@@ -184,6 +184,7 @@ public final class FieldApplicator {
     }
 
     private static void debugLog(final ServerLevel level, final String fmt, final Object... args) {
+        if (!MagConfig.debugLogging()) return;
         final long tick = level.getGameTime();
         if (tick - lastDebugTick < 20L) return;
         lastDebugTick = tick;

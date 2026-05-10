@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.anchor;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagBlockEntities;
@@ -111,8 +112,10 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         );
     }
 
-    /** Throttle: log at most once every 20 ticks (1s) so the console isn't spammed. */
+    /** Throttle: log at most once every 20 ticks (1s) so the console isn't spammed.
+     *  Gated behind config.debug.debugLogging to keep production logs clean. */
     private void debugLog(final ServerLevel server, final String fmt, final Object... args) {
+        if (!MagConfig.debugLogging()) return;
         final long tick = server.getGameTime();
         if (tick - lastDebugTick < 20L) return;
         lastDebugTick = tick;

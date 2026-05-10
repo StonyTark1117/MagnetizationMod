@@ -4,6 +4,8 @@ import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.FieldApplicator;
@@ -171,6 +173,17 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             final ServerLevel server, final BlockState state, final @Nullable ServerSubLevel host
     ) {
         final MagneticField previous = cachedField;
+        // Soft-disable hook: if the operator has listed this block path in
+        // config.content.disabledBlocks, treat the emitter as off regardless
+        // of redstone state. Existing placements survive saves but stay inert.
+        final String path = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        if (MagConfig.isBlockDisabled(path)) {
+            if (cachedField != null) {
+                cachedField = null;
+                markForClientSync(server);
+            }
+            return;
+        }
         MagneticField local = computeField(state);
         if (local == null) {
             cachedField = null;

@@ -3,7 +3,12 @@ package com.stonytark.magnetization.menu;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity;
+import com.stonytark.magnetization.content.electromagnet.ElectromagnetBlockEntity;
+import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity;
+import com.stonytark.magnetization.content.tractor.TractorBeamBlockEntity;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagMenus;
 import net.minecraft.core.BlockPos;
@@ -197,6 +202,9 @@ public class EmitterMenu extends AbstractContainerMenu {
     private void setStrengthIfAble(final BlockEntity be, final MagneticStrength s) {
         if (!hasCap(CAP_STRENGTH)) return;
         if (be instanceof AbstractEmitterBlockEntity em) {
+            // Refuse to set above the per-block ceiling defined in config.
+            final MagneticStrength ceiling = strengthCeilingFor(em);
+            if (s.ordinal() > ceiling.ordinal()) return;
             // Toggle off if clicking the currently-selected tier — lets the player
             // restore the emitter's default tier without leaving the menu.
             final MagneticStrength current = em.getStrengthOverride();
@@ -211,10 +219,34 @@ public class EmitterMenu extends AbstractContainerMenu {
             final int current = em.getRangeOverride();
             int next = current + delta;
             if (next < RANGE_MIN) next = RANGE_MIN;
-            if (next > RANGE_MAX) next = RANGE_MAX;
+            // Clamp to the per-block ceiling defined in config.
+            final int ceiling = Math.min(RANGE_MAX, rangeCeilingFor(em));
+            if (next > ceiling) next = ceiling;
             em.setRangeOverride(next);
             rangeBlocks.set(em.getRangeOverride());
         }
+    }
+
+    /** Per-block GUI ceiling for the strength tier, from {@link MagConfig}. */
+    private static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
+        try {
+            if (be instanceof ElectromagnetBlockEntity)   return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
+            if (be instanceof MagneticAnchorBlockEntity)  return MagConfig.ANCHOR_MAX_STRENGTH.get();
+            if (be instanceof RepulsorCoilBlockEntity)    return MagConfig.REPULSOR_MAX_STRENGTH.get();
+            if (be instanceof TractorBeamBlockEntity)     return MagConfig.TRACTOR_MAX_STRENGTH.get();
+        } catch (final Throwable ignored) { /* config not loaded yet */ }
+        return MagneticStrength.EXTREME;
+    }
+
+    /** Per-block GUI ceiling for the range, from {@link MagConfig}. */
+    private static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
+        try {
+            if (be instanceof ElectromagnetBlockEntity)   return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
+            if (be instanceof MagneticAnchorBlockEntity)  return MagConfig.ANCHOR_MAX_RANGE.get();
+            if (be instanceof RepulsorCoilBlockEntity)    return MagConfig.REPULSOR_MAX_RANGE.get();
+            if (be instanceof TractorBeamBlockEntity)     return MagConfig.TRACTOR_MAX_RANGE.get();
+        } catch (final Throwable ignored) { /* config not loaded yet */ }
+        return RANGE_MAX;
     }
 
     @Override

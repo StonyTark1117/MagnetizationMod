@@ -1,11 +1,16 @@
 package com.stonytark.magnetization.registry;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class MagCreativeTab {
@@ -18,45 +23,53 @@ public final class MagCreativeTab {
                     .title(Component.translatable("itemGroup.magnetization"))
                     .icon(() -> new ItemStack(MagItems.LODESTONE_CORE.get()))
                     .displayItems((params, output) -> {
-                        output.accept(MagItems.MAGNETITE_ORE.get());
-                        output.accept(MagItems.DEEPSLATE_MAGNETITE_ORE.get());
-                        output.accept(MagItems.RAW_MAGNETITE.get());
-                        output.accept(MagItems.RAW_MAGNETITE_BLOCK.get());
-                        output.accept(MagItems.MAGNETITE_INGOT.get());
-                        output.accept(MagItems.MAGNETITE_BLOCK.get());
-                        output.accept(MagItems.MAGNETITE_SWORD.get());
-                        output.accept(MagItems.MAGNETITE_PICKAXE.get());
-                        output.accept(MagItems.MAGNETITE_AXE.get());
-                        output.accept(MagItems.MAGNETITE_SHOVEL.get());
-                        output.accept(MagItems.MAGNETITE_HOE.get());
-                        output.accept(MagItems.MAGNETITE_HELMET.get());
-                        output.accept(MagItems.MAGNETITE_CHESTPLATE.get());
-                        output.accept(MagItems.MAGNETITE_LEGGINGS.get());
-                        output.accept(MagItems.MAGNETITE_BOOTS.get());
-                        output.accept(MagItems.FERROMAGNETIC_INGOT.get());
-                        output.accept(MagItems.FERROMAGNETIC_SWORD.get());
-                        output.accept(MagItems.FERROMAGNETIC_PICKAXE.get());
-                        output.accept(MagItems.FERROMAGNETIC_AXE.get());
-                        output.accept(MagItems.FERROMAGNETIC_SHOVEL.get());
-                        output.accept(MagItems.FERROMAGNETIC_HOE.get());
-                        output.accept(MagItems.FERROMAGNETIC_HELMET.get());
-                        output.accept(MagItems.FERROMAGNETIC_CHESTPLATE.get());
-                        output.accept(MagItems.FERROMAGNETIC_LEGGINGS.get());
-                        output.accept(MagItems.FERROMAGNETIC_BOOTS.get());
-                        output.accept(MagItems.MAGNETIC_PLATE.get());
-                        output.accept(MagItems.FIELD_COMPASS.get());
-                        output.accept(MagItems.MAGNETIC_GRAPPLE.get());
-                        output.accept(MagItems.LODESTONE_CORE.get());
-                        output.accept(MagItems.ELECTROMAGNET.get());
-                        output.accept(MagItems.KINETIC_ELECTROMAGNET.get());
-                        output.accept(MagItems.MAGNETIC_ANCHOR.get());
-                        output.accept(MagItems.REPULSOR_COIL.get());
-                        output.accept(MagItems.TRACTOR_BEAM.get());
-                        output.accept(MagItems.MAGNETIC_SWITCH.get());
-                        output.accept(MagItems.PERMANENT_MAGNET.get());
-                        output.accept(MagItems.POLARITY_INVERTER.get());
+                        accept(output, MagItems.MAGNETITE_ORE);
+                        accept(output, MagItems.DEEPSLATE_MAGNETITE_ORE);
+                        accept(output, MagItems.RAW_MAGNETITE);
+                        accept(output, MagItems.RAW_MAGNETITE_BLOCK);
+                        accept(output, MagItems.MAGNETITE_INGOT);
+                        accept(output, MagItems.MAGNETITE_BLOCK);
+                        accept(output, MagItems.MAGNETITE_SWORD);
+                        accept(output, MagItems.MAGNETITE_PICKAXE);
+                        accept(output, MagItems.MAGNETITE_AXE);
+                        accept(output, MagItems.MAGNETITE_SHOVEL);
+                        accept(output, MagItems.MAGNETITE_HOE);
+                        accept(output, MagItems.MAGNETITE_HELMET);
+                        accept(output, MagItems.MAGNETITE_CHESTPLATE);
+                        accept(output, MagItems.MAGNETITE_LEGGINGS);
+                        accept(output, MagItems.MAGNETITE_BOOTS);
+                        accept(output, MagItems.FERROMAGNETIC_INGOT);
+                        accept(output, MagItems.FERROMAGNETIC_SWORD);
+                        accept(output, MagItems.FERROMAGNETIC_PICKAXE);
+                        accept(output, MagItems.FERROMAGNETIC_AXE);
+                        accept(output, MagItems.FERROMAGNETIC_SHOVEL);
+                        accept(output, MagItems.FERROMAGNETIC_HOE);
+                        accept(output, MagItems.FERROMAGNETIC_HELMET);
+                        accept(output, MagItems.FERROMAGNETIC_CHESTPLATE);
+                        accept(output, MagItems.FERROMAGNETIC_LEGGINGS);
+                        accept(output, MagItems.FERROMAGNETIC_BOOTS);
+                        accept(output, MagItems.MAGNETIC_PLATE);
+                        accept(output, MagItems.FIELD_COMPASS);
+                        accept(output, MagItems.MAGNETIC_GRAPPLE);
+                        accept(output, MagItems.LODESTONE_CORE);
+                        accept(output, MagItems.ELECTROMAGNET);
+                        accept(output, MagItems.KINETIC_ELECTROMAGNET);
+                        accept(output, MagItems.MAGNETIC_ANCHOR);
+                        accept(output, MagItems.REPULSOR_COIL);
+                        accept(output, MagItems.TRACTOR_BEAM);
+                        accept(output, MagItems.MAGNETIC_SWITCH);
+                        accept(output, MagItems.PERMANENT_MAGNET);
+                        accept(output, MagItems.POLARITY_INVERTER);
                     })
                     .build());
+
+    /** Add the item to the tab unless its registry path is in the config disabled-list. */
+    private static void accept(final CreativeModeTab.Output output, final DeferredItem<? extends Item> entry) {
+        final Item item = entry.get();
+        final ResourceLocation rl = BuiltInRegistries.ITEM.getKey(item);
+        if (MagConfig.isItemDisabled(rl.getPath()) || MagConfig.isBlockDisabled(rl.getPath())) return;
+        output.accept(item);
+    }
 
     private MagCreativeTab() {}
 }
