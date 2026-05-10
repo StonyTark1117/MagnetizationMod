@@ -218,8 +218,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      *
      *  <p>If the BE's tool slot has an enchanted item or book in it, its
      *  enchantments are passed to the loot context — Fortune multiplies ore
-     *  drops, Silk Touch silk-mines, etc. The book itself isn't consumed and
-     *  doesn't take durability damage; treat it as a "tuning module". */
+     *  drops, Silk Touch silk-mines, etc. Damageable tools take 1 durability
+     *  per pull cycle (see {@link #damageToolSlot}); books are immune. */
     private void dropPendingAtEmitter(final ServerLevel server) {
         if (pendingDrops.isEmpty()) return;
         final Direction facing = getBlockState().getValue(DirectionalBlock.FACING);
@@ -314,6 +314,11 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             }
             activePullShipId = ship.getUniqueId();
             pendingDrops = columnStates;
+            // Tool wear: damageable tools take 1 durability per cycle. Enchanted
+            // books are immune (no damage component) so a Fortune-book setup
+            // never wears out — but a Fortune-pickaxe slowly does, encouraging
+            // players to repair it occasionally.
+            damageToolSlot();
             // FX: scrape sound at the deepest cell + a trail of crit-style sparks
             // along the column to telegraph "this was just ripped out".
             level.playSound(null, anchor, SoundEvents.NETHERITE_BLOCK_BREAK,
@@ -334,6 +339,19 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             for (final BlockState bs : columnStates) {
                 Block.dropResources(bs, level, getBlockPos().relative(facing, 1));
             }
+        }
+    }
+
+    /** Hurt the installed tool by 1 durability, clearing the slot if the tool
+     *  breaks. No-op for items that aren't damageable (enchanted books). */
+    private void damageToolSlot() {
+        final ItemStack tool = toolSlot.getItem(0);
+        if (tool.isEmpty() || !tool.isDamageableItem()) return;
+        final int newDamage = tool.getDamageValue() + 1;
+        if (newDamage >= tool.getMaxDamage()) {
+            toolSlot.setItem(0, ItemStack.EMPTY);
+        } else {
+            tool.setDamageValue(newDamage);
         }
     }
 
