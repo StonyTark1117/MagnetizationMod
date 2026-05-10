@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.content.anchor.MagneticAnchorBlock;
 import com.stonytark.magnetization.content.electromagnet.ElectromagnetBlock;
 import com.stonytark.magnetization.content.electromagnet.KineticElectromagnetBlock;
+import com.stonytark.magnetization.content.excavator.MagneticExcavatorBlock;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.content.permanent.PermanentMagnetBlock;
 import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlock;
@@ -52,6 +53,9 @@ public final class MagBlocks {
 
     public static final DeferredBlock<TractorBeamBlock> TRACTOR_BEAM =
             REGISTER.register("tractor_beam", () -> new TractorBeamBlock(poweredMetal()));
+
+    public static final DeferredBlock<MagneticExcavatorBlock> MAGNETIC_EXCAVATOR =
+            REGISTER.register("magnetic_excavator", () -> new MagneticExcavatorBlock(poweredMetal()));
 
     public static final DeferredBlock<Block> LODESTONE_CORE =
             REGISTER.register("lodestone_core", () -> new Block(metal()));

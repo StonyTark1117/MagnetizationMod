@@ -41,5 +41,11 @@ public final class MagTags {
     public static final TagKey<Block> MAGNETIC_EMITTER_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("magnetic_emitter"));
 
+    /** Block-side counterpart of {@link #FERROMAGNETIC_ITEMS}. The Magnetic
+     *  Excavator scans for blocks in this tag and rips them out of the
+     *  ground. Other mods can opt their metallic ores in by appending. */
+    public static final TagKey<Block> FERROMAGNETIC_BLOCKS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("ferromagnetic_blocks"));
+
     private MagTags() {}
 }

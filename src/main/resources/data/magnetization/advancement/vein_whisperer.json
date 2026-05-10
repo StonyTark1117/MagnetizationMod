@@ -1,0 +1,18 @@
+{
+  "parent": "magnetization:first_emitter",
+  "display": {
+    "icon": { "id": "magnetization:magnetic_excavator" },
+    "title": { "translate": "advancement.magnetization.vein_whisperer.title" },
+    "description": { "translate": "advancement.magnetization.vein_whisperer.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "powered_excavator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [ { "items": "magnetization:magnetic_excavator" } ] }
+    }
+  },
+  "requirements": [["powered_excavator"]]
+}

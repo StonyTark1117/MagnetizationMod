@@ -31,6 +31,9 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue                    REPULSOR_MAX_RANGE;
     public static final ModConfigSpec.EnumValue<MagneticStrength> TRACTOR_MAX_STRENGTH;
     public static final ModConfigSpec.IntValue                    TRACTOR_MAX_RANGE;
+    public static final ModConfigSpec.EnumValue<MagneticStrength> EXCAVATOR_MAX_STRENGTH;
+    public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_RANGE;
+    public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_BLOCKS_PER_CYCLE;
 
     /** Soft-disabled blocks (by registry path). Disabled blocks emit no field, are
      *  hidden from the creative tab, and skip their right-click GUI. Existing
@@ -110,6 +113,19 @@ public final class MagConfig {
         TRACTOR_MAX_RANGE = b
                 .comment("Max range (blocks) the Tractor Beam GUI can dial up to.")
                 .defineInRange("tractorMaxRange", 64, 0, 256);
+
+        EXCAVATOR_MAX_STRENGTH = b
+                .comment("Max strength tier the Magnetic Excavator GUI can select.",
+                         "Strength controls the cycle interval (faster mining at higher tiers).")
+                .defineEnum("excavatorMaxStrength", MagneticStrength.EXTREME);
+        EXCAVATOR_MAX_RANGE = b
+                .comment("Max column depth (blocks) the Magnetic Excavator can rip ores from.")
+                .defineInRange("excavatorMaxRange", 32, 1, 128);
+        EXCAVATOR_MAX_BLOCKS_PER_CYCLE = b
+                .comment("Hard cap on cells one Excavator pull cycle may scan/move,",
+                         "regardless of strength + range. Acts as a safety against",
+                         "config typos. 32 is sane for any reasonable server.")
+                .defineInRange("excavatorMaxBlocksPerCycle", 32, 1, 128);
 
         b.pop();
 

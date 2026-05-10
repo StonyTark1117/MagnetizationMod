@@ -10,6 +10,7 @@
   "block.magnetization.magnetic_switch": "Magnetic Switch",
   "block.magnetization.permanent_magnet": "Permanent Magnet",
   "block.magnetization.polarity_inverter": "Polarity Inverter",
+  "block.magnetization.magnetic_excavator": "Magnetic Excavator",
   "block.magnetization.magnetite_ore": "Magnetite Ore",
   "block.magnetization.deepslate_magnetite_ore": "Deepslate Magnetite Ore",
   "block.magnetization.magnetite_block": "Block of Magnetite",
@@ -70,6 +71,7 @@
   "tooltip.magnetization.magnetic_anchor.use":        "Locks the first ship that enters its range. Persists across reload.",
   "tooltip.magnetization.repulsor_coil.use":          "Pushes ships outward in a 45° cone along its facing. Place upward for a hover pad; place sideways or down to line a propulsion tunnel.",
   "tooltip.magnetization.tractor_beam.use":           "Directional pull along facing. Wrench to rotate.",
+  "tooltip.magnetization.magnetic_excavator.use":     "Powered by redstone. Rips ferromagnetic ores out of the column along its facing — pulled blocks travel one cell per cycle until they reach the emitter and pop into the world. Wrench to rotate; right-click to set strength + range.",
   "tooltip.magnetization.lodestone_core.use":         "Crafting component for every emitter.",
   "tooltip.magnetization.ferromagnetic_ingot.use":    "Iron infused with magnetic properties.",
   "tooltip.magnetization.magnetic_plate.use":         "Flat ferromagnetic plate. Used as cladding.",
@@ -101,5 +103,9 @@
   "advancement.magnetization.full_loadout.title":       "Iron-Clad",
   "advancement.magnetization.full_loadout.description": "Hold a magnetite and ferromagnetic sword and pickaxe.",
   "advancement.magnetization.dual_magnetized.title":    "Wearing the Field",
-  "advancement.magnetization.dual_magnetized.description":"Equip any metal armor piece tracked by Magnetization."
+  "advancement.magnetization.dual_magnetized.description":"Equip any metal armor piece tracked by Magnetization.",
+  "advancement.magnetization.vein_whisperer.title":     "Vein Whisperer",
+  "advancement.magnetization.vein_whisperer.description":"Hold a Magnetic Excavator. Mining without lifting a finger.",
+  "advancement.magnetization.inverted_quarry.title":    "Inverted Quarry",
+  "advancement.magnetization.inverted_quarry.description":"Place a Magnetic Excavator. Wrench it to face wherever the ore is."
 }

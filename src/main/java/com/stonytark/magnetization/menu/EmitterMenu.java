@@ -7,6 +7,7 @@ import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity;
 import com.stonytark.magnetization.content.electromagnet.ElectromagnetBlockEntity;
+import com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity;
 import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity;
 import com.stonytark.magnetization.content.tractor.TractorBeamBlockEntity;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -232,10 +233,11 @@ public class EmitterMenu extends AbstractContainerMenu {
     /** Per-block GUI ceiling for the strength tier, from {@link MagConfig}. */
     private static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
-            if (be instanceof ElectromagnetBlockEntity)   return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
-            if (be instanceof MagneticAnchorBlockEntity)  return MagConfig.ANCHOR_MAX_STRENGTH.get();
-            if (be instanceof RepulsorCoilBlockEntity)    return MagConfig.REPULSOR_MAX_STRENGTH.get();
-            if (be instanceof TractorBeamBlockEntity)     return MagConfig.TRACTOR_MAX_STRENGTH.get();
+            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
+            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_STRENGTH.get();
+            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_STRENGTH.get();
+            if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_STRENGTH.get();
+            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.EXCAVATOR_MAX_STRENGTH.get();
         } catch (final Throwable ignored) { /* config not loaded yet */ }
         return MagneticStrength.EXTREME;
     }
@@ -243,10 +245,11 @@ public class EmitterMenu extends AbstractContainerMenu {
     /** Per-block GUI ceiling for the range, from {@link MagConfig}. */
     private static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
-            if (be instanceof ElectromagnetBlockEntity)   return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
-            if (be instanceof MagneticAnchorBlockEntity)  return MagConfig.ANCHOR_MAX_RANGE.get();
-            if (be instanceof RepulsorCoilBlockEntity)    return MagConfig.REPULSOR_MAX_RANGE.get();
-            if (be instanceof TractorBeamBlockEntity)     return MagConfig.TRACTOR_MAX_RANGE.get();
+            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
+            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_RANGE.get();
+            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_RANGE.get();
+            if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_RANGE.get();
+            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.EXCAVATOR_MAX_RANGE.get();
         } catch (final Throwable ignored) { /* config not loaded yet */ }
         return RANGE_MAX;
     }

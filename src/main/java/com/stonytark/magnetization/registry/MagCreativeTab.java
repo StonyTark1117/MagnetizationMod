@@ -57,6 +57,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGNETIC_ANCHOR);
                         accept(output, MagItems.REPULSOR_COIL);
                         accept(output, MagItems.TRACTOR_BEAM);
+                        accept(output, MagItems.MAGNETIC_EXCAVATOR);
                         accept(output, MagItems.MAGNETIC_SWITCH);
                         accept(output, MagItems.PERMANENT_MAGNET);
                         accept(output, MagItems.POLARITY_INVERTER);

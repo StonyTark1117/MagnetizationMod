@@ -24,6 +24,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> MAGNETIC_ANCHOR  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_ANCHOR);
     public static final DeferredItem<BlockItem> REPULSOR_COIL    = REGISTER.registerSimpleBlockItem(MagBlocks.REPULSOR_COIL);
     public static final DeferredItem<BlockItem> TRACTOR_BEAM     = REGISTER.registerSimpleBlockItem(MagBlocks.TRACTOR_BEAM);
+    public static final DeferredItem<BlockItem> MAGNETIC_EXCAVATOR = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_EXCAVATOR);
     public static final DeferredItem<BlockItem> LODESTONE_CORE   = REGISTER.registerSimpleBlockItem(MagBlocks.LODESTONE_CORE);
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);
     public static final DeferredItem<BlockItem> PERMANENT_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.PERMANENT_MAGNET);

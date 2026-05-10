@@ -223,6 +223,29 @@ save(emissive(copper_grate.copy()),
 save(emissive(overlay(copper_block, lambda d, img: (coil_band(d, COPPER_HOT), border(d))[0])),
      f"{BLOCK}/repulsor_coil_side_active.png")
 
+# ---------------- magnetic excavator ----------------
+# Active face: dark recess with concentric rings + a centered "drill" cross-hair
+# (vertical + horizontal bars) to suggest mining inward. Side faces: coil bands.
+# Back face: plain darkened iron — that's the side facing the player.
+def excavator_face(d, accent=NORTH):
+    d.rectangle([0, 0, 15, 15], fill=SLATE_DARK)
+    d.rectangle([3, 3, 12, 12], outline=accent)
+    d.rectangle([5, 5, 10, 10], outline=accent)
+    # Cross-hair (drill) glyph
+    d.line([(7, 3), (7, 12)], fill=accent, width=1)
+    d.line([(8, 3), (8, 12)], fill=accent, width=1)
+    d.line([(3, 7), (12, 7)], fill=accent, width=1)
+    d.line([(3, 8), (12, 8)], fill=accent, width=1)
+
+
+save(overlay(iron, lambda d, img: excavator_face(d, NORTH)),
+     f"{BLOCK}/magnetic_excavator_face.png")
+save(emissive(overlay(iron, lambda d, img: excavator_face(d, NORTH))),
+     f"{BLOCK}/magnetic_excavator_face_active.png")
+save(overlay(iron, lambda d, img: (coil_band(d, COPPER), border(d))[0]),
+     f"{BLOCK}/magnetic_excavator_side.png")
+save(iron.copy(), f"{BLOCK}/magnetic_excavator_back.png")
+
 # ---------------- tractor beam ----------------
 save(overlay(iron, lambda d, img: lens(d, SOUTH)),
      f"{BLOCK}/tractor_beam_front.png")

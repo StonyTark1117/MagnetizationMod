@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity;
 import com.stonytark.magnetization.content.electromagnet.ElectromagnetBlockEntity;
 import com.stonytark.magnetization.content.electromagnet.KineticElectromagnetBlockEntity;
+import com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity;
 import com.stonytark.magnetization.content.permanent.PermanentMagnetBlockEntity;
 import com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity;
 import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity;
@@ -44,6 +45,11 @@ public final class MagBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TractorBeamBlockEntity>> TRACTOR_BEAM =
             REGISTER.register("tractor_beam", () -> BlockEntityType.Builder
                     .of(TractorBeamBlockEntity::new, MagBlocks.TRACTOR_BEAM.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticExcavatorBlockEntity>> MAGNETIC_EXCAVATOR =
+            REGISTER.register("magnetic_excavator", () -> BlockEntityType.Builder
+                    .of(MagneticExcavatorBlockEntity::new, MagBlocks.MAGNETIC_EXCAVATOR.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticSwitchBlockEntity>> MAGNETIC_SWITCH =

@@ -183,7 +183,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         tickEmitter(server, getBlockState(), subLevel);
     }
 
-    void tickEmitter(
+    protected void tickEmitter(
             final ServerLevel server, final BlockState state, final @Nullable ServerSubLevel host
     ) {
         final MagneticField previous = cachedField;

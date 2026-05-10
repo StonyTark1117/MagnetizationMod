@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "#c:ores/iron",
+    "#c:ores/gold",
+    "#c:ores/copper",
+    "#c:ores/netherite_scrap",
+    "#c:storage_blocks/iron",
+    "#c:storage_blocks/gold",
+    "#c:storage_blocks/copper",
+    "#c:storage_blocks/netherite",
+    "#c:storage_blocks/raw_iron",
+    "#c:storage_blocks/raw_gold",
+    "#c:storage_blocks/raw_copper",
+    "magnetization:magnetite_ore",
+    "magnetization:deepslate_magnetite_ore",
+    "magnetization:magnetite_block",
+    "magnetization:raw_magnetite_block"
+  ]
+}

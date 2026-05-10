@@ -1,0 +1,18 @@
+{
+  "parent": "magnetization:vein_whisperer",
+  "display": {
+    "icon": { "id": "magnetization:magnetic_excavator" },
+    "title": { "translate": "advancement.magnetization.inverted_quarry.title" },
+    "description": { "translate": "advancement.magnetization.inverted_quarry.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "place_excavator": {
+      "trigger": "minecraft:placed_block",
+      "conditions": { "block": "magnetization:magnetic_excavator" }
+    }
+  },
+  "requirements": [["place_excavator"]]
+}
