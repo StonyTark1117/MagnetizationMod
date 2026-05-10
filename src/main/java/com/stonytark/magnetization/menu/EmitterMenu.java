@@ -106,7 +106,8 @@ public class EmitterMenu extends AbstractContainerMenu {
         this.caps = caps;
         this.armorSlot = new SimpleContainer(1) {
             @Override public boolean canPlaceItem(final int slot, final ItemStack stack) {
-                return stack.is(MagTags.METAL_ARMOR);
+                // Accept armor (player magnetization) OR tools/weapons (item-attractor).
+                return stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS);
             }
             @Override public int getMaxStackSize() { return 1; }
         };
@@ -189,7 +190,8 @@ public class EmitterMenu extends AbstractContainerMenu {
     private void applyArmorPolarity(final @Nullable MagneticPolarity polarity) {
         if (!hasCap(CAP_POLARITY) || !hasCap(CAP_ARMOR)) return;
         final ItemStack stack = armorSlot.getItem(0);
-        if (stack.isEmpty() || !stack.is(MagTags.METAL_ARMOR)) return;
+        if (stack.isEmpty()) return;
+        if (!stack.is(MagTags.METAL_ARMOR) && !stack.is(MagTags.METAL_TOOLS)) return;
         if (polarity == null) {
             stack.remove(MagDataComponents.ARMOR_POLARITY.get());
         } else {
@@ -274,7 +276,8 @@ public class EmitterMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(original, 1, slots.size(), true)) return ItemStack.EMPTY;
         } else {
             // player inv → armor slot, only if eligible
-            if (!hasCap(CAP_ARMOR) || !original.is(MagTags.METAL_ARMOR)) return ItemStack.EMPTY;
+            if (!hasCap(CAP_ARMOR)) return ItemStack.EMPTY;
+            if (!original.is(MagTags.METAL_ARMOR) && !original.is(MagTags.METAL_TOOLS)) return ItemStack.EMPTY;
             if (!moveItemStackTo(original, 0, 1, false)) return ItemStack.EMPTY;
         }
         if (original.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
@@ -282,7 +285,8 @@ public class EmitterMenu extends AbstractContainerMenu {
         return copy;
     }
 
-    /** Slot that rejects everything when CAP_ARMOR is off, and rejects non-armor otherwise. */
+    /** Slot that rejects everything when CAP_ARMOR is off, and rejects items
+     *  that aren't in either the metal_armor or metal_tools tag otherwise. */
     private static final class ArmorMagnetizeSlot extends Slot {
         private final boolean enabled;
         ArmorMagnetizeSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
@@ -290,7 +294,7 @@ public class EmitterMenu extends AbstractContainerMenu {
             this.enabled = enabled;
         }
         @Override public boolean mayPlace(final ItemStack stack) {
-            return enabled && stack.is(MagTags.METAL_ARMOR);
+            return enabled && (stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS));
         }
         @Override public boolean isActive() { return enabled; }
         @Override public int getMaxStackSize() { return 1; }

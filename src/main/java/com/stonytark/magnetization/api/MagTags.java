@@ -27,6 +27,14 @@ public final class MagTags {
     public static final TagKey<Item> METAL_ARMOR =
             TagKey.create(Registries.ITEM, Magnetization.id("metal_armor"));
 
+    /** Tools and weapons that can be magnetized via the electromagnet GUI.
+     *  When a magnetized tool from this tag is held or worn, dropped
+     *  ferromagnetic items within a small radius get pulled toward the
+     *  holder — like a personal item magnet. Other mods can opt their
+     *  metal tools in by appending to this tag. */
+    public static final TagKey<Item> METAL_TOOLS =
+            TagKey.create(Registries.ITEM, Magnetization.id("metal_tools"));
+
     public static final TagKey<EntityType<?>> MAGNETIZABLE_ENTITIES =
             TagKey.create(Registries.ENTITY_TYPE, Magnetization.id("magnetizable"));
 
