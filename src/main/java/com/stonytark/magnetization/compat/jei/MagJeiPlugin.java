@@ -29,12 +29,21 @@ public class MagJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(final IRecipeRegistration registration) {
         final List<ItemStack> ferromagnetic = FerromagneticInfoHelper.stacks();
-        if (ferromagnetic.isEmpty()) return;
+        if (!ferromagnetic.isEmpty()) {
+            registration.addIngredientInfo(
+                    ferromagnetic,
+                    VanillaTypes.ITEM_STACK,
+                    Component.translatable("jei.magnetization.ferromagnetic.info")
+                            .withStyle(ChatFormatting.GRAY));
+        }
 
-        registration.addIngredientInfo(
-                ferromagnetic,
-                VanillaTypes.ITEM_STACK,
-                Component.translatable("jei.magnetization.ferromagnetic.info")
-                        .withStyle(ChatFormatting.GRAY));
+        final List<ItemStack> ferroBlocks = FerromagneticInfoHelper.blockStacks();
+        if (!ferroBlocks.isEmpty()) {
+            registration.addIngredientInfo(
+                    ferroBlocks,
+                    VanillaTypes.ITEM_STACK,
+                    Component.translatable("jei.magnetization.ferromagnetic_blocks.info")
+                            .withStyle(ChatFormatting.GRAY));
+        }
     }
 }

@@ -79,8 +79,11 @@
   "tooltip.magnetization.magnetic_grapple.use":       "Right-click to launch toward the nearest attractive emitter (24-block range). Sneak mid-flight to cancel.",
 
   "jei.magnetization.ferromagnetic.info": "Items in this list are pulled by Magnetization emitters when dropped on the ground. Other mods can extend the list via the #magnetization:ferromagnetic tag.",
+  "jei.magnetization.ferromagnetic_blocks.info": "Blocks in this list are ripped out of the ground by the Magnetic Excavator. Anything in their path gets pulled along too. Other mods extend the list via the #magnetization:ferromagnetic_blocks tag.",
   "rei.magnetization.ferromagnetic.name": "Ferromagnetic items",
   "rei.magnetization.ferromagnetic.info": "Items in this list are pulled by Magnetization emitters when dropped on the ground. Other mods can extend the list via the #magnetization:ferromagnetic tag.",
+  "rei.magnetization.ferromagnetic_blocks.name": "Excavator targets",
+  "rei.magnetization.ferromagnetic_blocks.info": "Blocks in this list are ripped out of the ground by the Magnetic Excavator. Anything in their path gets pulled along too. Other mods extend the list via the #magnetization:ferromagnetic_blocks tag.",
   "tooltip.magnetization.magnetic_switch.use":        "Emits a redstone signal proportional to nearest ship's distance (8-block range).",
   "tooltip.magnetization.permanent_magnet.use":       "Always-on weak field. Right-click flips polarity. Build propulsion tracks by lining up opposing magnets between world and ship.",
   "tooltip.magnetization.polarity_inverter.use":      "Place adjacent to an emitter to flip its field polarity. Two inverters cancel.",
