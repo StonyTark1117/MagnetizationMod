@@ -81,8 +81,16 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      *  the ship's logical pose origin gets this close, we dismantle and drop. */
     private static final double ARRIVAL_RADIUS = 1.5d;
 
+    /** Hard ceiling on how long a single pull cycle can run before we
+     *  force-dismantle. Covers chunk-unload + Sable-edge-case scenarios where
+     *  the ship can't move toward the emitter and would otherwise block all
+     *  future pulls forever. 30 seconds at 20 tps. */
+    private static final long PULL_TIMEOUT_TICKS = 600L;
+
     /** Long.MIN_VALUE-style sentinel: "never pulled before". */
     private long lastPullTick = Long.MIN_VALUE;
+    /** Tick when the in-flight pull cycle started. Long.MIN_VALUE = no pull. */
+    private long pullStartTick = Long.MIN_VALUE;
 
     /** UUID of the in-flight column-ship, or null if no pull is active. */
     private @Nullable UUID activePullShipId = null;
@@ -211,12 +219,34 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     }
 
     /** Track the in-flight column-ship: if it's gone, clear state; if it's
-     *  arrived at the emitter, drop the pending blocks and remove it. */
+     *  arrived at the emitter, drop the pending blocks and remove it. Also
+     *  enforces {@link #PULL_TIMEOUT_TICKS} — if the ship can't move toward
+     *  the emitter for any reason (chunk unload, Sable edge case), the pull
+     *  is force-dismantled so the excavator isn't blocked forever. */
     private void tickActiveShip(final ServerLevel server) {
+        // Force-dismantle on timeout. Drop pending at emitter as recovery.
+        if (pullStartTick != Long.MIN_VALUE
+                && server.getGameTime() - pullStartTick > PULL_TIMEOUT_TICKS) {
+            LOG.warn("Excavator at {} hit pull timeout; force-dismantling ship {}",
+                    getBlockPos().toShortString(), activePullShipId);
+            final SubLevelContainer cont = SubLevelContainer.getContainer(server);
+            if (cont != null) {
+                final var sub = cont.getSubLevel(activePullShipId);
+                if (sub instanceof ServerSubLevel ship) {
+                    cont.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
+                }
+            }
+            dropPendingAtEmitter(server);
+            activePullShipId = null;
+            pullStartTick = Long.MIN_VALUE;
+            setChanged();
+            return;
+        }
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) {
             // Should never happen on a ServerLevel, but defensive.
             activePullShipId = null;
+            pullStartTick = Long.MIN_VALUE;
             pendingDrops.clear();
             setChanged();
             return;
@@ -227,6 +257,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             // the emitter as a recovery so the player isn't out resources.
             dropPendingAtEmitter(server);
             activePullShipId = null;
+            pullStartTick = Long.MIN_VALUE;
             setChanged();
             return;
         }
@@ -240,6 +271,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             dropPendingAtEmitter(server);
             container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
             activePullShipId = null;
+            pullStartTick = Long.MIN_VALUE;
             setChanged();
         }
     }
@@ -348,15 +380,16 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         if (columnPositions.isEmpty()) return;
 
         // Build the Sable assembly bounds — the column's bbox + 1-block padding.
-        // Anchor is the cell adjacent to the emitter (offset 1, the NEAR end of
-        // the column). Sable uses anchor as the ship's pose origin, so when the
-        // FieldApplicator pulls the ship toward the emitter, the near end is
-        // what reaches the ARRIVAL_RADIUS check first — exactly when the column
-        // visually arrives at the magnet. Anchoring at the deep end (which I
-        // tried first) made the dismantle fire only after the ship had passed
-        // entirely through the emitter cell, producing a goofy "column flies
-        // straight through" effect.
-        final BlockPos anchor = columnPositions.get(0); // nearest cell to emitter
+        // Anchor is the cell *immediately* adjacent to the emitter (always
+        // offset 1, regardless of whether that cell is in columnPositions —
+        // it might be air-skipped). Sable uses the anchor as the ship's pose
+        // origin; the column extends away from the emitter from there. When
+        // FieldApplicator pulls the ship toward the emitter, the pose origin
+        // (leading edge) reaches ARRIVAL_RADIUS exactly when the column
+        // visually meets the magnet. An earlier version anchored at the deep
+        // end (the ferro ore), which made the dismantle fire only after the
+        // entire column had passed *through* the emitter cell.
+        final BlockPos anchor = getBlockPos().relative(facing, 1);
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
         for (final BlockPos p : columnPositions) {
@@ -378,6 +411,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
                 return;
             }
             activePullShipId = ship.getUniqueId();
+            pullStartTick = level.getGameTime();
             pendingDrops = columnStates;
             // Tool wear: damageable tools take 1 durability per cycle. Enchanted
             // books are immune (no damage component) so a Fortune-book setup
@@ -433,6 +467,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putLong("LastPullTick", lastPullTick);
+        if (pullStartTick != Long.MIN_VALUE) tag.putLong("PullStartTick", pullStartTick);
         if (activePullShipId != null) tag.putUUID("ActiveShip", activePullShipId);
         if (!pendingDrops.isEmpty()) {
             final ListTag drops = new ListTag();
@@ -449,6 +484,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         lastPullTick = tag.contains("LastPullTick") ? tag.getLong("LastPullTick") : Long.MIN_VALUE;
+        pullStartTick = tag.contains("PullStartTick") ? tag.getLong("PullStartTick") : Long.MIN_VALUE;
         activePullShipId = tag.hasUUID("ActiveShip") ? tag.getUUID("ActiveShip") : null;
         pendingDrops = new ArrayList<>();
         if (tag.contains("PendingDrops", Tag.TAG_LIST)) {
