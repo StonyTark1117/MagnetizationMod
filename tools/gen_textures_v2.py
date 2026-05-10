@@ -60,6 +60,14 @@ def emissive(img: Image.Image, factor: float = 1.4) -> Image.Image:
     return enhancer.enhance(factor)
 
 
+def darken(img: Image.Image, factor: float = 0.55) -> Image.Image:
+    """Knock the base brightness down. Used to shift vanilla-iron-based blocks
+    (electromagnet, kinetic, switch, tractor, permanent magnet) onto a darker
+    palette so the addon reads as 'industrial / metallic' instead of 'shiny iron'."""
+    enhancer = ImageEnhance.Brightness(img)
+    return enhancer.enhance(factor)
+
+
 def border(d: ImageDraw.ImageDraw, color=SLATE_DARK):
     d.rectangle([0, 0, 15, 15], outline=color)
 
@@ -72,32 +80,44 @@ def coil_band(d, color=COPPER):
         d.rectangle([1, y - 1, 14, y], fill=color)
 
 
-def pole_letter(d, letter, color):
-    """Bold N or S centered."""
+def pole_letter(d, letter, color, small=False):
+    """Bold N or S centered horizontally and vertically in the 16x16 face. Letter
+    spans x=4..12 (8 px), giving a true center at x=8. When `small` is True
+    (kinetic side faces), the letter shrinks vertically and uses a 1-px stroke
+    so it sits inside the y=7..11 strip below the shaft hole rather than
+    colliding with it."""
+    if small:
+        # Compact glyph for kinetic faces. Sits below the shaft hole in the
+        # y=7..11 band; uses 1-px strokes so it never overlaps the socket.
+        if letter == "N":
+            d.line([(5, 7), (5, 11)], fill=color, width=1)
+            d.line([(10, 7), (10, 11)], fill=color, width=1)
+            d.line([(5, 7), (10, 11)], fill=color, width=1)
+        else:  # "S"
+            d.line([(5, 7), (10, 7)], fill=color, width=1)
+            d.line([(5, 7), (5, 9)], fill=color, width=1)
+            d.line([(5, 9), (10, 9)], fill=color, width=1)
+            d.line([(10, 9), (10, 11)], fill=color, width=1)
+            d.line([(5, 11), (10, 11)], fill=color, width=1)
+        return
     if letter == "N":
-        d.line([(5, 4), (5, 12)], fill=color, width=2)
-        d.line([(11, 4), (11, 12)], fill=color, width=2)
-        d.line([(5, 4), (11, 12)], fill=color, width=2)
+        d.line([(4, 4), (4, 12)], fill=color, width=2)
+        d.line([(12, 4), (12, 12)], fill=color, width=2)
+        d.line([(4, 4), (12, 12)], fill=color, width=2)
     else:
-        d.line([(5, 4), (11, 4)], fill=color, width=2)
-        d.line([(5, 4), (5, 8)], fill=color, width=2)
-        d.line([(5, 8), (11, 8)], fill=color, width=2)
-        d.line([(11, 8), (11, 12)], fill=color, width=2)
-        d.line([(5, 12), (11, 12)], fill=color, width=2)
+        d.line([(4, 4), (12, 4)], fill=color, width=2)
+        d.line([(4, 4), (4, 8)], fill=color, width=2)
+        d.line([(4, 8), (12, 8)], fill=color, width=2)
+        d.line([(12, 8), (12, 12)], fill=color, width=2)
+        d.line([(4, 12), (12, 12)], fill=color, width=2)
 
 
 def shaft_hole(d, color=SLATE_DARK):
-    """Octagonal shaft socket on side faces of kinetic block."""
-    d.rectangle([5, 5, 10, 10], fill=color)
-    d.rectangle([6, 4, 9, 11], fill=color)
-    d.rectangle([4, 6, 11, 9], fill=color)
-
-
-def upward_arrows(d, color=ACCENT):
-    for x in (3, 8, 13):
-        d.line([(x, 12), (x, 5)], fill=color)
-        d.line([(x - 2, 7), (x, 5)], fill=color)
-        d.line([(x + 2, 7), (x, 5)], fill=color)
+    """Octagonal shaft socket on side faces of kinetic block. Sits in y=4..7
+    so the small pole_letter (y=7..11) doesn't overlap it."""
+    d.rectangle([5, 4, 10, 7], fill=color)
+    d.rectangle([6, 3, 9, 8], fill=color)
+    d.rectangle([4, 5, 11, 6], fill=color)
 
 
 def horizontal_arrow(d, color=ACCENT):
@@ -136,15 +156,18 @@ def save(img: Image.Image, dest: str):
     img.save(dest)
 
 
-# Bases
-iron = vanilla("block/iron_block")
-lodestone_top = vanilla("block/lodestone_top")
+# Bases. The user wants a darker addon palette — pull each iron-derived base
+# toward black up front, then composite glyphs as before. Ore/lodestone/copper
+# bases are already on the darker side, so they keep their vanilla brightness.
+iron       = darken(vanilla("block/iron_block"))
+dark_iron  = darken(vanilla("block/iron_block"), 0.40)  # for switch / inverter
+lodestone_top  = vanilla("block/lodestone_top")
 lodestone_side = vanilla("block/lodestone_side")
-copper_grate = vanilla("block/copper_grate")
-copper_block = vanilla("block/copper_block")
-netherite = vanilla("block/netherite_block")
-raw_iron = vanilla("block/raw_iron_block")
-smooth_stone = vanilla("block/smooth_stone")
+copper_grate   = vanilla("block/copper_grate")
+copper_block   = vanilla("block/copper_block")
+netherite      = vanilla("block/netherite_block")
+raw_iron       = darken(vanilla("block/raw_iron_block"), 0.70)
+smooth_stone   = darken(vanilla("block/smooth_stone"), 0.45)
 
 # ---------------- electromagnet ----------------
 save(overlay(iron, lambda d, img: (coil_band(d, COPPER), border(d))[0]),
@@ -163,17 +186,19 @@ save(emissive(overlay(iron, lambda d, img: pole_letter(d, "S", SOUTH))),
      f"{BLOCK}/electromagnet_bottom_active.png")
 
 # ---------------- kinetic electromagnet ----------------
+# Side faces have a shaft hole (Create kinetic socket); the small pole_letter
+# variant tucks below the hole at y=7..11 so the two never collide.
 save(overlay(iron, lambda d, img: (coil_band(d), shaft_hole(d), border(d))[0]),
      f"{BLOCK}/kinetic_electromagnet_side.png")
-save(overlay(iron, lambda d, img: (pole_letter(d, "N", NORTH), shaft_hole(d))[0]),
+save(overlay(iron, lambda d, img: (shaft_hole(d), pole_letter(d, "N", NORTH, small=True))[0]),
      f"{BLOCK}/kinetic_electromagnet_top.png")
-save(overlay(iron, lambda d, img: (pole_letter(d, "S", SOUTH), shaft_hole(d))[0]),
+save(overlay(iron, lambda d, img: (shaft_hole(d), pole_letter(d, "S", SOUTH, small=True))[0]),
      f"{BLOCK}/kinetic_electromagnet_bottom.png")
 save(emissive(overlay(iron, lambda d, img: (coil_band(d, COPPER_HOT), shaft_hole(d), border(d))[0])),
      f"{BLOCK}/kinetic_electromagnet_side_active.png")
-save(emissive(overlay(iron, lambda d, img: (pole_letter(d, "N", NORTH), shaft_hole(d))[0])),
+save(emissive(overlay(iron, lambda d, img: (shaft_hole(d), pole_letter(d, "N", NORTH, small=True))[0])),
      f"{BLOCK}/kinetic_electromagnet_top_active.png")
-save(emissive(overlay(iron, lambda d, img: (pole_letter(d, "S", SOUTH), shaft_hole(d))[0])),
+save(emissive(overlay(iron, lambda d, img: (shaft_hole(d), pole_letter(d, "S", SOUTH, small=True))[0])),
      f"{BLOCK}/kinetic_electromagnet_bottom_active.png")
 
 # ---------------- magnetic anchor ----------------
@@ -186,12 +211,14 @@ save(emissive(lodestone_side.copy()),
      f"{BLOCK}/magnetic_anchor_side_active.png")
 
 # ---------------- repulsor coil ----------------
-save(overlay(copper_grate, lambda d, img: upward_arrows(d, ACCENT)),
-     f"{BLOCK}/repulsor_coil_top.png")
+# Yellow arrows removed per UX feedback — the copper grate already reads as
+# 'air vent / output' which is enough; players figure out direction from
+# placement orientation rather than a glyph that can be wrong-side-up.
+save(copper_grate.copy(), f"{BLOCK}/repulsor_coil_top.png")
 save(overlay(copper_block, lambda d, img: (coil_band(d, COPPER), border(d))[0]),
      f"{BLOCK}/repulsor_coil_side.png")
 save(copper_block.copy(), f"{BLOCK}/repulsor_coil_bottom.png")
-save(emissive(overlay(copper_grate, lambda d, img: upward_arrows(d, ACCENT))),
+save(emissive(copper_grate.copy()),
      f"{BLOCK}/repulsor_coil_top_active.png")
 save(emissive(overlay(copper_block, lambda d, img: (coil_band(d, COPPER_HOT), border(d))[0])),
      f"{BLOCK}/repulsor_coil_side_active.png")
@@ -207,22 +234,14 @@ save(emissive(overlay(iron, lambda d, img: lens(d, SOUTH))),
 save(emissive(overlay(iron, lambda d, img: (coil_band(d, SLATE_DARK), border(d))[0])),
      f"{BLOCK}/tractor_beam_side_active.png")
 
-# ---------------- maglev rail ----------------
-save(overlay(iron, lambda d, img: horizontal_arrow(d, ACCENT)),
-     f"{BLOCK}/maglev_rail_top.png")
-save(overlay(iron, lambda d, img: (coil_band(d, COPPER), border(d))[0]),
-     f"{BLOCK}/maglev_rail_side.png")
-save(iron.copy(), f"{BLOCK}/maglev_rail_bottom.png")
-save(emissive(overlay(iron, lambda d, img: horizontal_arrow(d, ACCENT))),
-     f"{BLOCK}/maglev_rail_top_active.png")
-save(emissive(overlay(iron, lambda d, img: (coil_band(d, COPPER_HOT), border(d))[0])),
-     f"{BLOCK}/maglev_rail_side_active.png")
+# (maglev_rail removed in phase 13; texture generation deleted with it.)
 
 # ---------------- lodestone core ----------------
 save(overlay(lodestone_top, lambda d, img: concentric(d, ACCENT, SLATE_DARK)),
      f"{BLOCK}/lodestone_core.png")
 
 # ---------------- magnetic switch ----------------
+# Darker base so the red sensor dot pops; smooth_stone alone read too white.
 save(overlay(smooth_stone, lambda d, img: (
     d.rectangle([3, 3, 12, 12], fill=SLATE_DARK),
     d.ellipse([6, 6, 9, 9], fill=NORTH),
