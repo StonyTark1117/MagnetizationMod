@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["MMM", "M M"],
+  "key": {
+    "M": { "item": "magnetization:ferromagnetic_ingot" }
+  },
+  "result": { "id": "magnetization:ferromagnetic_helmet", "count": 1 }
+}

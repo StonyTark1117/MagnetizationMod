@@ -48,8 +48,35 @@ public final class MagArmorMaterials {
                 );
             });
 
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> FERROMAGNETIC =
+            REGISTER.register("ferromagnetic", () -> {
+                final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+                // Diamond-equivalent: helmet 3, chestplate 8, leggings 6, boots 3.
+                defense.put(ArmorItem.Type.HELMET, 3);
+                defense.put(ArmorItem.Type.CHESTPLATE, 8);
+                defense.put(ArmorItem.Type.LEGGINGS, 6);
+                defense.put(ArmorItem.Type.BOOTS, 3);
+                defense.put(ArmorItem.Type.BODY, 8);
+                return new ArmorMaterial(
+                        defense,
+                        18,                                   // enchantmentValue (diamond 10, magnetite 14)
+                        Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value()),
+                        () -> Ingredient.of(MagItems.FERROMAGNETIC_INGOT.get()),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "ferromagnetic"),
+                                "",
+                                false)),
+                        2.0f,                                 // toughness (diamond 2)
+                        0.0f                                  // knockbackResistance
+                );
+            });
+
     public static Holder<ArmorMaterial> magnetite() {
         return MAGNETITE;
+    }
+
+    public static Holder<ArmorMaterial> ferromagnetic() {
+        return FERROMAGNETIC;
     }
 
     private MagArmorMaterials() {}

@@ -64,7 +64,11 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.MAGNETITE_HELMET.get())
                 .add(MagItems.MAGNETITE_CHESTPLATE.get())
                 .add(MagItems.MAGNETITE_LEGGINGS.get())
-                .add(MagItems.MAGNETITE_BOOTS.get());
+                .add(MagItems.MAGNETITE_BOOTS.get())
+                .add(MagItems.FERROMAGNETIC_HELMET.get())
+                .add(MagItems.FERROMAGNETIC_CHESTPLATE.get())
+                .add(MagItems.FERROMAGNETIC_LEGGINGS.get())
+                .add(MagItems.FERROMAGNETIC_BOOTS.get());
 
         tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get());
         tag(common("plates")).add(MagItems.MAGNETIC_PLATE.get());

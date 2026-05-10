@@ -20,6 +20,10 @@
     "magnetization:magnetite_helmet",
     "magnetization:magnetite_chestplate",
     "magnetization:magnetite_leggings",
-    "magnetization:magnetite_boots"
+    "magnetization:magnetite_boots",
+    "magnetization:ferromagnetic_helmet",
+    "magnetization:ferromagnetic_chestplate",
+    "magnetization:ferromagnetic_leggings",
+    "magnetization:ferromagnetic_boots"
   ]
 }

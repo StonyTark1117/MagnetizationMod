@@ -34,6 +34,15 @@ public final class MagCreativeTab {
                         output.accept(MagItems.MAGNETITE_LEGGINGS.get());
                         output.accept(MagItems.MAGNETITE_BOOTS.get());
                         output.accept(MagItems.FERROMAGNETIC_INGOT.get());
+                        output.accept(MagItems.FERROMAGNETIC_SWORD.get());
+                        output.accept(MagItems.FERROMAGNETIC_PICKAXE.get());
+                        output.accept(MagItems.FERROMAGNETIC_AXE.get());
+                        output.accept(MagItems.FERROMAGNETIC_SHOVEL.get());
+                        output.accept(MagItems.FERROMAGNETIC_HOE.get());
+                        output.accept(MagItems.FERROMAGNETIC_HELMET.get());
+                        output.accept(MagItems.FERROMAGNETIC_CHESTPLATE.get());
+                        output.accept(MagItems.FERROMAGNETIC_LEGGINGS.get());
+                        output.accept(MagItems.FERROMAGNETIC_BOOTS.get());
                         output.accept(MagItems.MAGNETIC_PLATE.get());
                         output.accept(MagItems.FIELD_COMPASS.get());
                         output.accept(MagItems.MAGNETIC_GRAPPLE.get());

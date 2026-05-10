@@ -97,5 +97,47 @@ public final class MagItems {
                     p -> new ArmorItem(MagArmorMaterials.magnetite(), ArmorItem.Type.BOOTS, p),
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(15)));
 
+    // ---- Ferromagnetic gear ----
+    // Crafted from ferromagnetic_ingot (iron + magnetite alloy). Slightly stronger
+    // than magnetite, weaker than netherite — slotted as a diamond-tier alternative
+    // for ferromagnetic-themed builds.
+    public static final DeferredItem<SwordItem> FERROMAGNETIC_SWORD =
+            REGISTER.registerItem("ferromagnetic_sword",
+                    p -> new SwordItem(MagTiers.FERROMAGNETIC, p),
+                    new Item.Properties().attributes(SwordItem.createAttributes(MagTiers.FERROMAGNETIC, 3, -2.4f)));
+    public static final DeferredItem<PickaxeItem> FERROMAGNETIC_PICKAXE =
+            REGISTER.registerItem("ferromagnetic_pickaxe",
+                    p -> new PickaxeItem(MagTiers.FERROMAGNETIC, p),
+                    new Item.Properties().attributes(PickaxeItem.createAttributes(MagTiers.FERROMAGNETIC, 1, -2.8f)));
+    public static final DeferredItem<AxeItem> FERROMAGNETIC_AXE =
+            REGISTER.registerItem("ferromagnetic_axe",
+                    p -> new AxeItem(MagTiers.FERROMAGNETIC, p),
+                    new Item.Properties().attributes(AxeItem.createAttributes(MagTiers.FERROMAGNETIC, 5, -3.0f)));
+    public static final DeferredItem<ShovelItem> FERROMAGNETIC_SHOVEL =
+            REGISTER.registerItem("ferromagnetic_shovel",
+                    p -> new ShovelItem(MagTiers.FERROMAGNETIC, p),
+                    new Item.Properties().attributes(ShovelItem.createAttributes(MagTiers.FERROMAGNETIC, 1.5f, -3.0f)));
+    public static final DeferredItem<HoeItem> FERROMAGNETIC_HOE =
+            REGISTER.registerItem("ferromagnetic_hoe",
+                    p -> new HoeItem(MagTiers.FERROMAGNETIC, p),
+                    new Item.Properties().attributes(HoeItem.createAttributes(MagTiers.FERROMAGNETIC, -3, 0.0f)));
+
+    public static final DeferredItem<ArmorItem> FERROMAGNETIC_HELMET =
+            REGISTER.registerItem("ferromagnetic_helmet",
+                    p -> new ArmorItem(MagArmorMaterials.ferromagnetic(), ArmorItem.Type.HELMET, p),
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(33)));
+    public static final DeferredItem<ArmorItem> FERROMAGNETIC_CHESTPLATE =
+            REGISTER.registerItem("ferromagnetic_chestplate",
+                    p -> new ArmorItem(MagArmorMaterials.ferromagnetic(), ArmorItem.Type.CHESTPLATE, p),
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(33)));
+    public static final DeferredItem<ArmorItem> FERROMAGNETIC_LEGGINGS =
+            REGISTER.registerItem("ferromagnetic_leggings",
+                    p -> new ArmorItem(MagArmorMaterials.ferromagnetic(), ArmorItem.Type.LEGGINGS, p),
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(33)));
+    public static final DeferredItem<ArmorItem> FERROMAGNETIC_BOOTS =
+            REGISTER.registerItem("ferromagnetic_boots",
+                    p -> new ArmorItem(MagArmorMaterials.ferromagnetic(), ArmorItem.Type.BOOTS, p),
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(33)));
+
     private MagItems() {}
 }
