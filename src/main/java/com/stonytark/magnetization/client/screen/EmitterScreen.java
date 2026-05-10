@@ -124,6 +124,14 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
             final int sx = leftPos + 132;
             final int sy = topPos + 20;
             g.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF1B2B1B);
+            // Pull-progress bar to the left of the slot (132 - 60 = 72 ≈ 70).
+            // Empty track + filled portion. Width 60 px, height 4 px, aligned
+            // with the slot vertically.
+            final int barX = leftPos + 70;
+            final int barY = topPos + 26;
+            g.fill(barX, barY, barX + 60, barY + 4, 0xFF101010);
+            final int filled = (int) Math.round(60 * Math.max(0, Math.min(100, menu.pullProgressPct())) / 100.0);
+            g.fill(barX, barY, barX + filled, barY + 4, 0xFF60A0E0);
         }
     }
 

@@ -108,6 +108,39 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         return toolSlot;
     }
 
+    /** 0..100 percent for the GUI progress bar. While a pull is in flight the
+     *  value reflects ship-arrival progress (0 = just spawned, 100 = at the
+     *  emitter). When idle, the value reflects cycle cooldown progress
+     *  (0 = just fired, 100 = ready to fire). Returns 0 when not powered. */
+    public int getPullProgressPct() {
+        if (!isPowered()) return 0;
+        if (level == null) return 0;
+        if (activePullShipId != null) {
+            if (!(level instanceof ServerLevel server)) return 0;
+            final SubLevelContainer container = SubLevelContainer.getContainer(server);
+            if (container == null) return 0;
+            final dev.ryanhcode.sable.sublevel.SubLevel sub = container.getSubLevel(activePullShipId);
+            if (!(sub instanceof ServerSubLevel ship)) return 0;
+            final Vec3 emitterCenter = Vec3.atCenterOf(getBlockPos());
+            final org.joml.Vector3dc shipPos = ship.logicalPose().position();
+            final double dx = emitterCenter.x - shipPos.x();
+            final double dy = emitterCenter.y - shipPos.y();
+            final double dz = emitterCenter.z - shipPos.z();
+            final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            // Map [range..0] → [0..100]. Saturate at the ends.
+            final double range = effectiveRange(effectiveStrength(MagneticStrength.MEDIUM));
+            if (range <= 0.5) return 100;
+            final double progress = 1.0 - Math.min(1.0, dist / range);
+            return (int) Math.round(Math.max(0, Math.min(1.0, progress)) * 100);
+        }
+        if (lastPullTick == Long.MIN_VALUE) return 100; // never fired = ready
+        final long now = level.getGameTime();
+        final int interval = cycleIntervalFor(effectiveStrength(MagneticStrength.MEDIUM));
+        if (interval <= 0) return 100;
+        final long elapsed = now - lastPullTick;
+        return (int) Math.round(Math.max(0, Math.min(1.0, (double) elapsed / interval)) * 100);
+    }
+
     /** Drop the tool slot's contents into the world. Called from the block when
      *  the player breaks the excavator so the player doesn't lose their book. */
     public void dropToolSlot(final Level level, final BlockPos pos) {

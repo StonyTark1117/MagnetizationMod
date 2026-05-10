@@ -94,6 +94,11 @@ public class EmitterMenu extends AbstractContainerMenu {
     private final DataSlot strengthOrdinal = DataSlot.standalone();
     /** Current range override on the BE; 0 = default. */
     private final DataSlot rangeBlocks = DataSlot.standalone();
+    /** Excavator-only: 0..100 percent reflecting either the active ship's
+     *  arrival progress, or — when no pull is in flight — cycle cooldown
+     *  progress. Driven from the BE's {@code getPullProgressPct()} on each
+     *  tick via {@link #broadcastChanges()}. */
+    private final DataSlot pullProgress = DataSlot.standalone();
 
     /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
     public static EmitterMenu fromNetwork(final int id, final Inventory inv,
@@ -148,6 +153,7 @@ public class EmitterMenu extends AbstractContainerMenu {
 
         addDataSlot(strengthOrdinal);
         addDataSlot(rangeBlocks);
+        addDataSlot(pullProgress);
         // Initial sync from BE (server-side path only — client passes NULL access).
         // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
         // ContainerLevelAccess wraps the lambda return in Optional.of() — which NPEs
@@ -173,8 +179,25 @@ public class EmitterMenu extends AbstractContainerMenu {
     public int strengthOrdinal() { return strengthOrdinal.get(); }
     /** Current range override in blocks as known by the menu. 0 = default. */
     public int rangeBlocks() { return rangeBlocks.get(); }
+    /** Excavator-only: current pull progress, 0..100. */
+    public int pullProgressPct() { return pullProgress.get(); }
     /** Slot 0 access for the screen. */
     public ItemStack armorStack() { return armorSlot.getItem(0); }
+
+    @Override
+    public void broadcastChanges() {
+        // Refresh the live BE-driven DataSlots before vanilla broadcasts diffs.
+        // The strength/range DataSlots are also kept in sync at button-click
+        // time, but pullProgress only makes sense when sampled fresh each tick.
+        if (hasCap(CAP_TOOL_SLOT)) {
+            access.execute((level, p) -> {
+                if (level.getBlockEntity(p) instanceof MagneticExcavatorBlockEntity exc) {
+                    pullProgress.set(exc.getPullProgressPct());
+                }
+            });
+        }
+        super.broadcastChanges();
+    }
 
     @Override
     public boolean stillValid(final Player player) {
