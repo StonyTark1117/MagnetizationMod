@@ -1,0 +1,18 @@
+{
+  "parent": "magnetization:full_kit",
+  "display": {
+    "icon": { "id": "magnetization:ferromagnetic_chestplate" },
+    "title": { "translate": "advancement.magnetization.dual_magnetized.title" },
+    "description": { "translate": "advancement.magnetization.dual_magnetized.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "magnetized_helmet": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [ { "items": "#magnetization:metal_armor" } ] }
+    }
+  },
+  "requirements": [["magnetized_helmet"]]
+}

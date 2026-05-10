@@ -55,6 +55,14 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
     }
 
     @Override
+    public void resetOverrides() {
+        super.resetOverrides();
+        // Sneak-wrench on an anchor also clears its sticky ship binding so players
+        // can re-bind to a different vessel without depowering the anchor.
+        releaseBinding();
+    }
+
+    @Override
     protected @Nullable Predicate<ServerSubLevel> shipFilter() {
         final UUID id = boundShipId;
         return id == null ? null : sub -> id.equals(sub.getUniqueId());

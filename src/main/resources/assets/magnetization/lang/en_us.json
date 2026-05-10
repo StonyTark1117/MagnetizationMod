@@ -42,6 +42,7 @@
 
   "compass.magnetization.none": "No active fields within 16 blocks.",
   "grapple.magnetization.no_anchor": "No attractive field within 24 blocks.",
+  "message.magnetization.wrench_reset": "Emitter overrides cleared.",
 
   "effect.magnetization.magnetized": "Magnetized",
   "item.minecraft.potion.effect.magnetization.magnetized": "Potion of Magnetization",
@@ -96,5 +97,9 @@
   "advancement.magnetization.find_magnetite.title":     "Strange Stone",
   "advancement.magnetization.find_magnetite.description":"Mine raw magnetite (Fe₃O₄) from a magnetite ore.",
   "advancement.magnetization.smelt_magnetite.title":    "True North",
-  "advancement.magnetization.smelt_magnetite.description":"Smelt raw magnetite into a magnetite ingot."
+  "advancement.magnetization.smelt_magnetite.description":"Smelt raw magnetite into a magnetite ingot.",
+  "advancement.magnetization.full_loadout.title":       "Iron-Clad",
+  "advancement.magnetization.full_loadout.description": "Hold a magnetite and ferromagnetic sword and pickaxe.",
+  "advancement.magnetization.dual_magnetized.title":    "Wearing the Field",
+  "advancement.magnetization.dual_magnetized.description":"Equip any metal armor piece tracked by Magnetization."
 }

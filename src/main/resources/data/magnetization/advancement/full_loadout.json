@@ -1,0 +1,21 @@
+{
+  "parent": "magnetization:full_kit",
+  "display": {
+    "icon": { "id": "magnetization:ferromagnetic_sword" },
+    "title": { "translate": "advancement.magnetization.full_loadout.title" },
+    "description": { "translate": "advancement.magnetization.full_loadout.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "magnetite_sword":      { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetite_sword" } ] } },
+    "magnetite_pickaxe":    { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetite_pickaxe" } ] } },
+    "ferromagnetic_sword":  { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:ferromagnetic_sword" } ] } },
+    "ferromagnetic_pickaxe":{ "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:ferromagnetic_pickaxe" } ] } }
+  },
+  "requirements": [
+    ["magnetite_sword"], ["magnetite_pickaxe"],
+    ["ferromagnetic_sword"], ["ferromagnetic_pickaxe"]
+  ]
+}

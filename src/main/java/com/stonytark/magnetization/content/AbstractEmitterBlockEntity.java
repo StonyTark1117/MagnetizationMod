@@ -114,6 +114,20 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (level instanceof ServerLevel server) markForClientSync(server);
     }
 
+    /** Reset every per-emitter override at once. Useful for the wrench-tap
+     *  shortcut so players can quickly restore an emitter to its built-in
+     *  defaults without walking through the GUI. Subclasses can override to
+     *  also drop subtype-specific state (anchor binding, etc.). */
+    public void resetOverrides() {
+        if (strengthOverride == null && rangeOverride == 0 && polarityOverride == null) return;
+        strengthOverride = null;
+        rangeOverride = 0;
+        polarityOverride = null;
+        cachedField = null;
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
+
     public void setPowered(final boolean powered) {
         if (this.powered == powered) return;
         this.powered = powered;
