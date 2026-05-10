@@ -11,7 +11,6 @@ import com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -119,7 +118,12 @@ public final class FieldLineOverlay {
 
     /** Draw a line from the anchor's center to its bound ship's pose origin.
      *  Skipped silently if the ship can't be resolved (shattered, unloaded,
-     *  cross-dimensional). */
+     *  cross-dimensional, or not yet replicated to the client).
+     *
+     *  <p>Runs client-side, so the SubLevel returned by the container is a
+     *  ClientSubLevel — we cast only as far as the {@link SubLevel} base
+     *  class (which has logicalPose) and avoid the ServerSubLevel-specific
+     *  mass tracker check. */
     private static void drawAnchorTether(
             final VertexConsumer buf, final PoseStack ps, final Vec3 camPos,
             final Level level, final BlockPos anchorPos, final UUID boundShipId,
@@ -127,8 +131,8 @@ public final class FieldLineOverlay {
     ) {
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
         if (container == null) return;
-        final SubLevel sub = container.getSubLevel(boundShipId);
-        if (!(sub instanceof ServerSubLevel ship) || ship.getMassTracker().isInvalid()) return;
+        final SubLevel ship = container.getSubLevel(boundShipId);
+        if (ship == null || ship.isRemoved()) return;
         final org.joml.Vector3dc shipPos = ship.logicalPose().position();
         final Vec3 anchorCenter = Vec3.atCenterOf(anchorPos);
 

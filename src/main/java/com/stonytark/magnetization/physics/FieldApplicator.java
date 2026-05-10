@@ -114,11 +114,12 @@ public final class FieldApplicator {
             final @Nullable Predicate<ServerSubLevel> shipFilter
     ) {
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
-        // Fast path: in worlds with no Sable sub-levels at all (vanilla saves
-        // before C:Aero builds anything), every emitter would otherwise pay the
-        // cost of `queryIntersecting` per tick. Bail out before touching the
-        // spatial index when the container is empty.
-        if (container.getAllSubLevels().isEmpty()) return;
+        // Sable's container can be null very early in load (before its
+        // capability attaches) — guard so the emitter pass is a silent no-op
+        // rather than an NPE there. Fast path also bails when no sub-levels
+        // exist at all (vanilla saves with C:Aero installed but nothing built),
+        // sparing every emitter the cost of queryIntersecting.
+        if (container == null || container.getAllSubLevels().isEmpty()) return;
 
         final double range = field.range();
         final Vec3 origin = field.origin();

@@ -279,17 +279,41 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     /** Compute a block's drop list using the loot context, threading through
      *  {@code tool}'s enchantments if any are present. When tool is empty we
      *  fall back to the simpler {@code Block.getDrops(state, level, pos, null)}
-     *  path that was used before. */
+     *  path that was used before.
+     *
+     *  <p>Special case: enchanted books store enchantments in
+     *  {@link net.minecraft.core.component.DataComponents#STORED_ENCHANTMENTS}
+     *  rather than {@code ENCHANTMENTS}, so the loot system would read zero
+     *  enchantments off them. To make Fortune-on-a-book work, we synthesize a
+     *  stand-in ItemStack with those enchantments active — a netherite pickaxe
+     *  has the right tool/mining tag for ore drops, and the loot context only
+     *  reads enchantments off the stack so the item type doesn't otherwise
+     *  matter for drop resolution. */
     private static List<ItemStack> enchantedDropsFor(
             final BlockState state, final ServerLevel server, final BlockPos pos,
             final ItemStack tool
     ) {
         if (tool.isEmpty()) return Block.getDrops(state, server, pos, null);
+        final ItemStack effectiveTool = translateBookEnchantments(tool);
         final LootParams.Builder params = new LootParams.Builder(server)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                .withParameter(LootContextParams.TOOL, tool)
+                .withParameter(LootContextParams.TOOL, effectiveTool)
                 .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
         return state.getDrops(params);
+    }
+
+    /** If {@code tool} is an enchanted book (stored enchantments only, no
+     *  active ones), return a netherite-pickaxe stand-in stack with the same
+     *  enchantments stamped active so the loot system actually picks them up.
+     *  Otherwise return the input unchanged. */
+    private static ItemStack translateBookEnchantments(final ItemStack tool) {
+        final var active = tool.getEnchantments();
+        if (active != null && !active.isEmpty()) return tool;
+        final var stored = tool.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
+        if (stored == null || stored.isEmpty()) return tool;
+        final ItemStack standIn = new ItemStack(net.minecraft.world.item.Items.NETHERITE_PICKAXE);
+        standIn.set(net.minecraft.core.component.DataComponents.ENCHANTMENTS, stored);
+        return standIn;
     }
 
     private void startPullCycle(final ServerLevel level, final BlockState state, final MagneticStrength tier) {
@@ -324,7 +348,15 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         if (columnPositions.isEmpty()) return;
 
         // Build the Sable assembly bounds — the column's bbox + 1-block padding.
-        final BlockPos anchor = columnPositions.get(columnPositions.size() - 1); // deepest = ferro ore
+        // Anchor is the cell adjacent to the emitter (offset 1, the NEAR end of
+        // the column). Sable uses anchor as the ship's pose origin, so when the
+        // FieldApplicator pulls the ship toward the emitter, the near end is
+        // what reaches the ARRIVAL_RADIUS check first — exactly when the column
+        // visually arrives at the magnet. Anchoring at the deep end (which I
+        // tried first) made the dismantle fire only after the ship had passed
+        // entirely through the emitter cell, producing a goofy "column flies
+        // straight through" effect.
+        final BlockPos anchor = columnPositions.get(0); // nearest cell to emitter
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
         for (final BlockPos p : columnPositions) {
@@ -421,9 +453,13 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         pendingDrops = new ArrayList<>();
         if (tag.contains("PendingDrops", Tag.TAG_LIST)) {
             final ListTag list = tag.getList("PendingDrops", Tag.TAG_COMPOUND);
-            final var lookup = level == null
-                    ? net.minecraft.core.HolderLookup.Provider.create(java.util.stream.Stream.empty()).lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK)
-                    : level.holderLookup(net.minecraft.core.registries.Registries.BLOCK);
+            // Prefer the registries parameter that NeoForge hands us — it's
+            // always populated during BE deserialization. Fall back to the
+            // level's holderLookup once the BE is attached. The previous
+            // empty-stream fallback would throw on lookupOrThrow when level
+            // happened to be null at load time.
+            final net.minecraft.core.HolderLookup<net.minecraft.world.level.block.Block> lookup =
+                    registries.lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK);
             for (int i = 0; i < list.size(); i++) {
                 pendingDrops.add(NbtUtils.readBlockState(lookup, list.getCompound(i)));
             }

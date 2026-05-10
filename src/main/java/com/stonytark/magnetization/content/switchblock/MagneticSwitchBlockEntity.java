@@ -52,6 +52,7 @@ public class MagneticSwitchBlockEntity extends BlockEntity {
                 origin.x + SCAN_RADIUS, origin.y + SCAN_RADIUS, origin.z + SCAN_RADIUS
         );
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
+        if (container == null) return 0;
         double bestDist = Double.MAX_VALUE;
         for (SubLevel sub : container.queryIntersecting(searchBox)) {
             final BoundingBox3dc box = sub.boundingBox();

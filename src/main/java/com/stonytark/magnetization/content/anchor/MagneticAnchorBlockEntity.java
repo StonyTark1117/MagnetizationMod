@@ -176,6 +176,7 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
                 origin.x + range, origin.y + range, origin.z + range
         );
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
+        if (container == null) return null;
         final ServerSubLevel host = SableBridge.subLevelAt(level, getBlockPos());
         ServerSubLevel best = null;
         double bestDistSqr = Double.MAX_VALUE;

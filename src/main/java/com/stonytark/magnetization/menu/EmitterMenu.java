@@ -329,10 +329,11 @@ public class EmitterMenu extends AbstractContainerMenu {
                 moved = moveItemStackTo(original, 0, 1, false);
             }
             if (!moved && hasCap(CAP_TOOL_SLOT)) {
-                final var enchantments = original.getEnchantments();
-                if (enchantments != null && !enchantments.isEmpty()) {
-                    moved = moveItemStackTo(original, 1, 2, false);
-                }
+                final var active = original.getEnchantments();
+                final var stored = original.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
+                final boolean hasAny = (active != null && !active.isEmpty())
+                        || (stored != null && !stored.isEmpty());
+                if (hasAny) moved = moveItemStackTo(original, 1, 2, false);
             }
             if (!moved) return ItemStack.EMPTY;
         }
@@ -357,8 +358,9 @@ public class EmitterMenu extends AbstractContainerMenu {
     }
 
     /** Persistent slot for an enchanted item / book. Accepts any item carrying
-     *  enchantments; the dropper logic ignores the item type and just reads
-     *  what's stamped on it. Hidden + locked when CAP_TOOL_SLOT is off. */
+     *  enchantments — either active (regular tools) or stored (enchanted books).
+     *  The dropper logic merges both into the loot context's TOOL parameter.
+     *  Hidden + locked when CAP_TOOL_SLOT is off. */
     private static final class ToolEnchantSlot extends Slot {
         private final boolean enabled;
         ToolEnchantSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
@@ -367,10 +369,14 @@ public class EmitterMenu extends AbstractContainerMenu {
         }
         @Override public boolean mayPlace(final ItemStack stack) {
             if (!enabled || stack.isEmpty()) return false;
-            // Only meaningful with at least one enchantment — books with none
-            // and bare tools waste the slot, so we filter them out.
-            final var enchantments = stack.getEnchantments();
-            return enchantments != null && !enchantments.isEmpty();
+            // Active enchantments (tools) OR stored enchantments (books). Books
+            // store theirs in DataComponents.STORED_ENCHANTMENTS — getEnchantments
+            // returns the regular ENCHANTMENTS component which is empty on a
+            // book, so we have to consult both.
+            final var active = stack.getEnchantments();
+            if (active != null && !active.isEmpty()) return true;
+            final var stored = stack.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
+            return stored != null && !stored.isEmpty();
         }
         @Override public boolean isActive() { return enabled; }
         @Override public int getMaxStackSize() { return 1; }
