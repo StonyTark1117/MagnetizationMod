@@ -131,7 +131,10 @@ public class EmitterMenu extends AbstractContainerMenu {
         addDataSlot(strengthOrdinal);
         addDataSlot(rangeBlocks);
         // Initial sync from BE (server-side path only — client passes NULL access).
-        access.evaluate((level, p) -> {
+        // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
+        // ContainerLevelAccess wraps the lambda return in Optional.of() — which NPEs
+        // if the lambda returns null.
+        access.execute((level, p) -> {
             final BlockEntity be = level.getBlockEntity(p);
             if (be instanceof AbstractEmitterBlockEntity emitter) {
                 final MagneticStrength s = emitter.getStrengthOverride();
@@ -141,7 +144,6 @@ public class EmitterMenu extends AbstractContainerMenu {
                 strengthOrdinal.set(-1);
                 rangeBlocks.set(0);
             }
-            return null;
         });
     }
 
