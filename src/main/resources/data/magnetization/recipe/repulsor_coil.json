@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PCP",
+    "BBB"
+  ],
+  "key": {
+    "P": { "item": "magnetization:magnetic_plate" },
+    "C": { "item": "magnetization:lodestone_core" },
+    "B": { "tag": "c:storage_blocks/copper" }
+  },
+  "result": {
+    "id": "magnetization:repulsor_coil",
+    "count": 1
+  }
+}

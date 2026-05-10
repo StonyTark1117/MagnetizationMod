@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PCP",
+    " P "
+  ],
+  "key": {
+    "P": { "item": "magnetization:magnetic_plate" },
+    "C": { "item": "minecraft:compass" }
+  },
+  "result": {
+    "id": "magnetization:field_compass",
+    "count": 1
+  }
+}

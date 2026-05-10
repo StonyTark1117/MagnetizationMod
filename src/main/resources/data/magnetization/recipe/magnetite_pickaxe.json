@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["MMM", " S ", " S "],
+  "key": {
+    "M": { "tag": "c:ingots/magnetite" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": { "id": "magnetization:magnetite_pickaxe", "count": 1 }
+}

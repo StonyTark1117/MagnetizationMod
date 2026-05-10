@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:electromagnet",
+    "magnetization:kinetic_electromagnet",
+    "magnetization:magnetic_anchor",
+    "magnetization:repulsor_coil",
+    "magnetization:tractor_beam",
+    "magnetization:permanent_magnet"
+  ]
+}

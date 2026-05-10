@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/repulsor_coil_top",
+    "bottom": "magnetization:block/repulsor_coil_bottom",
+    "side": "magnetization:block/repulsor_coil_side"
+  }
+}

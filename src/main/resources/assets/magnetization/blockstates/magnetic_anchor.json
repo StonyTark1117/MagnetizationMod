@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "magnetization:block/magnetic_anchor" },
+    "powered=true":  { "model": "magnetization:block/magnetic_anchor_active" }
+  }
+}

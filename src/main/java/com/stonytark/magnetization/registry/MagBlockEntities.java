@@ -1,0 +1,60 @@
+package com.stonytark.magnetization.registry;
+
+import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity;
+import com.stonytark.magnetization.content.electromagnet.ElectromagnetBlockEntity;
+import com.stonytark.magnetization.content.electromagnet.KineticElectromagnetBlockEntity;
+import com.stonytark.magnetization.content.permanent.PermanentMagnetBlockEntity;
+import com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity;
+import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity;
+import com.stonytark.magnetization.content.tractor.TractorBeamBlockEntity;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+public final class MagBlockEntities {
+
+    public static final DeferredRegister<BlockEntityType<?>> REGISTER =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Magnetization.MOD_ID);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =
+            REGISTER.register("electromagnet", () -> BlockEntityType.Builder
+                    .of(ElectromagnetBlockEntity::new, MagBlocks.ELECTROMAGNET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticElectromagnetBlockEntity>> KINETIC_ELECTROMAGNET =
+            REGISTER.register("kinetic_electromagnet", () -> BlockEntityType.Builder
+                    .<KineticElectromagnetBlockEntity>of(
+                            (pos, state) -> new KineticElectromagnetBlockEntity(
+                                    MagBlockEntities.KINETIC_ELECTROMAGNET.get(), pos, state),
+                            MagBlocks.KINETIC_ELECTROMAGNET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticAnchorBlockEntity>> MAGNETIC_ANCHOR =
+            REGISTER.register("magnetic_anchor", () -> BlockEntityType.Builder
+                    .of(MagneticAnchorBlockEntity::new, MagBlocks.MAGNETIC_ANCHOR.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RepulsorCoilBlockEntity>> REPULSOR_COIL =
+            REGISTER.register("repulsor_coil", () -> BlockEntityType.Builder
+                    .of(RepulsorCoilBlockEntity::new, MagBlocks.REPULSOR_COIL.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TractorBeamBlockEntity>> TRACTOR_BEAM =
+            REGISTER.register("tractor_beam", () -> BlockEntityType.Builder
+                    .of(TractorBeamBlockEntity::new, MagBlocks.TRACTOR_BEAM.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MagneticSwitchBlockEntity>> MAGNETIC_SWITCH =
+            REGISTER.register("magnetic_switch", () -> BlockEntityType.Builder
+                    .of(MagneticSwitchBlockEntity::new, MagBlocks.MAGNETIC_SWITCH.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PermanentMagnetBlockEntity>> PERMANENT_MAGNET =
+            REGISTER.register("permanent_magnet", () -> BlockEntityType.Builder
+                    .of(PermanentMagnetBlockEntity::new, MagBlocks.PERMANENT_MAGNET.get())
+                    .build(null));
+
+    private MagBlockEntities() {}
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=y": { "model": "magnetization:block/kinetic_electromagnet" },
+    "axis=x": { "model": "magnetization:block/kinetic_electromagnet", "x": 90, "y": 90 },
+    "axis=z": { "model": "magnetization:block/kinetic_electromagnet", "x": 90 }
+  }
+}

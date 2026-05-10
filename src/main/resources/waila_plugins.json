@@ -1,0 +1,7 @@
+{
+  "magnetization:plugin": {
+    "initializer": "com.stonytark.magnetization.compat.wthit.MagWthitPlugin",
+    "side": "client",
+    "required": ["magnetization"]
+  }
+}

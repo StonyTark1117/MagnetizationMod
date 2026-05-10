@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCP",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "P": { "tag": "c:plates" },
+    "C": { "item": "magnetization:lodestone_core" },
+    "S": { "tag": "c:strings" }
+  },
+  "result": {
+    "id": "magnetization:magnetic_grapple",
+    "count": 1
+  }
+}

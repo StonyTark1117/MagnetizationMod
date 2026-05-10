@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": { "id": "magnetization:lodestone_core" },
+    "title": { "translate": "advancement.magnetization.root.title" },
+    "description": { "translate": "advancement.magnetization.root.description" },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "minecraft:textures/block/lodestone_top.png"
+  },
+  "criteria": {
+    "has_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "magnetization:lodestone_core" }
+        ]
+      }
+    }
+  },
+  "requirements": [["has_core"]]
+}

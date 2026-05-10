@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "ILI",
+    "III"
+  ],
+  "key": {
+    "I": [
+      { "tag": "c:ingots/iron" },
+      { "tag": "c:ingots/magnetite" }
+    ],
+    "L": { "item": "minecraft:lodestone" }
+  },
+  "result": {
+    "id": "magnetization:ferromagnetic_ingot",
+    "count": 8
+  }
+}

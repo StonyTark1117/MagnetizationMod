@@ -1,0 +1,177 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+group = mod_group
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+// Datagen output goes here; included in main resources so the built jar contains it.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// `localRuntime` lets us add an optional dependency to the in-dev run classpath
+// (so /gradlew runClient loads it) WITHOUT publishing that dep to the
+// runtimeElements variant — i.e. installed users won't be forced to also install
+// the optional mod. Use it for soft-dep compats we want to smoke-test in dev.
+configurations {
+    localRuntime
+}
+configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+
+// Substitute ${...} placeholders in neoforge.mods.toml at processResources time.
+// Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
+// because the toml is loaded literally from build/resources/main with no expansion.
+processResources {
+    final Map<String, String> replaceTokens = [
+        mod_id           : mod_id,
+        mod_name         : mod_name,
+        mod_version      : mod_version,
+        mod_group        : mod_group,
+        mod_authors      : mod_authors,
+        mod_description  : mod_description,
+        mod_license      : mod_license,
+        minecraft_version: minecraft_version,
+        neoforge_version : neoforge_version
+    ]
+    inputs.properties(replaceTokens)
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand replaceTokens
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.createmod.net' }
+    maven { url = 'https://maven.ithundxr.dev/snapshots' }
+    maven { url = 'https://maven.ryanhcode.dev/releases' }
+    maven { url = 'https://maven.theillusivec4.top/' }
+    maven { url = 'https://maven.blamejared.com/' }
+    maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked (transitive dep of aeronautics)
+    maven { url = 'https://maven.shedaniel.me/' } // REI
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+        client { client() }
+        server { server(); programArgument 'nogui' }
+        // data { data() } is commented out: in this env (moddev 2.0.141, NeoForge
+        // 21.1.219) the plugin assembles a data run classpath where FML scans
+        // build/classes/java/main as a candidate mod root and fails because
+        // META-INF/neoforge.mods.toml lives separately under build/resources/main.
+        // Reproducible across plugin minor versions. Workarounds:
+        //   1) Run datagen from a working IDE setup (IntelliJ usually composes the
+        //      classpath via virtual mod folders correctly).
+        //   2) Manually copy src/main/resources/META-INF over to build/classes/java/main/META-INF
+        //      before invoking the run.
+        // The Gather*Event-driven providers compile fine and produce identical
+        // output to the hand-written JSON when invoked, so the addon works either way.
+    }
+
+    mods {
+        "${mod_id}" { sourceSet sourceSets.main }
+    }
+}
+
+dependencies {
+    // Create + supporting libs
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    // Sable physics
+    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
+    implementation("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}")
+
+    // Create: Aeronautics + Simulated
+    implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}")
+    implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}")
+
+    // Jade — optional HUD overlay. compileOnly so we can write the plugin without
+    // forcing Jade as a runtime dependency; the plugin class loads only when Jade
+    // is present (its mod scans classes for @WailaPlugin).
+    compileOnly("maven.modrinth:jade:15.10.0+neoforge")
+
+    // WTHIT — alternative HUD. Same soft-dep pattern; plugin entry is declared in
+    // waila_plugins.json so the class only loads when WTHIT is present.
+    compileOnly("maven.modrinth:wthit:neo-12.10.2")
+    // Loaded into runClient so the WTHIT plugin path can be tested in dev.
+    // WTHIT has a hard dep on Bad Packets — without it WTHIT fails to load.
+    localRuntime("maven.modrinth:wthit:neo-12.10.2")
+    localRuntime("maven.modrinth:badpackets:neo-0.8.2")
+
+    // The One Probe — third HUD. Soft-dep via IMC.
+    compileOnly("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+
+    // JEI — recipe browser. Soft-dep, plugin auto-discovered. Pulled from
+    // BlameJared's maven (api-only artifact), which is published with NeoForge-
+    // compatible mappings; the Modrinth mirror has classpath baggage that pulls
+    // Yarn intermediary stubs.
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.27.0.340")
+    // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.27.0.340")
+
+    // REI — alternative recipe browser. Soft-dep; plugin discovered via the
+    // META-INF/services/me.shedaniel.rei.api.client.plugins.REIClientPlugin file.
+    compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}")
+    compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}")
+
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// Run unit tests against the same Minecraft / dep classpath as main, so tests
+// can reference Vec3, BlockPos, etc. without us having to re-stage dependencies.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'     : mod_id,
+            'Specification-Vendor'    : mod_authors,
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : version,
+            'Implementation-Vendor'   : mod_authors,
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}

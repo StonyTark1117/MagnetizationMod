@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "magnetization:raw_magnetite_block" }
+  ],
+  "result": {
+    "id": "magnetization:raw_magnetite",
+    "count": 9
+  }
+}

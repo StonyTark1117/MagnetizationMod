@@ -1,21 +1,35 @@
-.gradle
-**/build/
-!**/src/**/build/
-
-# Ignore Gradle GUI config
+# Gradle
+.gradle/
+build/
+*/build/
+run/
+*/run/
+*/run-data/
 gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
-
-# Cache of project
 .gradletasknamecache
 
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
+# Keep gradle wrapper artifacts
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IDE
+.idea/
+*.iml
+.eclipse/
 .classpath
+.project
+.settings/
+out/
+
+# Generated resources
+*/src/generated/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local Claude state (project memory, transcripts) — not for the repo
+.claude/
+
+# Loose runtime logs at project root (gradle daemon, etc.)
+/logs/

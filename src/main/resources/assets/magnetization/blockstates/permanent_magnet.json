@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "polarity=north": { "model": "magnetization:block/permanent_magnet_north" },
+    "polarity=south": { "model": "magnetization:block/permanent_magnet_south" }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "parent": "magnetization:first_emitter",
+  "display": {
+    "icon": { "id": "magnetization:kinetic_electromagnet" },
+    "title": { "translate": "advancement.magnetization.full_kit.title" },
+    "description": { "translate": "advancement.magnetization.full_kit.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "electromagnet":         { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:electromagnet" } ] } },
+    "kinetic_electromagnet": { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:kinetic_electromagnet" } ] } },
+    "magnetic_anchor":       { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_anchor" } ] } },
+    "repulsor_coil":         { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:repulsor_coil" } ] } },
+    "tractor_beam":          { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:tractor_beam" } ] } }
+  },
+  "requirements": [
+    ["electromagnet"], ["kinetic_electromagnet"], ["magnetic_anchor"],
+    ["repulsor_coil"], ["tractor_beam"]
+  ]
+}

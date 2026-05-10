@@ -1,0 +1,22 @@
+{
+  "parent": "magnetization:root",
+  "display": {
+    "icon": { "id": "magnetization:raw_magnetite" },
+    "title": { "translate": "advancement.magnetization.find_magnetite.title" },
+    "description": { "translate": "advancement.magnetization.find_magnetite.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has_raw": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "magnetization:raw_magnetite" }
+        ]
+      }
+    }
+  },
+  "requirements": [["has_raw"]]
+}

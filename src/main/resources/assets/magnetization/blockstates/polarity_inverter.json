@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "magnetization:block/polarity_inverter" }
+  }
+}

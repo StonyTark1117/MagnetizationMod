@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FFF"
+  ],
+  "key": {
+    "F": { "item": "magnetization:ferromagnetic_ingot" }
+  },
+  "result": {
+    "id": "magnetization:magnetic_plate",
+    "count": 3
+  }
+}

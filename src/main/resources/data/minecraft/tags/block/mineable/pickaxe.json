@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:electromagnet",
+    "magnetization:kinetic_electromagnet",
+    "magnetization:magnetic_anchor",
+    "magnetization:repulsor_coil",
+    "magnetization:tractor_beam",
+    "magnetization:lodestone_core",
+    "magnetization:magnetic_switch",
+    "magnetization:permanent_magnet",
+    "magnetization:polarity_inverter",
+    "magnetization:magnetite_ore",
+    "magnetization:deepslate_magnetite_ore",
+    "magnetization:magnetite_block",
+    "magnetization:raw_magnetite_block"
+  ]
+}

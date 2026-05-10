@@ -1,0 +1,38 @@
+package com.stonytark.magnetization.content.repulsor;
+
+import com.stonytark.magnetization.api.MagneticField;
+import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.registry.MagBlockEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
+
+    public RepulsorCoilBlockEntity(final BlockPos pos, final BlockState state) {
+        super(MagBlockEntities.REPULSOR_COIL.get(), pos, state);
+    }
+
+    @Override
+    protected @Nullable MagneticField computeField(final BlockState state) {
+        if (!isPowered()) return null;
+        // Axis is the placement direction. UP for the classic hover pad;
+        // NORTH/SOUTH/EAST/WEST/DOWN for tunnel-style propulsion lanes.
+        final Direction facing = state.hasProperty(DirectionalBlock.FACING)
+                ? state.getValue(DirectionalBlock.FACING)
+                : Direction.UP;
+        final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
+        return new MagneticField(
+                Vec3.atCenterOf(getBlockPos()),
+                axis,
+                MagneticPolarity.NORTH, // repulsive on a conical field
+                MagneticStrength.MEDIUM,
+                MagneticField.Shape.CONICAL
+        );
+    }
+}

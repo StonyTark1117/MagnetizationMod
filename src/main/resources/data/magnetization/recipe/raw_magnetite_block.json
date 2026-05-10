@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "R": { "item": "magnetization:raw_magnetite" }
+  },
+  "result": {
+    "id": "magnetization:raw_magnetite_block",
+    "count": 1
+  }
+}

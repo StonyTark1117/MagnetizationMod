@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/polarity_inverter_top",
+    "bottom": "magnetization:block/polarity_inverter_side",
+    "side": "magnetization:block/polarity_inverter_side"
+  }
+}

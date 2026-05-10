@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_ore",
+    "magnetization:deepslate_magnetite_ore",
+    "magnetization:raw_magnetite_block"
+  ]
+}

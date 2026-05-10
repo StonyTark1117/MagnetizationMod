@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_golem",
+    "minecraft:zombie",
+    "minecraft:husk",
+    "minecraft:drowned",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:wither_skeleton",
+    "minecraft:vindicator",
+    "minecraft:pillager",
+    "minecraft:ravager",
+    "minecraft:falling_block",
+    "minecraft:arrow",
+    "minecraft:trident"
+  ]
+}

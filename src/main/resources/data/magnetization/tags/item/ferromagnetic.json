@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:ferromagnetic_ingot",
+    "magnetization:magnetic_plate",
+    "magnetization:lodestone_core",
+    "magnetization:magnetite_ingot",
+    "magnetization:raw_magnetite",
+    "magnetization:magnetite_block",
+    "magnetization:raw_magnetite_block",
+    "minecraft:lodestone"
+  ]
+}

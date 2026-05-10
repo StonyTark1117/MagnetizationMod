@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "magnetization:block/tractor_beam_side_active",
+    "front": "magnetization:block/tractor_beam_front_active",
+    "side": "magnetization:block/tractor_beam_side_active"
+  }
+}

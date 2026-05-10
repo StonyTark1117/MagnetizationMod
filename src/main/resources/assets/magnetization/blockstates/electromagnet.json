@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "magnetization:block/electromagnet" },
+    "powered=true":  { "model": "magnetization:block/electromagnet_active" }
+  }
+}
