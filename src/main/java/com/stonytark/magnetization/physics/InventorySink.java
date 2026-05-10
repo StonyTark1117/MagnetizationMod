@@ -55,4 +55,14 @@ public final class InventorySink {
         }
         return null;
     }
+
+    /** Try to push a single stack into the first inventory adjacent to {@code anchor}.
+     *  Returns the leftover (empty if fully accepted). Used by the Magnetic Excavator
+     *  to direct-ingest drops on arrival rather than leaving them as ItemEntities for
+     *  the polling intake to find on a later tick. */
+    public static ItemStack tryDirectIngest(final ServerLevel level, final BlockPos anchor, final ItemStack stack) {
+        final IItemHandler target = adjacentInventory(level, anchor);
+        if (target == null) return stack;
+        return ItemHandlerHelper.insertItemStacked(target, stack, false);
+    }
 }

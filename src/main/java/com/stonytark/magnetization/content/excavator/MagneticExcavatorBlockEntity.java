@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.physics.InventorySink;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -181,15 +182,23 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         }
     }
 
-    /** Drop every pending BlockState as an ItemEntity at the cell adjacent to
-     *  the emitter (the same spot {@link com.stonytark.magnetization.physics.InventorySink}
-     *  watches), then clear the queue. */
+    /** Drop every pending BlockState's loot at the cell adjacent to the emitter.
+     *  Tries to push each stack directly into an adjacent inventory (hopper /
+     *  chest / barrel / etc.) first, falling back to spawning ItemEntities that
+     *  the polling {@link InventorySink} would otherwise pick up next tick. */
     private void dropPendingAtEmitter(final ServerLevel server) {
         if (pendingDrops.isEmpty()) return;
         final Direction facing = getBlockState().getValue(DirectionalBlock.FACING);
         final BlockPos drop = getBlockPos().relative(facing, 1);
         for (final BlockState bs : pendingDrops) {
-            Block.dropResources(bs, server, drop);
+            for (final net.minecraft.world.item.ItemStack stack :
+                    Block.getDrops(bs, server, drop, null)) {
+                final net.minecraft.world.item.ItemStack remainder =
+                        InventorySink.tryDirectIngest(server, getBlockPos(), stack);
+                if (!remainder.isEmpty()) {
+                    Block.popResource(server, drop, remainder);
+                }
+            }
         }
         pendingDrops.clear();
         server.playSound(null, drop, SoundEvents.AMETHYST_BLOCK_CHIME,
