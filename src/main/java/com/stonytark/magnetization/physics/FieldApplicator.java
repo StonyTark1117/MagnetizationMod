@@ -10,7 +10,6 @@ import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
@@ -246,20 +245,25 @@ public final class FieldApplicator {
             if (item.getItem().getItem() instanceof IMagnetizable m) return m.magneticSusceptibility();
             if (item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) return 1.0d;
         }
-        // Players are pulled in proportion to how much metal armor they wear.
-        // Bare players are inert; full plate is yanked hard. Magnetized pieces
-        // (stamped with a polarity by an electromagnet) get an additional bonus.
-        if (e instanceof Player player) {
-            double sum = 0.0d;
-            for (ItemStack armor : player.getArmorSlots()) {
+        // Tagged-entity baseline (zombies, iron golems, item drops marked
+        // ferromagnetic-by-type, etc.) — counted before the armor pass so a
+        // tagged mob wearing magnetized iron stacks both contributions.
+        double sum = 0.0d;
+        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) sum += 1.0d;
+        // Any LivingEntity wearing tagged metal armor is pulled in proportion to
+        // how many pieces it has on. Magnetized pieces (stamped with a polarity
+        // by the electromagnet GUI) get an additional bonus on top — so a zombie
+        // in magnetized iron plate, an iron golem with a chestplate stuffed on
+        // it via /summon, or a player in fresh ferromagnetic armor all behave
+        // identically. Used to be Player-only.
+        if (e instanceof LivingEntity living) {
+            for (final ItemStack armor : living.getArmorSlots()) {
                 if (!armor.is(MagTags.METAL_ARMOR)) continue;
                 sum += PER_ARMOR_SUSCEPTIBILITY;
                 if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) sum += PER_MAGNETIZED_BONUS;
             }
-            return sum;
         }
-        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return 1.0d;
-        return 0.0d;
+        return sum;
     }
 
     private static MagneticPolarity polarityOf(final Entity e) {
@@ -267,11 +271,12 @@ public final class FieldApplicator {
         if (e instanceof ItemEntity item && item.getItem().getItem() instanceof IMagnetizable m) {
             return m.magneticPolarity();
         }
-        // Players carrying magnetized armor present the net pole of their armor.
-        // Tie / no magnetized armor → NORTH (default convention).
-        if (e instanceof Player player) {
+        // Any living entity carrying magnetized armor (player, zombie, golem,
+        // skeleton, etc.) presents the net pole of its armor. Tie / no
+        // magnetized armor → NORTH (default convention).
+        if (e instanceof LivingEntity living) {
             int net = 0;
-            for (ItemStack armor : player.getArmorSlots()) {
+            for (final ItemStack armor : living.getArmorSlots()) {
                 final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
                 if (pol != null) net += pol.sign();
             }

@@ -19,7 +19,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -189,7 +192,11 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             Block.dropResources(bs, server, drop);
         }
         pendingDrops.clear();
-        server.levelEvent(2001, drop, Block.getId(getBlockState())); // generic break particles
+        server.playSound(null, drop, SoundEvents.AMETHYST_BLOCK_CHIME,
+                SoundSource.BLOCKS, 0.6f, 1.2f);
+        server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                drop.getX() + 0.5, drop.getY() + 0.5, drop.getZ() + 0.5,
+                12, 0.3, 0.3, 0.3, 0.1);
     }
 
     private void startPullCycle(final ServerLevel level, final BlockState state, final MagneticStrength tier) {
@@ -247,6 +254,17 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             }
             activePullShipId = ship.getUniqueId();
             pendingDrops = columnStates;
+            // FX: scrape sound at the deepest cell + a trail of crit-style sparks
+            // along the column to telegraph "this was just ripped out".
+            level.playSound(null, anchor, SoundEvents.NETHERITE_BLOCK_BREAK,
+                    SoundSource.BLOCKS, 0.7f, 0.5f);
+            level.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE,
+                    SoundSource.BLOCKS, 0.4f, 1.6f);
+            for (final BlockPos p : columnPositions) {
+                level.sendParticles(ParticleTypes.CRIT,
+                        p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5,
+                        4, 0.2, 0.2, 0.2, 0.05);
+            }
             setChanged();
         } catch (final Throwable t) {
             LOG.error("Excavator assembly failed at {}", getBlockPos().toShortString(), t);
@@ -260,9 +278,11 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     }
 
     /** Scan-stopper: refuse to pull through a block entity (chests, beacons,
-     *  other emitters) or an unbreakable block (bedrock-class). */
+     *  other emitters), an unbreakable block (bedrock-class), or anything
+     *  explicitly tagged {@code #magnetization:excavator_immune}. */
     private static boolean isBarrier(final ServerLevel level, final BlockPos pos, final BlockState state) {
         if (state.hasBlockEntity()) return true;
+        if (state.is(MagTags.EXCAVATOR_IMMUNE)) return true;
         return state.getDestroySpeed(level, pos) < 0;
     }
 

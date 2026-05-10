@@ -47,5 +47,13 @@ public final class MagTags {
     public static final TagKey<Block> FERROMAGNETIC_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("ferromagnetic_blocks"));
 
+    /** Block-level escape hatch for the Magnetic Excavator: any block in this
+     *  tag is treated like bedrock — the excavator will refuse to pull through
+     *  it. The bedrock + block-entity safeguards are already wired in code;
+     *  this exists so server owners and other mods can extend the immune list
+     *  to claim-mod boundaries, valuable spawners, etc. */
+    public static final TagKey<Block> EXCAVATOR_IMMUNE =
+            TagKey.create(Registries.BLOCK, Magnetization.id("excavator_immune"));
+
     private MagTags() {}
 }
