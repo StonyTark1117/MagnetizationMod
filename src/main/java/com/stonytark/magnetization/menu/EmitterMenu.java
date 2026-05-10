@@ -50,10 +50,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class EmitterMenu extends AbstractContainerMenu {
 
-    public static final int CAP_ARMOR    = 1;
-    public static final int CAP_POLARITY = 2;
-    public static final int CAP_STRENGTH = 4;
-    public static final int CAP_RANGE    = 8;
+    public static final int CAP_ARMOR     = 1;
+    public static final int CAP_POLARITY  = 2;
+    public static final int CAP_STRENGTH  = 4;
+    public static final int CAP_RANGE     = 8;
+    /** Excavator-only: a second persistent slot for an enchanted tool / book that
+     *  injects its enchantments into the column's drop loot context (Fortune,
+     *  Silk Touch). The slot is bound to the BE, so its contents survive close. */
+    public static final int CAP_TOOL_SLOT = 16;
 
     // Button IDs sent through clickMenuButton(playerId, buttonId) on click.
     public static final int BUTTON_POLARITY_NORTH = 0;
@@ -118,7 +122,21 @@ public class EmitterMenu extends AbstractContainerMenu {
         // add a slot but make it permanently empty/locked when not allowed.
         addSlot(new ArmorMagnetizeSlot(this.armorSlot, 0, 80, 20, hasCap(CAP_ARMOR)));
 
-        // Player inventory rows (3) + hotbar (1).
+        // Tool slot at (132, 20) — bound to the BE's persistent container on the
+        // server, a transient client-side mirror on the client. Synced via the
+        // standard slot-content network. Same locked-when-disabled trick as the
+        // armor slot keeps slot indices stable across cap variants.
+        final Container[] toolHolder = { new SimpleContainer(1) };
+        access.execute((level, p) -> {
+            final BlockEntity be = level.getBlockEntity(p);
+            if (be instanceof com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity exc) {
+                toolHolder[0] = exc.getToolSlot();
+            }
+        });
+        addSlot(new ToolEnchantSlot(toolHolder[0], 0, 132, 20, hasCap(CAP_TOOL_SLOT)));
+
+        // Player inventory rows (3) + hotbar (1). Slot indices 2..28 (main) and
+        // 29..37 (hotbar) — the +2 offset accounts for armor + tool ahead.
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
@@ -271,19 +289,29 @@ public class EmitterMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
-        // 0 = armor slot, 1..27 = inv main, 28..36 = hotbar.
+        // 0 = armor slot, 1 = tool slot, 2..28 = inv main, 29..37 = hotbar.
         final Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         final ItemStack original = slot.getItem();
         final ItemStack copy = original.copy();
-        if (index == 0) {
-            // armor slot → player inventory
-            if (!moveItemStackTo(original, 1, slots.size(), true)) return ItemStack.EMPTY;
+        if (index == 0 || index == 1) {
+            // armor or tool slot → player inventory
+            if (!moveItemStackTo(original, 2, slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            // player inv → armor slot, only if eligible
-            if (!hasCap(CAP_ARMOR)) return ItemStack.EMPTY;
-            if (!original.is(MagTags.METAL_ARMOR) && !original.is(MagTags.METAL_TOOLS)) return ItemStack.EMPTY;
-            if (!moveItemStackTo(original, 0, 1, false)) return ItemStack.EMPTY;
+            // player inv → first matching slot. Try armor (if CAP_ARMOR + matching tag),
+            // then tool (if CAP_TOOL_SLOT + has enchantments).
+            boolean moved = false;
+            if (hasCap(CAP_ARMOR)
+                    && (original.is(MagTags.METAL_ARMOR) || original.is(MagTags.METAL_TOOLS))) {
+                moved = moveItemStackTo(original, 0, 1, false);
+            }
+            if (!moved && hasCap(CAP_TOOL_SLOT)) {
+                final var enchantments = original.getEnchantments();
+                if (enchantments != null && !enchantments.isEmpty()) {
+                    moved = moveItemStackTo(original, 1, 2, false);
+                }
+            }
+            if (!moved) return ItemStack.EMPTY;
         }
         if (original.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();
@@ -300,6 +328,26 @@ public class EmitterMenu extends AbstractContainerMenu {
         }
         @Override public boolean mayPlace(final ItemStack stack) {
             return enabled && (stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS));
+        }
+        @Override public boolean isActive() { return enabled; }
+        @Override public int getMaxStackSize() { return 1; }
+    }
+
+    /** Persistent slot for an enchanted item / book. Accepts any item carrying
+     *  enchantments; the dropper logic ignores the item type and just reads
+     *  what's stamped on it. Hidden + locked when CAP_TOOL_SLOT is off. */
+    private static final class ToolEnchantSlot extends Slot {
+        private final boolean enabled;
+        ToolEnchantSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
+            super(c, s, x, y);
+            this.enabled = enabled;
+        }
+        @Override public boolean mayPlace(final ItemStack stack) {
+            if (!enabled || stack.isEmpty()) return false;
+            // Only meaningful with at least one enchantment — books with none
+            // and bare tools waste the slot, so we filter them out.
+            final var enchantments = stack.getEnchantments();
+            return enchantments != null && !enchantments.isEmpty();
         }
         @Override public boolean isActive() { return enabled; }
         @Override public int getMaxStackSize() { return 1; }

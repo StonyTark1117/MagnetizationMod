@@ -118,6 +118,13 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
             final int sy = topPos + 20;
             g.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF1B1B1B);
         }
+        // Tool-slot recess if the cap is on. Slight green tint to telegraph it's
+        // a separate slot from the armor magnetize one.
+        if (menu.hasCap(EmitterMenu.CAP_TOOL_SLOT)) {
+            final int sx = leftPos + 132;
+            final int sy = topPos + 20;
+            g.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF1B2B1B);
+        }
     }
 
     @Override

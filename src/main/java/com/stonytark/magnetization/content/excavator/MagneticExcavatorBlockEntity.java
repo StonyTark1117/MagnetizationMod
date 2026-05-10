@@ -24,9 +24,16 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -84,6 +91,28 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      *  drop them as items when the ship arrives at the emitter. Order matches
      *  the cells from offset 1 (adjacent to emitter) through the deepest. */
     private List<BlockState> pendingDrops = new ArrayList<>();
+
+    /** Single-slot container holding an enchanted tool / book that influences
+     *  the column's drops — Fortune multiplies, Silk Touch silk-mines, etc.
+     *  Persists across reloads via NBT and dumps to the ground on block break.
+     *  The slot is exposed via the GUI's {@code CAP_TOOL_SLOT} bit. */
+    private final SimpleContainer toolSlot = new SimpleContainer(1) {
+        @Override public int getMaxStackSize() { return 1; }
+        @Override public void setChanged() {
+            super.setChanged();
+            MagneticExcavatorBlockEntity.this.setChanged();
+        }
+    };
+
+    public Container getToolSlot() {
+        return toolSlot;
+    }
+
+    /** Drop the tool slot's contents into the world. Called from the block when
+     *  the player breaks the excavator so the player doesn't lose their book. */
+    public void dropToolSlot(final Level level, final BlockPos pos) {
+        Containers.dropContents(level, pos, toolSlot);
+    }
 
     public MagneticExcavatorBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETIC_EXCAVATOR.get(), pos, state);
@@ -185,15 +214,21 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     /** Drop every pending BlockState's loot at the cell adjacent to the emitter.
      *  Tries to push each stack directly into an adjacent inventory (hopper /
      *  chest / barrel / etc.) first, falling back to spawning ItemEntities that
-     *  the polling {@link InventorySink} would otherwise pick up next tick. */
+     *  the polling {@link InventorySink} would otherwise pick up next tick.
+     *
+     *  <p>If the BE's tool slot has an enchanted item or book in it, its
+     *  enchantments are passed to the loot context — Fortune multiplies ore
+     *  drops, Silk Touch silk-mines, etc. The book itself isn't consumed and
+     *  doesn't take durability damage; treat it as a "tuning module". */
     private void dropPendingAtEmitter(final ServerLevel server) {
         if (pendingDrops.isEmpty()) return;
         final Direction facing = getBlockState().getValue(DirectionalBlock.FACING);
         final BlockPos drop = getBlockPos().relative(facing, 1);
+        final ItemStack tool = toolSlot.getItem(0);
         for (final BlockState bs : pendingDrops) {
-            for (final net.minecraft.world.item.ItemStack stack :
-                    Block.getDrops(bs, server, drop, null)) {
-                final net.minecraft.world.item.ItemStack remainder =
+            final List<ItemStack> drops = enchantedDropsFor(bs, server, drop, tool);
+            for (final ItemStack stack : drops) {
+                final ItemStack remainder =
                         InventorySink.tryDirectIngest(server, getBlockPos(), stack);
                 if (!remainder.isEmpty()) {
                     Block.popResource(server, drop, remainder);
@@ -206,6 +241,22 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
                 drop.getX() + 0.5, drop.getY() + 0.5, drop.getZ() + 0.5,
                 12, 0.3, 0.3, 0.3, 0.1);
+    }
+
+    /** Compute a block's drop list using the loot context, threading through
+     *  {@code tool}'s enchantments if any are present. When tool is empty we
+     *  fall back to the simpler {@code Block.getDrops(state, level, pos, null)}
+     *  path that was used before. */
+    private static List<ItemStack> enchantedDropsFor(
+            final BlockState state, final ServerLevel server, final BlockPos pos,
+            final ItemStack tool
+    ) {
+        if (tool.isEmpty()) return Block.getDrops(state, server, pos, null);
+        final LootParams.Builder params = new LootParams.Builder(server)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                .withParameter(LootContextParams.TOOL, tool)
+                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, null);
+        return state.getDrops(params);
     }
 
     private void startPullCycle(final ServerLevel level, final BlockState state, final MagneticStrength tier) {
@@ -307,6 +358,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             }
             tag.put("PendingDrops", drops);
         }
+        final ItemStack tool = toolSlot.getItem(0);
+        if (!tool.isEmpty()) tag.put("ToolSlot", tool.save(registries));
     }
 
     @Override
@@ -324,5 +377,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
                 pendingDrops.add(NbtUtils.readBlockState(lookup, list.getCompound(i)));
             }
         }
+        toolSlot.setItem(0, tag.contains("ToolSlot", Tag.TAG_COMPOUND)
+                ? ItemStack.parseOptional(registries, tag.getCompound("ToolSlot"))
+                : ItemStack.EMPTY);
     }
 }

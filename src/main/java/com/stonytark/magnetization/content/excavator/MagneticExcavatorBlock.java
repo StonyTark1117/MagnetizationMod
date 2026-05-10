@@ -87,11 +87,26 @@ public class MagneticExcavatorBlock extends DirectionalBlock implements EntityBl
     ) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        // No armor magnetize panel — the excavator only exposes strength/range.
-        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
+        // Strength + range tuning for the column reach, plus a tool slot for an
+        // enchanted tool / book whose enchantments enhance the column's drops
+        // (Fortune multiplies, Silk Touch silk-mines).
+        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE | EmitterMenu.CAP_TOOL_SLOT;
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
                 Component.translatable("block.magnetization.magnetic_excavator")).openFor(sp);
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            // Block is genuinely being removed (broken, replaced) — eject any
+            // installed enchanted tool so the player isn't left short.
+            if (level.getBlockEntity(pos) instanceof MagneticExcavatorBlockEntity exc) {
+                exc.dropToolSlot(level, pos);
+            }
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override
