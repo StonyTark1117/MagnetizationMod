@@ -1,0 +1,266 @@
+package com.stonytark.magnetization.menu;
+
+import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.registry.MagMenus;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Single capability-driven menu for every emitter that exposes a config GUI.
+ *
+ * <p>The {@code caps} bitmap controls which widgets the screen shows:
+ * <ul>
+ *   <li>{@link #CAP_ARMOR} — armor slot (Electromagnet / Kinetic Electromagnet)</li>
+ *   <li>{@link #CAP_POLARITY} — NORTH/SOUTH/CLEAR buttons (operate on the armor stack
+ *       in slot 0; absent on emitters without an armor slot)</li>
+ *   <li>{@link #CAP_STRENGTH} — WEAK/MEDIUM/STRONG/EXTREME buttons (Electromagnet,
+ *       Anchor, Repulsor, Tractor)</li>
+ *   <li>{@link #CAP_RANGE} — range +/- buttons (same emitters as strength)</li>
+ * </ul>
+ *
+ * <p>Polarity always pairs with the armor slot; strength always pairs with range.
+ * Kinetic = ARMOR | POLARITY. Anchor/Repulsor/Tractor = STRENGTH | RANGE. Electromagnet
+ * = ARMOR | POLARITY | STRENGTH | RANGE.
+ *
+ * <p>Server-side state (strength/range overrides) lives on the
+ * {@link AbstractEmitterBlockEntity}; the menu mirrors it via {@link DataSlot}s.
+ */
+public class EmitterMenu extends AbstractContainerMenu {
+
+    public static final int CAP_ARMOR    = 1;
+    public static final int CAP_POLARITY = 2;
+    public static final int CAP_STRENGTH = 4;
+    public static final int CAP_RANGE    = 8;
+
+    // Button IDs sent through clickMenuButton(playerId, buttonId) on click.
+    public static final int BUTTON_POLARITY_NORTH = 0;
+    public static final int BUTTON_POLARITY_SOUTH = 1;
+    public static final int BUTTON_POLARITY_CLEAR = 2;
+    public static final int BUTTON_STRENGTH_WEAK    = 10;
+    public static final int BUTTON_STRENGTH_MEDIUM  = 11;
+    public static final int BUTTON_STRENGTH_STRONG  = 12;
+    public static final int BUTTON_STRENGTH_EXTREME = 13;
+    public static final int BUTTON_RANGE_DEC = 20;
+    public static final int BUTTON_RANGE_INC = 21;
+
+    /** Min and max for the range knob (in blocks). 0 means "use the strength tier's default". */
+    public static final int RANGE_MIN = 0;
+    public static final int RANGE_MAX = 64;
+    public static final int RANGE_STEP = 2;
+
+    /** Open-payload schema. Sent from the server when the player triggers the menu. */
+    public record OpenPayload(BlockPos pos, int caps) {
+        public static final StreamCodec<RegistryFriendlyByteBuf, OpenPayload> STREAM_CODEC =
+                StreamCodec.composite(
+                        BlockPos.STREAM_CODEC, OpenPayload::pos,
+                        ByteBufCodecs.VAR_INT,  OpenPayload::caps,
+                        OpenPayload::new);
+    }
+
+    private final ContainerLevelAccess access;
+    private final BlockPos pos;
+    private final int caps;
+    /** 1-slot transient container for the armor magnetize slot. Auto-returned to the
+     *  player on close so the player never loses items if they walk away. */
+    private final Container armorSlot;
+    /** {@link MagneticStrength#ordinal()} of the BE's current strength override; -1 = default. */
+    private final DataSlot strengthOrdinal = DataSlot.standalone();
+    /** Current range override on the BE; 0 = default. */
+    private final DataSlot rangeBlocks = DataSlot.standalone();
+
+    /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
+    public static EmitterMenu fromNetwork(final int id, final Inventory inv,
+                                          final RegistryFriendlyByteBuf buf) {
+        final OpenPayload payload = OpenPayload.STREAM_CODEC.decode(buf);
+        return new EmitterMenu(id, inv, ContainerLevelAccess.NULL, payload.pos(), payload.caps());
+    }
+
+    /** Server-side factory wraps a real {@link ContainerLevelAccess} for stillValid. */
+    public EmitterMenu(final int id, final Inventory inv, final ContainerLevelAccess access,
+                       final BlockPos pos, final int caps) {
+        super(MagMenus.EMITTER.get(), id);
+        this.access = access;
+        this.pos = pos;
+        this.caps = caps;
+        this.armorSlot = new SimpleContainer(1) {
+            @Override public boolean canPlaceItem(final int slot, final ItemStack stack) {
+                return stack.is(MagTags.METAL_ARMOR);
+            }
+            @Override public int getMaxStackSize() { return 1; }
+        };
+
+        // The armor slot at (80, 20) — only added when CAP_ARMOR is on. Even when the
+        // server caps say "no armor", we still want a stable slot count, so we always
+        // add a slot but make it permanently empty/locked when not allowed.
+        addSlot(new ArmorMagnetizeSlot(this.armorSlot, 0, 80, 20, hasCap(CAP_ARMOR)));
+
+        // Player inventory rows (3) + hotbar (1).
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+            }
+        }
+        for (int col = 0; col < 9; col++) {
+            addSlot(new Slot(inv, col, 8 + col * 18, 142));
+        }
+
+        addDataSlot(strengthOrdinal);
+        addDataSlot(rangeBlocks);
+        // Initial sync from BE (server-side path only — client passes NULL access).
+        access.evaluate((level, p) -> {
+            final BlockEntity be = level.getBlockEntity(p);
+            if (be instanceof AbstractEmitterBlockEntity emitter) {
+                final MagneticStrength s = emitter.getStrengthOverride();
+                strengthOrdinal.set(s == null ? -1 : s.ordinal());
+                rangeBlocks.set(emitter.getRangeOverride());
+            } else {
+                strengthOrdinal.set(-1);
+                rangeBlocks.set(0);
+            }
+            return null;
+        });
+    }
+
+    public int caps() { return caps; }
+    public BlockPos pos() { return pos; }
+    public boolean hasCap(final int cap) { return (caps & cap) != 0; }
+
+    /** Current strength override ordinal as known by the menu. -1 = default. */
+    public int strengthOrdinal() { return strengthOrdinal.get(); }
+    /** Current range override in blocks as known by the menu. 0 = default. */
+    public int rangeBlocks() { return rangeBlocks.get(); }
+    /** Slot 0 access for the screen. */
+    public ItemStack armorStack() { return armorSlot.getItem(0); }
+
+    @Override
+    public boolean stillValid(final Player player) {
+        // Any block entity present at the configured pos counts as valid; this handles
+        // both AbstractEmitterBlockEntity descendants and the Kinetic Electromagnet
+        // (which extends Create's KineticBlockEntity instead). The strength/range
+        // setters are no-ops for non-AbstractEmitter BEs, so the kinetic case is safe.
+        return access.evaluate((level, p) -> {
+            return level.getBlockEntity(p) != null
+                    && player.distanceToSqr(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5) <= 64.0;
+        }, true);
+    }
+
+    @Override
+    public boolean clickMenuButton(final Player player, final int id) {
+        return access.evaluate((level, p) -> {
+            final BlockEntity be = level.getBlockEntity(p);
+            switch (id) {
+                case BUTTON_POLARITY_NORTH -> applyArmorPolarity(MagneticPolarity.NORTH);
+                case BUTTON_POLARITY_SOUTH -> applyArmorPolarity(MagneticPolarity.SOUTH);
+                case BUTTON_POLARITY_CLEAR -> applyArmorPolarity(null);
+                case BUTTON_STRENGTH_WEAK    -> setStrengthIfAble(be, MagneticStrength.WEAK);
+                case BUTTON_STRENGTH_MEDIUM  -> setStrengthIfAble(be, MagneticStrength.MEDIUM);
+                case BUTTON_STRENGTH_STRONG  -> setStrengthIfAble(be, MagneticStrength.STRONG);
+                case BUTTON_STRENGTH_EXTREME -> setStrengthIfAble(be, MagneticStrength.EXTREME);
+                case BUTTON_RANGE_DEC -> bumpRange(be, -RANGE_STEP);
+                case BUTTON_RANGE_INC -> bumpRange(be, +RANGE_STEP);
+                default -> { return false; }
+            }
+            return true;
+        }, false);
+    }
+
+    private void applyArmorPolarity(final @Nullable MagneticPolarity polarity) {
+        if (!hasCap(CAP_POLARITY) || !hasCap(CAP_ARMOR)) return;
+        final ItemStack stack = armorSlot.getItem(0);
+        if (stack.isEmpty() || !stack.is(MagTags.METAL_ARMOR)) return;
+        if (polarity == null) {
+            stack.remove(MagDataComponents.ARMOR_POLARITY.get());
+        } else {
+            stack.set(MagDataComponents.ARMOR_POLARITY.get(), polarity);
+        }
+        armorSlot.setItem(0, stack);
+        broadcastChanges();
+    }
+
+    private void setStrengthIfAble(final BlockEntity be, final MagneticStrength s) {
+        if (!hasCap(CAP_STRENGTH)) return;
+        if (be instanceof AbstractEmitterBlockEntity em) {
+            // Toggle off if clicking the currently-selected tier — lets the player
+            // restore the emitter's default tier without leaving the menu.
+            final MagneticStrength current = em.getStrengthOverride();
+            em.setStrengthOverride(current == s ? null : s);
+            strengthOrdinal.set(em.getStrengthOverride() == null ? -1 : em.getStrengthOverride().ordinal());
+        }
+    }
+
+    private void bumpRange(final BlockEntity be, final int delta) {
+        if (!hasCap(CAP_RANGE)) return;
+        if (be instanceof AbstractEmitterBlockEntity em) {
+            final int current = em.getRangeOverride();
+            int next = current + delta;
+            if (next < RANGE_MIN) next = RANGE_MIN;
+            if (next > RANGE_MAX) next = RANGE_MAX;
+            em.setRangeOverride(next);
+            rangeBlocks.set(em.getRangeOverride());
+        }
+    }
+
+    @Override
+    public void removed(final Player player) {
+        super.removed(player);
+        // Hand the armor slot's contents back to the player when the GUI closes,
+        // so they never lose an item if they walk away mid-magnetize.
+        if (!player.level().isClientSide) {
+            access.execute((level, p) -> {
+                final ItemStack remaining = armorSlot.removeItemNoUpdate(0);
+                if (!remaining.isEmpty()) player.getInventory().placeItemBackInInventory(remaining);
+            });
+        }
+    }
+
+    @Override
+    public ItemStack quickMoveStack(final Player player, final int index) {
+        // 0 = armor slot, 1..27 = inv main, 28..36 = hotbar.
+        final Slot slot = slots.get(index);
+        if (!slot.hasItem()) return ItemStack.EMPTY;
+        final ItemStack original = slot.getItem();
+        final ItemStack copy = original.copy();
+        if (index == 0) {
+            // armor slot → player inventory
+            if (!moveItemStackTo(original, 1, slots.size(), true)) return ItemStack.EMPTY;
+        } else {
+            // player inv → armor slot, only if eligible
+            if (!hasCap(CAP_ARMOR) || !original.is(MagTags.METAL_ARMOR)) return ItemStack.EMPTY;
+            if (!moveItemStackTo(original, 0, 1, false)) return ItemStack.EMPTY;
+        }
+        if (original.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
+        else slot.setChanged();
+        return copy;
+    }
+
+    /** Slot that rejects everything when CAP_ARMOR is off, and rejects non-armor otherwise. */
+    private static final class ArmorMagnetizeSlot extends Slot {
+        private final boolean enabled;
+        ArmorMagnetizeSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
+            super(c, s, x, y);
+            this.enabled = enabled;
+        }
+        @Override public boolean mayPlace(final ItemStack stack) {
+            return enabled && stack.is(MagTags.METAL_ARMOR);
+        }
+        @Override public boolean isActive() { return enabled; }
+        @Override public int getMaxStackSize() { return 1; }
+    }
+}

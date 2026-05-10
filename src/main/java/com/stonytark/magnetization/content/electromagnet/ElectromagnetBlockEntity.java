@@ -24,12 +24,14 @@ public class ElectromagnetBlockEntity extends AbstractEmitterBlockEntity {
     protected @Nullable MagneticField computeField(final BlockState state) {
         if (!isPowered()) return null;
         final Vec3 origin = Vec3.atCenterOf(getBlockPos());
+        final MagneticStrength strength = effectiveStrength(MagneticStrength.MEDIUM);
         return new MagneticField(
                 origin,
                 new Vec3(0, 1, 0),
-                MagneticPolarity.SOUTH, // attract north-poled magnetizables
-                MagneticStrength.MEDIUM,
-                MagneticField.Shape.OMNIDIRECTIONAL
+                effectivePolarity(MagneticPolarity.SOUTH), // default attracts north-poled magnetizables
+                strength,
+                MagneticField.Shape.OMNIDIRECTIONAL,
+                effectiveRange(strength) == strength.range() ? 0.0d : effectiveRange(strength)
         );
     }
 }

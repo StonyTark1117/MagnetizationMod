@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content;
 import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
+import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.FieldApplicator;
@@ -47,6 +48,13 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     private boolean powered = false;
     @Nullable MagneticField cachedField = null;
 
+    /** Per-emitter strength override. {@code null} = use the subclass's default tier. */
+    private @Nullable MagneticStrength strengthOverride = null;
+    /** Per-emitter range override (in blocks). {@code 0} = use the strength tier's default. */
+    private int rangeOverride = 0;
+    /** Per-emitter polarity override. {@code null} = use the subclass's default. */
+    private @Nullable com.stonytark.magnetization.api.MagneticPolarity polarityOverride = null;
+
     protected AbstractEmitterBlockEntity(
             final BlockEntityType<?> type,
             final BlockPos pos,
@@ -57,6 +65,51 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
 
     public boolean isPowered() {
         return powered;
+    }
+
+    /** Effective strength tier for {@link #computeField}: override when set, otherwise base. */
+    public MagneticStrength effectiveStrength(final MagneticStrength base) {
+        return strengthOverride != null ? strengthOverride : base;
+    }
+
+    /** Effective range in blocks: override when set, otherwise the tier's default. */
+    public double effectiveRange(final MagneticStrength tier) {
+        return rangeOverride > 0 ? rangeOverride : tier.range();
+    }
+
+    /** Effective polarity: override when set, otherwise base. */
+    public com.stonytark.magnetization.api.MagneticPolarity effectivePolarity(
+            final com.stonytark.magnetization.api.MagneticPolarity base) {
+        return polarityOverride != null ? polarityOverride : base;
+    }
+
+    public @Nullable MagneticStrength getStrengthOverride() { return strengthOverride; }
+    public int getRangeOverride() { return rangeOverride; }
+    public @Nullable com.stonytark.magnetization.api.MagneticPolarity getPolarityOverride() { return polarityOverride; }
+
+    public void setStrengthOverride(final @Nullable MagneticStrength s) {
+        if (this.strengthOverride == s) return;
+        this.strengthOverride = s;
+        this.cachedField = null;
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
+
+    public void setRangeOverride(final int blocks) {
+        final int clamped = Math.max(0, Math.min(64, blocks));
+        if (this.rangeOverride == clamped) return;
+        this.rangeOverride = clamped;
+        this.cachedField = null;
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
+
+    public void setPolarityOverride(final @Nullable com.stonytark.magnetization.api.MagneticPolarity p) {
+        if (this.polarityOverride == p) return;
+        this.polarityOverride = p;
+        this.cachedField = null;
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
     }
 
     public void setPowered(final boolean powered) {
@@ -158,10 +211,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     private static boolean sameForClientDisplay(final MagneticField a, final MagneticField b) {
         return a.polarity() == b.polarity()
                 && a.strength() == b.strength()
-                && a.shape() == b.shape();
+                && a.shape() == b.shape()
+                && a.customRange() == b.customRange();
     }
 
-    private void markForClientSync(final ServerLevel server) {
+    void markForClientSync(final ServerLevel server) {
         setChanged();
         server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2 /* UPDATE_CLIENTS */);
     }
@@ -202,6 +256,9 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putBoolean("Powered", powered);
         if (cachedField != null) tag.put("Field", cachedField.toNbt());
+        if (strengthOverride != null) tag.putString("StrengthOverride", strengthOverride.name());
+        if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
+        if (polarityOverride != null) tag.putString("PolarityOverride", polarityOverride.name());
     }
 
     @Override
@@ -209,6 +266,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         powered = tag.getBoolean("Powered");
         cachedField = tag.contains("Field") ? MagneticField.fromNbt(tag.getCompound("Field")) : null;
+        strengthOverride = tag.contains("StrengthOverride")
+                ? MagneticStrength.valueOf(tag.getString("StrengthOverride")) : null;
+        rangeOverride = tag.contains("RangeOverride") ? tag.getInt("RangeOverride") : 0;
+        polarityOverride = tag.contains("PolarityOverride")
+                ? com.stonytark.magnetization.api.MagneticPolarity.valueOf(tag.getString("PolarityOverride")) : null;
     }
 
     /** Pushes the BE's saved NBT to clients on chunk load — without this, client-side

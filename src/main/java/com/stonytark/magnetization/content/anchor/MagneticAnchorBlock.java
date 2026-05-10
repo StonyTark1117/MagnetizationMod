@@ -1,7 +1,14 @@
 package com.stonytark.magnetization.content.anchor;
 
+import com.stonytark.magnetization.menu.EmitterMenu;
+import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -11,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -42,6 +50,19 @@ public class MagneticAnchorBlock extends Block implements EntityBlock {
         if (level.isClientSide || type != MagBlockEntities.MAGNETIC_ANCHOR.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<MagneticAnchorBlockEntity>)
                 MagneticAnchorBlockEntity::serverTick;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final BlockHitResult hit
+    ) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
+        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
+                Component.translatable("block.magnetization.magnetic_anchor")).openFor(sp);
+        return InteractionResult.CONSUME;
     }
 
     @Override

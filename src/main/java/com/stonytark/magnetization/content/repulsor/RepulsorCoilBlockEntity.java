@@ -27,12 +27,15 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
                 ? state.getValue(DirectionalBlock.FACING)
                 : Direction.UP;
         final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
+        final MagneticStrength strength = effectiveStrength(MagneticStrength.MEDIUM);
+        final double range = effectiveRange(strength);
         return new MagneticField(
                 Vec3.atCenterOf(getBlockPos()),
                 axis,
-                MagneticPolarity.NORTH, // repulsive on a conical field
-                MagneticStrength.MEDIUM,
-                MagneticField.Shape.CONICAL
+                effectivePolarity(MagneticPolarity.NORTH), // repulsive on a conical field
+                strength,
+                MagneticField.Shape.CONICAL,
+                range == strength.range() ? 0.0d : range
         );
     }
 }

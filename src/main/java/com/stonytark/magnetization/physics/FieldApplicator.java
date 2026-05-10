@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.effect.MagnetizedEffect;
+import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,6 +49,11 @@ public final class FieldApplicator {
 
     /** Susceptibility added per worn metal armor piece (#magnetization:metal_armor). */
     public static final double PER_ARMOR_SUSCEPTIBILITY = 0.4d;
+    /** Bonus susceptibility added per worn piece that has been magnetized (data component
+     *  {@link com.stonytark.magnetization.registry.MagDataComponents#ARMOR_POLARITY}).
+     *  Stacks on top of {@link #PER_ARMOR_SUSCEPTIBILITY} — magnetized full plate ≈ 4×
+     *  the pull of plain iron. */
+    public static final double PER_MAGNETIZED_BONUS = 0.6d;
 
     private FieldApplicator() {}
 
@@ -240,11 +246,14 @@ public final class FieldApplicator {
             if (item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) return 1.0d;
         }
         // Players are pulled in proportion to how much metal armor they wear.
-        // Bare players are inert; full plate is yanked hard.
+        // Bare players are inert; full plate is yanked hard. Magnetized pieces
+        // (stamped with a polarity by an electromagnet) get an additional bonus.
         if (e instanceof Player player) {
             double sum = 0.0d;
             for (ItemStack armor : player.getArmorSlots()) {
-                if (armor.is(MagTags.METAL_ARMOR)) sum += PER_ARMOR_SUSCEPTIBILITY;
+                if (!armor.is(MagTags.METAL_ARMOR)) continue;
+                sum += PER_ARMOR_SUSCEPTIBILITY;
+                if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) sum += PER_MAGNETIZED_BONUS;
             }
             return sum;
         }
@@ -256,6 +265,17 @@ public final class FieldApplicator {
         if (e instanceof IMagnetizable m) return m.magneticPolarity();
         if (e instanceof ItemEntity item && item.getItem().getItem() instanceof IMagnetizable m) {
             return m.magneticPolarity();
+        }
+        // Players carrying magnetized armor present the net pole of their armor.
+        // Tie / no magnetized armor → NORTH (default convention).
+        if (e instanceof Player player) {
+            int net = 0;
+            for (ItemStack armor : player.getArmorSlots()) {
+                final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
+                if (pol != null) net += pol.sign();
+            }
+            if (net > 0) return MagneticPolarity.NORTH;
+            if (net < 0) return MagneticPolarity.SOUTH;
         }
         // Default convention: untagged entities present a NORTH face, so a SOUTH
         // emitter pulls them and a NORTH emitter pushes them.

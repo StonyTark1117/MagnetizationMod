@@ -1,12 +1,20 @@
 package com.stonytark.magnetization.content.electromagnet;
 
+import com.stonytark.magnetization.menu.EmitterMenu;
+import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -14,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -57,6 +66,20 @@ public class KineticElectromagnetBlock extends KineticBlock implements IBE<Kinet
     @Override
     public Direction.Axis getRotationAxis(final BlockState state) {
         return state.getValue(AXIS);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final BlockHitResult hit
+    ) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        // Kinetic emitter: only the armor magnetize panel — strength is RPM-driven.
+        final int caps = EmitterMenu.CAP_ARMOR | EmitterMenu.CAP_POLARITY;
+        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
+                Component.translatable("block.magnetization.kinetic_electromagnet")).openFor(sp);
+        return InteractionResult.CONSUME;
     }
 
     @Override

@@ -1,5 +1,9 @@
 package com.stonytark.magnetization.api;
 
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 /**
@@ -15,6 +19,10 @@ public enum MagneticPolarity implements StringRepresentable {
     NORTH(+1, "north"),
     SOUTH(-1, "south"),
     NONE(0, "none");
+
+    public static final Codec<MagneticPolarity> CODEC = StringRepresentable.fromEnum(MagneticPolarity::values);
+    public static final StreamCodec<ByteBuf, MagneticPolarity> STREAM_CODEC =
+            ByteBufCodecs.idMapper(i -> values()[i], MagneticPolarity::ordinal);
 
     private final int sign;
     private final String serializedName;

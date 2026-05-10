@@ -1,12 +1,15 @@
 package com.stonytark.magnetization.client;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.client.screen.EmitterScreen;
 import com.stonytark.magnetization.registry.MagBlockEntities;
+import com.stonytark.magnetization.registry.MagMenus;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 /**
  * Wires the directional emitter beam renderer to its block entity types and
@@ -33,5 +36,10 @@ public final class MagClientRegistration {
             ClientEmitterEffects.touch();
             EmitterHumSound.touch();
         });
+    }
+
+    @SubscribeEvent
+    public static void onRegisterMenuScreens(final RegisterMenuScreensEvent event) {
+        event.register(MagMenus.EMITTER.get(), EmitterScreen::new);
     }
 }

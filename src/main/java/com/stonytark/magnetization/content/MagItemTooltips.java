@@ -1,10 +1,13 @@
 package com.stonytark.magnetization.content;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -54,9 +57,22 @@ public final class MagItemTooltips {
             // Build lazily — items aren't resolved at class-init time on the mod bus.
             try { map = build(); } catch (Throwable t) { return; }
         }
-        final String key = map.get(event.getItemStack().getItem());
-        if (key == null) return;
+        final ItemStack stack = event.getItemStack();
         final List<Component> lines = event.getToolTip();
-        lines.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
+        final String key = map.get(stack.getItem());
+        if (key != null) {
+            lines.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
+        }
+        // Magnetized armor: show its polarity stamp regardless of which item it is —
+        // any tagged metal armor can be magnetized, including iron, gold, netherite, etc.
+        final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
+        if (pol != null && pol != MagneticPolarity.NONE) {
+            final ChatFormatting color = pol == MagneticPolarity.NORTH
+                    ? ChatFormatting.AQUA : ChatFormatting.RED;
+            lines.add(Component.translatable("tooltip.magnetization.magnetized_armor",
+                    Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName())
+                            .withStyle(color)
+            ).withStyle(ChatFormatting.GRAY));
+        }
     }
 }

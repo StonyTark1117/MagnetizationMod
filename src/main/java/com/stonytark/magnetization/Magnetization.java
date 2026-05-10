@@ -7,8 +7,10 @@ import com.stonytark.magnetization.registry.MagBiomeModifiers;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagCreativeTab;
+import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.registry.MagMenus;
 import com.stonytark.magnetization.registry.MagParticles;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -33,6 +35,8 @@ public final class Magnetization {
         MagEffects.POTIONS.register(modBus);
         MagParticles.REGISTER.register(modBus);
         MagBiomeModifiers.REGISTER.register(modBus);
+        MagDataComponents.REGISTER.register(modBus);
+        MagMenus.REGISTER.register(modBus);
 
         modContainer.registerConfig(ModConfig.Type.SERVER, MagConfig.SPEC);
 

@@ -25,12 +25,15 @@ public class TractorBeamBlockEntity extends AbstractEmitterBlockEntity {
         // Beam shoots along facing; force on targets pulls them backward toward us,
         // which is encoded as polarity SOUTH + axis-along-facing on a DIRECTIONAL field.
         final Vec3 axis = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ());
+        final MagneticStrength strength = effectiveStrength(MagneticStrength.STRONG);
+        final double range = effectiveRange(strength);
         return new MagneticField(
                 Vec3.atCenterOf(getBlockPos()),
                 axis,
-                MagneticPolarity.SOUTH,
-                MagneticStrength.STRONG,
-                MagneticField.Shape.DIRECTIONAL
+                effectivePolarity(MagneticPolarity.SOUTH),
+                strength,
+                MagneticField.Shape.DIRECTIONAL,
+                range == strength.range() ? 0.0d : range
         );
     }
 }

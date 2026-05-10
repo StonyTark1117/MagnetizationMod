@@ -68,9 +68,11 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
             return null;
         }
 
+        final MagneticStrength strength = effectiveStrength(MagneticStrength.STRONG);
+        final double range = effectiveRange(strength);
         // Pick a target if we don't have one yet — closest sub-level whose bbox intersects ours.
         if (boundShipId == null) {
-            final ServerSubLevel target = pickClosestShip(server, MagneticStrength.STRONG.range());
+            final ServerSubLevel target = pickClosestShip(server, range);
             if (target != null) {
                 boundShipId = target.getUniqueId();
                 setChanged();
@@ -102,9 +104,10 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         return new MagneticField(
                 Vec3.atCenterOf(getBlockPos()),
                 new Vec3(0, 1, 0),
-                MagneticPolarity.SOUTH,
-                MagneticStrength.STRONG,
-                MagneticField.Shape.OMNIDIRECTIONAL
+                effectivePolarity(MagneticPolarity.SOUTH),
+                strength,
+                MagneticField.Shape.OMNIDIRECTIONAL,
+                range == strength.range() ? 0.0d : range
         );
     }
 

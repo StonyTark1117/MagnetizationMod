@@ -1,10 +1,17 @@
 package com.stonytark.magnetization.content.tractor;
 
+import com.stonytark.magnetization.menu.EmitterMenu;
+import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -16,6 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -63,6 +71,19 @@ public class TractorBeamBlock extends DirectionalBlock implements EntityBlock, I
         if (level.isClientSide || type != MagBlockEntities.TRACTOR_BEAM.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<TractorBeamBlockEntity>)
                 TractorBeamBlockEntity::serverTick;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final BlockHitResult hit
+    ) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
+        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
+                Component.translatable("block.magnetization.tractor_beam")).openFor(sp);
+        return InteractionResult.CONSUME;
     }
 
     @Override

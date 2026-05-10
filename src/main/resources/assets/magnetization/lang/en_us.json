@@ -52,6 +52,18 @@
   "tooltip.magnetization.field_status": "Magnetic Field",
   "tooltip.magnetization.inactive": "Inactive",
 
+  "tooltip.magnetization.magnetized_armor": "Magnetized — %s",
+  "tooltip.magnetization.polarity.north": "North",
+  "tooltip.magnetization.polarity.south": "South",
+  "tooltip.magnetization.polarity.none": "None",
+
+  "gui.magnetization.polarity.north": "N",
+  "gui.magnetization.polarity.south": "S",
+  "gui.magnetization.polarity.clear": "Clear",
+  "gui.magnetization.polarity.unmagnetized": "Unmagnetized — insert armor to begin.",
+  "gui.magnetization.strength": "Strength: %s",
+  "gui.magnetization.range": "Range: %s",
+
   "tooltip.magnetization.electromagnet.use":          "Powered by redstone. Pulls nearby ships and ferromagnetic items.",
   "tooltip.magnetization.kinetic_electromagnet.use":  "Powered by Create rotation. Strength scales with RPM.",
   "tooltip.magnetization.magnetic_anchor.use":        "Locks the first ship that enters its range. Persists across reload.",
