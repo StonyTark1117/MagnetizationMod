@@ -5,6 +5,7 @@ import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -36,7 +37,14 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
     private static final Logger DEBUG_LOG = LoggerFactory.getLogger("magnetization/AnchorDebug");
     private long lastDebugTick = -1L;
 
+    /** Per-tick angular damp applied when this anchor has at least one peer
+     *  bound to the same ship. 30% per second (every 20 ticks). */
+    private static final double COOP_ANGULAR_DAMP_FACTOR = 0.30d;
+    /** Throttle for the coop-peer scan + damp call. Once per second is plenty. */
+    private static final int COOP_TICK_INTERVAL = 20;
+
     private @Nullable UUID boundShipId = null;
+    private long lastCoopTick = Long.MIN_VALUE;
 
     public MagneticAnchorBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETIC_ANCHOR.get(), pos, state);
@@ -110,6 +118,17 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
 
         debugLog(server, "computeField: anchor at {} EMITTING field, bound={}",
                 getBlockPos().toShortString(), boundShipId);
+        // Cooperative anchor stabilization: when one or more peer anchors in
+        // this level share the same boundShipId, damp the bound ship's angular
+        // velocity so a multi-anchor dock keeps the airship level instead of
+        // letting it spin from accumulated torques. Throttled — every-tick
+        // damping would over-stiffen.
+        if (target instanceof ServerSubLevel boundShip
+                && server.getGameTime() - lastCoopTick >= COOP_TICK_INTERVAL
+                && hasCoopPeer(server)) {
+            lastCoopTick = server.getGameTime();
+            SableBridge.dampAngularVelocity(boundShip, COOP_ANGULAR_DAMP_FACTOR);
+        }
         return new MagneticField(
                 Vec3.atCenterOf(getBlockPos()),
                 new Vec3(0, 1, 0),
@@ -118,6 +137,26 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
                 MagneticField.Shape.OMNIDIRECTIONAL,
                 range == strength.range() ? 0.0d : range
         );
+    }
+
+    /** Walk every loaded emitter pos in this level to find another anchor with
+     *  the same {@code boundShipId}. The scan is O(N emitters) but throttled to
+     *  once per second per anchor, so cumulative cost is O(N) per second per
+     *  anchor in a coop arrangement — fine at typical scale. */
+    private boolean hasCoopPeer(final ServerLevel server) {
+        final UUID mine = boundShipId;
+        if (mine == null) return false;
+        final BlockPos myPos = getBlockPos();
+        final boolean[] found = { false };
+        EmitterRegistry.forEach(server, (lvl, p) -> {
+            if (found[0] || p.equals(myPos)) return;
+            if (lvl.getBlockEntity(p) instanceof MagneticAnchorBlockEntity peer
+                    && peer.isPowered()
+                    && mine.equals(peer.boundShipId())) {
+                found[0] = true;
+            }
+        });
+        return found[0];
     }
 
     /** Throttle: log at most once every 20 ticks (1s) so the console isn't spammed.

@@ -127,6 +127,39 @@ public final class SableBridge {
      * Use this for environmental emitters: a magnet on the ground pulling a ship
      * that flies overhead.
      */
+    /**
+     * Damp the sub-level's current angular velocity by a fraction. Used by
+     * cooperative-anchor pairs to keep a docked ship level: two anchors bound
+     * to the same ship each call this, so spin gets bled off until it settles.
+     *
+     * @param factor 0..1; the angular velocity is reduced by this fraction
+     *               per call. 0.3 ≈ 30% damp per tick.
+     */
+    public static void dampAngularVelocity(final ServerSubLevel subLevel, final double factor) {
+        if (subLevel.getMassTracker().isInvalid() || subLevel.getMassTracker().getMass() <= 0.0) return;
+        final RigidBodyHandle handle;
+        try {
+            handle = RigidBodyHandle.of(subLevel);
+        } catch (final Throwable t) {
+            return;
+        }
+        if (handle == null) return;
+        final Vector3d w = new Vector3d();
+        try {
+            handle.getAngularVelocity(w);
+        } catch (final Throwable t) {
+            return;
+        }
+        if (w.lengthSquared() < 1.0e-8) return;
+        // Negative scaled: adding -f*w to w produces (1-f)*w.
+        final Vector3d delta = new Vector3d(-w.x * factor, -w.y * factor, -w.z * factor);
+        try {
+            handle.addLinearAndAngularVelocity(new Vector3d(0, 0, 0), delta);
+        } catch (final Throwable t) {
+            // Native panics fall through quietly — caller filtered phantoms.
+        }
+    }
+
     public static void applyWorldImpulse(
             final ServerSubLevel subLevel,
             final Vec3 worldPoint,

@@ -113,6 +113,13 @@ public final class FieldApplicator {
             final @Nullable ServerSubLevel exclude,
             final @Nullable Predicate<ServerSubLevel> shipFilter
     ) {
+        final SubLevelContainer container = SubLevelContainer.getContainer(level);
+        // Fast path: in worlds with no Sable sub-levels at all (vanilla saves
+        // before C:Aero builds anything), every emitter would otherwise pay the
+        // cost of `queryIntersecting` per tick. Bail out before touching the
+        // spatial index when the container is empty.
+        if (container.getAllSubLevels().isEmpty()) return;
+
         final double range = field.range();
         final Vec3 origin = field.origin();
         final BoundingBox3d searchBox = new BoundingBox3d(
@@ -120,15 +127,14 @@ public final class FieldApplicator {
                 origin.x + range, origin.y + range, origin.z + range
         );
 
-        final SubLevelContainer container = SubLevelContainer.getContainer(level);
-        int candidates = 0;
-        int passedFilter = 0;
-        int impulsesApplied = 0;
+        // Diagnostics — only allocated when the debug log gate is open.
+        final boolean diag = MagConfig.debugLogging();
+        int candidates = 0, passedFilter = 0, impulsesApplied = 0;
         double maxImpulseMag = 0.0;
-        final java.util.List<String> candidateIds = new java.util.ArrayList<>();
+        final java.util.List<String> candidateIds = diag ? new java.util.ArrayList<>() : null;
         for (SubLevel sub : container.queryIntersecting(searchBox)) {
-            candidates++;
-            if (sub instanceof ServerSubLevel s) candidateIds.add(s.getUniqueId().toString().substring(0, 8));
+            if (diag) candidates++;
+            if (diag && sub instanceof ServerSubLevel s) candidateIds.add(s.getUniqueId().toString().substring(0, 8));
             if (!(sub instanceof ServerSubLevel server) || server == exclude) continue;
             // Reject phantom sub-levels: stale entries Sable's spatial index
             // can return after a shatter/unload. Applying velocity to one of
@@ -136,7 +142,7 @@ public final class FieldApplicator {
             if (server.getMassTracker().isInvalid() || server.getMassTracker().getMass() <= 0.0) continue;
             if (container.getSubLevel(server.getUniqueId()) == null) continue;
             if (shipFilter != null && !shipFilter.test(server)) continue;
-            passedFilter++;
+            if (diag) passedFilter++;
 
             // Pick the closest point inside the sub-level's bounding box to the field origin
             // and apply the impulse there. This is a coarse approximation — real interaction
@@ -168,18 +174,22 @@ public final class FieldApplicator {
                 }
             }
             SableBridge.applyWorldImpulse(server, closest, impulse);
-            impulsesApplied++;
-            maxImpulseMag = Math.max(maxImpulseMag, impulse.length());
+            if (diag) {
+                impulsesApplied++;
+                maxImpulseMag = Math.max(maxImpulseMag, impulse.length());
+            }
         }
-        // Per-tick velocity delta corresponding to the strongest impulse this
-        // call produced — at 1/20s/tick, that's the m/s/tick the rigid body
-        // gets injected directly. Useful for sanity-checking calibration.
-        final double dvPerTick = maxImpulseMag * 0.05;
-        debugLog(level, "applyToSubLevels: candidates={} ids={} passedFilter={} impulsesApplied={} maxImpulse={} dv/tick={} hasFilter={} fieldOrigin={} range={}",
-                candidates, candidateIds, passedFilter, impulsesApplied,
-                String.format("%.2fN", maxImpulseMag),
-                String.format("%.3fm/s", dvPerTick),
-                shipFilter != null, origin, range);
+        if (diag) {
+            // Per-tick velocity delta corresponding to the strongest impulse this
+            // call produced — at 1/20s/tick, that's the m/s/tick the rigid body
+            // gets injected directly. Useful for sanity-checking calibration.
+            final double dvPerTick = maxImpulseMag * 0.05;
+            debugLog(level, "applyToSubLevels: candidates={} ids={} passedFilter={} impulsesApplied={} maxImpulse={} dv/tick={} hasFilter={} fieldOrigin={} range={}",
+                    candidates, candidateIds, passedFilter, impulsesApplied,
+                    String.format("%.2fN", maxImpulseMag),
+                    String.format("%.3fm/s", dvPerTick),
+                    shipFilter != null, origin, range);
+        }
     }
 
     private static void debugLog(final ServerLevel level, final String fmt, final Object... args) {
