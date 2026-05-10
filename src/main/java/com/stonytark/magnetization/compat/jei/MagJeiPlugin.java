@@ -1,18 +1,16 @@
 package com.stonytark.magnetization.compat.jei;
 
 import com.stonytark.magnetization.Magnetization;
-import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.compat.FerromagneticInfoHelper;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,10 +28,7 @@ public class MagJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(final IRecipeRegistration registration) {
-        // Build the list of items currently in the ferromagnetic tag.
-        final List<ItemStack> ferromagnetic = new ArrayList<>();
-        BuiltInRegistries.ITEM.getTag(MagTags.FERROMAGNETIC_ITEMS).ifPresent(set ->
-                set.forEach(holder -> ferromagnetic.add(new ItemStack(holder.value()))));
+        final List<ItemStack> ferromagnetic = FerromagneticInfoHelper.stacks();
         if (ferromagnetic.isEmpty()) return;
 
         registration.addIngredientInfo(

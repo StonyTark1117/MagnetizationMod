@@ -1,6 +1,6 @@
 package com.stonytark.magnetization.compat.rei;
 
-import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.compat.FerromagneticInfoHelper;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -9,7 +9,6 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.displays.DefaultInformationDisplay;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -27,11 +26,10 @@ public class MagReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(final DisplayRegistry registry) {
-        // Build EntryStacks from items currently in the ferromagnetic tag.
+        final List<ItemStack> stacks = FerromagneticInfoHelper.stacks();
+        if (stacks.isEmpty()) return;
         final List<EntryStack<ItemStack>> entries = new ArrayList<>();
-        BuiltInRegistries.ITEM.getTag(MagTags.FERROMAGNETIC_ITEMS).ifPresent(set ->
-                set.forEach(holder -> entries.add(EntryStacks.of(new ItemStack(holder.value())))));
-        if (entries.isEmpty()) return;
+        for (final ItemStack stack : stacks) entries.add(EntryStacks.of(stack));
 
         final EntryIngredient ingredient = EntryIngredient.of(entries);
         final Component name = Component.translatable("rei.magnetization.ferromagnetic.name");
