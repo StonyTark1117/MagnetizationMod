@@ -143,4 +143,4 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 
 ## License
 
-MIT.
+CC0 1.0 Universal
