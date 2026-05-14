@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_copper",
+  "feature": "minecraft:ore_copper_large",
   "placement": [
     { "type": "minecraft:count", "count": 22 },
     { "type": "minecraft:in_square" },
