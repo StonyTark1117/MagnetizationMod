@@ -102,5 +102,16 @@ public final class MagBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()));
 
+    /** Petrified wood: stone-flavored ferrous wood. Generates as a rare drop from
+     *  log chops with a magnetized axe; placeable, mineable. Intentionally NOT in
+     *  {@code #magnetization:ferromagnetic_blocks} — the Magnetic Excavator and
+     *  Magnetic Pickaxe rip don't claim it. The Magnetized Axe rip is the only
+     *  block-yank that targets it, making the axe its signature tool. */
+    public static final DeferredBlock<Block> PETRIFIED_WOOD =
+            REGISTER.register("petrified_wood", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f, 4.0f)
+                    .sound(SoundType.STONE)));
+
     private MagBlocks() {}
 }

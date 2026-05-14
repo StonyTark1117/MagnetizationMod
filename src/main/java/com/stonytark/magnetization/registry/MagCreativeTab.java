@@ -49,6 +49,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.FERROMAGNETIC_LEGGINGS);
                         accept(output, MagItems.FERROMAGNETIC_BOOTS);
                         accept(output, MagItems.MAGNETIC_PLATE);
+                        accept(output, MagItems.PETRIFIED_WOOD);
                         accept(output, MagItems.FIELD_COMPASS);
                         accept(output, MagItems.MAGNETIC_GRAPPLE);
                         accept(output, MagItems.LODESTONE_CORE);

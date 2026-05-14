@@ -58,6 +58,14 @@ public class EmitterMenu extends AbstractContainerMenu {
      *  injects its enchantments into the column's drop loot context (Fortune,
      *  Silk Touch). The slot is bound to the BE, so its contents survive close. */
     public static final int CAP_TOOL_SLOT = 16;
+    /** Excavator-only: per-emitter override for the concurrent-pull cap (how many
+     *  in-flight ferromagnetic sub-levels the excavator may have at once). Capped
+     *  upstream by {@link com.stonytark.magnetization.config.MagConfig#EXCAVATOR_MAX_IN_FLIGHT}. */
+    public static final int CAP_INFLIGHT = 32;
+    /** Excavator-only: an internal redstone-power slot. Any redstone dust in the
+     *  slot keeps the excavator active — equivalent to an external redstone
+     *  signal, but safe from being mined by its own pulls. Items aren't consumed. */
+    public static final int CAP_REDSTONE_FUEL = 64;
 
     // Button IDs sent through clickMenuButton(playerId, buttonId) on click.
     public static final int BUTTON_POLARITY_NORTH = 0;
@@ -69,11 +77,37 @@ public class EmitterMenu extends AbstractContainerMenu {
     public static final int BUTTON_STRENGTH_EXTREME = 13;
     public static final int BUTTON_RANGE_DEC = 20;
     public static final int BUTTON_RANGE_INC = 21;
+    public static final int BUTTON_INFLIGHT_DEC = 30;
+    public static final int BUTTON_INFLIGHT_INC = 31;
 
-    /** Min and max for the range knob (in blocks). 0 means "use the strength tier's default". */
+    /** Per-emitter in-flight cap floor / step. The upper bound comes from
+     *  {@link com.stonytark.magnetization.config.MagConfig#EXCAVATOR_MAX_IN_FLIGHT}. */
+    public static final int INFLIGHT_MIN = 1;
+    public static final int INFLIGHT_STEP = 1;
+
+    /** Min and absolute max for the range knob (in blocks). 0 means "use the emitter's
+     *  built-in default" — for the excavator that's the deep-reach default; for ship
+     *  emitters it falls back to the strength tier's nominal range. RANGE_MAX is the
+     *  hard upper bound that no per-emitter config cap can exceed — pick something
+     *  generous so the config keys (electromagnetMaxRange, excavatorMaxRange, ...) get
+     *  to define the gameplay limit. 512 covers bedrock-from-build-limit pulls. */
     public static final int RANGE_MIN = 0;
-    public static final int RANGE_MAX = 64;
-    public static final int RANGE_STEP = 2;
+    public static final int RANGE_MAX = 512;
+    public static final int RANGE_STEP = 8;
+
+    /** Extra vertical space added to the GUI when {@link #CAP_INFLIGHT} is set,
+     *  so the "Pulls" row and its buttons don't collide with the inventory label.
+     *  The player inventory slot positions are shifted down by this amount on the
+     *  excavator's menu; the screen extends {@code imageHeight} by the same. */
+    public static final int EXTRA_HEIGHT_FOR_INFLIGHT = 16;
+
+    /** Y-offset to apply to player-inventory slots / inventory label based on caps.
+     *  Shared between {@link EmitterMenu} (slot placement) and {@link
+     *  com.stonytark.magnetization.client.screen.EmitterScreen} (recess rendering)
+     *  so they stay aligned. */
+    public static int inventoryYOffset(final int caps) {
+        return (caps & CAP_INFLIGHT) != 0 ? EXTRA_HEIGHT_FOR_INFLIGHT : 0;
+    }
 
     /** Open-payload schema. Sent from the server when the player triggers the menu. */
     public record OpenPayload(BlockPos pos, int caps) {
@@ -99,6 +133,13 @@ public class EmitterMenu extends AbstractContainerMenu {
      *  progress. Driven from the BE's {@code getPullProgressPct()} on each
      *  tick via {@link #broadcastChanges()}. */
     private final DataSlot pullProgress = DataSlot.standalone();
+    /** Excavator-only: current per-emitter in-flight cap. 0 = "follow the
+     *  admin ceiling" ({@link com.stonytark.magnetization.config.MagConfig#EXCAVATOR_MAX_IN_FLIGHT}). */
+    private final DataSlot inflightCap = DataSlot.standalone();
+    /** Effective default range in blocks (admin-max / 2 for this emitter type).
+     *  Shown on the GUI when no override is dialed in, so the player can see
+     *  what the emitter is actually using before they touch the slider. */
+    private final DataSlot defaultRange = DataSlot.standalone();
 
     /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
     public static EmitterMenu fromNetwork(final int id, final Inventory inv,
@@ -132,28 +173,38 @@ public class EmitterMenu extends AbstractContainerMenu {
         // standard slot-content network. Same locked-when-disabled trick as the
         // armor slot keeps slot indices stable across cap variants.
         final Container[] toolHolder = { new SimpleContainer(1) };
+        final Container[] fuelHolder = { new SimpleContainer(1) };
         access.execute((level, p) -> {
             final BlockEntity be = level.getBlockEntity(p);
             if (be instanceof com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity exc) {
                 toolHolder[0] = exc.getToolSlot();
+                fuelHolder[0] = exc.getRedstoneFuelSlot();
             }
         });
         addSlot(new ToolEnchantSlot(toolHolder[0], 0, 132, 20, hasCap(CAP_TOOL_SLOT)));
+        // Redstone-fuel slot at (28, 20) — accepts only redstone dust. Internal
+        // power source that's immune to the excavator destroying its own redstone.
+        addSlot(new RedstoneFuelSlot(fuelHolder[0], 0, 28, 20, hasCap(CAP_REDSTONE_FUEL)));
 
-        // Player inventory rows (3) + hotbar (1). Slot indices 2..28 (main) and
-        // 29..37 (hotbar) — the +2 offset accounts for armor + tool ahead.
+        // Player inventory rows (3) + hotbar (1). Slot indices 3..29 (main) and
+        // 30..38 (hotbar) — the +3 offset accounts for armor + tool + fuel ahead.
+        // When CAP_INFLIGHT is set the whole inventory shifts down to make room
+        // for the Pulls row above (otherwise the label collides with this title).
+        final int invDy = inventoryYOffset(this.caps);
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + invDy + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(inv, col, 8 + col * 18, 142));
+            addSlot(new Slot(inv, col, 8 + col * 18, 142 + invDy));
         }
 
         addDataSlot(strengthOrdinal);
         addDataSlot(rangeBlocks);
         addDataSlot(pullProgress);
+        addDataSlot(inflightCap);
+        addDataSlot(defaultRange);
         // Initial sync from BE (server-side path only — client passes NULL access).
         // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
         // ContainerLevelAccess wraps the lambda return in Optional.of() — which NPEs
@@ -164,9 +215,17 @@ public class EmitterMenu extends AbstractContainerMenu {
                 final MagneticStrength s = emitter.getStrengthOverride();
                 strengthOrdinal.set(s == null ? -1 : s.ordinal());
                 rangeBlocks.set(emitter.getRangeOverride());
+                defaultRange.set((int) Math.round(
+                        emitter.effectiveRange(emitter.effectiveStrength(MagneticStrength.STRONG))));
             } else {
                 strengthOrdinal.set(-1);
                 rangeBlocks.set(0);
+                defaultRange.set(0);
+            }
+            if (be instanceof MagneticExcavatorBlockEntity exc) {
+                inflightCap.set(exc.getInFlightCapOverride());
+            } else {
+                inflightCap.set(0);
             }
         });
     }
@@ -179,8 +238,19 @@ public class EmitterMenu extends AbstractContainerMenu {
     public int strengthOrdinal() { return strengthOrdinal.get(); }
     /** Current range override in blocks as known by the menu. 0 = default. */
     public int rangeBlocks() { return rangeBlocks.get(); }
+    /** Effective default range in blocks when no override is dialed in.
+     *  Half of the per-block admin ceiling; equals the value the screen should
+     *  show on the label when {@link #rangeBlocks()} returns 0. */
+    public int defaultRangeBlocks() { return defaultRange.get(); }
     /** Excavator-only: current pull progress, 0..100. */
     public int pullProgressPct() { return pullProgress.get(); }
+    /** Excavator-only: current per-emitter concurrent-pull cap override. 0 = admin ceiling. */
+    public int inflightCap() { return inflightCap.get(); }
+    /** Excavator-only: admin ceiling for the in-flight cap, from config. */
+    public int inflightCapMax() {
+        try { return com.stonytark.magnetization.config.MagConfig.EXCAVATOR_MAX_IN_FLIGHT.get(); }
+        catch (final Throwable t) { return 16; }
+    }
     /** Slot 0 access for the screen. */
     public ItemStack armorStack() { return armorSlot.getItem(0); }
 
@@ -225,6 +295,8 @@ public class EmitterMenu extends AbstractContainerMenu {
                 case BUTTON_STRENGTH_EXTREME -> setStrengthIfAble(be, MagneticStrength.EXTREME);
                 case BUTTON_RANGE_DEC -> bumpRange(be, -RANGE_STEP);
                 case BUTTON_RANGE_INC -> bumpRange(be, +RANGE_STEP);
+                case BUTTON_INFLIGHT_DEC -> bumpInflightCap(be, -INFLIGHT_STEP);
+                case BUTTON_INFLIGHT_INC -> bumpInflightCap(be, +INFLIGHT_STEP);
                 default -> { return false; }
             }
             return true;
@@ -241,6 +313,9 @@ public class EmitterMenu extends AbstractContainerMenu {
         } else {
             stack.set(MagDataComponents.ARMOR_POLARITY.get(), polarity);
         }
+        // Electromagnet-GUI stamps are permanent — clear any prior LIRM marker so
+        // the stamp doesn't decay out from under the player.
+        stack.remove(MagDataComponents.LIRM_CREATED_AT.get());
         armorSlot.setItem(0, stack);
         broadcastChanges();
     }
@@ -262,7 +337,13 @@ public class EmitterMenu extends AbstractContainerMenu {
     private void bumpRange(final BlockEntity be, final int delta) {
         if (!hasCap(CAP_RANGE)) return;
         if (be instanceof AbstractEmitterBlockEntity em) {
-            final int current = em.getRangeOverride();
+            // First touch: start from the current effective default (half of admin
+            // ceiling) rather than 0, so +/- behaves predictably relative to what
+            // the player sees on the label.
+            int current = em.getRangeOverride();
+            if (current <= 0) {
+                current = (int) Math.round(em.effectiveRange(em.effectiveStrength(MagneticStrength.STRONG)));
+            }
             int next = current + delta;
             if (next < RANGE_MIN) next = RANGE_MIN;
             // Clamp to the per-block ceiling defined in config.
@@ -270,6 +351,20 @@ public class EmitterMenu extends AbstractContainerMenu {
             if (next > ceiling) next = ceiling;
             em.setRangeOverride(next);
             rangeBlocks.set(em.getRangeOverride());
+        }
+    }
+
+    private void bumpInflightCap(final BlockEntity be, final int delta) {
+        if (!hasCap(CAP_INFLIGHT)) return;
+        if (be instanceof MagneticExcavatorBlockEntity exc) {
+            final int current = exc.getInFlightCapOverride();
+            int next = current + delta;
+            // 0 = "follow admin ceiling"; allow setting all the way down to that.
+            if (next < 0) next = 0;
+            final int ceiling = inflightCapMax();
+            if (next > ceiling) next = ceiling;
+            exc.setInFlightCapOverride(next);
+            inflightCap.set(exc.getInFlightCapOverride());
         }
     }
 
@@ -312,17 +407,16 @@ public class EmitterMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
-        // 0 = armor slot, 1 = tool slot, 2..28 = inv main, 29..37 = hotbar.
+        // 0 = armor, 1 = tool, 2 = redstone fuel, 3..29 = inv main, 30..38 = hotbar.
         final Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         final ItemStack original = slot.getItem();
         final ItemStack copy = original.copy();
-        if (index == 0 || index == 1) {
-            // armor or tool slot → player inventory
-            if (!moveItemStackTo(original, 2, slots.size(), true)) return ItemStack.EMPTY;
+        if (index <= 2) {
+            // armor / tool / fuel → player inventory
+            if (!moveItemStackTo(original, 3, slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            // player inv → first matching slot. Try armor (if CAP_ARMOR + matching tag),
-            // then tool (if CAP_TOOL_SLOT + has enchantments).
+            // player inv → first matching slot.
             boolean moved = false;
             if (hasCap(CAP_ARMOR)
                     && (original.is(MagTags.METAL_ARMOR) || original.is(MagTags.METAL_TOOLS))) {
@@ -334,6 +428,10 @@ public class EmitterMenu extends AbstractContainerMenu {
                 final boolean hasAny = (active != null && !active.isEmpty())
                         || (stored != null && !stored.isEmpty());
                 if (hasAny) moved = moveItemStackTo(original, 1, 2, false);
+            }
+            if (!moved && hasCap(CAP_REDSTONE_FUEL)
+                    && original.is(MagTags.REDSTONE_FUEL)) {
+                moved = moveItemStackTo(original, 2, 3, false);
             }
             if (!moved) return ItemStack.EMPTY;
         }
@@ -355,6 +453,23 @@ public class EmitterMenu extends AbstractContainerMenu {
         }
         @Override public boolean isActive() { return enabled; }
         @Override public int getMaxStackSize() { return 1; }
+    }
+
+    /** Persistent slot for internal redstone power. Accepts any item tagged
+     *  {@link MagTags#REDSTONE_FUEL} — dust, blocks, torches, levers, plates,
+     *  observers, and anything datapacks add. Presence-based: any amount in
+     *  the slot keeps the excavator powered, and items are never consumed —
+     *  pull it back out anytime to switch off. */
+    private static final class RedstoneFuelSlot extends Slot {
+        private final boolean enabled;
+        RedstoneFuelSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
+            super(c, s, x, y);
+            this.enabled = enabled;
+        }
+        @Override public boolean mayPlace(final ItemStack stack) {
+            return enabled && stack.is(MagTags.REDSTONE_FUEL);
+        }
+        @Override public boolean isActive() { return enabled; }
     }
 
     /** Persistent slot for an enchanted item / book. Accepts any item carrying

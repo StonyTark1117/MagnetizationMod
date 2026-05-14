@@ -87,10 +87,14 @@ public class MagneticExcavatorBlock extends DirectionalBlock implements EntityBl
     ) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        // Strength + range tuning for the column reach, plus a tool slot for an
-        // enchanted tool / book whose enchantments enhance the column's drops
-        // (Fortune multiplies, Silk Touch silk-mines).
-        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE | EmitterMenu.CAP_TOOL_SLOT;
+        // Strength + range tuning, plus a tool slot for an enchanted tool / book whose
+        // enchantments enhance the column's drops (Fortune multiplies, Silk Touch
+        // silk-mines), a per-emitter cap on concurrent in-flight pulls, and an internal
+        // redstone-power slot so builders can run the excavator without exposing an
+        // external redstone source the pulled blocks can destroy.
+        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE
+                | EmitterMenu.CAP_TOOL_SLOT | EmitterMenu.CAP_INFLIGHT
+                | EmitterMenu.CAP_REDSTONE_FUEL;
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
                 Component.translatable("block.magnetization.magnetic_excavator")).openFor(sp);
         return InteractionResult.CONSUME;
@@ -101,9 +105,11 @@ public class MagneticExcavatorBlock extends DirectionalBlock implements EntityBl
                             final BlockState newState, final boolean isMoving) {
         if (!state.is(newState.getBlock())) {
             // Block is genuinely being removed (broken, replaced) — eject any
-            // installed enchanted tool so the player isn't left short.
+            // installed enchanted tool and internal redstone power so the
+            // player isn't left short.
             if (level.getBlockEntity(pos) instanceof MagneticExcavatorBlockEntity exc) {
                 exc.dropToolSlot(level, pos);
+                exc.dropRedstoneFuelSlot(level, pos);
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
@@ -115,13 +121,19 @@ public class MagneticExcavatorBlock extends DirectionalBlock implements EntityBl
             final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston
     ) {
         if (level.isClientSide) return;
-        final boolean nowPowered = level.hasNeighborSignal(pos);
-        if (state.getValue(BlockStateProperties.POWERED) != nowPowered) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
-        }
+        final boolean nowExternal = level.hasNeighborSignal(pos);
         final BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof MagneticExcavatorBlockEntity excavator) {
-            excavator.setPowered(nowPowered);
+            // BE owns block-state POWERED: it's the OR of external signal +
+            // internal redstone fuel, so the BE has to compute the union and
+            // push the result to the world. Just hand it the external bit.
+            excavator.setExternalSignal(nowExternal);
+            return;
+        }
+        // No BE yet (placement race): fall back to direct state update so the
+        // first frame shows the right visual until the BE attaches.
+        if (state.getValue(BlockStateProperties.POWERED) != nowExternal) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowExternal), Block.UPDATE_CLIENTS);
         }
     }
 }

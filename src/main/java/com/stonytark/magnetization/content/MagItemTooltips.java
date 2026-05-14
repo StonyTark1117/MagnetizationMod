@@ -1,11 +1,14 @@
 package com.stonytark.magnetization.content;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -74,6 +77,38 @@ public final class MagItemTooltips {
                     Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName())
                             .withStyle(color)
             ).withStyle(ChatFormatting.GRAY));
+
+            // LIRM (temporary magnetism) indicator — flagged when the polarity came
+            // from a lightning strike rather than the Electromagnet GUI. The marker
+            // gets cleared server-side by LirmDecayHandler when decay completes, so
+            // the line vanishes on its own.
+            if (stack.has(MagDataComponents.LIRM_CREATED_AT.get())) {
+                lines.add(Component.translatable("tooltip.magnetization.lirm_temporary")
+                        .withStyle(ChatFormatting.GOLD));
+            }
+
+            // Per-tool signature ability line — only when the item is a magnetized
+            // tool from the metal_tools tag and matches a known tool category.
+            if (stack.is(MagTags.METAL_TOOLS)) {
+                final String sigKey = signatureFor(stack);
+                if (sigKey != null) {
+                    lines.add(Component.translatable(sigKey).withStyle(ChatFormatting.DARK_AQUA));
+                }
+            }
         }
+    }
+
+    /** @return tooltip translation key matching the tool category, or {@code null} if none. */
+    private static String signatureFor(final ItemStack stack) {
+        if (matches(stack, ItemTags.SWORDS))   return "tooltip.magnetization.tool_signature.sword";
+        if (matches(stack, ItemTags.PICKAXES)) return "tooltip.magnetization.tool_signature.pickaxe";
+        if (matches(stack, ItemTags.AXES))     return "tooltip.magnetization.tool_signature.axe";
+        if (matches(stack, ItemTags.SHOVELS))  return "tooltip.magnetization.tool_signature.shovel";
+        if (matches(stack, ItemTags.HOES))     return "tooltip.magnetization.tool_signature.hoe";
+        return null;
+    }
+
+    private static boolean matches(final ItemStack stack, final TagKey<Item> tag) {
+        return stack.is(tag);
     }
 }

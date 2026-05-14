@@ -35,6 +35,15 @@ public final class MagTags {
     public static final TagKey<Item> METAL_TOOLS =
             TagKey.create(Registries.ITEM, Magnetization.id("metal_tools"));
 
+    /** Items the Magnetic Excavator (and any other emitter exposing the
+     *  redstone-fuel slot) accepts as a self-contained power source.
+     *  Presence-only — items in the slot are never consumed. The default
+     *  tag covers obvious redstone sources (dust, block, torch, lever,
+     *  observer, daylight detector, target, etc.); datapacks can extend
+     *  the list however they like. */
+    public static final TagKey<Item> REDSTONE_FUEL =
+            TagKey.create(Registries.ITEM, Magnetization.id("redstone_fuel"));
+
     public static final TagKey<EntityType<?>> MAGNETIZABLE_ENTITIES =
             TagKey.create(Registries.ENTITY_TYPE, Magnetization.id("magnetizable"));
 

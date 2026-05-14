@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
+import com.stonytark.magnetization.worldgen.AnomalyBiome;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -40,6 +41,28 @@ public class FieldCompassItem extends Item {
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.success(stack);
+
+        // Inside the magnetic anomaly the compass loses calibration: every reading is
+        // a randomly-chosen field, often misreporting strength/polarity/distance, so
+        // the player can't trust it for navigation while standing in the field flux.
+        if (AnomalyBiome.isAt(level, player.blockPosition())) {
+            final List<Found> hits = scanAll(level, player.position());
+            if (hits.isEmpty()) {
+                player.displayClientMessage(
+                        Component.translatable("compass.magnetization.anomaly_empty")
+                                .withStyle(ChatFormatting.DARK_PURPLE),
+                        true);
+            } else {
+                final Found random = hits.get(level.random.nextInt(hits.size()));
+                player.displayClientMessage(
+                        Component.translatable("compass.magnetization.anomaly_prefix")
+                                .withStyle(ChatFormatting.DARK_PURPLE)
+                                .append(Component.literal(" ").withStyle(ChatFormatting.GRAY))
+                                .append(format(random)),
+                        true);
+            }
+            return InteractionResultHolder.success(stack);
+        }
 
         final List<Found> hits = scanAll(level, player.position());
 

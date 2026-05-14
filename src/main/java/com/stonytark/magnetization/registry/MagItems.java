@@ -49,6 +49,14 @@ public final class MagItems {
     public static final DeferredItem<Item> MAGNETIC_PLATE =
             REGISTER.registerSimpleItem("magnetic_plate", new Item.Properties());
 
+    /** Rare drop from chopping logs with a magnetized axe. Now a real placeable block —
+     *  the BlockItem references {@link MagBlocks#PETRIFIED_WOOD}. Magnetized axes
+     *  preferentially pull both the drop and the block (the axe rip yanks placed
+     *  petrified-wood blocks from the world). Tagged ferromagnetic so generic emitters
+     *  weakly pull dropped pieces, but intentionally NOT in ferromagnetic_blocks. */
+    public static final DeferredItem<BlockItem> PETRIFIED_WOOD =
+            REGISTER.registerSimpleBlockItem(MagBlocks.PETRIFIED_WOOD);
+
     public static final DeferredItem<FieldCompassItem> FIELD_COMPASS =
             REGISTER.registerItem("field_compass", FieldCompassItem::new, new Item.Properties().stacksTo(1));
 

@@ -34,6 +34,7 @@ public final class MagConfig {
     public static final ModConfigSpec.EnumValue<MagneticStrength> EXCAVATOR_MAX_STRENGTH;
     public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_RANGE;
     public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_BLOCKS_PER_CYCLE;
+    public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_IN_FLIGHT;
 
     /** Soft-disabled blocks (by registry path). Disabled blocks emit no field, are
      *  hidden from the creative tab, and skip their right-click GUI. Existing
@@ -52,6 +53,21 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue GRAPPLE_MAX_RANGE;
     /** Field Compass scan radius, in blocks. */
     public static final ModConfigSpec.IntValue COMPASS_RANGE;
+
+    // Per-tool magnetized-effect toggles. Each tool gets a unique signature
+    // ability on top of the shared "pull dropped ferromagnetic items" handler.
+    public static final ModConfigSpec.BooleanValue LIRM_ENABLED;
+    public static final ModConfigSpec.BooleanValue PETRIFIED_FOREST_ENABLED;
+    public static final ModConfigSpec.BooleanValue TOOL_SWORD_YANK_ENABLED;
+    public static final ModConfigSpec.BooleanValue TOOL_PICKAXE_ORE_RIP_ENABLED;
+    public static final ModConfigSpec.BooleanValue TOOL_AXE_PULSE_ENABLED;
+    public static final ModConfigSpec.BooleanValue TOOL_SHOVEL_PAN_ENABLED;
+    public static final ModConfigSpec.BooleanValue TOOL_HOE_DOWSE_ENABLED;
+    public static final ModConfigSpec.IntValue     TOOL_PICKAXE_RIP_RADIUS;
+    public static final ModConfigSpec.IntValue     TOOL_PICKAXE_RIP_INTERVAL_TICKS;
+    public static final ModConfigSpec.DoubleValue  TOOL_SHOVEL_PAN_CHANCE;
+    public static final ModConfigSpec.IntValue     TOOL_HOE_DOWSE_RADIUS;
+    public static final ModConfigSpec.IntValue     TOOL_HOE_DOWSE_COOLDOWN_TICKS;
 
     static {
         final ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -91,41 +107,50 @@ public final class MagConfig {
                 .defineEnum("electromagnetMaxStrength", MagneticStrength.EXTREME);
         ELECTROMAGNET_MAX_RANGE = b
                 .comment("Max range (blocks) the Electromagnet GUI can dial up to.")
-                .defineInRange("electromagnetMaxRange", 64, 0, 256);
+                .defineInRange("electromagnetMaxRange", 256, 0, 512);
 
         ANCHOR_MAX_STRENGTH = b
                 .comment("Max strength tier the Magnetic Anchor GUI can select.")
                 .defineEnum("anchorMaxStrength", MagneticStrength.EXTREME);
         ANCHOR_MAX_RANGE = b
                 .comment("Max range (blocks) the Magnetic Anchor GUI can dial up to.")
-                .defineInRange("anchorMaxRange", 64, 0, 256);
+                .defineInRange("anchorMaxRange", 256, 0, 512);
 
         REPULSOR_MAX_STRENGTH = b
                 .comment("Max strength tier the Repulsor Coil GUI can select.")
                 .defineEnum("repulsorMaxStrength", MagneticStrength.EXTREME);
         REPULSOR_MAX_RANGE = b
                 .comment("Max range (blocks) the Repulsor Coil GUI can dial up to.")
-                .defineInRange("repulsorMaxRange", 64, 0, 256);
+                .defineInRange("repulsorMaxRange", 256, 0, 512);
 
         TRACTOR_MAX_STRENGTH = b
                 .comment("Max strength tier the Tractor Beam GUI can select.")
                 .defineEnum("tractorMaxStrength", MagneticStrength.EXTREME);
         TRACTOR_MAX_RANGE = b
                 .comment("Max range (blocks) the Tractor Beam GUI can dial up to.")
-                .defineInRange("tractorMaxRange", 64, 0, 256);
+                .defineInRange("tractorMaxRange", 256, 0, 512);
 
         EXCAVATOR_MAX_STRENGTH = b
                 .comment("Max strength tier the Magnetic Excavator GUI can select.",
                          "Strength controls the cycle interval (faster mining at higher tiers).")
                 .defineEnum("excavatorMaxStrength", MagneticStrength.EXTREME);
         EXCAVATOR_MAX_RANGE = b
-                .comment("Max column depth (blocks) the Magnetic Excavator can rip ores from.")
-                .defineInRange("excavatorMaxRange", 32, 1, 128);
+                .comment("Max column depth (blocks) the Magnetic Excavator can rip ores from.",
+                         "Default high enough that EXTREME-tier excavators reach bedrock from the",
+                         "surface (the runtime applies a 6× multiplier to the tier's nominal range,",
+                         "so an EXTREME excavator scans 192 blocks deep with no GUI override).")
+                .defineInRange("excavatorMaxRange", 256, 1, 384);
         EXCAVATOR_MAX_BLOCKS_PER_CYCLE = b
                 .comment("Hard cap on cells one Excavator pull cycle may scan/move,",
                          "regardless of strength + range. Acts as a safety against",
-                         "config typos. 32 is sane for any reasonable server.")
-                .defineInRange("excavatorMaxBlocksPerCycle", 32, 1, 128);
+                         "config typos. Bedrock from surface is ~200 blocks; default leaves headroom.")
+                .defineInRange("excavatorMaxBlocksPerCycle", 256, 1, 512);
+        EXCAVATOR_MAX_IN_FLIGHT = b
+                .comment("Max number of ferromagnetic blocks one Magnetic Excavator may pull at",
+                         "the same time. Each pulled block becomes a Sable sub-level until it",
+                         "reaches the emitter, so this also caps physics-simulation cost. Per-emitter",
+                         "GUI control can dial individual excavators down below this admin ceiling.")
+                .defineInRange("excavatorMaxInFlight", 16, 1, 64);
 
         b.pop();
 
@@ -163,6 +188,55 @@ public final class MagConfig {
 
         b.pop();
 
+        b.comment("Magnetized-tool signature abilities. Each tool in #magnetization:metal_tools",
+                  "(or its vanilla tag — #minecraft:swords/pickaxes/axes/shovels/hoes) gets its",
+                  "own ability once a polarity is stamped on it via the Electromagnet GUI. The",
+                  "shared 'pull dropped items' behavior still runs regardless of these toggles.")
+         .push("tools");
+
+        TOOL_SWORD_YANK_ENABLED = b
+                .comment("Magnetized swords yank opposite-pole armored targets one step toward the",
+                         "attacker on hit (in addition to the existing Magnetized effect tag).")
+                .define("swordYankEnabled", true);
+
+        TOOL_PICKAXE_ORE_RIP_ENABLED = b
+                .comment("Sneaking with a magnetized pickaxe rips nearby ferromagnetic ore blocks",
+                         "out of the world as items, periodically.")
+                .define("pickaxeOreRipEnabled", true);
+        TOOL_PICKAXE_RIP_RADIUS = b
+                .comment("Block radius around the player scanned for ferromagnetic ores while",
+                         "sneaking with a magnetized pickaxe.")
+                .defineInRange("pickaxeRipRadius", 4, 1, 16);
+        TOOL_PICKAXE_RIP_INTERVAL_TICKS = b
+                .comment("Ticks between ore-rip pulses. One block per pulse (capped to prevent griefing).")
+                .defineInRange("pickaxeRipIntervalTicks", 20, 4, 200);
+
+        TOOL_AXE_PULSE_ENABLED = b
+                .comment("Chopping a log with a magnetized axe sends a brief radial pull on nearby",
+                         "ferromagnetic items + entities toward the player.")
+                .define("axePulseEnabled", true);
+
+        TOOL_SHOVEL_PAN_ENABLED = b
+                .comment("Digging dirt/sand/gravel/clay/soil with a magnetized shovel has a small",
+                         "chance to drop trace iron nuggets and rarer raw magnetite.")
+                .define("shovelPanEnabled", true);
+        TOOL_SHOVEL_PAN_CHANCE = b
+                .comment("Probability per shovel-target block break that a trace metal drops.")
+                .defineInRange("shovelPanChance", 0.04d, 0.0d, 1.0d);
+
+        TOOL_HOE_DOWSE_ENABLED = b
+                .comment("Right-clicking with a magnetized hoe pings ferromagnetic ore blocks in",
+                         "range with marker particles — a magnetic metal-detector.")
+                .define("hoeDowseEnabled", true);
+        TOOL_HOE_DOWSE_RADIUS = b
+                .comment("Block radius scanned by the hoe dowsing ping.")
+                .defineInRange("hoeDowseRadius", 8, 2, 32);
+        TOOL_HOE_DOWSE_COOLDOWN_TICKS = b
+                .comment("Cooldown (ticks) between hoe dowsing pings.")
+                .defineInRange("hoeDowseCooldownTicks", 60, 10, 600);
+
+        b.pop();
+
         b.comment("World generation toggles. Note: the base magnetite ore vein generates",
                   "in every overworld biome regardless of these flags — these only control",
                   "the 'flavor' biome modifiers layered on top.")
@@ -180,6 +254,27 @@ public final class MagConfig {
                          "amplified. Currently a stub — the biome JSON is registered but the",
                          "biome is not yet injected into the overworld terrain. Default off.")
                 .define("anomalyBiomeEnabled", false);
+
+        PETRIFIED_FOREST_ENABLED = b
+                .comment("If true, the Petrified Forest biome registers a TerraBlender region",
+                         "so it spawns naturally on the overworld (a cold/dry inland slot).",
+                         "The biome JSON itself loads either way — turning this off just blocks",
+                         "natural generation; /locate biome magnetization:petrified_forest still",
+                         "works. Default true.")
+                .define("petrifiedForestEnabled", true);
+
+        b.pop();
+
+        b.comment("Lightning Induced Remnant Magnetism (LIRM). Real-world phenomenon — a",
+                  "lightning strike's transient magnetic field permanently stamps polarity onto",
+                  "nearby ferromagnetic material.")
+         .push("lightning");
+
+        LIRM_ENABLED = b
+                .comment("If true, every lightning bolt: (1) randomly magnetizes one unstamped",
+                         "metal armor/tool piece on the struck entity, and (2) has a high chance",
+                         "of converting nearby log blocks to petrified wood. Default true.")
+                .define("lirmEnabled", true);
 
         b.pop();
 

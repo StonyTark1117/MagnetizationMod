@@ -1,13 +1,17 @@
 package com.stonytark.magnetization.physics;
 
 import com.stonytark.magnetization.api.IMagnetizable;
+import com.stonytark.magnetization.api.Lirm;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.content.effect.MagnetizedEffect;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
+import com.stonytark.magnetization.worldgen.AnomalyBiome;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -51,8 +55,14 @@ public final class FieldApplicator {
     /** Bonus susceptibility added per worn piece that has been magnetized (data component
      *  {@link com.stonytark.magnetization.registry.MagDataComponents#ARMOR_POLARITY}).
      *  Stacks on top of {@link #PER_ARMOR_SUSCEPTIBILITY} — magnetized full plate ≈ 4×
-     *  the pull of plain iron. */
+     *  the pull of plain iron. Scaled by {@link Lirm#strength(ItemStack, long)} when the
+     *  piece carries an active LIRM stamp (temporary magnetism). */
     public static final double PER_MAGNETIZED_BONUS = 0.6d;
+    /** Petrified wood items are <i>weakly</i> ferromagnetic — distinctly less than a
+     *  full ferromagnetic ingot. Per the temporary-magnetism framing, even a fully-
+     *  decayed LIRM stamp wouldn't reduce them past this floor: they're intrinsically
+     *  weak, not LIRM-decayed. */
+    public static final double PETRIFIED_WOOD_SUSCEPTIBILITY = 0.3d;
 
     private FieldApplicator() {}
 
@@ -157,7 +167,7 @@ public final class FieldApplicator {
             );
             if (closest.distanceToSqr(origin) > range * range) continue;
 
-            Vec3 impulse = forceAt(field, closest);
+            Vec3 impulse = forceAt(level, field, closest);
             if (impulse.lengthSqr() < 1.0e-6) continue;
 
             // Sable's solver applies F = ma internally, so a constant impulse
@@ -221,7 +231,7 @@ public final class FieldApplicator {
             if (entityPol == MagneticPolarity.NONE) continue;
             final double polaritySign = entityPol == MagneticPolarity.SOUTH ? -1.0d : 1.0d;
 
-            final Vec3 impulse = forceAt(field, entityPos).scale(susceptibility * polaritySign);
+            final Vec3 impulse = forceAt(level, field, entityPos).scale(susceptibility * polaritySign);
             entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(entityVelocityScale())));
             entity.hurtMarked = true;
         }
@@ -233,6 +243,17 @@ public final class FieldApplicator {
         if (e instanceof ItemEntity item) {
             if (item.getItem().getItem() instanceof IMagnetizable) return true;
             return item.getItem().is(MagTags.FERROMAGNETIC_ITEMS);
+        }
+        // Any living entity wearing tagged metal armor is magnetizable through
+        // its gear — players (not in the entity tag by default) and modded
+        // humanoids included. {@link #baseSusceptibility} reads the armor and
+        // returns a non-zero value; this gate just keeps them in the candidate
+        // set so that pass runs at all. Without this branch, the susceptibility
+        // code would be unreachable for everything except tagged mobs.
+        if (e instanceof LivingEntity living) {
+            for (final ItemStack armor : living.getArmorSlots()) {
+                if (armor.is(MagTags.METAL_ARMOR)) return true;
+            }
         }
         return false;
     }
@@ -254,6 +275,9 @@ public final class FieldApplicator {
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
         if (e instanceof ItemEntity item) {
             if (item.getItem().getItem() instanceof IMagnetizable m) return m.magneticSusceptibility();
+            // Petrified wood is intrinsically weak — checked before the generic
+            // ferromagnetic_items pass so the 1.0 baseline doesn't override it.
+            if (item.getItem().is(MagItems.PETRIFIED_WOOD.get())) return PETRIFIED_WOOD_SUSCEPTIBILITY;
             if (item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) return 1.0d;
         }
         // Tagged-entity baseline (zombies, iron golems, item drops marked
@@ -268,10 +292,14 @@ public final class FieldApplicator {
         // it via /summon, or a player in fresh ferromagnetic armor all behave
         // identically. Used to be Player-only.
         if (e instanceof LivingEntity living) {
+            final long now = living.level().getGameTime();
             for (final ItemStack armor : living.getArmorSlots()) {
                 if (!armor.is(MagTags.METAL_ARMOR)) continue;
                 sum += PER_ARMOR_SUSCEPTIBILITY;
-                if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) sum += PER_MAGNETIZED_BONUS;
+                if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) {
+                    // Permanent stamps return strength=1.0; LIRM stamps decay from 1.0 → 0.0.
+                    sum += PER_MAGNETIZED_BONUS * Lirm.strength(armor, now);
+                }
             }
         }
         return sum;
@@ -307,11 +335,20 @@ public final class FieldApplicator {
      * outside the shape's effective region.
      */
     public static Vec3 forceAt(final MagneticField field, final Vec3 samplePos) {
+        return forceAt(null, field, samplePos);
+    }
+
+    /** Variant that consults the world to apply the anomaly-biome strength bonus when
+     *  the emitter origin lies inside the {@code magnetization:anomaly} biome. */
+    public static Vec3 forceAt(final @Nullable ServerLevel level, final MagneticField field, final Vec3 samplePos) {
         final Vec3 toSample = samplePos.subtract(field.origin());
         final double distance = toSample.length();
         if (distance < 1.0e-6 || distance > field.range()) return Vec3.ZERO;
 
-        final double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
+        double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
+        if (level != null && AnomalyBiome.isAt(level, BlockPos.containing(field.origin()))) {
+            scalar *= AnomalyBiome.STRENGTH_BONUS;
+        }
 
         return switch (field.shape()) {
             case OMNIDIRECTIONAL -> {

@@ -69,14 +69,28 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         return powered;
     }
 
-    /** Effective strength tier for {@link #computeField}: override when set, otherwise base. */
+    /** Effective strength tier for {@link #computeField}: override when set,
+     *  otherwise the default. Defaults to {@link MagneticStrength#STRONG} for
+     *  every menu-bearing emitter — the {@code base} the subclass passes is
+     *  ignored when no override is in play. */
     public MagneticStrength effectiveStrength(final MagneticStrength base) {
-        return strengthOverride != null ? strengthOverride : base;
+        return strengthOverride != null ? strengthOverride : MagneticStrength.STRONG;
     }
 
-    /** Effective range in blocks: override when set, otherwise the tier's default. */
+    /** Effective range in blocks: override when set, otherwise
+     *  {@link #defaultEffectiveRange}. Subclasses describe their default range;
+     *  the base falls back to the strength tier's nominal value. */
     public double effectiveRange(final MagneticStrength tier) {
-        return rangeOverride > 0 ? rangeOverride : tier.range();
+        return rangeOverride > 0 ? rangeOverride : defaultEffectiveRange(tier);
+    }
+
+    /** Subclass-supplied default range when no override has been dialed in.
+     *  Conventionally returns half of the per-block admin ceiling from
+     *  {@link com.stonytark.magnetization.config.MagConfig}, so emitters
+     *  ship with a sensible midway range without forcing the player into
+     *  the GUI. Override per-emitter to plug in the right config key. */
+    protected double defaultEffectiveRange(final MagneticStrength tier) {
+        return tier.range();
     }
 
     /** Effective polarity: override when set, otherwise base. */
@@ -98,7 +112,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     }
 
     public void setRangeOverride(final int blocks) {
-        final int clamped = Math.max(0, Math.min(64, blocks));
+        // Hard floor at 0 (= "use built-in default"). The upper bound matches the
+        // GUI's RANGE_MAX so a maxed-out slider isn't quietly truncated here — the
+        // per-emitter config ceiling does the actual game-balance clamp upstream
+        // in EmitterMenu.bumpRange.
+        final int clamped = Math.max(0, Math.min(com.stonytark.magnetization.menu.EmitterMenu.RANGE_MAX, blocks));
         if (this.rangeOverride == clamped) return;
         this.rangeOverride = clamped;
         this.cachedField = null;

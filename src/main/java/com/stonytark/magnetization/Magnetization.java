@@ -12,12 +12,18 @@ import com.stonytark.magnetization.registry.MagEffects;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.registry.MagMenus;
 import com.stonytark.magnetization.registry.MagParticles;
+import com.stonytark.magnetization.worldgen.AnomalyRegion;
+import com.stonytark.magnetization.worldgen.PetrifiedForestRegion;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import terrablender.api.Regions;
 
 @Mod(Magnetization.MOD_ID)
 public final class Magnetization {
@@ -40,7 +46,34 @@ public final class Magnetization {
 
         modContainer.registerConfig(ModConfig.Type.SERVER, MagConfig.SPEC);
 
+        modBus.addListener(Magnetization::onCommonSetup);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
+
+        // Client-only: light up the "Config" button on the Mods list with NeoForge's
+        // built-in auto-generated config screen. The guard keeps the client-side
+        // ConfigurationScreen / IConfigScreenFactory classes from being touched
+        // on a dedicated server, where they don't exist.
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            com.stonytark.magnetization.client.MagClientConfig.registerConfigScreen(modContainer);
+        }
+    }
+
+    /**
+     * TerraBlender region registration. Runs once, post-registry-flush, so the
+     * biome resource key is resolvable. TerraBlender is a hard dep — see
+     * {@code neoforge.mods.toml} — so no presence guard is needed here.
+     */
+    private static void onCommonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            Regions.register(new AnomalyRegion());
+            if (petrifiedForestEnabled()) {
+                Regions.register(new PetrifiedForestRegion());
+            }
+        });
+    }
+
+    private static boolean petrifiedForestEnabled() {
+        try { return MagConfig.PETRIFIED_FOREST_ENABLED.get(); } catch (Throwable t) { return true; }
     }
 
     public static ResourceLocation id(final String path) {

@@ -8,6 +8,12 @@
     "magnetization:raw_magnetite",
     "magnetization:magnetite_block",
     "magnetization:raw_magnetite_block",
-    "minecraft:lodestone"
+    "magnetization:petrified_wood",
+    "minecraft:lodestone",
+    "create:shaft",
+    "create:cogwheel",
+    "create:large_cogwheel",
+    "create:andesite_alloy",
+    "create:iron_sheet"
   ]
 }

@@ -50,6 +50,12 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         super(MagBlockEntities.MAGNETIC_ANCHOR.get(), pos, state);
     }
 
+    @Override
+    protected double defaultEffectiveRange(final MagneticStrength tier) {
+        try { return MagConfig.ANCHOR_MAX_RANGE.get() / 2.0d; }
+        catch (final Throwable t) { return tier.range(); }
+    }
+
     public @Nullable UUID boundShipId() {
         return boundShipId;
     }

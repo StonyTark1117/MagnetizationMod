@@ -3,11 +3,14 @@ package com.stonytark.magnetization.content.effect;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -62,5 +65,34 @@ public final class MagnetizedWeaponHits {
         }
         target.addEffect(new MobEffectInstance(MagEffects.MAGNETIZED, EFFECT_DURATION_TICKS, amp,
                 false, true));
+
+        // Sword signature ability: yank ANY target wearing metal armor (regardless of polarity).
+        // The thinking is "iron grabbing iron" — the field handle the sword has on the target's
+        // ferrous gear pulls them in, opposite poles or not. Strength is boosted on opposite-pole
+        // pin, but a same-pole or unpolarized metal-clad target still gets dragged toward the
+        // attacker. Untagged-armor targets (no METAL_ARMOR pieces) get no kinetic pull.
+        if (!swordYankEnabled()) return;
+        if (!weapon.is(ItemTags.SWORDS)) return;
+        if (!wearsMetalArmor(target)) return;
+        final Vec3 pull = attacker.position().subtract(target.position());
+        final double dist = pull.length();
+        if (dist < 0.1) return;
+        // Stronger pull on opposite-pole grabs (pin amp) — the same field that pins also
+        // accelerates the lunge.
+        final double strength = amp == MagnetizedEffect.PIN_AMPLIFIER ? 0.55d : 0.30d;
+        final Vec3 nudge = pull.scale(strength / dist);
+        target.setDeltaMovement(target.getDeltaMovement().add(nudge.x, 0.1d, nudge.z));
+        target.hurtMarked = true;
+    }
+
+    private static boolean wearsMetalArmor(final LivingEntity entity) {
+        for (final ItemStack armor : entity.getArmorSlots()) {
+            if (armor.is(MagTags.METAL_ARMOR)) return true;
+        }
+        return false;
+    }
+
+    private static boolean swordYankEnabled() {
+        try { return MagConfig.TOOL_SWORD_YANK_ENABLED.get(); } catch (Throwable t) { return true; }
     }
 }

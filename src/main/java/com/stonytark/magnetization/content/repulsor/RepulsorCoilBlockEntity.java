@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.repulsor;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,12 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
 
     public RepulsorCoilBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.REPULSOR_COIL.get(), pos, state);
+    }
+
+    @Override
+    protected double defaultEffectiveRange(final MagneticStrength tier) {
+        try { return MagConfig.REPULSOR_MAX_RANGE.get() / 2.0d; }
+        catch (final Throwable t) { return tier.range(); }
     }
 
     @Override

@@ -30,6 +30,18 @@ public final class MagDataComponents {
                             .persistent(MagneticPolarity.CODEC)
                             .networkSynchronized(MagneticPolarity.STREAM_CODEC));
 
+    /** Game-tick at which a Lightning-Induced Remnant Magnetism stamp was applied.
+     *  Presence flags the item as temporarily polarized — strength decays linearly
+     *  from full at the strike to zero after {@code Lirm.DURATION_TICKS}, after
+     *  which the LIRM_CREATED_AT component and the paired ARMOR_POLARITY are
+     *  cleaned up by {@code LirmDecayHandler}. Absent = polarity is permanent
+     *  (electromagnet-stamped) or absent. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>>
+            LIRM_CREATED_AT = register("lirm_created_at",
+                    builder -> builder
+                            .persistent(Codec.LONG)
+                            .networkSynchronized(ByteBufCodecs.VAR_LONG));
+
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(
             final String name,
             final UnaryOperator<DataComponentType.Builder<T>> builderOp

@@ -85,3 +85,14 @@ type = "optional"
 versionRange = "[17.0,)"
 ordering = "AFTER"
 side = "CLIENT"
+
+# TerraBlender — required. Drives natural generation of the Magnetic Anomaly
+# biome, and opens the door for other-mod biome interop (TerraBlender is the
+# 1.21.1 ecosystem's de-facto biome injection lib, so being on it composes with
+# Biomes O'Plenty, Terralith, etc.).
+[[dependencies.${mod_id}]]
+modId = "terrablender"
+type = "required"
+versionRange = "[4.1,)"
+ordering = "BEFORE"
+side = "BOTH"
