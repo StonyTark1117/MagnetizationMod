@@ -13,6 +13,7 @@ import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.registry.MagMenus;
 import com.stonytark.magnetization.registry.MagParticles;
 import com.stonytark.magnetization.worldgen.AnomalyRegion;
+import com.stonytark.magnetization.worldgen.MagSurfaceRules;
 import com.stonytark.magnetization.worldgen.PetrifiedForestRegion;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -24,6 +25,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import terrablender.api.Regions;
+import terrablender.api.SurfaceRuleManager;
 
 @Mod(Magnetization.MOD_ID)
 public final class Magnetization {
@@ -69,6 +71,13 @@ public final class Magnetization {
             if (petrifiedForestEnabled()) {
                 Regions.register(new PetrifiedForestRegion());
             }
+            // Custom surface blocks for the two custom biomes — runs whether or
+            // not the region was registered, so /place biome still produces a
+            // visually-distinct surface.
+            SurfaceRuleManager.addSurfaceRules(
+                    SurfaceRuleManager.RuleCategory.OVERWORLD,
+                    MOD_ID,
+                    MagSurfaceRules.overworld());
         });
     }
 
