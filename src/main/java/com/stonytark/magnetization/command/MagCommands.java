@@ -8,6 +8,9 @@ import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.worldgen.AnomalyBiome;
+import com.stonytark.magnetization.worldgen.PetrifiedForestBiome;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
@@ -20,8 +23,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -97,9 +104,61 @@ public final class MagCommands {
                         .then(Commands.literal("clear")
                                 .executes(ctx -> clearHeldLirm(ctx.getSource())))
                         .then(Commands.literal("fields")
-                                .executes(ctx -> countLirmFields(ctx.getSource()))));
+                                .executes(ctx -> countLirmFields(ctx.getSource()))))
+                .then(Commands.literal("tp")
+                        // /magnetization tp anomaly           — closest anomaly biome
+                        // /magnetization tp petrified_forest  — closest petrified forest
+                        .then(Commands.literal("anomaly")
+                                .executes(ctx -> tpToBiome(ctx.getSource(), AnomalyBiome.KEY, "anomaly")))
+                        .then(Commands.literal("petrified_forest")
+                                .executes(ctx -> tpToBiome(ctx.getSource(), PetrifiedForestBiome.KEY, "petrified forest"))));
 
         event.getDispatcher().register(root);
+    }
+
+    // ---------------- biome teleport ----------------
+
+    /** Scan up to 6 400 blocks for the nearest cell of {@code biomeKey} and
+     *  teleport the running player to the surface there. Mirrors vanilla
+     *  {@code /locate biome} parameters (radius / horizontal / vertical
+     *  step), then heightmap-walks to a safe surface Y so the player doesn't
+     *  spawn inside a stone column. */
+    private static int tpToBiome(final CommandSourceStack src,
+                                 final ResourceKey<Biome> biomeKey,
+                                 final String displayName) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final Exception e) {
+            src.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        final ServerLevel level = src.getLevel();
+        final BlockPos origin = player.blockPosition();
+
+        // Same scan parameters vanilla's LocateCommand uses for biomes.
+        final Pair<BlockPos, Holder<Biome>> found = level.findClosestBiome3d(
+                (Holder<Biome> h) -> h.is(biomeKey), origin, 6400, 32, 64);
+        if (found == null) {
+            src.sendFailure(Component.literal(
+                    "No nearby " + displayName + " biome within 6400 blocks of " + origin.toShortString() + "."));
+            return 0;
+        }
+
+        final BlockPos hit = found.getFirst();
+        final BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,
+                new BlockPos(hit.getX(), 0, hit.getZ()));
+        // Drop the player one block above the surface so they don't suffocate
+        // in a deep-snow / leaves stack the heightmap considers solid.
+        final double tx = surface.getX() + 0.5;
+        final double ty = surface.getY() + 1.0;
+        final double tz = surface.getZ() + 0.5;
+        player.teleportTo(level, tx, ty, tz, player.getYRot(), player.getXRot());
+
+        final int dist = (int) Math.round(Math.sqrt(origin.distSqr(surface)));
+        src.sendSuccess(() -> Component.literal(String.format(
+                "Teleported to %s biome at %s (%d blocks away).",
+                displayName, surface.toShortString(), dist)), true);
+        return 1;
     }
 
     // ---------------- LIRM test commands ----------------
