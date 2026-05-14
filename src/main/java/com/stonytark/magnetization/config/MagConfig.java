@@ -47,6 +47,15 @@ public final class MagConfig {
     /** Master toggle for the field-applicator and anchor-binding debug logs. Off by default. */
     public static final ModConfigSpec.BooleanValue DEBUG_LOGGING;
 
+    // Per-command-group permission levels. 0 = any player, 2 = operator (vanilla
+    // default), 3/4 = higher op levels. Read live via brigadier .requires(),
+    // so admins reload-config can adjust permissions without restarting.
+    public static final ModConfigSpec.IntValue COMMAND_DEBUG_PERMISSION;
+    public static final ModConfigSpec.IntValue COMMAND_SPAWN_TEST_PERMISSION;
+    public static final ModConfigSpec.IntValue COMMAND_SHIP_UTIL_PERMISSION;
+    public static final ModConfigSpec.IntValue COMMAND_LIRM_PERMISSION;
+    public static final ModConfigSpec.IntValue COMMAND_TP_PERMISSION;
+
     /** Global cooldown (ticks) between Magnetic Grapple right-clicks. */
     public static final ModConfigSpec.IntValue GRAPPLE_COOLDOWN_TICKS;
     /** Magnetic Grapple max range, in blocks. */
@@ -249,10 +258,11 @@ public final class MagConfig {
                 .define("magneticPeaksEnabled", false);
 
         ANOMALY_BIOME_ENABLED = b
-                .comment("If true, registers a custom 'magnetic anomaly' biome where field",
-                         "compasses spin, ambient particles drift, and emitter strength is",
-                         "amplified. Currently a stub — the biome JSON is registered but the",
-                         "biome is not yet injected into the overworld terrain. Default off.")
+                .comment("If true, the anomaly biome's runtime effects activate inside it",
+                         "(field-compass spin, 1.5× emitter strength, the random chaos field).",
+                         "The biome itself spawns naturally via TerraBlender regardless — this",
+                         "flag only controls whether being in the biome changes how magnetism",
+                         "behaves. Default off.")
                 .define("anomalyBiomeEnabled", false);
 
         PETRIFIED_FOREST_ENABLED = b
@@ -288,8 +298,50 @@ public final class MagConfig {
 
         b.pop();
 
+        b.comment("Required permission level for each /magnetization command group.",
+                  "0 = any player can run, 2 = operator (vanilla default), 3 or 4 =",
+                  "higher op tiers. Levels read live from the spec via brigadier's",
+                  ".requires() predicate so changes take effect on the next command",
+                  "invocation without restart.")
+         .push("commands");
+
+        COMMAND_DEBUG_PERMISSION = b
+                .comment("Permission level for /magnetization debug field|forceAt.")
+                .defineInRange("debugPermission", 2, 0, 4);
+        COMMAND_SPAWN_TEST_PERMISSION = b
+                .comment("Permission level for /magnetization spawn_test_ship|spawn_test_anchor.")
+                .defineInRange("spawnTestPermission", 2, 0, 4);
+        COMMAND_SHIP_UTIL_PERMISSION = b
+                .comment("Permission level for /magnetization clear_phantoms|shatter_all_ships|push_nearest_ship.",
+                         "These mutate world state (destroy sub-levels), so a higher level is",
+                         "the sensible default.")
+                .defineInRange("shipUtilPermission", 2, 0, 4);
+        COMMAND_LIRM_PERMISSION = b
+                .comment("Permission level for /magnetization lirm strike|stamp|inspect|clear|fields.",
+                         "Includes lightning-summoning, so keep it op-gated on shared servers.")
+                .defineInRange("lirmPermission", 2, 0, 4);
+        COMMAND_TP_PERMISSION = b
+                .comment("Permission level for /magnetization tp anomaly|petrified_forest.",
+                         "Default 0 = any player — biome travel is a quality-of-life shortcut,",
+                         "not a destructive admin tool. Bump to 2 if you want to lock travel.")
+                .defineInRange("tpPermission", 0, 0, 4);
+
+        b.pop();
+
         SPEC = b.build();
     }
+
+    /** Helper: returns the configured permission level, or a fallback if the
+     *  config isn't loaded yet (e.g. during early registration). */
+    private static int permissionOr(final ModConfigSpec.IntValue v, final int fallback) {
+        try { return v.get(); } catch (final Throwable t) { return fallback; }
+    }
+
+    public static int commandDebugPermission()    { return permissionOr(COMMAND_DEBUG_PERMISSION, 2); }
+    public static int commandSpawnTestPermission(){ return permissionOr(COMMAND_SPAWN_TEST_PERMISSION, 2); }
+    public static int commandShipUtilPermission() { return permissionOr(COMMAND_SHIP_UTIL_PERMISSION, 2); }
+    public static int commandLirmPermission()     { return permissionOr(COMMAND_LIRM_PERMISSION, 2); }
+    public static int commandTpPermission()       { return permissionOr(COMMAND_TP_PERMISSION, 0); }
 
     /** Convenience: lookup whether a block path is in the disabled list. Tolerates
      *  config-not-yet-loaded by returning false. */

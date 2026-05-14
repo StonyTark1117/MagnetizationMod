@@ -22,6 +22,7 @@
   "magnetization.configuration.guiLimits.excavatorMaxStrength": "Excavator — Max Strength",
   "magnetization.configuration.guiLimits.excavatorMaxRange": "Excavator — Max Depth",
   "magnetization.configuration.guiLimits.excavatorMaxBlocksPerCycle": "Excavator — Max Blocks/Cycle",
+  "magnetization.configuration.guiLimits.excavatorMaxInFlight": "Excavator — Max Concurrent Pulls",
 
   "magnetization.configuration.content": "Content Toggles",
   "magnetization.configuration.content.disabledBlocks": "Disabled Blocks",
@@ -54,6 +55,12 @@
 
   "magnetization.configuration.debug": "Debug",
   "magnetization.configuration.debug.debugLogging": "Debug Logging",
+  "magnetization.configuration.commands": "Command Permissions",
+  "magnetization.configuration.commands.debugPermission": "/magnetization debug — Required Op Level",
+  "magnetization.configuration.commands.spawnTestPermission": "/magnetization spawn_test_* — Required Op Level",
+  "magnetization.configuration.commands.shipUtilPermission": "/magnetization clear_phantoms / shatter_all_ships / push_nearest_ship — Required Op Level",
+  "magnetization.configuration.commands.lirmPermission": "/magnetization lirm * — Required Op Level",
+  "magnetization.configuration.commands.tpPermission": "/magnetization tp * — Required Op Level",
 
   "block.magnetization.electromagnet": "Electromagnet",
   "block.magnetization.kinetic_electromagnet": "Kinetic Electromagnet",

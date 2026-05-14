@@ -5,6 +5,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -55,9 +56,25 @@ public final class MagCommands {
     private MagCommands() {}
 
     public static void onRegister(final RegisterCommandsEvent event) {
+        // Per-subtree permission predicates — each reads its config value live,
+        // so admins can /reload after editing the config to change access
+        // without restarting the server. Lowering a permission to 0 makes the
+        // subtree available to all players; raising to 3-4 locks it to higher
+        // op tiers.
+        final java.util.function.Predicate<CommandSourceStack> debugPerm =
+                src -> src.hasPermission(MagConfig.commandDebugPermission());
+        final java.util.function.Predicate<CommandSourceStack> spawnPerm =
+                src -> src.hasPermission(MagConfig.commandSpawnTestPermission());
+        final java.util.function.Predicate<CommandSourceStack> shipUtilPerm =
+                src -> src.hasPermission(MagConfig.commandShipUtilPermission());
+        final java.util.function.Predicate<CommandSourceStack> lirmPerm =
+                src -> src.hasPermission(MagConfig.commandLirmPermission());
+        final java.util.function.Predicate<CommandSourceStack> tpPerm =
+                src -> src.hasPermission(MagConfig.commandTpPermission());
+
         final LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("magnetization")
-                .requires(src -> src.hasPermission(2))
                 .then(Commands.literal("debug")
+                        .requires(debugPerm)
                         .then(Commands.literal("field")
                                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                                         .executes(ctx -> {
@@ -73,16 +90,22 @@ public final class MagCommands {
                                                     return printForceAt(ctx.getSource(), emit, tgt);
                                                 })))))
                 .then(Commands.literal("spawn_test_ship")
+                        .requires(spawnPerm)
                         .executes(ctx -> spawnTestShip(ctx.getSource())))
                 .then(Commands.literal("spawn_test_anchor")
+                        .requires(spawnPerm)
                         .executes(ctx -> spawnTestAnchor(ctx.getSource())))
                 .then(Commands.literal("clear_phantoms")
+                        .requires(shipUtilPerm)
                         .executes(ctx -> clearPhantoms(ctx.getSource())))
                 .then(Commands.literal("shatter_all_ships")
+                        .requires(shipUtilPerm)
                         .executes(ctx -> shatterAllShips(ctx.getSource())))
                 .then(Commands.literal("push_nearest_ship")
+                        .requires(shipUtilPerm)
                         .executes(ctx -> pushNearestShip(ctx.getSource(), 5.0)))
                 .then(Commands.literal("lirm")
+                        .requires(lirmPerm)
                         // /magnetization lirm strike            — lightning bolt on the player
                         // /magnetization lirm strike <pos>       — lightning bolt at <pos>
                         // /magnetization lirm stamp [north|south]— manually LIRM-stamp held item
@@ -106,6 +129,7 @@ public final class MagCommands {
                         .then(Commands.literal("fields")
                                 .executes(ctx -> countLirmFields(ctx.getSource()))))
                 .then(Commands.literal("tp")
+                        .requires(tpPerm)
                         // /magnetization tp anomaly           — closest anomaly biome
                         // /magnetization tp petrified_forest  — closest petrified forest
                         .then(Commands.literal("anomaly")
