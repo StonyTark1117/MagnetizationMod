@@ -7,6 +7,7 @@ import com.stonytark.magnetization.content.electromagnet.KineticElectromagnetBlo
 import com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity;
 import com.stonytark.magnetization.content.permanent.PermanentMagnetBlockEntity;
 import com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity;
+import com.stonytark.magnetization.content.temporary.TemporaryMagnetBlockEntity;
 import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity;
 import com.stonytark.magnetization.content.tractor.TractorBeamBlockEntity;
 import net.minecraft.core.registries.Registries;
@@ -60,6 +61,11 @@ public final class MagBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PermanentMagnetBlockEntity>> PERMANENT_MAGNET =
             REGISTER.register("permanent_magnet", () -> BlockEntityType.Builder
                     .of(PermanentMagnetBlockEntity::new, MagBlocks.PERMANENT_MAGNET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TemporaryMagnetBlockEntity>> TEMPORARY_MAGNET =
+            REGISTER.register("temporary_magnet", () -> BlockEntityType.Builder
+                    .of(TemporaryMagnetBlockEntity::new, MagBlocks.TEMPORARY_MAGNET.get())
                     .build(null));
 
     private MagBlockEntities() {}

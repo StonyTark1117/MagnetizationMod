@@ -28,6 +28,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> LODESTONE_CORE   = REGISTER.registerSimpleBlockItem(MagBlocks.LODESTONE_CORE);
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);
     public static final DeferredItem<BlockItem> PERMANENT_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.PERMANENT_MAGNET);
+    public static final DeferredItem<BlockItem> TEMPORARY_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.TEMPORARY_MAGNET);
     public static final DeferredItem<BlockItem> POLARITY_INVERTER = REGISTER.registerSimpleBlockItem(MagBlocks.POLARITY_INVERTER);
     public static final DeferredItem<BlockItem> MAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETITE_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_MAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_MAGNETITE_ORE);

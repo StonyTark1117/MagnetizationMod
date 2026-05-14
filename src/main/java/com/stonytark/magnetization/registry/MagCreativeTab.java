@@ -61,6 +61,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGNETIC_EXCAVATOR);
                         accept(output, MagItems.MAGNETIC_SWITCH);
                         accept(output, MagItems.PERMANENT_MAGNET);
+                        accept(output, MagItems.TEMPORARY_MAGNET);
                         accept(output, MagItems.POLARITY_INVERTER);
                     })
                     .build());

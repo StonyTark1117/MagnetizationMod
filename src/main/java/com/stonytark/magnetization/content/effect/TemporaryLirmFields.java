@@ -97,12 +97,29 @@ public final class TemporaryLirmFields {
 
     private TemporaryLirmFields() {}
 
+    /** Generic registration — every other caller funnels through here. Use this
+     *  from new event handlers (explosions, mob deaths, etc.) so the registry
+     *  stays the single source of transient-field truth. */
+    public static void register(final ServerLevel level, final Vec3 origin,
+                                final MagneticPolarity polarity,
+                                final MagneticStrength tier,
+                                final double range, final long now) {
+        addEntry(level, new Entry(origin, polarity, tier, range, now));
+    }
+
     /** Register a temporary field at a just-petrified log. Called from
      *  {@link LightningRemnantMagnetism} for every cell converted in a strike. */
     public static void registerPetrifiedLog(final ServerLevel level, final BlockPos pos, final long now) {
         final MagneticPolarity pol = randomPolarity(level);
         addEntry(level, new Entry(Vec3.atCenterOf(pos), pol,
                 PETRIFIED_LOG_TIER, PETRIFIED_LOG_RANGE_BASE, now));
+    }
+
+    /** Convenience for callers that want a random polarity but custom range/tier. */
+    public static void registerRandomPolarity(final ServerLevel level, final Vec3 origin,
+                                              final MagneticStrength tier,
+                                              final double range, final long now) {
+        register(level, origin, randomPolarity(level), tier, range, now);
     }
 
     /** Roll for a temporary ground field at a strike position. Higher chance

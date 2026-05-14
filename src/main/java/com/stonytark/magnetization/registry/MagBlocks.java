@@ -8,6 +8,7 @@ import com.stonytark.magnetization.content.excavator.MagneticExcavatorBlock;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.content.permanent.PermanentMagnetBlock;
 import com.stonytark.magnetization.content.repulsor.RepulsorCoilBlock;
+import com.stonytark.magnetization.content.temporary.TemporaryMagnetBlock;
 import com.stonytark.magnetization.content.switchblock.MagneticSwitchBlock;
 import com.stonytark.magnetization.content.tractor.TractorBeamBlock;
 import net.minecraft.world.level.block.Block;
@@ -65,6 +66,14 @@ public final class MagBlocks {
 
     public static final DeferredBlock<PermanentMagnetBlock> PERMANENT_MAGNET =
             REGISTER.register("permanent_magnet", () -> new PermanentMagnetBlock(metal()));
+
+    /** Cheap, decaying counterpart to the Permanent Magnet. Crafted from
+     *  iron + redstone, emits a WEAK omnidirectional field for ~10 minutes,
+     *  then reverts to an iron block (redstone consumed at craft time is
+     *  not returned). Players use it for short-lived propulsion-track
+     *  segments where they don't want the lodestone-core investment. */
+    public static final DeferredBlock<TemporaryMagnetBlock> TEMPORARY_MAGNET =
+            REGISTER.register("temporary_magnet", () -> new TemporaryMagnetBlock(metal()));
 
     public static final DeferredBlock<PolarityInverterBlock> POLARITY_INVERTER =
             REGISTER.register("polarity_inverter", () -> new PolarityInverterBlock(metal()));

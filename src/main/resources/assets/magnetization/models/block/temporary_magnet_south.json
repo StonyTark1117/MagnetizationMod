@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/temporary_magnet_top_south",
+    "bottom": "magnetization:block/temporary_magnet_bottom",
+    "side": "magnetization:block/temporary_magnet_side"
+  }
+}
