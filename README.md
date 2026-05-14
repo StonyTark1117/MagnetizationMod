@@ -33,7 +33,7 @@ Onboard-only configurations (every magnet on the same ship) produce zero net thr
 | **Magnetic Anchor** | redstone | omnidirectional, STRONG | Locks a ship in place. The first ship in range becomes the bound target; binding persists across reload. |
 | **Repulsor Coil** | redstone | conical (placement-aligned), MEDIUM | Pushes ships in the direction the coil faces. Place upward for a hover pad; place sideways/downward to line a tunnel and shove ships through it. |
 | **Tractor Beam Emitter** | redstone | directional, STRONG | Pulls ships in front of it toward the emitter. Wrench-rotatable. |
-| **Magnetic Excavator** | redstone | directional, MEDIUM | Rips ferromagnetic ores out of the column along its facing — pulls the entire column above each ore as a single Sable sub-level toward the emitter, dismantles on arrival, and drops the contents (Fortune/Silk Touch capable via the in-GUI tool slot). Wrench-rotatable. |
+| **Magnetic Excavator** | redstone *or* internal redstone slot | continuous cone scan, default STRONG | Continuously projects a widening cone along its facing and pulls every ferromagnetic block in range — each as its own Sable sub-level that tunnels through obstructions toward the emitter, drops on arrival, and feeds adjacent inventories. GUI has strength/range knobs, an in-flight cap slider, an enchanted-tool slot (Fortune/Silk Touch), and an internal redstone-fuel slot so an external redstone signal isn't required. Wrench-rotatable. |
 | **Permanent Magnet** | none (always-on) | omnidirectional, WEAK | Right-click to flip polarity. Pairs of opposing-polarity permanent magnets between world and ship build static propulsion tracks. |
 | **Polarity Inverter** | passive | — | Adjacent emitters get their field polarity flipped. Two inverters cancel. |
 | **Magnetic Switch** | passive | — | Emits redstone signal proportional to nearest ship's distance (8-block range). Pair with anchor + comparator for auto-docking. |
@@ -83,24 +83,24 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 
 Right-click the **Electromagnet** or **Kinetic Electromagnet** with an empty hand to open its GUI. Insert a piece of metal armor (anything in `#magnetization:metal_armor`) or a metal tool (anything in `#magnetization:metal_tools`) into the slot, then click **N** / **S** / **Clear** to stamp the polarity:
 
-- **Magnetized armor**: while worn, gives the player +0.6 susceptibility per piece (on top of the base +0.4 for tagged metal armor) and overrides the wearer's effective polarity. A player in magnetized-NORTH plate is repelled by NORTH emitters and pulled hard by SOUTH ones.
-- **Magnetized tools**: while held or worn, attract dropped ferromagnetic items in a 4-block radius per magnetized tool the player carries. The same Magnetized-stamp logic gives a sword (or pickaxe / axe / shovel / hoe) a personal item-magnet effect — drop iron near a held magnetized sword and it flies to you.
+- **Magnetized armor**: while worn, gives the player +0.6 susceptibility per piece (on top of the base +0.4 for tagged metal armor) and overrides the wearer's effective polarity. A player in magnetized-NORTH plate is repelled by NORTH emitters and pulled hard by SOUTH ones. Magnetized armor also acts as a personal item-vacuum: nearby dropped ferromagnetic items drift toward the player (2-block radius per magnetized piece, so a full set reaches 8 blocks). Net polarity decides direction — SOUTH-net attracts, NORTH-net repels (useful for sweeping junk away while mining). A full magnetized set widens the filter from "ferromagnetic only" to every dropped item.
+- **Magnetized tools**: each tool type has a signature ability once stamped — sword-yank, pickaxe ore-rip while sneaking, axe pulse on log chop, shovel metal-pan trace drops, hoe dowsing-ping. See `tools.*` config keys to toggle individual abilities.
 - **Combat synergy**: hitting any LivingEntity with a magnetized weapon stamps the target with the **Magnetized** mob effect for 3 seconds. Opposite-pole weapon-on-armor hit upgrades to amp 2 — the target is *pinned* (60% horizontal velocity damp per tick) under the magnetic field, simulating iron grabbing iron.
 
 ## Magnetic Excavator
 
-The Excavator is a redstone-powered ferromagnetic mining block. Right-click (empty hand) for its GUI: strength tier (W/M/S/E), range slider (in blocks), and a persistent tool slot for an enchanted item or book. Wrench-rotate to change the active face direction; defaults to FACING=DOWN (place against a ceiling, mines the floor below).
+A redstone-powered (or internally-powered) ferromagnetic mining block. Right-click (empty hand) for its GUI: strength tier (W/M/S/E, default STRONG), range slider (default = half the admin ceiling), in-flight cap slider (how many concurrent pulls the emitter allows), an enchanted-tool slot, and an internal redstone-fuel slot. Wrench-rotate to change the active face direction; defaults to FACING=DOWN (place against a ceiling, mines the column below).
 
-Each pull cycle:
+The field model is **continuous, not per-cycle**:
 
-1. The Excavator scans the column along its FACING for the nearest block in `#magnetization:ferromagnetic_blocks` (covers `c:ores/iron|gold|copper|netherite_scrap`, `c:storage_blocks/*` for those metals, plus addon magnetite blocks).
-2. The whole column from the cell adjacent to the emitter through the ferromagnetic ore is removed from the world and assembled into a single Sable sub-level via `SubLevelAssemblyHelper.assembleBlocks`.
-3. The standard FieldApplicator pulls Sable ships, so the column-ship gets dragged toward the emitter as a fully-simulated rigid body — players see the entire column rip out of the ground and float toward the magnet.
-4. When the ship arrives at the emitter, it dismantles and drops the original blocks' loot. The tool slot's enchantments thread through `LootContextParams.TOOL` — Fortune III multiplies ore drops, Silk Touch silk-mines, etc. Damageable tools take 1 durability per cycle; books are immune.
+1. While powered, the Excavator continuously projects a widening cone along its facing (~14° half-angle, ≥5×5 disc even at shallow depth). Every few ticks it rescans the cone for ferromagnetic blocks in `#magnetization:ferromagnetic_blocks` (covers `c:ores/iron|gold|copper|netherite_scrap`, `c:storage_blocks/*` for those metals, plus addon magnetite blocks and selected Create intermediates).
+2. Each newly-found cell gets assembled as its **own** Sable sub-level — not one big column — and added to the in-flight pool. The per-emitter "Pulls" slider caps how many can be in flight simultaneously (default 16, admin ceiling 64).
+3. Each in-flight ship gets a radial impulse toward the emitter every tick, and *tunnels* through obstructions: the world cells on its toward-emitter faces are destroyed (drops pop in place) so the ore can drill through dirt/stone toward the magnet. Multiple ores from the same vein each carve their own tunnel.
+4. On arrival at the emitter, the ship dismantles and its loot drops at the emitter cell — directly into adjacent inventories first (hopper / chest / barrel via IItemHandler), falling back to a dropped ItemEntity for the entity-pass to pull into the same destination.
 
-Cycle interval scales with strength tier (40/20/10/5 ticks for WEAK/MEDIUM/STRONG/EXTREME). Pull stops at any block entity (chests, beacons, other emitters), unbreakable block (bedrock-class), or anything tagged `#magnetization:excavator_immune` — append to that tag to opt out of pulls (claim-mod boundaries, valuable spawners, etc.).
+The **enchanted-tool slot** at (132, 20) threads its enchantments through `LootContextParams.TOOL` for every ship's drop resolution — Fortune III multiplies ore drops, Silk Touch silk-mines, etc. Damageable tools take 1 durability per scan that pulls new blocks; enchanted books are immune. The **redstone-fuel slot** at (28, 20) accepts any item in `#magnetization:redstone_fuel` (dust, redstone block, torch, lever, observer, daylight detector, target, every vanilla button/pressure-plate variant). Items in the slot are never consumed — it's a presence-based internal power source so your wiring can be safely hidden from the Excavator's own pulls. Either an external redstone signal *or* a redstone-fuel item keeps the block active.
 
-The drop cell pushes directly into adjacent IItemHandlers (hopper, chest, barrel) before falling back to ItemEntity, so excavator → hopper → chest builds work without the one-tick latency.
+The strength tier no longer controls a cycle interval — it controls pull *force* and *destruction speed* per tunneling ship. Higher tiers = faster tunneling + harder pull. The whole pipeline is throttled per-emitter (destruction budget, in-flight cap) so even at cap=64 the server tick stays healthy. Pulls stop at any block entity (chests, beacons, other emitters), unbreakable block (bedrock-class), or anything tagged `#magnetization:excavator_immune` — append to that tag to opt out of pulls (claim-mod boundaries, valuable spawners, etc.).
 
 ## Cooperative Anchors
 
@@ -121,16 +121,75 @@ While goggles are worn, additional world overlays appear:
 
 `config/magnetization-server.toml`:
 
+### physics
 | Key | Default | Range | Description |
 |-----|---------|-------|-------------|
 | `physics.strengthMultiplier` | 1.0 | 0.0–100.0 | Global multiplier on every emitter's force. |
 | `physics.entityVelocityScale` | 0.05 | 0.0–1.0 | Tick conversion factor for vanilla entity velocity. |
 | `physics.conicalHalfAngleCos` | 0.7071 | 0.0–0.999 | Cosine of the half-angle of conical emitters. |
-| `physics.maxAccelPerTick` | 0.5 | 0.0–100.0 | Per-ship acceleration cap (blocks/tick²) after Sable's mass scaling. Prevents trivial griefing of tiny ships. 0 to disable. |
-| `worldgen.magneticPeaksEnabled` | false | true/false | If true, denser magnetite veins generate in `#minecraft:is_mountain` biomes. |
-| `worldgen.anomalyBiomeEnabled` | false | true/false | Stub for the magnetic anomaly biome (codec gate is wired; biome injection is not yet implemented). |
+| `physics.maxAccelPerTick` | 50.0 | 0.0–1000.0 | Per-ship acceleration cap (m/s²) applied after Sable's mass scaling. 0 to disable. |
 
-The base magnetite ore vein generates in every overworld biome regardless of these flags — the `worldgen` toggles only control optional flavor passes.
+### guiLimits — per-emitter GUI ceilings (admin caps)
+| Key | Default | Range | Description |
+|-----|---------|-------|-------------|
+| `guiLimits.electromagnetMaxStrength` | EXTREME | enum | Max strength tier the Electromagnet GUI can select. |
+| `guiLimits.electromagnetMaxRange` | 256 | 0–512 | Max range in blocks. |
+| `guiLimits.anchorMaxStrength` | EXTREME | enum | Max strength tier the Magnetic Anchor GUI can select. |
+| `guiLimits.anchorMaxRange` | 256 | 0–512 | Max range in blocks. |
+| `guiLimits.repulsorMaxStrength` | EXTREME | enum | Max strength tier the Repulsor Coil GUI can select. |
+| `guiLimits.repulsorMaxRange` | 256 | 0–512 | Max range in blocks. |
+| `guiLimits.tractorMaxStrength` | EXTREME | enum | Max strength tier the Tractor Beam GUI can select. |
+| `guiLimits.tractorMaxRange` | 256 | 0–512 | Max range in blocks. |
+| `guiLimits.excavatorMaxStrength` | EXTREME | enum | Max strength tier the Excavator GUI can select. |
+| `guiLimits.excavatorMaxRange` | 256 | 1–384 | Max scan depth for the Excavator. |
+| `guiLimits.excavatorMaxBlocksPerCycle` | 256 | 1–512 | Cap on cells the Excavator may consider per cone scan; safety against config typos. |
+| `guiLimits.excavatorMaxInFlight` | 16 | 1–64 | Admin ceiling for concurrent in-flight pulls per Excavator. Each in-flight pull is a Sable sub-level, so this also caps physics-simulation cost. |
+
+### content
+| Key | Default | Description |
+|-----|---------|-------------|
+| `content.disabledBlocks` | `[]` | Block paths (e.g. `"repulsor_coil"`) to disable — block emits no field, hidden from creative, GUI skipped. Placed instances stay but go inert. |
+| `content.disabledItems` | `[]` | Item paths to disable — hidden from creative, special effects skipped. |
+
+### items
+| Key | Default | Range | Description |
+|-----|---------|-------|-------------|
+| `items.grappleCooldownTicks` | 20 | 0–600 | Cooldown between Magnetic Grapple right-clicks. |
+| `items.grappleMaxRange` | 24 | 4–128 | Max scan range for the grapple. |
+| `items.compassRange` | 16 | 4–128 | Field Compass scan radius. |
+
+### tools — magnetized tool signature abilities
+| Key | Default | Description |
+|-----|---------|-------------|
+| `tools.swordYankEnabled` | true | Magnetized sword yanks opposite-pole armored targets one step on hit. |
+| `tools.pickaxeOreRipEnabled` | true | Sneaking with a magnetized pickaxe rips nearby ferromagnetic ore as items. |
+| `tools.pickaxeRipRadius` | 4 | (1–16) Scan radius for the pickaxe ore-rip. |
+| `tools.pickaxeRipIntervalTicks` | 20 | (4–200) Ticks between ore-rip pulses. |
+| `tools.axePulseEnabled` | true | Chopping a log with a magnetized axe sends a radial pull on nearby items + entities toward the player. |
+| `tools.shovelPanEnabled` | true | Digging soil with a magnetized shovel may drop trace iron / raw magnetite. |
+| `tools.shovelPanChance` | 0.04 | (0–1) Probability per qualifying block break. |
+| `tools.hoeDowseEnabled` | true | Right-clicking a magnetized hoe pings ferromagnetic ore with marker particles. |
+| `tools.hoeDowseRadius` | 8 | (2–32) Hoe dowsing ping radius. |
+| `tools.hoeDowseCooldownTicks` | 60 | (10–600) Cooldown between dowsing pings. |
+
+### worldgen
+| Key | Default | Description |
+|-----|---------|-------------|
+| `worldgen.magneticPeaksEnabled` | false | If true, denser magnetite veins generate in `#minecraft:is_mountain` biomes. |
+| `worldgen.anomalyBiomeEnabled` | false | Gate for the anomaly biome's runtime effects (field-compass spin, 1.5× emitter strength, random chaos forces). The biome itself spawns naturally via TerraBlender regardless of this flag — this just controls whether stepping inside it changes how magnetism behaves. |
+| `worldgen.petrifiedForestEnabled` | true | If true, the Petrified Forest biome registers a TerraBlender region so it spawns naturally. Turning it off only blocks natural generation; `/locate biome` still works. |
+
+### lightning
+| Key | Default | Description |
+|-----|---------|-------------|
+| `lightning.lirmEnabled` | true | Lightning-Induced Remnant Magnetism: lightning strikes magnetize one unstamped metal armor/tool piece on the struck entity, and have a high chance of petrifying nearby logs. |
+
+### debug
+| Key | Default | Description |
+|-----|---------|-------------|
+| `debug.debugLogging` | false | FieldApplicator + anchor-binding diagnostic logs. Leave off on busy servers. |
+
+The base magnetite ore vein generates in every overworld biome regardless of these flags — `worldgen.*` only controls optional flavor passes layered on top.
 
 ## Building
 

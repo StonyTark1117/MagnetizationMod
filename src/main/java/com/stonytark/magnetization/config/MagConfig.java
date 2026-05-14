@@ -132,7 +132,7 @@ public final class MagConfig {
 
         EXCAVATOR_MAX_STRENGTH = b
                 .comment("Max strength tier the Magnetic Excavator GUI can select.",
-                         "Strength controls the cycle interval (faster mining at higher tiers).")
+                         "Strength controls pull force and tunneling speed per in-flight ship.")
                 .defineEnum("excavatorMaxStrength", MagneticStrength.EXTREME);
         EXCAVATOR_MAX_RANGE = b
                 .comment("Max column depth (blocks) the Magnetic Excavator can rip ores from.",
@@ -141,9 +141,9 @@ public final class MagConfig {
                          "so an EXTREME excavator scans 192 blocks deep with no GUI override).")
                 .defineInRange("excavatorMaxRange", 256, 1, 384);
         EXCAVATOR_MAX_BLOCKS_PER_CYCLE = b
-                .comment("Hard cap on cells one Excavator pull cycle may scan/move,",
-                         "regardless of strength + range. Acts as a safety against",
-                         "config typos. Bedrock from surface is ~200 blocks; default leaves headroom.")
+                .comment("Hard cap on cells the Excavator's cone scan considers per pass,",
+                         "regardless of strength + range. Acts as a safety against config",
+                         "typos. Bedrock from surface is ~200 blocks; default leaves headroom.")
                 .defineInRange("excavatorMaxBlocksPerCycle", 256, 1, 512);
         EXCAVATOR_MAX_IN_FLIGHT = b
                 .comment("Max number of ferromagnetic blocks one Magnetic Excavator may pull at",

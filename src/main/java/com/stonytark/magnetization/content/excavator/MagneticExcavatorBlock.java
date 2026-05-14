@@ -28,9 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Magnetic Excavator: the directional ferromagnetic mining block. Defaults to
- * pulling from below — placed against a ceiling, the active face points DOWN,
- * and the column under it ascends one cell per pull cycle until exhausted.
- * Wrench rotates the active face to any of six directions.
+ * pulling from below — placed against a ceiling, the active face points DOWN.
+ * While powered, the block projects a widening cone along its active face,
+ * continuously pulling every ferromagnetic block it finds; each pulled block
+ * tunnels through obstructions on its way to the emitter. Wrench rotates the
+ * active face to any of six directions.
  *
  * <p>The block is just plumbing — the BlockEntity does the actual work.
  */

@@ -350,7 +350,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         catch (final Throwable t) { return DEFAULT_SCAN_DEPTH; }
     }
 
-    /** Hard cap on how many cells one pull cycle may rip out, regardless of
+    /** Hard cap on how many cells one cone-scan pass considers, regardless of
      *  range. Acts as a config-typo backstop. */
     private static int maxBlocksPerCycle() {
         try { return MagConfig.EXCAVATOR_MAX_BLOCKS_PER_CYCLE.get(); }
@@ -732,9 +732,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
     /** Continuous field scan. Sweeps the cone, collects every ferromagnetic
      *  block not already being pulled, assembles each as its own pulled
      *  sub-level — until either no candidates remain or the in-flight cap
-     *  is hit. Independent of any per-cycle gate: runs every
-     *  {@link #SCAN_INTERVAL_TICKS} ticks so new ores get drawn in as space
-     *  opens up. */
+     *  is hit. Runs every {@link #SCAN_INTERVAL_TICKS} ticks so new ores
+     *  get drawn in as space opens up. */
     private void maybeScanAndPull(final ServerLevel level, final BlockState state) {
         final int cap = effectiveInFlightCap();
         if (pulledShips.size() >= cap) return;

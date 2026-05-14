@@ -537,7 +537,7 @@ public final class MagPonderScenes {
         scene.idle(25);
 
         scene.overlay().showText(70)
-                .text("Pulled blocks travel one cell per cycle until they reach the emitter")
+                .text("Each pulled block tunnels through any obstructions on its way to the emitter")
                 .pointAt(util.vector().centerOf(ore2))
                 .placeNearTarget();
         scene.idle(25);

@@ -128,10 +128,10 @@ public class EmitterMenu extends AbstractContainerMenu {
     private final DataSlot strengthOrdinal = DataSlot.standalone();
     /** Current range override on the BE; 0 = default. */
     private final DataSlot rangeBlocks = DataSlot.standalone();
-    /** Excavator-only: 0..100 percent reflecting either the active ship's
-     *  arrival progress, or — when no pull is in flight — cycle cooldown
-     *  progress. Driven from the BE's {@code getPullProgressPct()} on each
-     *  tick via {@link #broadcastChanges()}. */
+    /** Excavator-only: 0..100 percent reflecting the closest active pulled
+     *  ship's normalized progress toward the emitter, or 100 when nothing is
+     *  in flight (ready). Driven from the BE's {@code getPullProgressPct()}
+     *  on each tick via {@link #broadcastChanges()}. */
     private final DataSlot pullProgress = DataSlot.standalone();
     /** Excavator-only: current per-emitter in-flight cap. 0 = "follow the
      *  admin ceiling" ({@link com.stonytark.magnetization.config.MagConfig#EXCAVATOR_MAX_IN_FLIGHT}). */

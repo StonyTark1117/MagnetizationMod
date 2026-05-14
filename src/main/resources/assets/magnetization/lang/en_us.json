@@ -143,7 +143,7 @@
   "tooltip.magnetization.magnetic_anchor.use":        "Locks the first ship that enters its range. Persists across reload.",
   "tooltip.magnetization.repulsor_coil.use":          "Pushes ships outward in a 45° cone along its facing. Place upward for a hover pad; place sideways or down to line a propulsion tunnel.",
   "tooltip.magnetization.tractor_beam.use":           "Directional pull along facing. Wrench to rotate.",
-  "tooltip.magnetization.magnetic_excavator.use":     "Powered by redstone. Rips ferromagnetic ores out of the column along its facing — pulled blocks travel one cell per cycle until they reach the emitter and pop into the world. Wrench to rotate; right-click to set strength + range.",
+  "tooltip.magnetization.magnetic_excavator.use":     "Powered by redstone (external signal or internal redstone slot). Projects a widening cone along its facing and continuously pulls every ferromagnetic block in range — each pulled block tunnels through obstructions toward the emitter, drops on arrival, and feeds adjacent inventories. Wrench to rotate; right-click for the GUI.",
   "tooltip.magnetization.lodestone_core.use":         "Crafting component for every emitter.",
   "tooltip.magnetization.ferromagnetic_ingot.use":    "Iron infused with magnetic properties.",
   "tooltip.magnetization.magnetic_plate.use":         "Flat ferromagnetic plate. Used as cladding.",
