@@ -1,13 +1,18 @@
 package com.stonytark.magnetization.command;
 
+import com.stonytark.magnetization.api.Lirm;
+import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
+import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.registry.MagBlocks;
+import com.stonytark.magnetization.registry.MagDataComponents;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -15,6 +20,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -66,9 +74,171 @@ public final class MagCommands {
                 .then(Commands.literal("shatter_all_ships")
                         .executes(ctx -> shatterAllShips(ctx.getSource())))
                 .then(Commands.literal("push_nearest_ship")
-                        .executes(ctx -> pushNearestShip(ctx.getSource(), 5.0)));
+                        .executes(ctx -> pushNearestShip(ctx.getSource(), 5.0)))
+                .then(Commands.literal("lirm")
+                        // /magnetization lirm strike            — lightning bolt on the player
+                        // /magnetization lirm strike <pos>       — lightning bolt at <pos>
+                        // /magnetization lirm stamp [north|south]— manually LIRM-stamp held item
+                        // /magnetization lirm inspect            — print LIRM state of held + armor
+                        // /magnetization lirm clear              — clear LIRM stamp from held item
+                        .then(Commands.literal("strike")
+                                .executes(ctx -> strikePlayer(ctx.getSource()))
+                                .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                                        .executes(ctx -> strikeAt(ctx.getSource(),
+                                                BlockPosArgument.getBlockPos(ctx, "pos")))))
+                        .then(Commands.literal("stamp")
+                                .executes(ctx -> stampHeld(ctx.getSource(), null))
+                                .then(Commands.literal("north")
+                                        .executes(ctx -> stampHeld(ctx.getSource(), MagneticPolarity.NORTH)))
+                                .then(Commands.literal("south")
+                                        .executes(ctx -> stampHeld(ctx.getSource(), MagneticPolarity.SOUTH))))
+                        .then(Commands.literal("inspect")
+                                .executes(ctx -> inspectLirm(ctx.getSource())))
+                        .then(Commands.literal("clear")
+                                .executes(ctx -> clearHeldLirm(ctx.getSource()))));
 
         event.getDispatcher().register(root);
+    }
+
+    // ---------------- LIRM test commands ----------------
+
+    /** Summons a vanilla lightning bolt directly on the player. Fires both
+     *  the EntityJoinLevelEvent (→ log petrification) and EntityStruckByLightningEvent
+     *  (→ LIRM stamp on a metal armor/tool piece) so a single command exercises
+     *  the whole feature. Also deals normal lightning damage — wear armor or
+     *  brace for it. */
+    private static int strikePlayer(final CommandSourceStack src) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final Exception e) {
+            src.sendFailure(Component.literal("Run this as a player, or use /magnetization lirm strike <pos>."));
+            return 0;
+        }
+        return spawnBolt(src.getLevel(), player.blockPosition(), src,
+                "Struck " + player.getScoreboardName() + " with lightning.");
+    }
+
+    /** Summons a vanilla lightning bolt at a position. Useful for testing log
+     *  petrification — point at a tree and any log within 3 blocks of the bolt
+     *  has a 75% chance of becoming petrified wood. */
+    private static int strikeAt(final CommandSourceStack src, final BlockPos pos) {
+        return spawnBolt(src.getLevel(), pos, src,
+                "Struck " + pos.toShortString() + " with lightning.");
+    }
+
+    private static int spawnBolt(final ServerLevel level, final BlockPos at,
+                                 final CommandSourceStack src, final String successMsg) {
+        final LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
+        if (bolt == null) {
+            src.sendFailure(Component.literal("Could not create lightning entity."));
+            return 0;
+        }
+        bolt.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0.0f, 0.0f);
+        level.addFreshEntity(bolt);
+        src.sendSuccess(() -> Component.literal(successMsg), true);
+        return 1;
+    }
+
+    /** Manually applies a LIRM stamp to the held item, skipping the lightning
+     *  step. Useful for testing decay (the 20-minute timer + LirmDecayHandler
+     *  cleanup) without standing in a storm. If polarity is null, picks one at
+     *  random — same as a real strike. */
+    private static int stampHeld(final CommandSourceStack src, final MagneticPolarity preset) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final Exception e) {
+            src.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        final ItemStack held = player.getMainHandItem();
+        if (held.isEmpty()) {
+            src.sendFailure(Component.literal("Hold an item in your main hand first."));
+            return 0;
+        }
+        if (!held.is(MagTags.METAL_ARMOR) && !held.is(MagTags.METAL_TOOLS)) {
+            src.sendFailure(Component.literal(
+                    "Held item " + held.getItem() + " isn't tagged metal_armor or metal_tools."));
+            return 0;
+        }
+        final MagneticPolarity pol = preset != null
+                ? preset
+                : (player.level().random.nextBoolean() ? MagneticPolarity.NORTH : MagneticPolarity.SOUTH);
+        held.set(MagDataComponents.ARMOR_POLARITY.get(), pol);
+        Lirm.stamp(held, player.level().getGameTime());
+        src.sendSuccess(() -> Component.literal(
+                "Stamped " + held.getItem() + " with LIRM " + pol.getSerializedName()
+                        + " (decays over 20 min)."), true);
+        return 1;
+    }
+
+    /** Lists every metal-armor / metal-tool the player carries, showing LIRM
+     *  status: polarity, decay strength (1.0 = fresh / no LIRM, 0.0 = expired),
+     *  and remaining ticks if a LIRM marker is active. */
+    private static int inspectLirm(final CommandSourceStack src) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final Exception e) {
+            src.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        final long now = player.level().getGameTime();
+        final List<Component> lines = new ArrayList<>();
+        for (final ItemStack armor : player.getArmorSlots()) {
+            describeLirm(armor, now, lines, "armor");
+        }
+        describeLirm(player.getMainHandItem(), now, lines, "main");
+        describeLirm(player.getOffhandItem(), now, lines, "off");
+        if (lines.isEmpty()) {
+            src.sendSuccess(() -> Component.literal(
+                    "No metal armor / tools to inspect."), false);
+            return 1;
+        }
+        for (final Component line : lines) {
+            src.sendSuccess(() -> line, false);
+        }
+        return lines.size();
+    }
+
+    private static void describeLirm(final ItemStack stack, final long now,
+                                     final List<Component> out, final String slot) {
+        if (stack.isEmpty()) return;
+        if (!stack.is(MagTags.METAL_ARMOR) && !stack.is(MagTags.METAL_TOOLS)) return;
+        final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
+        final Long createdAt = stack.get(MagDataComponents.LIRM_CREATED_AT.get());
+        final double strength = Lirm.strength(stack, now);
+        final String polStr = pol == null ? "—" : pol.getSerializedName();
+        final String lirmStr;
+        if (createdAt == null) {
+            lirmStr = pol == null ? "unmagnetized" : "permanent stamp";
+        } else {
+            final long remaining = Math.max(0, Lirm.DURATION_TICKS - (now - createdAt));
+            lirmStr = String.format("LIRM %.0f%% (remaining %ds)", strength * 100, remaining / 20);
+        }
+        out.add(Component.literal(String.format("[%s] %s — polarity=%s, %s",
+                slot, stack.getItem(), polStr, lirmStr))
+                .withStyle(pol == MagneticPolarity.NORTH ? ChatFormatting.AQUA
+                        : pol == MagneticPolarity.SOUTH ? ChatFormatting.RED
+                        : ChatFormatting.GRAY));
+    }
+
+    /** Strips LIRM (the time-stamp + paired polarity) from the held item.
+     *  Same operation the decay handler eventually runs automatically. */
+    private static int clearHeldLirm(final CommandSourceStack src) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final Exception e) {
+            src.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        final ItemStack held = player.getMainHandItem();
+        if (held.isEmpty()) {
+            src.sendFailure(Component.literal("Hold an item in your main hand first."));
+            return 0;
+        }
+        Lirm.clear(held);
+        src.sendSuccess(() -> Component.literal(
+                "Cleared LIRM + polarity from " + held.getItem() + "."), true);
+        return 1;
     }
 
     /**
