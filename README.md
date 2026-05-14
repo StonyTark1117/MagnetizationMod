@@ -78,7 +78,7 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 - **Iron / chainmail / gold / netherite / magnetite / ferromagnetic armor** makes you magnetizable. Each piece worn adds susceptibility — full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
 - **Magnetic Grapple** turns infrastructure into traversal. Right-click pointing at any space within 24 blocks of an active attractive field; the closest qualifying emitter pulls you toward it. Cooldown: 1 second.
 - **`/magnetization debug field <pos>`** prints the field state at a block. Useful for debugging.
-- **`/magnetization lirm strike [pos]`** summons a lightning bolt on the player (or at `pos`) so LIRM + log petrification fire on demand. `/magnetization lirm stamp [north|south]` manually LIRM-stamps the held metal item (testing decay without waiting on a storm). `/magnetization lirm inspect` lists every metal armor/tool the player carries with current polarity + decay remaining. `/magnetization lirm clear` strips the LIRM stamp from the held item.
+- **`/magnetization lirm strike [pos]`** summons a lightning bolt on the player (or at `pos`) so LIRM + log petrification fire on demand. `/magnetization lirm stamp [north|south]` manually LIRM-stamps the held metal item (testing decay without waiting on a storm). `/magnetization lirm inspect` lists every metal armor/tool the player carries with current polarity + decay remaining. `/magnetization lirm clear` strips the LIRM stamp from the held item. `/magnetization lirm fields` prints the number of active transient magnetic fields seeded by recent lightning in the current level.
 
 ## Magnetizing armor & tools
 

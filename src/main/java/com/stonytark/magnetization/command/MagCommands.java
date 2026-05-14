@@ -95,7 +95,9 @@ public final class MagCommands {
                         .then(Commands.literal("inspect")
                                 .executes(ctx -> inspectLirm(ctx.getSource())))
                         .then(Commands.literal("clear")
-                                .executes(ctx -> clearHeldLirm(ctx.getSource()))));
+                                .executes(ctx -> clearHeldLirm(ctx.getSource())))
+                        .then(Commands.literal("fields")
+                                .executes(ctx -> countLirmFields(ctx.getSource()))));
 
         event.getDispatcher().register(root);
     }
@@ -219,6 +221,17 @@ public final class MagCommands {
                 .withStyle(pol == MagneticPolarity.NORTH ? ChatFormatting.AQUA
                         : pol == MagneticPolarity.SOUTH ? ChatFormatting.RED
                         : ChatFormatting.GRAY));
+    }
+
+    /** Counts the active transient magnetic fields seeded by lightning in
+     *  the running player's level — useful for verifying that strike-on-ground
+     *  / log-petrification actually populates the registry. */
+    private static int countLirmFields(final CommandSourceStack src) {
+        final ServerLevel level = src.getLevel();
+        final int n = com.stonytark.magnetization.content.effect.TemporaryLirmFields.activeCount(level);
+        src.sendSuccess(() -> Component.literal(
+                "Active transient LIRM fields in this level: " + n), false);
+        return n;
     }
 
     /** Strips LIRM (the time-stamp + paired polarity) from the held item.

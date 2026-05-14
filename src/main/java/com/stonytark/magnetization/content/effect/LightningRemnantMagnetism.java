@@ -178,11 +178,23 @@ public final class LightningRemnantMagnetism {
         // here rather than in onStruck so storm bolts that miss every entity still
         // produce petrified wood under their column.
         petrifyLogsAround(level, e.blockPosition());
+
+        // Ground-strike temporary field. The strike's actual surface point is
+        // the heightmap top under the bolt; we register a temp field there
+        // (probability-gated, with petrified-forest biome bias) so any
+        // lightning has a chance to leave magnetism behind.
+        final BlockPos surface = level.getHeightmapPos(
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                e.blockPosition()).below();
+        if (!level.getBlockState(surface).isAir()) {
+            TemporaryLirmFields.maybeRegisterGroundStrike(level, surface, level.getGameTime());
+        }
     }
 
     private static void petrifyLogsAround(final ServerLevel level, final BlockPos center) {
         final BlockState target = MagBlocks.PETRIFIED_WOOD.get().defaultBlockState();
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        final long now = level.getGameTime();
         int converted = 0;
         for (int dx = -CONVERSION_RADIUS; dx <= CONVERSION_RADIUS; dx++) {
             for (int dy = -CONVERSION_RADIUS; dy <= CONVERSION_RADIUS; dy++) {
@@ -191,7 +203,12 @@ public final class LightningRemnantMagnetism {
                     final BlockState here = level.getBlockState(cursor);
                     if (!here.is(BlockTags.LOGS)) continue;
                     if (level.random.nextDouble() >= LOG_PETRIFICATION_CHANCE) continue;
-                    level.setBlock(cursor.immutable(), target, Block.UPDATE_CLIENTS);
+                    final BlockPos at = cursor.immutable();
+                    level.setBlock(at, target, Block.UPDATE_CLIENTS);
+                    // Newly petrified wood emits a weak temporary magnetic
+                    // field that decays to zero over 30 s. The block itself
+                    // stays petrified forever — the field is the LIRM half.
+                    TemporaryLirmFields.registerPetrifiedLog(level, at, now);
                     converted++;
                 }
             }
