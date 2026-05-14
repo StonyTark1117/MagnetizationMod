@@ -29,6 +29,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,8 @@ import java.util.List;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class LightningRemnantMagnetism {
 
+    private static final Logger LOG = LoggerFactory.getLogger("magnetization/LIRM");
+
     /** Block-conversion radius around a lightning bolt's spawn position. */
     private static final int CONVERSION_RADIUS = 3;
     /** Per-log probability of petrification once it falls in the conversion radius. */
@@ -71,7 +75,10 @@ public final class LightningRemnantMagnetism {
 
     @SubscribeEvent
     public static void onStruck(final EntityStruckByLightningEvent event) {
-        if (!enabled()) return;
+        if (!enabled()) {
+            if (MagConfig.debugLogging()) LOG.info("LIRM struck-event suppressed: feature disabled in config");
+            return;
+        }
         if (!(event.getEntity() instanceof LivingEntity target)) return;
 
         // Gather all unmagnetized metal armor + held tools as candidates.
@@ -82,7 +89,12 @@ public final class LightningRemnantMagnetism {
         for (final ItemStack hand : new ItemStack[]{target.getMainHandItem(), target.getOffhandItem()}) {
             if (hand.is(MagTags.METAL_TOOLS) && !alreadyMagnetized(hand)) candidates.add(hand);
         }
-        if (candidates.isEmpty()) return;
+        if (candidates.isEmpty()) {
+            if (MagConfig.debugLogging())
+                LOG.info("LIRM strike on {} produced no stamp — no eligible metal armor/tools",
+                        target.getType().toShortString());
+            return;
+        }
 
         final ItemStack picked = candidates.get(target.level().random.nextInt(candidates.size()));
         final MagneticPolarity pol = target.level().random.nextBoolean()
@@ -90,6 +102,12 @@ public final class LightningRemnantMagnetism {
         picked.set(MagDataComponents.ARMOR_POLARITY.get(), pol);
         // Mark as temporary — the LIRM tick handler will decay then clear it.
         Lirm.stamp(picked, target.level().getGameTime());
+
+        if (MagConfig.debugLogging()) {
+            LOG.info("LIRM stamp: target={} item={} polarity={} candidates={}",
+                    target.getType().toShortString(), picked.getItem(), pol.getSerializedName(),
+                    candidates.size());
+        }
 
         if (target.level() instanceof ServerLevel server) {
             shockwave(server, target, pol);
@@ -165,6 +183,7 @@ public final class LightningRemnantMagnetism {
     private static void petrifyLogsAround(final ServerLevel level, final BlockPos center) {
         final BlockState target = MagBlocks.PETRIFIED_WOOD.get().defaultBlockState();
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        int converted = 0;
         for (int dx = -CONVERSION_RADIUS; dx <= CONVERSION_RADIUS; dx++) {
             for (int dy = -CONVERSION_RADIUS; dy <= CONVERSION_RADIUS; dy++) {
                 for (int dz = -CONVERSION_RADIUS; dz <= CONVERSION_RADIUS; dz++) {
@@ -173,8 +192,12 @@ public final class LightningRemnantMagnetism {
                     if (!here.is(BlockTags.LOGS)) continue;
                     if (level.random.nextDouble() >= LOG_PETRIFICATION_CHANCE) continue;
                     level.setBlock(cursor.immutable(), target, Block.UPDATE_CLIENTS);
+                    converted++;
                 }
             }
+        }
+        if (MagConfig.debugLogging() && converted > 0) {
+            LOG.info("LIRM bolt at {} petrified {} log(s)", center.toShortString(), converted);
         }
     }
 

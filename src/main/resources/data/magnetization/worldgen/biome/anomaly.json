@@ -88,15 +88,41 @@
     "ambient": [
       {
         "type": "minecraft:bat",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 20
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 25
       }
     ],
     "axolotls": [],
-    "creature": [],
+    "creature": [
+      {
+        "type": "minecraft:iron_golem",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 3
+      }
+    ],
     "misc": [],
-    "monster": [],
+    "monster": [
+      {
+        "type": "minecraft:husk",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 12
+      },
+      {
+        "type": "minecraft:skeleton",
+        "maxCount": 4,
+        "minCount": 1,
+        "weight": 14
+      },
+      {
+        "type": "minecraft:vex",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 4
+      }
+    ],
     "underground_water_creature": [],
     "water_ambient": [],
     "water_creature": []
