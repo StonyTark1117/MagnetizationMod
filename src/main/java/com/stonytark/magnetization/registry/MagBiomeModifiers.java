@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 /**
  * Registers the addon's custom BiomeModifier codec types. Datapack JSONs in
- * {@code data/magnetization/biome_modifier/} reference these by id.
+ * {@code data/magnetization/neoforge/biome_modifier/} reference these by id.
  */
 public final class MagBiomeModifiers {
 

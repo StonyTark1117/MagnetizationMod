@@ -27,7 +27,7 @@ public final class PetrifiedForestBiome {
         try {
             return MagConfig.PETRIFIED_FOREST_ENABLED.get();
         } catch (Throwable t) {
-            return true;
+            return false;
         }
     }
 
