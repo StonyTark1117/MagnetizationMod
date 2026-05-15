@@ -148,6 +148,13 @@ dependencies {
     compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}")
     compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}")
 
+    // Just Enough Resources (JER) — JEI add-on that shows ore distribution +
+    // mob loot tables. Soft-dep; the @JERPlugin annotation is JER's discovery
+    // mechanism (scanned at FMLCommonSetup), so without JER installed our
+    // plugin class is never loaded and the missing imports don't matter.
+    compileOnly("maven.modrinth:just-enough-resources-jer:${jer_version}")
+    localRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
+
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

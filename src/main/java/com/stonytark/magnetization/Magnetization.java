@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -80,6 +81,16 @@ public final class Magnetization {
                     SurfaceRuleManager.RuleCategory.OVERWORLD,
                     MOD_ID,
                     MagSurfaceRules.overworld());
+
+            // Just Enough Resources integration — register magnetite ore
+            // distributions directly via JERAPI.getInstance(). We avoid JER's
+            // @JERPlugin annotation route because the 1.6.0.17 NeoForge build
+            // scans for the wrong type and never finds the plugin. The
+            // isLoaded check keeps MagJerPlugin (and its JER imports)
+            // unloaded when JER isn't installed.
+            if (ModList.get().isLoaded("jeresources")) {
+                com.stonytark.magnetization.compat.jer.MagJerPlugin.register();
+            }
         });
     }
 

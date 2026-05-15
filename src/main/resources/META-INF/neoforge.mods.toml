@@ -89,6 +89,16 @@ versionRange = "[17.0,)"
 ordering = "AFTER"
 side = "CLIENT"
 
+# Just Enough Resources — JEI add-on that surfaces ore-distribution graphs
+# and mob loot tables. Optional; the addon registers magnetite distributions
+# only when JER is installed.
+[[dependencies.${mod_id}]]
+modId = "jeresources"
+type = "optional"
+versionRange = "[1.6,)"
+ordering = "AFTER"
+side = "CLIENT"
+
 # TerraBlender — required. Drives natural generation of the Magnetic Anomaly
 # biome, and opens the door for other-mod biome interop (TerraBlender is the
 # 1.21.1 ecosystem's de-facto biome injection lib, so being on it composes with
