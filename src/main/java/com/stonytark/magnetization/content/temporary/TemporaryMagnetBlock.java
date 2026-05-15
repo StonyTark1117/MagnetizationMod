@@ -3,6 +3,12 @@ package com.stonytark.magnetization.content.temporary;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -20,11 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * Always-on while alive (no redstone), reverts to iron block after the BE's
  * lifetime elapses.
  *
- * <p>Polarity is rolled randomly at placement (sneak-place forces SOUTH for
- * symmetry with the Permanent Magnet's quality-of-life behavior); unlike the
- * Permanent, the player can't right-click flip it after placement — picking it
- * back up and re-placing rolls again, but in-place flipping would erase the
- * Permanent's main advantage.
+ * <p>Polarity defaults to NORTH on placement (sneak-place starts SOUTH), and
+ * right-click flips it — same UX as the Permanent Magnet so propulsion-track
+ * setups feel consistent regardless of which variant you're using.
  */
 public class TemporaryMagnetBlock extends Block implements EntityBlock {
 
@@ -44,15 +49,22 @@ public class TemporaryMagnetBlock extends Block implements EntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
-        final MagneticPolarity pol;
-        if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
-            pol = MagneticPolarity.SOUTH;
-        } else if (context.getLevel().getRandom().nextBoolean()) {
-            pol = MagneticPolarity.SOUTH;
-        } else {
-            pol = MagneticPolarity.NORTH;
-        }
-        return defaultBlockState().setValue(POLARITY, pol);
+        return defaultBlockState().setValue(POLARITY,
+                context.getPlayer() != null && context.getPlayer().isShiftKeyDown()
+                        ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(
+            final ItemStack stack, final BlockState state, final Level level,
+            final BlockPos pos, final Player player, final InteractionHand hand,
+            final BlockHitResult hit
+    ) {
+        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        final MagneticPolarity flipped = state.getValue(POLARITY).opposite();
+        level.setBlock(pos, state.setValue(POLARITY, flipped), Block.UPDATE_CLIENTS);
+        level.playSound(null, pos, SoundEvents.LODESTONE_HIT, SoundSource.BLOCKS, 0.5f, 1.4f);
+        return ItemInteractionResult.sidedSuccess(false);
     }
 
     @Override

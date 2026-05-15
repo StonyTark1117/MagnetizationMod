@@ -58,10 +58,12 @@ public final class AnomalyMagneticChaos {
      *  Scaled by per-target susceptibility before application. */
     private static final double ENTITY_PEAK_IMPULSE = 0.18d;
 
-    /** Peak Newtons applied to Sable ships per chaos update. The per-tick
-     *  acceleration cap in {@link MagConfig#MAX_ACCEL_PER_TICK} clamps the
-     *  effective dV; this just sets the unclamped ceiling. */
-    private static final double SHIP_PEAK_FORCE_N = 120.0d;
+    /** Peak Newtons applied to Sable ships per chaos update. Roughly half a
+     *  STRONG emitter at point-blank (~2400 N) so the anomaly feels like a
+     *  comparable-but-erratic disturbance rather than a polite nudge. The
+     *  per-tick acceleration cap in {@link MagConfig#MAX_ACCEL_PER_TICK}
+     *  clamps the effective dV; this just sets the unclamped ceiling. */
+    private static final double SHIP_PEAK_FORCE_N = 1500.0d;
 
     /** Search radius around each player for affected ItemEntities. Items in
      *  unloaded chunks won't tick and don't matter; this keeps the scan
@@ -70,6 +72,10 @@ public final class AnomalyMagneticChaos {
 
     private AnomalyMagneticChaos() {}
 
+    private static double chaosStrength() {
+        try { return MagConfig.ANOMALY_CHAOS_STRENGTH.get(); } catch (Throwable t) { return 1.0d; }
+    }
+
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!AnomalyBiome.enabled()) return;
@@ -77,12 +83,15 @@ public final class AnomalyMagneticChaos {
         final long now = server.getGameTime();
         if ((now % TICK_INTERVAL) != 0L) return;
 
+        final double strength = chaosStrength();
+        if (strength <= 0.0d) return;
+
         // Players + their nearby items.
         for (final ServerPlayer player : server.players()) {
             if (player.isSpectator() || player.isDeadOrDying()) continue;
             if (!AnomalyBiome.isAt(server, player.blockPosition())) continue;
-            applyChaosToPlayer(player, now);
-            applyChaosToNearbyItems(server, player, now);
+            applyChaosToPlayer(player, now, strength);
+            applyChaosToNearbyItems(server, player, now, strength);
         }
 
         // Sable sub-levels anywhere in this level — biome check per ship.
@@ -94,11 +103,11 @@ public final class AnomalyMagneticChaos {
             final org.joml.Vector3dc poseVec = ship.logicalPose().position();
             final Vec3 shipPos = new Vec3(poseVec.x(), poseVec.y(), poseVec.z());
             if (!AnomalyBiome.isAt(server, BlockPos.containing(shipPos))) continue;
-            applyChaosToShip(ship, shipPos, now);
+            applyChaosToShip(ship, shipPos, now, strength);
         }
     }
 
-    private static void applyChaosToPlayer(final ServerPlayer player, final long now) {
+    private static void applyChaosToPlayer(final ServerPlayer player, final long now, final double strength) {
         // Susceptibility mirrors FieldApplicator's count: each magnetized armor
         // piece adds to a unitless multiplier so a fully-kitted player gets
         // tossed harder than a bare-handed wanderer.
@@ -111,12 +120,12 @@ public final class AnomalyMagneticChaos {
         }
         if (susceptibility <= 0) return;
         final Vec3 chaos = chaosVectorAt(now, player.position());
-        final Vec3 delta = chaos.scale(ENTITY_PEAK_IMPULSE * Math.min(susceptibility, 2.0d));
+        final Vec3 delta = chaos.scale(ENTITY_PEAK_IMPULSE * Math.min(susceptibility, 2.0d) * strength);
         player.setDeltaMovement(player.getDeltaMovement().add(delta));
         player.hurtMarked = true;
     }
 
-    private static void applyChaosToNearbyItems(final ServerLevel server, final ServerPlayer player, final long now) {
+    private static void applyChaosToNearbyItems(final ServerLevel server, final ServerPlayer player, final long now, final double strength) {
         final AABB box = AABB.ofSize(player.position(),
                 2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS);
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box)) {
@@ -124,14 +133,14 @@ public final class AnomalyMagneticChaos {
             if (!item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) continue;
             if (!AnomalyBiome.isAt(server, item.blockPosition())) continue;
             final Vec3 chaos = chaosVectorAt(now, item.position());
-            item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(ENTITY_PEAK_IMPULSE)));
+            item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(ENTITY_PEAK_IMPULSE * strength)));
             item.hasImpulse = true;
         }
     }
 
-    private static void applyChaosToShip(final ServerSubLevel ship, final Vec3 shipPos, final long now) {
+    private static void applyChaosToShip(final ServerSubLevel ship, final Vec3 shipPos, final long now, final double strength) {
         final Vec3 chaos = chaosVectorAt(now, shipPos);
-        final Vec3 force = chaos.scale(SHIP_PEAK_FORCE_N);
+        final Vec3 force = chaos.scale(SHIP_PEAK_FORCE_N * strength);
         SableBridge.applyWorldImpulse(ship, shipPos, force);
     }
 

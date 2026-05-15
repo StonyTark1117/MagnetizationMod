@@ -178,8 +178,9 @@ While goggles are worn, additional world overlays appear:
 | Key | Default | Description |
 |-----|---------|-------------|
 | `worldgen.magneticPeaksEnabled` | false | If true, denser magnetite veins generate in `#minecraft:is_mountain` biomes. |
-| `worldgen.anomalyBiomeEnabled` | false | Gate for the anomaly biome's runtime effects (field-compass spin, 1.5× emitter strength, random chaos forces). The biome itself spawns naturally via TerraBlender regardless of this flag — this just controls whether stepping inside it changes how magnetism behaves. |
-| `worldgen.petrifiedForestEnabled` | true | If true, the Petrified Forest biome registers a TerraBlender region so it spawns naturally. Turning it off only blocks natural generation; `/locate biome` still works. |
+| `worldgen.anomalyBiomeEnabled` | false | Default off — opt-in. When true, the Magnetic Anomaly biome registers a TerraBlender region (so it spawns naturally) **and** its runtime effects activate inside it (vanilla-compass spin, field-compass scramble, 1.5× emitter strength, random chaos field). When false the biome JSON still loads, so `/locate biome magnetization:anomaly` and `/magnetization tp anomaly` still work — but it won't spawn on its own and effects are inert. |
+| `worldgen.anomalyChaosStrength` | 1.0 | Multiplier on the anomaly's chaos-field impulses (ships, players, items). 0 = compass spin + emitter bonus only, no kinetic chaos. Range 0.0–10.0. |
+| `worldgen.petrifiedForestEnabled` | false | Default off — opt-in. When true, the Petrified Forest biome registers a TerraBlender region so it spawns naturally. Turning it off only blocks natural generation; `/locate biome` and `/magnetization tp petrified_forest` still work. |
 
 ### lightning
 | Key | Default | Description |
@@ -200,7 +201,11 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 ./gradlew test        # 13 unit tests on field math
 ```
 
-`./gradlew runClient` for an in-dev test run; `runData` is unreliable in the moddev plugin's classpath assembly here, so providers run only from a working IDE setup.
+`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for the dedicated-server smoke test. Data is hand-authored JSON; no `runData` task is wired.
+
+## Known issues
+
+- Sable may log `Received a sub-level movement packet for a non-existent sub-level` on the client at low frequency while the Magnetic Excavator is actively pulling. This is a packet-ordering race during the excavator's rapid sub-level assemble→remove cycle for blocks Sable couldn't initialize a body for; it's non-fatal and only affects log noise.
 
 ## License
 

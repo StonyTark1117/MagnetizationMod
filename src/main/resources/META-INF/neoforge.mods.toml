@@ -9,6 +9,8 @@ displayName = "${mod_name}"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
 logoFile = "logo.png"
+issueTrackerURL = "https://github.com/StonyTark1117/MagnetizationMod/issues"
+displayURL = "https://github.com/StonyTark1117/MagnetizationMod"
 
 [[dependencies.${mod_id}]]
 modId = "neoforge"

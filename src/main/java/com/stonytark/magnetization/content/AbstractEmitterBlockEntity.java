@@ -273,6 +273,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     @Override
     public boolean addToTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         tooltip.addAll(FieldTooltipFormatter.format(cachedField, false));
+        tooltip.addAll(extraTooltipLines(false));
         return true;
     }
 
@@ -281,6 +282,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         tooltip.add(Component.translatable("tooltip.magnetization.field_status")
                 .withStyle(ChatFormatting.GRAY));
         tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
+        tooltip.addAll(extraTooltipLines(true));
         return true;
     }
 

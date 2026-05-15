@@ -169,6 +169,12 @@ public final class MagCommands {
         }
 
         final BlockPos hit = found.getFirst();
+        // Force the target chunk to generate up to SURFACE status — otherwise the
+        // chunk heightmap is empty and getHeightmapPos returns the world's minBuild
+        // height (player lands inside bedrock). findClosestBiome3d scans biome
+        // sources without actually generating terrain, so we have to ask for it.
+        level.getChunk(hit.getX() >> 4, hit.getZ() >> 4,
+                net.minecraft.world.level.chunk.status.ChunkStatus.SURFACE, true);
         final BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,
                 new BlockPos(hit.getX(), 0, hit.getZ()));
         // Drop the player one block above the surface so they don't suffocate

@@ -6,15 +6,19 @@ import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Cheap, transient companion to the Permanent Magnet. Always-on (no redstone
@@ -86,6 +90,26 @@ public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
     public long remainingTicks(final long now) {
         if (placedTick == Long.MIN_VALUE) return LIFETIME_TICKS;
         return Math.max(0L, LIFETIME_TICKS - (now - placedTick));
+    }
+
+    @Override
+    public List<Component> extraTooltipLines(final boolean verbose) {
+        // Use a level-relative clock when we can; before the first server tick
+        // (and on the client where game time is the synced level time anyway),
+        // fall back to level.getGameTime so the line shows full lifetime
+        // immediately on placement instead of "0:00".
+        final long now = level != null ? level.getGameTime() : 0L;
+        final long remaining = remainingTicks(now);
+        final int totalSeconds = (int) (remaining / 20L);
+        final int minutes = totalSeconds / 60;
+        final int seconds = totalSeconds % 60;
+        final float frac = LIFETIME_TICKS > 0 ? remaining / (float) LIFETIME_TICKS : 0f;
+        final ChatFormatting color = frac > 0.5f
+                ? ChatFormatting.GREEN
+                : frac > 0.2f ? ChatFormatting.YELLOW : ChatFormatting.RED;
+        return List.of(Component.translatable(
+                "tooltip.magnetization.temporary_magnet.decay",
+                String.format("%d:%02d", minutes, seconds)).withStyle(color));
     }
 
     @Override

@@ -23,5 +23,8 @@ public enum EmitterBodyProvider implements IBlockComponentProvider {
         for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
             tooltip.addLine(line);
         }
+        for (Component line : source.extraTooltipLines(true)) {
+            tooltip.addLine(line);
+        }
     }
 }

@@ -1,6 +1,10 @@
 package com.stonytark.magnetization.api;
 
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Implemented by block entities that emit a magnetic field.
@@ -17,4 +21,17 @@ public interface MagneticFieldSource {
      *         (e.g. unpowered, redstone-disabled, no kinetic input).
      */
     @Nullable MagneticField currentField();
+
+    /**
+     * Optional extra HUD lines emitted by an emitter. Appended after the standard
+     * field block by goggles, in-world hover, Jade, WTHIT, and TOP. Used for
+     * source-specific status that doesn't fit the {@link MagneticField} model —
+     * e.g. the Temporary Magnet's remaining lifetime.
+     *
+     * @param verbose {@code true} for the goggle/Jade/WTHIT/TOP surfaces;
+     *                {@code false} for the compact in-world hover line.
+     */
+    default List<Component> extraTooltipLines(boolean verbose) {
+        return Collections.emptyList();
+    }
 }

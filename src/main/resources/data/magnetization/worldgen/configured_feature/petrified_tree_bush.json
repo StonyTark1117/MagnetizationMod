@@ -9,10 +9,10 @@
     "force_dirt": false,
     "ignore_vines": true,
     "foliage_placer": {
-      "type": "minecraft:bush_foliage_placer",
-      "radius": 1,
+      "type": "minecraft:blob_foliage_placer",
+      "radius": 0,
       "offset": 0,
-      "height": 1
+      "height": 0
     },
     "foliage_provider": {
       "type": "minecraft:simple_state_provider",
@@ -26,8 +26,8 @@
     },
     "trunk_placer": {
       "type": "minecraft:straight_trunk_placer",
-      "base_height": 1,
-      "height_rand_a": 0,
+      "base_height": 2,
+      "height_rand_a": 1,
       "height_rand_b": 0
     },
     "trunk_provider": {

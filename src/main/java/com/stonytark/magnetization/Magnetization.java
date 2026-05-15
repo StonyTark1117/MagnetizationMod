@@ -67,7 +67,9 @@ public final class Magnetization {
      */
     private static void onCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            Regions.register(new AnomalyRegion());
+            if (anomalyBiomeEnabled()) {
+                Regions.register(new AnomalyRegion());
+            }
             if (petrifiedForestEnabled()) {
                 Regions.register(new PetrifiedForestRegion());
             }
@@ -81,8 +83,12 @@ public final class Magnetization {
         });
     }
 
+    private static boolean anomalyBiomeEnabled() {
+        try { return MagConfig.ANOMALY_BIOME_ENABLED.get(); } catch (Throwable t) { return false; }
+    }
+
     private static boolean petrifiedForestEnabled() {
-        try { return MagConfig.PETRIFIED_FOREST_ENABLED.get(); } catch (Throwable t) { return true; }
+        try { return MagConfig.PETRIFIED_FOREST_ENABLED.get(); } catch (Throwable t) { return false; }
     }
 
     public static ResourceLocation id(final String path) {

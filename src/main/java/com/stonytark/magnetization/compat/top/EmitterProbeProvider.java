@@ -34,5 +34,8 @@ public enum EmitterProbeProvider implements IProbeInfoProvider {
         for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
             probeInfo.text(line);
         }
+        for (Component line : source.extraTooltipLines(true)) {
+            probeInfo.text(line);
+        }
     }
 }
