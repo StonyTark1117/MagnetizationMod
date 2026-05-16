@@ -64,6 +64,16 @@
 ### Grapple targeting expanded
 - The Magnetic Grapple now hooks attractive emitters (unchanged), Sable sub-levels with non-zero susceptibility, and magnetized living entities (any armor with the polarity stamp, or carrying the Magnetized effect). Mobile targets are tracked via a position-supplier each tick, so the grapple pulls toward a moving ship's current pose-center or a fleeing entity's current position rather than where they were at click time.
 
+### FE/RF as alternative power source
+- The 5 redstone-powered emitters (Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator) now expose an `IEnergyStorage` capability and accept FE/RF from any mod that provides it (Create: Crafts & Additions, Mekanism, Thermal, IE generators, AE2, etc.) — no hard dep on any specific energy mod required, FE is a NeoForge-native API.
+- Internal one-way buffer (50 000 FE default, 200 FE/tick transfer rate, 10 FE/tick drain while emitting). External `extractEnergy` returns 0 by design — the emitter is the only thing that drains the buffer.
+- Power resolution: redstone takes priority (free); if redstone is off and energy is allowed + sufficient, one tick's drain consumes from the buffer. Energy stays buffered when idle.
+- New admin config: `compat.allowRedstonePower` (default true), `compat.allowEnergyPower` (default true), `compat.emitterEnergyCapacity` (50 000), `compat.emitterEnergyDrainPerTick` (10), `compat.emitterEnergyTransferRate` (200). Setting `allowRedstonePower=false` forces players to use FE/RF, useful on hardcore-leaning servers where infinite redstone trivialises the loop.
+- The KineticElectromagnet is unchanged — it uses Create kinetic stress; adding FE on top would conflict with the kinetic balance and isn't what was asked.
+
+### Modded armor + tools recognized
+- Immersive Engineering (Steel + Faraday armor sets, Hammer, Wirecutter, Revolver, Railgun, Drillheads), Iron's Spells (iron-plated and netherite-plated armor sets, Cultist/Executioner/Knight swords), Cataclysm (Ignitium armor + elytra chestplate + tool set), Alex's Caves (Hazmat suit), Mekanism (Steel armor + tools), TF tools (knightmetal/steeleaf/ironwood/fiery sword/pickaxe/axe/etc.) all in `metal_armor` and `metal_tools` — so they accept polarity stamps from the Electromagnet GUI and feed our magnetized-armor pull system.
+
 ## 1.0.1 — Worldgen hotfix
 - Fixed silent worldgen breakage (custom biome modifier codec, `minecraft:ore_copper` was the wrong target).
 

@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.energy.EnergyStorage;
 import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.FieldApplicator;
@@ -48,6 +49,32 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         IHaveGoggleInformation, IHaveHoveringInformation {
 
     private boolean powered = false;
+    /** True for the current tick if energy was successfully consumed this tick
+     *  to drive the field. Reset/recomputed each {@link #tickEmitter} call. */
+    private boolean energyActiveThisTick = false;
+    /** Internal FE buffer. Receives from external sources (capacity + transfer
+     *  rate from config); drains while emitting if redstone signal is absent.
+     *  Persists across saves via NBT. {@code maxExtract = 0} disables external
+     *  draining — the buffer is one-way, fed by wires/cables and consumed
+     *  internally by the emitter only via {@link InternalEnergyBuffer#drainInternal}. */
+    private final InternalEnergyBuffer energyBuffer = new InternalEnergyBuffer(
+            emitterEnergyCapacity(), emitterEnergyTransferRate());
+
+    /** EnergyStorage subclass exposing the protected {@code energy} field so
+     *  the emitter can drain it internally without making the capability
+     *  externally extractable. */
+    private static final class InternalEnergyBuffer extends EnergyStorage {
+        InternalEnergyBuffer(final int capacity, final int maxReceive) {
+            super(capacity, maxReceive, 0);
+        }
+        void drainInternal(final int amount) {
+            this.energy = Math.max(0, this.energy - amount);
+        }
+        void setStored(final int value) {
+            this.energy = Math.max(0, Math.min(this.capacity, value));
+        }
+    }
+
     @Nullable MagneticField cachedField = null;
     /** Snapshot of the host ship's magnetic state, synced to the client so HUDs
      *  can show "Ship: NORTH ×1.4" without re-running the server-side scan.
@@ -69,8 +96,46 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         super(type, pos, state);
     }
 
+    /** Returns the <em>effective</em> powered state — true if redstone signal
+     *  is active AND that source is allowed, OR if energy was successfully
+     *  drained this tick AND that source is allowed. Subclasses' field-builder
+     *  methods consult this to decide whether to emit. */
     public boolean isPowered() {
-        return powered;
+        return (allowRedstonePower() && powered) || (allowEnergyPower() && energyActiveThisTick);
+    }
+
+    /** Direct query: is a redstone signal currently driving this emitter
+     *  (ignoring energy)? Used by tooltips/HUD that want to surface "powered
+     *  by redstone" vs "powered by energy" separately. */
+    public boolean isRedstonePowered() { return powered; }
+
+    /** Direct query: did energy drive this tick? */
+    public boolean isEnergyPowered() { return energyActiveThisTick; }
+
+    /** Exposed to {@code RegisterCapabilitiesEvent} so external sources can
+     *  push FE into this buffer. External {@code extractEnergy} calls return 0
+     *  (the buffer's {@code maxExtract} is 0) — the emitter is the only thing
+     *  that drains it. */
+    public net.neoforged.neoforge.energy.IEnergyStorage getEnergyBuffer() { return energyBuffer; }
+
+    private static boolean allowRedstonePower() {
+        try { return MagConfig.ALLOW_REDSTONE_POWER.get(); } catch (Throwable t) { return true; }
+    }
+
+    private static boolean allowEnergyPower() {
+        try { return MagConfig.ALLOW_ENERGY_POWER.get(); } catch (Throwable t) { return true; }
+    }
+
+    private static int emitterEnergyCapacity() {
+        try { return MagConfig.EMITTER_ENERGY_CAPACITY.get(); } catch (Throwable t) { return 50_000; }
+    }
+
+    private static int emitterEnergyTransferRate() {
+        try { return MagConfig.EMITTER_ENERGY_TRANSFER_RATE.get(); } catch (Throwable t) { return 200; }
+    }
+
+    private static int emitterEnergyDrainPerTick() {
+        try { return MagConfig.EMITTER_ENERGY_DRAIN_PER_TICK.get(); } catch (Throwable t) { return 10; }
     }
 
     /** Effective strength tier for {@link #computeField}: override when set,
@@ -220,6 +285,25 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             }
             return;
         }
+
+        // Power-source resolution: redstone takes priority (it's free; no
+        // reason to burn energy if it's already running). If redstone isn't
+        // driving us, try to consume one tick's worth of energy. The drain is
+        // a single extract — if the buffer can't cover it, energyActiveThisTick
+        // stays false and the field falls off.
+        energyActiveThisTick = false;
+        if (!(allowRedstonePower() && powered) && allowEnergyPower()) {
+            final int drain = emitterEnergyDrainPerTick();
+            if (drain <= 0) {
+                // Free-energy mode: any buffer content (or even an empty one)
+                // counts as powered. Useful for creative/test setups.
+                energyActiveThisTick = true;
+            } else if (energyBuffer.getEnergyStored() >= drain) {
+                energyBuffer.drainInternal(drain);
+                energyActiveThisTick = true;
+            }
+        }
+
         MagneticField local = computeField(state);
         if (local == null) {
             cachedField = null;
@@ -363,6 +447,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
         if (polarityOverride != null) tag.putString("PolarityOverride", polarityOverride.name());
         if (cachedShipState != null) tag.put("ShipState", cachedShipState.toNbt());
+        if (energyBuffer.getEnergyStored() > 0) tag.putInt("Energy", energyBuffer.getEnergyStored());
     }
 
     @Override
@@ -378,6 +463,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         cachedShipState = tag.contains("ShipState")
                 ? com.stonytark.magnetization.api.ShipMagneticState.fromNbt(tag.getCompound("ShipState"))
                 : null;
+        if (tag.contains("Energy")) energyBuffer.setStored(tag.getInt("Energy"));
     }
 
     /** Pushes the BE's saved NBT to clients on chunk load — without this, client-side

@@ -25,6 +25,45 @@
     "magnetization:ferromagnetic_pickaxe",
     "magnetization:ferromagnetic_axe",
     "magnetization:ferromagnetic_shovel",
-    "magnetization:ferromagnetic_hoe"
+    "magnetization:ferromagnetic_hoe",
+
+    {"id": "twilightforest:knightmetal_sword", "required": false},
+    {"id": "twilightforest:knightmetal_pickaxe", "required": false},
+    {"id": "twilightforest:knightmetal_axe", "required": false},
+    {"id": "twilightforest:steeleaf_sword", "required": false},
+    {"id": "twilightforest:steeleaf_pickaxe", "required": false},
+    {"id": "twilightforest:steeleaf_axe", "required": false},
+    {"id": "twilightforest:steeleaf_shovel", "required": false},
+    {"id": "twilightforest:steeleaf_hoe", "required": false},
+    {"id": "twilightforest:ironwood_sword", "required": false},
+    {"id": "twilightforest:ironwood_pickaxe", "required": false},
+    {"id": "twilightforest:ironwood_axe", "required": false},
+    {"id": "twilightforest:ironwood_shovel", "required": false},
+    {"id": "twilightforest:ironwood_hoe", "required": false},
+    {"id": "twilightforest:fiery_sword", "required": false},
+    {"id": "twilightforest:fiery_pickaxe", "required": false},
+
+    {"id": "immersiveengineering:hammer", "required": false},
+    {"id": "immersiveengineering:wirecutter", "required": false},
+    {"id": "immersiveengineering:revolver", "required": false},
+    {"id": "immersiveengineering:railgun", "required": false},
+    {"id": "immersiveengineering:drillhead_iron", "required": false},
+    {"id": "immersiveengineering:drillhead_steel", "required": false},
+
+    {"id": "ironsspellbooks:cultist_sword", "required": false},
+    {"id": "ironsspellbooks:executioner_sword", "required": false},
+    {"id": "ironsspellbooks:knight_sword", "required": false},
+
+    {"id": "cataclysm:ignitium_sword", "required": false},
+    {"id": "cataclysm:ignitium_pickaxe", "required": false},
+    {"id": "cataclysm:ignitium_axe", "required": false},
+    {"id": "cataclysm:ignitium_shovel", "required": false},
+    {"id": "cataclysm:ignitium_hoe", "required": false},
+
+    {"id": "mekanism:steel_sword", "required": false},
+    {"id": "mekanism:steel_pickaxe", "required": false},
+    {"id": "mekanism:steel_axe", "required": false},
+    {"id": "mekanism:steel_shovel", "required": false},
+    {"id": "mekanism:steel_hoe", "required": false}
   ]
 }

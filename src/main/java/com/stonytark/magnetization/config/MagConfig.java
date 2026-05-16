@@ -96,6 +96,25 @@ public final class MagConfig {
     public enum AlexsCavesPotionMode { BOTH, OURS_ONLY, THEIRS_ONLY }
     public static final ModConfigSpec.EnumValue<AlexsCavesPotionMode> ALEXSCAVES_POTION_MODE;
 
+    /** Admin toggle: redstone signal counts as a valid power source for redstone-
+     *  powered emitters (Electromagnet, Anchor, Repulsor, Tractor Beam, Excavator).
+     *  Default true. Set false to force players to feed an FE source. */
+    public static final ModConfigSpec.BooleanValue ALLOW_REDSTONE_POWER;
+    /** Admin toggle: FE/RF energy counts as a valid power source for emitters.
+     *  Default true. Set false to disable energy-driven emitters entirely. The
+     *  capability is still exposed (NeoForge can't conditionally hide it) but
+     *  energy stays buffered and never activates the field. */
+    public static final ModConfigSpec.BooleanValue ALLOW_ENERGY_POWER;
+    /** Internal FE buffer capacity per emitter, in FE. Default 50_000 (about
+     *  5_000 ticks = 250s of operation at the default drain). */
+    public static final ModConfigSpec.IntValue EMITTER_ENERGY_CAPACITY;
+    /** FE consumed per tick while an emitter is energy-driven. Default 10 FE/tick.
+     *  Multiply by 20 for FE/s. */
+    public static final ModConfigSpec.IntValue EMITTER_ENERGY_DRAIN_PER_TICK;
+    /** Max FE per tick the emitter accepts from external sources. Higher values
+     *  refill the buffer faster from heavy cabling. Default 200 FE/tick. */
+    public static final ModConfigSpec.IntValue EMITTER_ENERGY_TRANSFER_RATE;
+
     static {
         final ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
@@ -494,6 +513,42 @@ public final class MagConfig {
                          "THEIRS_ONLY if you prefer AC's particle/visual treatment.")
                 .translation("magnetization.configuration.compat.alexsCavesPotionMode")
                 .defineEnum("alexsCavesPotionMode", AlexsCavesPotionMode.BOTH);
+
+        ALLOW_REDSTONE_POWER = b
+                .comment("Whether redstone signal activates the addon's redstone-powered emitters",
+                         "(Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator).",
+                         "Set false to force players to feed FE/RF energy — useful on hardcore-leaning",
+                         "servers where infinite-redstone setups would trivialise the gameplay loop.")
+                .translation("magnetization.configuration.compat.allowRedstonePower")
+                .define("allowRedstonePower", true);
+
+        ALLOW_ENERGY_POWER = b
+                .comment("Whether FE/RF energy activates the addon's redstone-powered emitters.",
+                         "Default true. Any mod that provides FE (Create: Crafts & Additions, Mekanism,",
+                         "Thermal, Immersive Engineering generators, AE2, etc.) can drive an emitter.",
+                         "Set false to disable energy-driven emitters — they fall back to redstone-only.")
+                .translation("magnetization.configuration.compat.allowEnergyPower")
+                .define("allowEnergyPower", true);
+
+        EMITTER_ENERGY_CAPACITY = b
+                .comment("Internal FE buffer capacity per emitter. 50000 ≈ 4 minutes of continuous",
+                         "operation at the default drain. Higher = longer ride on a single fill.")
+                .translation("magnetization.configuration.compat.emitterEnergyCapacity")
+                .defineInRange("emitterEnergyCapacity", 50_000, 1_000, 10_000_000);
+
+        EMITTER_ENERGY_DRAIN_PER_TICK = b
+                .comment("FE consumed per tick while an emitter is energy-driven. 10 FE/tick =",
+                         "200 FE/s. Set 0 to make energy power free (capability still required",
+                         "just for the buffer to exist).")
+                .translation("magnetization.configuration.compat.emitterEnergyDrainPerTick")
+                .defineInRange("emitterEnergyDrainPerTick", 10, 0, 100_000);
+
+        EMITTER_ENERGY_TRANSFER_RATE = b
+                .comment("Max FE per tick the emitter accepts from external sources. Higher =",
+                         "refills the buffer faster from heavy cabling. 200 FE/tick is enough for",
+                         "20× the default drain — sturdy under load.")
+                .translation("magnetization.configuration.compat.emitterEnergyTransferRate")
+                .defineInRange("emitterEnergyTransferRate", 200, 1, 1_000_000);
 
         b.pop();
 

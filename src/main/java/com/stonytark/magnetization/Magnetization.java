@@ -50,6 +50,7 @@ public final class Magnetization {
         modContainer.registerConfig(ModConfig.Type.SERVER, MagConfig.SPEC);
 
         modBus.addListener(Magnetization::onCommonSetup);
+        modBus.addListener(Magnetization::onRegisterCapabilities);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
 
@@ -107,6 +108,23 @@ public final class Magnetization {
                 com.stonytark.magnetization.compat.jer.MagJerPlugin.register();
             }
         });
+    }
+
+    /** Register the {@code FORGE_ENERGY} capability on every redstone-powered
+     *  emitter so any FE-providing mod (Create: Crafts & Additions, Mekanism,
+     *  Thermal, IE generators, AE2…) can push energy into the buffer. The
+     *  capability resolves to the BE's internal one-way buffer; external
+     *  extraction returns 0 by design. The KineticElectromagnet is omitted
+     *  here because it's already powered by Create kinetics — no point in
+     *  exposing FE on it. */
+    private static void onRegisterCapabilities(final net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+        final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.energy.IEnergyStorage, net.minecraft.core.Direction> cap
+                = net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK;
+        event.registerBlockEntity(cap, MagBlockEntities.ELECTROMAGNET.get(),       (be, side) -> be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ANCHOR.get(),     (be, side) -> be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.REPULSOR_COIL.get(),       (be, side) -> be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.TRACTOR_BEAM.get(),        (be, side) -> be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_EXCAVATOR.get(),  (be, side) -> be.getEnergyBuffer());
     }
 
     /** Drop the per-level ship-state caches when a dimension unloads, so we don't

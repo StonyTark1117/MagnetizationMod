@@ -40,6 +40,40 @@
     {"id": "twilightforest:fiery_helmet", "required": false},
     {"id": "twilightforest:fiery_chestplate", "required": false},
     {"id": "twilightforest:fiery_leggings", "required": false},
-    {"id": "twilightforest:fiery_boots", "required": false}
+    {"id": "twilightforest:fiery_boots", "required": false},
+
+    {"id": "immersiveengineering:steel_helmet", "required": false},
+    {"id": "immersiveengineering:steel_chestplate", "required": false},
+    {"id": "immersiveengineering:steel_leggings", "required": false},
+    {"id": "immersiveengineering:steel_boots", "required": false},
+    {"id": "immersiveengineering:armor_faraday_head", "required": false},
+    {"id": "immersiveengineering:armor_faraday_chest", "required": false},
+    {"id": "immersiveengineering:armor_faraday_legs", "required": false},
+    {"id": "immersiveengineering:armor_faraday_feet", "required": false},
+
+    {"id": "ironsspellbooks:armor_iron_plated_helmet", "required": false},
+    {"id": "ironsspellbooks:armor_iron_plated_chestplate", "required": false},
+    {"id": "ironsspellbooks:armor_iron_plated_leggings", "required": false},
+    {"id": "ironsspellbooks:armor_iron_plated_boots", "required": false},
+    {"id": "ironsspellbooks:armor_netherite_plated_helmet", "required": false},
+    {"id": "ironsspellbooks:armor_netherite_plated_chestplate", "required": false},
+    {"id": "ironsspellbooks:armor_netherite_plated_leggings", "required": false},
+    {"id": "ironsspellbooks:armor_netherite_plated_boots", "required": false},
+
+    {"id": "cataclysm:ignitium_helmet", "required": false},
+    {"id": "cataclysm:ignitium_chestplate", "required": false},
+    {"id": "cataclysm:ignitium_leggings", "required": false},
+    {"id": "cataclysm:ignitium_boots", "required": false},
+    {"id": "cataclysm:ignitium_elytra_chestplate", "required": false},
+
+    {"id": "alexscaves:hazmat_mask", "required": false},
+    {"id": "alexscaves:hazmat_chestplate", "required": false},
+    {"id": "alexscaves:hazmat_leggings", "required": false},
+    {"id": "alexscaves:hazmat_boots", "required": false},
+
+    {"id": "mekanism:steel_helmet", "required": false},
+    {"id": "mekanism:steel_chestplate", "required": false},
+    {"id": "mekanism:steel_leggings", "required": false},
+    {"id": "mekanism:steel_boots", "required": false}
   ]
 }
