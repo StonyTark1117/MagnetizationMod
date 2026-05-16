@@ -140,6 +140,16 @@ public class EmitterMenu extends AbstractContainerMenu {
      *  Shown on the GUI when no override is dialed in, so the player can see
      *  what the emitter is actually using before they touch the slider. */
     private final DataSlot defaultRange = DataSlot.standalone();
+    /** Current FE buffer level on the BE — synced each tick from
+     *  {@link AbstractEmitterBlockEntity#getEnergyBuffer()} so the GUI bar
+     *  can show live drain/fill. */
+    private final DataSlot energyStored = DataSlot.standalone();
+    /** Max FE the buffer holds (config-driven). Almost-static — sent so the GUI
+     *  can compute the fill fraction without hard-coding the config value. */
+    private final DataSlot energyCapacity = DataSlot.standalone();
+    /** 0 = idle, 1 = redstone-driven, 2 = energy-driven. Drives the
+     *  "Source: …" label and the bar's tint colour. */
+    private final DataSlot powerSource = DataSlot.standalone();
 
     /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
     public static EmitterMenu fromNetwork(final int id, final Inventory inv,
@@ -205,6 +215,9 @@ public class EmitterMenu extends AbstractContainerMenu {
         addDataSlot(pullProgress);
         addDataSlot(inflightCap);
         addDataSlot(defaultRange);
+        addDataSlot(energyStored);
+        addDataSlot(energyCapacity);
+        addDataSlot(powerSource);
         // Initial sync from BE (server-side path only — client passes NULL access).
         // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
         // ContainerLevelAccess wraps the lambda return in Optional.of() — which NPEs
@@ -266,8 +279,20 @@ public class EmitterMenu extends AbstractContainerMenu {
                 }
             });
         }
+        // Energy + power-source snapshot every tick so the GUI's bar stays live.
+        access.execute((level, p) -> {
+            if (level.getBlockEntity(p) instanceof AbstractEmitterBlockEntity emitter) {
+                energyStored.set(emitter.getEnergyBuffer().getEnergyStored());
+                energyCapacity.set(emitter.getEnergyBuffer().getMaxEnergyStored());
+                powerSource.set(emitter.isEnergyPowered() ? 2 : (emitter.isRedstonePowered() ? 1 : 0));
+            }
+        });
         super.broadcastChanges();
     }
+
+    public int energyStored()   { return energyStored.get(); }
+    public int energyCapacity() { return energyCapacity.get(); }
+    public int powerSource()    { return powerSource.get(); }
 
     @Override
     public boolean stillValid(final Player player) {

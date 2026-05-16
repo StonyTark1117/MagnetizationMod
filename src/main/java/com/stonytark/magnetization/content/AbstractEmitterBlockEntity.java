@@ -52,6 +52,13 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     /** True for the current tick if energy was successfully consumed this tick
      *  to drive the field. Reset/recomputed each {@link #tickEmitter} call. */
     private boolean energyActiveThisTick = false;
+    /** Game-time of the last energy-state network sync. We resync once per
+     *  second during active drain so the client HUD/goggle/Jade reading stays
+     *  within ~1s of the true buffer level without flooding the network. */
+    private long lastEnergySyncTick = Long.MIN_VALUE;
+    /** Energy snapshot at the last sync — used to also fire a sync when the
+     *  buffer changes meaningfully (e.g. a large FE pulse from a cable). */
+    private int lastSyncedEnergy = 0;
     /** Internal FE buffer. Receives from external sources (capacity + transfer
      *  rate from config); drains while emitting if redstone signal is absent.
      *  Persists across saves via NBT. {@code maxExtract = 0} disables external
@@ -337,10 +344,19 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // ↔ non-null, or polarity / strength / shape change. Don't resync on every
         // tick (would flood the network) or on origin micro-changes (irrelevant
         // to the goggle/HUD readout).
+        final long now = server.getGameTime();
+        final int currentEnergy = energyBuffer.getEnergyStored();
+        final boolean energyChangedEnough =
+                Math.abs(currentEnergy - lastSyncedEnergy) >= Math.max(1, energyBuffer.getMaxEnergyStored() / 100);
+        final boolean energyPeriodicDue = energyActiveThisTick && (now - lastEnergySyncTick) >= 20;
         if (previous == null
                 || !sameForClientDisplay(previous, worldField)
-                || !sameShipStateForClientDisplay(previousShipState, cachedShipState)) {
+                || !sameShipStateForClientDisplay(previousShipState, cachedShipState)
+                || energyChangedEnough
+                || energyPeriodicDue) {
             markForClientSync(server);
+            lastEnergySyncTick = now;
+            lastSyncedEnergy = currentEnergy;
         }
         FieldApplicator.apply(server, worldField, host, shipFilter());
         // Only ingest when the emitter sits in the open world — emitters mounted on a
@@ -383,8 +399,33 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
 
     @Override
     public List<Component> extraTooltipLines(final boolean verbose) {
-        if (cachedShipState == null) return List.of();
-        return shipStateTooltipLines(cachedShipState, verbose);
+        final List<Component> lines = new java.util.ArrayList<>(4);
+        // Power-source line: highest signal-to-noise. Always show, regardless
+        // of whether energy or redstone is driving so players know at a glance.
+        final int energy = energyBuffer.getEnergyStored();
+        final int capacity = energyBuffer.getMaxEnergyStored();
+        if (energy > 0 || isPowered()) {
+            final String source = energyActiveThisTick ? "energy"
+                    : (powered ? "redstone" : "idle");
+            final ChatFormatting sourceColor = energyActiveThisTick ? ChatFormatting.GOLD
+                    : (powered ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
+            lines.add(Component.translatable("tooltip.magnetization.power_source",
+                            Component.translatable("tooltip.magnetization.power_source." + source)
+                                    .withStyle(sourceColor))
+                    .withStyle(ChatFormatting.GRAY));
+        }
+        // Energy buffer line: only show when there's actually a buffer to surface.
+        // Hides the line for fresh placements that never received energy, so
+        // the tooltip stays clean when FE isn't in use on this server.
+        if (energy > 0 || verbose) {
+            lines.add(Component.translatable("tooltip.magnetization.energy",
+                            String.format("%,d / %,d", energy, capacity))
+                    .withStyle(ChatFormatting.GRAY));
+        }
+        if (cachedShipState != null) {
+            lines.addAll(shipStateTooltipLines(cachedShipState, verbose));
+        }
+        return lines;
     }
 
     /** "On ship: NORTH ×1.4 (12 ferrous, 3 magnets, 1 inverter)" — verbose form

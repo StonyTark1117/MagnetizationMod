@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.fe_rf.name",
+  "icon": "magnetization:electromagnet",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.fe_rf.page1.title", "text": "book.magnetization.entry.fe_rf.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.fe_rf.page2.title", "text": "book.magnetization.entry.fe_rf.page2.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.fe_rf.page3.title", "text": "book.magnetization.entry.fe_rf.page3.text" }
+  ]
+}
