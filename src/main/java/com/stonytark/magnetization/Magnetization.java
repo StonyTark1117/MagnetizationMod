@@ -51,6 +51,7 @@ public final class Magnetization {
 
         modBus.addListener(Magnetization::onCommonSetup);
         modBus.addListener(Magnetization::onRegisterCapabilities);
+        modBus.addListener(Magnetization::onRegisterPayloads);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
 
@@ -125,6 +126,15 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.REPULSOR_COIL.get(),       (be, side) -> be.getEnergyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.TRACTOR_BEAM.get(),        (be, side) -> be.getEnergyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_EXCAVATOR.get(),  (be, side) -> be.getEnergyBuffer());
+    }
+
+    /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from
+     *  charm slots via the configurable keybinds. Registration is server-side
+     *  too because the payload handler lives on both. */
+    private static void onRegisterPayloads(final net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent event) {
+        final net.neoforged.neoforge.network.registration.PayloadRegistrar reg =
+                event.registrar(MOD_ID).versioned("1");
+        com.stonytark.magnetization.client.MagKeyBindings.registerPayloads(reg);
     }
 
     /** Drop the per-level ship-state caches when a dimension unloads, so we don't

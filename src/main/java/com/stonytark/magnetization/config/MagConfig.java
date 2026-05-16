@@ -72,6 +72,16 @@ public final class MagConfig {
     /** Field Compass scan radius, in blocks. */
     public static final ModConfigSpec.IntValue COMPASS_RANGE;
 
+    /** Repulsor Gun cone range in blocks. */
+    public static final ModConfigSpec.IntValue    REPULSOR_GUN_RANGE;
+    /** Cosine of the cone half-angle. Narrower than the Repulsor Coil's 45°
+     *  to give the gun precision at distance. */
+    public static final ModConfigSpec.DoubleValue REPULSOR_GUN_CONICAL_HALF_ANGLE_COS;
+    /** Self-recoil velocity magnitude when aiming at a magnetic emitter block. */
+    public static final ModConfigSpec.DoubleValue REPULSOR_GUN_SELF_RECOIL_STRENGTH;
+    /** Cooldown (ticks) between Repulsor Gun shots. */
+    public static final ModConfigSpec.IntValue    REPULSOR_GUN_COOLDOWN_TICKS;
+
     // Per-tool magnetized-effect toggles. Each tool gets a unique signature
     // ability on top of the shared "pull dropped ferromagnetic items" handler.
     public static final ModConfigSpec.BooleanValue LIRM_ENABLED;
@@ -95,6 +105,14 @@ public final class MagConfig {
      *  {@code alexscaves} is on the mod list. */
     public enum AlexsCavesPotionMode { BOTH, OURS_ONLY, THEIRS_ONLY }
     public static final ModConfigSpec.EnumValue<AlexsCavesPotionMode> ALEXSCAVES_POTION_MODE;
+
+    /** Whether the vanilla Minecraft compass spins erratically inside the
+     *  Magnetic Anomaly biome. Default true — matches the in-mod theming that
+     *  any mechanical compass would be scrambled by the field flux. Set false
+     *  to leave vanilla compass behaviour untouched (useful when other mods
+     *  depend on stable compass readings). Implemented via Mixin into
+     *  {@code CompassAngleState.calculate}. */
+    public static final ModConfigSpec.BooleanValue ANOMALY_AFFECTS_VANILLA_COMPASS;
 
     /** Admin toggle: redstone signal counts as a valid power source for redstone-
      *  powered emitters (Electromagnet, Anchor, Repulsor, Tractor Beam, Excavator).
@@ -329,6 +347,34 @@ public final class MagConfig {
                 .translation("magnetization.configuration.items.compassRange")
                 .defineInRange("compassRange", 16, 4, 128);
 
+        REPULSOR_GUN_RANGE = b
+                .comment("Repulsor Gun cone range in blocks. Shorter than the Magnetic Grapple's",
+                         "scan because the gun is meant for crowd control and self-launch, not",
+                         "long-range traversal.")
+                .translation("magnetization.configuration.items.repulsorGunRange")
+                .defineInRange("repulsorGunRange", 12, 2, 64);
+
+        REPULSOR_GUN_CONICAL_HALF_ANGLE_COS = b
+                .comment("Cosine of the Repulsor Gun's cone half-angle. 0.866 = 30° half-angle",
+                         "(60° total). Narrower than the Repulsor Coil's 45° so the gun rewards",
+                         "aim at distance.")
+                .translation("magnetization.configuration.items.repulsorGunConicalHalfAngleCos")
+                .defineInRange("repulsorGunConicalHalfAngleCos", 0.866d, 0.0d, 0.999d);
+
+        REPULSOR_GUN_SELF_RECOIL_STRENGTH = b
+                .comment("Self-recoil velocity magnitude (blocks/tick) when aiming at a magnetic",
+                         "emitter block. 0.8 = enough to launch a player ~6 blocks back at point",
+                         "blank. Falloff linearly to zero at the cone's range. Set to 0 to disable",
+                         "self-recoil — gun then only pushes targets, never the holder.")
+                .translation("magnetization.configuration.items.repulsorGunSelfRecoilStrength")
+                .defineInRange("repulsorGunSelfRecoilStrength", 0.8d, 0.0d, 5.0d);
+
+        REPULSOR_GUN_COOLDOWN_TICKS = b
+                .comment("Cooldown (game ticks; 20 = 1s) between Repulsor Gun shots. Prevents",
+                         "spam-bouncing exploits while still allowing rapid follow-ups.")
+                .translation("magnetization.configuration.items.repulsorGunCooldownTicks")
+                .defineInRange("repulsorGunCooldownTicks", 20, 0, 600);
+
         b.pop();
 
         b.comment("Magnetized-tool signature abilities. Each tool in #magnetization:metal_tools",
@@ -549,6 +595,14 @@ public final class MagConfig {
                          "20× the default drain — sturdy under load.")
                 .translation("magnetization.configuration.compat.emitterEnergyTransferRate")
                 .defineInRange("emitterEnergyTransferRate", 200, 1, 1_000_000);
+
+        ANOMALY_AFFECTS_VANILLA_COMPASS = b
+                .comment("Whether the vanilla Minecraft compass needle spins erratically when the",
+                         "holder is inside the Magnetic Anomaly biome. Default true. Set false to",
+                         "leave vanilla compass behaviour untouched — useful when other mods rely",
+                         "on stable compass readings (waystone mods, navigation mods).")
+                .translation("magnetization.configuration.compat.anomalyAffectsVanillaCompass")
+                .define("anomalyAffectsVanillaCompass", true);
 
         b.pop();
 

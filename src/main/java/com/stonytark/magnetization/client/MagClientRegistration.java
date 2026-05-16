@@ -36,7 +36,7 @@ public final class MagClientRegistration {
             // ActiveEmitterScanner. Without this the wire() blocks never fire.
             ClientEmitterEffects.touch();
             EmitterHumSound.touch();
-            AnomalyCompassSpin.install();
+            CompassPropertyHooks.install();
         });
     }
 

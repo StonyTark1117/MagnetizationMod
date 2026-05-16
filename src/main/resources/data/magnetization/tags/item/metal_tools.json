@@ -26,6 +26,9 @@
     "magnetization:ferromagnetic_axe",
     "magnetization:ferromagnetic_shovel",
     "magnetization:ferromagnetic_hoe",
+    "magnetization:repulsor_gun",
+    "magnetization:magnetic_grapple",
+    "magnetization:field_compass",
 
     {"id": "twilightforest:knightmetal_sword", "required": false},
     {"id": "twilightforest:knightmetal_pickaxe", "required": false},

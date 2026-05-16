@@ -64,6 +64,11 @@ public final class MagItems {
     public static final DeferredItem<MagneticGrappleItem> MAGNETIC_GRAPPLE =
             REGISTER.registerItem("magnetic_grapple", MagneticGrappleItem::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<com.stonytark.magnetization.content.item.RepulsorGunItem> REPULSOR_GUN =
+            REGISTER.registerItem("repulsor_gun",
+                    com.stonytark.magnetization.content.item.RepulsorGunItem::new,
+                    new Item.Properties().stacksTo(1));
+
     // ---- Magnetite gear ----
     // 1.21.1 tool constructors take only Tier + Properties; attack damage and
     // speed are baked into Properties via the per-class createAttributes static.

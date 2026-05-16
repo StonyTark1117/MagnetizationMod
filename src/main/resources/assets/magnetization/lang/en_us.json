@@ -47,6 +47,8 @@
   "magnetization.configuration.compat.emitterEnergyDrainPerTick.tooltip": "FE consumed per tick while an emitter is energy-driven. 10 FE/tick = 200 FE/s. Set 0 to make energy power free.",
   "magnetization.configuration.compat.emitterEnergyTransferRate": "Energy Transfer Rate (FE/tick)",
   "magnetization.configuration.compat.emitterEnergyTransferRate.tooltip": "Max FE/tick the emitter accepts from external sources. Higher = refills the buffer faster from heavy cabling.",
+  "magnetization.configuration.compat.anomalyAffectsVanillaCompass": "Anomaly Scrambles Vanilla Compass",
+  "magnetization.configuration.compat.anomalyAffectsVanillaCompass.tooltip": "When true (default), the vanilla compass spins erratically inside the Magnetic Anomaly biome — same theming as our Field Compass. Set false to leave vanilla behaviour untouched (useful if other mods rely on stable compass readings).",
 
   "magnetization.configuration.guiLimits": "Per-Emitter GUI Ceilings",
   "magnetization.configuration.guiLimits.tooltip": "Admin caps on what each emitter's in-game GUI can dial up to. Prevents griefer-tier loadouts on shared servers.",
@@ -375,6 +377,25 @@
 
   "item.magnetization.field_manual":                      "Magnetization Field Manual",
 
+  "item.magnetization.repulsor_gun":        "Repulsor Gun",
+  "key.categories.magnetization":           "Magnetization",
+  "key.magnetization.use_grapple":          "Use Magnetic Grapple (from curio)",
+  "key.magnetization.use_repulsor_gun":     "Use Repulsor Gun (from curio)",
+
+  "magnetization.configuration.items.repulsorGunRange":                       "Repulsor Gun — Range",
+  "magnetization.configuration.items.repulsorGunRange.tooltip":               "Cone range in blocks. Shorter than the Magnetic Grapple's scan because the gun is crowd-control / self-launch, not long-range traversal.",
+  "magnetization.configuration.items.repulsorGunConicalHalfAngleCos":         "Repulsor Gun — Cone Half-Angle (cos)",
+  "magnetization.configuration.items.repulsorGunConicalHalfAngleCos.tooltip": "Cosine of the cone half-angle. 0.866 = 30°. Narrower than the Repulsor Coil's 45° so aim rewards.",
+  "magnetization.configuration.items.repulsorGunSelfRecoilStrength":          "Repulsor Gun — Self-Recoil",
+  "magnetization.configuration.items.repulsorGunSelfRecoilStrength.tooltip":  "Velocity (blocks/tick) the gun pushes the holder back when aiming at a magnetic emitter block. Linear falloff over the cone's range. Set 0 to disable self-recoil entirely.",
+  "magnetization.configuration.items.repulsorGunCooldownTicks":               "Repulsor Gun — Cooldown (ticks)",
+  "magnetization.configuration.items.repulsorGunCooldownTicks.tooltip":       "Game-ticks between shots (20 = 1s). Prevents spam-bouncing exploits while still allowing rapid follow-ups.",
+
+  "hud.magnetization.compass.bearing":      "%s  (%s)  %s",
+  "hud.magnetization.compass.target":       "%s  %s",
+  "hud.magnetization.compass.no_target":    "No active emitters in range",
+  "hud.magnetization.compass.anomaly":      "— field flux scrambling readings —",
+
   "tooltip.magnetization.energy":                "Energy: %s FE",
   "tooltip.magnetization.power_source":          "Source: %s",
   "tooltip.magnetization.power_source.redstone": "redstone",
@@ -387,4 +408,11 @@
   "book.magnetization.entry.fe_rf.page2.title":  "How it works",
   "book.magnetization.entry.fe_rf.page2.text":   "Each emitter has an internal $(l)50,000 FE$() buffer (default). Connect any FE source — wires, cables, generators — and the buffer fills.$(br)$(br)$(l)Redstone takes priority$(): if the emitter is receiving a redstone signal, that drives it for free. Without redstone, the emitter consumes $(l)10 FE/tick$() from its buffer while emitting. The GUI's right-side bar shows current fill and active source.",
   "book.magnetization.entry.fe_rf.page3.title":  "Admin toggles",
-  "book.magnetization.entry.fe_rf.page3.text":   "Server owners can lock players out of either source via $(o)compat.allowRedstonePower$() and $(o)compat.allowEnergyPower$(). Setting redstone to false makes every emitter require an FE supply — meaningful since redstone is effectively infinite once a lever is placed. Set both true (default) to let players pick."
+  "book.magnetization.entry.fe_rf.page3.text":   "Server owners can lock players out of either source via $(o)compat.allowRedstonePower$() and $(o)compat.allowEnergyPower$(). Setting redstone to false makes every emitter require an FE supply — meaningful since redstone is effectively infinite once a lever is placed. Set both true (default) to let players pick.",
+
+  "book.magnetization.entry.repulsor_gun.name":          "Repulsor Gun",
+  "book.magnetization.entry.repulsor_gun.spotlight":     "Hand-held conical repulsor. Right-click to fire a single pulse in your look direction. Cooldown-gated like the Magnetic Grapple — no fuel.",
+  "book.magnetization.entry.repulsor_gun.effects.title": "Three effects per shot",
+  "book.magnetization.entry.repulsor_gun.effects.text":  "$(li)$(l)Ships$() in the cone get pushed away.$(li)$(l)Magnetized entities$() (mobs in magnetized armor, or carrying the Magnetized effect) get knockback.$(li)$(l)Dropped items and falling blocks$() get nudged out of the cone — defensive crowd-clearing trick.",
+  "book.magnetization.entry.repulsor_gun.curio.title":   "Self-recoil & curios",
+  "book.magnetization.entry.repulsor_gun.curio.text":    "If your shot lands on a $(l)magnetic emitter block$() (lodestone, electromagnet, permanent magnet, etc.), you get $(l)kicked back$() along the inverse of your aim — closer magnet = harder push. The headline traversal trick: aim down at a lodestone to launch yourself upward and backward.$(br)$(br)Curios-compatible: drop the gun in a charm slot and bind $(o)Use Repulsor Gun$() under $(l)Options → Controls → Key Binds → Magnetization$()."

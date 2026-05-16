@@ -28,15 +28,21 @@ public final class MagCurioCompat {
     }
 
     private static void onRegisterCapabilities(final RegisterCapabilitiesEvent event) {
-        // Per-stack ICurio: declares the item as a valid curio (so Curios slots
-        // accept it). Pickup/usage behaviour is preserved verbatim because both
-        // items already self-tick from their inventory slot — being in a curio
-        // slot instead just stops them from occupying a hotbar / inventory cell.
+        // Per-stack ICurio: declares each item as a valid curio so Curios slots
+        // accept it.
+        // - Field Compass: pure passive — its rotating needle and HUD overlay
+        //   are render-time effects that read the slot directly, no use() call
+        //   needed.
+        // - Magnetic Grapple / Repulsor Gun: active items. Slot-acceptance is
+        //   step one; activation runs via the configurable keybinds registered
+        //   in MagKeyBindings, which fire the items' use() / fire() handlers
+        //   server-side after looking the stack up in the curios inventory.
         event.registerItem(CuriosCapability.ITEM,
                 (stack, ctx) -> new ICurio() {
                     @Override public net.minecraft.world.item.ItemStack getStack() { return stack; }
                 },
                 MagItems.FIELD_COMPASS.get(),
-                MagItems.MAGNETIC_GRAPPLE.get());
+                MagItems.MAGNETIC_GRAPPLE.get(),
+                MagItems.REPULSOR_GUN.get());
     }
 }

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCR",
+    " IR",
+    "  R"
+  ],
+  "key": {
+    "P": { "item": "magnetization:magnetic_plate" },
+    "C": { "item": "magnetization:lodestone_core" },
+    "I": { "item": "magnetization:ferromagnetic_ingot" },
+    "R": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "id": "magnetization:repulsor_gun",
+    "count": 1
+  }
+}

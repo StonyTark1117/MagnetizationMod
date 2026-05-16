@@ -159,8 +159,14 @@ dependencies {
     // EMI — third recipe viewer, common alongside JEI/REI. Soft-dep, plugin
     // discovered via @EmiEntrypoint. Modrinth maven (no separate api artifact —
     // single jar is fine for our compile usage).
+    //
+    // localRuntime intentionally commented out: JEI and EMI both shipped in the
+    // same dev runtime produces duplicate recipe overlays and conflicting hotkey
+    // bindings. The EMI plugin has been validated separately. To re-test it,
+    // un-comment the localRuntime line below AND comment out the JEI + JER
+    // localRuntime lines above.
     compileOnly("maven.modrinth:emi:${emi_version}")
-    localRuntime("maven.modrinth:emi:${emi_version}")
+    // localRuntime("maven.modrinth:emi:${emi_version}")
 
     // Curios API — slot extension framework. Soft-dep; our CurioItem capability
     // registration is gated on ModList.get().isLoaded("curios"), so the missing
@@ -173,6 +179,27 @@ dependencies {
     // registers the book item from the data/<modid>/patchouli_books/<name>/book.json
     // file on its own. We only need the dep at runtime so the book displays.
     localRuntime("maven.modrinth:patchouli:${patchouli_version}")
+
+    // === Soft-dep test mods (localRuntime only — pulled in for runClient to
+    // validate cross-mod tag entries + code integrations in-world). Comment
+    // out any line to drop that mod from the test session. ===
+
+    // Create: Crafts & Additions — kinetic ↔ FE bridge. Lets us test the FE/RF
+    // alternative power source: build a windmill → Alternator → wire → Magnetic
+    // Anchor → anchor activates without a redstone signal.
+    localRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
+
+    // Immersive Engineering — tests our railgun + tesla-coil entries in the
+    // lightning_sources damage-type tag, plus steel/aluminum/Faraday armor in
+    // metal_armor, hammer/wirecutter/revolver/railgun in metal_tools.
+    localRuntime("maven.modrinth:immersiveengineering:${ie_test_version}")
+
+    // Alex's Caves (Unofficial Port) + Citadel — tests Magnetron + Ferrouslime
+    // as magnetizable entities, azure/scarlet neodymium ores as ferromagnetic,
+    // and the alexsCavesPotionMode config (BOTH/OURS_ONLY/THEIRS_ONLY).
+    // Citadel is AC's hard dep (must come before AC in classpath order).
+    localRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}")
+    localRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}")
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
