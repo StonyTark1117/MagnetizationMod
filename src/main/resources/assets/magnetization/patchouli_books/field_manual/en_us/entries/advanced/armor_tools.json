@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.armor_tools.name",
+  "icon": "magnetization:ferromagnetic_chestplate",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page1.title", "text": "book.magnetization.entry.armor_tools.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page2.title", "text": "book.magnetization.entry.armor_tools.page2.text" }
+  ]
+}

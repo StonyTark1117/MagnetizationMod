@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.ship_polarity.name",
+  "icon": "magnetization:polarity_inverter",
+  "category": "magnetization:ships",
+  "priority": true,
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.ship_polarity.page1.title", "text": "book.magnetization.entry.ship_polarity.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.ship_polarity.page2.title", "text": "book.magnetization.entry.ship_polarity.page2.text" }
+  ]
+}

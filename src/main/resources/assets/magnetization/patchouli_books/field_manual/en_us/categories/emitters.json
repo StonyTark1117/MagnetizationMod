@@ -1,0 +1,6 @@
+{
+  "name": "book.magnetization.category.emitters.name",
+  "description": "book.magnetization.category.emitters.desc",
+  "icon": "magnetization:electromagnet",
+  "sortnum": 1
+}

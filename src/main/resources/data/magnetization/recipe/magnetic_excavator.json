@@ -7,7 +7,7 @@
   ],
   "key": {
     "P": { "item": "magnetization:magnetic_plate" },
-    "M": { "item": "magnetization:magnetite_ingot" },
+    "M": { "tag": "c:ingots/magnetite" },
     "C": { "item": "magnetization:lodestone_core" }
   },
   "result": {

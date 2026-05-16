@@ -1,0 +1,8 @@
+{
+  "name": "book.magnetization.entry.repulsor.name",
+  "icon": "magnetization:repulsor_coil",
+  "category": "magnetization:emitters",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:repulsor_coil", "text": "book.magnetization.entry.repulsor.spotlight" }
+  ]
+}

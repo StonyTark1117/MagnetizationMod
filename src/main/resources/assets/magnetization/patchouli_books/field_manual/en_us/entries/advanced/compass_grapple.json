@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.compass_grapple.name",
+  "icon": "magnetization:field_compass",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:field_compass", "text": "book.magnetization.entry.compass_grapple.compass" },
+    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_grapple", "text": "book.magnetization.entry.compass_grapple.grapple" }
+  ]
+}

@@ -74,12 +74,23 @@ public class ElectromagnetBlock extends Block implements EntityBlock {
             final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston
     ) {
         if (level.isClientSide) return;
+        applyExternalSignal(state, level, pos);
+    }
+
+    @Override
+    protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
+                           final BlockState oldState, final boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        if (level.isClientSide || state.is(oldState.getBlock())) return;
+        applyExternalSignal(state, level, pos);
+    }
+
+    private static void applyExternalSignal(final BlockState state, final Level level, final BlockPos pos) {
         final boolean nowPowered = level.hasNeighborSignal(pos);
         if (state.getValue(BlockStateProperties.POWERED) != nowPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
-        final BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ElectromagnetBlockEntity emag) {
+        if (level.getBlockEntity(pos) instanceof ElectromagnetBlockEntity emag) {
             emag.setPowered(nowPowered);
         }
     }

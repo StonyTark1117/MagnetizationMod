@@ -89,6 +89,10 @@ public final class FieldApplicator {
         try { return MagConfig.SHIP_LINEAR_DRAG.get(); } catch (Throwable t) { return 0.02d; }
     }
 
+    private static double shipAngularDrag() {
+        try { return MagConfig.SHIP_ANGULAR_DRAG.get(); } catch (Throwable t) { return 0.05d; }
+    }
+
     private static int shipSampleSteps() {
         try { return MagConfig.SHIP_SAMPLE_STEPS.get(); } catch (Throwable t) { return 3; }
     }
@@ -150,6 +154,7 @@ public final class FieldApplicator {
         final double cap = maxAccelPerTick();
         final int steps = Math.max(1, shipSampleSteps());
         final double drag = shipLinearDrag();
+        final double angDrag = shipAngularDrag();
         final double rangeSqr = range * range;
 
         // Diagnostics — only allocated when the debug log gate is open.
@@ -259,11 +264,15 @@ public final class FieldApplicator {
                 SableBridge.applyWorldImpulse(server, samplePoints.get(i), scaled);
             }
 
-            // Apply linear drag at most once per ship per tick (multiple emitters
-            // touching the same ship don't multiply the drag). Reaches a terminal
-            // velocity under sustained pull rather than accelerating indefinitely.
-            if (drag > 0.0 && ShipTickBudget.markTouched(server, now)) {
-                SableBridge.dampLinearVelocity(server, drag);
+            // Apply linear + angular drag at most once per ship per tick (multiple
+            // emitters touching the same ship don't multiply the drag). Reaches a
+            // terminal velocity (linear) and a bounded spin rate (angular) under
+            // sustained pull rather than diverging. markTouched gates both so the
+            // budget is consumed for the whole touched-this-tick state, not per
+            // axis — calling it twice would burn it on the first call.
+            if ((drag > 0.0 || angDrag > 0.0) && ShipTickBudget.markTouched(server, now)) {
+                if (drag    > 0.0) SableBridge.dampLinearVelocity(server, drag);
+                if (angDrag > 0.0) SableBridge.dampAngularVelocity(server, angDrag);
             }
             if (diag) {
                 impulsesApplied += samplePoints.size();
@@ -319,6 +328,10 @@ public final class FieldApplicator {
     }
 
     private static boolean isMagnetizable(final Entity e) {
+        // Cross-mod opt-out: respect Magnetizing's unmoveable list so admin/server
+        // owners only need to curate one tag for both mods. Checked first because
+        // it's a hard veto.
+        if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
         if (e instanceof IMagnetizable) return true;
         if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
         if (e instanceof ItemEntity item) {

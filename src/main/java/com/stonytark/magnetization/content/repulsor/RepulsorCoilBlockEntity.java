@@ -19,10 +19,13 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
         super(MagBlockEntities.REPULSOR_COIL.get(), pos, state);
     }
 
+    /** Default 8-block range — repulsor coils are short-range tunnel/hover
+     *  shovers, not long-range hooks. Hard-coded fallback (not the GUI ceiling
+     *  / 2 idiom the other emitters use) because halving a 256-block admin
+     *  ceiling produces a 128-block default that's nonsensical for a coil. */
     @Override
     protected double defaultEffectiveRange(final MagneticStrength tier) {
-        try { return MagConfig.REPULSOR_MAX_RANGE.get() / 2.0d; }
-        catch (final Throwable t) { return tier.range(); }
+        return 8.0d;
     }
 
     @Override

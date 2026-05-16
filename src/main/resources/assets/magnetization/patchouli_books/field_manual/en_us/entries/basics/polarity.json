@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.polarity.name",
+  "icon": "magnetization:polarity_inverter",
+  "category": "magnetization:basics",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.polarity.page1.title", "text": "book.magnetization.entry.polarity.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.polarity.page2.title", "text": "book.magnetization.entry.polarity.page2.text" }
+  ]
+}

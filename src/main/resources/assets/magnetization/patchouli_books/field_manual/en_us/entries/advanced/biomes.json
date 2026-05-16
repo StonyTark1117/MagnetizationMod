@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.biomes.name",
+  "icon": "magnetization:petrified_wood",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.biomes.page1.title", "text": "book.magnetization.entry.biomes.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.biomes.page2.title", "text": "book.magnetization.entry.biomes.page2.text" }
+  ]
+}

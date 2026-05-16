@@ -6,6 +6,12 @@
     "magnetization:magnetic_anchor",
     "magnetization:repulsor_coil",
     "magnetization:tractor_beam",
-    "magnetization:permanent_magnet"
+    "magnetization:permanent_magnet",
+    {"id": "simulated:redstone_magnet", "required": false},
+    {"id": "magnetizing:blue_block_magnet", "required": false},
+    {"id": "magnetizing:red_block_magnet", "required": false},
+    {"id": "magnetizing:blue_directional_block_magnet", "required": false},
+    {"id": "magnetizing:red_directional_block_magnet", "required": false},
+    {"id": "createmagnetics:kinetic_magnet", "required": false}
   ]
 }

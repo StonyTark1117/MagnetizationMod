@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.electromagnet.name",
+  "icon": "magnetization:electromagnet",
+  "category": "magnetization:emitters",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:electromagnet", "text": "book.magnetization.entry.electromagnet.spotlight" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.electromagnet.gui.title", "text": "book.magnetization.entry.electromagnet.gui.text" }
+  ]
+}

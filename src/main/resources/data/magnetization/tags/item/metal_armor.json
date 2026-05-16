@@ -24,6 +24,22 @@
     "magnetization:ferromagnetic_helmet",
     "magnetization:ferromagnetic_chestplate",
     "magnetization:ferromagnetic_leggings",
-    "magnetization:ferromagnetic_boots"
+    "magnetization:ferromagnetic_boots",
+    {"id": "twilightforest:knightmetal_helmet", "required": false},
+    {"id": "twilightforest:knightmetal_chestplate", "required": false},
+    {"id": "twilightforest:knightmetal_leggings", "required": false},
+    {"id": "twilightforest:knightmetal_boots", "required": false},
+    {"id": "twilightforest:steeleaf_helmet", "required": false},
+    {"id": "twilightforest:steeleaf_chestplate", "required": false},
+    {"id": "twilightforest:steeleaf_leggings", "required": false},
+    {"id": "twilightforest:steeleaf_boots", "required": false},
+    {"id": "twilightforest:ironwood_helmet", "required": false},
+    {"id": "twilightforest:ironwood_chestplate", "required": false},
+    {"id": "twilightforest:ironwood_leggings", "required": false},
+    {"id": "twilightforest:ironwood_boots", "required": false},
+    {"id": "twilightforest:fiery_helmet", "required": false},
+    {"id": "twilightforest:fiery_chestplate", "required": false},
+    {"id": "twilightforest:fiery_leggings", "required": false},
+    {"id": "twilightforest:fiery_boots", "required": false}
   ]
 }

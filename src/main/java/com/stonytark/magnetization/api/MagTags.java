@@ -3,6 +3,7 @@ package com.stonytark.magnetization.api;
 import com.stonytark.magnetization.Magnetization;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -47,6 +48,16 @@ public final class MagTags {
     public static final TagKey<EntityType<?>> MAGNETIZABLE_ENTITIES =
             TagKey.create(Registries.ENTITY_TYPE, Magnetization.id("magnetizable"));
 
+    /** Cross-mod opt-out tag we honour: any entity whose type is in
+     *  {@code magnetizing:unmoveable_by_magnets} (from the Magnetizing mod) is
+     *  skipped by our field application, even if armor/tag-membership would
+     *  otherwise qualify. Lets server owners maintain a single "do not move"
+     *  list across both mods. The tag may not exist when Magnetizing isn't
+     *  loaded; that's fine — vanilla tag lookup on a missing tag is empty. */
+    public static final TagKey<EntityType<?>> MAGNETIZING_UNMOVEABLE =
+            TagKey.create(Registries.ENTITY_TYPE,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("magnetizing", "unmoveable_by_magnets"));
+
     public static final TagKey<Block> MAGNETIC_EMITTER_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("magnetic_emitter"));
 
@@ -63,6 +74,13 @@ public final class MagTags {
      *  to claim-mod boundaries, valuable spawners, etc. */
     public static final TagKey<Block> EXCAVATOR_IMMUNE =
             TagKey.create(Registries.BLOCK, Magnetization.id("excavator_immune"));
+
+    /** Damage-source types treated as "lightning-flavoured" for LIRM stamping.
+     *  Includes {@code minecraft:lightning_bolt} plus a curated set of modded
+     *  lightning attacks (Iron's Spells, Cataclysm, Alex's Caves, Twilight
+     *  Forest). Datapacks can extend without code changes. */
+    public static final TagKey<DamageType> LIGHTNING_SOURCES =
+            TagKey.create(Registries.DAMAGE_TYPE, Magnetization.id("lightning_sources"));
 
     private MagTags() {}
 }

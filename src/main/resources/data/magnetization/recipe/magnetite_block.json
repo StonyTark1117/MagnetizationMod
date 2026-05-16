@@ -6,7 +6,7 @@
     "III"
   ],
   "key": {
-    "I": { "item": "magnetization:magnetite_ingot" }
+    "I": { "tag": "c:ingots/magnetite" }
   },
   "result": {
     "id": "magnetization:magnetite_block",

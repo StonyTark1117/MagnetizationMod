@@ -12,7 +12,13 @@
 - **Torque from off-center impulses**: extended ships now rotate naturally when forces are applied off the center of mass (`τ = r × F`, ∆ω via the sub-level's inverse inertia tensor).
 - **Multi-sample field integration**: each emitter samples a 3×3×3 grid across the target ship's AABB by default (configurable 1–7), so non-uniform fields produce realistic torque on large ships. The per-tick acceleration cap is applied once across the summed force and distributed proportionally — preserving the relative magnitude of each sample.
 - **Linear drag**: ships under sustained magnetic pull settle to a terminal velocity instead of accelerating without bound (`shipLinearDrag`, 2 %/tick default).
+- **Angular drag**: counterpart to linear drag — without it the torque from off-center sample forces could keep a ship spinning indefinitely (`shipAngularDrag`, 5 %/tick default).
 - **Cumulative per-ship-per-tick budget**: multiple emitters touching the same ship now share the acceleration cap.
+
+### Quality-of-life
+- **Repulsor Coil defaults** to 8-block range (was a config-derived 128 default which was nonsensical for a short-range pusher); its GUI range buttons now step by 1 instead of 8 for finer tuning.
+- **Emitters now react to existing redstone signals at placement time** — placing an electromagnet next to an active lever no longer leaves it inert until the lever is toggled.
+- **Angular drag** companion to linear drag (`shipAngularDrag`, 5%/tick default) so ships don't spin indefinitely under sustained off-center pull.
 
 ### Fixed
 - **Rotation bug**: magnets on simulated contraptions no longer stick to the cardinal direction they were placed in — both the field origin and axis now follow the ship's pose. (Root cause: `SableBridge.promoteToWorldSpace` was re-querying the host via a sub-level-local blockpos against the outer world level, silently failing the lookup and leaving the field in local space. Fix: takes `Pose3dc` directly from `host.logicalPose()`.)
@@ -23,10 +29,40 @@
   - `first_emitter` was triggering on any `#magnetization:ferromagnetic` item (picking up an iron ingot completed the chain). Now requires one of the seven actual emitter items.
   - `inverted_quarry` description mentioned wrenching but the trigger was plain block placement. Now uses `item_used_on_block` with `#c:tools/wrench` on `magnetic_excavator`.
   - `dual_magnetized` triggered on any `#magnetization:metal_armor` (including plain vanilla iron). Now requires both a NORTH-stamped and a SOUTH-stamped magnetized armor piece, matching the name.
+  - `full_kit` description says "every emitter in the addon" but `permanent_magnet` was missing from the criteria; added.
 
 ### Tooling
 - `/magnetization debug rotate <deg> [yaw|pitch|roll]` — teleport-rotates the nearest sub-level by absolute world-frame angle, for testing magnet behavior on arbitrarily oriented ships.
 - Test count 13 → 50: new coverage on pose-transform math and the ship-state scanner.
+
+### Compatibility & tagging
+- **Magnetizing** (Command17) — ingot fungible via `c:ingots/magnetite`; block/item magnets recognized as ferromagnetic; honour `magnetizing:unmoveable_by_magnets` entity tag so admins curate one list.
+- **Create: Magnetics** (Koudesuk) — ingot/sheet/block fungible via `c:` tags; Kinetic Magnet counts as a magnet for ship susceptibility; magnetized crystals are ferromagnetic items.
+- **Simulated** — Redstone Magnet recognized as a magnet emitter, so contraptions carrying one feel our fields naturally.
+- Recipe ingredients (excavator, magnetite block) switched to `c:ingots/magnetite` tag so any of the three mods' ingots feed our recipes.
+- Broader `c:` metal tags added to `ferromagnetic_blocks` and `ferromagnetic` (items) — steel, nickel, cobalt, zinc, brass, tin, lead, silver, osmium, uranium, aluminum, neodymium, electrum, invar, constantan, bronze. Any tech/Create addon populating these gets free integration.
+- **Alex's Caves** — Magnetron + Ferrouslime in `magnetizable` entity tag; Azure/Scarlet magnet blocks and their neodymium ores/ingots/blocks in `ferromagnetic_blocks`/`ferromagnetic`; Heart of Iron, Galena, Ferrouslimeball as ferromagnetic items.
+- **Twilight Forest** — knightmetal/steeleaf/ironwood/fiery ingots + blocks tagged as ferromagnetic; their full armor sets in `metal_armor` so they accept polarity stamps from the Electromagnet GUI.
+- **Create: New Age** — its `electromagnet` coil + `tesla_coil` recognized as ferromagnetic blocks (the names overlap with ours but the mechanics don't conflict — theirs is a power-generation coil, ours is a field emitter).
+- **Create: Crafts & Additions** — copper wires, iron rods, capacitor, electric motor tagged ferromagnetic.
+- **Mekanism** — osmium/lead/tin/uranium/refined alloys are auto-covered by the `c:` tag expansion above.
+- **EMI** plugin — recipe-viewer info pages for ferromagnetic items and excavator targets, mirroring the existing JEI and REI plugins.
+- **Curios** plugin — Field Compass and Magnetic Grapple registered as curios so they work from a charm slot.
+- **Patchouli** book — craftable in-game guide (Book + Raw Magnetite) with four chapters covering basics, emitters, ship polarity, and advanced topics. Auto-registers when Patchouli is installed.
+- **Alex's Caves** — Magnetron + Ferrouslime in magnetizable entity tag; their magnets and neodymium content in ferromagnetic tags. New config `compat.alexsCavesPotionMode` controls whether AC's Magnetizing potion and our Magnetized effect coexist (`BOTH`, default), or one mod's effect supersedes the other (`OURS_ONLY` / `THEIRS_ONLY`).
+- **The Aether** — gravitite tagged ferromagnetic (item + block).
+- **Iron Chests / Sophisticated Storage** — metal chest/barrel variants in ferromagnetic_blocks.
+- **Immersive Engineering** — steel/aluminum/electrum/constantan ingots, plates, wirecoils, railgun in ferromagnetic; their ore variants in ferromagnetic_blocks.
+- **Modular Golems / Extra Golems / Cataclysm / Bosses of Mass Destruction** — metallic golem entities and metal bosses (Ignis, Netherite Monstrosity, Gauntlet) in magnetizable entity tag.
+- **Quark** — Iron and Copper Oretoises in magnetizable entity tag.
+- **Cross-mod lightning sources** — new `#magnetization:lightning_sources` damage-type tag lets non-vanilla lightning attacks trigger LIRM stamping + log petrification. Curated entries for Iron's Spells (Chain Lightning, Lightning Lance, Thunderstorm, Ascension), Cataclysm Scylla (Lightning Spear, Electric Shock), Alex's Caves (Tesla, Magnetron Shock), IE Tesla Coil + razor shock + razor wire, Twilight Forest lightning. Datapacks can extend the list without touching code. Refactored `LightningRemnantMagnetism.applyLirmStamp(target, sourceLabel)` to be public so the new `LivingIncomingDamageEvent` listener can share the vanilla-bolt code path.
+- **Supplementaries** — iron_gate, gold/netherite doors+trapdoors, pulley_block, faucet, bellows, cog_block, spring_launcher, globe, wind_vane, hourglass, cannon, cannonball, rocket all ferromagnetic.
+- **Immersive Engineering deeper pass** — Tesla Coil, Floodlight, Transformers, Capacitors (LV/MV/HV), Generators, Coil blocks, full steel/aluminum architecture line (fences, gates, posts, doors, trapdoors, catwalks, scaffolding, ladders, sheetmetal), feedthrough — plus `#c:sheetmetals` for any-mod metal sheet coverage.
+- **Macaw's mods** — Doors (7 metal variants), Fences (17 metal variants), Lights (15 iron/gold/copper candle holders + chandeliers), Bridges (iron variants), Trapdoors (3 metal variants), Windows (6 metal variants).
+- **Immersive Aircraft + Aviator Dreams** — all 7 IA aircraft (Gyrodyne, Biplane, Airship, Cargo Airship, Warship, Quadrocopter, Bamboo Hopper) and all 8 Aviator Dreams aircraft entities tagged magnetizable; metal crafting components (engines, propellers, boilers, gyroscope, gears, pipes, hull reinforcement, landing gear, rotary cannon, bomb bay, etc.) tagged ferromagnetic. Aircraft are plain entities (not Sable sub-levels), so velocity injection from our fields works directly.
+
+### Grapple targeting expanded
+- The Magnetic Grapple now hooks attractive emitters (unchanged), Sable sub-levels with non-zero susceptibility, and magnetized living entities (any armor with the polarity stamp, or carrying the Magnetized effect). Mobile targets are tracked via a position-supplier each tick, so the grapple pulls toward a moving ship's current pose-center or a fleeing entity's current position rather than where they were at click time.
 
 ## 1.0.1 — Worldgen hotfix
 - Fixed silent worldgen breakage (custom biome modifier codec, `minecraft:ore_copper` was the wrong target).

@@ -1,0 +1,8 @@
+{
+  "name": "book.magnetization.entry.anchor_docking.name",
+  "icon": "magnetization:magnetic_anchor",
+  "category": "magnetization:ships",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.anchor_docking.page1.title", "text": "book.magnetization.entry.anchor_docking.page1.text" }
+  ]
+}

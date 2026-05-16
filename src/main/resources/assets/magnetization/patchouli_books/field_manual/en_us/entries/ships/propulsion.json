@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.propulsion.name",
+  "icon": "magnetization:repulsor_coil",
+  "category": "magnetization:ships",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.propulsion.page1.title", "text": "book.magnetization.entry.propulsion.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.propulsion.page2.title", "text": "book.magnetization.entry.propulsion.page2.text" }
+  ]
+}

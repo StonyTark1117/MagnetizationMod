@@ -2,7 +2,6 @@ package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagItems;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Drives the sustained pull for {@link MagneticGrappleItem}. The grapple
@@ -20,6 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * anchor each tick until the player gets close, time runs out, or sneak
  * cancels. Without this re-application, vanilla drag and gravity decelerate
  * the player after one tick and they never reach a far anchor.
+ *
+ * <p>The anchor is a {@link Supplier} of {@link Vec3} (not a static
+ * {@link net.minecraft.core.BlockPos}) so it can resolve a moving target —
+ * a Sable ship or a magnetized entity continues to update its position
+ * between ticks and the grapple tracks it. If the supplier returns
+ * {@code null} (e.g. entity died, ship unloaded), the pull ends.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class GrappleTickHandler {
@@ -37,7 +43,7 @@ public final class GrappleTickHandler {
 
     private GrappleTickHandler() {}
 
-    public static void start(final Player player, final BlockPos anchor) {
+    public static void start(final Player player, final Supplier<Vec3> anchor) {
         ACTIVE.put(player.getUUID(), new ActivePull(anchor, MAX_PULL_TICKS));
     }
 
@@ -58,7 +64,14 @@ public final class GrappleTickHandler {
             return;
         }
 
-        final Vec3 to = Vec3.atCenterOf(pull.anchor).subtract(player.position());
+        final Vec3 target = pull.anchor.get();
+        // Target may have disappeared (ship unloaded, entity died) — end gracefully.
+        if (target == null) {
+            end(player);
+            return;
+        }
+
+        final Vec3 to = target.subtract(player.position());
         final double dist = to.length();
         if (dist <= STOP_DISTANCE || pull.ticksLeft <= 0) {
             end(player);
@@ -93,9 +106,9 @@ public final class GrappleTickHandler {
     }
 
     private static final class ActivePull {
-        final BlockPos anchor;
+        final Supplier<Vec3> anchor;
         int ticksLeft;
-        ActivePull(final BlockPos anchor, final int ticksLeft) {
+        ActivePull(final Supplier<Vec3> anchor, final int ticksLeft) {
             this.anchor = anchor;
             this.ticksLeft = ticksLeft;
         }

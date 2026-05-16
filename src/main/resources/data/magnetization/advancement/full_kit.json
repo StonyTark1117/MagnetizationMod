@@ -14,10 +14,11 @@
     "magnetic_anchor":       { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_anchor" } ] } },
     "repulsor_coil":         { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:repulsor_coil" } ] } },
     "tractor_beam":          { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:tractor_beam" } ] } },
-    "magnetic_excavator":    { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_excavator" } ] } }
+    "magnetic_excavator":    { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_excavator" } ] } },
+    "permanent_magnet":      { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:permanent_magnet" } ] } }
   },
   "requirements": [
     ["electromagnet"], ["kinetic_electromagnet"], ["magnetic_anchor"],
-    ["repulsor_coil"], ["tractor_beam"], ["magnetic_excavator"]
+    ["repulsor_coil"], ["tractor_beam"], ["magnetic_excavator"], ["permanent_magnet"]
   ]
 }

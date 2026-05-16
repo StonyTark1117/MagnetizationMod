@@ -1,0 +1,8 @@
+{
+  "name": "book.magnetization.entry.lirm.name",
+  "icon": "minecraft:lightning_rod",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.lirm.page1.title", "text": "book.magnetization.entry.lirm.page1.text" }
+  ]
+}

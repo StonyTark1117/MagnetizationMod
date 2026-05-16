@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:lightning_bolt",
+    {"id": "ironsspellbooks:chain_lightning", "required": false},
+    {"id": "ironsspellbooks:lightning_lance", "required": false},
+    {"id": "ironsspellbooks:thunderstorm", "required": false},
+    {"id": "ironsspellbooks:ascension", "required": false},
+    {"id": "cataclysm:lightning_spear", "required": false},
+    {"id": "cataclysm:electric_shock", "required": false},
+    {"id": "alexscaves:tesla", "required": false},
+    {"id": "alexscaves:magnetron_shock", "required": false},
+    {"id": "twilightforest:lightning", "required": false},
+    {"id": "immersiveengineering:tesla", "required": false},
+    {"id": "immersiveengineering:razor_shock", "required": false},
+    {"id": "immersiveengineering:razor_wire", "required": false}
+  ]
+}

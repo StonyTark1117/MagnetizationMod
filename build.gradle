@@ -60,6 +60,7 @@ repositories {
     maven { url = 'https://maven.blamejared.com/' }
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked (transitive dep of aeronautics)
     maven { url = 'https://maven.shedaniel.me/' } // REI
+    maven { url = 'https://maven.terraformersmc.com/releases' } // EMI
 
     exclusiveContent {
         forRepository {
@@ -154,6 +155,24 @@ dependencies {
     // plugin class is never loaded and the missing imports don't matter.
     compileOnly("maven.modrinth:just-enough-resources-jer:${jer_version}")
     localRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
+
+    // EMI — third recipe viewer, common alongside JEI/REI. Soft-dep, plugin
+    // discovered via @EmiEntrypoint. Modrinth maven (no separate api artifact —
+    // single jar is fine for our compile usage).
+    compileOnly("maven.modrinth:emi:${emi_version}")
+    localRuntime("maven.modrinth:emi:${emi_version}")
+
+    // Curios API — slot extension framework. Soft-dep; our CurioItem capability
+    // registration is gated on ModList.get().isLoaded("curios"), so the missing
+    // class never resolves when Curios isn't installed.
+    compileOnly("maven.modrinth:curios:${curios_version}")
+    localRuntime("maven.modrinth:curios:${curios_version}")
+
+    // Patchouli — guide-book framework. Soft-dep, pure data-driven (book.json,
+    // category JSONs, entry JSONs). No Java code needed — Patchouli auto-
+    // registers the book item from the data/<modid>/patchouli_books/<name>/book.json
+    // file on its own. We only need the dep at runtime so the book displays.
+    localRuntime("maven.modrinth:patchouli:${patchouli_version}")
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

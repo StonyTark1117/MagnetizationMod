@@ -53,6 +53,20 @@ public final class Magnetization {
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
 
+        // Curios — register the Field Compass and Magnetic Grapple as curios
+        // so they work from a charm slot. Guarded so the Curios imports don't
+        // resolve when Curios isn't installed.
+        if (ModList.get().isLoaded("curios")) {
+            com.stonytark.magnetization.compat.curios.MagCurioCompat.wire(modBus);
+        }
+
+        // Alex's Caves — optional swap between our Magnetized effect and AC's
+        // Magnetizing effect, controlled by config. Guarded so the AC imports
+        // and BuiltInRegistries lookups don't fire when AC isn't installed.
+        if (ModList.get().isLoaded("alexscaves")) {
+            com.stonytark.magnetization.compat.alexscaves.MagAlexsCavesCompat.wire(modBus);
+        }
+
         // Client-only: light up the "Config" button on the Mods list with NeoForge's
         // built-in auto-generated config screen. The guard keeps the client-side
         // ConfigurationScreen / IConfigScreenFactory classes from being touched

@@ -13,7 +13,22 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 
 Optional integrations (auto-detected when installed):
 - [Jade](https://modrinth.com/mod/jade), [WTHIT](https://modrinth.com/mod/wthit), or [The One Probe](https://modrinth.com/mod/the-one-probe) for HUD info on emitters.
-- [JEI](https://modrinth.com/mod/jei) or [REI](https://modrinth.com/mod/rei) for an in-browser info page on the ferromagnetic-item tag.
+- [JEI](https://modrinth.com/mod/jei), [REI](https://modrinth.com/mod/rei), or [EMI](https://modrinth.com/mod/emi) for an in-browser info page on the ferromagnetic-item tag.
+- [Curios](https://modrinth.com/mod/curios) — Field Compass and Magnetic Grapple are recognized as curios so they work from a charm slot instead of needing the hotbar.
+- [Patchouli](https://modrinth.com/mod/patchouli) — adds a craftable in-game guide book (Book + Raw Magnetite) covering basics, emitters, ship polarity, and advanced systems.
+- [Alex's Caves](https://modrinth.com/mod/alexs-caves) — Magnetron + Ferrouslime are magnetizable; Azure/Scarlet magnets + neodymium ores/blocks are ferromagnetic. Config `compat.alexsCavesPotionMode` (BOTH / OURS_ONLY / THEIRS_ONLY) controls how our Magnetized effect coexists with AC's Magnetizing effect when both mods are present.
+- [Magnetizing](https://www.curseforge.com/minecraft/mc-mods/magnetizing) — its magnetite ingots are fungible with ours via `c:ingots/magnetite`; its block/item magnets and colored magnetite blocks count as ferromagnetic to our emitters; we honour its `magnetizing:unmoveable_by_magnets` entity tag so admins only need to curate one list.
+- [Create: Magnetics](https://www.curseforge.com/minecraft/mc-mods/create-magnetics) — ingot/sheet/block all fungible via the `c:` tags; its Kinetic Magnet counts as a magnet for ship susceptibility; magnetized crystals are ferromagnetic items.
+- **Simulated** — its Redstone Magnet block is recognized as a magnet emitter, so any contraption carrying one gains susceptibility from it and naturally responds to our fields.
+- **Broader metal coverage** — common `c:` metal tags (steel, nickel, cobalt, zinc, brass, tin, lead, silver, osmium, uranium, aluminum, neodymium, electrum, invar, constantan, bronze) are all included in our ferromagnetic tags, so any tech/Create addon that populates them gets free integration: those ores/ingots/blocks act as ferromagnetic targets and count toward ship susceptibility when carried. Verified hits: Mekanism (osmium/lead/tin/uranium/refined alloys), Create: Crafts & Additions (electrum, wires, rods), Create: New Age (electromagnet coil), AlexsCaves (azure/scarlet neodymium ores/ingots/blocks + their magnets), Twilight Forest (knightmetal, steeleaf, ironwood, fiery armor sets).
+- **AlexsCaves** — Magnetron mobs (literally made of metal) and Ferrouslime are in our `magnetizable` entity tag. Their armor sets are recognized as magnetizable gear.
+- **Twilight Forest** — knightmetal/steeleaf/ironwood/fiery armor sets are in `metal_armor` and feed our magnetized-armor system.
+- **Iron Chests / Sophisticated Storage** — metal chest/barrel variants act as ferromagnetic blocks.
+- **Immersive Engineering** — steel/aluminum/electrum/constantan ingots + iron/steel plates + copper/electrum/steel wirecoils + railgun are tagged ferromagnetic.
+- **Modular Golems / Extra Golems / Cataclysm / Bosses of Mass Destruction** — metallic golem entities and metal-themed bosses (Ignis, Netherite Monstrosity, Gauntlet) are magnetizable.
+- **The Aether** — Gravitite item and block tagged ferromagnetic (their "anti-gravity" stays — our pull is just additive).
+- **Quark** — Iron and Copper Oretoises are magnetizable.
+- **Cross-mod lightning** — Iron's Spells (Chain Lightning, Lightning Lance, Thunderstorm, Ascension), Cataclysm Scylla (Lightning Spear / Electric Shock), Alex's Caves Tesla + Magnetron arcs, Twilight Forest lightning all trigger LIRM stamping and log petrification on hit — same effect as a vanilla bolt. Driven by the `#magnetization:lightning_sources` damage-type tag; datapacks can add more sources without code changes.
 
 ## How it works
 
@@ -147,6 +162,7 @@ While goggles are worn, additional world overlays appear:
 | `physics.maxAccelPerTick` | 50.0 | 0.0–1000.0 | Per-ship-per-tick acceleration cap (m/s²) summed across every emitter touching the ship that tick. 0 to disable. |
 | `physics.shipSampleSteps` | 3 | 1–7 | Grid size for volume-integrating a field over a ship's AABB. 1 = single closest-point sample (1.0.0 behaviour); 3 = 27 samples that produce realistic torque. Quadratic cost in steps. |
 | `physics.shipLinearDrag` | 0.02 | 0.0–1.0 | Linear-velocity damping per tick applied to any ship being pulled by a magnet. 0 disables. |
+| `physics.shipAngularDrag` | 0.05 | 0.0–1.0 | Angular-velocity damping per tick — counterpart to `shipLinearDrag`. Without it, the torque from off-center sample forces could keep a ship spinning indefinitely under sustained pull. 0 disables. |
 | `physics.shipBaselineSusceptibility` | 1.0 | 0.0–10.0 | Multiplier on external force a ship feels with no ferromagnetic blocks aboard. 1.0 = full strength. |
 | `physics.shipPerFerrousSusceptibility` | 0.05 | 0.0–5.0 | Susceptibility added per ferromagnetic block (`#magnetization:ferromagnetic_blocks`) aboard. |
 | `physics.shipPerMagnetSusceptibility` | 0.15 | 0.0–5.0 | Susceptibility added per magnet emitter block (`#magnetization:magnetic_emitter`) aboard. Magnets count as ferrous-plus; their pole does NOT shift the ship's pole. |

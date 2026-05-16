@@ -29,6 +29,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,11 +76,56 @@ public final class LightningRemnantMagnetism {
 
     @SubscribeEvent
     public static void onStruck(final EntityStruckByLightningEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+        applyLirmStamp(target, "vanilla-bolt");
+    }
+
+    /**
+     * Cross-mod hook: when a {@link LivingEntity} takes damage from a source
+     * tagged {@link MagTags#LIGHTNING_SOURCES}, treat it as a lightning strike
+     * for LIRM purposes. Vanilla {@code minecraft:lightning_bolt} is already
+     * in that tag, so {@link #onStruck} handles natural strikes — this hook
+     * picks up Iron's Spells Chain Lightning / Lightning Lance, Cataclysm's
+     * Scylla bolts, Alex's Caves Tesla arcs, etc., none of which spawn a
+     * vanilla {@code LightningBolt} entity.
+     *
+     * <p>Spawned-bolt spells (Iron's Spells Thunderstorm/Ascension, Twilight
+     * Lich) still go through {@link #onStruck} because they create a real
+     * {@code LightningBolt}. The two paths are guarded against double-stamping
+     * by {@link #alreadyMagnetized}.
+     */
+    @SubscribeEvent
+    public static void onLightningDamage(final LivingIncomingDamageEvent event) {
+        if (!enabled()) return;
+        if (!event.getSource().is(MagTags.LIGHTNING_SOURCES)) return;
+        // Skip vanilla bolts — they fire EntityStruckByLightningEvent before
+        // damage, so onStruck (+ onLightningSpawn for petrification) has
+        // already done the work. Re-entering here would just rebuild the
+        // candidate list and (usually) no-op via the already-magnetized
+        // filter, but skipping is cheaper.
+        if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.LIGHTNING_BOLT)) return;
+
+        final LivingEntity target = event.getEntity();
+        final String sourceLabel = event.getSource().typeHolder().unwrapKey()
+                .map(k -> k.location().toString()).orElse("unknown-lightning");
+        applyLirmStamp(target, sourceLabel);
+
+        // Petrify nearby logs too — vanilla bolts get this via onLightningSpawn
+        // (the bolt's spawn position), but modded lightning attacks don't spawn
+        // a real LightningBolt, so we run petrification at the target's position.
+        if (target.level() instanceof ServerLevel server) {
+            petrifyLogsAround(server, target.blockPosition());
+        }
+    }
+
+    /** Pick a random eligible armor/tool piece on the target and stamp it with
+     *  a random polarity. Public so other systems (boss lightning attacks,
+     *  custom rituals, /magnetization debug lirm) can fire the same effect. */
+    public static void applyLirmStamp(final LivingEntity target, final String sourceLabel) {
         if (!enabled()) {
-            if (MagConfig.debugLogging()) LOG.info("LIRM struck-event suppressed: feature disabled in config");
+            if (MagConfig.debugLogging()) LOG.info("LIRM stamp suppressed: feature disabled in config");
             return;
         }
-        if (!(event.getEntity() instanceof LivingEntity target)) return;
 
         // Gather all unmagnetized metal armor + held tools as candidates.
         final List<ItemStack> candidates = new ArrayList<>(6);
@@ -91,8 +137,8 @@ public final class LightningRemnantMagnetism {
         }
         if (candidates.isEmpty()) {
             if (MagConfig.debugLogging())
-                LOG.info("LIRM strike on {} produced no stamp — no eligible metal armor/tools",
-                        target.getType().toShortString());
+                LOG.info("LIRM stamp ({}) on {} produced no result — no eligible metal armor/tools",
+                        sourceLabel, target.getType().toShortString());
             return;
         }
 
@@ -104,9 +150,9 @@ public final class LightningRemnantMagnetism {
         Lirm.stamp(picked, target.level().getGameTime());
 
         if (MagConfig.debugLogging()) {
-            LOG.info("LIRM stamp: target={} item={} polarity={} candidates={}",
-                    target.getType().toShortString(), picked.getItem(), pol.getSerializedName(),
-                    candidates.size());
+            LOG.info("LIRM stamp ({}): target={} item={} polarity={} candidates={}",
+                    sourceLabel, target.getType().toShortString(), picked.getItem(),
+                    pol.getSerializedName(), candidates.size());
         }
 
         if (target.level() instanceof ServerLevel server) {

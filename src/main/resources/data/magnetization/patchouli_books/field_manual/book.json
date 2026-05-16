@@ -1,0 +1,11 @@
+{
+  "name": "book.magnetization.field_manual.name",
+  "landing_text": "book.magnetization.field_manual.landing",
+  "version": 1,
+  "creative_tab": "magnetization:main",
+  "model": "patchouli:book_brown",
+  "use_resource_pack": true,
+  "i18n": true,
+  "show_progress": false,
+  "subtitle": "book.magnetization.field_manual.subtitle"
+}

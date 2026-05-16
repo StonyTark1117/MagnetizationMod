@@ -1,0 +1,8 @@
+{
+  "name": "book.magnetization.entry.tractor.name",
+  "icon": "magnetization:tractor_beam",
+  "category": "magnetization:emitters",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:tractor_beam", "text": "book.magnetization.entry.tractor.spotlight" }
+  ]
+}

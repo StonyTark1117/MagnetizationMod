@@ -293,8 +293,8 @@ public class EmitterMenu extends AbstractContainerMenu {
                 case BUTTON_STRENGTH_MEDIUM  -> setStrengthIfAble(be, MagneticStrength.MEDIUM);
                 case BUTTON_STRENGTH_STRONG  -> setStrengthIfAble(be, MagneticStrength.STRONG);
                 case BUTTON_STRENGTH_EXTREME -> setStrengthIfAble(be, MagneticStrength.EXTREME);
-                case BUTTON_RANGE_DEC -> bumpRange(be, -RANGE_STEP);
-                case BUTTON_RANGE_INC -> bumpRange(be, +RANGE_STEP);
+                case BUTTON_RANGE_DEC -> bumpRange(be, -rangeStepFor(be));
+                case BUTTON_RANGE_INC -> bumpRange(be, +rangeStepFor(be));
                 case BUTTON_INFLIGHT_DEC -> bumpInflightCap(be, -INFLIGHT_STEP);
                 case BUTTON_INFLIGHT_INC -> bumpInflightCap(be, +INFLIGHT_STEP);
                 default -> { return false; }
@@ -378,6 +378,16 @@ public class EmitterMenu extends AbstractContainerMenu {
             if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.EXCAVATOR_MAX_STRENGTH.get();
         } catch (final Throwable ignored) { /* config not loaded yet */ }
         return MagneticStrength.EXTREME;
+    }
+
+    /** Per-emitter range step for the +/- buttons. The Repulsor Coil's tuning
+     *  band is much narrower than the long-range emitters (its default is 8
+     *  blocks total, not 128), so an 8-block step would jump past most of its
+     *  useful range in one click. 1-block step gives the player finger-fine
+     *  control. */
+    private static int rangeStepFor(final @Nullable BlockEntity be) {
+        if (be instanceof RepulsorCoilBlockEntity) return 1;
+        return RANGE_STEP;
     }
 
     /** Per-block GUI ceiling for the range, from {@link MagConfig}. */

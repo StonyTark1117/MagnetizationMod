@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.intro.name",
+  "icon": "magnetization:lodestone_core",
+  "category": "magnetization:basics",
+  "priority": true,
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.intro.page1.title", "text": "book.magnetization.entry.intro.page1.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.intro.page2.title", "text": "book.magnetization.entry.intro.page2.text" }
+  ]
+}
