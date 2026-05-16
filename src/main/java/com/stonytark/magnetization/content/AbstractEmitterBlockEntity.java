@@ -49,6 +49,10 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
 
     private boolean powered = false;
     @Nullable MagneticField cachedField = null;
+    /** Snapshot of the host ship's magnetic state, synced to the client so HUDs
+     *  can show "Ship: NORTH ×1.4" without re-running the server-side scan.
+     *  {@code null} when this emitter is in the open world (not on a contraption). */
+    private @Nullable com.stonytark.magnetization.api.ShipMagneticState cachedShipState = null;
 
     /** Per-emitter strength override. {@code null} = use the subclass's default tier. */
     private @Nullable MagneticStrength strengthOverride = null;
@@ -235,14 +239,23 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // host from force application (no internal forces on the carrying ship).
         final MagneticField worldField = host == null
                 ? local
-                : SableBridge.promoteToWorldSpace(server, getBlockPos(), local);
+                : SableBridge.promoteToWorldSpace(host.logicalPose(), local);
 
         cachedField = worldField;
+        // Refresh the cached host-ship state so HUDs/goggles can show it. Cheap:
+        // the registry is a TTL cache, so most ticks return immediately. Updates
+        // to the snapshot are propagated to clients via the BE-NBT sync path.
+        final com.stonytark.magnetization.api.ShipMagneticState previousShipState = cachedShipState;
+        cachedShipState = host == null
+                ? null
+                : com.stonytark.magnetization.physics.ShipMagneticRegistry.get(server, host);
         // Resync to clients when the field meaningfully changes — going from null
         // ↔ non-null, or polarity / strength / shape change. Don't resync on every
         // tick (would flood the network) or on origin micro-changes (irrelevant
         // to the goggle/HUD readout).
-        if (previous == null || !sameForClientDisplay(previous, worldField)) {
+        if (previous == null
+                || !sameForClientDisplay(previous, worldField)
+                || !sameShipStateForClientDisplay(previousShipState, cachedShipState)) {
             markForClientSync(server);
         }
         FieldApplicator.apply(server, worldField, host, shipFilter());
@@ -251,6 +264,20 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (host == null) {
             InventorySink.tryIngest(server, getBlockPos());
         }
+    }
+
+    /** Resync gate for ship state: only re-network when polarity or counts move
+     *  enough to change the HUD readout. The susceptibility number is derived from
+     *  counts, so comparing counts already covers it. */
+    private static boolean sameShipStateForClientDisplay(
+            final @Nullable com.stonytark.magnetization.api.ShipMagneticState a,
+            final @Nullable com.stonytark.magnetization.api.ShipMagneticState b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.polarity() == b.polarity()
+                && a.ferrousBlockCount() == b.ferrousBlockCount()
+                && a.magnetBlockCount() == b.magnetBlockCount()
+                && a.inverterBlockCount() == b.inverterBlockCount();
     }
 
     private static boolean sameForClientDisplay(final MagneticField a, final MagneticField b) {
@@ -268,6 +295,35 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     /** Convenience for subclasses that store a horizontal facing in their blockstate. */
     protected static Direction facing(final BlockState state, final DirectionProperty prop) {
         return state.getValue(prop);
+    }
+
+    @Override
+    public List<Component> extraTooltipLines(final boolean verbose) {
+        if (cachedShipState == null) return List.of();
+        return shipStateTooltipLines(cachedShipState, verbose);
+    }
+
+    /** "On ship: NORTH ×1.4 (12 ferrous, 3 magnets, 1 inverter)" — verbose form
+     *  for goggles/Jade/WTHIT/TOP; the compact form drops the count breakdown. */
+    private static List<Component> shipStateTooltipLines(
+            final com.stonytark.magnetization.api.ShipMagneticState state, final boolean verbose) {
+        final ChatFormatting polColor = switch (state.polarity()) {
+            case NORTH -> ChatFormatting.AQUA;
+            case SOUTH -> ChatFormatting.RED;
+            case NONE  -> ChatFormatting.GRAY;
+        };
+        final String summary = String.format("%s ×%.2f",
+                state.polarity().getSerializedName().toUpperCase(java.util.Locale.ROOT),
+                state.susceptibility());
+        final Component head = Component.translatable("tooltip.magnetization.ship_state",
+                        Component.literal(summary).withStyle(polColor))
+                .withStyle(ChatFormatting.GRAY);
+        if (!verbose) return List.of(head);
+        final Component detail = Component.literal(String.format(
+                "  %d ferrous, %d magnets, %d inverters",
+                state.ferrousBlockCount(), state.magnetBlockCount(), state.inverterBlockCount()))
+                .withStyle(ChatFormatting.DARK_GRAY);
+        return List.of(head, detail);
     }
 
     @Override
@@ -306,6 +362,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (strengthOverride != null) tag.putString("StrengthOverride", strengthOverride.name());
         if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
         if (polarityOverride != null) tag.putString("PolarityOverride", polarityOverride.name());
+        if (cachedShipState != null) tag.put("ShipState", cachedShipState.toNbt());
     }
 
     @Override
@@ -318,6 +375,9 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         rangeOverride = tag.contains("RangeOverride") ? tag.getInt("RangeOverride") : 0;
         polarityOverride = tag.contains("PolarityOverride")
                 ? com.stonytark.magnetization.api.MagneticPolarity.valueOf(tag.getString("PolarityOverride")) : null;
+        cachedShipState = tag.contains("ShipState")
+                ? com.stonytark.magnetization.api.ShipMagneticState.fromNbt(tag.getCompound("ShipState"))
+                : null;
     }
 
     /** Pushes the BE's saved NBT to clients on chunk load — without this, client-side

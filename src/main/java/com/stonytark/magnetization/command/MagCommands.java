@@ -12,6 +12,7 @@ import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.worldgen.AnomalyBiome;
 import com.stonytark.magnetization.worldgen.PetrifiedForestBiome;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
@@ -88,7 +89,22 @@ public final class MagCommands {
                                                     final BlockPos emit = BlockPosArgument.getBlockPos(ctx, "emitter");
                                                     final BlockPos tgt = BlockPosArgument.getBlockPos(ctx, "target");
                                                     return printForceAt(ctx.getSource(), emit, tgt);
-                                                })))))
+                                                }))))
+                        .then(Commands.literal("rotate")
+                                // /magnetization debug rotate <deg>           — yaw the nearest ship
+                                // /magnetization debug rotate <deg> yaw|pitch|roll
+                                .then(Commands.argument("degrees", DoubleArgumentType.doubleArg(-360, 360))
+                                        .executes(ctx -> rotateNearestShip(ctx.getSource(),
+                                                DoubleArgumentType.getDouble(ctx, "degrees"), "yaw"))
+                                        .then(Commands.literal("yaw")
+                                                .executes(ctx -> rotateNearestShip(ctx.getSource(),
+                                                        DoubleArgumentType.getDouble(ctx, "degrees"), "yaw")))
+                                        .then(Commands.literal("pitch")
+                                                .executes(ctx -> rotateNearestShip(ctx.getSource(),
+                                                        DoubleArgumentType.getDouble(ctx, "degrees"), "pitch")))
+                                        .then(Commands.literal("roll")
+                                                .executes(ctx -> rotateNearestShip(ctx.getSource(),
+                                                        DoubleArgumentType.getDouble(ctx, "degrees"), "roll"))))))
                 .then(Commands.literal("spawn_test_ship")
                         .requires(spawnPerm)
                         .executes(ctx -> spawnTestShip(ctx.getSource())))
@@ -340,6 +356,76 @@ public final class MagCommands {
         Lirm.clear(held);
         src.sendSuccess(() -> Component.literal(
                 "Cleared LIRM + polarity from " + held.getItem() + "."), true);
+        return 1;
+    }
+
+    /**
+     * Teleport-rotate the nearest sub-level by {@code degrees} around the named axis
+     * (yaw = world Y, pitch = world X, roll = world Z). Setup-free regression check
+     * for the "magnet stuck on placement-cardinal" bug: place a directional emitter
+     * on a ship, run this command, and watch whether the field axis follows. Uses
+     * absolute teleport rather than angular velocity so the rotation is exact and
+     * doesn't drift over ticks.
+     */
+    private static int rotateNearestShip(final CommandSourceStack src,
+                                         final double degrees, final String axis) {
+        final ServerLevel level = src.getLevel();
+        final dev.ryanhcode.sable.api.sublevel.SubLevelContainer container =
+                dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        if (container == null) {
+            src.sendFailure(Component.literal("Sable container unavailable in this level."));
+            return 0;
+        }
+        final Vec3 origin = src.getPosition();
+
+        dev.ryanhcode.sable.sublevel.ServerSubLevel best = null;
+        double bestDistSqr = Double.MAX_VALUE;
+        for (final dev.ryanhcode.sable.sublevel.SubLevel sub : container.getAllSubLevels()) {
+            if (!(sub instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel s)) continue;
+            if (s.getMassTracker().isInvalid() || s.getMassTracker().getMass() <= 0.0) continue;
+            final var bb = s.boundingBox();
+            final double cx = (bb.minX() + bb.maxX()) * 0.5;
+            final double cy = (bb.minY() + bb.maxY()) * 0.5;
+            final double cz = (bb.minZ() + bb.maxZ()) * 0.5;
+            final double d2 = (cx - origin.x) * (cx - origin.x)
+                    + (cy - origin.y) * (cy - origin.y)
+                    + (cz - origin.z) * (cz - origin.z);
+            if (d2 < bestDistSqr) {
+                bestDistSqr = d2;
+                best = s;
+            }
+        }
+        if (best == null) {
+            src.sendFailure(Component.literal("No live sub-level in the world."));
+            return 0;
+        }
+        final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle handle =
+                dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(best);
+        if (handle == null) {
+            src.sendFailure(Component.literal("Could not obtain RigidBodyHandle for the nearest ship."));
+            return 0;
+        }
+        final int ax, ay, az;
+        switch (axis) {
+            case "pitch" -> { ax = 1; ay = 0; az = 0; }
+            case "roll"  -> { ax = 0; ay = 0; az = 1; }
+            default      -> { ax = 0; ay = 1; az = 0; } // yaw
+        }
+        // Compose in world frame: rotate the existing orientation by `delta` applied
+        // from the world side, so "yaw 90°" yaws around world up regardless of the
+        // ship's current orientation.
+        final org.joml.Quaterniond current = new org.joml.Quaterniond(best.logicalPose().orientation());
+        final org.joml.Quaterniond delta = new org.joml.Quaterniond(
+                new org.joml.AxisAngle4d(Math.toRadians(degrees), ax, ay, az));
+        final org.joml.Quaterniond next = new org.joml.Quaterniond();
+        delta.mul(current, next);
+        handle.teleport(best.logicalPose().position(), next);
+
+        final dev.ryanhcode.sable.sublevel.ServerSubLevel rotated = best;
+        src.sendSuccess(() -> Component.literal(String.format(
+                "Rotated ship %s by %.1f° %s (mass=%.2f).",
+                rotated.getUniqueId().toString().substring(0, 8),
+                degrees, axis, rotated.getMassTracker().getMass())), true);
         return 1;
     }
 

@@ -24,6 +24,17 @@ Every block in this addon either *emits a magnetic field* or *responds to one*. 
 
 Onboard-only configurations (every magnet on the same ship) produce zero net thrust — internal forces cancel, just like real physics. To propel a ship, you build *between* the world and the ship.
 
+External fields integrate over the ship's volume: a coarse 3×3×3 sample grid (configurable) means a long ship feels stronger pull at the end closest to a magnet than the far end, which naturally produces torque so the ship rotates into alignment instead of just sliding. Off-center impulses also feed back as angular velocity via the contraption's true inverse inertia tensor, so a tractor beam clipping the nose yaws the ship around its center of mass. A small per-tick linear drag (default 2%) is applied to any ship being pulled by a magnet so constant-force tugs reach a terminal velocity instead of accelerating forever, and the per-tick acceleration cap is now shared across every emitter touching the same ship — three STRONG anchors stacked can't stack 3× the cap.
+
+### Ship polarity & susceptibility
+
+Every Sable sub-level carries a derived magnetic state, scanned periodically from its blocks:
+
+- **Polarity** — NORTH by default. Place a **Polarity Inverter** anywhere on the contraption to flip the ship to SOUTH; place a second to cancel back to NORTH (parity). Inverters never affect adjacent emitters' polarity when used this way; they're whole-ship modifiers.
+- **Susceptibility** — `baseline + 0.05 × ferrous_blocks + 0.15 × magnet_blocks`, capped (default 20×). A heavier ferromagnetic loadout makes the ship visibly more responsive to external fields. Magnet blocks aboard count toward susceptibility only — their own pole has no effect on the ship's pole, so flipping an Electromagnet's polarity for ship-to-ship combat doesn't accidentally invert your own ship and tear the contraption apart.
+
+Magnets mounted on a ship still never pull their own ship directly (the carrying sub-level is excluded from each emitter's force pass). But a static magnet on the ground will pull a ship with onboard magnets normally — composition affects susceptibility, presence doesn't gate it.
+
 ## Block reference
 
 | Block | Power | Field shape | Use |
@@ -78,6 +89,8 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 - **Iron / chainmail / gold / netherite / magnetite / ferromagnetic armor** makes you magnetizable. Each piece worn adds susceptibility — full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
 - **Magnetic Grapple** turns infrastructure into traversal. Right-click pointing at any space within 24 blocks of an active attractive field; the closest qualifying emitter pulls you toward it. Cooldown: 1 second.
 - **`/magnetization debug field <pos>`** prints the field state at a block. Useful for debugging.
+- **`/magnetization debug forceAt <emitter> <target>`** prints the world-space force vector the emitter would exert on a unit-mass test particle at `target`.
+- **`/magnetization debug rotate <deg> [yaw|pitch|roll]`** teleport-rotates the nearest sub-level by an absolute angle in world frame — setup-free way to confirm a mounted emitter's field axis follows the contraption.
 - **`/magnetization lirm strike [pos]`** summons a lightning bolt on the player (or at `pos`) so LIRM + log petrification fire on demand. `/magnetization lirm stamp [north|south]` manually LIRM-stamps the held metal item (testing decay without waiting on a storm). `/magnetization lirm inspect` lists every metal armor/tool the player carries with current polarity + decay remaining. `/magnetization lirm clear` strips the LIRM stamp from the held item. `/magnetization lirm fields` prints the number of active transient magnetic fields seeded by recent lightning in the current level.
 - **`/magnetization tp anomaly`** and **`/magnetization tp petrified_forest`** scan up to 6 400 blocks for the closest matching biome and teleport the player to its surface — same scan radius vanilla `/locate biome` uses.
 
@@ -112,6 +125,8 @@ Two or more powered Magnetic Anchors that share a bound ship apply a once-per-se
 
 Wearing Create's Engineer's Goggles shows a tier/polarity/range readout above any emitter. Without goggles, you still get a one-line "TIER POLARITY" hint when crosshairing. Jade, WTHIT, and TheOneProbe all surface the same info if installed.
 
+Emitters mounted on a contraption also report the host ship's polarity and susceptibility — for example *On ship: NORTH ×1.40* with a `12 ferrous, 3 magnets, 1 inverter` breakdown when goggles are on. The snapshot is synced from the server so all four surfaces (goggles, Jade, WTHIT, TOP) read from the same number.
+
 While goggles are worn, additional world overlays appear:
 
 - **Range rings / arrows**: every active emitter draws a polarity-tinted ring (cool blue = attract, warm red = repel) at its origin's y-plane sized to its effective range. DIRECTIONAL and CONICAL emitters draw an axis arrow instead — a tractor beam aimed sideways doesn't paint a misleading horizontal disc.
@@ -129,7 +144,14 @@ While goggles are worn, additional world overlays appear:
 | `physics.strengthMultiplier` | 1.0 | 0.0–100.0 | Global multiplier on every emitter's force. |
 | `physics.entityVelocityScale` | 0.05 | 0.0–1.0 | Tick conversion factor for vanilla entity velocity. |
 | `physics.conicalHalfAngleCos` | 0.7071 | 0.0–0.999 | Cosine of the half-angle of conical emitters. |
-| `physics.maxAccelPerTick` | 50.0 | 0.0–1000.0 | Per-ship acceleration cap (m/s²) applied after Sable's mass scaling. 0 to disable. |
+| `physics.maxAccelPerTick` | 50.0 | 0.0–1000.0 | Per-ship-per-tick acceleration cap (m/s²) summed across every emitter touching the ship that tick. 0 to disable. |
+| `physics.shipSampleSteps` | 3 | 1–7 | Grid size for volume-integrating a field over a ship's AABB. 1 = single closest-point sample (1.0.0 behaviour); 3 = 27 samples that produce realistic torque. Quadratic cost in steps. |
+| `physics.shipLinearDrag` | 0.02 | 0.0–1.0 | Linear-velocity damping per tick applied to any ship being pulled by a magnet. 0 disables. |
+| `physics.shipBaselineSusceptibility` | 1.0 | 0.0–10.0 | Multiplier on external force a ship feels with no ferromagnetic blocks aboard. 1.0 = full strength. |
+| `physics.shipPerFerrousSusceptibility` | 0.05 | 0.0–5.0 | Susceptibility added per ferromagnetic block (`#magnetization:ferromagnetic_blocks`) aboard. |
+| `physics.shipPerMagnetSusceptibility` | 0.15 | 0.0–5.0 | Susceptibility added per magnet emitter block (`#magnetization:magnetic_emitter`) aboard. Magnets count as ferrous-plus; their pole does NOT shift the ship's pole. |
+| `physics.shipMaxSusceptibility` | 20.0 | 1.0–100.0 | Upper cap on a ship's susceptibility multiplier. |
+| `physics.shipScanIntervalTicks` | 100 | 20–6000 | How often (ticks) a ship's magnetic state is rescanned. 100 = 5 s. Ships not inside any active field never get scanned regardless. |
 
 ### guiLimits — per-emitter GUI ceilings (admin caps)
 | Key | Default | Range | Description |
@@ -198,7 +220,7 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 
 ```sh
 ./gradlew build       # produces build/libs/magnetization-<version>.jar
-./gradlew test        # 13 unit tests on field math
+./gradlew test        # 50 unit tests on field math + ship state
 ```
 
 `./gradlew runClient` for an in-dev test run; `./gradlew runServer` for the dedicated-server smoke test. Data is hand-authored JSON; no `runData` task is wired.

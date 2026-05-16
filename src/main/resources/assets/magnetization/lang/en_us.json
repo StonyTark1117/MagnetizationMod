@@ -165,6 +165,7 @@
   "lirm.magnetization.struck": "Lightning Induced Remnant Magnetism — gear polarised %s.",
   "lirm.magnetization.faded": "Your lightning charge has faded.",
   "tooltip.magnetization.lirm_temporary": "Lightning charge — temporary",
+  "tooltip.magnetization.ship_state": "On ship: %s",
   "hoe.magnetization.dowse_result": "Magnetic dowsing: %s vein block(s) detected.",
   "tooltip.magnetization.tool_signature.sword": "Magnetized: hits yank opposite-pole armored targets toward you.",
   "tooltip.magnetization.tool_signature.pickaxe": "Magnetized: sneak to slowly rip nearby ferromagnetic ore out of the world.",
@@ -221,7 +222,7 @@
   "tooltip.magnetization.magnetic_switch.use":        "Emits a redstone signal proportional to nearest ship's distance (8-block range).",
   "tooltip.magnetization.permanent_magnet.use":       "Always-on weak field. Right-click flips polarity. Build propulsion tracks by lining up opposing magnets between world and ship.",
   "tooltip.magnetization.temporary_magnet.use":       "Cheap, decaying counterpart. Emits a weak field for 10 minutes after placement, then reverts to an Iron Block (redstone consumed at craft is not returned). Use for short-lived propulsion segments.",
-  "tooltip.magnetization.polarity_inverter.use":      "Place adjacent to an emitter to flip its field polarity. Two inverters cancel.",
+  "tooltip.magnetization.polarity_inverter.use":      "Place adjacent to an emitter to flip its field polarity, or anywhere on a contraption to flip the whole ship's polarity. Parity: two inverters cancel.",
   "tooltip.magnetization.magnetite_ingot.use":        "Naturally magnetic iron oxide (Fe₃O₄).",
   "tooltip.magnetization.raw_magnetite.use":          "Mined from magnetite ore. Smelt for an ingot.",
   "tooltip.magnetization.magnetite_ore.use":          "Drops raw magnetite. Fortune multiplies the drop.",
@@ -231,7 +232,7 @@
   "advancement.magnetization.root.title":               "Magnetic North",
   "advancement.magnetization.root.description":         "Craft a Lodestone Core — the heart of every emitter.",
   "advancement.magnetization.first_emitter.title":      "Field of Influence",
-  "advancement.magnetization.first_emitter.description":"Pick up any ferromagnetic component.",
+  "advancement.magnetization.first_emitter.description":"Pick up your first magnetic emitter.",
   "advancement.magnetization.full_kit.title":           "Aeromagnetic Engineer",
   "advancement.magnetization.full_kit.description":    "Hold every emitter in the addon at once.",
   "advancement.magnetization.find_magnetite.title":     "Strange Stone",
@@ -241,9 +242,9 @@
   "advancement.magnetization.full_loadout.title":       "Iron-Clad",
   "advancement.magnetization.full_loadout.description": "Hold a magnetite and ferromagnetic sword and pickaxe.",
   "advancement.magnetization.dual_magnetized.title":    "Wearing the Field",
-  "advancement.magnetization.dual_magnetized.description":"Equip any metal armor piece tracked by Magnetization.",
+  "advancement.magnetization.dual_magnetized.description":"Carry a north-stamped and a south-stamped piece of magnetized armor.",
   "advancement.magnetization.vein_whisperer.title":     "Vein Whisperer",
   "advancement.magnetization.vein_whisperer.description":"Hold a Magnetic Excavator. Mining without lifting a finger.",
   "advancement.magnetization.inverted_quarry.title":    "Inverted Quarry",
-  "advancement.magnetization.inverted_quarry.description":"Place a Magnetic Excavator. Wrench it to face wherever the ore is."
+  "advancement.magnetization.inverted_quarry.description":"Wrench a Magnetic Excavator to point it where the ore is."
 }

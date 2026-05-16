@@ -85,6 +85,14 @@ public final class FieldApplicator {
         try { return MagConfig.MAX_ACCEL_PER_TICK.get(); } catch (Throwable t) { return 50.0d; }
     }
 
+    private static double shipLinearDrag() {
+        try { return MagConfig.SHIP_LINEAR_DRAG.get(); } catch (Throwable t) { return 0.02d; }
+    }
+
+    private static int shipSampleSteps() {
+        try { return MagConfig.SHIP_SAMPLE_STEPS.get(); } catch (Throwable t) { return 3; }
+    }
+
     public static void apply(final ServerLevel level, final MagneticField field) {
         apply(level, field, null, null);
     }
@@ -138,6 +146,12 @@ public final class FieldApplicator {
                 origin.x + range, origin.y + range, origin.z + range
         );
 
+        final long now = level.getGameTime();
+        final double cap = maxAccelPerTick();
+        final int steps = Math.max(1, shipSampleSteps());
+        final double drag = shipLinearDrag();
+        final double rangeSqr = range * range;
+
         // Diagnostics — only allocated when the debug log gate is open.
         final boolean diag = MagConfig.debugLogging();
         int candidates = 0, passedFilter = 0, impulsesApplied = 0;
@@ -155,39 +169,105 @@ public final class FieldApplicator {
             if (shipFilter != null && !shipFilter.test(server)) continue;
             if (diag) passedFilter++;
 
-            // Pick the closest point inside the sub-level's bounding box to the field origin
-            // and apply the impulse there. This is a coarse approximation — real interaction
-            // would integrate force over the ship's volume — but it's stable enough for
-            // gameplay and avoids visiting interior blocks one at a time.
+            final double mass = server.getMassTracker().getMass();
             final BoundingBox3dc subBox = sub.boundingBox();
-            final Vec3 closest = new Vec3(
-                    Math.max(subBox.minX(), Math.min(origin.x, subBox.maxX())),
-                    Math.max(subBox.minY(), Math.min(origin.y, subBox.maxY())),
-                    Math.max(subBox.minZ(), Math.min(origin.z, subBox.maxZ()))
-            );
-            if (closest.distanceToSqr(origin) > range * range) continue;
 
-            Vec3 impulse = forceAt(level, field, closest);
-            if (impulse.lengthSqr() < 1.0e-6) continue;
+            // Resolve the ship's own polarity + susceptibility. Like polarities
+            // repel, unlike attract — same convention the entity path uses. A
+            // SOUTH-poled ship flips force sign so a NORTH emitter pulls instead
+            // of pushing. Susceptibility scales the magnitude, so ferrous-heavy
+            // ships respond more strongly to the same field. ShipMagneticState
+            // is cached per ship; this is an O(1) lookup most ticks.
+            final com.stonytark.magnetization.api.ShipMagneticState shipState =
+                    ShipMagneticRegistry.get(level, server);
+            final double shipSign = shipState.polarity().sign();
+            // ship.polarity().sign() = +1 for NORTH (default-target convention,
+            // no flip), -1 for SOUTH (flip), 0 for NONE (never returned by the
+            // scanner today, but if it ever does, the ship feels no force).
+            if (shipSign == 0.0) continue;
+            final double shipGain = shipState.susceptibility() * shipSign;
 
-            // Sable's solver applies F = ma internally, so a constant impulse
-            // already produces less acceleration on heavier ships. The cap below
-            // additionally bounds peak acceleration so a STRONG anchor can't
-            // launch a tiny test ship into the next chunk.
-            final double cap = maxAccelPerTick();
-            if (cap > 0) {
-                final double mass = server.getMassTracker().getMass();
-                if (mass > 0) {
-                    final double currentAccel = impulse.length() / mass;
-                    if (currentAccel > cap) {
-                        impulse = impulse.scale(cap * mass / impulse.length());
+            // Integrate the field over a coarse grid of sample points spanning the
+            // ship's AABB. Each sample contributes an impulse at its own world point,
+            // so non-uniform fields (OMNIDIRECTIONAL fall-off, CONICAL gating) naturally
+            // produce torque on extended ships — the closer end pulls harder than the
+            // far end, generating a moment about the COM. steps=1 falls back to the
+            // 1.0.0 closest-point sample.
+            final java.util.List<Vec3> samplePoints = new java.util.ArrayList<>();
+            final java.util.List<Vec3> sampleForces = new java.util.ArrayList<>();
+            double totalForceMag = 0.0;
+            if (steps == 1) {
+                final Vec3 closest = new Vec3(
+                        Math.max(subBox.minX(), Math.min(origin.x, subBox.maxX())),
+                        Math.max(subBox.minY(), Math.min(origin.y, subBox.maxY())),
+                        Math.max(subBox.minZ(), Math.min(origin.z, subBox.maxZ()))
+                );
+                if (closest.distanceToSqr(origin) <= rangeSqr) {
+                    final Vec3 force = forceAt(level, field, closest).scale(shipGain);
+                    if (force.lengthSqr() >= 1.0e-6) {
+                        samplePoints.add(closest);
+                        sampleForces.add(force);
+                        totalForceMag = force.length();
+                    }
+                }
+            } else {
+                final double sx = subBox.maxX() - subBox.minX();
+                final double sy = subBox.maxY() - subBox.minY();
+                final double sz = subBox.maxZ() - subBox.minZ();
+                final double invSteps = 1.0 / (steps - 1);
+                final double weight = 1.0 / (steps * steps * steps);
+                for (int ix = 0; ix < steps; ix++) {
+                    final double fx = subBox.minX() + sx * ix * invSteps;
+                    for (int iy = 0; iy < steps; iy++) {
+                        final double fy = subBox.minY() + sy * iy * invSteps;
+                        for (int iz = 0; iz < steps; iz++) {
+                            final double fz = subBox.minZ() + sz * iz * invSteps;
+                            final Vec3 sample = new Vec3(fx, fy, fz);
+                            if (sample.distanceToSqr(origin) > rangeSqr) continue;
+                            // Each grid cell represents a fraction (1/steps³) of the
+                            // ship's volume; weighting the sampled force by that
+                            // fraction keeps total integrated force comparable to the
+                            // single-sample path regardless of grid density.
+                            final Vec3 force = forceAt(level, field, sample).scale(weight * shipGain);
+                            if (force.lengthSqr() < 1.0e-8) continue;
+                            samplePoints.add(sample);
+                            sampleForces.add(force);
+                            totalForceMag += force.length();
+                        }
                     }
                 }
             }
-            SableBridge.applyWorldImpulse(server, closest, impulse);
+
+            if (totalForceMag <= 1.0e-6) continue;
+
+            // Apply the per-ship-per-tick acceleration cap once across the
+            // *summed* force this emitter wants to deliver, then distribute the
+            // granted slice proportionally over the individual samples. Doing the
+            // cap per-sample would let whichever grid cell happened to be visited
+            // first consume the entire budget — wrong, because cap is a total-accel
+            // limit, not a per-sample limit.
+            double scaleAll = 1.0;
+            if (cap > 0.0 && mass > 0.0) {
+                final double wantedAccel = totalForceMag / mass;
+                final double granted = ShipTickBudget.grant(server, now, cap, wantedAccel);
+                if (granted <= 0.0) continue;
+                if (granted < wantedAccel) scaleAll = granted / wantedAccel;
+            }
+
+            for (int i = 0; i < samplePoints.size(); i++) {
+                final Vec3 scaled = scaleAll == 1.0 ? sampleForces.get(i) : sampleForces.get(i).scale(scaleAll);
+                SableBridge.applyWorldImpulse(server, samplePoints.get(i), scaled);
+            }
+
+            // Apply linear drag at most once per ship per tick (multiple emitters
+            // touching the same ship don't multiply the drag). Reaches a terminal
+            // velocity under sustained pull rather than accelerating indefinitely.
+            if (drag > 0.0 && ShipTickBudget.markTouched(server, now)) {
+                SableBridge.dampLinearVelocity(server, drag);
+            }
             if (diag) {
-                impulsesApplied++;
-                maxImpulseMag = Math.max(maxImpulseMag, impulse.length());
+                impulsesApplied += samplePoints.size();
+                maxImpulseMag = Math.max(maxImpulseMag, totalForceMag * scaleAll);
             }
         }
         if (diag) {
@@ -195,13 +275,14 @@ public final class FieldApplicator {
             // call produced — at 1/20s/tick, that's the m/s/tick the rigid body
             // gets injected directly. Useful for sanity-checking calibration.
             final double dvPerTick = maxImpulseMag * 0.05;
-            debugLog(level, "applyToSubLevels: candidates={} ids={} passedFilter={} impulsesApplied={} maxImpulse={} dv/tick={} hasFilter={} fieldOrigin={} range={}",
+            debugLog(level, "applyToSubLevels: candidates={} ids={} passedFilter={} samplesApplied={} maxSumImpulse={} dv/tick={} hasFilter={} fieldOrigin={} range={}",
                     candidates, candidateIds, passedFilter, impulsesApplied,
                     String.format("%.2fN", maxImpulseMag),
                     String.format("%.3fm/s", dvPerTick),
                     shipFilter != null, origin, range);
         }
     }
+
 
     private static void debugLog(final ServerLevel level, final String fmt, final Object... args) {
         if (!MagConfig.debugLogging()) return;

@@ -51,6 +51,7 @@ public final class Magnetization {
 
         modBus.addListener(Magnetization::onCommonSetup);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
+        NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
 
         // Client-only: light up the "Config" button on the Mods list with NeoForge's
         // built-in auto-generated config screen. The guard keeps the client-side
@@ -92,6 +93,14 @@ public final class Magnetization {
                 com.stonytark.magnetization.compat.jer.MagJerPlugin.register();
             }
         });
+    }
+
+    /** Drop the per-level ship-state caches when a dimension unloads, so we don't
+     *  leak ShipMagneticState across world restarts. */
+    private static void onLevelUnload(final net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
+        if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel server) {
+            com.stonytark.magnetization.physics.ShipMagneticRegistry.onLevelUnload(server);
+        }
     }
 
     private static boolean anomalyBiomeEnabled() {

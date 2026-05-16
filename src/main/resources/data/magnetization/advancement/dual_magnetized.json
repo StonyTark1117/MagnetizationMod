@@ -9,10 +9,28 @@
     "announce_to_chat": false
   },
   "criteria": {
-    "magnetized_helmet": {
+    "north_armor": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [ { "items": "#magnetization:metal_armor" } ] }
+      "conditions": {
+        "items": [
+          {
+            "items": "#magnetization:metal_armor",
+            "components": { "magnetization:armor_polarity": "north" }
+          }
+        ]
+      }
+    },
+    "south_armor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#magnetization:metal_armor",
+            "components": { "magnetization:armor_polarity": "south" }
+          }
+        ]
+      }
     }
   },
-  "requirements": [["magnetized_helmet"]]
+  "requirements": [["north_armor"], ["south_armor"]]
 }

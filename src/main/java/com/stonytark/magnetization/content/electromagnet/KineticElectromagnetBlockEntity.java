@@ -86,7 +86,7 @@ public class KineticElectromagnetBlockEntity extends KineticBlockEntity
         );
 
         if (host != null) {
-            field = SableBridge.promoteToWorldSpace(server, getBlockPos(), field);
+            field = SableBridge.promoteToWorldSpace(host.logicalPose(), field);
         }
 
         cachedField = field;

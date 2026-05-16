@@ -40,29 +40,26 @@ public final class SableBridge {
     }
 
     /**
-     * @return the {@link SubLevel} (server or client) at {@code pos}, or {@code null}
-     *         if not on a contraption.
-     */
-    public static @Nullable SubLevel anySubLevelAt(final Level level, final BlockPos pos) {
-        return Sable.HELPER.getContaining(level, pos);
-    }
-
-    /**
-     * If the emitter at {@code emitterPos} is itself sitting on a contraption,
-     * its blockstate-derived origin and axis are in sub-level-local coordinates;
-     * transform them into world coordinates so the field interacts correctly with
-     * other ships. If the emitter is in the open world, returns {@code field}
-     * unchanged.
+     * Transform a sub-level-local field into world space using a contraption's
+     * current pose. Both the origin and the directional axis are rotated and
+     * translated, so as the ship moves and rotates the field follows.
+     *
+     * <p>Callers pass the pose directly (via {@code host.logicalPose()}) — never
+     * re-query by the BE's blockPos. On a contraption, {@code getBlockPos()} is
+     * a sub-level-local position and looking it up against the outer world level
+     * silently fails, leaving the field in local space. That presents as
+     * "magnets stuck to the cardinal direction they were placed in", because
+     * the local axis never updates as the ship rotates.
      */
     public static MagneticField promoteToWorldSpace(
-            final Level level, final BlockPos emitterPos, final MagneticField field
+            final Pose3dc pose, final MagneticField field
     ) {
-        final SubLevel host = anySubLevelAt(level, emitterPos);
-        if (host == null) return field;
-        final Pose3dc pose = host.logicalPose();
         final Vec3 worldOrigin = pose.transformPosition(field.origin());
         final Vec3 worldAxis = pose.transformNormal(field.axis()).normalize();
-        return new MagneticField(worldOrigin, worldAxis, field.polarity(), field.strength(), field.shape());
+        return new MagneticField(
+                worldOrigin, worldAxis,
+                field.polarity(), field.strength(), field.shape(),
+                field.customRange());
     }
 
     /**
@@ -108,17 +105,48 @@ public final class SableBridge {
             return;
         }
         if (handle == null) return;
-        final Vector3d dv = new Vector3d(forceLocal.x * scale, forceLocal.y * scale, forceLocal.z * scale);
-        if (dv.lengthSquared() < 1.0e-8) return;
+        final Vector3d dvLocal = new Vector3d(forceLocal.x * scale, forceLocal.y * scale, forceLocal.z * scale);
+
+        // Torque from an off-center impulse: τ = r × F where r = pointLocal − COM.
+        // Δω = I⁻¹ · τ · Δt. Sable hands us the inverse inertia tensor in the
+        // sub-level's local frame, which matches our pointLocal/forceLocal frame,
+        // so no rotation is needed for the I⁻¹ step. An impulse at the COM
+        // produces r = 0 and contributes no torque — the math degrades cleanly.
+        final org.joml.Vector3dc comC = subLevel.getMassTracker().getCenterOfMass();
+        final Vector3d r = new Vector3d(
+                pointLocal.x - comC.x(),
+                pointLocal.y - comC.y(),
+                pointLocal.z - comC.z());
+        final Vector3d torque = new Vector3d();
+        r.cross(forceLocal, torque);
+        final Vector3d dOmegaLocal = new Vector3d();
+        subLevel.getMassTracker().getInverseInertiaTensor().transform(torque, dOmegaLocal);
+        dOmegaLocal.mul(TICK_DT_SECONDS);
+
+        if (dvLocal.lengthSquared() < 1.0e-8 && dOmegaLocal.lengthSquared() < 1.0e-10) return;
+
+        // Sable's getLinearVelocity / getAngularVelocity return GLOBAL (world)
+        // velocities, and addLinearAndAngularVelocity is their counterpart — it
+        // also operates in world frame. Our dvLocal and dOmegaLocal are in the
+        // ship's local frame, so we must rotate them into world space before
+        // adding. Skipping this conversion presents as "ships spin near a magnet"
+        // and "repelled despite having opposite poles" once a ship has rotated
+        // off identity, because the impulse direction gets rotated by the ship's
+        // own orientation. The fix is just an orientation transform — no
+        // translation, since velocities are direction vectors.
+        final Pose3dc pose = subLevel.logicalPose();
+        final Vector3d dvWorld = new Vector3d(dvLocal);
+        pose.transformNormal(dvWorld);
+        final Vector3d dOmegaWorld = new Vector3d(dOmegaLocal);
+        pose.transformNormal(dOmegaWorld);
+
         try {
-            handle.addLinearAndAngularVelocity(dv, new Vector3d(0, 0, 0));
+            handle.addLinearAndAngularVelocity(dvWorld, dOmegaWorld);
         } catch (final Throwable t) {
             // Java-side exceptions (e.g. NPE in handle internals) — silently
             // skip. Native Rapier panics will still abort, which is why
             // FieldApplicator filters out phantom sub-levels upstream.
         }
-        // Note: torque from off-center forces is dropped. For small ships the
-        // rotational effect is negligible vs the translational pull.
     }
 
     /**
@@ -135,6 +163,39 @@ public final class SableBridge {
      * @param factor 0..1; the angular velocity is reduced by this fraction
      *               per call. 0.3 ≈ 30% damp per tick.
      */
+    /**
+     * Damp the sub-level's current linear velocity by a fraction. Called once
+     * per tick per ship touched by a magnetic impulse, so a ship under constant
+     * magnetic pull reaches a terminal velocity instead of accelerating forever.
+     * {@code factor} 0..1 — the linear velocity is reduced by this fraction per
+     * call. 0.02 ≈ 2% per tick = terminal velocity at ~50× the per-tick
+     * acceleration cap.
+     */
+    public static void dampLinearVelocity(final ServerSubLevel subLevel, final double factor) {
+        if (factor <= 0.0d) return;
+        if (subLevel.getMassTracker().isInvalid() || subLevel.getMassTracker().getMass() <= 0.0) return;
+        final RigidBodyHandle handle;
+        try {
+            handle = RigidBodyHandle.of(subLevel);
+        } catch (final Throwable t) {
+            return;
+        }
+        if (handle == null) return;
+        final Vector3d v = new Vector3d();
+        try {
+            handle.getLinearVelocity(v);
+        } catch (final Throwable t) {
+            return;
+        }
+        if (v.lengthSquared() < 1.0e-8) return;
+        final Vector3d delta = new Vector3d(-v.x * factor, -v.y * factor, -v.z * factor);
+        try {
+            handle.addLinearAndAngularVelocity(delta, new Vector3d(0, 0, 0));
+        } catch (final Throwable t) {
+            // Native panics fall through quietly — caller filtered phantoms.
+        }
+    }
+
     public static void dampAngularVelocity(final ServerSubLevel subLevel, final double factor) {
         if (subLevel.getMassTracker().isInvalid() || subLevel.getMassTracker().getMass() <= 0.0) return;
         final RigidBodyHandle handle;

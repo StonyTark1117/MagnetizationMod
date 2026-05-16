@@ -17,6 +17,13 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue ENTITY_VELOCITY_SCALE;
     public static final ModConfigSpec.DoubleValue CONICAL_HALF_ANGLE_COS;
     public static final ModConfigSpec.DoubleValue MAX_ACCEL_PER_TICK;
+    public static final ModConfigSpec.DoubleValue SHIP_LINEAR_DRAG;
+    public static final ModConfigSpec.IntValue    SHIP_SAMPLE_STEPS;
+    public static final ModConfigSpec.DoubleValue SHIP_BASELINE_SUSCEPTIBILITY;
+    public static final ModConfigSpec.DoubleValue SHIP_PER_FERROUS_SUSCEPTIBILITY;
+    public static final ModConfigSpec.DoubleValue SHIP_PER_MAGNET_SUSCEPTIBILITY;
+    public static final ModConfigSpec.DoubleValue SHIP_MAX_SUSCEPTIBILITY;
+    public static final ModConfigSpec.IntValue    SHIP_SCAN_INTERVAL_TICKS;
 
     public static final ModConfigSpec.BooleanValue MAGNETIC_PEAKS_ENABLED;
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
@@ -104,12 +111,74 @@ public final class MagConfig {
                 .defineInRange("conicalHalfAngleCos", 0.7071d, 0.0d, 0.999d);
 
         MAX_ACCEL_PER_TICK = b
-                .comment("Per-ship acceleration cap (m/s², Sable's SI units) applied AFTER",
-                         "Sable's own F=ma mass scaling. Prevents a STRONG anchor from launching",
-                         "a 1-block test ship across the world. 50 m/s² ~= 5 g, well above",
-                         "vanilla gravity's ~9.8 m/s². Set to 0 to disable the cap entirely.")
+                .comment("Per-ship-per-tick acceleration cap (m/s², Sable's SI units), summed",
+                         "across every emitter touching the ship that tick. Prevents a STRONG",
+                         "anchor — or three of them — from launching a 1-block ship across the",
+                         "world. 50 m/s² ~= 5 g, well above vanilla gravity's ~9.8 m/s². Set to",
+                         "0 to disable the cap entirely.")
                 .translation("magnetization.configuration.physics.maxAccelPerTick")
                 .defineInRange("maxAccelPerTick", 50.0d, 0.0d, 1000.0d);
+
+        SHIP_LINEAR_DRAG = b
+                .comment("Per-tick linear-velocity damping applied to a ship while it is being",
+                         "pulled by any magnetic emitter. 0.02 = the ship loses 2% of its current",
+                         "speed every tick a magnet is acting on it, so constant-force pulls",
+                         "settle to a terminal velocity instead of accelerating without bound.",
+                         "Set to 0 to disable drag entirely (1.0.0 behaviour).")
+                .translation("magnetization.configuration.physics.shipLinearDrag")
+                .defineInRange("shipLinearDrag", 0.02d, 0.0d, 1.0d);
+
+        SHIP_SAMPLE_STEPS = b
+                .comment("How many sample points to take along each axis of a ship's bounding",
+                         "box when integrating a magnetic field over it. 1 = single closest-point",
+                         "sample (1.0.0 behaviour). 3 = a 3×3×3 grid, so larger ships feel",
+                         "varying force across their volume — naturally producing torque from",
+                         "non-uniform fields. Higher = smoother but quadratically more work per",
+                         "emitter per ship.")
+                .translation("magnetization.configuration.physics.shipSampleSteps")
+                .defineInRange("shipSampleSteps", 3, 1, 7);
+
+        SHIP_BASELINE_SUSCEPTIBILITY = b
+                .comment("Multiplier on external magnetic force a ship feels with NO ferromagnetic",
+                         "blocks on board. 1.0 = forces apply at full strength regardless of ship",
+                         "composition (1.0.0 behaviour). Lower values mean a pure-stone ship is",
+                         "less responsive to magnets, while a ferrous-rich ship can scale up to",
+                         "shipMaxSusceptibility.")
+                .translation("magnetization.configuration.physics.shipBaselineSusceptibility")
+                .defineInRange("shipBaselineSusceptibility", 1.0d, 0.0d, 10.0d);
+
+        SHIP_PER_FERROUS_SUSCEPTIBILITY = b
+                .comment("Susceptibility added per ferromagnetic block (#magnetization:ferromagnetic_blocks)",
+                         "aboard a ship. 0.05 = 20 iron blocks doubles the ship's responsiveness over",
+                         "baseline. Stacks with shipPerMagnetSusceptibility.")
+                .translation("magnetization.configuration.physics.shipPerFerrousSusceptibility")
+                .defineInRange("shipPerFerrousSusceptibility", 0.05d, 0.0d, 5.0d);
+
+        SHIP_PER_MAGNET_SUSCEPTIBILITY = b
+                .comment("Susceptibility added per magnet emitter block (#magnetization:magnetic_emitter)",
+                         "aboard a ship. Magnets count as ferrous-plus — their pole does NOT change",
+                         "the ship's polarity, but their presence raises the ship's responsiveness",
+                         "above what an equivalent count of plain ferrous blocks would.")
+                .translation("magnetization.configuration.physics.shipPerMagnetSusceptibility")
+                .defineInRange("shipPerMagnetSusceptibility", 0.15d, 0.0d, 5.0d);
+
+        SHIP_MAX_SUSCEPTIBILITY = b
+                .comment("Upper cap on a ship's susceptibility multiplier. Prevents a 500-block",
+                         "ferromagnetic airship from accelerating at 25× the rate of a small test",
+                         "cube. Set high (e.g. 100) to effectively disable.")
+                .translation("magnetization.configuration.physics.shipMaxSusceptibility")
+                .defineInRange("shipMaxSusceptibility", 20.0d, 1.0d, 100.0d);
+
+        SHIP_SCAN_INTERVAL_TICKS = b
+                .comment("How often (ticks) a ship's magnetic state is rescanned. The scan walks",
+                         "the contraption's loaded chunks to count ferromagnetic blocks, magnet",
+                         "emitters, and polarity inverters. 20 = 1 s. Lower = more responsive to",
+                         "block-level changes (e.g. an inverter destroyed by another mod) but more",
+                         "CPU. Ships not currently inside any active field never get scanned",
+                         "regardless of this interval. Bumped from the 1.0.1 default of 100 to",
+                         "20 so polarity flips track block edits within a second.")
+                .translation("magnetization.configuration.physics.shipScanIntervalTicks")
+                .defineInRange("shipScanIntervalTicks", 20, 1, 6000);
 
         b.pop();
 
