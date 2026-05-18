@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:maghemite_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "magnetization:maghemite_ingot"
+  }
+}

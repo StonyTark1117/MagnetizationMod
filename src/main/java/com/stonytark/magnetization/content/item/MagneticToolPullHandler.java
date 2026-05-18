@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -88,7 +89,7 @@ public final class MagneticToolPullHandler {
         final List<ItemStack> out = new java.util.ArrayList<>(6);
         out.add(player.getMainHandItem());
         out.add(player.getOffhandItem());
-        player.getArmorSlots().forEach(out::add);
+        EquippedArmor.all(player).forEach(out::add);
         return out;
     }
 }

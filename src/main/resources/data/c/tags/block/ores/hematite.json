@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:hematite_ore",
+    "magnetization:deepslate_hematite_ore"
+  ]
+}

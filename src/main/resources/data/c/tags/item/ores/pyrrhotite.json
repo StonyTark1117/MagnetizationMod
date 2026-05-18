@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:pyrrhotite_ore",
+    "magnetization:deepslate_pyrrhotite_ore"
+  ]
+}

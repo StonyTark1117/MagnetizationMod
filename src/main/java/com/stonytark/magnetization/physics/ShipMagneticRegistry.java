@@ -4,6 +4,8 @@ import com.stonytark.magnetization.api.ShipMagneticState;
 import com.stonytark.magnetization.config.MagConfig;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.server.level.ServerLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ShipMagneticRegistry {
 
+    private static final Logger LOG = LoggerFactory.getLogger("magnetization/ShipMagneticRegistry");
     private static final Map<ServerLevel, Map<UUID, CachedEntry>> BY_LEVEL = new ConcurrentHashMap<>();
 
     private static final class CachedEntry {
@@ -57,6 +60,10 @@ public final class ShipMagneticRegistry {
         try {
             fresh = ShipMagneticScanner.scan(ship);
         } catch (final Throwable t) {
+            // Scanner blew up (rare — usually a JNI panic from Sable mid-shatter).
+            // Fall back to DEFAULT so callers don't see null, but surface the
+            // failure so a recurring scan break doesn't go unnoticed.
+            LOG.warn("Ship scan failed for {}, using DEFAULT state", ship.getUniqueId(), t);
             fresh = ShipMagneticState.DEFAULT;
         }
         levelMap.put(ship.getUniqueId(), new CachedEntry(fresh, now));

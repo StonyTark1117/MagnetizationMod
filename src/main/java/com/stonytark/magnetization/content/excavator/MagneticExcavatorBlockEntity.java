@@ -537,7 +537,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
                 final double vz = ship.latestLinearVelocity.z;
                 final double towardSpeed = vx * ux + vy * uy + vz * uz;
                 if (towardSpeed < EXCAVATOR_MAX_PULL_SPEED) {
-                    final Vec3 impulse = new Vec3(dx, dy, dz).scale(mag * invDist);
+                    // Fuse the magnitude into the constructor so we allocate one
+                    // Vec3 instead of two (was `new Vec3(...).scale(...)`).
+                    final double impulseScale = mag * invDist;
+                    final Vec3 impulse = new Vec3(dx * impulseScale, dy * impulseScale, dz * impulseScale);
                     SableBridge.applyWorldImpulse(ship,
                             new Vec3(shipPos.x(), shipPos.y(), shipPos.z()),
                             impulse);
@@ -623,7 +626,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         // Sample break-sound packets — every Nth destruction this tick — so we
         // don't flood clients when many ships are tunneling at once.
         if ((destroySoundCursor++ % BREAK_SOUND_EVERY_N) == 0) {
-            server.playSound(null, at, bs.getSoundType().getBreakSound(),
+            server.playSound(null, at, bs.getSoundType(server, at, null).getBreakSound(),
                     SoundSource.BLOCKS, 0.3f, 1.0f);
         }
         destroyBudgetRemaining--;
@@ -669,22 +672,18 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      *  drops" rule so the player never sees mass-teleport at the emitter. */
     private void dismantleAllAtEmitter(final ServerLevel server) {
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
-        for (final var m : new java.util.LinkedHashMap[] { pulledShips }) {
-            @SuppressWarnings("unchecked")
-            final java.util.LinkedHashMap<UUID, PulledShip> map = m;
-            for (final var entry : map.entrySet()) {
-                final UUID id = entry.getKey();
-                final PulledShip rec = entry.getValue();
-                if (container != null) {
-                    final var sub = container.getSubLevel(id);
-                    if (sub instanceof ServerSubLevel ship) {
-                        container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
-                    }
+        for (final var entry : pulledShips.entrySet()) {
+            final UUID id = entry.getKey();
+            final PulledShip rec = entry.getValue();
+            if (container != null) {
+                final var sub = container.getSubLevel(id);
+                if (sub instanceof ServerSubLevel ship) {
+                    container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
                 }
-                restoreBlockAt(server, rec.bornPos, rec.capturedState);
             }
-            map.clear();
+            restoreBlockAt(server, rec.bornPos, rec.capturedState);
         }
+        pulledShips.clear();
         activelyPulledShips.clear();
         setChanged();
     }
@@ -720,8 +719,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      *  enchantments stamped active so the loot system actually picks them up.
      *  Otherwise return the input unchanged. */
     private static ItemStack translateBookEnchantments(final ItemStack tool) {
-        final var active = tool.getEnchantments();
-        if (active != null && !active.isEmpty()) return tool;
+        final var active = tool.getOrDefault(
+                net.minecraft.core.component.DataComponents.ENCHANTMENTS,
+                net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
+        if (!active.isEmpty()) return tool;
         final var stored = tool.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
         if (stored == null || stored.isEmpty()) return tool;
         final ItemStack standIn = new ItemStack(net.minecraft.world.item.Items.NETHERITE_PICKAXE);
@@ -816,7 +817,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
      */
     private List<BlockPos> findFerromagneticsInCone(final ServerLevel level, final Direction facing, final int depthLimit) {
         final BlockPos origin = getBlockPos();
-        final List<BlockPos> out = new ArrayList<>();
+        // Pre-size from the expected upper bound (cone volume ≈ π·slope²·depth³/3
+        // ≈ 0.35·depth³ for slope≈0.5). depthLimit²·2 is a generous heuristic
+        // that covers most real configurations without ArrayList resize churn.
+        final List<BlockPos> out = new ArrayList<>(Math.max(16, depthLimit * depthLimit * 2));
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         final Direction.Axis facingAxis = facing.getAxis();
         for (int d = 1; d <= depthLimit; d++) {
@@ -936,5 +940,16 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
             out.put(id, rec);
             if (addToActivelyPulled) activelyPulledShips.add(id);
         }
+    }
+
+    @Override
+    public void fillCrashReportCategory(final net.minecraft.CrashReportCategory category) {
+        super.fillCrashReportCategory(category);
+        category.setDetail("Magnetization Excavator In-Flight Ships",
+                () -> Integer.toString(pulledShips.size()));
+        category.setDetail("Magnetization Excavator Actively Pulled",
+                () -> Integer.toString(activelyPulledShips.size()));
+        category.setDetail("Magnetization Excavator Last Scan Tick",
+                () -> Long.toString(lastScanTick));
     }
 }

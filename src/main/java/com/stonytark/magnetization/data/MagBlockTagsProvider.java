@@ -45,16 +45,40 @@ public final class MagBlockTagsProvider extends BlockTagsProvider {
                 .add(MagBlocks.MAGNETITE_ORE.get())
                 .add(MagBlocks.DEEPSLATE_MAGNETITE_ORE.get())
                 .add(MagBlocks.MAGNETITE_BLOCK.get())
-                .add(MagBlocks.RAW_MAGNETITE_BLOCK.get());
+                .add(MagBlocks.RAW_MAGNETITE_BLOCK.get())
+                // Iron-oxide family
+                .add(MagBlocks.MAGHEMITE_ORE.get()).add(MagBlocks.DEEPSLATE_MAGHEMITE_ORE.get())
+                .add(MagBlocks.MAGHEMITE_BLOCK.get()).add(MagBlocks.RAW_MAGHEMITE_BLOCK.get())
+                .add(MagBlocks.PYRRHOTITE_ORE.get()).add(MagBlocks.DEEPSLATE_PYRRHOTITE_ORE.get())
+                .add(MagBlocks.PYRRHOTITE_BLOCK.get()).add(MagBlocks.RAW_PYRRHOTITE_BLOCK.get())
+                .add(MagBlocks.HEMATITE_ORE.get()).add(MagBlocks.DEEPSLATE_HEMATITE_ORE.get())
+                .add(MagBlocks.HEMATITE_BLOCK.get()).add(MagBlocks.RAW_HEMATITE_BLOCK.get())
+                .add(MagBlocks.TITANOMAGNETITE_ORE.get()).add(MagBlocks.DEEPSLATE_TITANOMAGNETITE_ORE.get())
+                .add(MagBlocks.TITANOMAGNETITE_BLOCK.get()).add(MagBlocks.RAW_TITANOMAGNETITE_BLOCK.get());
 
         // Stone tier mirrors vanilla iron_ore (raw drops without iron-tier tool).
         tag(BlockTags.NEEDS_STONE_TOOL)
                 .add(MagBlocks.MAGNETITE_ORE.get())
                 .add(MagBlocks.DEEPSLATE_MAGNETITE_ORE.get())
-                .add(MagBlocks.RAW_MAGNETITE_BLOCK.get());
+                .add(MagBlocks.RAW_MAGNETITE_BLOCK.get())
+                .add(MagBlocks.MAGHEMITE_ORE.get()).add(MagBlocks.DEEPSLATE_MAGHEMITE_ORE.get()).add(MagBlocks.RAW_MAGHEMITE_BLOCK.get())
+                .add(MagBlocks.PYRRHOTITE_ORE.get()).add(MagBlocks.DEEPSLATE_PYRRHOTITE_ORE.get()).add(MagBlocks.RAW_PYRRHOTITE_BLOCK.get())
+                .add(MagBlocks.HEMATITE_ORE.get()).add(MagBlocks.DEEPSLATE_HEMATITE_ORE.get()).add(MagBlocks.RAW_HEMATITE_BLOCK.get());
 
-        // Iron tier mirrors vanilla iron_block.
+        // Iron tier mirrors vanilla iron_block. Titanomagnetite is rare-and-deep so
+        // it sits at iron-tier; the storage blocks for the other oxides match.
         tag(BlockTags.NEEDS_IRON_TOOL)
-                .add(MagBlocks.MAGNETITE_BLOCK.get());
+                .add(MagBlocks.MAGNETITE_BLOCK.get())
+                .add(MagBlocks.MAGHEMITE_BLOCK.get())
+                .add(MagBlocks.PYRRHOTITE_BLOCK.get())
+                .add(MagBlocks.HEMATITE_BLOCK.get())
+                .add(MagBlocks.TITANOMAGNETITE_ORE.get())
+                .add(MagBlocks.DEEPSLATE_TITANOMAGNETITE_ORE.get())
+                .add(MagBlocks.TITANOMAGNETITE_BLOCK.get())
+                .add(MagBlocks.RAW_TITANOMAGNETITE_BLOCK.get())
+                .add(MagBlocks.METEORITE_CORE.get())
+                .add(MagBlocks.PYRRHOTITE_CATALYST.get())
+                .add(MagBlocks.ENHANCED_PYRRHOTITE_CATALYST.get())
+                .add(MagBlocks.COSMIC_PYRRHOTITE_CATALYST.get());
     }
 }

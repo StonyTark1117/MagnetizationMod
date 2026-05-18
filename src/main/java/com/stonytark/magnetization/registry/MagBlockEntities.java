@@ -68,5 +68,23 @@ public final class MagBlockEntities {
                     .of(TemporaryMagnetBlockEntity::new, MagBlocks.TEMPORARY_MAGNET.get())
                     .build(null));
 
+    // Iron-oxide-family BEs.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity>> PYRRHOTITE =
+            REGISTER.register("pyrrhotite", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity::new, MagBlocks.PYRRHOTITE_BLOCK.get())
+                    .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.titanomagnetite.TitanomagnetiteBlockEntity>> TITANOMAGNETITE =
+            REGISTER.register("titanomagnetite", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.titanomagnetite.TitanomagnetiteBlockEntity::new, MagBlocks.TITANOMAGNETITE_BLOCK.get())
+                    .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.meteorite.MeteoriteCoreBlockEntity>> METEORITE_CORE =
+            REGISTER.register("meteorite_core", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.meteorite.MeteoriteCoreBlockEntity::new, MagBlocks.METEORITE_CORE.get())
+                    .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.meteorite.MeteoriteSaplingBlockEntity>> METEORITE_SAPLING =
+            REGISTER.register("meteorite_sapling", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.meteorite.MeteoriteSaplingBlockEntity::new, MagBlocks.METEORITE_SAPLING.get())
+                    .build(null));
+
     private MagBlockEntities() {}
 }

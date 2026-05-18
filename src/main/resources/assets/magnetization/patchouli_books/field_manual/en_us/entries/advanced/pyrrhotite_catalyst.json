@@ -1,0 +1,14 @@
+{
+  "name": "book.magnetization.entry.pyrrhotite_catalyst.name",
+  "icon": "magnetization:pyrrhotite_catalyst",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_catalyst.intro.title", "text": "book.magnetization.entry.pyrrhotite_catalyst.intro.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_catalyst.intro2.title", "text": "book.magnetization.entry.pyrrhotite_catalyst.intro2.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_catalyst.chain.title", "text": "book.magnetization.entry.pyrrhotite_catalyst.chain.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_catalyst.tiers.title", "text": "book.magnetization.entry.pyrrhotite_catalyst.tiers.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:pyrrhotite_catalyst", "text": "book.magnetization.entry.pyrrhotite_catalyst.recipe" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:enhanced_pyrrhotite_catalyst", "text": "book.magnetization.entry.pyrrhotite_catalyst.enhanced_recipe" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:cosmic_pyrrhotite_catalyst", "text": "book.magnetization.entry.pyrrhotite_catalyst.cosmic_recipe" }
+  ]
+}

@@ -1,0 +1,1 @@
+{ "parent": "minecraft:block/stairs", "textures": { "bottom": "magnetization:block/cobbled_anomaly_stone", "top": "magnetization:block/cobbled_anomaly_stone", "side": "magnetization:block/cobbled_anomaly_stone" } }

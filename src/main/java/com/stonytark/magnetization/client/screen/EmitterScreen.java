@@ -96,10 +96,16 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         }
 
         if (menu.hasCap(EmitterMenu.CAP_RANGE)) {
-            rangeMinus = addRenderableWidget(new RepeatButton(x0 + 100, y0 + 50, 14, 14,
+            // Range row shifts down by 16 px when the polarity Clear button is
+            // present (CAP_ARMOR+CAP_POLARITY adds a 44 px wide button at y=32
+            // that the range label collides with at y=40). Pushing the whole
+            // row down to y=66 clears it cleanly.
+            final int rangeY = (menu.hasCap(EmitterMenu.CAP_ARMOR) && menu.hasCap(EmitterMenu.CAP_POLARITY))
+                    ? 66 : 50;
+            rangeMinus = addRenderableWidget(new RepeatButton(x0 + 100, y0 + rangeY, 14, 14,
                     Component.literal("-"),
                     () -> sendButton(EmitterMenu.BUTTON_RANGE_DEC)));
-            rangePlus  = addRenderableWidget(new RepeatButton(x0 + 154, y0 + 50, 14, 14,
+            rangePlus  = addRenderableWidget(new RepeatButton(x0 + 154, y0 + rangeY, 14, 14,
                     Component.literal("+"),
                     () -> sendButton(EmitterMenu.BUTTON_RANGE_INC)));
         }
@@ -241,7 +247,18 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         if (menu.hasCap(EmitterMenu.CAP_RANGE)) {
             final int blocks = menu.rangeBlocks();
             final int label = blocks > 0 ? blocks : menu.defaultRangeBlocks();
-            g.drawString(font, Component.translatable("gui.magnetization.range", label + "b"), 100, 40, 0xC0C0C0, false);
+            // Word "Range" goes ABOVE the row (where the value used to live),
+            // value goes BETWEEN the -/+ buttons on the button row itself.
+            // Compact two-tier layout that works on every emitter without the
+            // value ever extending into the energy bar.
+            final int rangeRowY = (menu.hasCap(EmitterMenu.CAP_ARMOR) && menu.hasCap(EmitterMenu.CAP_POLARITY))
+                    ? 66 : 50;
+            final int labelY = rangeRowY - 10;
+            final int valueY = rangeRowY + 3; // vertical-centered against a 14 px button
+            g.drawCenteredString(font, Component.translatable("gui.magnetization.range"),
+                    134, labelY, 0xC0C0C0);
+            g.drawCenteredString(font, Component.literal(label + " b"),
+                    134, valueY, 0xFFFFFFFF);
         }
         if (menu.hasCap(EmitterMenu.CAP_INFLIGHT)) {
             final int cap = menu.inflightCap();
@@ -261,31 +278,31 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         }
     }
 
-    /** Energy bar at the top-right corner of the GUI pane. 8 px wide, 50 px
-     *  tall, fills upward from the bottom. Hover text shows exact FE values
-     *  and the active power source. */
+    /** Energy bar at the top-right corner of the GUI pane. 8 px wide, 40 px
+     *  tall, fills upward from the bottom. Sits at y=5..45 to clear the
+     *  range +/- button row at y=50. Fill is always red so it reads at a
+     *  glance as the FE meter regardless of source; the source is still in
+     *  the hover tooltip. Hover text shows exact FE values and the active
+     *  power source. */
     private void renderEnergyBar(final GuiGraphics g, final int mouseX, final int mouseY) {
-        final int barX = 160;
+        // barX 159 (not 160) so the 1-px black border at barX-1..barX+barW+1
+        // (158..168) right-aligns with the range +/- button right edge at
+        // x=154+14=168. Previously barX=160 put the border's right edge at
+        // 169 — one pixel past the button row, which read as misaligned.
+        final int barX = 159;
         final int barY = 5;
         final int barW = 8;
-        final int barH = 50;
+        final int barH = 40;
         final int stored = menu.energyStored();
         final int capacity = Math.max(1, menu.energyCapacity());
         final int filledH = Math.max(0, Math.min(barH, (int) Math.round((double) stored / capacity * barH)));
 
-        // Background (dark slate) + border (light grey).
-        g.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, 0xFFB0B0B0);
+        // Black border + dark interior so the red fill reads cleanly.
+        g.fill(barX - 1, barY - 1, barX + barW + 1, barY + barH + 1, 0xFF000000);
         g.fill(barX, barY, barX + barW, barY + barH, 0xFF1C1C1C);
 
-        // Fill colour by power source: 0 = idle (grey), 1 = redstone (red),
-        // 2 = energy (orange). Idle but with energy still buffered = blue.
-        final int fillColor = switch (menu.powerSource()) {
-            case 1 -> 0xFFD23838;
-            case 2 -> 0xFFFFA040;
-            default -> stored > 0 ? 0xFF4080FF : 0xFF505050;
-        };
         if (filledH > 0) {
-            g.fill(barX, barY + (barH - filledH), barX + barW, barY + barH, fillColor);
+            g.fill(barX, barY + (barH - filledH), barX + barW, barY + barH, 0xFFD23838);
         }
 
         // Hover tooltip — only fire when actually hovered to avoid GUI lag.

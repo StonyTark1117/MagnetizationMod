@@ -48,7 +48,7 @@ public final class MagTags {
     public static final TagKey<EntityType<?>> MAGNETIZABLE_ENTITIES =
             TagKey.create(Registries.ENTITY_TYPE, Magnetization.id("magnetizable"));
 
-    /** Cross-mod opt-out tag we honour: any entity whose type is in
+    /** Cross-mod opt-out tag we honor: any entity whose type is in
      *  {@code magnetizing:unmoveable_by_magnets} (from the Magnetizing mod) is
      *  skipped by our field application, even if armor/tag-membership would
      *  otherwise qualify. Lets server owners maintain a single "do not move"

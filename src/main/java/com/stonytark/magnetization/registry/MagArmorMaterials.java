@@ -48,6 +48,30 @@ public final class MagArmorMaterials {
                 );
             });
 
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> MAGHEMITE =
+            REGISTER.register("maghemite", () -> {
+                final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+                // Weaker than iron (the oxide structure flakes under impact):
+                // helmet 1, chestplate 4, leggings 3, boots 1; body 3 (lower than magnetite's 5).
+                defense.put(ArmorItem.Type.HELMET, 1);
+                defense.put(ArmorItem.Type.CHESTPLATE, 4);
+                defense.put(ArmorItem.Type.LEGGINGS, 3);
+                defense.put(ArmorItem.Type.BOOTS, 1);
+                defense.put(ArmorItem.Type.BODY, 3);
+                return new ArmorMaterial(
+                        defense,
+                        12,                                   // enchantmentValue (slight bump over iron's 9)
+                        Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value()),
+                        () -> Ingredient.of(MagItems.MAGHEMITE_INGOT.get()),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "maghemite"),
+                                "",
+                                false)),
+                        0.0f,
+                        0.0f
+                );
+            });
+
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> FERROMAGNETIC =
             REGISTER.register("ferromagnetic", () -> {
                 final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
@@ -56,7 +80,7 @@ public final class MagArmorMaterials {
                 defense.put(ArmorItem.Type.CHESTPLATE, 8);
                 defense.put(ArmorItem.Type.LEGGINGS, 6);
                 defense.put(ArmorItem.Type.BOOTS, 3);
-                defense.put(ArmorItem.Type.BODY, 8);
+                defense.put(ArmorItem.Type.BODY, 11);        // diamond_horse_armor parity
                 return new ArmorMaterial(
                         defense,
                         18,                                   // enchantmentValue (diamond 10, magnetite 14)
@@ -73,6 +97,10 @@ public final class MagArmorMaterials {
 
     public static Holder<ArmorMaterial> magnetite() {
         return MAGNETITE;
+    }
+
+    public static Holder<ArmorMaterial> maghemite() {
+        return MAGHEMITE;
     }
 
     public static Holder<ArmorMaterial> ferromagnetic() {

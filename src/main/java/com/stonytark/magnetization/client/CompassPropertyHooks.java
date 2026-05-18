@@ -9,14 +9,20 @@ import com.stonytark.magnetization.worldgen.AnomalyBiome;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 
 /**
  * Registers item-property functions for both compasses:
@@ -47,16 +53,96 @@ public final class CompassPropertyHooks {
             ResourceLocation.withDefaultNamespace("angle");
     private static final ResourceLocation FIELD_ANGLE =
             ResourceLocation.fromNamespaceAndPath("magnetization", "angle");
+    private static final ResourceLocation COSMIC_ANGLE =
+            ResourceLocation.fromNamespaceAndPath("magnetization", "cosmic_angle");
+
+    /** Search radius for the Cosmic Compass meteorite scan. Much larger than
+     *  the Field Compass range — meteorites are rare worldgen, so a wider
+     *  arc justifies the dedicated item. Server-overridable via
+     *  {@code MagConfig.COSMIC_COMPASS_RANGE}; this is the fallback default. */
+    private static final double COSMIC_COMPASS_RANGE = 512.0;
+
+    private static double liveCosmicRange() {
+        try {
+            return com.stonytark.magnetization.config.MagConfig.COSMIC_COMPASS_RANGE.get();
+        } catch (final Throwable t) {
+            return COSMIC_COMPASS_RANGE;
+        }
+    }
+
+    private static final ResourceLocation NATURES_COMPASS_ITEM =
+            ResourceLocation.fromNamespaceAndPath("naturescompass", "naturescompass");
+    private static final ResourceLocation NATURES_COMPASS_ANGLE =
+            ResourceLocation.fromNamespaceAndPath("naturescompass", "angle");
+    private static final ResourceLocation EXPLORERS_COMPASS_ITEM =
+            ResourceLocation.fromNamespaceAndPath("explorerscompass", "explorerscompass");
+    private static final ResourceLocation EXPLORERS_COMPASS_ANGLE =
+            ResourceLocation.fromNamespaceAndPath("explorerscompass", "angle");
+
+    /** One-shot guard for {@link #installModCompasses()} — both target mods
+     *  register their angle property inside {@code FMLClientSetupEvent}, so
+     *  we wait for first-login and wrap then to guarantee we run last. */
+    private static final AtomicBoolean MOD_COMPASSES_INSTALLED = new AtomicBoolean(false);
 
     private CompassPropertyHooks() {}
 
     public static void install() {
         wrapVanillaCompass();
         registerFieldCompass();
+        registerCosmicCompass();
+    }
+
+    /** Wrap third-party compass needle properties so they scramble inside the
+     *  anomaly biome. Idempotent — safe to call multiple times (later calls
+     *  no-op). Must run AFTER the host mods' own FMLClientSetupEvent has
+     *  registered their original property, hence the deferred call from the
+     *  login hook in {@link MagClientRegistration}. */
+    public static void installModCompasses() {
+        if (!MOD_COMPASSES_INSTALLED.compareAndSet(false, true)) return;
+        wrapModCompass("naturescompass", NATURES_COMPASS_ITEM, NATURES_COMPASS_ANGLE,
+                CompassPropertyHooks::naturesCompassEnabled);
+        wrapModCompass("explorerscompass", EXPLORERS_COMPASS_ITEM, EXPLORERS_COMPASS_ANGLE,
+                CompassPropertyHooks::explorersCompassEnabled);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void wrapModCompass(final String modId,
+                                       final ResourceLocation itemRl,
+                                       final ResourceLocation propRl,
+                                       final BooleanSupplier configGate) {
+        if (!ModList.get().isLoaded(modId)) return;
+        final Item item = BuiltInRegistries.ITEM.get(itemRl);
+        if (item == null || item == Items.AIR) return;
+        final @Nullable ItemPropertyFunction original =
+                ItemProperties.getProperty(item.getDefaultInstance(), propRl);
+        ItemProperties.register(item, propRl, (stack, level, entity, seed) -> {
+            if (configGate.getAsBoolean() && entity != null && level != null) {
+                if (level.getBiome(entity.blockPosition()).is(AnomalyBiome.KEY)) {
+                    return scrambledAngle(level, entity);
+                }
+            }
+            return original != null ? original.call(stack, level, entity, seed) : 0.0f;
+        });
+    }
+
+    private static boolean naturesCompassEnabled() {
+        try { return MagConfig.ANOMALY_AFFECTS_NATURES_COMPASS.get(); }
+        catch (final Throwable t) { return true; }
+    }
+
+    private static boolean explorersCompassEnabled() {
+        try { return MagConfig.ANOMALY_AFFECTS_EXPLORERS_COMPASS.get(); }
+        catch (final Throwable t) { return true; }
     }
 
     // ---------------- vanilla compass anomaly scramble ----------------
 
+    // MC 1.21.1 only ships the legacy ItemProperties + ItemPropertyFunction
+    // dispatch system. The 1.21.4+ replacement (RangeSelectItemModelProperty +
+    // items/<name>.json definitions) doesn't exist in this version's classpath,
+    // so we have to use the deprecated API. See memory note
+    // [[1.21.1 item-model API]] for the long version.
+    @SuppressWarnings("deprecation")
     private static void wrapVanillaCompass() {
         final @Nullable ItemPropertyFunction original =
                 ItemProperties.getProperty(Items.COMPASS.getDefaultInstance(), VANILLA_ANGLE);
@@ -86,6 +172,51 @@ public final class CompassPropertyHooks {
                     }
                     return targetedAngle(level, entity);
                 });
+    }
+
+    private static void registerCosmicCompass() {
+        ItemProperties.register(MagItems.COSMIC_COMPASS.get(), COSMIC_ANGLE,
+                (stack, level, entity, seed) -> {
+                    if (level == null || entity == null) return 0.0f;
+                    // Cosmic Compass is NOT scrambled by the anomaly biome —
+                    // meteorite cores read clean above the flux noise.
+                    return cosmicAngle(level, entity);
+                });
+    }
+
+    /** Needle angle pointing at the closest active meteorite_core within
+     *  {@link #COSMIC_COMPASS_RANGE}. Returns 0 (north / no signal) when no
+     *  meteorite is in range OR when all candidates are fully decayed. */
+    private static float cosmicAngle(final Level level, final Entity holder) {
+        final BlockPos target = findNearestActiveMeteorite(level, holder.position());
+        if (target == null) return 0.0f;
+        final Vec3 holderPos = holder.position();
+        final double dx = target.getX() + 0.5 - holderPos.x;
+        final double dz = target.getZ() + 0.5 - holderPos.z;
+        final double bearingRad = Math.atan2(dz, dx);
+        final double yawRad = Math.toRadians(holder.getYRot() - 90.0);
+        final double angleRad = bearingRad - yawRad;
+        return (float) Mth.positiveModulo(angleRad / (Math.PI * 2.0), 1.0);
+    }
+
+    /** Walk the emitter registry for any MeteoriteCoreBlockEntity within
+     *  range whose {@code currentField()} is non-null (i.e. still has charge
+     *  remaining). Cosmic Compass intentionally ignores inert / decayed
+     *  cores so the player isn't sent on a wild goose chase to a dead one. */
+    private static @Nullable BlockPos findNearestActiveMeteorite(final Level level, final Vec3 from) {
+        BlockPos best = null;
+        final double range = liveCosmicRange();
+        double bestDistSqr = range * range;
+        for (final BlockPos pos : EmitterRegistry.snapshot(level)) {
+            final double d2 = pos.getCenter().distanceToSqr(from);
+            if (d2 >= bestDistSqr) continue;
+            final BlockEntity be = level.getBlockEntity(pos);
+            if (!(be instanceof com.stonytark.magnetization.content.meteorite.MeteoriteCoreBlockEntity meteorite)) continue;
+            if (meteorite.currentField() == null) continue;
+            best = pos;
+            bestDistSqr = d2;
+        }
+        return best;
     }
 
     /** Compute the needle frame fraction (0..1) pointing toward the closest

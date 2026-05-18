@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.cosmic_compass.name",
+  "icon": "magnetization:cosmic_compass",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.cosmic_compass.intro.title", "text": "book.magnetization.entry.cosmic_compass.intro.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:cosmic_compass", "text": "book.magnetization.entry.cosmic_compass.recipe" }
+  ]
+}

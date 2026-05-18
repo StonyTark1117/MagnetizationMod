@@ -48,6 +48,10 @@ public final class FieldCompassHud {
     private static final int HOTBAR_OFFSET = 60;
     /** Horizontal centring — minecraft hotbar is centred at width / 2. */
     private static final int CENTER_OFFSET = 0;
+    /** Visual scale for the whole HUD. Smaller than 1 lets us fit two lines
+     *  + flavour text without crowding the hotbar / chat. 0.75 keeps glyph
+     *  bitmap aliasing tolerable on default GUI scale. */
+    private static final float HUD_SCALE = 0.75f;
 
     private FieldCompassHud() {}
 
@@ -121,11 +125,19 @@ public final class FieldCompassHud {
                                       final Component top, final @Nullable Component bottom) {
         final int screenW = g.guiWidth();
         final int screenH = g.guiHeight();
-        final int yTop = screenH - HOTBAR_OFFSET;
-        g.drawCenteredString(font, top, screenW / 2 + CENTER_OFFSET, yTop, 0xFFFFFFFF);
+        final int anchorX = screenW / 2 + CENTER_OFFSET;
+        final int anchorY = screenH - HOTBAR_OFFSET;
+        // Scale the whole HUD around (anchorX, anchorY) so text shrinks but
+        // stays anchored to the hotbar-relative position. drawCenteredString
+        // post-scale renders at (0,0) since we've translated the origin.
+        g.pose().pushPose();
+        g.pose().translate(anchorX, anchorY, 0);
+        g.pose().scale(HUD_SCALE, HUD_SCALE, 1f);
+        g.drawCenteredString(font, top, 0, 0, 0xFFFFFFFF);
         if (bottom != null) {
-            g.drawCenteredString(font, bottom, screenW / 2 + CENTER_OFFSET, yTop + 10, 0xFFFFFFFF);
+            g.drawCenteredString(font, bottom, 0, 10, 0xFFFFFFFF);
         }
+        g.pose().popPose();
     }
 
     /** Find a Field Compass in either hand, or — if Curios is loaded — in any

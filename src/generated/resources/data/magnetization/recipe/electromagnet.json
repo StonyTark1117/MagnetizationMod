@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "PRP",
+    "RCR",
+    "PRP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:electromagnet"
+  }
+}

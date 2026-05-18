@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "magnetization:meteorite_fragment"
+    },
+    "I": {
+      "item": "magnetization:ferromagnetic_ingot"
+    }
+  },
+  "pattern": [
+    " F ",
+    "FIF",
+    " F "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:meteorite_core"
+  }
+}

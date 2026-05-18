@@ -1,0 +1,7 @@
+{
+  "type": "magnetization:config_gated_add_features",
+  "flag": "magnetic_gravel_in_vanilla",
+  "biomes": "#minecraft:is_overworld",
+  "features": "magnetization:magnetic_gravel_disk",
+  "step": "top_layer_modification"
+}

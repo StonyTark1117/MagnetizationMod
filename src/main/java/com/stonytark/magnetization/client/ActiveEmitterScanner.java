@@ -12,8 +12,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 
 /**
@@ -30,8 +30,12 @@ public final class ActiveEmitterScanner {
 
     private static final double VIEW_RADIUS = 32.0d;
 
-    private static final List<BiConsumer<BlockPos, MagneticField>> listeners = new ArrayList<>();
-    private static final List<Runnable> postScanHooks = new ArrayList<>();
+    // CopyOnWriteArrayList — listeners normally register at client setup and
+    // never again, so the write-on-modify cost is paid once; reads (every
+    // client tick) are lock-free. Removes any latent CME risk if a mod adds
+    // a listener mid-tick.
+    private static final List<BiConsumer<BlockPos, MagneticField>> listeners = new CopyOnWriteArrayList<>();
+    private static final List<Runnable> postScanHooks = new CopyOnWriteArrayList<>();
 
     private ActiveEmitterScanner() {}
 

@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.hematite_block.name",
+  "icon": "magnetization:hematite_block",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.hematite_block.intro.title", "text": "book.magnetization.entry.hematite_block.intro.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.hematite_block.dampen.title", "text": "book.magnetization.entry.hematite_block.dampen.text" }
+  ]
+}

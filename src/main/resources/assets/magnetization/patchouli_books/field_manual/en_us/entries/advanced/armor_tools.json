@@ -4,6 +4,11 @@
   "category": "magnetization:advanced",
   "pages": [
     { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page1.title", "text": "book.magnetization.entry.armor_tools.page1.text" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page2.title", "text": "book.magnetization.entry.armor_tools.page2.text" }
+    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page2.title", "text": "book.magnetization.entry.armor_tools.page2.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page_items.title", "text": "book.magnetization.entry.armor_tools.page_items.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.armor_tools.page3.title", "text": "book.magnetization.entry.armor_tools.page3.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:maghemite_horse_armor", "title": "book.magnetization.entry.armor_tools.page_maghemite_horse.title", "text": "book.magnetization.entry.armor_tools.page_maghemite_horse.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:magnetite_horse_armor", "title": "book.magnetization.entry.armor_tools.page4.title", "text": "book.magnetization.entry.armor_tools.page4.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:ferromagnetic_horse_armor", "title": "book.magnetization.entry.armor_tools.page5.title", "text": "book.magnetization.entry.armor_tools.page5.text" }
   ]
 }

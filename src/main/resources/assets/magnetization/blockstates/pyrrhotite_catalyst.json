@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "magnetization:block/pyrrhotite_catalyst"
+    }
+  }
+}

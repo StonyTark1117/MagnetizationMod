@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": {
+      "item": "minecraft:elytra"
+    },
+    "F": {
+      "item": "magnetization:ferromagnetic_ingot"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    }
+  },
+  "pattern": [
+    "FPF",
+    "FEF",
+    " F "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_elytra"
+  }
+}

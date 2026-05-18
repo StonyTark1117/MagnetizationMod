@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.lodestone_core.name",
+  "icon": "magnetization:lodestone_core",
+  "category": "magnetization:basics",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:lodestone_core", "text": "book.magnetization.entry.lodestone_core.spotlight" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:lodestone_core", "title": "book.magnetization.entry.lodestone_core.recipe.title", "text": "book.magnetization.entry.lodestone_core.recipe.text" }
+  ]
+}

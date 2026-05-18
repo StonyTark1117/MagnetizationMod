@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "R": {
+      "item": "magnetization:raw_pyrrhotite"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "RDR",
+    "RRR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:deepslate_pyrrhotite_ore"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hematite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:hematite_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:red_dye_from_hematite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hematite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:red_dye_from_hematite"
+    ]
+  }
+}

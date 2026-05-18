@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "F": {
+      "item": "magnetization:ferromagnetic_ingot"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    "OFO",
+    "FCF",
+    "OFO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_anchor"
+  }
+}

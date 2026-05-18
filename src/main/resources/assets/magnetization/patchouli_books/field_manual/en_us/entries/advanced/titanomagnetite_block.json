@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.titanomagnetite_block.name",
+  "icon": "magnetization:titanomagnetite_block",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.titanomagnetite_block.intro.title", "text": "book.magnetization.entry.titanomagnetite_block.intro.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.titanomagnetite_block.usage.title", "text": "book.magnetization.entry.titanomagnetite_block.usage.text" }
+  ]
+}

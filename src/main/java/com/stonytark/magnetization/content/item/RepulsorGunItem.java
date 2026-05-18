@@ -82,14 +82,24 @@ public class RepulsorGunItem extends Item {
         final double range = repulsorGunRange();
         final MagneticStrength strength = MagneticStrength.MEDIUM;
 
-        // Build a transient conical repulsive field and let FieldApplicator do
-        // the ship + entity push, same code path the Repulsor Coil block uses.
-        // NORTH polarity = repulsive on our convention (default-target = NORTH,
-        // like polarities repel).
+        // Build a transient conical repulsive field and use the shared entity
+        // pipeline for mob knockback (NORTH polarity = repulsive on our
+        // convention; default-target = NORTH, like polarities repel). Ships
+        // are handled below via a custom mass-scaled impulse — the sustained
+        // FieldApplicator path was designed for emitter blocks and caps
+        // acceleration per-tick, which neuters a one-tick burst on a
+        // medium-mass ship.
         final MagneticField field = new MagneticField(
                 origin, look, MagneticPolarity.NORTH, strength,
                 MagneticField.Shape.CONICAL, range);
-        FieldApplicator.apply(server, field);
+        FieldApplicator.applyEntitiesOnly(server, field);
+
+        // Ship push: direct linear impulse via Sable's RigidBodyHandle. The
+        // physics integrator computes velocity_change = impulse / mass, so a
+        // single base impulse naturally launches small test cubes while
+        // budging heavy contraptions a little. The per-shot velocity cap
+        // stops tiny ships from launching across the world.
+        applyShipImpulse(server, origin, look, range);
 
         // Push dropped items + falling blocks separately — FieldApplicator's
         // entity path covers entities with magnetic predicates, but plain
@@ -107,9 +117,76 @@ public class RepulsorGunItem extends Item {
         spawnConeParticles(server, origin, look, range);
     }
 
+    /** Iterate every loaded Sable sub-level, push the ones inside the cone
+     *  with an impulse along the look direction. Velocity change scales as
+     *  impulse / mass, so small ships feel a much harder shove than heavy
+     *  contraptions — matches the "blow the small drone away, barely budge
+     *  the airship" intent. A per-shot velocity cap prevents 1-block test
+     *  ships from teleporting to bedrock-floor. Linear distance falloff so
+     *  point-blank shots are hardest. */
+    private static void applyShipImpulse(final ServerLevel level, final Vec3 origin,
+                                          final Vec3 look, final double range) {
+        final dev.ryanhcode.sable.api.sublevel.SubLevelContainer container =
+                dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        if (container == null) return;
+        final double cosHalfAngle = repulsorGunConicalHalfAngleCos();
+        final double baseImpulse = repulsorGunShipImpulse();
+        final double maxVelocityDelta = repulsorGunShipMaxVelocityDelta();
+        final double rangeSqr = range * range;
+
+        for (final dev.ryanhcode.sable.sublevel.SubLevel sub : container.getAllSubLevels()) {
+            if (!(sub instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel s)) continue;
+            if (s.getMassTracker().isInvalid()) continue;
+            final double mass = s.getMassTracker().getMass();
+            if (mass <= 0.0) continue;
+            final var bb = s.boundingBox();
+            final double cx = (bb.minX() + bb.maxX()) * 0.5;
+            final double cy = (bb.minY() + bb.maxY()) * 0.5;
+            final double cz = (bb.minZ() + bb.maxZ()) * 0.5;
+            final Vec3 toShip = new Vec3(cx - origin.x, cy - origin.y, cz - origin.z);
+            final double distSqr = toShip.lengthSqr();
+            if (distSqr > rangeSqr || distSqr < 0.0001) continue;
+            final Vec3 dir = toShip.normalize();
+            if (dir.dot(look) < cosHalfAngle) continue; // outside the cone
+
+            final double dist = Math.sqrt(distSqr);
+            final double falloff = Math.max(0.0, 1.0 - dist / range);
+            // Direct velocity injection (same path SableBridge uses for emitter
+            // forces, which we know works). applyLinearImpulse(...) was tried
+            // but didn't visibly move ships — Sable's force-queue pipeline
+            // seems to dampen it out before it hits the rigid body. dv =
+            // impulse / mass, clamped to the per-shot velocity cap so 1×1
+            // test ships don't launch to the moon.
+            final double dvMag = Math.min(baseImpulse * falloff / mass, maxVelocityDelta);
+            if (dvMag < 1.0e-3) continue;
+
+            final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle handle =
+                    dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(s);
+            if (handle == null) continue;
+            handle.addLinearAndAngularVelocity(
+                    new org.joml.Vector3d(look.x * dvMag, look.y * dvMag, look.z * dvMag),
+                    new org.joml.Vector3d(0, 0, 0));
+        }
+    }
+
+    private static double repulsorGunShipImpulse() {
+        try { return MagConfig.REPULSOR_GUN_SHIP_IMPULSE.get(); }
+        catch (final Throwable t) { return 100_000.0; }
+    }
+
+    private static double repulsorGunShipMaxVelocityDelta() {
+        try { return MagConfig.REPULSOR_GUN_SHIP_MAX_VELOCITY_DELTA.get(); }
+        catch (final Throwable t) { return 64.0; }
+    }
+
     private static void pushLooseObjects(final ServerLevel level, final Vec3 origin,
                                          final Vec3 look, final double range) {
-        final double pushStrength = 0.6;
+        // Per-shot velocity injection magnitude (blocks/tick). 8.0 with a
+        // sqrt falloff (instead of linear) so mid-range items still feel a
+        // clear shove. ItemEntity air friction (0.98/tick) decays the boost
+        // fast, so the launch needs to be dramatic to read as "blown away"
+        // rather than "nudged".
+        final double pushStrength = 8.0;
         final double cosHalfAngle = repulsorGunConicalHalfAngleCos();
         final net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(
                 origin.x - range, origin.y - range, origin.z - range,
@@ -122,9 +199,13 @@ public class RepulsorGunItem extends Item {
             if (dist < 0.1 || dist > range) continue;
             final Vec3 dir = toEntity.normalize();
             if (dir.dot(look) < cosHalfAngle) continue; // outside the cone
-            final double falloff = 1.0 - (dist / range);
+            // sqrt falloff: 1.0 at point-blank, ~0.71 at half range, ~0.32 at
+            // 90% range (versus 0.5 / 0.1 for linear). Keeps items launched
+            // hard even when they're several blocks downrange.
+            final double falloff = Math.sqrt(Math.max(0.0, 1.0 - dist / range));
             final Vec3 nudge = dir.scale(pushStrength * falloff);
             entity.setDeltaMovement(entity.getDeltaMovement().add(nudge));
+            entity.hurtMarked = entity instanceof net.minecraft.world.entity.LivingEntity;
             entity.hasImpulse = true;
         }
     }
@@ -154,6 +235,9 @@ public class RepulsorGunItem extends Item {
             // Send velocity packet so the client sees the kickback immediately
             // rather than next tick (which is jittery at long range).
             sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket(sp));
+            // Hidden `recoil_launch` advancement — fires on every successful
+            // self-recoil shot, but the advancement itself only awards once.
+            com.stonytark.magnetization.registry.MagTriggers.RECOIL_LAUNCH.get().trigger(sp);
         }
     }
 

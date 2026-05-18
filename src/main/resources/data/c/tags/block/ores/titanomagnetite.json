@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:titanomagnetite_ore",
+    "magnetization:deepslate_titanomagnetite_ore"
+  ]
+}

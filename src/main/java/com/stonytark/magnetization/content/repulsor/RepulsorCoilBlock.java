@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * upward for a hover pad; place sideways or downward to line a tunnel and
  * shove ships through. Active while powered.
  */
-public class RepulsorCoilBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
+public final class RepulsorCoilBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<RepulsorCoilBlock> CODEC = simpleCodec(RepulsorCoilBlock::new);
 

@@ -24,7 +24,7 @@
       "options": {
         "type": "magnetization:mag_south"
       },
-      "probability": 0.005
+      "probability": 0.025
     },
     "fog_color": 11842740,
     "sky_color": 7972607,
@@ -42,7 +42,6 @@
     [],
     [],
     [
-      "minecraft:ore_dirt",
       "minecraft:ore_gravel",
       "minecraft:ore_granite_upper",
       "minecraft:ore_granite_lower",
@@ -74,7 +73,11 @@
       "magnetization:anomaly_iron_dense",
       "magnetization:anomaly_copper_dense",
       "magnetization:anomaly_gold_dense",
-      "magnetization:anomaly_magnetite_dense"
+      "magnetization:anomaly_magnetite_dense",
+      "magnetization:anomaly_maghemite_dense",
+      "magnetization:anomaly_pyrrhotite_dense",
+      "magnetization:anomaly_hematite_dense",
+      "magnetization:anomaly_titanomagnetite_dense"
     ],
     [],
     [
@@ -83,7 +86,8 @@
     ],
     [],
     [
-      "minecraft:freeze_top_layer"
+      "minecraft:freeze_top_layer",
+      "magnetization:anomaly_lodestone_cluster"
     ]
   ],
   "has_precipitation": false,

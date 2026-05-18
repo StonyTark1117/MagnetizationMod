@@ -13,6 +13,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Thin wrapper over the slice of Sable's API the addon uses, so call-sites stay
@@ -22,6 +26,21 @@ public final class SableBridge {
 
     /** Per-tick timestep — vanilla Minecraft is 20 ticks/second. Used to convert force [N] to Δv [m/s]. */
     private static final double TICK_DT_SECONDS = 1.0 / 20.0;
+
+    private static final Logger LOG = LoggerFactory.getLogger("magnetization/SableBridge");
+    /** Per-tag throttle for failure logs. Keeps a single noisy native panic
+     *  from flooding the log at 20 Hz while still surfacing the *first*
+     *  occurrence and a periodic reminder. */
+    private static final long WARN_THROTTLE_MS = 30_000L;
+    private static final ConcurrentHashMap<String, Long> LAST_WARN_MS = new ConcurrentHashMap<>();
+
+    private static void warnThrottled(final String tag, final Throwable t, final ServerSubLevel sub) {
+        final long now = System.currentTimeMillis();
+        final Long prev = LAST_WARN_MS.put(tag, now);
+        if (prev != null && (now - prev) < WARN_THROTTLE_MS) return;
+        final String shipId = sub == null ? "<null>" : String.valueOf(sub.getUniqueId());
+        LOG.warn("Sable interop failed [{}] for ship {}: {}", tag, shipId, t.toString(), t);
+    }
 
     private SableBridge() {}
 
@@ -102,6 +121,7 @@ public final class SableBridge {
         try {
             handle = RigidBodyHandle.of(subLevel);
         } catch (final Throwable t) {
+            warnThrottled("applyLocalImpulse:handleOf", t, subLevel);
             return;
         }
         if (handle == null) return;
@@ -143,9 +163,10 @@ public final class SableBridge {
         try {
             handle.addLinearAndAngularVelocity(dvWorld, dOmegaWorld);
         } catch (final Throwable t) {
-            // Java-side exceptions (e.g. NPE in handle internals) — silently
-            // skip. Native Rapier panics will still abort, which is why
+            // Java-side exceptions (e.g. NPE in handle internals) — log and
+            // continue. Native Rapier panics will still abort, which is why
             // FieldApplicator filters out phantom sub-levels upstream.
+            warnThrottled("applyLocalImpulse:addVelocity", t, subLevel);
         }
     }
 
@@ -178,6 +199,7 @@ public final class SableBridge {
         try {
             handle = RigidBodyHandle.of(subLevel);
         } catch (final Throwable t) {
+            warnThrottled("dampLinearVelocity:handleOf", t, subLevel);
             return;
         }
         if (handle == null) return;
@@ -185,6 +207,7 @@ public final class SableBridge {
         try {
             handle.getLinearVelocity(v);
         } catch (final Throwable t) {
+            warnThrottled("dampLinearVelocity:getLinearVelocity", t, subLevel);
             return;
         }
         if (v.lengthSquared() < 1.0e-8) return;
@@ -192,7 +215,7 @@ public final class SableBridge {
         try {
             handle.addLinearAndAngularVelocity(delta, new Vector3d(0, 0, 0));
         } catch (final Throwable t) {
-            // Native panics fall through quietly — caller filtered phantoms.
+            warnThrottled("dampLinearVelocity:addVelocity", t, subLevel);
         }
     }
 
@@ -202,6 +225,7 @@ public final class SableBridge {
         try {
             handle = RigidBodyHandle.of(subLevel);
         } catch (final Throwable t) {
+            warnThrottled("dampAngularVelocity:handleOf", t, subLevel);
             return;
         }
         if (handle == null) return;
@@ -209,6 +233,7 @@ public final class SableBridge {
         try {
             handle.getAngularVelocity(w);
         } catch (final Throwable t) {
+            warnThrottled("dampAngularVelocity:getAngularVelocity", t, subLevel);
             return;
         }
         if (w.lengthSquared() < 1.0e-8) return;
@@ -217,7 +242,7 @@ public final class SableBridge {
         try {
             handle.addLinearAndAngularVelocity(new Vector3d(0, 0, 0), delta);
         } catch (final Throwable t) {
-            // Native panics fall through quietly — caller filtered phantoms.
+            warnThrottled("dampAngularVelocity:addVelocity", t, subLevel);
         }
     }
 

@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.pyrrhotite_block.name",
+  "icon": "magnetization:pyrrhotite_block",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_block.intro.title", "text": "book.magnetization.entry.pyrrhotite_block.intro.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_block.heat.title", "text": "book.magnetization.entry.pyrrhotite_block.heat.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.pyrrhotite_block.range.title", "text": "book.magnetization.entry.pyrrhotite_block.range.text" }
+  ]
+}

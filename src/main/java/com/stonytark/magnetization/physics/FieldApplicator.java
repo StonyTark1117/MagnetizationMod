@@ -11,6 +11,7 @@ import com.stonytark.magnetization.content.effect.MagnetizedEffect;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
 import com.stonytark.magnetization.worldgen.AnomalyBiome;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -156,6 +157,12 @@ public final class FieldApplicator {
         final double drag = shipLinearDrag();
         final double angDrag = shipAngularDrag();
         final double rangeSqr = range * range;
+        // Per-tick constants — pull them out of the per-sample loop so we don't
+        // pay the biome lookup + config getters 27 times per ship per emitter.
+        // On a server with N emitters × M ships, that's a 27× reduction on the
+        // dominant fixed cost of the inner loop.
+        final double globalScalar = computeGlobalScalar(level, field);
+        final double cosHalfAngle = conicalHalfAngleCos();
 
         // Diagnostics — only allocated when the debug log gate is open.
         final boolean diag = MagConfig.debugLogging();
@@ -197,9 +204,11 @@ public final class FieldApplicator {
             // so non-uniform fields (OMNIDIRECTIONAL fall-off, CONICAL gating) naturally
             // produce torque on extended ships — the closer end pulls harder than the
             // far end, generating a moment about the COM. steps=1 falls back to the
-            // 1.0.0 closest-point sample.
-            final java.util.List<Vec3> samplePoints = new java.util.ArrayList<>();
-            final java.util.List<Vec3> sampleForces = new java.util.ArrayList<>();
+            // 1.0.0 closest-point sample. Lists are pre-sized to the max possible
+            // grid (steps³) so the typical case never grows the underlying array.
+            final int maxSamples = steps * steps * steps;
+            final java.util.List<Vec3> samplePoints = new java.util.ArrayList<>(maxSamples);
+            final java.util.List<Vec3> sampleForces = new java.util.ArrayList<>(maxSamples);
             double totalForceMag = 0.0;
             if (steps == 1) {
                 final Vec3 closest = new Vec3(
@@ -208,7 +217,7 @@ public final class FieldApplicator {
                         Math.max(subBox.minZ(), Math.min(origin.z, subBox.maxZ()))
                 );
                 if (closest.distanceToSqr(origin) <= rangeSqr) {
-                    final Vec3 force = forceAt(level, field, closest).scale(shipGain);
+                    final Vec3 force = forceAtPrecomputed(field, closest, globalScalar, cosHalfAngle).scale(shipGain);
                     if (force.lengthSqr() >= 1.0e-6) {
                         samplePoints.add(closest);
                         sampleForces.add(force);
@@ -223,17 +232,25 @@ public final class FieldApplicator {
                 final double weight = 1.0 / (steps * steps * steps);
                 for (int ix = 0; ix < steps; ix++) {
                     final double fx = subBox.minX() + sx * ix * invSteps;
+                    final double dxOriginSqr = (fx - origin.x) * (fx - origin.x);
                     for (int iy = 0; iy < steps; iy++) {
                         final double fy = subBox.minY() + sy * iy * invSteps;
+                        final double dyOriginSqr = (fy - origin.y) * (fy - origin.y);
                         for (int iz = 0; iz < steps; iz++) {
                             final double fz = subBox.minZ() + sz * iz * invSteps;
+                            // Range check via primitives — skips the Vec3 allocation
+                            // entirely for out-of-range samples. For elongated ships
+                            // where most of the AABB sits outside the field, this
+                            // eliminates the bulk of allocations in the inner loop.
+                            final double dzOriginSqr = (fz - origin.z) * (fz - origin.z);
+                            if (dxOriginSqr + dyOriginSqr + dzOriginSqr > rangeSqr) continue;
                             final Vec3 sample = new Vec3(fx, fy, fz);
-                            if (sample.distanceToSqr(origin) > rangeSqr) continue;
                             // Each grid cell represents a fraction (1/steps³) of the
                             // ship's volume; weighting the sampled force by that
                             // fraction keeps total integrated force comparable to the
                             // single-sample path regardless of grid density.
-                            final Vec3 force = forceAt(level, field, sample).scale(weight * shipGain);
+                            final Vec3 force = forceAtPrecomputed(field, sample, globalScalar, cosHalfAngle)
+                                    .scale(weight * shipGain);
                             if (force.lengthSqr() < 1.0e-8) continue;
                             samplePoints.add(sample);
                             sampleForces.add(force);
@@ -303,14 +320,30 @@ public final class FieldApplicator {
 
     // ---------------- entities ----------------
 
+    /** Entities-only field application — used by the Repulsor Gun, which
+     *  handles ships via its own mass-scaled impulse path (so small ships fly
+     *  while the entity path still gives mob knockback). */
+    public static void applyEntitiesOnly(final ServerLevel level, final MagneticField field) {
+        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
+        applyToEntities(level, field);
+    }
+
     private static void applyToEntities(final ServerLevel level, final MagneticField field) {
         final double r = field.range();
         final AABB box = AABB.ofSize(field.origin(), 2 * r, 2 * r, 2 * r);
         final List<Entity> nearby = level.getEntities((Entity) null, box, FieldApplicator::isMagnetizable);
+        if (nearby.isEmpty()) return;
+
+        // Per-emitter-tick constants — pulled out of the per-entity loop so we
+        // pay the biome lookup + config getters once instead of per-entity.
+        final double globalScalar = computeGlobalScalar(level, field);
+        final double cosHalfAngle = conicalHalfAngleCos();
+        final double velScale = entityVelocityScale();
+        final double rSqr = r * r;
 
         for (Entity entity : nearby) {
             final Vec3 entityPos = entity.position().add(0, entity.getBbHeight() * 0.5d, 0);
-            if (entityPos.distanceToSqr(field.origin()) > r * r) continue;
+            if (entityPos.distanceToSqr(field.origin()) > rSqr) continue;
 
             final double susceptibility = susceptibilityOf(entity);
             if (susceptibility <= 0) continue;
@@ -321,8 +354,9 @@ public final class FieldApplicator {
             if (entityPol == MagneticPolarity.NONE) continue;
             final double polaritySign = entityPol == MagneticPolarity.SOUTH ? -1.0d : 1.0d;
 
-            final Vec3 impulse = forceAt(level, field, entityPos).scale(susceptibility * polaritySign);
-            entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(entityVelocityScale())));
+            final Vec3 impulse = forceAtPrecomputed(field, entityPos, globalScalar, cosHalfAngle)
+                    .scale(susceptibility * polaritySign);
+            entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(velScale)));
             entity.hurtMarked = true;
         }
     }
@@ -345,7 +379,7 @@ public final class FieldApplicator {
         // set so that pass runs at all. Without this branch, the susceptibility
         // code would be unreachable for everything except tagged mobs.
         if (e instanceof LivingEntity living) {
-            for (final ItemStack armor : living.getArmorSlots()) {
+            for (final ItemStack armor : EquippedArmor.all(living)) {
                 if (armor.is(MagTags.METAL_ARMOR)) return true;
             }
         }
@@ -353,10 +387,19 @@ public final class FieldApplicator {
     }
 
     private static double susceptibilityOf(final Entity e) {
-        final double base = baseSusceptibility(e);
+        double base = baseSusceptibility(e);
         if (base <= 0) return 0;
-        // Magnetized status effect multiplies pull strength.
         if (e instanceof LivingEntity living) {
+            // Magnetic elytra rail-ride: while gliding with the magnetic
+            // elytra in the chest slot, fields tug the wearer harder so they
+            // can surf between emitters like riding magnetic rails.
+            if (living.isFallFlying()) {
+                final ItemStack chest = living.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
+                if (chest.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem) {
+                    base *= com.stonytark.magnetization.content.item.MagneticElytraItem.GLIDE_SUSCEPTIBILITY_BONUS;
+                }
+            }
+            // Magnetized status effect multiplies pull strength.
             final MobEffectInstance effect = living.getEffect(MagEffects.MAGNETIZED);
             if (effect != null) {
                 return base * MagnetizedEffect.multiplierFor(effect.getAmplifier());
@@ -387,7 +430,7 @@ public final class FieldApplicator {
         // identically. Used to be Player-only.
         if (e instanceof LivingEntity living) {
             final long now = living.level().getGameTime();
-            for (final ItemStack armor : living.getArmorSlots()) {
+            for (final ItemStack armor : EquippedArmor.all(living)) {
                 if (!armor.is(MagTags.METAL_ARMOR)) continue;
                 sum += PER_ARMOR_SUSCEPTIBILITY;
                 if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) {
@@ -409,7 +452,7 @@ public final class FieldApplicator {
         // magnetized armor → NORTH (default convention).
         if (e instanceof LivingEntity living) {
             int net = 0;
-            for (final ItemStack armor : living.getArmorSlots()) {
+            for (final ItemStack armor : EquippedArmor.all(living)) {
                 final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
                 if (pol != null) net += pol.sign();
             }
@@ -435,14 +478,38 @@ public final class FieldApplicator {
     /** Variant that consults the world to apply the anomaly-biome strength bonus when
      *  the emitter origin lies inside the {@code magnetization:anomaly} biome. */
     public static Vec3 forceAt(final @Nullable ServerLevel level, final MagneticField field, final Vec3 samplePos) {
-        final Vec3 toSample = samplePos.subtract(field.origin());
-        final double distance = toSample.length();
-        if (distance < 1.0e-6 || distance > field.range()) return Vec3.ZERO;
+        // Hot-path callers should pre-compute the scalar + cone cap once per
+        // emitter tick and call forceAtPrecomputed instead — this overload pays
+        // the biome lookup + 2 config getters on every call.
+        return forceAtPrecomputed(field, samplePos,
+                computeGlobalScalar(level, field), conicalHalfAngleCos());
+    }
 
-        double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
-        if (level != null && AnomalyBiome.isAt(level, BlockPos.containing(field.origin()))) {
-            scalar *= AnomalyBiome.STRENGTH_BONUS;
-        }
+    /**
+     * Hot-loop fast path. Caller pre-computes the global scalar (which folds
+     * field.strength.force × polarity.sign × {@link #strengthMultiplier()}, plus
+     * the {@link AnomalyBiome#STRENGTH_BONUS} when the emitter is inside the
+     * anomaly biome) and the cone cosine cap. Eliminates a per-sample biome
+     * lookup + 2 per-sample config getters from {@code forceAt} — meaningful on
+     * servers where many emitters each sample many ships many times per tick.
+     *
+     * <p>All vector arithmetic is done in primitives — only the final result
+     * Vec3 is allocated. Cuts the per-sample allocation count from ~3 (the
+     * old {@code subtract → normalize → scale} chain) down to 1 (or 0 when
+     * the sample is out-of-range / out-of-cone, short-circuiting to
+     * {@link Vec3#ZERO}). On servers with many emitters touching many ships
+     * this is the dominant per-tick allocation cost in this method.
+     */
+    static Vec3 forceAtPrecomputed(final MagneticField field, final Vec3 samplePos,
+                                    final double scalar, final double cosHalfAngle) {
+        final Vec3 origin = field.origin();
+        final double dx = samplePos.x - origin.x;
+        final double dy = samplePos.y - origin.y;
+        final double dz = samplePos.z - origin.z;
+        final double distSqr = dx * dx + dy * dy + dz * dz;
+        final double range = field.range();
+        if (distSqr < 1.0e-12 || distSqr > range * range) return Vec3.ZERO;
+        final double distance = Math.sqrt(distSqr);
 
         return switch (field.shape()) {
             case OMNIDIRECTIONAL -> {
@@ -452,22 +519,42 @@ public final class FieldApplicator {
                 // scalar) produces force in -toSample (toward origin = attract). Targets with
                 // SOUTH polarity flip this sign at the call site.
                 final double r = Math.max(distance, 1.0d);
+                // Fuse normalize (/ distance) and scale (× mag) into one
+                // multiplier on the displacement vector. One Vec3 allocation.
                 final double mag = scalar / (r * r);
-                yield toSample.normalize().scale(mag);
+                final double k = mag / distance;
+                yield new Vec3(dx * k, dy * k, dz * k);
             }
             case DIRECTIONAL -> {
-                final double along = toSample.dot(field.axis());
+                // Dot via primitives to avoid a Vec3 alloc for toSample.
+                final Vec3 axis = field.axis();
+                final double along = dx * axis.x + dy * axis.y + dz * axis.z;
                 if (along < 0) yield Vec3.ZERO; // no force behind the emitter
-                final double falloff = Math.max(0.0d, 1.0d - distance / field.range());
-                yield field.axis().scale(scalar * falloff);
+                final double falloff = Math.max(0.0d, 1.0d - distance / range);
+                yield axis.scale(scalar * falloff);
             }
             case CONICAL -> {
-                final Vec3 dir = toSample.normalize();
-                final double cosTheta = dir.dot(field.axis());
-                if (cosTheta < conicalHalfAngleCos()) yield Vec3.ZERO;
-                final double falloff = Math.max(0.0d, 1.0d - distance / field.range());
-                yield field.axis().scale(scalar * falloff * cosTheta);
+                // Compute the dir/axis dot via primitives (no normalize allocation).
+                // cosTheta = (dir · axis) where dir = (dx,dy,dz)/distance.
+                final Vec3 axis = field.axis();
+                final double invDist = 1.0d / distance;
+                final double cosTheta = (dx * axis.x + dy * axis.y + dz * axis.z) * invDist;
+                if (cosTheta < cosHalfAngle) yield Vec3.ZERO;
+                final double falloff = Math.max(0.0d, 1.0d - distance / range);
+                yield axis.scale(scalar * falloff * cosTheta);
             }
         };
+    }
+
+    /** Per-emitter-tick constant: bundles strength × polarity × global multiplier,
+     *  with the anomaly biome bonus folded in when the emitter origin is inside
+     *  the anomaly. Computed once at the start of each {@code applyTo*} pass and
+     *  reused across every sample / entity in that pass. */
+    static double computeGlobalScalar(final @Nullable ServerLevel level, final MagneticField field) {
+        double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
+        if (level != null && AnomalyBiome.isAt(level, BlockPos.containing(field.origin()))) {
+            scalar *= AnomalyBiome.STRENGTH_BONUS;
+        }
+        return scalar;
     }
 }

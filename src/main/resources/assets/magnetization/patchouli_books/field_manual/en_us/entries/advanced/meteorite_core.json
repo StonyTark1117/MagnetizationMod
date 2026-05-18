@@ -1,0 +1,11 @@
+{
+  "name": "book.magnetization.entry.meteorite_core.name",
+  "icon": "magnetization:meteorite_core",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.meteorite_core.intro.title", "text": "book.magnetization.entry.meteorite_core.intro.text" },
+    { "type": "patchouli:spotlight", "item": "magnetization:meteorite_core", "text": "book.magnetization.entry.meteorite_core.spotlight" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.meteorite_core.refill.title", "text": "book.magnetization.entry.meteorite_core.refill.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.meteorite_core.ae2.title", "text": "book.magnetization.entry.meteorite_core.ae2.text" }
+  ]
+}

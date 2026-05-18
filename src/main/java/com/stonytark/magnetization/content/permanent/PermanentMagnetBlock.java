@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * own host ship, so internal forces can't propel a ship under its own power.
  * That's the realistic part of the unrealistic system.
  */
-public class PermanentMagnetBlock extends Block implements EntityBlock {
+public final class PermanentMagnetBlock extends Block implements EntityBlock {
 
     /** Two-state polarity property; NONE is excluded so the block always emits. */
     public static final EnumProperty<MagneticPolarity> POLARITY =

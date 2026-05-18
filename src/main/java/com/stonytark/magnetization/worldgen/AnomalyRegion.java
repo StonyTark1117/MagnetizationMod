@@ -2,6 +2,7 @@ package com.stonytark.magnetization.worldgen;
 
 import com.mojang.datafixers.util.Pair;
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -14,22 +15,19 @@ import java.util.function.Consumer;
 
 /**
  * TerraBlender overworld region that injects the {@code magnetization:anomaly}
- * biome at low weight. The region is registered in {@link Magnetization}'s
- * constructor; without TerraBlender on the classpath the {@code anomaly.json}
- * biome still loads but only spawns via {@code /place biome} / {@code /locate}.
+ * biome. The biome's climate identity is cold + arid + heavily eroded inland.
+ * How wide a slice of that climate parameter space the biome claims is driven
+ * by {@link MagConfig#ANOMALY_BIOME_RARITY} at world-create time — narrower
+ * spans mean fewer chunks match, so the biome is rarer.
  *
- * <p>Climate slot: cold + arid + heavily eroded inland. This biases the biome
- * toward windswept-cold-ish strips at higher continentalness, which fits the
- * "stray anomaly" flavor — appears here and there inside dry mountainous
- * stretches, not as a continuous biome chunk.
+ * <p>Without TerraBlender on the classpath the {@code anomaly.json} biome
+ * still loads but only spawns via {@code /place biome} / {@code /locate}.
  */
 public final class AnomalyRegion extends Region {
 
-    /** Weight relative to the vanilla overworld region (which has weight 10).
-     *  At weight=2, the anomaly's parameter slots win the multi-noise lottery
-     *  about 1/6 of the time within their climate band — already small, and
-     *  the band itself is narrow, so the biome ends up genuinely rare. */
-    public static final int WEIGHT = 2;
+    /** TerraBlender region weight constant. Not user-facing — actual rarity
+     *  is governed by the rarity-driven parameter spans in {@link #addBiomes}. */
+    public static final int WEIGHT = 1;
 
     public AnomalyRegion() {
         super(Magnetization.id("anomaly_region"), RegionType.OVERWORLD, WEIGHT);
@@ -40,18 +38,50 @@ public final class AnomalyRegion extends Region {
             final Registry<Biome> registry,
             final Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper
     ) {
-        new ParameterUtils.ParameterPointListBuilder()
-                .temperature(ParameterUtils.Temperature.span(
-                        ParameterUtils.Temperature.ICY, ParameterUtils.Temperature.COOL))
-                .humidity(ParameterUtils.Humidity.span(
-                        ParameterUtils.Humidity.ARID, ParameterUtils.Humidity.DRY))
-                .continentalness(ParameterUtils.Continentalness.span(
-                        ParameterUtils.Continentalness.MID_INLAND, ParameterUtils.Continentalness.FAR_INLAND))
-                .erosion(ParameterUtils.Erosion.span(
-                        ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_2))
-                .depth(ParameterUtils.Depth.SURFACE.parameter())
-                .weirdness(ParameterUtils.Weirdness.PEAK_NORMAL.parameter())
-                .build()
-                .forEach(point -> mapper.accept(Pair.of(point, AnomalyBiome.KEY)));
+        // SERVER config has loaded by the time TerraBlender calls addBiomes
+        // at world-create, so both the enabled gate and the rarity lookup
+        // resolve to the user's current values here.
+        if (!AnomalyBiome.enabled()) return;
+
+        final BiomeRarity rarity = rarity();
+        final ParameterUtils.ParameterPointListBuilder builder =
+                new ParameterUtils.ParameterPointListBuilder()
+                        .continentalness(ParameterUtils.Continentalness.FAR_INLAND.parameter())
+                        .depth(ParameterUtils.Depth.SURFACE.parameter())
+                        .weirdness(ParameterUtils.Weirdness.PEAK_NORMAL.parameter());
+
+        switch (rarity) {
+            case EXTREMELY_RARE -> builder
+                    .temperature(ParameterUtils.Temperature.ICY.parameter())
+                    .humidity(ParameterUtils.Humidity.ARID.parameter())
+                    .erosion(ParameterUtils.Erosion.EROSION_1.parameter());
+            case VERY_RARE -> builder
+                    .temperature(ParameterUtils.Temperature.ICY.parameter())
+                    .humidity(ParameterUtils.Humidity.span(
+                            ParameterUtils.Humidity.ARID, ParameterUtils.Humidity.DRY))
+                    .erosion(ParameterUtils.Erosion.span(
+                            ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_1));
+            case RARE -> builder
+                    .temperature(ParameterUtils.Temperature.span(
+                            ParameterUtils.Temperature.ICY, ParameterUtils.Temperature.COOL))
+                    .humidity(ParameterUtils.Humidity.span(
+                            ParameterUtils.Humidity.ARID, ParameterUtils.Humidity.DRY))
+                    .erosion(ParameterUtils.Erosion.span(
+                            ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_2));
+            case COMMON -> builder
+                    .temperature(ParameterUtils.Temperature.span(
+                            ParameterUtils.Temperature.ICY, ParameterUtils.Temperature.NEUTRAL))
+                    .humidity(ParameterUtils.Humidity.span(
+                            ParameterUtils.Humidity.ARID, ParameterUtils.Humidity.NEUTRAL))
+                    .erosion(ParameterUtils.Erosion.span(
+                            ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_4));
+        }
+
+        builder.build().forEach(point -> mapper.accept(Pair.of(point, AnomalyBiome.KEY)));
+    }
+
+    private static BiomeRarity rarity() {
+        try { return MagConfig.ANOMALY_BIOME_RARITY.get(); }
+        catch (final Throwable t) { return BiomeRarity.EXTREMELY_RARE; }
     }
 }

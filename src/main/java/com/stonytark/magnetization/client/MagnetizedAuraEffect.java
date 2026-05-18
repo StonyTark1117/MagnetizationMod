@@ -5,6 +5,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagParticles;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,7 +49,7 @@ public final class MagnetizedAuraEffect {
         for (final var entity : level.entitiesForRendering()) {
             if (!(entity instanceof LivingEntity living)) continue;
             int northCount = 0, southCount = 0;
-            for (final ItemStack stack : living.getArmorSlots()) {
+            for (final ItemStack stack : EquippedArmor.all(living)) {
                 final MagneticPolarity p = stack.is(MagTags.METAL_ARMOR)
                         ? stack.get(MagDataComponents.ARMOR_POLARITY.get()) : null;
                 if (p == MagneticPolarity.NORTH) northCount++;

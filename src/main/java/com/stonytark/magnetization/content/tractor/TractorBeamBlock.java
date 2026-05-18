@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * Directional attractive beam — points along the player's facing at placement time.
  * Pulls ships in front of it toward the emitter. Active while powered.
  */
-public class TractorBeamBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
+public final class TractorBeamBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<TractorBeamBlock> CODEC = simpleCodec(TractorBeamBlock::new);
 

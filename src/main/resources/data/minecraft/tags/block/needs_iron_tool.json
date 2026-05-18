@@ -1,6 +1,17 @@
 {
   "replace": false,
   "values": [
-    "magnetization:magnetite_block"
+    "magnetization:magnetite_block",
+    "magnetization:maghemite_block",
+    "magnetization:pyrrhotite_block",
+    "magnetization:hematite_block",
+    "magnetization:titanomagnetite_ore",
+    "magnetization:deepslate_titanomagnetite_ore",
+    "magnetization:titanomagnetite_block",
+    "magnetization:raw_titanomagnetite_block",
+    "magnetization:pyrrhotite_catalyst",
+    "magnetization:enhanced_pyrrhotite_catalyst",
+    "magnetization:cosmic_pyrrhotite_catalyst",
+    "magnetization:meteorite_core"
   ]
 }

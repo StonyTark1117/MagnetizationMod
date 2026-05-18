@@ -19,8 +19,16 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class MagneticSwitchBlockEntity extends BlockEntity {
 
-    private static final double SCAN_RADIUS = 8.0d;
+    /** Default scan radius. Server owners override via
+     *  {@code MagConfig.MAGNETIC_SWITCH_RANGE}; this is the fallback for
+     *  early-load / unit-test contexts. */
+    public static final double SCAN_RADIUS = 8.0d;
     private static final int PERIOD = 4;
+
+    private static double scanRadius() {
+        try { return com.stonytark.magnetization.config.MagConfig.MAGNETIC_SWITCH_RANGE.get(); }
+        catch (final Throwable t) { return SCAN_RADIUS; }
+    }
 
     private int signal = 0;
     private int phase = 0;
@@ -47,9 +55,10 @@ public class MagneticSwitchBlockEntity extends BlockEntity {
 
     private int computeSignal(final ServerLevel level) {
         final var origin = getBlockPos().getCenter();
+        final double radius = scanRadius();
         final BoundingBox3d searchBox = new BoundingBox3d(
-                origin.x - SCAN_RADIUS, origin.y - SCAN_RADIUS, origin.z - SCAN_RADIUS,
-                origin.x + SCAN_RADIUS, origin.y + SCAN_RADIUS, origin.z + SCAN_RADIUS
+                origin.x - radius, origin.y - radius, origin.z - radius,
+                origin.x + radius, origin.y + radius, origin.z + radius
         );
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
         if (container == null) return 0;
@@ -63,8 +72,8 @@ public class MagneticSwitchBlockEntity extends BlockEntity {
             if (d < bestDist) bestDist = d;
         }
         if (bestDist == Double.MAX_VALUE) return 0;
-        // Linear ramp: 0 at SCAN_RADIUS, 15 at distance 0.
-        final double t = Math.max(0.0d, 1.0d - bestDist / SCAN_RADIUS);
+        // Linear ramp: 0 at scan radius, 15 at distance 0.
+        final double t = Math.max(0.0d, 1.0d - bestDist / radius);
         return Math.min(15, (int) Math.round(t * 15.0d));
     }
 

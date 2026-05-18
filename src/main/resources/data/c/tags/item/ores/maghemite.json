@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:maghemite_ore",
+    "magnetization:deepslate_maghemite_ore"
+  ]
+}

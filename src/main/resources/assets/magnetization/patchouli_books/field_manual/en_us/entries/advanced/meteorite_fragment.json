@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.meteorite_fragment.name",
+  "icon": "magnetization:meteorite_fragment",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:meteorite_fragment", "text": "book.magnetization.entry.meteorite_fragment.spotlight" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:ferromagnetic_ingot_cosmic", "title": "book.magnetization.entry.meteorite_fragment.cosmic_recipe.title", "text": "book.magnetization.entry.meteorite_fragment.cosmic_recipe.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:lodestone_core_from_meteorite", "title": "book.magnetization.entry.meteorite_fragment.lodestone_recipe.title", "text": "book.magnetization.entry.meteorite_fragment.lodestone_recipe.text" }
+  ]
+}

@@ -13,7 +13,6 @@ import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.physics.InventorySink;
 import com.stonytark.magnetization.physics.SableBridge;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.ChatFormatting;
@@ -46,12 +45,18 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractEmitterBlockEntity extends BlockEntity
         implements MagneticFieldSource, BlockEntitySubLevelActor,
-        IHaveGoggleInformation, IHaveHoveringInformation {
+        IHaveGoggleInformation {
 
     private boolean powered = false;
     /** True for the current tick if energy was successfully consumed this tick
      *  to drive the field. Reset/recomputed each {@link #tickEmitter} call. */
     private boolean energyActiveThisTick = false;
+    /** Snapshot of {@link #energyActiveThisTick} from the prior tick; used to
+     *  fire the {@code energy_activated} advancement trigger on the rising
+     *  edge only, not every tick the emitter is active. Not persisted — a
+     *  player reload always re-fires the trigger the first time they're
+     *  nearby an energy-driven emitter, which is fine. */
+    private boolean wasEnergyActiveLastTick = false;
     /** Game-time of the last energy-state network sync. We resync once per
      *  second during active drain so the client HUD/goggle/Jade reading stays
      *  within ~1s of the true buffer level without flooding the network. */
@@ -94,6 +99,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     private int rangeOverride = 0;
     /** Per-emitter polarity override. {@code null} = use the subclass's default. */
     private @Nullable com.stonytark.magnetization.api.MagneticPolarity polarityOverride = null;
+    /** Hematite Lens polarity lock. When non-null, the emitter's field is forced
+     *  to this polarity at the END of {@link #tickEmitter} (after the Polarity
+     *  Inverter step), making the lock take precedence over the inverter.
+     *  Installed/removed by the Hematite Lens item. */
+    private @Nullable com.stonytark.magnetization.api.MagneticPolarity lockedPolarity = null;
 
     protected AbstractEmitterBlockEntity(
             final BlockEntityType<?> type,
@@ -124,6 +134,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      *  (the buffer's {@code maxExtract} is 0) — the emitter is the only thing
      *  that drains it. */
     public net.neoforged.neoforge.energy.IEnergyStorage getEnergyBuffer() { return energyBuffer; }
+
+    /** Direct buffer setter for the {@code /magnetization debug energy} command —
+     *  bypasses the {@code maxReceive} clamp so a single command can fill an
+     *  empty buffer to capacity without needing a cabled-up FE source. Marks
+     *  dirty + triggers a client sync so HUD/goggle/Jade update immediately. */
+    public void setEnergyForDebug(final int amount) {
+        energyBuffer.setStored(amount);
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
 
     private static boolean allowRedstonePower() {
         try { return MagConfig.ALLOW_REDSTONE_POWER.get(); } catch (Throwable t) { return true; }
@@ -203,6 +223,21 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     public void setPolarityOverride(final @Nullable com.stonytark.magnetization.api.MagneticPolarity p) {
         if (this.polarityOverride == p) return;
         this.polarityOverride = p;
+        this.cachedField = null;
+        setChanged();
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
+
+    public @Nullable com.stonytark.magnetization.api.MagneticPolarity getLockedPolarity() {
+        return lockedPolarity;
+    }
+
+    /** Apply or clear the Hematite Lens polarity lock. While non-null, the
+     *  emitter's field will reset to this polarity after each tick's
+     *  Inverter pass, defeating the inverter and freezing polarity. */
+    public void setLockedPolarity(final @Nullable com.stonytark.magnetization.api.MagneticPolarity p) {
+        if (this.lockedPolarity == p) return;
+        this.lockedPolarity = p;
         this.cachedField = null;
         setChanged();
         if (level instanceof ServerLevel server) markForClientSync(server);
@@ -310,6 +345,22 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                 energyActiveThisTick = true;
             }
         }
+        // Rising-edge advancement fire: when an emitter first goes energy-active,
+        // trigger the `energy_activated` criterion for every ServerPlayer within
+        // 16 blocks. Heavy-handed by design — the player must be present to see
+        // it, and rising edges are rare enough that scanning the player list per
+        // transition is cheap.
+        if (energyActiveThisTick && !wasEnergyActiveLastTick) {
+            final double cx = getBlockPos().getX() + 0.5;
+            final double cy = getBlockPos().getY() + 0.5;
+            final double cz = getBlockPos().getZ() + 0.5;
+            for (final net.minecraft.server.level.ServerPlayer sp : server.players()) {
+                if (sp.distanceToSqr(cx, cy, cz) <= 16.0 * 16.0) {
+                    com.stonytark.magnetization.registry.MagTriggers.ENERGY_ACTIVATED.get().trigger(sp);
+                }
+            }
+        }
+        wasEnergyActiveLastTick = energyActiveThisTick;
 
         MagneticField local = computeField(state);
         if (local == null) {
@@ -322,6 +373,24 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // scan; only runs while the emitter is active.
         if (PolarityInverterBlock.shouldInvert(server, getBlockPos())) {
             local = new MagneticField(local.origin(), local.axis(), local.polarity().opposite(),
+                    local.strength(), local.shape());
+        }
+
+        // Adjacent Hematite blocks dampen the field strength tier (one step per
+        // adjacent block, clamped to WEAK). Antiferromagnetic flavour — hematite
+        // cancels out applied fields.
+        final MagneticStrength dampened = com.stonytark.magnetization.content.hematite.HematiteBlock
+                .dampenedStrength(server, getBlockPos(), local.strength());
+        if (dampened != local.strength()) {
+            local = new MagneticField(local.origin(), local.axis(), local.polarity(),
+                    dampened, local.shape());
+        }
+
+        // Hematite Lens polarity lock: takes precedence over any Inverter flip
+        // earlier in this tick. Set via the lens item's right-click; cleared
+        // via shift+right-click.
+        if (lockedPolarity != null && local.polarity() != lockedPolarity) {
+            local = new MagneticField(local.origin(), local.axis(), lockedPolarity,
                     local.strength(), local.shape());
         }
 
@@ -387,7 +456,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                 && a.customRange() == b.customRange();
     }
 
-    void markForClientSync(final ServerLevel server) {
+    protected void markForClientSync(final ServerLevel server) {
         setChanged();
         server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 2 /* UPDATE_CLIENTS */);
     }
@@ -397,30 +466,41 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         return state.getValue(prop);
     }
 
+    /** Subclass hook: does this emitter actually accept power input (redstone
+     *  or FE/RF)? Passive emitters like pyrrhotite_block (heat-driven) and
+     *  titanomagnetite_block (paleomagnetic record) don't — surfacing the
+     *  power-source / energy-buffer tooltip line on them is a lie. Default
+     *  true to cover the standard powered emitters. */
+    protected boolean acceptsPower() { return true; }
+
     @Override
     public List<Component> extraTooltipLines(final boolean verbose) {
         final List<Component> lines = new java.util.ArrayList<>(4);
-        // Power-source line: highest signal-to-noise. Always show, regardless
-        // of whether energy or redstone is driving so players know at a glance.
-        final int energy = energyBuffer.getEnergyStored();
-        final int capacity = energyBuffer.getMaxEnergyStored();
-        if (energy > 0 || isPowered()) {
-            final String source = energyActiveThisTick ? "energy"
-                    : (powered ? "redstone" : "idle");
-            final ChatFormatting sourceColor = energyActiveThisTick ? ChatFormatting.GOLD
-                    : (powered ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
-            lines.add(Component.translatable("tooltip.magnetization.power_source",
-                            Component.translatable("tooltip.magnetization.power_source." + source)
-                                    .withStyle(sourceColor))
-                    .withStyle(ChatFormatting.GRAY));
-        }
-        // Energy buffer line: only show when there's actually a buffer to surface.
-        // Hides the line for fresh placements that never received energy, so
-        // the tooltip stays clean when FE isn't in use on this server.
-        if (energy > 0 || verbose) {
-            lines.add(Component.translatable("tooltip.magnetization.energy",
-                            String.format("%,d / %,d", energy, capacity))
-                    .withStyle(ChatFormatting.GRAY));
+        if (acceptsPower()) {
+            // Power-source line: highest signal-to-noise. Always show,
+            // regardless of whether energy or redstone is driving so players
+            // know at a glance.
+            final int energy = energyBuffer.getEnergyStored();
+            final int capacity = energyBuffer.getMaxEnergyStored();
+            if (energy > 0 || isPowered()) {
+                final String source = energyActiveThisTick ? "energy"
+                        : (powered ? "redstone" : "idle");
+                final ChatFormatting sourceColor = energyActiveThisTick ? ChatFormatting.GOLD
+                        : (powered ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
+                lines.add(Component.translatable("tooltip.magnetization.power_source",
+                                Component.translatable("tooltip.magnetization.power_source." + source)
+                                        .withStyle(sourceColor))
+                        .withStyle(ChatFormatting.GRAY));
+            }
+            // Energy buffer line: only show when there's actually a buffer to
+            // surface. Hides the line for fresh placements that never received
+            // energy, so the tooltip stays clean when FE isn't in use on this
+            // server.
+            if (energy > 0 || verbose) {
+                lines.add(Component.translatable("tooltip.magnetization.energy",
+                                String.format("%,d / %,d", energy, capacity))
+                        .withStyle(ChatFormatting.GRAY));
+            }
         }
         if (cachedShipState != null) {
             lines.addAll(shipStateTooltipLines(cachedShipState, verbose));
@@ -433,8 +513,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     private static List<Component> shipStateTooltipLines(
             final com.stonytark.magnetization.api.ShipMagneticState state, final boolean verbose) {
         final ChatFormatting polColor = switch (state.polarity()) {
-            case NORTH -> ChatFormatting.AQUA;
-            case SOUTH -> ChatFormatting.RED;
+            case NORTH -> ChatFormatting.RED;
+            case SOUTH -> ChatFormatting.AQUA;
             case NONE  -> ChatFormatting.GRAY;
         };
         final String summary = String.format("%s ×%.2f",
@@ -452,16 +532,15 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     }
 
     @Override
-    public boolean addToTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        tooltip.addAll(FieldTooltipFormatter.format(cachedField, false));
-        tooltip.addAll(extraTooltipLines(false));
-        return true;
-    }
-
-    @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
-        tooltip.add(Component.translatable("tooltip.magnetization.field_status")
-                .withStyle(ChatFormatting.GRAY));
+        // Create's GoggleOverlayRenderer draws the icon at (posX+10, posY-16)
+        // which only horizontally overlaps the FIRST tooltip line. Lines 2+
+        // are below the icon entirely and should render flush-left — indenting
+        // them looks lopsided. So: 8-space prefix on the header line only,
+        // content lines flush.
+        tooltip.add(Component.literal("        ").append(
+                Component.translatable("tooltip.magnetization.field_status")
+                        .withStyle(ChatFormatting.GRAY)));
         tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
         tooltip.addAll(extraTooltipLines(true));
         return true;
@@ -487,6 +566,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (strengthOverride != null) tag.putString("StrengthOverride", strengthOverride.name());
         if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
         if (polarityOverride != null) tag.putString("PolarityOverride", polarityOverride.name());
+        if (lockedPolarity != null) tag.putString("LockedPolarity", lockedPolarity.name());
         if (cachedShipState != null) tag.put("ShipState", cachedShipState.toNbt());
         if (energyBuffer.getEnergyStored() > 0) tag.putInt("Energy", energyBuffer.getEnergyStored());
     }
@@ -501,6 +581,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         rangeOverride = tag.contains("RangeOverride") ? tag.getInt("RangeOverride") : 0;
         polarityOverride = tag.contains("PolarityOverride")
                 ? com.stonytark.magnetization.api.MagneticPolarity.valueOf(tag.getString("PolarityOverride")) : null;
+        lockedPolarity = tag.contains("LockedPolarity")
+                ? com.stonytark.magnetization.api.MagneticPolarity.valueOf(tag.getString("LockedPolarity")) : null;
         cachedShipState = tag.contains("ShipState")
                 ? com.stonytark.magnetization.api.ShipMagneticState.fromNbt(tag.getCompound("ShipState"))
                 : null;
@@ -525,5 +607,27 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     public void onDataPacket(final Connection connection, final ClientboundBlockEntityDataPacket pkt,
                              final HolderLookup.Provider registries) {
         if (pkt.getTag() != null) loadCustomOnly(pkt.getTag(), registries);
+    }
+
+    /** Attach emitter state to crash reports. Vanilla's base already adds block
+     *  + position; this adds the magnetism-specific fields that a maintainer
+     *  reading the report would otherwise have to reproduce from a save. */
+    @Override
+    public void fillCrashReportCategory(final net.minecraft.CrashReportCategory category) {
+        super.fillCrashReportCategory(category);
+        category.setDetail("Magnetization Powered (redstone)", () -> Boolean.toString(powered));
+        category.setDetail("Magnetization Energy Active", () -> Boolean.toString(energyActiveThisTick));
+        category.setDetail("Magnetization Energy Buffer",
+                () -> energyBuffer.getEnergyStored() + " / " + energyBuffer.getMaxEnergyStored());
+        category.setDetail("Magnetization Strength Override",
+                () -> strengthOverride == null ? "<default>" : strengthOverride.name());
+        category.setDetail("Magnetization Range Override",
+                () -> rangeOverride > 0 ? Integer.toString(rangeOverride) : "<default>");
+        category.setDetail("Magnetization Polarity Override",
+                () -> polarityOverride == null ? "<default>" : polarityOverride.name());
+        category.setDetail("Magnetization Cached Field",
+                () -> cachedField == null ? "<none>" : cachedField.toString());
+        category.setDetail("Magnetization Cached Ship State",
+                () -> cachedShipState == null ? "<not on ship>" : cachedShipState.toString());
     }
 }

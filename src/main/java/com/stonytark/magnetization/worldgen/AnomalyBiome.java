@@ -38,4 +38,11 @@ public final class AnomalyBiome {
         if (!enabled()) return false;
         return level.getBiome(pos).is(KEY);
     }
+
+    /** Hot-path variant for callers that have already gated on {@link #enabled()}.
+     *  Skips the redundant config getter so loops over many positions / ships /
+     *  entities don't pay it per iteration. */
+    public static boolean isAtAssumeEnabled(final Level level, final BlockPos pos) {
+        return level.getBiome(pos).is(KEY);
+    }
 }

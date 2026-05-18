@@ -8,6 +8,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.world.entity.EntityType;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
@@ -43,5 +48,56 @@ public final class MagClientRegistration {
     @SubscribeEvent
     public static void onRegisterMenuScreens(final RegisterMenuScreensEvent event) {
         event.register(MagMenus.EMITTER.get(), EmitterScreen::new);
+    }
+
+    /** Wires layer0 of the magnetic_elytra item model to the DYED_COLOR
+     *  data component so dyeing the item in the crafting grid colours the
+     *  inventory icon as well as the worn cape. Without this the held item
+     *  stays its base tint even after dyeing. The cape tint itself is
+     *  driven by {@link MagneticElytraLayer#resolveDyeTint}. */
+    @SubscribeEvent
+    public static void onRegisterItemColors(final net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> {
+            if (tintIndex != 0) return 0xFFFFFFFF;
+            final net.minecraft.world.item.component.DyedItemColor dyed =
+                    stack.get(net.minecraft.core.component.DataComponents.DYED_COLOR);
+            if (dyed == null) return 0xFFFFFFFF;
+            return 0xFF000000 | (dyed.rgb() & 0x00FFFFFF);
+        }, com.stonytark.magnetization.registry.MagItems.MAGNETIC_ELYTRA.get());
+    }
+
+    /** Adds a {@link MagneticElytraLayer} to every humanoid renderer so the
+     *  custom magnetic-elytra cape texture draws when worn. Vanilla's
+     *  {@code ElytraLayer.shouldRender} only fires for {@code Items.ELYTRA};
+     *  without this our subclassed item would render nothing. */
+    @SubscribeEvent
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void onAddLayers(final EntityRenderersEvent.AddLayers event) {
+        // Player renderers (default + slim).
+        for (PlayerSkin.Model model : event.getSkins()) {
+            EntityRenderer<?> renderer = event.getSkin(model);
+            if (renderer instanceof LivingEntityRenderer<?, ?> living) {
+                ((LivingEntityRenderer) living).addLayer(
+                        new MagneticElytraLayer<>((LivingEntityRenderer) living, event.getEntityModels()));
+            }
+        }
+        // Armor stands — vanilla elytra works on them, so ours should too.
+        EntityRenderer<?> stand = event.getRenderer(EntityType.ARMOR_STAND);
+        if (stand instanceof LivingEntityRenderer<?, ?> living) {
+            ((LivingEntityRenderer) living).addLayer(
+                    new MagneticElytraLayer<>((LivingEntityRenderer) living, event.getEntityModels()));
+        }
+    }
+
+    /** Defers mod-compass wrapping until after every mod's
+     *  {@link FMLClientSetupEvent} has flushed — both Nature's Compass and
+     *  Explorer's Compass register their own angle property inside that
+     *  same event, and mod-bus ordering across mods isn't deterministic, so
+     *  wrapping there can be silently overwritten. By the time the client
+     *  player logs in, all client-setup work is done; one-shot guard inside
+     *  {@link CompassPropertyHooks#installModCompasses} keeps this idempotent. */
+    @SubscribeEvent
+    public static void onClientLogin(final ClientPlayerNetworkEvent.LoggingIn event) {
+        CompassPropertyHooks.installModCompasses();
     }
 }

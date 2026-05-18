@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magnetization:item/cosmic_compass_26"
+  }
+}

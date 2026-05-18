@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "magnetization:maghemite_ingot"
+    }
+  },
+  "pattern": [
+    "M M",
+    "MMM",
+    "M M"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:maghemite_horse_armor"
+  }
+}

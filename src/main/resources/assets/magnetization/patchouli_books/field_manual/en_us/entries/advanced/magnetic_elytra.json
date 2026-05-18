@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.magnetic_elytra.name",
+  "icon": "magnetization:magnetic_elytra",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.magnetic_elytra.intro.title", "text": "book.magnetization.entry.magnetic_elytra.intro.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:magnetic_elytra", "text": "book.magnetization.entry.magnetic_elytra.recipe" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.magnetic_elytra.usage.title", "text": "book.magnetization.entry.magnetic_elytra.usage.text" }
+  ]
+}

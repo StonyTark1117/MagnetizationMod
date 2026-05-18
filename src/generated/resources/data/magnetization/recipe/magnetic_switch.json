@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "S": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "pattern": [
+    "PRP",
+    "PCP",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_switch"
+  }
+}

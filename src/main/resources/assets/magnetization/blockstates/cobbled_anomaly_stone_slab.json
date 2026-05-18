@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "magnetization:block/cobbled_anomaly_stone_slab" },
+    "type=top":    { "model": "magnetization:block/cobbled_anomaly_stone_slab_top" },
+    "type=double": { "model": "magnetization:block/cobbled_anomaly_stone" }
+  }
+}

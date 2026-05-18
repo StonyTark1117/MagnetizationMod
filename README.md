@@ -5,16 +5,16 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 ## Requirements
 
 - Minecraft **1.21.1**
-- NeoForge **21.1.219+**
+- NeoForge **21.1.230+**
 - [Create](https://modrinth.com/mod/create) **6.0.9+**
-- [Sable](https://modrinth.com/mod/sable) **1.1.1+**
-- [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.1.0+**
-- Simulated **1.1.0+**
+- [Sable](https://modrinth.com/mod/sable) **1.2.2+**
+- [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.2.1+**
+- Simulated **1.2.1+**
 
 Optional integrations (auto-detected when installed):
 - [Jade](https://modrinth.com/mod/jade), [WTHIT](https://modrinth.com/mod/wthit), or [The One Probe](https://modrinth.com/mod/the-one-probe) for HUD info on emitters.
 - [JEI](https://modrinth.com/mod/jei), [REI](https://modrinth.com/mod/rei), or [EMI](https://modrinth.com/mod/emi) for an in-browser info page on the ferromagnetic-item tag.
-- [Curios](https://modrinth.com/mod/curios) — Field Compass (pure passive — needle + HUD overlay read the slot directly), Magnetic Grapple, and Repulsor Gun work from a charm slot. Active items are fired via configurable keybinds under *Options → Controls → Key Binds → Magnetization*.
+- [Curios](https://modrinth.com/mod/curios) — adds three slots to the player: **charm** (Field Compass), **back** (Magnetic Grapple), **hands** (Repulsor Gun). The compass is purely passive — its needle and HUD overlay both read the slot directly. The grapple and gun are active and fire via configurable keybinds under *Options → Controls → Key Binds → Magnetization*. Default keys are unbound so they never collide with vanilla on first launch.
 - [Patchouli](https://modrinth.com/mod/patchouli) — adds a craftable in-game guide book (Book + Raw Magnetite) covering basics, emitters, ship polarity, and advanced systems.
 - [Alex's Caves](https://modrinth.com/mod/alexs-caves) — Magnetron + Ferrouslime are magnetizable; Azure/Scarlet magnets + neodymium ores/blocks are ferromagnetic. Config `compat.alexsCavesPotionMode` (BOTH / OURS_ONLY / THEIRS_ONLY) controls how our Magnetized effect coexists with AC's Magnetizing effect when both mods are present.
 - [Magnetizing](https://www.curseforge.com/minecraft/mc-mods/magnetizing) — its magnetite ingots are fungible with ours via `c:ingots/magnetite`; its block/item magnets and colored magnetite blocks count as ferromagnetic to our emitters; we honour its `magnetizing:unmoveable_by_magnets` entity tag so admins only need to curate one list.
@@ -72,6 +72,7 @@ Magnets mounted on a ship still never pull their own ship directly (the carrying
 - **Magnetic Plate** — `3 ferromagnetic ingot → 3 plates`. Cladding for emitter recipes.
 - **Field Compass** — `4 plates + 1 vanilla compass → 1 compass`. Right-click for the strongest active field nearby; sneak right-click lists every active field in range.
 - **Magnetic Grapple** — `2 plates + 1 lodestone core + 1 string → 1 grapple`. Right-click an attractive field source within 24 blocks to be yanked toward it.
+- **Repulsor Gun** — `1 plate + 1 lodestone core + 1 ferromagnetic ingot + 3 iron ingots → 1 gun`. Inverse of the Grapple. Right-click fires a one-tick conical pulse along your look direction: ships in the cone get pushed (impulse divided by ship mass, so small ships fly farther), magnetized entities get knockback, dropped items + falling blocks get nudged out. If the shot lands on a magnetic emitter block you get self-recoiled along the inverse of your aim — closer = harder kickback, opening up traversal tricks ("aim down at a lodestone to launch backward"). Cooldown 1 s, no fuel.
 - **Magnetite Ore / Deepslate Magnetite Ore** — naturally occurring Fe₃O₄. Drops raw magnetite (Fortune ore_drops formula). Stone-tier pickaxe.
 - **Raw Magnetite / Magnetite Ingot** — smelt or blast 1:1. Both are in `#magnetization:ferromagnetic` so emitters yank them straight off the ground.
 - **Block of Magnetite / Block of Raw Magnetite** — 9× compact storage. Iron-tier for the smelted block, stone-tier for the raw block. Both also ferromagnetic in bulk.
@@ -104,11 +105,19 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 
 - **Iron / chainmail / gold / netherite / magnetite / ferromagnetic armor** makes you magnetizable. Each piece worn adds susceptibility — full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
 - **Magnetic Grapple** turns infrastructure into traversal. Right-click pointing at any space within 24 blocks of an active attractive field; the closest qualifying emitter pulls you toward it. Cooldown: 1 second.
-- **`/magnetization debug field <pos>`** prints the field state at a block. Useful for debugging.
+- **`/magnetization help`** lists every subcommand available to the caller's permission level with a one-line description.
+- **`/magnetization version`** prints mod + Create + Sable + Aeronautics + NeoForge versions. Handy for bug reports.
+- **`/magnetization stats`** counts loaded emitters, live Sable ships, and entities carrying the Magnetized effect in the player's level.
+- **`/magnetization config show [filter]`** dumps live `MagConfig` values to chat. Optional substring filter (e.g. `show energy` for the FE-related knobs).
+- **`/magnetization debug field <pos>`** prints the field state at an emitter.
 - **`/magnetization debug forceAt <emitter> <target>`** prints the world-space force vector the emitter would exert on a unit-mass test particle at `target`.
 - **`/magnetization debug rotate <deg> [yaw|pitch|roll]`** teleport-rotates the nearest sub-level by an absolute angle in world frame — setup-free way to confirm a mounted emitter's field axis follows the contraption.
+- **`/magnetization debug energy <pos> [fill|drain|set <n>]`** reads or writes an emitter's FE buffer directly — skips needing a cabled-up FE source to validate the energy path.
+- **`/magnetization debug curios`** lists every item in the player's Curios slots; confirms slot membership when validating HUD/keybind behaviour.
+- **`/magnetization spawn_test_ship [size] [material]`** drops an N×N×N test ship in the air 4 blocks ahead. Size defaults to 1, material defaults to magnetite (also accepts iron / raw_iron / gold / copper).
+- **`/magnetization spawn_test_anchor`** drops a powered Magnetic Anchor 4 blocks ahead.
 - **`/magnetization lirm strike [pos]`** summons a lightning bolt on the player (or at `pos`) so LIRM + log petrification fire on demand. `/magnetization lirm stamp [north|south]` manually LIRM-stamps the held metal item (testing decay without waiting on a storm). `/magnetization lirm inspect` lists every metal armor/tool the player carries with current polarity + decay remaining. `/magnetization lirm clear` strips the LIRM stamp from the held item. `/magnetization lirm fields` prints the number of active transient magnetic fields seeded by recent lightning in the current level.
-- **`/magnetization tp anomaly`** and **`/magnetization tp petrified_forest`** scan up to 6 400 blocks for the closest matching biome and teleport the player to its surface — same scan radius vanilla `/locate biome` uses.
+- **`/magnetization tp anomaly [player]`** and **`/magnetization tp petrified_forest [player]`** scan up to 6 400 blocks for the closest matching biome and teleport the player (or a named target) to its surface — same scan radius vanilla `/locate biome` uses.
 
 ## Magnetizing armor & tools
 
@@ -236,11 +245,12 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 ## Building
 
 ```sh
-./gradlew build       # produces build/libs/magnetization-<version>.jar
-./gradlew test        # 50 unit tests on field math + ship state
+./gradlew build                # produces build/libs/magnetization-<version>.jar
+./gradlew test                 # 81 unit tests on field math + ship state
+./gradlew runGameTestServer    # headless in-world integration tests (emitter lifecycle + energy drain)
 ```
 
-`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for the dedicated-server smoke test. Data is hand-authored JSON; no `runData` task is wired.
+`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for the dedicated-server smoke test; `./gradlew runData` to regenerate recipes + loot tables (most other data is hand-authored).
 
 ## Known issues
 

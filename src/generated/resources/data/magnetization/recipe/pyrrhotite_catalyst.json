@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "P": {
+      "item": "magnetization:pyrrhotite_ingot"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "POP",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:pyrrhotite_catalyst"
+  }
+}

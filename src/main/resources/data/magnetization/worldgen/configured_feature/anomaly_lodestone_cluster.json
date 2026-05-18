@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:disk",
+  "config": {
+    "half_height": 1,
+    "radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 1,
+      "max_inclusive": 2
+    },
+    "state_provider": {
+      "fallback": {
+        "type": "minecraft:simple_state_provider",
+        "state": { "Name": "magnetization:lodestone_core" }
+      },
+      "rules": []
+    },
+    "target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": [
+        "magnetization:magnetite_block",
+        "magnetization:raw_magnetite_block",
+        "magnetization:hematite_block",
+        "minecraft:stone"
+      ]
+    }
+  }
+}

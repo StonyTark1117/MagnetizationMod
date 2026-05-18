@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * Strong omnidirectional attractive field that pulls ships toward this exact
  * spot. Intended for docking pads. Active while powered.
  */
-public class MagneticAnchorBlock extends Block implements EntityBlock {
+public final class MagneticAnchorBlock extends Block implements EntityBlock {
 
     public MagneticAnchorBlock(final Properties props) {
         super(props);

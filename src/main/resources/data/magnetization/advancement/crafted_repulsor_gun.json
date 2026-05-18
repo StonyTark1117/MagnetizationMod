@@ -1,0 +1,20 @@
+{
+  "parent": "magnetization:first_emitter",
+  "display": {
+    "icon": { "id": "magnetization:repulsor_gun" },
+    "title": { "translate": "advancement.magnetization.crafted_repulsor_gun.title" },
+    "description": { "translate": "advancement.magnetization.crafted_repulsor_gun.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has_gun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "magnetization:repulsor_gun" }]
+      }
+    }
+  },
+  "requirements": [["has_gun"]]
+}

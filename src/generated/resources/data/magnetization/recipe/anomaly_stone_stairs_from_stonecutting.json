@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "magnetization:anomaly_stone"
+  },
+  "result": {
+    "count": 1,
+    "id": "magnetization:anomaly_stone_stairs"
+  }
+}

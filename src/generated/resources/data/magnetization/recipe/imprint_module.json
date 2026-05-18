@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "T": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    " T ",
+    "TET",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:imprint_module"
+  }
+}

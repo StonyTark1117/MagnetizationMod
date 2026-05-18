@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "magnetization:pyrrhotite_catalyst"
+    },
+    "P": {
+      "item": "magnetization:pyrrhotite_ingot"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PCP",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:enhanced_pyrrhotite_catalyst"
+  }
+}

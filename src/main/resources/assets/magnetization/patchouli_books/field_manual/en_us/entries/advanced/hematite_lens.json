@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.hematite_lens.name",
+  "icon": "magnetization:hematite_lens",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.hematite_lens.intro.title", "text": "book.magnetization.entry.hematite_lens.intro.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:hematite_lens", "text": "book.magnetization.entry.hematite_lens.recipe" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.hematite_lens.usage.title", "text": "book.magnetization.entry.hematite_lens.usage.text" }
+  ]
+}

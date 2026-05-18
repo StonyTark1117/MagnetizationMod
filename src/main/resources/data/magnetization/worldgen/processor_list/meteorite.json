@@ -1,0 +1,5 @@
+{
+  "processors": [
+    { "processor_type": "magnetization:meteorite_center_marker" }
+  ]
+}

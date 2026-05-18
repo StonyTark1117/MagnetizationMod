@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * a strong adjacent signal vs. a redstone-block-sourced signal isn't reliable, so
  * we just use full power = NORTH and the sub-block toggle via right-click later if needed).
  */
-public class ElectromagnetBlock extends Block implements EntityBlock {
+public final class ElectromagnetBlock extends Block implements EntityBlock {
 
     public ElectromagnetBlock(final Properties props) {
         super(props);

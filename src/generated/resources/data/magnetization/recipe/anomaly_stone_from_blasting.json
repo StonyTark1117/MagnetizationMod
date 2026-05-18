@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "blocks",
+  "cookingtime": 100,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "magnetization:cobbled_anomaly_stone"
+  },
+  "result": {
+    "count": 1,
+    "id": "magnetization:anomaly_stone"
+  }
+}

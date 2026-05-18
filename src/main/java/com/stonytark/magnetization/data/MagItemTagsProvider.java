@@ -42,6 +42,16 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.RAW_MAGNETITE.get())
                 .add(MagItems.MAGNETITE_BLOCK.get())
                 .add(MagItems.RAW_MAGNETITE_BLOCK.get())
+                // Iron-oxide family — all ferromagnetic (even hematite ingot,
+                // which acts as a polarity modifier rather than a pure source).
+                .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.RAW_MAGHEMITE.get())
+                .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
+                .add(MagItems.PYRRHOTITE_INGOT.get()).add(MagItems.RAW_PYRRHOTITE.get())
+                .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
+                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.RAW_HEMATITE.get())
+                .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
+                .add(MagItems.TITANOMAGNETITE_INGOT.get()).add(MagItems.RAW_TITANOMAGNETITE.get())
+                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
                 .addOptional(ResourceLocation.withDefaultNamespace("lodestone"));
 
         tag(MagTags.METAL_ARMOR)
@@ -68,12 +78,32 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.FERROMAGNETIC_HELMET.get())
                 .add(MagItems.FERROMAGNETIC_CHESTPLATE.get())
                 .add(MagItems.FERROMAGNETIC_LEGGINGS.get())
-                .add(MagItems.FERROMAGNETIC_BOOTS.get());
+                .add(MagItems.FERROMAGNETIC_BOOTS.get())
+                .add(MagItems.MAGNETITE_HORSE_ARMOR.get())
+                .add(MagItems.FERROMAGNETIC_HORSE_ARMOR.get())
+                .add(MagItems.MAGHEMITE_HELMET.get())
+                .add(MagItems.MAGHEMITE_CHESTPLATE.get())
+                .add(MagItems.MAGHEMITE_LEGGINGS.get())
+                .add(MagItems.MAGHEMITE_BOOTS.get())
+                .add(MagItems.MAGHEMITE_HORSE_ARMOR.get())
+                .add(MagItems.MAGNETIC_ELYTRA.get());
 
-        tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get());
+        tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get())
+                .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.PYRRHOTITE_INGOT.get())
+                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.TITANOMAGNETITE_INGOT.get());
         tag(common("plates")).add(MagItems.MAGNETIC_PLATE.get());
-        tag(common("raw_materials")).add(MagItems.RAW_MAGNETITE.get());
-        tag(common("storage_blocks")).add(MagItems.MAGNETITE_BLOCK.get()).add(MagItems.RAW_MAGNETITE_BLOCK.get());
-        tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get());
+        tag(common("raw_materials")).add(MagItems.RAW_MAGNETITE.get())
+                .add(MagItems.RAW_MAGHEMITE.get()).add(MagItems.RAW_PYRRHOTITE.get())
+                .add(MagItems.RAW_HEMATITE.get()).add(MagItems.RAW_TITANOMAGNETITE.get());
+        tag(common("storage_blocks")).add(MagItems.MAGNETITE_BLOCK.get()).add(MagItems.RAW_MAGNETITE_BLOCK.get())
+                .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
+                .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
+                .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
+                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get());
+        tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get())
+                .add(MagItems.MAGHEMITE_ORE.get()).add(MagItems.DEEPSLATE_MAGHEMITE_ORE.get())
+                .add(MagItems.PYRRHOTITE_ORE.get()).add(MagItems.DEEPSLATE_PYRRHOTITE_ORE.get())
+                .add(MagItems.HEMATITE_ORE.get()).add(MagItems.DEEPSLATE_HEMATITE_ORE.get())
+                .add(MagItems.TITANOMAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_TITANOMAGNETITE_ORE.get());
     }
 }

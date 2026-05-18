@@ -26,8 +26,8 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue SHIP_MAX_SUSCEPTIBILITY;
     public static final ModConfigSpec.IntValue    SHIP_SCAN_INTERVAL_TICKS;
 
-    public static final ModConfigSpec.BooleanValue MAGNETIC_PEAKS_ENABLED;
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
+    public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
 
     // Per-emitter GUI ceilings. Strings rather than enums so the spec can validate
@@ -53,6 +53,15 @@ public final class MagConfig {
      *  effects (grapple, compass, magnetized armor susceptibility) are skipped at runtime. */
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ITEMS;
 
+    /** Master switch for the passive magnetite → maghemite inventory decay
+     *  driven by {@code MaghemiteDecayHandler}. Off by default; flip on for
+     *  the slow-rusting hoarder behaviour. Named after the source material
+     *  (magnetite) since that's the thing that oxidises. */
+    public static final ModConfigSpec.BooleanValue MAGNETITE_OXIDATION_ENABLED;
+    /** Ticks a stamped magnetite stack waits before converting in place to
+     *  its maghemite equivalent. Only consulted when oxidation is enabled. */
+    public static final ModConfigSpec.IntValue     MAGNETITE_OXIDATION_TICKS;
+
     /** Master toggle for the field-applicator and anchor-binding debug logs. Off by default. */
     public static final ModConfigSpec.BooleanValue DEBUG_LOGGING;
 
@@ -71,6 +80,8 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue GRAPPLE_MAX_RANGE;
     /** Field Compass scan radius, in blocks. */
     public static final ModConfigSpec.IntValue COMPASS_RANGE;
+    /** Cosmic Compass meteorite-scan radius, in blocks. */
+    public static final ModConfigSpec.IntValue COSMIC_COMPASS_RANGE;
 
     /** Repulsor Gun cone range in blocks. */
     public static final ModConfigSpec.IntValue    REPULSOR_GUN_RANGE;
@@ -81,11 +92,25 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue REPULSOR_GUN_SELF_RECOIL_STRENGTH;
     /** Cooldown (ticks) between Repulsor Gun shots. */
     public static final ModConfigSpec.IntValue    REPULSOR_GUN_COOLDOWN_TICKS;
+    /** Base linear impulse the gun applies to a ship per shot (Sable units —
+     *  kg·m/s). Resulting velocity change = impulse / ship-mass, so small
+     *  ships fly farther than large ones for the same impulse. */
+    public static final ModConfigSpec.DoubleValue REPULSOR_GUN_SHIP_IMPULSE;
+    /** Per-shot cap on the velocity change a ship can receive (m/s). Prevents
+     *  a 1×1 magnetite test cube from launching across the world when the
+     *  impulse/mass ratio explodes. */
+    public static final ModConfigSpec.DoubleValue REPULSOR_GUN_SHIP_MAX_VELOCITY_DELTA;
 
     // Per-tool magnetized-effect toggles. Each tool gets a unique signature
     // ability on top of the shared "pull dropped ferromagnetic items" handler.
     public static final ModConfigSpec.BooleanValue LIRM_ENABLED;
     public static final ModConfigSpec.BooleanValue PETRIFIED_FOREST_ENABLED;
+    public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> PETRIFIED_FOREST_RARITY;
+    public static final ModConfigSpec.BooleanValue MAGNETIC_GRAVEL_IN_VANILLA_BIOMES;
+    public static final ModConfigSpec.IntValue     METEORITE_DECAY_TICKS;
+    public static final ModConfigSpec.IntValue     METEORITE_SAPLING_GROW_TICKS;
+    public static final ModConfigSpec.IntValue     MAGNETIC_SWITCH_RANGE;
+    public static final ModConfigSpec.BooleanValue AE2_METEORITE_HOOK_ENABLED;
     public static final ModConfigSpec.BooleanValue TOOL_SWORD_YANK_ENABLED;
     public static final ModConfigSpec.BooleanValue TOOL_PICKAXE_ORE_RIP_ENABLED;
     public static final ModConfigSpec.BooleanValue TOOL_AXE_PULSE_ENABLED;
@@ -114,6 +139,12 @@ public final class MagConfig {
      *  {@code CompassAngleState.calculate}. */
     public static final ModConfigSpec.BooleanValue ANOMALY_AFFECTS_VANILLA_COMPASS;
 
+    /** Same scramble extended to Nature's Compass when that mod is loaded. */
+    public static final ModConfigSpec.BooleanValue ANOMALY_AFFECTS_NATURES_COMPASS;
+
+    /** Same scramble extended to Explorer's Compass when that mod is loaded. */
+    public static final ModConfigSpec.BooleanValue ANOMALY_AFFECTS_EXPLORERS_COMPASS;
+
     /** Admin toggle: redstone signal counts as a valid power source for redstone-
      *  powered emitters (Electromagnet, Anchor, Repulsor, Tractor Beam, Excavator).
      *  Default true. Set false to force players to feed an FE source. */
@@ -123,6 +154,11 @@ public final class MagConfig {
      *  capability is still exposed (NeoForge can't conditionally hide it) but
      *  energy stays buffered and never activates the field. */
     public static final ModConfigSpec.BooleanValue ALLOW_ENERGY_POWER;
+    /** Give the Patchouli field manual to each player on their first login.
+     *  Default true. Per-player flag is stored in the player's persistent NBT
+     *  so reconnecting doesn't re-give the manual. Set false if your server
+     *  prefers players craft it from the (cheap) recipes. */
+    public static final ModConfigSpec.BooleanValue FIELD_MANUAL_AUTO_GIVE;
     /** Internal FE buffer capacity per emitter, in FE. Default 50_000 (about
      *  5_000 ticks = 250s of operation at the default drain). */
     public static final ModConfigSpec.IntValue EMITTER_ENERGY_CAPACITY;
@@ -328,6 +364,23 @@ public final class MagConfig {
                 .defineListAllowEmpty("disabledItems", List.of(),
                         () -> "", o -> o instanceof String);
 
+        MAGNETITE_OXIDATION_ENABLED = b
+                .comment("Master switch for the magnetite → maghemite passive inventory decay.",
+                         "Off by default — players found the slow rusting of hoarded magnetite",
+                         "more confusing than satisfying. Turn on to re-enable the feature.",
+                         "When off, MAGNETITE_OXIDATION_AGE stamps are also skipped so existing",
+                         "stacks don't accumulate stale timers.")
+                .translation("magnetization.configuration.content.magnetiteOxidationEnabled")
+                .define("magnetiteOxidationEnabled", false);
+
+        MAGNETITE_OXIDATION_TICKS = b
+                .comment("Ticks a stamped magnetite stack waits before converting to its",
+                         "maghemite equivalent. Default 168000 = 1 in-game week (7 days)",
+                         "of survival-time per stack. Only consulted when",
+                         "magnetiteOxidationEnabled is true.")
+                .translation("magnetization.configuration.content.magnetiteOxidationTicks")
+                .defineInRange("magnetiteOxidationTicks", 168000, 1200, 2_400_000);
+
         b.pop();
 
         b.comment("Item / utility tuning.")
@@ -346,6 +399,12 @@ public final class MagConfig {
                 .comment("Field Compass scan radius in blocks.")
                 .translation("magnetization.configuration.items.compassRange")
                 .defineInRange("compassRange", 16, 4, 128);
+        COSMIC_COMPASS_RANGE = b
+                .comment("Cosmic Compass meteorite-scan radius in blocks. Much larger than the",
+                         "Field Compass — meteorites are rare worldgen, so a wider arc justifies",
+                         "the dedicated item.")
+                .translation("magnetization.configuration.items.cosmicCompassRange")
+                .defineInRange("cosmicCompassRange", 512, 32, 4096);
 
         REPULSOR_GUN_RANGE = b
                 .comment("Repulsor Gun cone range in blocks. Shorter than the Magnetic Grapple's",
@@ -374,6 +433,23 @@ public final class MagConfig {
                          "spam-bouncing exploits while still allowing rapid follow-ups.")
                 .translation("magnetization.configuration.items.repulsorGunCooldownTicks")
                 .defineInRange("repulsorGunCooldownTicks", 20, 0, 600);
+
+        REPULSOR_GUN_SHIP_IMPULSE = b
+                .comment("Base linear impulse (Sable units — kg·m/s) the Repulsor Gun applies",
+                         "to a ship per shot. Velocity change = impulse / ship-mass, capped to",
+                         "repulsorGunShipMaxVelocityDelta. Default 100000 sizes 1×1 and 3×3",
+                         "ships to hit the cap (strong push), 5×5 begins to feel mass scaling",
+                         "(noticeable but tough), and 10×10+ barely budges. Bump 5–10× if even",
+                         "1×1 ships feel weak; dial back if 5×5+ launches across the map.")
+                .translation("magnetization.configuration.items.repulsorGunShipImpulse")
+                .defineInRange("repulsorGunShipImpulse", 100_000.0d, 0.0d, 100_000_000.0d);
+
+        REPULSOR_GUN_SHIP_MAX_VELOCITY_DELTA = b
+                .comment("Per-shot cap on the velocity change a ship can receive from one Repulsor",
+                         "Gun shot. Without this, the impulse/mass ratio would launch tiny test ships",
+                         "across the world. Default 64 m/s = a tiny ship launches at terminal velocity.")
+                .translation("magnetization.configuration.items.repulsorGunShipMaxVelocityDelta")
+                .defineInRange("repulsorGunShipMaxVelocityDelta", 64.0d, 0.0d, 500.0d);
 
         b.pop();
 
@@ -443,22 +519,25 @@ public final class MagConfig {
          .translation("magnetization.configuration.worldgen")
          .push("worldgen");
 
-        MAGNETIC_PEAKS_ENABLED = b
-                .comment("If true, denser magnetite ore veins appear in mountain biomes",
-                         "(#minecraft:is_mountain). Adds a flavor pass that surfaces in",
-                         "snowy/jagged peaks. Default off — opt-in.")
-                .translation("magnetization.configuration.worldgen.magneticPeaksEnabled")
-                .define("magneticPeaksEnabled", false);
-
         ANOMALY_BIOME_ENABLED = b
                 .comment("If true, the anomaly biome generates naturally and its runtime effects",
-                         "activate inside it (field-compass spin, vanilla-compass spin, 1.5×",
-                         "emitter strength, the random chaos field). With this off the biome",
-                         "stays loaded as a resource so /locate biome magnetization:anomaly and",
-                         "/magnetization tp anomaly still work, but it won't spawn on its own",
-                         "and effects are inert. Default off — opt-in.")
+                         "activate (field-compass spin, vanilla-compass spin, 1.5× emitter",
+                         "strength bonus, the random chaos field). With this off the biome",
+                         "stays loaded as a resource so /place biome magnetization:anomaly and",
+                         "/locate biome magnetization:anomaly still work, but it won't spawn on",
+                         "its own and effects are inert. Default off — opt-in.")
                 .translation("magnetization.configuration.worldgen.anomalyBiomeEnabled")
                 .define("anomalyBiomeEnabled", false);
+
+        ANOMALY_BIOME_RARITY = b
+                .comment("How rare the anomaly biome is when generating naturally. Controls the",
+                         "width of TerraBlender climate-parameter spans — narrower = fewer chunks",
+                         "match. EXTREMELY_RARE (default) pins a single point so you may go",
+                         "tens of thousands of blocks without seeing one. VERY_RARE / RARE widen",
+                         "the spans incrementally. COMMON is mostly for testing — it overlaps so",
+                         "much vanilla parameter space the anomaly turns up every few biomes.")
+                .translation("magnetization.configuration.worldgen.anomalyBiomeRarity")
+                .defineEnum("anomalyBiomeRarity", com.stonytark.magnetization.worldgen.BiomeRarity.EXTREMELY_RARE);
 
         ANOMALY_CHAOS_STRENGTH = b
                 .comment("Multiplier applied to the anomaly's chaos field — scales both the",
@@ -471,13 +550,66 @@ public final class MagConfig {
                 .defineInRange("anomalyChaosStrength", 1.0d, 0.0d, 10.0d);
 
         PETRIFIED_FOREST_ENABLED = b
-                .comment("If true, the Petrified Forest biome registers a TerraBlender region",
-                         "so it spawns naturally on the overworld (a cold/dry inland slot).",
-                         "The biome JSON itself loads either way — turning this off just blocks",
-                         "natural generation; /locate biome magnetization:petrified_forest still",
-                         "works. Default off — opt-in.")
+                .comment("If true, the Petrified Forest biome spawns naturally on the overworld",
+                         "(a cold/dry inland slot) and its runtime effects activate (lightning-",
+                         "storm-driven LIRM magnetization stamping on nearby items). With this",
+                         "off the biome JSON loads but doesn't spawn naturally; /place biome",
+                         "magnetization:petrified_forest still works. Default off — opt-in.")
                 .translation("magnetization.configuration.worldgen.petrifiedForestEnabled")
                 .define("petrifiedForestEnabled", false);
+
+        PETRIFIED_FOREST_RARITY = b
+                .comment("How rare the petrified forest biome is when generating naturally. See",
+                         "anomalyBiomeRarity for what each tier means. Default RARE — encounterable",
+                         "on most overworld runs but not in every biome row.")
+                .translation("magnetization.configuration.worldgen.petrifiedForestRarity")
+                .defineEnum("petrifiedForestRarity", com.stonytark.magnetization.worldgen.BiomeRarity.RARE);
+
+        MAGNETIC_GRAVEL_IN_VANILLA_BIOMES = b
+                .comment("If true, sparse patches of magnetic_gravel (the iron-flecked falling",
+                         "block from the anomaly biome) appear in vanilla overworld biomes at",
+                         "very low frequency (~1-in-24 chunks attempt). Survival players who",
+                         "never visit an Anomaly biome can still find a small supply through",
+                         "normal world exploration. Default on; flip off if you want the",
+                         "block to be strictly anomaly-exclusive.")
+                .translation("magnetization.configuration.worldgen.magneticGravelInVanillaBiomes")
+                .define("magneticGravelInVanillaBiomes", true);
+
+        METEORITE_DECAY_TICKS = b
+                .comment("Ticks between full charge and full decay on a meteorite_core. Default",
+                         "12000 = 10 in-game minutes (EXTREME for the first third, STRONG for",
+                         "the second, WEAK for the final, then inert). Bump to slow the decay",
+                         "loop for long-form survival pacing; drop to make refilling a constant",
+                         "chore.")
+                .translation("magnetization.configuration.worldgen.meteoriteDecayTicks")
+                .defineInRange("meteoriteDecayTicks", 12000, 200, 240000);
+
+        METEORITE_SAPLING_GROW_TICKS = b
+                .comment("Ticks before a planted meteorite_sapling matures into a meteorite_core.",
+                         "Default 36000 = 30 in-game minutes (chunk must stay loaded the whole",
+                         "time). Reduce to make sapling farming faster; raise for stricter",
+                         "scarcity.")
+                .translation("magnetization.configuration.worldgen.meteoriteSaplingGrowTicks")
+                .defineInRange("meteoriteSaplingGrowTicks", 36000, 200, 480000);
+
+        MAGNETIC_SWITCH_RANGE = b
+                .comment("Magnetic Switch ship-detection radius in blocks. Switch outputs a 0–15",
+                         "redstone signal whose strength ramps linearly with how close the nearest",
+                         "sub-level (ship/contraption) is to the switch within this radius.",
+                         "Default 8 blocks. Larger values let one switch cover bigger docking",
+                         "bays; smaller values force tighter sensor placement.")
+                .translation("magnetization.configuration.worldgen.magneticSwitchRange")
+                .defineInRange("magneticSwitchRange", 8, 1, 64);
+
+        AE2_METEORITE_HOOK_ENABLED = b
+                .comment("When AE2 is installed, scan freshly-loaded chunks for AE2 meteor",
+                         "structures and emit a decaying magnetic field at each one (same decay",
+                         "curve as a native meteorite_core). Turn off if the AE2 integration is",
+                         "causing trouble on a specific AE2 build — disabling is non-destructive,",
+                         "previously-registered AE2 meteors simply stop emitting on next reload.",
+                         "No effect when AE2 isn't installed.")
+                .translation("magnetization.configuration.worldgen.ae2MeteoriteHookEnabled")
+                .define("ae2MeteoriteHookEnabled", true);
 
         b.pop();
 
@@ -576,6 +708,15 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.allowEnergyPower")
                 .define("allowEnergyPower", true);
 
+        FIELD_MANUAL_AUTO_GIVE = b
+                .comment("Give the Patchouli field manual to each player on their first login.",
+                         "Default true. The per-player flag is stored in persistent NBT so",
+                         "reconnecting doesn't re-give the manual. Players can also craft it",
+                         "from cheap recipes (book + raw_magnetite OR iron ingot OR lodestone).",
+                         "Set false on servers that prefer players craft it themselves.")
+                .translation("magnetization.configuration.compat.fieldManualAutoGive")
+                .define("fieldManualAutoGive", true);
+
         EMITTER_ENERGY_CAPACITY = b
                 .comment("Internal FE buffer capacity per emitter. 50000 ≈ 4 minutes of continuous",
                          "operation at the default drain. Higher = longer ride on a single fill.")
@@ -603,6 +744,20 @@ public final class MagConfig {
                          "on stable compass readings (waystone mods, navigation mods).")
                 .translation("magnetization.configuration.compat.anomalyAffectsVanillaCompass")
                 .define("anomalyAffectsVanillaCompass", true);
+
+        ANOMALY_AFFECTS_NATURES_COMPASS = b
+                .comment("Same scramble extended to Nature's Compass (mod ID: naturescompass).",
+                         "No effect when that mod isn't loaded. Default true; set false to keep",
+                         "biome-search functional inside the anomaly.")
+                .translation("magnetization.configuration.compat.anomalyAffectsNaturesCompass")
+                .define("anomalyAffectsNaturesCompass", true);
+
+        ANOMALY_AFFECTS_EXPLORERS_COMPASS = b
+                .comment("Same scramble extended to Explorer's Compass (mod ID: explorerscompass).",
+                         "No effect when that mod isn't loaded. Default true; set false to keep",
+                         "structure-search functional inside the anomaly.")
+                .translation("magnetization.configuration.compat.anomalyAffectsExplorersCompass")
+                .define("anomalyAffectsExplorersCompass", true);
 
         b.pop();
 

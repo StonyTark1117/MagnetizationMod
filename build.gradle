@@ -31,6 +31,11 @@ configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
 // Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
 // because the toml is loaded literally from build/resources/main with no expansion.
 processResources {
+    // src/main/resources can override src/generated/resources for hand-written
+    // files that supersede the data-generator output (e.g. loot tables that
+    // need minecraft:copy_components which the standard dropSelf builder
+    // doesn't emit). Without this Gradle hits a duplicate-resource error.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     final Map<String, String> replaceTokens = [
         mod_id           : mod_id,
         mod_name         : mod_name,
@@ -82,17 +87,24 @@ neoForge {
         }
         client { client() }
         server { server(); programArgument 'nogui' }
-        // data { data() } is commented out: in this env (moddev 2.0.141, NeoForge
-        // 21.1.219) the plugin assembles a data run classpath where FML scans
-        // build/classes/java/main as a candidate mod root and fails because
-        // META-INF/neoforge.mods.toml lives separately under build/resources/main.
-        // Reproducible across plugin minor versions. Workarounds:
-        //   1) Run datagen from a working IDE setup (IntelliJ usually composes the
-        //      classpath via virtual mod folders correctly).
-        //   2) Manually copy src/main/resources/META-INF over to build/classes/java/main/META-INF
-        //      before invoking the run.
-        // The Gather*Event-driven providers compile fine and produce identical
-        // output to the hand-written JSON when invoked, so the addon works either way.
+        // Headless test runner — invoke via `./gradlew runGameTestServer`.
+        // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience
+        // method (only client/server/data), so set the run type manually.
+        // The `neoforge.enabledGameTestNamespaces` system property (set in
+        // configureEach above) gates which mods' tests get registered.
+        gameTestServer { type = 'gameTestServer' }
+        data {
+            data()
+            // moddev 2.0.141 + NeoForge 21.1.230 doesn't automatically wire our
+            // mod into the data-gatherer's mod list — the GatherDataEvent fires
+            // with an empty mod set otherwise. Passing --mod explicitly works
+            // around it. Also pass --existing so the providers see our
+            // hand-written resources (lang/textures referenced by JSONs).
+            programArguments.addAll('--mod', mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources').absolutePath,
+                    '--existing', file('src/main/resources').absolutePath)
+        }
     }
 
     mods {
@@ -123,7 +135,7 @@ dependencies {
     // Jade — optional HUD overlay. compileOnly so we can write the plugin without
     // forcing Jade as a runtime dependency; the plugin class loads only when Jade
     // is present (its mod scans classes for @WailaPlugin).
-    compileOnly("maven.modrinth:jade:15.10.0+neoforge")
+    compileOnly("maven.modrinth:jade:15.10.5+neoforge")
 
     // WTHIT — alternative HUD. Same soft-dep pattern; plugin entry is declared in
     // waila_plugins.json so the class only loads when WTHIT is present.
@@ -200,6 +212,14 @@ dependencies {
     // Citadel is AC's hard dep (must come before AC in classpath order).
     localRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}")
     localRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}")
+
+    // Applied Energistics 2 — needed to dev-test the meteorite Phase B AE2
+    // scan hook (task #289). Pure reflection-based detection in our code, so
+    // no compileOnly needed; AE2 only has to be on the runClient classpath
+    // for the chunk-scan to find real AE2 meteorites to bind onto. AE2 hard-
+    // deps on GuideME, which has to come along too.
+    localRuntime("maven.modrinth:guideme:${guideme_test_version}")
+    localRuntime("maven.modrinth:ae2:${ae2_test_version}")
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "magnetization:meteorite_fragment"
+    },
+    "R": {
+      "item": "magnetization:raw_magnetite"
+    }
+  },
+  "pattern": [
+    " F ",
+    "RFR",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:meteorite_sapling"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "book.magnetization.entry.anomaly_terrain.name",
+  "icon": "magnetization:anomaly_stone",
+  "category": "magnetization:basics",
+  "pages": [
+    { "type": "patchouli:text",      "title": "book.magnetization.entry.anomaly_terrain.intro.title",  "text": "book.magnetization.entry.anomaly_terrain.intro.text" },
+    { "type": "patchouli:spotlight", "item": "magnetization:anomaly_stone",         "text": "book.magnetization.entry.anomaly_terrain.stone" },
+    { "type": "patchouli:spotlight", "item": "magnetization:cobbled_anomaly_stone", "text": "book.magnetization.entry.anomaly_terrain.cobbled" },
+    { "type": "patchouli:smelting",  "recipe": "magnetization:anomaly_stone_from_smelting", "text": "" },
+    { "type": "patchouli:crafting",  "recipe": "magnetization:anomaly_stone_stairs", "text": "" },
+    { "type": "patchouli:crafting",  "recipe": "magnetization:anomaly_stone_slab", "text": "" },
+    { "type": "patchouli:crafting",  "recipe": "magnetization:cobbled_anomaly_stone_stairs", "text": "" },
+    { "type": "patchouli:crafting",  "recipe": "magnetization:cobbled_anomaly_stone_slab", "text": "" },
+    { "type": "patchouli:crafting",  "recipe": "magnetization:cobbled_anomaly_stone_wall", "text": "" },
+    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_gravel",       "text": "book.magnetization.entry.anomaly_terrain.gravel" }
+  ]
+}

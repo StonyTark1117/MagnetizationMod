@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "P": {
+      "tag": "c:plates"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    "PCP",
+    " S ",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_grapple"
+  }
+}

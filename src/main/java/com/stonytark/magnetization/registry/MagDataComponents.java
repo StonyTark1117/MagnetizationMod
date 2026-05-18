@@ -42,6 +42,40 @@ public final class MagDataComponents {
                             .persistent(Codec.LONG)
                             .networkSynchronized(ByteBufCodecs.VAR_LONG));
 
+    /** Game-tick at which a magnetite item first entered inventory observation.
+     *  Drives {@code MaghemiteDecayHandler} — when {@code (now - stamped) >=
+     *  MaghemiteDecayHandler.DECAY_TICKS} the stack converts in place into its
+     *  maghemite equivalent (raw_magnetite → raw_maghemite, magnetite_ingot →
+     *  maghemite_ingot), mirroring real-world oxidation of γ-Fe2O3 to α-Fe2O3.
+     *  Stays absent on freshly-mined items until the first inventory sweep
+     *  sees them. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>>
+            MAGNETITE_OXIDATION_AGE = register("magnetite_oxidation_age",
+                    builder -> builder
+                            .persistent(Codec.LONG)
+                            .networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+    /** Captured {@link com.stonytark.magnetization.api.EmitterPreset} carried
+     *  by a Titanomagnetite Imprint Module item — shift-right-click an emitter
+     *  to overwrite, right-click another emitter to project. Persistent so a
+     *  recorded preset survives chunk/world reload + inventory transfers. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.stonytark.magnetization.api.EmitterPreset>>
+            EMITTER_PRESET = register("emitter_preset",
+                    builder -> builder
+                            .persistent(com.stonytark.magnetization.api.EmitterPreset.CODEC)
+                            .networkSynchronized(com.stonytark.magnetization.api.EmitterPreset.STREAM_CODEC));
+
+    /** Recorded field NBT carried by a dropped Titanomagnetite Block item so a
+     *  player can mine a captured titanomagnetite and re-place it elsewhere
+     *  without losing the imprint. Written by the block's loot table via
+     *  {@code minecraft:copy_components}; read back by
+     *  {@code TitanomagnetiteBlockEntity.applyImplicitComponents}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>>
+            RECORDED_FIELD = register("recorded_field",
+                    builder -> builder
+                            .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                            .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG));
+
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(
             final String name,
             final UnaryOperator<DataComponentType.Builder<T>> builderOp

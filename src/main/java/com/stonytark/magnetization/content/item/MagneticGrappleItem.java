@@ -7,6 +7,7 @@ import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
+import com.stonytark.magnetization.api.EquippedArmor;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
@@ -164,7 +165,7 @@ public class MagneticGrappleItem extends Item {
      *  {@link MagEffects#MAGNETIZED} effect. */
     private static boolean isMagnetized(final LivingEntity e) {
         if (e.hasEffect(MagEffects.MAGNETIZED)) return true;
-        for (final ItemStack armor : e.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(e)) {
             if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) return true;
         }
         return false;

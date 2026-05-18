@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * right-click flips it — same UX as the Permanent Magnet so propulsion-track
  * setups feel consistent regardless of which variant you're using.
  */
-public class TemporaryMagnetBlock extends Block implements EntityBlock {
+public final class TemporaryMagnetBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<MagneticPolarity> POLARITY =
             EnumProperty.create("polarity", MagneticPolarity.class,

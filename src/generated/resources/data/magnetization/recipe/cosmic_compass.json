@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "magnetization:field_compass"
+    },
+    {
+      "item": "magnetization:meteorite_fragment"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:cosmic_compass"
+  }
+}

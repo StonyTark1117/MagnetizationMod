@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "magnetization:hematite_ingot"
+    },
+    {
+      "item": "magnetization:magnetic_plate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:hematite_lens"
+  }
+}

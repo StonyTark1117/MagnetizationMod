@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,7 +54,7 @@ public final class MagnetizedWeaponHits {
         // it's opposite to the weapon's, the field pins; same-pole or no armor
         // gets the lighter tag.
         int targetNet = 0;
-        for (final ItemStack armor : target.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(target)) {
             final MagneticPolarity p = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (p != null) targetNet += p.sign();
         }
@@ -86,7 +87,7 @@ public final class MagnetizedWeaponHits {
     }
 
     private static boolean wearsMetalArmor(final LivingEntity entity) {
-        for (final ItemStack armor : entity.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(entity)) {
             if (armor.is(MagTags.METAL_ARMOR)) return true;
         }
         return false;

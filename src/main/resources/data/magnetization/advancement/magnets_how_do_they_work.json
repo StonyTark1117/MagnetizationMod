@@ -1,0 +1,25 @@
+{
+  "parent": "magnetization:root",
+  "display": {
+    "icon": { "id": "magnetization:magnetite_ingot" },
+    "title": { "translate": "advancement.magnetization.magnets_how_do_they_work.title" },
+    "description": { "translate": "advancement.magnetization.magnets_how_do_they_work.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "have_all": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "magnetization:magnetite_ingot" },
+          { "items": "magnetization:permanent_magnet" },
+          { "items": "magnetization:electromagnet" }
+        ]
+      }
+    }
+  },
+  "requirements": [["have_all"]]
+}

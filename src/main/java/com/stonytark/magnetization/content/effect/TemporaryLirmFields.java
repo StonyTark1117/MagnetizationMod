@@ -16,10 +16,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Per-level registry of transient magnetic fields seeded by lightning. Two
@@ -82,8 +83,11 @@ public final class TemporaryLirmFields {
     private static final double PETRIFIED_GROUND_FIELD_RANGE_BASE = 9.0d;
 
     /** Live entries by level. Key by dimension resource key so this stays
-     *  correct across multi-world servers. */
-    private static final Map<ResourceKey<Level>, List<Entry>> ENTRIES_BY_LEVEL = new HashMap<>();
+     *  correct across multi-world servers. Outer map is concurrent; inner
+     *  lists are synchronized so the tick-handler's iterate-with-remove is
+     *  safe even if a register call lands from off-main during lightning
+     *  event dispatch. */
+    private static final Map<ResourceKey<Level>, List<Entry>> ENTRIES_BY_LEVEL = new ConcurrentHashMap<>();
 
     /** One transient remnant field. {@code baseRange} captures the initial
      *  range; we shrink it linearly with age to sell the "fading" feel. */
@@ -135,7 +139,9 @@ public final class TemporaryLirmFields {
     }
 
     private static void addEntry(final ServerLevel level, final Entry entry) {
-        ENTRIES_BY_LEVEL.computeIfAbsent(level.dimension(), k -> new ArrayList<>()).add(entry);
+        ENTRIES_BY_LEVEL
+                .computeIfAbsent(level.dimension(), k -> Collections.synchronizedList(new ArrayList<>()))
+                .add(entry);
     }
 
     private static MagneticPolarity randomPolarity(final ServerLevel level) {
@@ -150,27 +156,32 @@ public final class TemporaryLirmFields {
         if (entries == null || entries.isEmpty()) return;
 
         final long now = server.getGameTime();
-        final Iterator<Entry> it = entries.iterator();
-        while (it.hasNext()) {
-            final Entry e = it.next();
-            final long age = now - e.bornTick;
-            if (age >= DURATION_TICKS) {
-                it.remove();
-                continue;
+        // Hold the list lock for the whole iterate-with-remove pass — entries
+        // is a synchronizedList, so its iterator() requires external sync per
+        // the Collections.synchronizedList contract.
+        synchronized (entries) {
+            final Iterator<Entry> it = entries.iterator();
+            while (it.hasNext()) {
+                final Entry e = it.next();
+                final long age = now - e.bornTick;
+                if (age >= DURATION_TICKS) {
+                    it.remove();
+                    continue;
+                }
+                // Linear decay: full range at birth, zero at expiration. Skip
+                // pump-throughs where the effective range collapsed below 1.
+                final double remaining = 1.0d - (age / (double) DURATION_TICKS);
+                final double range = e.baseRange * remaining;
+                if (range < 1.0d) continue;
+                final MagneticField field = new MagneticField(
+                        e.origin,
+                        new Vec3(0, 1, 0),
+                        e.polarity,
+                        e.tier,
+                        MagneticField.Shape.OMNIDIRECTIONAL,
+                        range);
+                FieldApplicator.apply(server, field);
             }
-            // Linear decay: full range at birth, zero at expiration. Skip
-            // pump-throughs where the effective range collapsed below 1.
-            final double remaining = 1.0d - (age / (double) DURATION_TICKS);
-            final double range = e.baseRange * remaining;
-            if (range < 1.0d) continue;
-            final MagneticField field = new MagneticField(
-                    e.origin,
-                    new Vec3(0, 1, 0),
-                    e.polarity,
-                    e.tier,
-                    MagneticField.Shape.OMNIDIRECTIONAL,
-                    range);
-            FieldApplicator.apply(server, field);
         }
     }
 

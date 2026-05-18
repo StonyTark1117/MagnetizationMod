@@ -8,6 +8,7 @@ import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.worldgen.AnomalyBiome;
+import com.stonytark.magnetization.api.EquippedArmor;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
@@ -86,10 +87,13 @@ public final class AnomalyMagneticChaos {
         final double strength = chaosStrength();
         if (strength <= 0.0d) return;
 
-        // Players + their nearby items.
+        // Players + their nearby items. The outer onLevelTick already gated on
+        // AnomalyBiome.enabled() — use the assume-enabled variant in these inner
+        // per-entity / per-ship loops so we don't pay the config getter per
+        // iteration. With many ships + many items in flight this matters.
         for (final ServerPlayer player : server.players()) {
             if (player.isSpectator() || player.isDeadOrDying()) continue;
-            if (!AnomalyBiome.isAt(server, player.blockPosition())) continue;
+            if (!AnomalyBiome.isAtAssumeEnabled(server, player.blockPosition())) continue;
             applyChaosToPlayer(player, now, strength);
             applyChaosToNearbyItems(server, player, now, strength);
         }
@@ -102,7 +106,7 @@ public final class AnomalyMagneticChaos {
             if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
             final org.joml.Vector3dc poseVec = ship.logicalPose().position();
             final Vec3 shipPos = new Vec3(poseVec.x(), poseVec.y(), poseVec.z());
-            if (!AnomalyBiome.isAt(server, BlockPos.containing(shipPos))) continue;
+            if (!AnomalyBiome.isAtAssumeEnabled(server, BlockPos.containing(shipPos))) continue;
             applyChaosToShip(ship, shipPos, now, strength);
         }
     }
@@ -112,7 +116,7 @@ public final class AnomalyMagneticChaos {
         // piece adds to a unitless multiplier so a fully-kitted player gets
         // tossed harder than a bare-handed wanderer.
         double susceptibility = 0.0d;
-        for (final ItemStack armor : player.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(player)) {
             if (!armor.is(MagTags.METAL_ARMOR)) continue;
             final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
@@ -131,7 +135,7 @@ public final class AnomalyMagneticChaos {
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box)) {
             if (item.hasPickUpDelay()) continue;
             if (!item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) continue;
-            if (!AnomalyBiome.isAt(server, item.blockPosition())) continue;
+            if (!AnomalyBiome.isAtAssumeEnabled(server, item.blockPosition())) continue;
             final Vec3 chaos = chaosVectorAt(now, item.position());
             item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(ENTITY_PEAK_IMPULSE * strength)));
             item.hasImpulse = true;

@@ -1,0 +1,18 @@
+{
+  "name": "book.magnetization.entry.iron_oxide_family.name",
+  "icon": "magnetization:hematite_ingot",
+  "category": "magnetization:basics",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.iron_oxide_family.intro.title", "text": "book.magnetization.entry.iron_oxide_family.intro.text" },
+    { "type": "patchouli:spotlight", "item": "magnetization:raw_maghemite", "text": "book.magnetization.entry.iron_oxide_family.maghemite" },
+    { "type": "patchouli:smelting", "recipe": "magnetization:maghemite_ingot_from_smelting", "text": "" },
+    { "type": "patchouli:spotlight", "item": "magnetization:raw_pyrrhotite", "text": "book.magnetization.entry.iron_oxide_family.pyrrhotite" },
+    { "type": "patchouli:smelting", "recipe": "magnetization:pyrrhotite_ingot_from_smelting", "text": "" },
+    { "type": "patchouli:spotlight", "item": "magnetization:raw_hematite", "text": "book.magnetization.entry.iron_oxide_family.hematite" },
+    { "type": "patchouli:smelting", "recipe": "magnetization:hematite_ingot_from_smelting", "text": "" },
+    { "type": "patchouli:spotlight", "item": "magnetization:raw_titanomagnetite", "text": "book.magnetization.entry.iron_oxide_family.titanomagnetite" },
+    { "type": "patchouli:smelting", "recipe": "magnetization:titanomagnetite_ingot_from_smelting", "text": "" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.iron_oxide_family.oxidation.title", "text": "book.magnetization.entry.iron_oxide_family.oxidation.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.iron_oxide_family.variants.title", "text": "book.magnetization.entry.iron_oxide_family.variants.text" }
+  ]
+}

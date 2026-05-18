@@ -8,6 +8,7 @@ import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagParticles;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -129,7 +130,7 @@ public final class LightningRemnantMagnetism {
 
         // Gather all unmagnetized metal armor + held tools as candidates.
         final List<ItemStack> candidates = new ArrayList<>(6);
-        for (final ItemStack armor : target.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(target)) {
             if (armor.is(MagTags.METAL_ARMOR) && !alreadyMagnetized(armor)) candidates.add(armor);
         }
         for (final ItemStack hand : new ItemStack[]{target.getMainHandItem(), target.getOffhandItem()}) {

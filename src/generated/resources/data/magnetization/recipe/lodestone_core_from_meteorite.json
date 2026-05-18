@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:meteorite_fragment"
+    },
+    {
+      "item": "magnetization:magnetic_plate"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "magnetization:lodestone_core"
+  }
+}

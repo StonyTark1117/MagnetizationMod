@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:imprint_module"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_titanomagnetite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:titanomagnetite_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_titanomagnetite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:imprint_module"
+    ]
+  }
+}

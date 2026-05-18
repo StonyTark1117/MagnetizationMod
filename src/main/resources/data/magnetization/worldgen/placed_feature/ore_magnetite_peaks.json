@@ -1,15 +1,14 @@
 {
   "feature": "magnetization:ore_magnetite",
   "placement": [
-    { "type": "minecraft:count", "count": 18 },
+    { "type": "minecraft:count", "count": 24 },
     { "type": "minecraft:in_square" },
     {
       "type": "minecraft:height_range",
       "height": {
-        "type": "minecraft:trapezoid",
-        "min_inclusive": { "absolute": 32 },
-        "max_inclusive": { "absolute": 200 },
-        "plateau": 0
+        "type": "minecraft:uniform",
+        "min_inclusive": { "absolute": 80 },
+        "max_inclusive": { "absolute": 200 }
       }
     },
     { "type": "minecraft:biome" }

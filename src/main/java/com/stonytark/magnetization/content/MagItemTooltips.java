@@ -53,6 +53,63 @@ public final class MagItemTooltips {
         m.put(MagItems.DEEPSLATE_MAGNETITE_ORE.get(), "tooltip.magnetization.magnetite_ore.use");
         m.put(MagItems.MAGNETITE_BLOCK.get(),       "tooltip.magnetization.magnetite_block.use");
         m.put(MagItems.RAW_MAGNETITE_BLOCK.get(),   "tooltip.magnetization.raw_magnetite_block.use");
+
+        // Iron-oxide family ores + storage blocks — all share the same
+        // "smelt → ingot, mineable, magnetic" semantics described by the
+        // family.use key, so they all point at it.
+        for (final var b : new Item[]{
+                MagItems.MAGHEMITE_ORE.get(), MagItems.DEEPSLATE_MAGHEMITE_ORE.get(),
+                MagItems.PYRRHOTITE_ORE.get(), MagItems.DEEPSLATE_PYRRHOTITE_ORE.get(),
+                MagItems.HEMATITE_ORE.get(), MagItems.DEEPSLATE_HEMATITE_ORE.get(),
+                MagItems.TITANOMAGNETITE_ORE.get(), MagItems.DEEPSLATE_TITANOMAGNETITE_ORE.get(),
+        }) m.put(b, "tooltip.magnetization.iron_oxide_ore.use");
+        for (final var b : new Item[]{
+                MagItems.MAGHEMITE_BLOCK.get(), MagItems.PYRRHOTITE_BLOCK.get(),
+                MagItems.HEMATITE_BLOCK.get(), MagItems.TITANOMAGNETITE_BLOCK.get(),
+                MagItems.RAW_MAGHEMITE_BLOCK.get(), MagItems.RAW_PYRRHOTITE_BLOCK.get(),
+                MagItems.RAW_HEMATITE_BLOCK.get(), MagItems.RAW_TITANOMAGNETITE_BLOCK.get(),
+        }) m.put(b, "tooltip.magnetization.iron_oxide_storage.use");
+        for (final var i : new Item[]{
+                MagItems.RAW_MAGHEMITE.get(), MagItems.RAW_PYRRHOTITE.get(),
+                MagItems.RAW_HEMATITE.get(), MagItems.RAW_TITANOMAGNETITE.get(),
+                MagItems.MAGHEMITE_INGOT.get(), MagItems.PYRRHOTITE_INGOT.get(),
+                MagItems.HEMATITE_INGOT.get(), MagItems.TITANOMAGNETITE_INGOT.get(),
+        }) m.put(i, "tooltip.magnetization.iron_oxide_ingot.use");
+
+        // Per-tier tool/armor sets — share one "magnetize in electromagnet"
+        // tooltip line. The per-category signature ability is appended
+        // separately via signatureFor() once the stack carries ARMOR_POLARITY.
+        for (final var t : new Item[]{
+                MagItems.MAGHEMITE_SWORD.get(), MagItems.MAGHEMITE_PICKAXE.get(),
+                MagItems.MAGHEMITE_AXE.get(), MagItems.MAGHEMITE_SHOVEL.get(),
+                MagItems.MAGHEMITE_HOE.get(),
+                MagItems.MAGNETITE_SWORD.get(), MagItems.MAGNETITE_PICKAXE.get(),
+                MagItems.MAGNETITE_AXE.get(), MagItems.MAGNETITE_SHOVEL.get(),
+                MagItems.MAGNETITE_HOE.get(),
+                MagItems.FERROMAGNETIC_SWORD.get(), MagItems.FERROMAGNETIC_PICKAXE.get(),
+                MagItems.FERROMAGNETIC_AXE.get(), MagItems.FERROMAGNETIC_SHOVEL.get(),
+                MagItems.FERROMAGNETIC_HOE.get(),
+        }) m.put(t, "tooltip.magnetization.metal_tool.use");
+        for (final var a : new Item[]{
+                MagItems.MAGHEMITE_HELMET.get(), MagItems.MAGHEMITE_CHESTPLATE.get(),
+                MagItems.MAGHEMITE_LEGGINGS.get(), MagItems.MAGHEMITE_BOOTS.get(),
+                MagItems.MAGNETITE_HELMET.get(), MagItems.MAGNETITE_CHESTPLATE.get(),
+                MagItems.MAGNETITE_LEGGINGS.get(), MagItems.MAGNETITE_BOOTS.get(),
+                MagItems.FERROMAGNETIC_HELMET.get(), MagItems.FERROMAGNETIC_CHESTPLATE.get(),
+                MagItems.FERROMAGNETIC_LEGGINGS.get(), MagItems.FERROMAGNETIC_BOOTS.get(),
+        }) m.put(a, "tooltip.magnetization.metal_armor.use");
+        for (final var h : new Item[]{
+                MagItems.MAGHEMITE_HORSE_ARMOR.get(),
+                MagItems.MAGNETITE_HORSE_ARMOR.get(),
+                MagItems.FERROMAGNETIC_HORSE_ARMOR.get(),
+        }) m.put(h, "tooltip.magnetization.horse_armor.use");
+
+        m.put(MagItems.MAGNETIC_ELYTRA.get(),     "tooltip.magnetization.magnetic_elytra.use");
+        m.put(MagItems.REPULSOR_GUN.get(),        "tooltip.magnetization.repulsor_gun.use");
+        m.put(MagItems.METEORITE_FRAGMENT.get(),  "tooltip.magnetization.meteorite_fragment.use");
+        m.put(MagItems.METEORITE_CORE.get(),      "tooltip.magnetization.meteorite_core.use");
+        m.put(MagItems.METEORITE_SAPLING.get(),   "tooltip.magnetization.meteorite_sapling.use");
+
         return m;
     }
 
@@ -60,7 +117,17 @@ public final class MagItemTooltips {
     public static void onTooltip(final ItemTooltipEvent event) {
         if (map == null) {
             // Build lazily — items aren't resolved at class-init time on the mod bus.
-            try { map = build(); } catch (Throwable t) { return; }
+            try {
+                map = build();
+            } catch (final Throwable t) {
+                // Item registry must be intact at tooltip time; if build() fails,
+                // a registration bug is the likely cause. Surface it once instead
+                // of silently dropping every tooltip going forward.
+                org.slf4j.LoggerFactory.getLogger("magnetization/Tooltips")
+                        .warn("Tooltip key map build failed; tooltips will be skipped", t);
+                map = java.util.Map.of(); // poison empty map so we don't retry every call
+                return;
+            }
         }
         final ItemStack stack = event.getItemStack();
         final List<Component> lines = event.getToolTip();
@@ -72,8 +139,11 @@ public final class MagItemTooltips {
         // any tagged metal armor can be magnetized, including iron, gold, netherite, etc.
         final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
         if (pol != null && pol != MagneticPolarity.NONE) {
+            // Physical-convention colour code (NORTH=red, SOUTH=blue) so the
+            // armor stamp line agrees with particles + FieldLineOverlay +
+            // every other surface that surfaces polarity.
             final ChatFormatting color = pol == MagneticPolarity.NORTH
-                    ? ChatFormatting.AQUA : ChatFormatting.RED;
+                    ? ChatFormatting.RED : ChatFormatting.AQUA;
             lines.add(Component.translatable("tooltip.magnetization.magnetized_armor",
                     Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName())
                             .withStyle(color)
@@ -95,6 +165,49 @@ public final class MagItemTooltips {
                 if (sigKey != null) {
                     lines.add(Component.translatable(sigKey).withStyle(ChatFormatting.DARK_AQUA));
                 }
+            }
+        }
+
+        // Maghemite oxidation countdown — shown on magnetite_ingot /
+        // raw_magnetite stacks that the MaghemiteDecayHandler has stamped.
+        // The decay clock starts the first sweep that sees the stack; ages
+        // past one full Minecraft day convert in place to maghemite.
+        // Surfaces remaining-time as a colour-graded percent so a player can
+        // see *why* their stockpile is rusting without consulting the wiki.
+        // Titanomagnetite block item: surface the recorded field carried via
+        // the RECORDED_FIELD data component so a player holding a charged
+        // titanomagnetite knows the imprint persists across pick-up/place.
+        final net.minecraft.nbt.CompoundTag recordedTag =
+                stack.get(MagDataComponents.RECORDED_FIELD.get());
+        if (recordedTag != null) {
+            final var field = com.stonytark.magnetization.api.MagneticField.fromNbt(recordedTag);
+            if (field != null) {
+                final ChatFormatting fieldColour = field.polarity() == MagneticPolarity.NORTH
+                        ? ChatFormatting.RED : ChatFormatting.AQUA;
+                lines.add(Component.translatable("tooltip.magnetization.titanomagnetite.item_recorded",
+                                field.strength().name(), field.polarity().name())
+                        .withStyle(fieldColour));
+            }
+        }
+
+        final Long stampedAt = stack.get(MagDataComponents.MAGNETITE_OXIDATION_AGE.get());
+        if (stampedAt != null && stack.getItem() != net.minecraft.world.item.Items.AIR) {
+            // Use whichever level the tooltip event sees — works in singleplayer
+            // and on integrated clients alike. We need *some* clock; client-side
+            // game time is fine for a display estimate. Decay window is read
+            // from config (default 168000 ticks = 1 in-game week).
+            final net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            if (mc != null && mc.level != null) {
+                final long elapsed = mc.level.getGameTime() - stampedAt;
+                final long decay;
+                try { decay = com.stonytark.magnetization.config.MagConfig.MAGNETITE_OXIDATION_TICKS.get(); }
+                catch (final Throwable t) { return; }
+                final float remaining = Math.max(0f, 1f - elapsed / (float) decay);
+                final ChatFormatting colour = remaining > 0.66f ? ChatFormatting.GRAY
+                        : (remaining > 0.33f ? ChatFormatting.YELLOW : ChatFormatting.RED);
+                lines.add(Component.translatable("tooltip.magnetization.magnetite_oxidising",
+                                String.format(java.util.Locale.ROOT, "%.0f", remaining * 100f))
+                        .withStyle(colour));
             }
         }
     }

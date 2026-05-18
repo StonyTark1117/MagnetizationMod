@@ -3,6 +3,15 @@
   "values": [
     "magnetization:magnetite_ore",
     "magnetization:deepslate_magnetite_ore",
-    "magnetization:raw_magnetite_block"
+    "magnetization:raw_magnetite_block",
+    "magnetization:maghemite_ore",
+    "magnetization:deepslate_maghemite_ore",
+    "magnetization:raw_maghemite_block",
+    "magnetization:pyrrhotite_ore",
+    "magnetization:deepslate_pyrrhotite_ore",
+    "magnetization:raw_pyrrhotite_block",
+    "magnetization:hematite_ore",
+    "magnetization:deepslate_hematite_ore",
+    "magnetization:raw_hematite_block"
   ]
 }

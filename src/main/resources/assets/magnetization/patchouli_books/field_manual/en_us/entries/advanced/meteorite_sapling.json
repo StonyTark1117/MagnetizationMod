@@ -1,0 +1,10 @@
+{
+  "name": "book.magnetization.entry.meteorite_sapling.name",
+  "icon": "magnetization:meteorite_sapling",
+  "category": "magnetization:advanced",
+  "pages": [
+    { "type": "patchouli:text", "title": "book.magnetization.entry.meteorite_sapling.intro.title", "text": "book.magnetization.entry.meteorite_sapling.intro.text" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:meteorite_sapling", "text": "book.magnetization.entry.meteorite_sapling.craft" },
+    { "type": "patchouli:spotlight", "item": "magnetization:meteorite_sapling", "text": "book.magnetization.entry.meteorite_sapling.spotlight" }
+  ]
+}

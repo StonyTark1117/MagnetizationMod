@@ -1,0 +1,11 @@
+{
+  "structures": [
+    { "structure": "magnetization:meteorite", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 19840703,
+    "separation": 16,
+    "spacing": 32
+  }
+}

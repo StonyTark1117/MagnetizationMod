@@ -1,0 +1,17 @@
+{
+  "parent": "magnetization:first_emitter",
+  "display": {
+    "icon": { "id": "magnetization:electromagnet" },
+    "title": { "translate": "advancement.magnetization.powered_by_energy.title" },
+    "description": { "translate": "advancement.magnetization.powered_by_energy.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "fe_active": {
+      "trigger": "magnetization:energy_activated"
+    }
+  },
+  "requirements": [["fe_active"]]
+}

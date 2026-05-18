@@ -1,20 +1,17 @@
 {
-  "type": "neoforge:conditional",
-  "conditions": [
+  "type": "minecraft:crafting_shapeless",
+  "neoforge:conditions": [
     { "type": "neoforge:mod_loaded", "modid": "patchouli" }
   ],
-  "recipe": {
-    "type": "minecraft:crafting_shapeless",
-    "ingredients": [
-      { "item": "minecraft:book" },
-      { "item": "magnetization:raw_magnetite" }
-    ],
-    "result": {
-      "id": "patchouli:guide_book",
-      "count": 1,
-      "components": {
-        "patchouli:book": "magnetization:field_manual"
-      }
+  "ingredients": [
+    { "item": "minecraft:book" },
+    { "item": "magnetization:raw_magnetite" }
+  ],
+  "result": {
+    "id": "patchouli:guide_book",
+    "count": 1,
+    "components": {
+      "patchouli:book": "magnetization:field_manual"
     }
   }
 }

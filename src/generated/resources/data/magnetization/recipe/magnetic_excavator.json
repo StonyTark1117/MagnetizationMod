@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "M": {
+      "tag": "c:ingots/magnetite"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    }
+  },
+  "pattern": [
+    "PMP",
+    "PCP",
+    "PMP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_excavator"
+  }
+}

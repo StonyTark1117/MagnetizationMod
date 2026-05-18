@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "pattern": ["MM ", "MS ", " S "],
-  "key": {
-    "M": { "item": "magnetization:ferromagnetic_ingot" },
-    "S": { "item": "minecraft:stick" }
-  },
-  "result": { "id": "magnetization:ferromagnetic_axe", "count": 1 }
-}

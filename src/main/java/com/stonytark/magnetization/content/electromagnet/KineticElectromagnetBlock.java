@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * strength scales with absolute RPM. Accepts a shaft on either face of its
  * placement axis (chosen at place time from the clicked face).
  */
-public class KineticElectromagnetBlock extends KineticBlock implements IBE<KineticElectromagnetBlockEntity> {
+public final class KineticElectromagnetBlock extends KineticBlock implements IBE<KineticElectromagnetBlockEntity> {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
     public static final MapCodec<KineticElectromagnetBlock> CODEC = simpleCodec(KineticElectromagnetBlock::new);

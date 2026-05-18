@@ -12,6 +12,7 @@ import com.stonytark.magnetization.registry.MagEffects;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.registry.MagMenus;
 import com.stonytark.magnetization.registry.MagParticles;
+import com.stonytark.magnetization.registry.MagTriggers;
 import com.stonytark.magnetization.worldgen.AnomalyRegion;
 import com.stonytark.magnetization.worldgen.MagSurfaceRules;
 import com.stonytark.magnetization.worldgen.PetrifiedForestRegion;
@@ -46,6 +47,9 @@ public final class Magnetization {
         MagBiomeModifiers.REGISTER.register(modBus);
         MagDataComponents.REGISTER.register(modBus);
         MagMenus.REGISTER.register(modBus);
+        MagTriggers.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagFeatures.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagFeatures.PROCESSOR_REGISTER.register(modBus);
 
         modContainer.registerConfig(ModConfig.Type.SERVER, MagConfig.SPEC);
 
@@ -85,12 +89,18 @@ public final class Magnetization {
      */
     private static void onCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            if (anomalyBiomeEnabled()) {
-                Regions.register(new AnomalyRegion());
-            }
-            if (petrifiedForestEnabled()) {
-                Regions.register(new PetrifiedForestRegion());
-            }
+            // Region registration is unconditional. The two biome toggles
+            // (anomalyBiomeEnabled, petrifiedForestEnabled) live in the SERVER
+            // config, which doesn't load until world-start — long after this
+            // event runs. Gating the registration on them here would silently
+            // skip the biome even when the user had set the toggle to true.
+            // Runtime effects (chaos field, compass scramble, emitter strength
+            // bonus) gate on the config check independently via the
+            // AnomalyBiome.enabled() / PetrifiedForestRegion checks at tick
+            // time, so disabling the toggle still suppresses gameplay impact —
+            // the biome just shows up as a quiet visual variant.
+            Regions.register(new AnomalyRegion());
+            Regions.register(new PetrifiedForestRegion());
             // Custom surface blocks for the two custom biomes — runs whether or
             // not the region was registered, so /place biome still produces a
             // visually-distinct surface.
@@ -98,6 +108,14 @@ public final class Magnetization {
                     SurfaceRuleManager.RuleCategory.OVERWORLD,
                     MOD_ID,
                     MagSurfaceRules.overworld());
+            // Confirm registration fires — user has reported the anomaly biome
+            // still looks like normal grass-and-trees despite three surface
+            // rule rewrites. If this log line appears at startup, registration
+            // happened; if the surface still doesn't visually change, the
+            // problem is downstream (rule structure, biome key mismatch, or
+            // TerraBlender merge ordering vs vanilla).
+            org.slf4j.LoggerFactory.getLogger(MOD_ID)
+                    .info("Surface rules registered for OVERWORLD category (anomaly + petrified_forest)");
 
             // Just Enough Resources integration — register magnetite ore
             // distributions directly via JERAPI.getInstance(). We avoid JER's
@@ -130,11 +148,13 @@ public final class Magnetization {
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from
      *  charm slots via the configurable keybinds. Registration is server-side
-     *  too because the payload handler lives on both. */
+     *  too because the payload handler lives on both. The payload class lives
+     *  outside the {@code .client} package so this dispatch doesn't load
+     *  {@code KeyMapping} on dedicated servers. */
     private static void onRegisterPayloads(final net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent event) {
         final net.neoforged.neoforge.network.registration.PayloadRegistrar reg =
                 event.registrar(MOD_ID).versioned("1");
-        com.stonytark.magnetization.client.MagKeyBindings.registerPayloads(reg);
+        com.stonytark.magnetization.network.UseCurioPayload.register(reg);
     }
 
     /** Drop the per-level ship-state caches when a dimension unloads, so we don't
@@ -143,14 +163,6 @@ public final class Magnetization {
         if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel server) {
             com.stonytark.magnetization.physics.ShipMagneticRegistry.onLevelUnload(server);
         }
-    }
-
-    private static boolean anomalyBiomeEnabled() {
-        try { return MagConfig.ANOMALY_BIOME_ENABLED.get(); } catch (Throwable t) { return false; }
-    }
-
-    private static boolean petrifiedForestEnabled() {
-        try { return MagConfig.PETRIFIED_FOREST_ENABLED.get(); } catch (Throwable t) { return false; }
     }
 
     public static ResourceLocation id(final String path) {

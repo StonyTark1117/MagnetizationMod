@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Server-side state (strength/range overrides) lives on the
  * {@link AbstractEmitterBlockEntity}; the menu mirrors it via {@link DataSlot}s.
  */
-public class EmitterMenu extends AbstractContainerMenu {
+public final class EmitterMenu extends AbstractContainerMenu {
 
     public static final int CAP_ARMOR     = 1;
     public static final int CAP_POLARITY  = 2;
@@ -393,8 +393,10 @@ public class EmitterMenu extends AbstractContainerMenu {
         }
     }
 
-    /** Per-block GUI ceiling for the strength tier, from {@link MagConfig}. */
-    private static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
+    /** Per-block GUI ceiling for the strength tier, from {@link MagConfig}.
+     *  Public so external tools (e.g. the Imprint Module item) can apply the
+     *  same clamps the GUI applies. */
+    public static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
             if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
             if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_STRENGTH.get();
@@ -415,8 +417,10 @@ public class EmitterMenu extends AbstractContainerMenu {
         return RANGE_STEP;
     }
 
-    /** Per-block GUI ceiling for the range, from {@link MagConfig}. */
-    private static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
+    /** Per-block GUI ceiling for the range, from {@link MagConfig}.
+     *  Public so external tools (e.g. the Imprint Module item) can apply the
+     *  same clamps the GUI applies. */
+    public static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
             if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
             if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_RANGE.get();
@@ -458,9 +462,11 @@ public class EmitterMenu extends AbstractContainerMenu {
                 moved = moveItemStackTo(original, 0, 1, false);
             }
             if (!moved && hasCap(CAP_TOOL_SLOT)) {
-                final var active = original.getEnchantments();
+                final var active = original.getOrDefault(
+                        net.minecraft.core.component.DataComponents.ENCHANTMENTS,
+                        net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
                 final var stored = original.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
-                final boolean hasAny = (active != null && !active.isEmpty())
+                final boolean hasAny = !active.isEmpty()
                         || (stored != null && !stored.isEmpty());
                 if (hasAny) moved = moveItemStackTo(original, 1, 2, false);
             }
@@ -520,11 +526,13 @@ public class EmitterMenu extends AbstractContainerMenu {
         @Override public boolean mayPlace(final ItemStack stack) {
             if (!enabled || stack.isEmpty()) return false;
             // Active enchantments (tools) OR stored enchantments (books). Books
-            // store theirs in DataComponents.STORED_ENCHANTMENTS — getEnchantments
-            // returns the regular ENCHANTMENTS component which is empty on a
-            // book, so we have to consult both.
-            final var active = stack.getEnchantments();
-            if (active != null && !active.isEmpty()) return true;
+            // store theirs in DataComponents.STORED_ENCHANTMENTS — the
+            // ENCHANTMENTS component is empty on a book, so we have to consult
+            // both.
+            final var active = stack.getOrDefault(
+                    net.minecraft.core.component.DataComponents.ENCHANTMENTS,
+                    net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
+            if (!active.isEmpty()) return true;
             final var stored = stack.get(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS);
             return stored != null && !stored.isEmpty();
         }

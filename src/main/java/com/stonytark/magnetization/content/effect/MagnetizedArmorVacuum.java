@@ -5,6 +5,7 @@ import com.stonytark.magnetization.api.Lirm;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -73,7 +74,7 @@ public final class MagnetizedArmorVacuum {
         final long now = level.getGameTime();
         int pieces = 0;
         int netPole = 0;
-        for (final ItemStack armor : player.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(player)) {
             if (!armor.is(MagTags.METAL_ARMOR)) continue;
             final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;

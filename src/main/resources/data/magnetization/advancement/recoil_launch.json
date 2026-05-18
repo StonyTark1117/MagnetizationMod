@@ -1,0 +1,18 @@
+{
+  "parent": "magnetization:crafted_repulsor_gun",
+  "display": {
+    "icon": { "id": "magnetization:repulsor_gun" },
+    "title": { "translate": "advancement.magnetization.recoil_launch.title" },
+    "description": { "translate": "advancement.magnetization.recoil_launch.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "self_launch": {
+      "trigger": "magnetization:recoil_launch"
+    }
+  },
+  "requirements": [["self_launch"]]
+}

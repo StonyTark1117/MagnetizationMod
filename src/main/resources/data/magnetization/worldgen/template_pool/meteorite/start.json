@@ -1,0 +1,11 @@
+{
+  "name": "magnetization:meteorite/start",
+  "fallback": "minecraft:empty",
+  "elements": [
+    { "weight": 3, "element": { "element_type": "minecraft:single_pool_element", "location": "magnetization:meteorite/small",    "processors": "magnetization:meteorite", "projection": "rigid" } },
+    { "weight": 4, "element": { "element_type": "minecraft:single_pool_element", "location": "magnetization:meteorite/medium",   "processors": "magnetization:meteorite", "projection": "rigid" } },
+    { "weight": 2, "element": { "element_type": "minecraft:single_pool_element", "location": "magnetization:meteorite/large",    "processors": "magnetization:meteorite", "projection": "rigid" } },
+    { "weight": 2, "element": { "element_type": "minecraft:single_pool_element", "location": "magnetization:meteorite/shallow",  "processors": "magnetization:meteorite", "projection": "rigid" } },
+    { "weight": 1, "element": { "element_type": "minecraft:single_pool_element", "location": "magnetization:meteorite/metallic", "processors": "magnetization:meteorite", "projection": "rigid" } }
+  ]
+}

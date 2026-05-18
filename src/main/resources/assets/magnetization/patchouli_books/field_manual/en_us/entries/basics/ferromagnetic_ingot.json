@@ -1,0 +1,9 @@
+{
+  "name": "book.magnetization.entry.ferromagnetic_ingot.name",
+  "icon": "magnetization:ferromagnetic_ingot",
+  "category": "magnetization:basics",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:ferromagnetic_ingot", "text": "book.magnetization.entry.ferromagnetic_ingot.spotlight" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:ferromagnetic_ingot", "title": "book.magnetization.entry.ferromagnetic_ingot.recipe.title", "text": "book.magnetization.entry.ferromagnetic_ingot.recipe.text" }
+  ]
+}

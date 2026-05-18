@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>The block is just plumbing — the BlockEntity does the actual work.
  */
-public class MagneticExcavatorBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
+public final class MagneticExcavatorBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<MagneticExcavatorBlock> CODEC = simpleCodec(MagneticExcavatorBlock::new);
 

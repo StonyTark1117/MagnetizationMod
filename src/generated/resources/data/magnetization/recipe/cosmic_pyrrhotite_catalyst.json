@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "magnetization:enhanced_pyrrhotite_catalyst"
+    },
+    "F": {
+      "item": "magnetization:meteorite_fragment"
+    },
+    "P": {
+      "item": "magnetization:pyrrhotite_ingot"
+    }
+  },
+  "pattern": [
+    " F ",
+    "PCP",
+    " F "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:cosmic_pyrrhotite_catalyst"
+  }
+}

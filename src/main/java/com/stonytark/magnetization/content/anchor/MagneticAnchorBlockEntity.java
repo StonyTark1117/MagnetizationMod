@@ -225,4 +225,11 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         super.loadAdditional(tag, registries);
         boundShipId = tag.hasUUID("BoundShip") ? tag.getUUID("BoundShip") : null;
     }
+
+    @Override
+    public void fillCrashReportCategory(final net.minecraft.CrashReportCategory category) {
+        super.fillCrashReportCategory(category);
+        category.setDetail("Magnetization Anchor Bound Ship",
+                () -> boundShipId == null ? "<unbound>" : boundShipId.toString());
+    }
 }

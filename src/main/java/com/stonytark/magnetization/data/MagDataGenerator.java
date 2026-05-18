@@ -29,16 +29,20 @@ public final class MagDataGenerator {
     public static void gather(final GatherDataEvent event) {
         final DataGenerator gen = event.getGenerator();
         final PackOutput out = gen.getPackOutput();
-        final ExistingFileHelper efh = event.getExistingFileHelper();
         final CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         final boolean server = event.includeServer();
 
-        final MagBlockTagsProvider blockTags = new MagBlockTagsProvider(out, lookup, efh);
-        gen.addProvider(server, blockTags);
-        gen.addProvider(server, new MagItemTagsProvider(out, lookup, blockTags.contentsGetter(), efh));
-        gen.addProvider(server, new MagEntityTypeTagsProvider(out, lookup, efh));
+        // Tag providers are intentionally NOT wired. The hand-written tag JSONs
+        // under src/main/resources/data/.../tags/ carry rich cross-mod content
+        // (Simulated, Magnetizing, Create:Magnetics, AC, IE, Mekanism, TF, etc.)
+        // that the providers don't replicate. Until those providers are extended
+        // with `addOptional(...)` entries for every cross-mod ID, hand-written
+        // remains the source of truth for tags. See MagBlockTagsProvider /
+        // MagItemTagsProvider / MagEntityTypeTagsProvider — kept as scaffolding
+        // for a future migration.
         gen.addProvider(server, new MagRecipeProvider(out, lookup));
         gen.addProvider(server, MagLootTableProvider.create(out, lookup));
+        gen.addProvider(server, new MagCraterTemplateProvider(out));
     }
 }

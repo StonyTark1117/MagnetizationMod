@@ -1,11 +1,28 @@
 {
-  "name": "book.magnetization.field_manual.name",
-  "landing_text": "book.magnetization.field_manual.landing",
-  "version": 1,
-  "creative_tab": "magnetization:main",
-  "model": "patchouli:book_brown",
-  "use_resource_pack": true,
-  "i18n": true,
-  "show_progress": false,
-  "subtitle": "book.magnetization.field_manual.subtitle"
+    "name": "book.magnetization.field_manual.name",
+    "landing_text": "book.magnetization.field_manual.landing",
+    "subtitle": "book.magnetization.field_manual.subtitle",
+
+    "creative_tab": "magnetization:main",
+    "use_resource_pack": true,
+    "i18n": true,
+    "show_progress": true,
+
+    "model": "magnetization:field_manual_book",
+    "book_texture": "magnetization:textures/gui/field_manual_book.png",
+
+    "index_icon": "magnetization:lodestone_core",
+
+    "text_color": "D8D5C4",
+    "header_color": "6FCFE3",
+    "nameplate_color": "E84A4A",
+    "link_color": "8FB8C9",
+    "link_hover_color": "E0AC4A",
+    "progress_bar_color": "6FCFE3",
+    "progress_bar_background": "2A2E33",
+
+    "open_sound": "minecraft:block.lodestone.place",
+    "flip_sound": "minecraft:item.book.page_turn",
+
+    "version": 1
 }

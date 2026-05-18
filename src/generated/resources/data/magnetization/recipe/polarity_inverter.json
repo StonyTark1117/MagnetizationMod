@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "RPB",
+    "PCP",
+    "BPR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:polarity_inverter"
+  }
+}

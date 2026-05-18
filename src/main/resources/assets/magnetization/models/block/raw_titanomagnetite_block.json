@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "magnetization:block/raw_titanomagnetite_block"
+  }
+}

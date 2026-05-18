@@ -40,7 +40,12 @@ public final class Lirm {
     public static double strength(final ItemStack stack, final long currentTick) {
         final Long createdAt = stack.get(MagDataComponents.LIRM_CREATED_AT.get());
         if (createdAt == null) return 1.0d;
-        final long elapsed = currentTick - createdAt;
+        return strengthForElapsed(currentTick - createdAt);
+    }
+
+    /** Pure-math decay helper extracted so unit tests can exercise the curve
+     *  without needing a real {@link ItemStack} + DataComponents registry. */
+    public static double strengthForElapsed(final long elapsed) {
         if (elapsed < 0) return 1.0d; // clock skew / save-load edge
         if (elapsed >= DURATION_TICKS) return 0.0d;
         return 1.0d - (elapsed / (double) DURATION_TICKS);
@@ -56,7 +61,13 @@ public final class Lirm {
     public static boolean isTemporary(final ItemStack stack, final long currentTick) {
         final Long createdAt = stack.get(MagDataComponents.LIRM_CREATED_AT.get());
         if (createdAt == null) return false;
-        return (currentTick - createdAt) < DURATION_TICKS;
+        return isTemporaryForElapsed(currentTick - createdAt);
+    }
+
+    /** Pure-math counterpart to {@link #isTemporary(ItemStack, long)}; returns
+     *  true iff a stamp at age {@code elapsed} ticks is still active. */
+    public static boolean isTemporaryForElapsed(final long elapsed) {
+        return elapsed >= 0 && elapsed < DURATION_TICKS;
     }
 
     /** Stamp {@code stack} with a fresh LIRM marker at the current game tick. The

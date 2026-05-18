@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "magnetization:ferromagnetic_ingot"
+    },
+    "L": {
+      "item": "minecraft:lodestone"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    }
+  },
+  "pattern": [
+    "PLP",
+    "LFL",
+    "PLP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:lodestone_core"
+  }
+}
