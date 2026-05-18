@@ -221,6 +221,32 @@ dependencies {
     localRuntime("maven.modrinth:guideme:${guideme_test_version}")
     localRuntime("maven.modrinth:ae2:${ae2_test_version}")
 
+    // === 1.1.2 cross-mod tag-coverage smoke-test mods ===
+    // localRuntime only — they need to be present so the ferromagnetic_blocks /
+    // ferromagnetic tag refs in our datapack resolve to real blocks/items at
+    // tag-load time. Each entry tests a different category of integration
+    // (decorative metalwork, falling blocks, tech metals, etc.). Twilight Forest
+    // and Iron Chests both lack 1.21.1 NeoForge ports on Modrinth so they're
+    // tag-supported but not dev-loadable.
+    localRuntime("maven.modrinth:macaws-doors:u7BRX44F")
+    localRuntime("maven.modrinth:macaws-fences-and-walls:jVdb0r4W")
+    localRuntime("maven.modrinth:macaws-bridges:aQ7rY7ng")
+    localRuntime("maven.modrinth:macaws-trapdoors:StnP0RNi")
+    localRuntime("maven.modrinth:macaws-lights-and-lamps:5U2kQZIL")
+    localRuntime("maven.modrinth:macaws-windows:rQUE4LCz")
+    localRuntime("maven.modrinth:supplementaries:3N4gijtd")
+    localRuntime("maven.modrinth:moonlight:sqbhVahR") // Supplementaries hard dep
+    // Aether intentionally disabled — its transitive `accessories` mod has a
+    // broken mixin against this NeoForge build (EntityRenderers lambda
+    // numbering mismatch crashes during render setup). Re-enable when the
+    // upstream mod fixes it; tag coverage remains in place either way.
+    // localRuntime("maven.modrinth:aether:K5X5qMwG")
+    // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
+    localRuntime("maven.modrinth:sophisticated-storage:38yFQ4UR")
+    localRuntime("maven.modrinth:sophisticated-core:616eWTaq") // Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:immersive-aircraft:lEyfKM50")
+    localRuntime("maven.modrinth:create-new-age:eQ9rbApE")
+
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

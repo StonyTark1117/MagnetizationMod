@@ -27,6 +27,7 @@
 - **SableBridge logging**: 8 previously-silent `catch (Throwable)` blocks now emit throttled WARN logs (30s per call-site) with ship UUID context, so Rapier JNI failures stop disappearing into the void.
 
 ### Fixes
+- **Deepslate maghemite + stone titanomagnetite now actually spawn (rarely)**: previous worldgen only placed these in their natural Y ranges (maghemite Y 40..120 never reached deepslate; titanomagnetite Y -64..-8 never reached stone), so JER charted them as "straight lines" and survival players who only mined one rock layer would never see the off-layer variant. Added `ore_maghemite_deep_rare` (Y -16..-1, rarity 1/4) and `ore_titanomagnetite_shallow_rare` (Y 0..32, rarity 1/6) placed features + matching biome modifiers; JER chart now shows the rare band at ~5% of the main-layer chance.
 - **`/magnetization tp` now lands on the actual visible surface**: previously generated the chunk to SURFACE status and read MOTION_BLOCKING heightmap, which could leave the player a block below the painted top. Now forces FULL chunk generation and walks up past any post-heightmap decorations.
 - **Dedicated server crash on boot**: the use-curio payload registration was triggering class-load of the client-only `MagKeyBindings` (KeyMapping field initializers), which fatally errored on dedicated servers. Moved the payload + handler to `com.stonytark.magnetization.network.UseCurioPayload` (server-safe package); `MagKeyBindings` stays client-only.
 - **Tag references cross-mod**: wrapped 84 bare `#c:` refs in `ferromagnetic` + `ferromagnetic_blocks` with `{"id": "...", "required": false}` so tag load doesn't fail when optional mods (cobalt/tin/steel providers) aren't installed. Added c-tag JSONs for our own magnetite items (`c:ingots/magnetite`, `c:raw_materials/magnetite`, `c:ores/magnetite`, `c:storage_blocks/magnetite`, `c:storage_blocks/raw_magnetite`).
@@ -35,11 +36,17 @@
 - **`MagItemTooltips` silent build failure**: tooltip-key map build failures now WARN once and poison the map so we don't retry every tooltip call.
 - **Patchouli Magnetic Switch entry**: was missing from the field manual; added with usage explainer.
 
+### Config reorganization
+- **`ae2MeteoriteHookEnabled`** moved from `[worldgen]` to `[compat]` — it's a mod-compatibility toggle that only fires when AE2 is installed.
+- **`magneticSwitchRange`** moved from `[worldgen]` to `[content]` — it's per-block redstone-sensor tuning, not worldgen.
+- **Upgrade note**: existing `magnetization-server.toml` files from 1.0.1/1.1.0 keep these values under `[worldgen]` and will silently revert to the new defaults (`ae2MeteoriteHookEnabled = true`, `magneticSwitchRange = 8`). Behavior is unchanged unless you'd previously customised them — in which case copy the value over to the new section after first load.
+
 ### Internal
 - New package `com.stonytark.magnetization.network` for server-safe payload definitions.
 - New package `com.stonytark.magnetization.gametest` for in-world integration tests.
 - `gameTestServer { type = 'gameTestServer' }` run added to `build.gradle`.
 - `ChunkSurfaceRepaintHandler` (new) — the player-tick-driven surface scanner described above.
+- Cross-mod smoke-test runtime: build.gradle now `localRuntime`s Macaw's 6, Supplementaries (+Moonlight), Sophisticated Storage (+Core), Immersive Aircraft, and Create: New Age alongside existing Create / IE / Alex's Caves / AE2 / Curios / Patchouli, so the ferromagnetic tag refs to each are exercised every runClient launch. The Aether is tag-supported but kept out of the dev runtime — its transitive `accessories` mixin currently breaks against NeoForge 21.1.230's renderer dispatcher.
 
 ## 1.1.0 — Whole-ship polarity + physics overhaul
 

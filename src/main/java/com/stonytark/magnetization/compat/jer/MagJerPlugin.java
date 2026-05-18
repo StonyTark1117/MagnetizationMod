@@ -108,29 +108,47 @@ public final class MagJerPlugin {
         // same count read as roughly equally common on JER's heatmap.
         final float chance = (worldgenCount / (float) VANILLA_IRON_COUNT) * 0.008f;
 
-        // Defensive double-registration: always register BOTH stone and
-        // deepslate variants. Earlier we skipped a variant when its Y range
-        // was empty (entirely above or below Y0); that caused some ores to
-        // simply not appear in JER, which players read as "missing entry"
-        // rather than "this variant doesn't spawn here." Better to show a
-        // narrow / near-zero spawn line than no line at all. JER renders
-        // empty distributions cleanly — empty pixels in the heatmap, no
-        // crash. Stone variant always gets the Y≥0 portion; deepslate
-        // always gets the Y<0 portion.
-        final int stoneMin = Math.max(0, yMin);
-        final int stoneMax = Math.max(stoneMin, yMax);
-        final int deepMin  = Math.min(yMin, -1);
-        final int deepMax  = Math.min(-1, yMax);
+        // Both variants always register. When the ore's main Y range
+        // doesn't cross Y0, a "rare off-layer" placed_feature (count=1,
+        // rarity_filter chance=4 or 6) places a small amount in the other
+        // rock layer so the variant actually exists in the world. JER chart
+        // shows the secondary band at proportionally tiny chance.
+        // Off-layer placements:
+        //   maghemite_deep_rare:           Y -16..-1, rarity 1/4
+        //   titanomagnetite_shallow_rare:  Y   0..32, rarity 1/6
+        final float OFF_LAYER_CHANCE = chance * 0.05f; // ≈ 5% as common as the main band
 
-        final DistributionBase stoneDist = new DistributionCustom(
-                DistributionHelpers.getSquareDistribution(stoneMin, stoneMax, stoneMax >= stoneMin && yMax >= 0 ? chance : 0f));
-        wg.register(new ItemStack(stoneOre), stoneDist, Restriction.OVERWORLD,
-                new LootDrop(rawDrop, 1, 1));
+        // Stone-layer band
+        if (yMax >= 0) {
+            // Ore's natural range covers stone — register main chance.
+            final int stoneMin = Math.max(0, yMin);
+            wg.register(new ItemStack(stoneOre),
+                    new DistributionCustom(DistributionHelpers.getSquareDistribution(stoneMin, yMax, chance)),
+                    Restriction.OVERWORLD, new LootDrop(rawDrop, 1, 1));
+        } else {
+            // Ore is deepslate-only; tiny off-layer placed_feature spawns
+            // this variant rarely in shallow stone. Currently only
+            // titanomagnetite has this — band Y 0..32, very rare.
+            wg.register(new ItemStack(stoneOre),
+                    new DistributionCustom(DistributionHelpers.getSquareDistribution(0, 32, OFF_LAYER_CHANCE)),
+                    Restriction.OVERWORLD, new LootDrop(rawDrop, 1, 1));
+        }
 
-        final DistributionBase deepDist = new DistributionCustom(
-                DistributionHelpers.getSquareDistribution(deepMin, deepMax, deepMax >= deepMin && yMin < 0 ? chance : 0f));
-        wg.register(new ItemStack(deepslateOre), deepDist, Restriction.OVERWORLD,
-                new LootDrop(rawDrop, 1, 1));
+        // Deepslate-layer band
+        if (yMin < 0) {
+            // Ore's natural range covers deepslate — register main chance.
+            final int deepMax = Math.min(-1, yMax);
+            wg.register(new ItemStack(deepslateOre),
+                    new DistributionCustom(DistributionHelpers.getSquareDistribution(yMin, deepMax, chance)),
+                    Restriction.OVERWORLD, new LootDrop(rawDrop, 1, 1));
+        } else {
+            // Ore is stone-only; tiny off-layer placed_feature spawns this
+            // variant rarely in deep deepslate. Currently only maghemite has
+            // this — band Y -16..-1, very rare.
+            wg.register(new ItemStack(deepslateOre),
+                    new DistributionCustom(DistributionHelpers.getSquareDistribution(-16, -1, OFF_LAYER_CHANCE)),
+                    Restriction.OVERWORLD, new LootDrop(rawDrop, 1, 1));
+        }
     }
 
     /** Stone variant spawns where the ore_replaceables tag is stone-side (roughly

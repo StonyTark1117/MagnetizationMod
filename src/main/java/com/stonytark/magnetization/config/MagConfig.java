@@ -381,6 +381,15 @@ public final class MagConfig {
                 .translation("magnetization.configuration.content.magnetiteOxidationTicks")
                 .defineInRange("magnetiteOxidationTicks", 168000, 1200, 2_400_000);
 
+        MAGNETIC_SWITCH_RANGE = b
+                .comment("Magnetic Switch ship-detection radius in blocks. Switch outputs a 0–15",
+                         "redstone signal whose strength ramps linearly with how close the nearest",
+                         "sub-level (ship/contraption) is to the switch within this radius.",
+                         "Default 8 blocks. Larger values let one switch cover bigger docking",
+                         "bays; smaller values force tighter sensor placement.")
+                .translation("magnetization.configuration.content.magneticSwitchRange")
+                .defineInRange("magneticSwitchRange", 8, 1, 64);
+
         b.pop();
 
         b.comment("Item / utility tuning.")
@@ -592,25 +601,6 @@ public final class MagConfig {
                 .translation("magnetization.configuration.worldgen.meteoriteSaplingGrowTicks")
                 .defineInRange("meteoriteSaplingGrowTicks", 36000, 200, 480000);
 
-        MAGNETIC_SWITCH_RANGE = b
-                .comment("Magnetic Switch ship-detection radius in blocks. Switch outputs a 0–15",
-                         "redstone signal whose strength ramps linearly with how close the nearest",
-                         "sub-level (ship/contraption) is to the switch within this radius.",
-                         "Default 8 blocks. Larger values let one switch cover bigger docking",
-                         "bays; smaller values force tighter sensor placement.")
-                .translation("magnetization.configuration.worldgen.magneticSwitchRange")
-                .defineInRange("magneticSwitchRange", 8, 1, 64);
-
-        AE2_METEORITE_HOOK_ENABLED = b
-                .comment("When AE2 is installed, scan freshly-loaded chunks for AE2 meteor",
-                         "structures and emit a decaying magnetic field at each one (same decay",
-                         "curve as a native meteorite_core). Turn off if the AE2 integration is",
-                         "causing trouble on a specific AE2 build — disabling is non-destructive,",
-                         "previously-registered AE2 meteors simply stop emitting on next reload.",
-                         "No effect when AE2 isn't installed.")
-                .translation("magnetization.configuration.worldgen.ae2MeteoriteHookEnabled")
-                .define("ae2MeteoriteHookEnabled", true);
-
         b.pop();
 
         b.comment("Lightning Induced Remnant Magnetism (LIRM). Real-world phenomenon — a",
@@ -758,6 +748,16 @@ public final class MagConfig {
                          "structure-search functional inside the anomaly.")
                 .translation("magnetization.configuration.compat.anomalyAffectsExplorersCompass")
                 .define("anomalyAffectsExplorersCompass", true);
+
+        AE2_METEORITE_HOOK_ENABLED = b
+                .comment("When AE2 is installed, scan freshly-loaded chunks for AE2 meteor",
+                         "structures and emit a decaying magnetic field at each one (same decay",
+                         "curve as a native meteorite_core). Turn off if the AE2 integration is",
+                         "causing trouble on a specific AE2 build — disabling is non-destructive,",
+                         "previously-registered AE2 meteors simply stop emitting on next reload.",
+                         "No effect when AE2 isn't installed.")
+                .translation("magnetization.configuration.compat.ae2MeteoriteHookEnabled")
+                .define("ae2MeteoriteHookEnabled", true);
 
         b.pop();
 
