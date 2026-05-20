@@ -351,11 +351,13 @@ public final class EmitterMenu extends AbstractContainerMenu {
             // Refuse to set above the per-block ceiling defined in config.
             final MagneticStrength ceiling = strengthCeilingFor(em);
             if (s.ordinal() > ceiling.ordinal()) return;
-            // Toggle off if clicking the currently-selected tier — lets the player
-            // restore the emitter's default tier without leaving the menu.
-            final MagneticStrength current = em.getStrengthOverride();
-            em.setStrengthOverride(current == s ? null : s);
-            strengthOrdinal.set(em.getStrengthOverride() == null ? -1 : em.getStrengthOverride().ordinal());
+            // Setting the same tier twice is a no-op rather than a clear-override
+            // toggle. The previous toggle behavior surprised users: a second click
+            // dropped the override and the label fell back to the default (STRONG),
+            // which looked like the button silently downgraded itself. Clicking
+            // STRONG explicitly already produces the default state.
+            em.setStrengthOverride(s);
+            strengthOrdinal.set(s.ordinal());
         }
     }
 

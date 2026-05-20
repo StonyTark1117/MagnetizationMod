@@ -247,6 +247,19 @@ dependencies {
     localRuntime("maven.modrinth:immersive-aircraft:lEyfKM50")
     localRuntime("maven.modrinth:create-new-age:eQ9rbApE")
 
+    // === Crash-repro deps (player's modpack StackOverflowError in
+    // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
+    // `#spartan_weaponry_unofficial:quivers` into both curios:back and
+    // curios:quiver; accessories_compat_layer's RuntimeTagModifier mirrors
+    // curios↔accessories slot tags wholesale (including tag refs); the
+    // combination plus our entries in shared curios slot tags closes a cycle.
+    // Loaded only here so we can repro + verify the fix; comment out after
+    // ship if undesired. ===
+    localRuntime("maven.modrinth:accessories:Fb55Fgjz")
+    localRuntime("maven.modrinth:accessories-compat-layer:JMgVNypu")
+    localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // accessories-compat-layer hard dep
+    localRuntime("maven.modrinth:spartan-weaponry-unofficial:AOJFMBF4")
+
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

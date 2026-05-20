@@ -12,6 +12,12 @@ logoFile = "logo.png"
 issueTrackerURL = "https://github.com/StonyTark1117/MagnetizationMod/issues"
 displayURL = "https://github.com/StonyTark1117/MagnetizationMod"
 
+# Defensive mixin against vanilla DependencySorter.isCyclic SOE — protects every
+# cross-mod tag we reference from broken upstream tags (e.g. self-references).
+# See DependencySorterCycleFixMixin.
+[[mixins]]
+config = "magnetization.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
