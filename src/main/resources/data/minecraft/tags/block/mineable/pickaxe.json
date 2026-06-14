@@ -11,6 +11,7 @@
     "magnetization:homopolar_motor",
     "magnetization:mhd_jet",
     "magnetization:micro_thruster",
-    "magnetization:solar_sail"
+    "magnetization:solar_sail",
+    "magnetization:g_force_cushion"
   ]
 }

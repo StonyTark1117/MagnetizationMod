@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "magnetization:block/g_force_cushion"
+    }
+  }
+}

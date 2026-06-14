@@ -312,6 +312,12 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
             REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
 
+    /** G-Force Cushion — magnetoresistive block that arrests falls for metallic-armor wearers. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.dampener.GForceCushionBlock> G_FORCE_CUSHION =
+            REGISTER.register("g_force_cushion", () -> new com.stonytark.magnetization.content.dampener.GForceCushionBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)
+                            .mapColor(MapColor.COLOR_LIGHT_BLUE).sound(net.minecraft.world.level.block.SoundType.WOOL)));
+
     /** Magnetosphere Solar Sail — passive fuel-free forward thrust on airships by day. */
     public static final DeferredBlock<com.stonytark.magnetization.content.sail.SolarSailBlock> SOLAR_SAIL =
             REGISTER.register("solar_sail", () -> new com.stonytark.magnetization.content.sail.SolarSailBlock(metal()));

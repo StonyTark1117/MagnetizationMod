@@ -170,7 +170,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
                 // Accept armor (player magnetization) OR tools/weapons (item-attractor)
                 // OR a ferrofluid bucket (magnetize the fluid → field-emitting when placed).
                 return stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS)
-                        || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get());
+                        || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
+                        || stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get());
             }
             @Override public int getMaxStackSize() { return 1; }
         };
@@ -335,7 +336,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
         final ItemStack stack = armorSlot.getItem(0);
         if (stack.isEmpty()) return;
         if (!stack.is(MagTags.METAL_ARMOR) && !stack.is(MagTags.METAL_TOOLS)
-                && !stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())) return;
+                && !stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
+                && !stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get())) return;
         if (polarity == null) {
             stack.remove(MagDataComponents.ARMOR_POLARITY.get());
         } else {
@@ -496,7 +498,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
         }
         @Override public boolean mayPlace(final ItemStack stack) {
             return enabled && (stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS)
-                    || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()));
+                    || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
+                        || stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get()));
         }
         @Override public boolean isActive() { return enabled; }
         @Override public int getMaxStackSize() { return 1; }

@@ -36,6 +36,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> MAGHEMITE_ANVIL       = REGISTER.registerSimpleBlockItem(MagBlocks.MAGHEMITE_ANVIL);
     public static final DeferredItem<BlockItem> HEMATITE_ANVIL        = REGISTER.registerSimpleBlockItem(MagBlocks.HEMATITE_ANVIL);
     public static final DeferredItem<BlockItem> TITANOMAGNETITE_ANVIL = REGISTER.registerSimpleBlockItem(MagBlocks.TITANOMAGNETITE_ANVIL);
+    public static final DeferredItem<BlockItem> G_FORCE_CUSHION      = REGISTER.registerSimpleBlockItem(MagBlocks.G_FORCE_CUSHION);
     public static final DeferredItem<BlockItem> SOLAR_SAIL           = REGISTER.registerSimpleBlockItem(MagBlocks.SOLAR_SAIL);
     public static final DeferredItem<BlockItem> MICRO_THRUSTER       = REGISTER.registerSimpleBlockItem(MagBlocks.MICRO_THRUSTER);
     public static final DeferredItem<BlockItem> MHD_JET              = REGISTER.registerSimpleBlockItem(MagBlocks.MHD_JET);
@@ -68,6 +69,11 @@ public final class MagItems {
     /** Pyrolytic carbon — a strongly diamagnetic wafer; drop it over a magnet and it floats. */
     public static final DeferredItem<Item> PYROLYTIC_CARBON =
             REGISTER.registerSimpleItem("pyrolytic_carbon", new Item.Properties());
+    /** Magnetoresistive Dampening Boots — auto-arrest falls (durability cost); inert to fields unless magnetized. */
+    public static final DeferredItem<com.stonytark.magnetization.content.dampener.MagnetoresistiveBootsItem> MAGNETORESISTIVE_BOOTS =
+            REGISTER.registerItem("magnetoresistive_boots",
+                    com.stonytark.magnetization.content.dampener.MagnetoresistiveBootsItem::new,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(12)));
     /** Deuterium Cell — D-T fusion fuel for the tokamak; right-click the controller to load it. */
     public static final DeferredItem<Item> DEUTERIUM_CELL =
             REGISTER.registerSimpleItem("deuterium_cell", new Item.Properties());

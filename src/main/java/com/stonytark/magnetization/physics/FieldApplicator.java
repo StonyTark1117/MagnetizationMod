@@ -420,11 +420,17 @@ public final class FieldApplicator {
         if (e instanceof LivingEntity living) {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
-                if (!armor.is(MagTags.METAL_ARMOR)) continue;
+                // A piece reacts if it's metal armor, OR if it's been explicitly
+                // magnetized (carries a polarity stamp) — the latter lets gear
+                // that's otherwise field-inert by design (e.g. the Magnetoresistive
+                // Boots) opt in once a player magnetizes it.
+                final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
+                if (!armor.is(MagTags.METAL_ARMOR) && !magnetized) continue;
                 // The magnetic elytra is an exception to armorReactsToFields:
                 // magnetic reaction is its core function (rail-riding), so it
-                // stays a candidate even when the toggle is off.
-                if (armorReacts || isMagneticElytra(armor)) return true;
+                // stays a candidate even when the toggle is off. Explicitly
+                // magnetized pieces are likewise always candidates.
+                if (armorReacts || isMagneticElytra(armor) || magnetized) return true;
             }
         }
         return false;
@@ -484,11 +490,13 @@ public final class FieldApplicator {
             final long now = living.level().getGameTime();
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
-                if (!armor.is(MagTags.METAL_ARMOR)) continue;
-                // armorReactsToFields off → only the magnetic elytra still
-                // contributes, so plain armor won't yank the player but the
-                // elytra rail-ride keeps working.
-                if (!armorReacts && !isMagneticElytra(armor)) continue;
+                final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
+                if (!armor.is(MagTags.METAL_ARMOR) && !magnetized) continue;
+                // armorReactsToFields off → only the magnetic elytra and
+                // explicitly-magnetized pieces still contribute, so plain armor
+                // won't yank the player but the elytra rail-ride / opted-in
+                // magnetized gear keep working.
+                if (!armorReacts && !isMagneticElytra(armor) && !magnetized) continue;
                 sum += PER_ARMOR_SUSCEPTIBILITY;
                 if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) {
                     // Permanent stamps return strength=1.0; LIRM stamps decay from 1.0 → 0.0.
