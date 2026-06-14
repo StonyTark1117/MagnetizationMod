@@ -1,12 +1,9 @@
 package com.stonytark.magnetization.content.tokamak;
 
 import com.stonytark.magnetization.registry.MagBlockEntities;
-import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -21,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Controller for the tokamak fusion reactor multiblock. See
- * {@link TokamakControllerBlockEntity}. Right-click with a Deuterium Cell to
- * load fuel; {@code LIT} reflects active fusion.
+ * {@link TokamakControllerBlockEntity}. Right-click opens a GUI with a fuel slot
+ * that auto-feeds Deuterium Cells; {@code LIT} reflects active fusion.
  */
 public final class TokamakControllerBlock extends Block implements EntityBlock {
 
@@ -51,16 +48,30 @@ public final class TokamakControllerBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
-                                              final BlockPos pos, final Player player, final InteractionHand hand,
-                                              final BlockHitResult hit) {
-        if (!stack.is(MagItems.DEUTERIUM_CELL.get())) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos,
+                                               final Player player, final BlockHitResult hit) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer sp)
+                || !(level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity be)) {
+            return InteractionResult.PASS;
         }
-        if (level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity be && be.addFuel()) {
-            if (!level.isClientSide && !player.getAbilities().instabuild) stack.shrink(1);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        sp.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                (id, inv, p) -> new com.stonytark.magnetization.menu.MachineMenu(
+                        id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK, be.fuelContainer()),
+                net.minecraft.network.chat.Component.translatable("block.magnetization.tokamak_controller")),
+                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK));
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean moving) {
+        if (!state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity be) {
+            net.minecraft.world.Containers.dropContents(level, pos, be.fuelContainer());
         }
-        return ItemInteractionResult.CONSUME;
+        super.onRemove(state, level, pos, newState, moving);
     }
 }

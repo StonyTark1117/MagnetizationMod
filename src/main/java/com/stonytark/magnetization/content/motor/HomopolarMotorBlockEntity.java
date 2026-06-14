@@ -23,7 +23,8 @@ import java.util.List;
  * or energy. Deliberately weak: even the strongest magnet tops out at a gentle
  * RPM. Speed + stress capacity both scale with the installed magnet's strength.
  */
-public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity {
+public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData {
 
     /** One-slot magnet inventory, exposed to {@code HomopolarMotorMenu}. */
     private final SimpleContainer magnetSlot = new SimpleContainer(1) {
@@ -49,6 +50,11 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity {
     public Container magnetContainer() {
         return magnetSlot;
     }
+
+    // ── MachineGuiData (shared GUI) ──
+    @Override public Container guiInput() { return magnetSlot; }
+    @Override public int guiStat1() { return Math.round(Math.abs(getGeneratedSpeed())); } // RPM
+    // No energy bar (it's a generator).
 
     public ItemStack getMagnet() {
         return magnetSlot.getItem(0);

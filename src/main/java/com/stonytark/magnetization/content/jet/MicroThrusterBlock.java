@@ -91,4 +91,33 @@ public final class MicroThrusterBlock extends DirectionalBlock implements Entity
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
+
+    @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(final BlockState state, final Level level,
+                                                                   final BlockPos pos, final Player player,
+                                                                   final BlockHitResult hit) {
+        if (level.isClientSide) return net.minecraft.world.InteractionResult.SUCCESS;
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer sp)
+                || !(level.getBlockEntity(pos) instanceof MicroThrusterBlockEntity be)) {
+            return net.minecraft.world.InteractionResult.PASS;
+        }
+        sp.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                (id, inv, p) -> new com.stonytark.magnetization.menu.MachineMenu(
+                        id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.THRUSTER, be.bucketContainer()),
+                net.minecraft.network.chat.Component.translatable("block.magnetization.micro_thruster")),
+                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.THRUSTER));
+        return net.minecraft.world.InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean moving) {
+        if (!state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof MicroThrusterBlockEntity be) {
+            net.minecraft.world.Containers.dropContents(level, pos, be.bucketContainer());
+        }
+        super.onRemove(state, level, pos, newState, moving);
+    }
 }

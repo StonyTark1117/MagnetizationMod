@@ -88,16 +88,19 @@ public final class MhdJetBlock extends DirectionalBlock implements EntityBlock, 
     @Override
     protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos,
                                                final Player player, final BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof MhdJetBlockEntity jet) || jet.getMagnet().isEmpty()) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer sp)
+                || !(level.getBlockEntity(pos) instanceof MhdJetBlockEntity jet)) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide) {
-            final ItemStack ejected = jet.setMagnet(ItemStack.EMPTY);
-            if (!player.addItem(ejected)) {
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), ejected);
-            }
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        sp.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                (id, inv, p) -> new com.stonytark.magnetization.menu.MachineMenu(
+                        id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.JET, jet.magnetContainer()),
+                net.minecraft.network.chat.Component.translatable("block.magnetization.mhd_jet")),
+                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.JET));
+        return InteractionResult.CONSUME;
     }
 
     @Override

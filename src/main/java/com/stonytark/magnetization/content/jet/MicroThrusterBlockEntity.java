@@ -38,7 +38,8 @@ import java.util.List;
  * faster than anything else. Its stored ferrofluid + FE show automatically in
  * WTHIT/Jade/TOP via the registered fluid + energy capabilities.
  */
-public class MicroThrusterBlockEntity extends BlockEntity {
+public class MicroThrusterBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData {
 
     public static final int TANK_CAPACITY = 8_000;       // 8 buckets of ferrofluid
     private static final int FE_CAPACITY = 400_000;
@@ -52,6 +53,13 @@ public class MicroThrusterBlockEntity extends BlockEntity {
     private final FluidTank tank = new FluidTank(TANK_CAPACITY,
             fs -> fs.getFluid() == MagFluids.FERROFLUID.get());
     private final ReceiveBuffer energy = new ReceiveBuffer(FE_CAPACITY, FE_MAX_RECEIVE);
+    /** Bucket-input slot — ferrofluid buckets are auto-drained into the tank. */
+    private final net.minecraft.world.SimpleContainer bucketSlot = new net.minecraft.world.SimpleContainer(1) {
+        @Override public boolean canPlaceItem(final int s, final net.minecraft.world.item.ItemStack st) {
+            return st.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get());
+        }
+        @Override public void setChanged() { super.setChanged(); MicroThrusterBlockEntity.this.setChanged(); }
+    };
 
     public MicroThrusterBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MICRO_THRUSTER.get(), pos, state);
@@ -59,6 +67,13 @@ public class MicroThrusterBlockEntity extends BlockEntity {
 
     public IEnergyStorage energyBuffer() { return energy; }
     public IFluidHandler fluidHandler() { return tank; }
+    public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
+
+    // ── MachineGuiData (shared GUI: ferrofluid mB + FE bar) ──
+    @Override public net.minecraft.world.Container guiInput() { return bucketSlot; }
+    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyMax() { return FE_CAPACITY; }
+    @Override public int guiStat1() { return tank.getFluidAmount(); }
 
     /** Try to pour one ferrofluid bucket (1000 mB) into the tank. */
     public boolean fillFromBucket() {
@@ -72,6 +87,11 @@ public class MicroThrusterBlockEntity extends BlockEntity {
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MicroThrusterBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
+        // Auto-drain a ferrofluid bucket from the input slot into the tank.
+        final net.minecraft.world.item.ItemStack in = be.bucketSlot.getItem(0);
+        if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && be.fillFromBucket()) {
+            be.bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
+        }
         final boolean running = be.tank.getFluidAmount() >= FLUID_PER_TICK
                 && be.energy.getEnergyStored() >= FE_PER_TICK;
         if (running) {
@@ -115,6 +135,7 @@ public class MicroThrusterBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        tag.put("Bucket", bucketSlot.createTag(registries));
     }
 
     @Override
@@ -122,6 +143,7 @@ public class MicroThrusterBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         energy.setStored(tag.getInt("Energy"));
         tank.readFromNBT(registries, tag.getCompound("Tank"));
+        bucketSlot.fromTag(tag.getList("Bucket", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 
     private static final class ReceiveBuffer extends EnergyStorage {

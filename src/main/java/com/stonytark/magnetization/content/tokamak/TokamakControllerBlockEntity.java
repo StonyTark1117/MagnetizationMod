@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,7 +24,8 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * pushes to adjacent machines/cables. Fuel is loaded by right-clicking with a
  * Deuterium Cell.
  */
-public class TokamakControllerBlockEntity extends BlockEntity {
+public class TokamakControllerBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData {
 
     private static final int CAPACITY = 4_000_000;
     private static final int GEN_PER_TICK = 2_000;     // FE/tick while fusing
@@ -33,6 +35,15 @@ public class TokamakControllerBlockEntity extends BlockEntity {
 
     private final GenBuffer energy = new GenBuffer(CAPACITY, OUTPUT_RATE);
     private int burnTime = 0;
+    private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
+
+    /** Fuel slot — holds spare Deuterium Cells, auto-fed into the burn buffer. */
+    private final net.minecraft.world.SimpleContainer fuelSlot = new net.minecraft.world.SimpleContainer(1) {
+        @Override public boolean canPlaceItem(final int s, final ItemStack st) {
+            return st.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get());
+        }
+        @Override public void setChanged() { super.setChanged(); TokamakControllerBlockEntity.this.setChanged(); }
+    };
 
     public TokamakControllerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.TOKAMAK_CONTROLLER.get(), pos, state);
@@ -42,17 +53,30 @@ public class TokamakControllerBlockEntity extends BlockEntity {
         return energy;
     }
 
-    /** Load one cell of fuel; false if already near full. */
-    public boolean addFuel() {
-        if (burnTime > MAX_BURN - BURN_TICKS_PER_CELL) return false;
-        burnTime += BURN_TICKS_PER_CELL;
-        setChanged();
-        return true;
+    public net.minecraft.world.Container fuelContainer() {
+        return fuelSlot;
     }
+
+    // ── MachineGuiData (shared GUI: fuel runtime + current FE output) ──
+    @Override public net.minecraft.world.Container guiInput() { return fuelSlot; }
+    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyMax() { return CAPACITY; }
+    @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
+    @Override public int guiStat2() { return lastOutput; }        // FE/tick out
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final TokamakControllerBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
+        // Auto-feed: pull a spare cell from the slot when the burn buffer has room.
+        if (be.burnTime <= MAX_BURN - BURN_TICKS_PER_CELL) {
+            final ItemStack cell = be.fuelSlot.getItem(0);
+            if (cell.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get())) {
+                cell.shrink(1);
+                be.fuelSlot.setItem(0, cell);
+                be.burnTime += BURN_TICKS_PER_CELL;
+                be.setChanged();
+            }
+        }
         final boolean fusing = be.burnTime > 0 && isRingFormed(level, pos);
         if (fusing) {
             be.energy.generate(GEN_PER_TICK);
@@ -62,7 +86,7 @@ public class TokamakControllerBlockEntity extends BlockEntity {
         if (state.getValue(BlockStateProperties.LIT) != fusing) {
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
         }
-        pushEnergy(server, pos, be.energy);
+        be.lastOutput = pushEnergy(server, pos, be.energy);
     }
 
     /** The 8 blocks around the controller in its own layer must all be Tokamak Coils. */
@@ -78,17 +102,20 @@ public class TokamakControllerBlockEntity extends BlockEntity {
         return true;
     }
 
-    private static void pushEnergy(final ServerLevel level, final BlockPos pos, final GenBuffer energy) {
-        if (energy.getEnergyStored() <= 0) return;
+    /** Push to neighbours; returns total FE moved this tick (the GUI's output readout). */
+    private static int pushEnergy(final ServerLevel level, final BlockPos pos, final GenBuffer energy) {
+        if (energy.getEnergyStored() <= 0) return 0;
+        int pushed = 0;
         for (final Direction dir : Direction.values()) {
             if (energy.getEnergyStored() <= 0) break;
             final IEnergyStorage target = level.getCapability(
                     Capabilities.EnergyStorage.BLOCK, pos.relative(dir), dir.getOpposite());
             if (target == null || !target.canReceive()) continue;
-            final int offered = Math.min(OUTPUT_RATE, energy.getEnergyStored());
+            final int offered = Math.min(OUTPUT_RATE - pushed, energy.getEnergyStored());
             final int accepted = target.receiveEnergy(offered, false);
-            if (accepted > 0) energy.extractEnergy(accepted, false);
+            if (accepted > 0) { energy.extractEnergy(accepted, false); pushed += accepted; }
         }
+        return pushed;
     }
 
     private static final class GenBuffer extends EnergyStorage {
@@ -105,6 +132,7 @@ public class TokamakControllerBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.putInt("Burn", burnTime);
+        tag.put("Fuel", fuelSlot.createTag(registries));
     }
 
     @Override
@@ -112,5 +140,6 @@ public class TokamakControllerBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         energy.generate(tag.getInt("Energy"));
         burnTime = tag.getInt("Burn");
+        fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 }

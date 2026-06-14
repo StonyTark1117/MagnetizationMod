@@ -772,5 +772,11 @@
   "tooltip.magnetization.tokamak_no_ring": "Needs an 8-coil confinement ring",
   "tooltip.magnetization.tokamak_no_fuel": "Ringed — load a Deuterium Cell",
   "tooltip.magnetization.tokamak_fuel": "Fuel: %ss",
-  "tooltip.magnetization.tokamak_energy": "Energy: %s FE"
+  "tooltip.magnetization.tokamak_energy": "Energy: %s FE",
+  "tooltip.magnetization.gui_energy": "%s / %s FE",
+  "tooltip.magnetization.gui_fuel": "Fuel: %ss",
+  "tooltip.magnetization.gui_output": "Output: %s FE/t",
+  "tooltip.magnetization.gui_fluid": "Ferrofluid: %s mB",
+  "tooltip.magnetization.gui_rpm": "Speed: %s RPM",
+  "tooltip.magnetization.gui_speed": "Thrust tier: %s"
 }

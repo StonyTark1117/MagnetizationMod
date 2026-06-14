@@ -93,13 +93,14 @@ public final class HomopolarMotorBlock extends KineticBlock implements IBE<Homop
                 || !(level.getBlockEntity(pos) instanceof HomopolarMotorBlockEntity motor)) {
             return net.minecraft.world.InteractionResult.PASS;
         }
-        // Open the magnet-slot GUI.
+        // Open the shared machine GUI (magnet slot + RPM readout).
         sp.openMenu(new net.minecraft.world.SimpleMenuProvider(
-                (id, inv, p) -> new com.stonytark.magnetization.menu.HomopolarMotorMenu(
+                (id, inv, p) -> new com.stonytark.magnetization.menu.MachineMenu(
                         id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
-                        motor.magnetContainer()),
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.MOTOR, motor.magnetContainer()),
                 net.minecraft.network.chat.Component.translatable("block.magnetization.homopolar_motor")),
-                buf -> buf.writeBlockPos(pos));
+                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, pos,
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.MOTOR));
         return net.minecraft.world.InteractionResult.CONSUME;
     }
 

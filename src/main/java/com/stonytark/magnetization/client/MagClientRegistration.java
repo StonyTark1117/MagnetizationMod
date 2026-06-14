@@ -132,8 +132,8 @@ public final class MagClientRegistration {
     @SubscribeEvent
     public static void onRegisterMenuScreens(final RegisterMenuScreensEvent event) {
         event.register(MagMenus.EMITTER.get(), EmitterScreen::new);
-        event.register(MagMenus.HOMOPOLAR_MOTOR.get(),
-                com.stonytark.magnetization.client.screen.HomopolarMotorScreen::new);
+        event.register(MagMenus.MACHINE.get(),
+                com.stonytark.magnetization.client.screen.MachineScreen::new);
     }
 
 

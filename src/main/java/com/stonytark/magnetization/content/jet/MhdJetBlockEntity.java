@@ -37,28 +37,37 @@ import java.util.List;
  * thrust, and the stronger the magnet the more FE it burns per tick, so a big
  * magnet only reaches full speed if you feed it matching power.
  */
-public class MhdJetBlockEntity extends BlockEntity {
+public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magnetization.menu.MachineGuiData {
 
     private static final int CAPACITY = 400_000;
     private static final int MAX_RECEIVE = 8_000;
     private static final double THRUST_RANGE = 7.0;
 
     private final ReceiveBuffer energy = new ReceiveBuffer(CAPACITY, MAX_RECEIVE);
-    private ItemStack magnet = ItemStack.EMPTY;
+    private final net.minecraft.world.SimpleContainer magnetSlot = new net.minecraft.world.SimpleContainer(1) {
+        @Override public boolean canPlaceItem(final int s, final ItemStack st) { return isMagnet(st); }
+        @Override public int getMaxStackSize() { return 1; }
+        @Override public void setChanged() { super.setChanged(); MhdJetBlockEntity.this.setChanged(); }
+    };
 
     public MhdJetBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MHD_JET.get(), pos, state);
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
-    public ItemStack getMagnet() { return magnet; }
+    public ItemStack getMagnet() { return magnetSlot.getItem(0); }
+    public net.minecraft.world.Container magnetContainer() { return magnetSlot; }
 
     public ItemStack setMagnet(final ItemStack stack) {
-        final ItemStack prev = this.magnet;
-        this.magnet = stack;
-        setChanged();
+        final ItemStack prev = magnetSlot.getItem(0);
+        magnetSlot.setItem(0, stack);
         return prev;
     }
+
+    // ── MachineGuiData (shared GUI) ──
+    @Override public net.minecraft.world.Container guiInput() { return magnetSlot; }
+    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyMax() { return CAPACITY; }
 
     /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnet — STRONG by design. */
     private static double[] tier(final ItemStack stack) {
@@ -73,7 +82,7 @@ public class MhdJetBlockEntity extends BlockEntity {
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MhdJetBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
-        final double[] t = tier(be.magnet);
+        final double[] t = tier(be.getMagnet());
         final boolean running = t != null && be.energy.getEnergyStored() >= (int) t[2];
         if (running) {
             be.energy.drainInternal((int) t[2]);
@@ -116,14 +125,14 @@ public class MhdJetBlockEntity extends BlockEntity {
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
-        if (!magnet.isEmpty()) tag.put("Magnet", magnet.save(registries));
+        tag.put("Magnet", magnetSlot.createTag(registries));
     }
 
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         energy.setStored(tag.getInt("Energy"));
-        magnet = tag.contains("Magnet") ? ItemStack.parseOptional(registries, tag.getCompound("Magnet")) : ItemStack.EMPTY;
+        magnetSlot.fromTag(tag.getList("Magnet", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 
 
