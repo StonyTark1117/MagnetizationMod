@@ -86,6 +86,11 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.meteorite.MeteoriteSaplingBlockEntity::new, MagBlocks.METEORITE_SAPLING.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.induction.InductionPadBlockEntity>> INDUCTION_PAD =
+            REGISTER.register("induction_pad", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.induction.InductionPadBlockEntity::new, MagBlocks.INDUCTION_PAD.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlockEntity>> MAGNETIC_ITEM_FRAME =
             REGISTER.register("magnetic_item_frame", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlockEntity::new, MagBlocks.MAGNETIC_ITEM_FRAME.get())

@@ -267,6 +267,10 @@ public final class MagBlocks {
                     .strength(2.5f, 4.0f)
                     .sound(SoundType.STONE)));
 
+    /** Induction charging pad — wirelessly tops up FE items a nearby player carries. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.induction.InductionPadBlock> INDUCTION_PAD =
+            REGISTER.register("induction_pad", () -> new com.stonytark.magnetization.content.induction.InductionPadBlock(metal()));
+
     /** Magnetic Item Frame — thin wall plate that displays one item stuck to it. */
     public static final DeferredBlock<com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlock> MAGNETIC_ITEM_FRAME =
             REGISTER.register("magnetic_item_frame", () -> new com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlock(

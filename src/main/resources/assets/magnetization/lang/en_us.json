@@ -241,6 +241,7 @@
   "item.magnetization.cosmic_compass": "Cosmic Compass",
   "item.magnetization.ore_compass": "Ore Dowsing Compass",
   "block.magnetization.magnetic_item_frame": "Magnetic Item Frame",
+  "block.magnetization.induction_pad": "Induction Charging Pad",
   "tooltip.magnetization.ore_compass.any": "Points to the nearest metallic ore vein",
   "tooltip.magnetization.ore_compass.tuned": "Tuned to %s",
   "hematite_lens.magnetization.locked": "Polarity locked to %s.",

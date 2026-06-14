@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/induction_pad_top",
+    "bottom": "magnetization:block/induction_pad_side",
+    "side": "magnetization:block/induction_pad_side"
+  }
+}

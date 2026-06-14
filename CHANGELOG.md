@@ -3,6 +3,7 @@
 ## 1.2.0 — (in development)
 
 ### New content
+- **Induction Charging Pad**: a block that buffers FE (fed from cables/generators) and wirelessly tops up every energy-storing item a nearby player carries — main inventory, armor, offhand, and Curios slots (when Curios is installed). Electromagnetic induction, gamified.
 - **Lenz-effect braking**: a magnetic ship moving over conductive non-ferrous blocks (`#magnetization:eddy_conductors` — copper, aluminium, …) is dragged to a slow float/coast by induced eddy currents, exactly like a magnet falling through a copper pipe. Lay a copper track to brake or gently lower a craft. Tunable via `physics.lenzBrakingStrength` (0 disables).
 - **Magnetic Item Frame**: a thin magnetic wall plate that holds one item/tool/armor stuck flat to it for display (no rotation) — right-click to stick on, empty-hand to pop off. Crafted from a vanilla item frame + a magnetic plate.
 - **Anvil magnetic dampener**: place any magnet or magnetic storage block (`#magnetization:anvil_dampeners`) touching an anvil — its field steadies the anvil so it never degrades, and deadens the use-clang.
