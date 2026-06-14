@@ -60,6 +60,11 @@ public final class MagItems {
     /** Vector Core — titanomagnetite chip; right-click a Repulsor to make it thrust ships along its facing. */
     public static final DeferredItem<Item> VECTOR_CORE =
             REGISTER.registerSimpleItem("vector_core", new Item.Properties());
+    /** Bucket of ferrofluid. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> FERROFLUID_BUCKET =
+            REGISTER.registerItem("ferrofluid_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.FERROFLUID.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

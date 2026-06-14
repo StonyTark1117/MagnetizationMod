@@ -1,0 +1,57 @@
+package com.stonytark.magnetization.registry;
+
+import com.stonytark.magnetization.Magnetization;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.common.SoundActions;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+import java.util.function.Supplier;
+
+/**
+ * Ferrofluid — a black, water-like magnetic liquid. Generates only in the
+ * Anomaly biome (replacing water); otherwise player-made. It reacts to magnetic
+ * fields (it doesn't push on its own unless a player polarizes a portion).
+ *
+ * <p>Registration relies on {@code FLUID} being declared before {@code BLOCK}/
+ * {@code ITEM} in {@code BuiltInRegistries}, so the fluids exist by the time the
+ * liquid block + bucket factories resolve {@link #FERROFLUID}{@code .get()}.
+ */
+public final class MagFluids {
+
+    public static final DeferredRegister<FluidType> FLUID_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Magnetization.MOD_ID);
+    public static final DeferredRegister<Fluid> FLUIDS =
+            DeferredRegister.create(Registries.FLUID, Magnetization.MOD_ID);
+
+    /** Heavier + more viscous than water — it's a metallic colloid. */
+    public static final Supplier<FluidType> FERROFLUID_TYPE = FLUID_TYPES.register("ferrofluid",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(2400)
+                    .viscosity(2400)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FERROFLUID =
+            FLUIDS.register("ferrofluid", () -> new BaseFlowingFluid.Source(properties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FERROFLUID_FLOWING =
+            FLUIDS.register("flowing_ferrofluid", () -> new BaseFlowingFluid.Flowing(properties()));
+
+    private static BaseFlowingFluid.Properties properties() {
+        return new BaseFlowingFluid.Properties(FERROFLUID_TYPE, FERROFLUID, FERROFLUID_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.FERROFLUID_BLOCK)
+                .bucket(MagItems.FERROFLUID_BUCKET);
+    }
+
+    private MagFluids() {}
+}

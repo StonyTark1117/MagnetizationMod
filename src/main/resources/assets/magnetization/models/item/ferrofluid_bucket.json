@@ -1,0 +1,4 @@
+{
+  "loader": "neoforge:fluid_container",
+  "fluid": "magnetization:ferrofluid"
+}

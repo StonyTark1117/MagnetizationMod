@@ -104,6 +104,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.IMPRINT_MODULE);
                         accept(output, MagItems.MAGNETIC_PLATE);
                         accept(output, MagItems.PYROLYTIC_CARBON);
+                        accept(output, MagItems.FERROFLUID_BUCKET);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.MAGNETIC_ITEM_FRAME);
                         accept(output, MagItems.INDUCTION_PAD);

@@ -299,5 +299,12 @@ public final class MagBlocks {
                             .mapColor(MapColor.METAL).strength(0.4f, 0.4f)
                             .sound(SoundType.NETHERITE_BLOCK).noOcclusion()));
 
+    /** Ferrofluid liquid block (holds the source fluid). */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> FERROFLUID_BLOCK =
+            REGISTER.register("ferrofluid", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.FERROFLUID.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_BLACK)));
+
     private MagBlocks() {}
 }

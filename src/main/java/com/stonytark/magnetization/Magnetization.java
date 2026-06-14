@@ -39,6 +39,8 @@ public final class Magnetization {
         // ArmorMaterials must register before items that reference them.
         MagArmorMaterials.REGISTER.register(modBus);
         MagItems.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagFluids.FLUID_TYPES.register(modBus);
+        com.stonytark.magnetization.registry.MagFluids.FLUIDS.register(modBus);
         MagBlockEntities.REGISTER.register(modBus);
         MagCreativeTab.REGISTER.register(modBus);
         MagEffects.EFFECTS.register(modBus);

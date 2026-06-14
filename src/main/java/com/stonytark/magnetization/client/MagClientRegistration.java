@@ -28,6 +28,25 @@ public final class MagClientRegistration {
     private MagClientRegistration() {}
 
     @SubscribeEvent
+    public static void onRegisterClientExtensions(final net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
+        // Ferrofluid renders as the vanilla water textures tinted near-black.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFF14141C; // opaque near-black
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.FERROFLUID_TYPE.get());
+    }
+
+    @SubscribeEvent
     public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(MagBlockEntities.TRACTOR_BEAM.get(), BeamEmitterRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.KINETIC_ELECTROMAGNET.get(), KineticElectromagnetRenderer::new);
