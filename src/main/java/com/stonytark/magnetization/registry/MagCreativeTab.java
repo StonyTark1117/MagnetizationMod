@@ -114,6 +114,10 @@ public final class MagCreativeTab {
                         accept(output, MagItems.GYROSTABILIZER);
                         accept(output, MagItems.G_FORCE_CUSHION);
                         accept(output, MagItems.MAGNETORESISTIVE_BOOTS);
+                        accept(output, MagItems.MR_LIQUID_HELMET);
+                        accept(output, MagItems.MR_LIQUID_CHESTPLATE);
+                        accept(output, MagItems.MR_LIQUID_LEGGINGS);
+                        accept(output, MagItems.MR_LIQUID_BOOTS);
                         accept(output, MagItems.SOLAR_SAIL);
                         accept(output, MagItems.MHD_JET);
                         accept(output, MagItems.MICRO_THRUSTER);

@@ -95,6 +95,35 @@ public final class MagArmorMaterials {
                 );
             });
 
+    /** Magnetorheological liquid armor — leather-light defense; its real protection
+     *  is the on-hit hardening handled by {@code MrArmorHandler}, not base armor points. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> MR_LIQUID =
+            REGISTER.register("mr_liquid", () -> {
+                final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+                // Leather-equivalent: helmet 1, chestplate 3, leggings 2, boots 1.
+                defense.put(ArmorItem.Type.HELMET, 1);
+                defense.put(ArmorItem.Type.CHESTPLATE, 3);
+                defense.put(ArmorItem.Type.LEGGINGS, 2);
+                defense.put(ArmorItem.Type.BOOTS, 1);
+                defense.put(ArmorItem.Type.BODY, 3);
+                return new ArmorMaterial(
+                        defense,
+                        12,
+                        Holder.direct(SoundEvents.ARMOR_EQUIP_LEATHER.value()),
+                        () -> Ingredient.of(MagItems.MR_FLUID_BUCKET.get()),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "maghemite"),
+                                "",
+                                false)),
+                        0.0f,
+                        0.0f
+                );
+            });
+
+    public static Holder<ArmorMaterial> mrLiquid() {
+        return MR_LIQUID;
+    }
+
     public static Holder<ArmorMaterial> magnetite() {
         return MAGNETITE;
     }

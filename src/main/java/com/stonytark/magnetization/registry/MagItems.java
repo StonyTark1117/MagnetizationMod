@@ -129,6 +129,22 @@ public final class MagItems {
             REGISTER.registerItem("maghemite_hoe",
                     p -> new HoeItem(MagTiers.MAGHEMITE, p),
                     new Item.Properties().attributes(HoeItem.createAttributes(MagTiers.MAGHEMITE, -2, -1.0f)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem> MR_LIQUID_HELMET =
+            REGISTER.registerItem("mr_liquid_helmet",
+                    p -> new com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem(ArmorItem.Type.HELMET, p),
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(8)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem> MR_LIQUID_CHESTPLATE =
+            REGISTER.registerItem("mr_liquid_chestplate",
+                    p -> new com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem(ArmorItem.Type.CHESTPLATE, p),
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(8)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem> MR_LIQUID_LEGGINGS =
+            REGISTER.registerItem("mr_liquid_leggings",
+                    p -> new com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem(ArmorItem.Type.LEGGINGS, p),
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(8)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem> MR_LIQUID_BOOTS =
+            REGISTER.registerItem("mr_liquid_boots",
+                    p -> new com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem(ArmorItem.Type.BOOTS, p),
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(8)));
     public static final DeferredItem<ArmorItem> MAGHEMITE_HELMET =
             REGISTER.registerItem("maghemite_helmet",
                     p -> new ArmorItem(MagArmorMaterials.maghemite(), ArmorItem.Type.HELMET, p),
