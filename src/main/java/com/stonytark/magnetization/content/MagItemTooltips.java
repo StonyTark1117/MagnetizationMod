@@ -110,6 +110,36 @@ public final class MagItemTooltips {
         m.put(MagItems.METEORITE_CORE.get(),      "tooltip.magnetization.meteorite_core.use");
         m.put(MagItems.METEORITE_SAPLING.get(),   "tooltip.magnetization.meteorite_sapling.use");
 
+        // 1.2 machines, propulsion, fluids & misc — keep the "how to use" line
+        // consistent across the whole addon. (Items with their own
+        // appendHoverText — ore compass, MR armor, boots, backpack, fluids'
+        // magnetized state, lens, catalysts, imprint — are intentionally absent
+        // here so their tooltip isn't doubled.)
+        m.put(MagItems.MAGNETIC_ITEM_FRAME.get(),      "tooltip.magnetization.magnetic_item_frame.use");
+        m.put(MagItems.INDUCTION_PAD.get(),            "tooltip.magnetization.induction_pad.use");
+        m.put(MagItems.KINETIC_COIL.get(),             "tooltip.magnetization.kinetic_coil.use");
+        m.put(MagItems.EMP_CHARGE.get(),               "tooltip.magnetization.emp_charge.use");
+        m.put(MagItems.GYROSTABILIZER.get(),           "tooltip.magnetization.gyrostabilizer.use");
+        m.put(MagItems.G_FORCE_CUSHION.get(),          "tooltip.magnetization.g_force_cushion.use");
+        m.put(MagItems.SOLAR_SAIL.get(),               "tooltip.magnetization.solar_sail.use");
+        m.put(MagItems.MHD_JET.get(),                  "tooltip.magnetization.mhd_jet.use");
+        m.put(MagItems.MICRO_THRUSTER.get(),           "tooltip.magnetization.micro_thruster.use");
+        m.put(MagItems.HOMOPOLAR_MOTOR.get(),          "tooltip.magnetization.homopolar_motor.use");
+        m.put(MagItems.STRUCTURAL_INDUCER.get(),       "tooltip.magnetization.structural_inducer.use");
+        m.put(MagItems.TOKAMAK_CONTROLLER.get(),       "tooltip.magnetization.tokamak_controller.use");
+        m.put(MagItems.TOKAMAK_COIL.get(),             "tooltip.magnetization.tokamak_coil.use");
+        m.put(MagItems.DEUTERIUM_CELL.get(),           "tooltip.magnetization.deuterium_cell.use");
+        m.put(MagItems.MAGNETOSTRICTIVE_SENSOR.get(),  "tooltip.magnetization.magnetostrictive_sensor.use");
+        m.put(MagItems.BARKHAUSEN_GENERATOR.get(),     "tooltip.magnetization.barkhausen.use");
+        m.put(MagItems.VECTOR_CORE.get(),              "tooltip.magnetization.vector_core.use");
+        m.put(MagItems.PYROLYTIC_CARBON.get(),         "tooltip.magnetization.pyrolytic_carbon.use");
+        m.put(MagItems.MR_FLUID_BUCKET.get(),          "tooltip.magnetization.mr_fluid.use");
+        m.put(MagItems.PETRIFIED_WOOD.get(),           "tooltip.magnetization.petrified_wood.use");
+        for (final var anvil : new Item[]{
+                MagItems.MAGNETITE_ANVIL.get(), MagItems.MAGHEMITE_ANVIL.get(),
+                MagItems.HEMATITE_ANVIL.get(), MagItems.TITANOMAGNETITE_ANVIL.get(),
+        }) m.put(anvil, "tooltip.magnetization.magnetic_anvil.use");
+
         return m;
     }
 
