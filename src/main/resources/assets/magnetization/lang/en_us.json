@@ -246,6 +246,7 @@
   "item.magnetization.ferrofluid_bucket.magnetized": "Magnetized Ferrofluid Bucket",
   "tooltip.magnetization.ferrofluid_polarity": "Polarity: %s",
   "block.magnetization.ferrofluid": "Ferrofluid",
+  "block.magnetization.magnetized_ferrofluid": "Magnetized Ferrofluid",
   "fluid_type.magnetization.ferrofluid": "Ferrofluid",
   "item.magnetization.mr_fluid_bucket": "MR Fluid Bucket",
   "block.magnetization.mr_fluid": "Magnetorheological Fluid",

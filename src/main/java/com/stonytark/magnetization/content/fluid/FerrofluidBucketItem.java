@@ -1,13 +1,23 @@
 package com.stonytark.magnetization.content.fluid;
 
 import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.registry.MagFluids;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -59,5 +69,31 @@ public final class FerrofluidBucketItem extends BucketItem {
     @Override
     public boolean isFoil(final ItemStack stack) {
         return isMagnetized(stack) || super.isFoil(stack);
+    }
+
+    /**
+     * A magnetized bucket pours the field-emitting {@link MagnetizedFerrofluidBlock}
+     * carrying its stamped pole; an un-magnetized bucket behaves like vanilla
+     * (places inert ferrofluid).
+     */
+    @Override
+    public boolean emptyContents(final @Nullable Player player, final Level level, final BlockPos pos,
+                                 final @Nullable BlockHitResult result, final @Nullable ItemStack container) {
+        final MagneticPolarity pole = container == null ? null : polarityOf(container);
+        if (pole == null) {
+            return super.emptyContents(player, level, pos, result, container);
+        }
+        final BlockState existing = level.getBlockState(pos);
+        if (!existing.isAir() && !existing.canBeReplaced(MagFluids.MAGNETIZED_FERROFLUID.get())) {
+            // Not an open cell — fall back to vanilla resolution for this click.
+            return super.emptyContents(player, level, pos, result, container);
+        }
+        if (!level.isClientSide) {
+            final BlockState placed = MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get().defaultBlockState()
+                    .setValue(MagnetizedFerrofluidBlock.POLARITY, pole);
+            level.setBlock(pos, placed, Block.UPDATE_ALL);
+        }
+        level.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
+        return true;
     }
 }

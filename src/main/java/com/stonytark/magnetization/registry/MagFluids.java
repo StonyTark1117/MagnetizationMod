@@ -53,6 +53,23 @@ public final class MagFluids {
                 .bucket(MagItems.FERROFLUID_BUCKET);
     }
 
+    // ---------------- Magnetized ferrofluid (player-polarized, field source) ----------------
+    // Reuses FERROFLUID_TYPE for rendering/physics — it looks like ferrofluid; the
+    // difference is the POLARITY blockstate + the field it emits.
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MAGNETIZED_FERROFLUID =
+            FLUIDS.register("magnetized_ferrofluid", () -> new BaseFlowingFluid.Source(magnetizedProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MAGNETIZED_FERROFLUID_FLOWING =
+            FLUIDS.register("flowing_magnetized_ferrofluid", () -> new BaseFlowingFluid.Flowing(magnetizedProperties()));
+
+    private static BaseFlowingFluid.Properties magnetizedProperties() {
+        return new BaseFlowingFluid.Properties(FERROFLUID_TYPE, MAGNETIZED_FERROFLUID, MAGNETIZED_FERROFLUID_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK)
+                .bucket(MagItems.FERROFLUID_BUCKET);
+    }
+
     // ---------------- Magnetorheological fluid ----------------
 
     public static final Supplier<FluidType> MR_FLUID_TYPE = FLUID_TYPES.register("mr_fluid",

@@ -331,6 +331,13 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_BLACK)));
 
+    /** Magnetized ferrofluid — flowing fluid that emits a weak field (player-polarized). */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock> MAGNETIZED_FERROFLUID_BLOCK =
+            REGISTER.register("magnetized_ferrofluid", () -> new com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.MAGNETIZED_FERROFLUID.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_BLACK)));
+
     /** MR (magnetorheological) fluid block — solidifies (walkable) when redstone-powered. */
     public static final DeferredBlock<com.stonytark.magnetization.content.fluid.MRFluidBlock> MR_FLUID_BLOCK =
             REGISTER.register("mr_fluid", () -> new com.stonytark.magnetization.content.fluid.MRFluidBlock(
