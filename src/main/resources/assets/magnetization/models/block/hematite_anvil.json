@@ -1,6 +1,8 @@
 {
-  "parent": "magnetization:block/magnetic_anvil_template",
+  "parent": "minecraft:block/template_anvil",
   "textures": {
-    "metal": "magnetization:block/hematite_block"
+    "particle": "magnetization:block/hematite_anvil",
+    "body": "magnetization:block/hematite_anvil",
+    "top": "magnetization:block/hematite_anvil_top"
   }
 }

@@ -1,6 +1,8 @@
 {
-  "parent": "magnetization:block/magnetic_anvil_template",
+  "parent": "minecraft:block/template_anvil",
   "textures": {
-    "metal": "magnetization:block/titanomagnetite_block"
+    "particle": "magnetization:block/titanomagnetite_anvil",
+    "body": "magnetization:block/titanomagnetite_anvil",
+    "top": "magnetization:block/titanomagnetite_anvil_top"
   }
 }

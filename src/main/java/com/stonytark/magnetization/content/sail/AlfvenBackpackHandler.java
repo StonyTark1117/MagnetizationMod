@@ -19,9 +19,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class AlfvenBackpackHandler {
 
-    private static final double ACCEL = 0.045;          // forward velocity added per tick
-    private static final double MAX_GLIDE_SPEED = 1.05;  // cap along the look vector
-    private static final int HIGH_ALTITUDE = 120;        // daytime boost needs this height
+    private static final double BASE_ACCEL = 0.08;       // forward push per tick at the low-altitude floor
+    private static final double BASE_MAX_SPEED = 1.4;     // cruise cap along the look vector (×altitude factor)
 
     private AlfvenBackpackHandler() {}
 
@@ -31,14 +30,30 @@ public final class AlfvenBackpackHandler {
         if (player.level().isClientSide || !player.isFallFlying()) return;
         if (!(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof AlfvenBackpackItem)) return;
 
+        // The ribbons catch a current in daylight, or anywhere in the End.
         final boolean inEnd = player.level().dimension() == Level.END;
-        final boolean dayHigh = !inEnd && player.level().isDay() && player.getY() > HIGH_ALTITUDE;
-        if (!inEnd && !dayHigh) return;
+        if (!inEnd && !player.level().isDay()) return;
+
+        // Stronger the higher you fly: 0.7 near sea level → ~2.4 in the high sky.
+        final double altFactor = inEnd ? 1.6
+                : net.minecraft.util.Mth.clamp(0.7 + (player.getY() - 64) / 150.0, 0.7, 2.4);
 
         final Vec3 look = player.getLookAngle();
-        final Vec3 dm = player.getDeltaMovement();
-        if (dm.dot(look) >= MAX_GLIDE_SPEED) return; // already cruising at speed
-        player.setDeltaMovement(dm.add(look.scale(ACCEL)));
+        Vec3 dm = player.getDeltaMovement();
+
+        // Forward thrust toward the look direction, up to an altitude-scaled cap.
+        if (dm.dot(look) < BASE_MAX_SPEED * altFactor) {
+            dm = dm.add(look.scale(BASE_ACCEL * altFactor));
+        }
+        // Lift assist: ease the vertical velocity up to a floor so the sail keeps
+        // you airborne in daylight — gentle level glide low down, a real climb up high.
+        final double minY = -0.04 + 0.035 * altFactor; // altF 0.7 → -0.015 (slow sink); altF 2.4 → +0.044 (climb)
+        if (dm.y < minY) {
+            dm = new Vec3(dm.x, Math.min(minY, dm.y + 0.06), dm.z);
+        }
+
+        player.setDeltaMovement(dm);
         player.hurtMarked = true; // force the server to sync the new velocity to the client
+        player.resetFallDistance();
     }
 }

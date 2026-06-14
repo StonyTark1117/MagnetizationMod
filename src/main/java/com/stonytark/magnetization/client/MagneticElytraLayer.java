@@ -43,6 +43,8 @@ public final class MagneticElytraLayer<T extends LivingEntity, M extends EntityM
 
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "textures/entity/magnetic_elytra.png");
+    private static final ResourceLocation ALFVEN_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "textures/entity/alfven_backpack.png");
 
     /** Default tint when the stack has no DYED_COLOR component — full white,
      *  i.e. show the base texture untouched. Matches vanilla elytra behaviour. */
@@ -57,12 +59,14 @@ public final class MagneticElytraLayer<T extends LivingEntity, M extends EntityM
 
     @Override
     public boolean shouldRender(final ItemStack stack, final T entity) {
-        return stack.getItem() instanceof MagneticElytraItem;
+        return stack.getItem() instanceof MagneticElytraItem
+                || stack.getItem() instanceof com.stonytark.magnetization.content.sail.AlfvenBackpackItem;
     }
 
     @Override
     public ResourceLocation getElytraTexture(final ItemStack stack, final T entity) {
-        return TEXTURE;
+        return stack.getItem() instanceof com.stonytark.magnetization.content.sail.AlfvenBackpackItem
+                ? ALFVEN_TEXTURE : TEXTURE;
     }
 
     @Override

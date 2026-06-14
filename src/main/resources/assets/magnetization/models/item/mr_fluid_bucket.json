@@ -1,4 +1,6 @@
 {
-  "loader": "neoforge:fluid_container",
-  "fluid": "magnetization:mr_fluid"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magnetization:item/mr_fluid_bucket"
+  }
 }
