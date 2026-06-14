@@ -55,6 +55,8 @@ public final class CompassPropertyHooks {
             ResourceLocation.fromNamespaceAndPath("magnetization", "angle");
     private static final ResourceLocation COSMIC_ANGLE =
             ResourceLocation.fromNamespaceAndPath("magnetization", "cosmic_angle");
+    private static final ResourceLocation ORE_ANGLE =
+            ResourceLocation.fromNamespaceAndPath("magnetization", "ore_angle");
 
     /** Search radius for the Cosmic Compass meteorite scan. Much larger than
      *  the Field Compass range — meteorites are rare worldgen, so a wider
@@ -90,6 +92,47 @@ public final class CompassPropertyHooks {
         wrapVanillaCompass();
         registerFieldCompass();
         registerCosmicCompass();
+        registerOreCompass();
+    }
+
+    // ---------------- ore dowsing compass ----------------
+
+    private static void registerOreCompass() {
+        ItemProperties.register(MagItems.ORE_COMPASS.get(), ORE_ANGLE,
+                (stack, level, entity, seed) -> {
+                    if (level == null || entity == null) return 0.0f;
+                    if (level.getBiome(entity.blockPosition()).is(AnomalyBiome.KEY)) {
+                        return scrambledAngle(level, entity);
+                    }
+                    return oreAngle(level, entity, stack);
+                });
+    }
+
+    /** Needle angle toward the nearest metallic ore (or the tuned ore, if the
+     *  compass was anvil-combined with one). 0 / north when none is in range. */
+    private static float oreAngle(final Level level, final Entity holder,
+                                  final net.minecraft.world.item.ItemStack stack) {
+        final net.minecraft.world.level.block.Block tuned =
+                com.stonytark.magnetization.content.item.OreCompassItem.tunedOre(stack);
+        final String key;
+        final java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> match;
+        if (tuned != null) {
+            key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(tuned).toString();
+            match = state -> state.is(tuned);
+        } else {
+            key = "any";
+            match = state -> state.is(com.stonytark.magnetization.api.MagTags.METALLIC_ORES);
+        }
+        final BlockPos target = com.stonytark.magnetization.client.OreCompassScanner.nearest(
+                level, holder.blockPosition(), key, match);
+        if (target == null) return 0.0f;
+        final Vec3 holderPos = holder.position();
+        final double dx = target.getX() + 0.5 - holderPos.x;
+        final double dz = target.getZ() + 0.5 - holderPos.z;
+        final double bearingRad = Math.atan2(dz, dx);
+        final double yawRad = Math.toRadians(holder.getYRot() - 90.0);
+        final double angleRad = bearingRad - yawRad;
+        return (float) Mth.positiveModulo(angleRad / (Math.PI * 2.0), 1.0);
     }
 
     /** Wrap third-party compass needle properties so they scramble inside the

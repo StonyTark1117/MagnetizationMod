@@ -65,6 +65,14 @@ public final class MagDataComponents {
                             .persistent(Codec.LONG)
                             .networkSynchronized(ByteBufCodecs.VAR_LONG));
 
+    /** Block id the Ore Dowsing Compass is tuned to (set by anvil-combining it
+     *  with a metallic ore). Absent = tracks any metallic ore. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.resources.ResourceLocation>>
+            TUNED_ORE = register("tuned_ore",
+                    builder -> builder
+                            .persistent(net.minecraft.resources.ResourceLocation.CODEC)
+                            .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC));
+
     /** Captured {@link com.stonytark.magnetization.api.EmitterPreset} carried
      *  by a Titanomagnetite Imprint Module item — shift-right-click an emitter
      *  to overwrite, right-click another emitter to project. Persistent so a

@@ -67,6 +67,13 @@ public final class MagTags {
     public static final TagKey<Block> FERROMAGNETIC_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("ferromagnetic_blocks"));
 
+    /** Metallic / magnetic ore blocks the Ore Dowsing Compass can point to and
+     *  tune onto. Our ferrous ores plus vanilla metal ores; other mods extend
+     *  by appending. Also gates the anvil-tuning (only ores in this tag tune the
+     *  compass). */
+    public static final TagKey<Block> METALLIC_ORES =
+            TagKey.create(Registries.BLOCK, Magnetization.id("metallic_ores"));
+
     /** Block-level escape hatch for the Magnetic Excavator: any block in this
      *  tag is treated like bedrock — the excavator will refuse to pull through
      *  it. The bedrock + block-entity safeguards are already wired in code;

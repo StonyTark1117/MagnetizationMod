@@ -1,0 +1,200 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magnetization:item/ore_compass_00"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.0
+      },
+      "model": "magnetization:item/ore_compass_00"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.03125
+      },
+      "model": "magnetization:item/ore_compass_01"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.0625
+      },
+      "model": "magnetization:item/ore_compass_02"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.09375
+      },
+      "model": "magnetization:item/ore_compass_03"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.125
+      },
+      "model": "magnetization:item/ore_compass_04"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.15625
+      },
+      "model": "magnetization:item/ore_compass_05"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.1875
+      },
+      "model": "magnetization:item/ore_compass_06"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.21875
+      },
+      "model": "magnetization:item/ore_compass_07"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.25
+      },
+      "model": "magnetization:item/ore_compass_08"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.28125
+      },
+      "model": "magnetization:item/ore_compass_09"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.3125
+      },
+      "model": "magnetization:item/ore_compass_10"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.34375
+      },
+      "model": "magnetization:item/ore_compass_11"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.375
+      },
+      "model": "magnetization:item/ore_compass_12"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.40625
+      },
+      "model": "magnetization:item/ore_compass_13"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.4375
+      },
+      "model": "magnetization:item/ore_compass_14"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.46875
+      },
+      "model": "magnetization:item/ore_compass_15"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.5
+      },
+      "model": "magnetization:item/ore_compass_16"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.53125
+      },
+      "model": "magnetization:item/ore_compass_17"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.5625
+      },
+      "model": "magnetization:item/ore_compass_18"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.59375
+      },
+      "model": "magnetization:item/ore_compass_19"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.625
+      },
+      "model": "magnetization:item/ore_compass_20"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.65625
+      },
+      "model": "magnetization:item/ore_compass_21"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.6875
+      },
+      "model": "magnetization:item/ore_compass_22"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.71875
+      },
+      "model": "magnetization:item/ore_compass_23"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.75
+      },
+      "model": "magnetization:item/ore_compass_24"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.78125
+      },
+      "model": "magnetization:item/ore_compass_25"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.8125
+      },
+      "model": "magnetization:item/ore_compass_26"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.84375
+      },
+      "model": "magnetization:item/ore_compass_27"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.875
+      },
+      "model": "magnetization:item/ore_compass_28"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.90625
+      },
+      "model": "magnetization:item/ore_compass_29"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.9375
+      },
+      "model": "magnetization:item/ore_compass_30"
+    },
+    {
+      "predicate": {
+        "magnetization:ore_angle": 0.96875
+      },
+      "model": "magnetization:item/ore_compass_31"
+    }
+  ]
+}

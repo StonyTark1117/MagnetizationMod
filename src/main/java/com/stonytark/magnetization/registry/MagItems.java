@@ -196,6 +196,13 @@ public final class MagItems {
     public static final DeferredItem<FieldCompassItem> FIELD_COMPASS =
             REGISTER.registerItem("field_compass", FieldCompassItem::new, new Item.Properties().stacksTo(1));
 
+    /** Ore Dowsing Compass — points at the nearest metallic ore vein; anvil-tune
+     *  it onto a specific ore. Scrambles in the Anomaly biome. */
+    public static final DeferredItem<com.stonytark.magnetization.content.item.OreCompassItem> ORE_COMPASS =
+            REGISTER.registerItem("ore_compass",
+                    com.stonytark.magnetization.content.item.OreCompassItem::new,
+                    new Item.Properties().stacksTo(1));
+
     /** Long-range compass tracking the nearest active meteorite_core (range
      *  512 blocks). Not scrambled by the anomaly biome. */
     public static final DeferredItem<com.stonytark.magnetization.content.item.CosmicCompassItem> COSMIC_COMPASS =

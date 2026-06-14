@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — (in development)
+
+### New content
+- **Ore Dowsing Compass**: a compass whose needle points to the nearest metallic ore vein (anything in `#magnetization:metallic_ores` — our ferrous ores plus vanilla/modded `#c:ores/*`). Anvil-combine it with a specific ore to **tune** it to track only that ore. Like the other compasses, the needle scrambles inside the Magnetic Anomaly biome. The world scan is bounded + throttled (nearest-first expanding sweep, capped, re-run every second). Crafted from a vanilla compass + 2 raw magnetite.
+
+### Dependencies
+- **Updated the Create:Aeronautics + Sable stack to latest (still MC 1.21.1)**: Sable **2.0.1** (from 1.2.2), Create Aeronautics **1.3.0**, Create Simulated **1.3.0**, Sable Companion **1.6.0**, Create **6.0.11-292**, NeoForge **21.1.233**. Sable's `mods.toml` range moved to `[2.0.0,3.0.0)`. Sable 2.0's reworked physics-constraint API, the split-out `sable_rapier` native module, and the newly-`@Internal` classes required **no source changes** on our side — the APIs we use (connected-chain walk, `RigidBodyHandle`, sub-level container, mass/bounding-box) are unchanged. Verified: compiles clean and a dedicated server boots in ~1.6s with Rapier scenes initialized.
+
 ## 1.1.4 — Self-pull freeze fix + armor-reaction toggle (from player feedback)
 
 ### Fixes
