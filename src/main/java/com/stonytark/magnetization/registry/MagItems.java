@@ -237,6 +237,12 @@ public final class MagItems {
                     com.stonytark.magnetization.content.item.MagneticElytraItem::new,
                     new Item.Properties().durability(432).rarity(net.minecraft.world.item.Rarity.UNCOMMON));
 
+    /** Alfvén Ribbon Backpack — chest-slot glider with a passive day/altitude/End boost. */
+    public static final DeferredItem<com.stonytark.magnetization.content.sail.AlfvenBackpackItem> ALFVEN_BACKPACK =
+            REGISTER.registerItem("alfven_backpack",
+                    com.stonytark.magnetization.content.sail.AlfvenBackpackItem::new,
+                    new Item.Properties().durability(432).rarity(net.minecraft.world.item.Rarity.UNCOMMON));
+
     // Crafting components.
     public static final DeferredItem<Item> FERROMAGNETIC_INGOT =
             REGISTER.registerSimpleItem("ferromagnetic_ingot", new Item.Properties());

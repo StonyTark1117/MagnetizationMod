@@ -118,6 +118,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MR_LIQUID_CHESTPLATE);
                         accept(output, MagItems.MR_LIQUID_LEGGINGS);
                         accept(output, MagItems.MR_LIQUID_BOOTS);
+                        accept(output, MagItems.ALFVEN_BACKPACK);
                         accept(output, MagItems.SOLAR_SAIL);
                         accept(output, MagItems.MHD_JET);
                         accept(output, MagItems.MICRO_THRUSTER);

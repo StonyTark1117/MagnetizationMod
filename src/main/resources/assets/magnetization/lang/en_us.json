@@ -267,6 +267,8 @@
   "tooltip.magnetization.boots_fall_save": "Arrests any fall (costs durability)",
   "tooltip.magnetization.boots_inert": "Inert to magnetic fields until magnetized",
   "block.magnetization.solar_sail": "Magnetosphere Solar Sail",
+  "item.magnetization.alfven_backpack": "Alfvén Ribbon Backpack",
+  "tooltip.magnetization.backpack_boost": "Glide boost: high-altitude daylight, or the End — no rockets",
   "message.magnetization.sail_night_off": "Solar sail: disabled at night",
   "message.magnetization.sail_night_on": "Solar sail: active at night (half power)",
   "block.magnetization.micro_thruster": "Ferrofluid Micro-Thruster",

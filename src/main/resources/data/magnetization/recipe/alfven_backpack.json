@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "s s",
+    "sps",
+    "c c"
+  ],
+  "key": {
+    "s": {
+      "item": "magnetization:solar_sail"
+    },
+    "p": {
+      "item": "minecraft:phantom_membrane"
+    },
+    "c": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "magnetization:alfven_backpack",
+    "count": 1
+  }
+}
