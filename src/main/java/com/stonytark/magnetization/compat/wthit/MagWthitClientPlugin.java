@@ -28,5 +28,8 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
         registrar.body(MachineBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);
         registrar.body(CatalystBodyProvider.INSTANCE, Block.class);
+        // Runs after WTHIT's built-in energy renderer (500) so our per-block
+        // stored-FE bar wins the EnergyData line and the magnet leak is cleared.
+        registrar.body(MachineEnergyBarProvider.INSTANCE, Block.class, MachineEnergyBarProvider.PRIORITY);
     }
 }

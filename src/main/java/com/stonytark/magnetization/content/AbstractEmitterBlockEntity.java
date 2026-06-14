@@ -545,15 +545,19 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      *  true to cover the standard powered emitters. */
     protected boolean acceptsPower() { return true; }
 
+    /** Public view of {@link #acceptsPower()} for the WTHIT energy-bar provider
+     *  (different package). True for blocks that actually store/use FE. */
+    public final boolean acceptsPowerInput() { return acceptsPower(); }
+
     @Override
     public List<Component> extraTooltipLines(final boolean verbose) {
         final List<Component> lines = new java.util.ArrayList<>(4);
         if (acceptsPower()) {
             // Power-source line: highest signal-to-noise. Always show,
             // regardless of whether energy or redstone is driving so players
-            // know at a glance.
+            // know at a glance. The actual stored-FE amount is rendered as a
+            // proper bar by the WTHIT energy-bar provider, so no text line here.
             final int energy = energyBuffer.getEnergyStored();
-            final int capacity = energyBuffer.getMaxEnergyStored();
             if (energy > 0 || isPowered()) {
                 final String source = energyActiveThisTick ? "energy"
                         : (powered ? "redstone" : "idle");
@@ -562,15 +566,6 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                 lines.add(Component.translatable("tooltip.magnetization.power_source",
                                 Component.translatable("tooltip.magnetization.power_source." + source)
                                         .withStyle(sourceColor))
-                        .withStyle(ChatFormatting.GRAY));
-            }
-            // Energy buffer line: only show when there's actually a buffer to
-            // surface. Hides the line for fresh placements that never received
-            // energy, so the tooltip stays clean when FE isn't in use on this
-            // server.
-            if (energy > 0 || verbose) {
-                lines.add(Component.translatable("tooltip.magnetization.energy",
-                                String.format("%,d / %,d", energy, capacity))
                         .withStyle(ChatFormatting.GRAY));
             }
         }
