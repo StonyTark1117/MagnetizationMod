@@ -74,6 +74,12 @@ public final class MagTags {
     public static final TagKey<Block> METALLIC_ORES =
             TagKey.create(Registries.BLOCK, Magnetization.id("metallic_ores"));
 
+    /** Magnetic blocks that, placed next to an anvil, dampen it — the magnetic
+     *  field steadies the impact, so the anvil doesn't degrade and its clang is
+     *  deadened. Curated to our magnet blocks; extend by appending. */
+    public static final TagKey<Block> ANVIL_DAMPENERS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("anvil_dampeners"));
+
     /** Block-level escape hatch for the Magnetic Excavator: any block in this
      *  tag is treated like bedrock — the excavator will refuse to pull through
      *  it. The bedrock + block-entity safeguards are already wired in code;

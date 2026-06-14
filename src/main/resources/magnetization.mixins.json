@@ -5,9 +5,12 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "magnetization.refmap.json",
   "mixins": [
-    "DependencySorterCycleFixMixin"
+    "DependencySorterCycleFixMixin",
+    "ItemCombinerMenuAccessor"
   ],
-  "client": [],
+  "client": [
+    "client.AnvilSoundMixin"
+  ],
   "server": [],
   "injectors": {
     "defaultRequire": 1

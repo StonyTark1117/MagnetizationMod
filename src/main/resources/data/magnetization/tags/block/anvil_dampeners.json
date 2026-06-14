@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_block",
+    "magnetization:raw_magnetite_block",
+    "magnetization:maghemite_block",
+    "magnetization:raw_maghemite_block",
+    "magnetization:pyrrhotite_block",
+    "magnetization:raw_pyrrhotite_block",
+    "magnetization:hematite_block",
+    "magnetization:raw_hematite_block",
+    "magnetization:titanomagnetite_block",
+    "magnetization:raw_titanomagnetite_block",
+    "magnetization:lodestone_core",
+    "magnetization:permanent_magnet",
+    "magnetization:temporary_magnet",
+    "magnetization:electromagnet",
+    "magnetization:magnetic_anchor"
+  ]
+}
