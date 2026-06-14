@@ -275,6 +275,11 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock> MAGNETOSTRICTIVE_SENSOR =
             REGISTER.register("magnetostrictive_sensor", () -> new com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock(poweredMetal()));
 
+    /** EMP flux-compression charge — redstone-detonated; blanks emitters + wipes FE in range. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.emp.EmpChargeBlock> EMP_CHARGE =
+            REGISTER.register("emp_charge", () -> new com.stonytark.magnetization.content.emp.EmpChargeBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.5f).sound(SoundType.METAL)));
+
     /** Kinetic induction coil — a magnet passing through generates FE + a redstone pulse. */
     public static final DeferredBlock<com.stonytark.magnetization.content.induction.KineticCoilBlock> KINETIC_COIL =
             REGISTER.register("kinetic_coil", () -> new com.stonytark.magnetization.content.induction.KineticCoilBlock(poweredMetal()));

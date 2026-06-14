@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "gcg",
+    "clc",
+    "gcg"
+  ],
+  "key": {
+    "g": {
+      "item": "minecraft:gunpowder"
+    },
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "l": {
+      "item": "magnetization:lodestone_core"
+    }
+  },
+  "result": {
+    "id": "magnetization:emp_charge",
+    "count": 1
+  }
+}

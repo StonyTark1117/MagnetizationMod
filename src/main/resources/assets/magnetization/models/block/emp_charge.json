@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/emp_charge_top",
+    "bottom": "magnetization:block/emp_charge_side",
+    "side": "magnetization:block/emp_charge_side"
+  }
+}

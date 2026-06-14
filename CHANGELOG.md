@@ -3,6 +3,7 @@
 ## 1.2.0 — (in development)
 
 ### New content
+- **EMP Flux Charge**: a single-use electromagnetic bomb. Power it with redstone and it detonates — every magnetic emitter in a 12-block radius goes dark for 10s and every machine/battery's stored FE is wiped, with a flash + thunderclap, then the charge is consumed. Fries electronics, not terrain (no block damage).
 - **Kinetic Induction Coil**: Faraday's law as a generator — a magnetic ship moving through the coil induces an EMF proportional to its speed, so the coil generates FE (pushed to adjacent machines/cables) and emits a redstone pulse while the magnet passes. No fuel; pure kinetic-to-electric. Pairs with Lenz braking and propulsion tracks.
 - **Barkhausen Noise Generator**: a true-RNG block. With a magnet (any `#magnetization:anvil_dampeners` block) placed against it, its iron domains flip chaotically and it emits a rapid, unpredictable stream of random redstone strengths; idle otherwise. For random lighting, casino logic, or unpredictable spawners.
 - **Magnetostrictive Sensor**: a buried magnetic tripwire. Nearby motion — a player or mob running/jumping within 8 blocks — flexes its magnetostrictive core and it reads out an analog redstone signal (stronger the closer/faster), decaying when things go still. Detects through blocks, so it makes an invisible perimeter alarm or seismic mob detector.

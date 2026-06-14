@@ -48,6 +48,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         IHaveGoggleInformation {
 
     private boolean powered = false;
+    /** Game-tick until which an EMP keeps this emitter dark. 0 = not EMP'd. */
+    private long empDisabledUntil = 0L;
     /** True for the current tick if energy was successfully consumed this tick
      *  to drive the field. Reset/recomputed each {@link #tickEmitter} call. */
     private boolean energyActiveThisTick = false;
@@ -123,6 +125,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      *  methods consult this to decide whether to emit. */
     public boolean isPowered() {
         return (allowRedstonePower() && powered) || (allowEnergyPower() && energyActiveThisTick);
+    }
+
+    /** Knock this emitter dark for {@code ticks} (an EMP pulse). Also empties its
+     *  energy buffer so an energy-driven emitter has to recharge afterward. */
+    public void disableForEmp(final int ticks) {
+        if (level instanceof ServerLevel sl) {
+            empDisabledUntil = Math.max(empDisabledUntil, sl.getGameTime() + ticks);
+            energyBuffer.setStored(0);
+            setChanged();
+        }
     }
 
     /** Direct query: is a redstone signal currently driving this emitter
@@ -329,6 +341,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             cachedBlockPath = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
         }
         if (MagConfig.isBlockDisabled(cachedBlockPath)) {
+            if (cachedField != null) {
+                cachedField = null;
+                markForClientSync(server);
+            }
+            return;
+        }
+
+        // EMP blackout: a flux-compression charge knocks this emitter dark for a
+        // few seconds. Treated like the soft-disable — no field while disabled.
+        if (server.getGameTime() < empDisabledUntil) {
             if (cachedField != null) {
                 cachedField = null;
                 markForClientSync(server);
