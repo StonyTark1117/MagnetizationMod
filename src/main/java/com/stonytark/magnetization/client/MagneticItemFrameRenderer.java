@@ -30,19 +30,33 @@ public class MagneticItemFrameRenderer implements BlockEntityRenderer<MagneticIt
         if (stack.isEmpty()) return;
         final Direction facing = be.getBlockState().getValue(DirectionalBlock.FACING);
 
+        // Spin angle (deg) while powered — advances with game time + BE direction.
+        float spin = 0f;
+        if (be.isSpinning() && be.getLevel() != null) {
+            spin = ((be.getLevel().getGameTime() + partialTick) * 4.0f * be.spinDir()) % 360.0f;
+        }
+
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
-        // Map the FIXED item (front = +Z / south) to face along `facing`.
-        switch (facing) {
-            case NORTH -> pose.mulPose(Axis.YP.rotationDegrees(180));
-            case SOUTH -> { }
-            case WEST  -> pose.mulPose(Axis.YP.rotationDegrees(90));
-            case EAST  -> pose.mulPose(Axis.YP.rotationDegrees(270));
-            case UP    -> pose.mulPose(Axis.XP.rotationDegrees(-90));
-            case DOWN  -> pose.mulPose(Axis.XP.rotationDegrees(90));
+
+        if (facing == Direction.UP || facing == Direction.DOWN) {
+            // Floor/ceiling: the item stands upright and hovers off the plate,
+            // spinning about the vertical axis.
+            pose.translate(0.0, facing == Direction.UP ? 0.45 : -0.45, 0.0);
+            pose.mulPose(Axis.YP.rotationDegrees(spin));
+            pose.scale(0.7f, 0.7f, 0.7f);
+        } else {
+            // Wall: the item sits flat on the outward face, spinning in-plane.
+            switch (facing) {
+                case NORTH -> pose.mulPose(Axis.YP.rotationDegrees(180));
+                case WEST  -> pose.mulPose(Axis.YP.rotationDegrees(90));
+                case EAST  -> pose.mulPose(Axis.YP.rotationDegrees(270));
+                default    -> { } // SOUTH
+            }
+            pose.translate(0.0, 0.0, 0.5 - 0.02); // out to just under the face
+            pose.mulPose(Axis.ZP.rotationDegrees(spin));
+            pose.scale(0.55f, 0.55f, 0.55f);
         }
-        pose.translate(0.0, 0.0, 0.5 - 0.02); // out to just under the face
-        pose.scale(0.55f, 0.55f, 0.55f);
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY,

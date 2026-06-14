@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.jet;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.BlockPos;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * its thrust direction; right-click with a ferrofluid bucket to top up its tank
  * (returns an empty bucket). {@code LIT} = actively firing.
  */
-public final class MicroThrusterBlock extends DirectionalBlock implements EntityBlock {
+public final class MicroThrusterBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<MicroThrusterBlock> CODEC = simpleCodec(MicroThrusterBlock::new);
 

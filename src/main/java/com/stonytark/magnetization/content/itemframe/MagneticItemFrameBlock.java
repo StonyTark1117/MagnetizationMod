@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.itemframe;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,12 +11,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
@@ -26,10 +30,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Magnetic Item Frame — a thin magnetic plate that mounts flat on any surface
- * and holds a single item/tool/armor stuck to it for display (no rotation).
- * Right-click with an item to stick it on; empty-hand right-click pops it off.
+ * (walls, floor, ceiling) and holds a single item/tool/armor. Right-click with
+ * an item to stick it on; empty-hand right-click flips its spin direction;
+ * sneak + empty-hand pops the item off. Fed redstone or FE, it magnetically
+ * spins the held item; placed on the floor, the item hovers vertically above.
  */
-public final class MagneticItemFrameBlock extends DirectionalBlock implements EntityBlock {
+public final class MagneticItemFrameBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<MagneticItemFrameBlock> CODEC = simpleCodec(MagneticItemFrameBlock::new);
 
@@ -77,6 +83,26 @@ public final class MagneticItemFrameBlock extends DirectionalBlock implements En
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
+            final Level level, final BlockState state, final BlockEntityType<T> type) {
+        if (level.isClientSide || type != MagBlockEntities.MAGNETIC_ITEM_FRAME.get()) return null;
+        return (BlockEntityTicker<T>) (BlockEntityTicker<MagneticItemFrameBlockEntity>)
+                MagneticItemFrameBlockEntity::serverTick;
+    }
+
+    /** Wrench flips the spin direction (rather than rotating the plate). */
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext ctx) {
+        if (!ctx.getLevel().isClientSide
+                && ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof MagneticItemFrameBlockEntity frame
+                && !frame.getDisplayedItem().isEmpty()) {
+            frame.cycleSpinDirection();
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
                                               final BlockPos pos, final Player player, final InteractionHand hand,
                                               final BlockHitResult hit) {
@@ -100,13 +126,23 @@ public final class MagneticItemFrameBlock extends DirectionalBlock implements En
     @Override
     protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos,
                                                final Player player, final BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof MagneticItemFrameBlockEntity frame)) return InteractionResult.PASS;
-        if (frame.getDisplayedItem().isEmpty()) return InteractionResult.PASS;
+        if (!(level.getBlockEntity(pos) instanceof MagneticItemFrameBlockEntity frame)
+                || frame.getDisplayedItem().isEmpty()) {
+            return InteractionResult.PASS;
+        }
         if (!level.isClientSide) {
-            final ItemStack popped = frame.removeDisplayedItem();
-            if (!player.addItem(popped)) player.drop(popped, false);
-            level.playSound(null, pos, SoundType.METAL.getBreakSound(),
-                    net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.6f);
+            if (player.isShiftKeyDown()) {
+                // Sneak + empty-hand pops the item off.
+                final ItemStack popped = frame.removeDisplayedItem();
+                if (!player.addItem(popped)) player.drop(popped, false);
+                level.playSound(null, pos, SoundType.METAL.getBreakSound(),
+                        net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.6f);
+            } else {
+                // Plain right-click flips the spin direction.
+                frame.cycleSpinDirection();
+                level.playSound(null, pos, SoundType.METAL.getHitSound(),
+                        net.minecraft.sounds.SoundSource.BLOCKS, 0.4f, 1.2f);
+            }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

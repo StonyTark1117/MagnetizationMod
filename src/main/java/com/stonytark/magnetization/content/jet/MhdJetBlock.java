@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.jet;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * thrusts (set at placement); right-click with a magnet to slot it, empty-hand
  * to pop it out. {@code LIT} reflects an actively-firing engine.
  */
-public final class MhdJetBlock extends DirectionalBlock implements EntityBlock {
+public final class MhdJetBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<MhdJetBlock> CODEC = simpleCodec(MhdJetBlock::new);
 

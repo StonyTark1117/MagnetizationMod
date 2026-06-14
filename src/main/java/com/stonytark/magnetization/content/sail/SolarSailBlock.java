@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.sail;
 
 import com.mojang.serialization.MapCodec;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * direction it pushes; build a wide, one-block-deep wall of them on an airship
  * for more thrust. Right-click toggles whether this panel keeps working at night.
  */
-public final class SolarSailBlock extends DirectionalBlock implements EntityBlock {
+public final class SolarSailBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
     public static final MapCodec<SolarSailBlock> CODEC = simpleCodec(SolarSailBlock::new);
 
