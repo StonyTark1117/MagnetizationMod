@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/structural_inducer_top_active",
+    "bottom": "magnetization:block/structural_inducer_bottom",
+    "side": "magnetization:block/structural_inducer_side_active"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "magnetization:block/structural_inducer"
+    },
+    "powered=true": {
+      "model": "magnetization:block/structural_inducer_active"
+    }
+  }
+}

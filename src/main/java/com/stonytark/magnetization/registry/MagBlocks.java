@@ -312,6 +312,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
             REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
 
+    /** Structural Inducer — grabs the structure above and lifts it as one Sable craft. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.inducer.StructuralInducerBlock> STRUCTURAL_INDUCER =
+            REGISTER.register("structural_inducer", () -> new com.stonytark.magnetization.content.inducer.StructuralInducerBlock(poweredMetal()));
+
     /** Tokamak confinement coil — the structural ring of the fusion reactor. */
     public static final DeferredBlock<com.stonytark.magnetization.content.tokamak.TokamakCoilBlock> TOKAMAK_COIL =
             REGISTER.register("tokamak_coil", () -> new com.stonytark.magnetization.content.tokamak.TokamakCoilBlock(metal()));

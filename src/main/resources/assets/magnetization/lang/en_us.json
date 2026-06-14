@@ -254,6 +254,7 @@
   "block.magnetization.kinetic_coil": "Kinetic Induction Coil",
   "block.magnetization.emp_charge": "EMP Flux Charge",
   "block.magnetization.gyrostabilizer": "Magnetic Gyrostabilizer",
+  "block.magnetization.structural_inducer": "Structural Inducer",
   "block.magnetization.tokamak_coil": "Tokamak Confinement Coil",
   "block.magnetization.tokamak_controller": "Tokamak Reactor Core",
   "item.magnetization.deuterium_cell": "Deuterium Fuel Cell",

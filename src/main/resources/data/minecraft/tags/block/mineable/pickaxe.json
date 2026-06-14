@@ -6,6 +6,7 @@
     "magnetization:hematite_anvil",
     "magnetization:titanomagnetite_anvil",
     "magnetization:tokamak_coil",
-    "magnetization:tokamak_controller"
+    "magnetization:tokamak_controller",
+    "magnetization:structural_inducer"
   ]
 }
