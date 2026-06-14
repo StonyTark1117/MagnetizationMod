@@ -150,6 +150,22 @@ public final class ChunkSurfaceRepaintHandler {
                                                final int x, final int z, final int topY,
                                                final BlockPos topPos) {
         final BlockState topState = chunk.getBlockState(topPos);
+
+        // Anomaly water bodies are ferrofluid: walk down the water column from the
+        // surface and swap each water source for ferrofluid (bounded depth).
+        if (topState.is(Blocks.WATER)) {
+            final BlockState ferro = com.stonytark.magnetization.registry.MagBlocks.FERROFLUID_BLOCK.get().defaultBlockState();
+            final BlockPos.MutableBlockPos c = new BlockPos.MutableBlockPos();
+            boolean swapped = false;
+            for (int y = topY, depth = 0; depth < 12 && y >= level.getMinBuildHeight(); y--, depth++) {
+                c.set(x, y, z);
+                if (!chunk.getBlockState(c).is(Blocks.WATER)) break;
+                level.setBlock(c.immutable(), ferro, 2);
+                swapped = true;
+            }
+            return swapped;
+        }
+
         if (!isVanillaReplaceable(topState)) return false;
 
         boolean changed = false;
