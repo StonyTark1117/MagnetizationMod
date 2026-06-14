@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/mhd_jet_side",
+    "down": "magnetization:block/mhd_jet_side",
+    "up": "magnetization:block/mhd_jet_side",
+    "east": "magnetization:block/mhd_jet_side",
+    "west": "magnetization:block/mhd_jet_side",
+    "south": "magnetization:block/mhd_jet_side",
+    "north": "magnetization:block/mhd_jet_nozzle"
+  }
+}

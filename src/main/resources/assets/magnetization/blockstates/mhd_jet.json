@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "magnetization:block/mhd_jet"
+    },
+    "facing=north,lit=true": {
+      "model": "magnetization:block/mhd_jet_active"
+    },
+    "facing=south,lit=false": {
+      "model": "magnetization:block/mhd_jet",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "magnetization:block/mhd_jet_active",
+      "y": 180
+    },
+    "facing=east,lit=false": {
+      "model": "magnetization:block/mhd_jet",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "magnetization:block/mhd_jet_active",
+      "y": 90
+    },
+    "facing=west,lit=false": {
+      "model": "magnetization:block/mhd_jet",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "magnetization:block/mhd_jet_active",
+      "y": 270
+    },
+    "facing=up,lit=false": {
+      "model": "magnetization:block/mhd_jet",
+      "x": 270
+    },
+    "facing=up,lit=true": {
+      "model": "magnetization:block/mhd_jet_active",
+      "x": 270
+    },
+    "facing=down,lit=false": {
+      "model": "magnetization:block/mhd_jet",
+      "x": 90
+    },
+    "facing=down,lit=true": {
+      "model": "magnetization:block/mhd_jet_active",
+      "x": 90
+    }
+  }
+}

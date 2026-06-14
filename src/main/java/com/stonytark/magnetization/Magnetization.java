@@ -158,6 +158,7 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.INDUCTION_PAD.get(),       (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.KINETIC_COIL.get(),        (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.TOKAMAK_CONTROLLER.get(),  (be, side) -> be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MHD_JET.get(),             (be, side) -> be.energyBuffer());
     }
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from
