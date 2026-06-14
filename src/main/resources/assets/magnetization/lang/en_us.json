@@ -758,5 +758,6 @@
   "tooltip.magnetization.pyrolytic_carbon.use": "Strongly diamagnetic. Dropped in a magnetic field it's repelled by both poles and hovers above a magnet.",
   "tooltip.magnetization.mr_fluid.use": "Magnetorheological fluid: flows like a liquid, but a redstone signal stiffens it to a walkable solid.",
   "tooltip.magnetization.petrified_wood.use": "Weakly ferromagnetic wood from the Petrified Forest — faintly tugged by fields.",
-  "tooltip.magnetization.magnetic_anvil.use": "A self-dampened anvil (no clang). Per-metal durability — titanomagnetite never degrades."
+  "tooltip.magnetization.magnetic_anvil.use": "A self-dampened anvil (no clang). Per-metal durability — titanomagnetite never degrades.",
+  "tooltip.magnetization.tokamak_status": "%s — Fuel: %ss — Energy: %s FE"
 }
