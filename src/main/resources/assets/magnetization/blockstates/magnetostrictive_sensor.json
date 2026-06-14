@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "magnetization:block/magnetostrictive_sensor"
+    },
+    "powered=true": {
+      "model": "magnetization:block/magnetostrictive_sensor"
+    }
+  }
+}

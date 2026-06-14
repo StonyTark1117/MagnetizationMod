@@ -3,6 +3,7 @@
 ## 1.2.0 — (in development)
 
 ### New content
+- **Magnetostrictive Sensor**: a buried magnetic tripwire. Nearby motion — a player or mob running/jumping within 8 blocks — flexes its magnetostrictive core and it reads out an analog redstone signal (stronger the closer/faster), decaying when things go still. Detects through blocks, so it makes an invisible perimeter alarm or seismic mob detector.
 - **Induction Charging Pad**: a block that buffers FE (fed from cables/generators) and wirelessly tops up every energy-storing item a nearby player carries — main inventory, armor, offhand, and Curios slots (when Curios is installed). Electromagnetic induction, gamified.
 - **Lenz-effect braking**: a magnetic ship moving over conductive non-ferrous blocks (`#magnetization:eddy_conductors` — copper, aluminium, …) is dragged to a slow float/coast by induced eddy currents, exactly like a magnet falling through a copper pipe. Lay a copper track to brake or gently lower a craft. Tunable via `physics.lenzBrakingStrength` (0 disables).
 - **Magnetic Item Frame**: a thin magnetic wall plate that holds one item/tool/armor stuck flat to it for display (no rotation) — right-click to stick on, empty-hand to pop off. Crafted from a vanilla item frame + a magnetic plate.

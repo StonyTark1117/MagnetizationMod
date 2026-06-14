@@ -267,6 +267,10 @@ public final class MagBlocks {
                     .strength(2.5f, 4.0f)
                     .sound(SoundType.STONE)));
 
+    /** Magnetostrictive sensor — buried magnetic tripwire; emits redstone on nearby motion. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock> MAGNETOSTRICTIVE_SENSOR =
+            REGISTER.register("magnetostrictive_sensor", () -> new com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock(poweredMetal()));
+
     /** Induction charging pad — wirelessly tops up FE items a nearby player carries. */
     public static final DeferredBlock<com.stonytark.magnetization.content.induction.InductionPadBlock> INDUCTION_PAD =
             REGISTER.register("induction_pad", () -> new com.stonytark.magnetization.content.induction.InductionPadBlock(metal()));

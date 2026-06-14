@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/magnetostrictive_sensor_top",
+    "bottom": "magnetization:block/magnetostrictive_sensor_side",
+    "side": "magnetization:block/magnetostrictive_sensor_side"
+  }
+}
