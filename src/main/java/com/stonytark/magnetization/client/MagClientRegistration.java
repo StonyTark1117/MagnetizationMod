@@ -32,6 +32,7 @@ public final class MagClientRegistration {
         event.registerBlockEntityRenderer(MagBlockEntities.TRACTOR_BEAM.get(), BeamEmitterRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.KINETIC_ELECTROMAGNET.get(), KineticElectromagnetRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_EXCAVATOR.get(), ExcavatorPreviewRenderer::new);
+        event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), MagneticItemFrameRenderer::new);
     }
 
     @SubscribeEvent
@@ -74,6 +75,7 @@ public final class MagClientRegistration {
     public static void onRegisterMenuScreens(final RegisterMenuScreensEvent event) {
         event.register(MagMenus.EMITTER.get(), EmitterScreen::new);
     }
+
 
     /** Wires layer0 of the magnetic_elytra item model to the DYED_COLOR
      *  data component so dyeing the item in the crafting grid colours the

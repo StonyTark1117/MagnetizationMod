@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magnetization:block/magnetic_item_frame"
+    },
+    "facing=north": {
+      "model": "magnetization:block/magnetic_item_frame",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "magnetization:block/magnetic_item_frame",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "magnetization:block/magnetic_item_frame",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "magnetization:block/magnetic_item_frame",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "magnetization:block/magnetic_item_frame",
+      "x": 90
+    }
+  }
+}

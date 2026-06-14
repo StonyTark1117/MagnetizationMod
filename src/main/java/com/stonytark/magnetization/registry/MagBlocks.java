@@ -267,5 +267,12 @@ public final class MagBlocks {
                     .strength(2.5f, 4.0f)
                     .sound(SoundType.STONE)));
 
+    /** Magnetic Item Frame — thin wall plate that displays one item stuck to it. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlock> MAGNETIC_ITEM_FRAME =
+            REGISTER.register("magnetic_item_frame", () -> new com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL).strength(0.4f, 0.4f)
+                            .sound(SoundType.NETHERITE_BLOCK).noOcclusion()));
+
     private MagBlocks() {}
 }

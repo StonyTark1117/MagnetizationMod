@@ -103,6 +103,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.METEORITE_FRAGMENT);
                         accept(output, MagItems.IMPRINT_MODULE);
                         accept(output, MagItems.MAGNETIC_PLATE);
+                        accept(output, MagItems.MAGNETIC_ITEM_FRAME);
                         accept(output, MagItems.PETRIFIED_WOOD);
                         accept(output, MagItems.FIELD_COMPASS);
                         accept(output, MagItems.ORE_COMPASS);
