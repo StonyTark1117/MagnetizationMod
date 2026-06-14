@@ -3,6 +3,8 @@
 ## 1.2.0 — (in development)
 
 ### New content
+- **Magnetic Item Frame**: a thin magnetic wall plate that holds one item/tool/armor stuck flat to it for display (no rotation) — right-click to stick on, empty-hand to pop off. Crafted from a vanilla item frame + a magnetic plate.
+- **Anvil magnetic dampener**: place any magnet or magnetic storage block (`#magnetization:anvil_dampeners`) touching an anvil — its field steadies the anvil so it never degrades, and deadens the use-clang.
 - **Ore Dowsing Compass**: a compass whose needle points to the nearest metallic ore vein (anything in `#magnetization:metallic_ores` — our ferrous ores plus vanilla/modded `#c:ores/*`). Anvil-combine it with a specific ore to **tune** it to track only that ore. Like the other compasses, the needle scrambles inside the Magnetic Anomaly biome. The world scan is bounded + throttled (nearest-first expanding sweep, capped, re-run every second). Crafted from a vanilla compass + 2 raw magnetite.
 
 ### Dependencies
