@@ -267,6 +267,10 @@ public final class MagBlocks {
                     .strength(2.5f, 4.0f)
                     .sound(SoundType.STONE)));
 
+    /** Barkhausen noise generator — RNG block; magnet adjacent → random redstone pulses. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.sensor.BarkhausenBlock> BARKHAUSEN =
+            REGISTER.register("barkhausen_generator", () -> new com.stonytark.magnetization.content.sensor.BarkhausenBlock(poweredMetal()));
+
     /** Magnetostrictive sensor — buried magnetic tripwire; emits redstone on nearby motion. */
     public static final DeferredBlock<com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock> MAGNETOSTRICTIVE_SENSOR =
             REGISTER.register("magnetostrictive_sensor", () -> new com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock(poweredMetal()));

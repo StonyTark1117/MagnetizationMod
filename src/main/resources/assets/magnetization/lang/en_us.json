@@ -243,6 +243,7 @@
   "block.magnetization.magnetic_item_frame": "Magnetic Item Frame",
   "block.magnetization.induction_pad": "Induction Charging Pad",
   "block.magnetization.magnetostrictive_sensor": "Magnetostrictive Sensor",
+  "block.magnetization.barkhausen_generator": "Barkhausen Noise Generator",
   "tooltip.magnetization.ore_compass.any": "Points to the nearest metallic ore vein",
   "tooltip.magnetization.ore_compass.tuned": "Tuned to %s",
   "hematite_lens.magnetization.locked": "Polarity locked to %s.",

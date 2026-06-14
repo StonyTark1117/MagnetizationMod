@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "magnetization:block/barkhausen_generator"
+    },
+    "powered=true": {
+      "model": "magnetization:block/barkhausen_generator"
+    }
+  }
+}
