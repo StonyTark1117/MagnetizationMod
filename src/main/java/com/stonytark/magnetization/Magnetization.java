@@ -51,7 +51,14 @@ public final class Magnetization {
         com.stonytark.magnetization.registry.MagFeatures.REGISTER.register(modBus);
         com.stonytark.magnetization.registry.MagFeatures.PROCESSOR_REGISTER.register(modBus);
 
+        // SERVER spec — per-world admin/balance settings (guiLimits, debug, command
+        // permissions). Loads at world-start; not editable from the title screen.
         modContainer.registerConfig(ModConfig.Type.SERVER, MagConfig.SPEC);
+        // COMMON spec — a single global file editable from the main menu BEFORE a
+        // world is created. Holds the player-facing + worldgen-baked settings so a
+        // single player can set biome rarity/gen correctly up front, and so the
+        // toggles are loaded early (before FMLCommonSetup region registration).
+        modContainer.registerConfig(ModConfig.Type.COMMON, MagConfig.COMMON_SPEC);
 
         modBus.addListener(Magnetization::onCommonSetup);
         modBus.addListener(Magnetization::onRegisterCapabilities);
@@ -89,15 +96,17 @@ public final class Magnetization {
      */
     private static void onCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            // Region registration is unconditional. The two biome toggles
-            // (anomalyBiomeEnabled, petrifiedForestEnabled) live in the SERVER
-            // config, which doesn't load until world-start — long after this
-            // event runs. Gating the registration on them here would silently
-            // skip the biome even when the user had set the toggle to true.
-            // Runtime effects (chaos field, compass scramble, emitter strength
-            // bonus) gate on the config check independently via the
-            // AnomalyBiome.enabled() / PetrifiedForestRegion checks at tick
-            // time, so disabling the toggle still suppresses gameplay impact —
+            // Region registration is unconditional. The biome toggles
+            // (anomalyBiomeEnabled, petrifiedForestEnabled) now live in the COMMON
+            // config so they CAN be edited from the title screen before world
+            // creation — but we still don't gate region registration on them here:
+            // COMMON-config load ordering relative to this event isn't guaranteed,
+            // and registering the region unconditionally is harmless. The biome's
+            // *placement* rarity is driven by anomalyBiomeRarity/petrifiedForestRarity
+            // (read by the Region at registration). Runtime effects (chaos field,
+            // compass scramble, emitter strength bonus) gate on the config check
+            // independently via AnomalyBiome.enabled() / PetrifiedForestRegion at
+            // tick time, so disabling the toggle still suppresses gameplay impact —
             // the biome just shows up as a quiet visual variant.
             Regions.register(new AnomalyRegion());
             Regions.register(new PetrifiedForestRegion());

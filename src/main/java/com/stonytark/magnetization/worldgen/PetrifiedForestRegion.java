@@ -36,7 +36,7 @@ public final class PetrifiedForestRegion extends Region {
             final Registry<Biome> registry,
             final Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper
     ) {
-        // SERVER config has loaded by the time TerraBlender calls addBiomes at
+        // COMMON config has loaded by the time TerraBlender calls addBiomes at
         // world-create, so both the enabled gate and the rarity lookup resolve
         // to the user's current values here.
         if (!petrifiedForestEnabled()) return;

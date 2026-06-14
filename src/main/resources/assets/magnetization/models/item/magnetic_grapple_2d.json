@@ -1,0 +1,7 @@
+{
+  "_comment": "Original flat sprite model, kept so we can wire neoforge:separate_transforms (2D inventory icon + 3D held) if desired. Not referenced by default.",
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magnetization:item/magnetic_grapple"
+  }
+}

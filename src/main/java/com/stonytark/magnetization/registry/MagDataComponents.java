@@ -55,6 +55,16 @@ public final class MagDataComponents {
                             .persistent(Codec.LONG)
                             .networkSynchronized(ByteBufCodecs.VAR_LONG));
 
+    /** Game-tick at which a gun (Repulsor Gun / Magnetic Grapple) was last
+     *  fired. Drives the client-side {@code fired} item-model property that
+     *  swaps in the glowing-muzzle model variant for a few ticks after a shot.
+     *  Network-synced so the holding client sees the muzzle light up. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>>
+            FIRED_AT = register("fired_at",
+                    builder -> builder
+                            .persistent(Codec.LONG)
+                            .networkSynchronized(ByteBufCodecs.VAR_LONG));
+
     /** Captured {@link com.stonytark.magnetization.api.EmitterPreset} carried
      *  by a Titanomagnetite Imprint Module item — shift-right-click an emitter
      *  to overwrite, right-click another emitter to project. Persistent so a

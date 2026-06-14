@@ -2,6 +2,8 @@ package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.registry.MagParticles;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -84,6 +86,28 @@ public final class GrappleTickHandler {
         player.fallDistance = 0f;
         player.resetFallDistance();
         pull.ticksLeft--;
+
+        // Visual grapple line: a taut chain of particles from the player to the
+        // anchor each tick, so the pull visibly REACHES the thing being grappled
+        // (emitter, ship or magnetized mob) instead of being an invisible yank.
+        if (player.level() instanceof ServerLevel server) {
+            drawGrappleLine(server, player.getEyePosition(), target);
+        }
+    }
+
+    /** Particle line from {@code from} to {@code to}, ~one pip per block, drawn
+     *  each pull tick so it tracks a moving anchor. */
+    private static void drawGrappleLine(final ServerLevel level, final Vec3 from, final Vec3 to) {
+        final Vec3 delta = to.subtract(from);
+        final double len = delta.length();
+        if (len < 0.1) return;
+        final Vec3 dir = delta.scale(1.0 / len);
+        final int steps = (int) Math.ceil(len);
+        for (int i = 0; i <= steps; i++) {
+            final double d = Math.min(i, len);
+            final Vec3 p = from.add(dir.scale(d));
+            level.sendParticles(MagParticles.MAG_NORTH.get(), p.x, p.y, p.z, 1, 0.0, 0.0, 0.0, 0.0);
+        }
     }
 
     private static void end(final Player player) {

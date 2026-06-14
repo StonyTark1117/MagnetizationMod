@@ -5,6 +5,9 @@ build/
 run/
 */run/
 */run-data/
+# Dev-world snapshots (scripts/test-world.sh). Large binaries; force-add a
+# specific snapshot if you deliberately want to share it.
+test-worlds/
 gradle-app.setting
 .gradletasknamecache
 

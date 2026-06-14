@@ -85,6 +85,10 @@ public class MagneticGrappleItem extends Item {
         GrappleTickHandler.start(player, anchor);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.LODESTONE_HIT, SoundSource.PLAYERS, 0.6f, 1.4f);
+
+        // Stamp fire time so the client swaps in the glowing-prong model variant
+        // for a few ticks — the nozzle/claw lights up as the hook launches.
+        stack.set(MagDataComponents.FIRED_AT.get(), level.getGameTime());
         return InteractionResultHolder.success(stack);
     }
 

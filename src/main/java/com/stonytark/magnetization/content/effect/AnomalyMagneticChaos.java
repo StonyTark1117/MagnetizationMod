@@ -132,9 +132,10 @@ public final class AnomalyMagneticChaos {
     private static void applyChaosToNearbyItems(final ServerLevel server, final ServerPlayer player, final long now, final double strength) {
         final AABB box = AABB.ofSize(player.position(),
                 2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS);
-        for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box)) {
-            if (item.hasPickUpDelay()) continue;
-            if (!item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) continue;
+        // Filter during traversal (skip pickup-delayed + non-ferromagnetic items)
+        // instead of materialising every item in this large box and filtering after.
+        for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box,
+                i -> !i.hasPickUpDelay() && i.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
             if (!AnomalyBiome.isAtAssumeEnabled(server, item.blockPosition())) continue;
             final Vec3 chaos = chaosVectorAt(now, item.position());
             item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(ENTITY_PEAK_IMPULSE * strength)));

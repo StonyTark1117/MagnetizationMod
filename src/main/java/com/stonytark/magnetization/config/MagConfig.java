@@ -11,7 +11,21 @@ import java.util.List;
  */
 public final class MagConfig {
 
+    /** SERVER-type spec: per-world, server-authoritative, synced server→client.
+     *  Holds admin/balance categories (guiLimits, debug, commands) that should
+     *  stay under the world owner's control and are NOT editable from the title
+     *  screen. */
     public static final ModConfigSpec SPEC;
+
+    /** COMMON-type spec: a single global file ({@code config/magnetization-common.toml})
+     *  loaded on both client and server early in mod loading. Holds the
+     *  player-facing and worldgen-affecting categories (physics, content, items,
+     *  tools, worldgen, lightning, compat). Because it isn't per-world, it can be
+     *  edited from the main menu (Mods → Magnetization → Config) BEFORE a world is
+     *  created — essential for the worldgen settings (biome rarity/enable) that are
+     *  baked in at world generation. On a dedicated server the owner edits the same
+     *  file in {@code config/}. */
+    public static final ModConfigSpec COMMON_SPEC;
 
     public static final ModConfigSpec.DoubleValue STRENGTH_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue ENTITY_VELOCITY_SCALE;
@@ -25,6 +39,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue SHIP_PER_MAGNET_SUSCEPTIBILITY;
     public static final ModConfigSpec.DoubleValue SHIP_MAX_SUSCEPTIBILITY;
     public static final ModConfigSpec.IntValue    SHIP_SCAN_INTERVAL_TICKS;
+    public static final ModConfigSpec.BooleanValue EXCLUDE_CONNECTED_SUBLEVELS;
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
@@ -57,6 +72,18 @@ public final class MagConfig {
      *  driven by {@code MaghemiteDecayHandler}. Off by default; flip on for
      *  the slow-rusting hoarder behaviour. Named after the source material
      *  (magnetite) since that's the thing that oxidises. */
+    /** When false, worn metal armor stops responding to magnetic fields entirely —
+     *  players (and armored mobs) are no longer pulled or pushed by ores, emitters
+     *  or any field through their gear. Default true (current behaviour). Added for
+     *  players who kept getting yanked into ore deposits and hazards by their armor. */
+    public static final ModConfigSpec.BooleanValue ARMOR_REACTS_TO_FIELDS;
+    /** When true (default), right-clicking an interactible emitter block while
+     *  holding a block PLACES that block, and shift-right-click opens the
+     *  GUI / flips polarity. When false, the legacy behavior: right-click
+     *  interacts and shift-right-click places. Empty hand / non-block items
+     *  always interact on right-click regardless. */
+    public static final ModConfigSpec.BooleanValue BLOCK_PLACEMENT_FIRST;
+
     public static final ModConfigSpec.BooleanValue MAGNETITE_OXIDATION_ENABLED;
     /** Ticks a stamped magnetite stack waits before converting in place to
      *  its maghemite equivalent. Only consulted when oxidation is enabled. */
@@ -170,7 +197,11 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue EMITTER_ENERGY_TRANSFER_RATE;
 
     static {
+        // Two builders: `b` accumulates the COMMON (global, main-menu-editable)
+        // categories; `sb` accumulates the SERVER (per-world, admin) categories.
+        // Each builder's push/pop stack is independent and self-balanced.
         final ModConfigSpec.Builder b = new ModConfigSpec.Builder();
+        final ModConfigSpec.Builder sb = new ModConfigSpec.Builder();
 
         b.comment("Physics tuning for the Sable sub-level query and entity force application.")
          .translation("magnetization.configuration.physics")
@@ -273,68 +304,82 @@ public final class MagConfig {
                 .translation("magnetization.configuration.physics.shipScanIntervalTicks")
                 .defineInRange("shipScanIntervalTicks", 20, 1, 6000);
 
+        EXCLUDE_CONNECTED_SUBLEVELS = b
+                .comment("When an emitter is mounted on a contraption, exclude the ENTIRE assembly",
+                         "it belongs to from that emitter's magnetic force — not just the single",
+                         "sub-level the emitter physically sits on. In Create: Aeronautics an",
+                         "aircraft built with bearings, springs or hinges is several Sable",
+                         "sub-levels joined by physics constraints; with this off (1.1.x and",
+                         "earlier behaviour) a magnet on the body would yank its own bearing-mounted",
+                         "subgroups around, which both looks wrong (the craft pulls on itself) and",
+                         "can spike or freeze the physics solver as the magnetic pull fights the",
+                         "constraint that holds the parts together. Leave on unless you specifically",
+                         "want emitters to act on connected subgroups of their own craft.")
+                .translation("magnetization.configuration.physics.excludeConnectedSubLevels")
+                .define("excludeConnectedSubLevels", true);
+
         b.pop();
 
-        b.comment("Per-emitter GUI ceilings. The in-game config menu can't dial above these",
+        sb.comment("Per-emitter GUI ceilings. The in-game config menu can't dial above these",
                   "values, so server owners can prevent griefer-tier loadouts.")
          .translation("magnetization.configuration.guiLimits")
          .push("guiLimits");
 
-        ELECTROMAGNET_MAX_STRENGTH = b
+        ELECTROMAGNET_MAX_STRENGTH = sb
                 .comment("Max strength tier the Electromagnet GUI can select.")
                 .translation("magnetization.configuration.guiLimits.electromagnetMaxStrength")
                 .defineEnum("electromagnetMaxStrength", MagneticStrength.EXTREME);
-        ELECTROMAGNET_MAX_RANGE = b
+        ELECTROMAGNET_MAX_RANGE = sb
                 .comment("Max range (blocks) the Electromagnet GUI can dial up to.")
                 .translation("magnetization.configuration.guiLimits.electromagnetMaxRange")
                 .defineInRange("electromagnetMaxRange", 256, 0, 512);
 
-        ANCHOR_MAX_STRENGTH = b
+        ANCHOR_MAX_STRENGTH = sb
                 .comment("Max strength tier the Magnetic Anchor GUI can select.")
                 .translation("magnetization.configuration.guiLimits.anchorMaxStrength")
                 .defineEnum("anchorMaxStrength", MagneticStrength.EXTREME);
-        ANCHOR_MAX_RANGE = b
+        ANCHOR_MAX_RANGE = sb
                 .comment("Max range (blocks) the Magnetic Anchor GUI can dial up to.")
                 .translation("magnetization.configuration.guiLimits.anchorMaxRange")
                 .defineInRange("anchorMaxRange", 256, 0, 512);
 
-        REPULSOR_MAX_STRENGTH = b
+        REPULSOR_MAX_STRENGTH = sb
                 .comment("Max strength tier the Repulsor Coil GUI can select.")
                 .translation("magnetization.configuration.guiLimits.repulsorMaxStrength")
                 .defineEnum("repulsorMaxStrength", MagneticStrength.EXTREME);
-        REPULSOR_MAX_RANGE = b
+        REPULSOR_MAX_RANGE = sb
                 .comment("Max range (blocks) the Repulsor Coil GUI can dial up to.")
                 .translation("magnetization.configuration.guiLimits.repulsorMaxRange")
                 .defineInRange("repulsorMaxRange", 256, 0, 512);
 
-        TRACTOR_MAX_STRENGTH = b
+        TRACTOR_MAX_STRENGTH = sb
                 .comment("Max strength tier the Tractor Beam GUI can select.")
                 .translation("magnetization.configuration.guiLimits.tractorMaxStrength")
                 .defineEnum("tractorMaxStrength", MagneticStrength.EXTREME);
-        TRACTOR_MAX_RANGE = b
+        TRACTOR_MAX_RANGE = sb
                 .comment("Max range (blocks) the Tractor Beam GUI can dial up to.")
                 .translation("magnetization.configuration.guiLimits.tractorMaxRange")
                 .defineInRange("tractorMaxRange", 256, 0, 512);
 
-        EXCAVATOR_MAX_STRENGTH = b
+        EXCAVATOR_MAX_STRENGTH = sb
                 .comment("Max strength tier the Magnetic Excavator GUI can select.",
                          "Strength controls pull force and tunneling speed per in-flight ship.")
                 .translation("magnetization.configuration.guiLimits.excavatorMaxStrength")
                 .defineEnum("excavatorMaxStrength", MagneticStrength.EXTREME);
-        EXCAVATOR_MAX_RANGE = b
+        EXCAVATOR_MAX_RANGE = sb
                 .comment("Max column depth (blocks) the Magnetic Excavator can rip ores from.",
                          "Default high enough that EXTREME-tier excavators reach bedrock from the",
                          "surface (the runtime applies a 6× multiplier to the tier's nominal range,",
                          "so an EXTREME excavator scans 192 blocks deep with no GUI override).")
                 .translation("magnetization.configuration.guiLimits.excavatorMaxRange")
                 .defineInRange("excavatorMaxRange", 256, 1, 384);
-        EXCAVATOR_MAX_BLOCKS_PER_CYCLE = b
+        EXCAVATOR_MAX_BLOCKS_PER_CYCLE = sb
                 .comment("Hard cap on cells the Excavator's cone scan considers per pass,",
                          "regardless of strength + range. Acts as a safety against config",
                          "typos. Bedrock from surface is ~200 blocks; default leaves headroom.")
                 .translation("magnetization.configuration.guiLimits.excavatorMaxBlocksPerCycle")
                 .defineInRange("excavatorMaxBlocksPerCycle", 256, 1, 512);
-        EXCAVATOR_MAX_IN_FLIGHT = b
+        EXCAVATOR_MAX_IN_FLIGHT = sb
                 .comment("Max number of ferromagnetic blocks one Magnetic Excavator may pull at",
                          "the same time. Each pulled block becomes a Sable sub-level until it",
                          "reaches the emitter, so this also caps physics-simulation cost. Per-emitter",
@@ -342,7 +387,7 @@ public final class MagConfig {
                 .translation("magnetization.configuration.guiLimits.excavatorMaxInFlight")
                 .defineInRange("excavatorMaxInFlight", 16, 1, 64);
 
-        b.pop();
+        sb.pop();
 
         b.comment("Disable individual content. Items go in 'disabledItems'; blocks in",
                   "'disabledBlocks' (paths from the magnetization namespace, e.g. 'electromagnet').",
@@ -363,6 +408,33 @@ public final class MagConfig {
                 .translation("magnetization.configuration.content.disabledItems")
                 .defineListAllowEmpty("disabledItems", List.of(),
                         () -> "", o -> o instanceof String);
+
+        ARMOR_REACTS_TO_FIELDS = b
+                .comment("Whether worn metal armor makes its wearer react to magnetic fields.",
+                         "On (default): a player or mob in metal armor is pulled toward / pushed",
+                         "away from emitters, magnetic ores and other fields, in proportion to how",
+                         "many pieces they wear (magnetized pieces pull harder). Off: armor is",
+                         "magnetically inert — the wearer feels no field through their gear. Set",
+                         "this off if you keep getting dragged into ore deposits or hazards by your",
+                         "own armor. Does NOT affect entities that are magnetizable in their own",
+                         "right (e.g. iron golems via the magnetizable_entities tag), magnetized",
+                         "armor's other uses, or ferromagnetic item drops.")
+                .translation("magnetization.configuration.content.armorReactsToFields")
+                .define("armorReactsToFields", true);
+
+        BLOCK_PLACEMENT_FIRST = b
+                .comment("How right-clicking our interactible blocks (Electromagnet, Anchor,",
+                         "Repulsor, Tractor Beam, Excavator, Permanent/Temporary Magnet) behaves",
+                         "while holding a BLOCK.",
+                         "On (default): right-click PLACES the held block against ours (like any",
+                         "normal block); shift-right-click opens the GUI / flips polarity. This",
+                         "fixes the complaint that you couldn't build against our blocks.",
+                         "Off (legacy): right-click opens the GUI / flips polarity; you must",
+                         "shift-right-click to place a block.",
+                         "Either way, an empty hand or a non-block item (tool) always interacts",
+                         "on right-click.")
+                .translation("magnetization.configuration.content.blockPlacementFirst")
+                .define("blockPlacementFirst", true);
 
         MAGNETITE_OXIDATION_ENABLED = b
                 .comment("Master switch for the magnetite → maghemite passive inventory decay.",
@@ -618,19 +690,19 @@ public final class MagConfig {
 
         b.pop();
 
-        b.comment("Diagnostic logging toggles. Off by default in production.")
+        sb.comment("Diagnostic logging toggles. Off by default in production.")
          .translation("magnetization.configuration.debug")
          .push("debug");
 
-        DEBUG_LOGGING = b
+        DEBUG_LOGGING = sb
                 .comment("Master toggle for FieldApplicator + anchor-binding debug logs.",
                          "Set true while diagnosing emitter behavior; leave false on busy servers.")
                 .translation("magnetization.configuration.debug.debugLogging")
                 .define("debugLogging", false);
 
-        b.pop();
+        sb.pop();
 
-        b.comment("Required permission level for each /magnetization command group.",
+        sb.comment("Required permission level for each /magnetization command group.",
                   "0 = any player can run, 2 = operator (vanilla default), 3 or 4 =",
                   "higher op tiers. Levels read live from the spec via brigadier's",
                   ".requires() predicate so changes take effect on the next command",
@@ -638,33 +710,33 @@ public final class MagConfig {
          .translation("magnetization.configuration.commands")
          .push("commands");
 
-        COMMAND_DEBUG_PERMISSION = b
+        COMMAND_DEBUG_PERMISSION = sb
                 .comment("Permission level for /magnetization debug field|forceAt.")
                 .translation("magnetization.configuration.commands.debugPermission")
                 .defineInRange("debugPermission", 2, 0, 4);
-        COMMAND_SPAWN_TEST_PERMISSION = b
+        COMMAND_SPAWN_TEST_PERMISSION = sb
                 .comment("Permission level for /magnetization spawn_test_ship|spawn_test_anchor.")
                 .translation("magnetization.configuration.commands.spawnTestPermission")
                 .defineInRange("spawnTestPermission", 2, 0, 4);
-        COMMAND_SHIP_UTIL_PERMISSION = b
+        COMMAND_SHIP_UTIL_PERMISSION = sb
                 .comment("Permission level for /magnetization clear_phantoms|shatter_all_ships|push_nearest_ship.",
                          "These mutate world state (destroy sub-levels), so a higher level is",
                          "the sensible default.")
                 .translation("magnetization.configuration.commands.shipUtilPermission")
                 .defineInRange("shipUtilPermission", 2, 0, 4);
-        COMMAND_LIRM_PERMISSION = b
+        COMMAND_LIRM_PERMISSION = sb
                 .comment("Permission level for /magnetization lirm strike|stamp|inspect|clear|fields.",
                          "Includes lightning-summoning, so keep it op-gated on shared servers.")
                 .translation("magnetization.configuration.commands.lirmPermission")
                 .defineInRange("lirmPermission", 2, 0, 4);
-        COMMAND_TP_PERMISSION = b
+        COMMAND_TP_PERMISSION = sb
                 .comment("Permission level for /magnetization tp anomaly|petrified_forest.",
                          "Default 0 = any player — biome travel is a quality-of-life shortcut,",
                          "not a destructive admin tool. Bump to 2 if you want to lock travel.")
                 .translation("magnetization.configuration.commands.tpPermission")
                 .defineInRange("tpPermission", 0, 0, 4);
 
-        b.pop();
+        sb.pop();
 
         b.comment("Cross-mod compatibility tuning. These only take effect when the",
                   "named mod is installed; otherwise they're inert.")
@@ -761,7 +833,8 @@ public final class MagConfig {
 
         b.pop();
 
-        SPEC = b.build();
+        COMMON_SPEC = b.build();
+        SPEC = sb.build();
     }
 
     /** Helper: returns the configured permission level, or a fallback if the
@@ -799,6 +872,37 @@ public final class MagConfig {
             return DEBUG_LOGGING.get();
         } catch (final Throwable t) {
             return false;
+        }
+    }
+
+    /** @return whether worn metal armor should respond to magnetic fields. Defaults
+     *  to true when the spec isn't loaded yet (matches the declared default). */
+    public static boolean armorReactsToFields() {
+        try {
+            return ARMOR_REACTS_TO_FIELDS.get();
+        } catch (final Throwable t) {
+            return true;
+        }
+    }
+
+    /** @return true if holding a block and right-clicking our interactible
+     *  blocks should place the block (shift to interact). Defaults true. */
+    public static boolean blockPlacementFirst() {
+        try {
+            return BLOCK_PLACEMENT_FIRST.get();
+        } catch (final Throwable t) {
+            return true;
+        }
+    }
+
+    /** @return whether an emitter on a contraption should exclude its whole connected
+     *  assembly (not just its host sub-level) from its own force. Defaults to true
+     *  when the spec isn't loaded yet (matches the declared default). */
+    public static boolean excludeConnectedSubLevels() {
+        try {
+            return EXCLUDE_CONNECTED_SUBLEVELS.get();
+        } catch (final Throwable t) {
+            return true;
         }
     }
 

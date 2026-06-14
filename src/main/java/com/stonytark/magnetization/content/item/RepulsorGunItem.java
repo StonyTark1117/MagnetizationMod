@@ -63,6 +63,10 @@ public class RepulsorGunItem extends Item {
         if (level.isClientSide) return InteractionResultHolder.success(stack);
         if (player.getCooldowns().isOnCooldown(this)) return InteractionResultHolder.fail(stack);
 
+        // Stamp the fire time so the client swaps in the glowing-muzzle model
+        // for a few ticks (the "tip lights up when fired" effect).
+        stack.set(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get(), level.getGameTime());
+
         fire(level, player);
 
         // Cooldown applied at fire-time (not pull-end, since this is a single pulse).
@@ -113,7 +117,9 @@ public class RepulsorGunItem extends Item {
         // look. The "opposite of the grapple" headline use case.
         applySelfRecoil(server, player, origin, look);
 
-        // Particle plume along the cone for visual feedback.
+        // Particle plume along the cone for visual feedback. The muzzle "flash"
+        // is now the glowing-tip MODEL swap (see FIRED_AT component), not a
+        // particle burst.
         spawnConeParticles(server, origin, look, range);
     }
 
@@ -243,13 +249,34 @@ public class RepulsorGunItem extends Item {
 
     private static void spawnConeParticles(final ServerLevel level, final Vec3 origin,
                                             final Vec3 look, final double range) {
-        // Sample a handful of points along the cone axis and at the rim. A
-        // dozen-or-so particles is enough to read as a directional blast
-        // without flooding the screen.
-        for (int i = 1; i <= 6; i++) {
-            final double t = (i / 6.0) * range;
-            final Vec3 p = origin.add(look.scale(t));
-            level.sendParticles(MagParticles.MAG_SOUTH.get(), p.x, p.y, p.z, 3, 0.15, 0.15, 0.15, 0.0);
+        // Draw the actual repulsion FIELD: expanding rings of particles along
+        // the cone axis trace out the conical volume that's being pushed, so a
+        // shot visibly shows the player the area it's repelling rather than a
+        // thin line of dots. Ring radius = distance * tan(half-angle).
+        final double cosHalf = repulsorGunConicalHalfAngleCos();
+        final double sinHalf = Math.sqrt(Math.max(0.0, 1.0 - cosHalf * cosHalf));
+        final double tanHalf = sinHalf / Math.max(1.0e-6, cosHalf);
+        // Build an orthonormal basis (u, v) perpendicular to the look axis.
+        final Vec3 reference = Math.abs(look.y) > 0.95 ? new Vec3(1, 0, 0) : new Vec3(0, 1, 0);
+        final Vec3 u = look.cross(reference).normalize();
+        final Vec3 v = look.cross(u).normalize();
+        final int rings = 5;
+        final int pointsPerRing = 10;
+        for (int r = 1; r <= rings; r++) {
+            final double t = (r / (double) rings) * range;
+            final Vec3 axisPoint = origin.add(look.scale(t));
+            final double radius = t * tanHalf;
+            // A pip on the axis too, so the cone reads as filled, not hollow.
+            level.sendParticles(MagParticles.MAG_SOUTH.get(),
+                    axisPoint.x, axisPoint.y, axisPoint.z, 1, 0.0, 0.0, 0.0, 0.0);
+            for (int k = 0; k < pointsPerRing; k++) {
+                final double ang = (k / (double) pointsPerRing) * Math.PI * 2.0;
+                final double cos = Math.cos(ang) * radius;
+                final double sin = Math.sin(ang) * radius;
+                final Vec3 p = axisPoint.add(u.scale(cos)).add(v.scale(sin));
+                level.sendParticles(MagParticles.MAG_SOUTH.get(),
+                        p.x, p.y, p.z, 1, 0.0, 0.0, 0.0, 0.0);
+            }
         }
     }
 

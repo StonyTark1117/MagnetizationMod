@@ -92,6 +92,10 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      *  can show "Ship: NORTH ×1.4" without re-running the server-side scan.
      *  {@code null} when this emitter is in the open world (not on a contraption). */
     private @Nullable com.stonytark.magnetization.api.ShipMagneticState cachedShipState = null;
+    /** This emitter block's registry path, resolved once on first tick (invariant
+     *  for the BE's lifetime) so the soft-disable check doesn't reverse-look-up the
+     *  block every tick. */
+    private @Nullable String cachedBlockPath = null;
 
     /** Per-emitter strength override. {@code null} = use the subclass's default tier. */
     private @Nullable MagneticStrength strengthOverride = null;
@@ -319,8 +323,12 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // Soft-disable hook: if the operator has listed this block path in
         // config.content.disabledBlocks, treat the emitter as off regardless
         // of redstone state. Existing placements survive saves but stay inert.
-        final String path = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
-        if (MagConfig.isBlockDisabled(path)) {
+        // The path is invariant for this BE's lifetime, so resolve the registry
+        // key + string once rather than reverse-looking-up the block every tick.
+        if (cachedBlockPath == null) {
+            cachedBlockPath = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        }
+        if (MagConfig.isBlockDisabled(cachedBlockPath)) {
             if (cachedField != null) {
                 cachedField = null;
                 markForClientSync(server);

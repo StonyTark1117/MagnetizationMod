@@ -92,16 +92,15 @@ public final class MagnetizedArmorVacuum {
 
         final Vec3 origin = player.position().add(0, player.getBbHeight() * 0.5d, 0);
         final AABB box = AABB.ofSize(origin, 2 * radius, 2 * radius, 2 * radius);
-        final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box);
+        // Filter during the chunk-section traversal rather than materialising every
+        // item entity in the box and filtering after. Skip the player's own
+        // freshly-dropped items (40-tick pickup delay) so a Q-toss isn't yanked
+        // straight back; a partial set only acts on ferromagnetic items so the
+        // player isn't sweeping up grass and bones (a full set vacuums everything).
+        final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
+                item -> !item.hasPickUpDelay()
+                        && (fullSet || item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)));
         for (final ItemEntity item : nearby) {
-            // Skip the player's own freshly-dropped items so a Q-toss doesn't
-            // immediately get yanked back. Vanilla sets a 40-tick pickup
-            // delay on dropped stacks.
-            if (item.hasPickUpDelay()) continue;
-            // Non-full-set vacuum only acts on ferromagnetic items so a
-            // player in a partial set isn't sweeping up grass and bones.
-            if (!fullSet && !item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) continue;
-
             final Vec3 delta = item.position().subtract(origin);
             final double dist = delta.length();
             if (dist < 0.1d || dist > radius) continue;

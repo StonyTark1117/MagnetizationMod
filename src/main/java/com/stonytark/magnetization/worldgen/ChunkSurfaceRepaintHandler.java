@@ -65,6 +65,10 @@ public final class ChunkSurfaceRepaintHandler {
         final var server = event.getServer();
         if (server == null) return;
         if ((server.getTickCount() % SCAN_INTERVAL_TICKS) != 0) return;
+        // Nothing to repaint if neither custom biome is generating — skip the whole
+        // player×chunk sweep (and the SEEN growth) entirely on servers that disabled
+        // both biomes via config.
+        if (!AnomalyBiome.enabled() && !PetrifiedForestBiome.enabled()) return;
 
         int budget = MAX_CHUNKS_PER_TICK;
         for (final ServerLevel level : server.getAllLevels()) {
@@ -90,14 +94,17 @@ public final class ChunkSurfaceRepaintHandler {
                 // don't force a load we wouldn't have done anyway.
                 if (!level.hasChunk(pos.x, pos.z)) continue;
                 final LevelChunk chunk = level.getChunk(pos.x, pos.z);
-                if (paintIfRelevant(level, chunk)) {
-                    SEEN.add(key);
-                    budget--;
-                } else {
-                    // Chunk is loaded but didn't need painting (wrong biome)
-                    // — still mark seen so we don't keep re-checking it.
-                    SEEN.add(key);
-                }
+                // Examining a chunk is the expensive part — a full 16×16 column walk
+                // with a heightmap + biome lookup per column — whether or not it ends
+                // up painting (a wrong-biome chunk still walks every column before
+                // finding nothing to do). Charge the per-tick budget for every
+                // examination, not just successful paints, so dropping into a fresh
+                // region examines at most MAX_CHUNKS_PER_TICK chunks per tick instead
+                // of walking the whole render-distance neighborhood in one tick.
+                // Mark seen either way so it's a paint-once / examine-once gate.
+                paintIfRelevant(level, chunk);
+                SEEN.add(key);
+                budget--;
             }
         }
     }
@@ -112,6 +119,7 @@ public final class ChunkSurfaceRepaintHandler {
         final int minY = level.getMinBuildHeight();
         boolean modified = false;
 
+        final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int dx = 0; dx < 16; dx++) {
             for (int dz = 0; dz < 16; dz++) {
                 final int x = cp.getMinBlockX() + dx;
@@ -120,7 +128,7 @@ public final class ChunkSurfaceRepaintHandler {
                 int topY = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, x & 15, z & 15) - 1;
                 if (topY < minY + 1) continue;
                 // Walk up if a decoration sits above the heightmap top.
-                while (topY < maxY && !chunk.getBlockState(new BlockPos(x, topY + 1, z)).isAir()) {
+                while (topY < maxY && !chunk.getBlockState(cursor.set(x, topY + 1, z)).isAir()) {
                     topY++;
                 }
 

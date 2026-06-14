@@ -42,7 +42,32 @@ public final class MagClientRegistration {
             ClientEmitterEffects.touch();
             EmitterHumSound.touch();
             CompassPropertyHooks.install();
+            registerGunFiredProperty();
         });
+    }
+
+    /** Number of ticks the muzzle stays in its glowing-model state after a shot. */
+    private static final long GUN_GLOW_TICKS = 10L;
+
+    /** Registers the {@code magnetization:fired} item-model property on both guns.
+     *  It reads the {@link com.stonytark.magnetization.registry.MagDataComponents#FIRED_AT}
+     *  stamp and returns 1 for {@link #GUN_GLOW_TICKS} ticks after a shot, which the
+     *  model {@code overrides} use to swap to the glowing-muzzle variant. */
+    @SuppressWarnings("deprecation")
+    private static void registerGunFiredProperty() {
+        final net.minecraft.resources.ResourceLocation fired =
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("magnetization", "fired");
+        final net.minecraft.client.renderer.item.ClampedItemPropertyFunction fn = (stack, level, entity, seed) -> {
+            if (level == null) return 0.0f;
+            final Long firedAt = stack.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get());
+            if (firedAt == null) return 0.0f;
+            final long dt = level.getGameTime() - firedAt;
+            return (dt >= 0 && dt < GUN_GLOW_TICKS) ? 1.0f : 0.0f;
+        };
+        net.minecraft.client.renderer.item.ItemProperties.register(
+                com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get(), fired, fn);
+        net.minecraft.client.renderer.item.ItemProperties.register(
+                com.stonytark.magnetization.registry.MagItems.MAGNETIC_GRAPPLE.get(), fired, fn);
     }
 
     @SubscribeEvent

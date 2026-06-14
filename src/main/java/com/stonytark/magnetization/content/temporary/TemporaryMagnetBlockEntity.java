@@ -46,6 +46,12 @@ public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
         super(MagBlockEntities.TEMPORARY_MAGNET.get(), pos, state);
     }
 
+    /** Passive magnet — always on, never consumes redstone/FE. Suppresses the
+     *  power-source / energy-buffer tooltip lines so WTHIT / Jade / goggles don't
+     *  wrongly imply it can take power. */
+    @Override
+    protected boolean acceptsPower() { return false; }
+
     @Override
     protected @Nullable MagneticField computeField(final BlockState state) {
         // No redstone gate — Temporary Magnet is "always on" while alive.

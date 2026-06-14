@@ -1,0 +1,104 @@
+# Magnetization
+
+NeoForge 1.21.1 addon for Create: Aeronautics. Adds magnets that push and pull Sable ships, plus a stack of ores, tools, and items built around the same idea.
+
+## How it works
+
+Blocks emit a magnetic field with a polarity (NORTH or SOUTH), a strength tier (WEAK to EXTREME), and a shape (omnidirectional, directional, or conical). Like poles repel, opposite poles attract. Forces apply to:
+
+- Sable sub-levels (your Create: Aeronautics ships) inside the field
+- Iron golems, undead mobs, and players wearing metal armor
+- Dropped items tagged as ferromagnetic
+- Immersive Aircraft entities (Biplane, Airship, Quadrocopter, etc.) — velocity injection works directly
+
+Place magnets on the ground to influence sable contraptions (ships) and mobs/players wearing magnetically susceptible armor. Magnets on a ship contribute to its **susceptibility** (how strongly fields affect it) but never to its polarity — toggling a mounted electromagnet north↔south won't tear the contraption apart. Polarity comes from **Polarity Inverters** instead: zero on board = NORTH, one = SOUTH, two cancel back to NORTH, and so on.
+
+## Emitters
+
+- **Electromagnet** — redstone-powered omnidirectional pull. Also accepts FE/RF.
+- **Kinetic Electromagnet** — driven by Create rotation. Strength scales with RPM.
+- **Magnetic Anchor** — locks the first ship that enters its range. Persists across reload. Two anchors bound to the same ship damp angular velocity to keep an airship dock level instead of spinning.
+- **Repulsor Coil** — cone push along its facing. Place facing up for a hover pad, or sideways/down to build a tunnel that shoves ships through it.
+- **Tractor Beam Emitter** — directional pull along its facing.
+- **Magnetic Excavator** — continuous cone scan that pulls every ferromagnetic block in range. Each pulled block becomes its own Sable sub-level, tunnels through anything in the way, and dumps into adjacent inventories when it arrives. Slots for an enchanted tool (Fortune, Silk Touch) and a redstone fuel item.
+- **Permanent Magnet** — always-on weak field. Right-click to flip polarity. Pair between world and ship to build static propulsion tracks.
+- **Temporary Magnet** — same as Permanent but reverts to an iron block after 10 minutes. Cheap for short runs.
+- **Polarity Inverter** — flips the polarity of adjacent emitters. Two cancel.
+- **Magnetic Switch** — emits redstone proportional to the nearest ship's distance. Useful for auto-docking circuits.
+- **Lodestone Core** — crafting ingredient for every emitter.
+- **Pyrrhotite Block** — heat-activated. Inert on its own; broadcasts a NORTH field whose strength rises with the heat source applied to it. Pair with a **Pyrrhotite Catalyst** (tiered radius upgrades) to extend its heat-source detection range.
+- **Hematite Lens** — multiblock polarity filter. Caps an emitter and only lets one polarity through.
+- **Titanomagnetite Block + Imprint Module** — the block records a nearby emitter's full config (range, strength, shape, polarity); the hand-held Imprint Module captures the recording and projects it onto another emitter elsewhere. No manual re-tuning.
+
+## FE/RF as alternative power
+
+The five redstone-powered emitters (Electromagnet, Anchor, Repulsor Coil, Tractor Beam, Excavator) accept FE/RF from any tech mod — Mekanism, Thermal, Create: Crafts & Additions, IE generators, AE2, etc. No hard dep on any specific energy mod; FE is a NeoForge-native API. Redstone is free and takes priority; if redstone is off and energy is enabled, the emitter drains its internal buffer. Server admins can disable either power source separately for harder-mode servers.
+
+## Ores
+
+Five ferrous ore families, each with stone + deepslate variants:
+
+- **Magnetite** (Fe₃O₄) — backbone ore. Smelts 1:1 to Magnetite Ingot. Slowly oxidises to Maghemite when exposed to air (off by default).
+- **Maghemite** — oxidation product of magnetite. Found at mid-Y in stone.
+- **Pyrrhotite** — feeds the Pyrrhotite Block emitter.
+- **Hematite** — feeds the Hematite Lens multiblock.
+- **Titanomagnetite** — feeds the Titanomagnetite Block and Imprint Module.
+
+Plus **Ferromagnetic Ingot**, **Magnetic Plate**, and **Raw Magnetite** as shared crafting bases.
+
+## Player-held items
+
+- **Magnetic Grapple** — right-click an attractive field, susceptible ship, or magnetized entity within 24 blocks. You get yanked toward it. Mobile targets track each tick.
+- **Repulsor Gun** — hand-held conical pusher, paired with the Grapple. Right-click fires a one-tick pulse along your look: ships in the cone get pushed away, magnetized entities get knockback, items + falling blocks get nudged out. Self-recoil triggers when your shot lands on a magnetic emitter — closer = harder kickback. You can launch yourself off a lodestone.
+- **Field Compass** — vanilla-compass-style passive needle pointing at the nearest active emitter. HUD overlay above the hotbar shows bearing (cardinal + degrees), distance, polarity, and strength when held or worn in a Curios charm slot. Goes haywire inside the Anomaly biome.
+- **Cosmic Compass** — points at the nearest Meteorite Core.
+- **Magnetized armor and tools** — choose a polarity at an Electromagnet's GUI. Magnetized armor turns you into an item vacuum and changes how emitters interact with you.
+- **Magnetic Elytra** — ferrous elytra variant with a custom worn-cape texture.
+
+## Curios integration
+
+The mod ships its own Curios slots so you don't have to configure any. **Charm** for the Field Compass (passive — needle and HUD read the slot directly). **Back** for the Magnetic Grapple. **Hands** for the Repulsor Gun. The two active items have configurable keybinds under *Options → Controls → Key Binds → Magnetization*, default unbound.
+
+## Meteorite Cores
+
+Rare structures with a decaying magnetic field at the centre — same EXTREME → STRONG → WEAK → inert decay curve as a placed emitter. Right-click with any ferromagnetic item to consume it and reset the timer, turning a found meteorite into a permanent power source at the cost of an ongoing feed. **Meteorite Sapling** crafted from a fragment grows into a fresh core over ~30 in-game minutes. If **Applied Energistics 2** is installed, every AE2 meteor structure also emits the same decaying field — no extra blocks placed, AE2's sky_stone is untouched. Toggle in config.
+
+## LIRM (Lightning Induced Remnant Magnetism)
+
+A lightning bolt's transient magnetic field stamps polarity into nearby iron. Every bolt can magnetize one unstamped metal armor or tool piece on whoever it hits, and has a good chance of converting nearby logs to Petrified Wood. Stamps decay over 20 minutes. Cross-mod lightning sources (Iron's Spells, Cataclysm Scylla, Alex's Caves Tesla, IE Tesla Coil, Twilight Forest) trigger LIRM via a damage-type tag that datapacks can extend.
+
+## Biomes (off by default, enable in config)
+
+- **Magnetic Anomaly** — vanilla compass jitters. Field Compass scrambles. Emitters get a 1.5× strength bonus. A smooth random chaos field pushes ships, players, and items around (intensity configurable 0–10×). The surface is a hand-built Anomaly Stone palette (smooth + cobbled + stairs/slabs/walls), heavily veined with iron-oxide ores, **magnetic gravel** patches, and rare raw-magnetite outcrops.
+- **Petrified Forest** — cold, dry, full of stone trees and stripped trunks. Lightning permanently petrifies logs here too.
+
+Both biomes register their resources unconditionally, so `/locate biome magnetization:anomaly`, `/magnetization tp anomaly`, and `/place biome` keep working even when the biomes aren't generating naturally. A sparse **magnetic gravel** patch also generates in ~1-in-24 chunks across normal overworld biomes, so survival players who never visit an Anomaly biome can still find a small supply.
+
+## Patchouli Field Manual
+
+Craftable in-game guidebook covering basics, every emitter, ship polarity, and advanced topics. Three cheap recipes (Book + Raw Magnetite, Book + Iron Ingot, Book + Lodestone) so you can craft one from whatever you find first. Auto-given to new players on first login.
+
+## Integrations (all auto-detected)
+
+- **Create Goggles, Jade, WTHIT, The One Probe** — emitter readouts in tooltips and HUD overlays (range rings, anchor tethers, inverter connectors, excavator preview, ship polarity + susceptibility + ferrous-block count).
+- **JEI, REI, EMI, JER** — info pages on the ferromagnetic tag.
+- **Curios, Patchouli, Applied Energistics 2** — see above.
+- **Modded armor and tools** — Immersive Engineering (Steel + Faraday + Hammer + Wirecutter + Revolver + Railgun), Iron's Spells (iron/netherite-plated armor + Cultist/Executioner/Knight swords), Cataclysm (Ignitium kit + tool set), Alex's Caves (Hazmat suit), Mekanism (Steel armor + tools), Twilight Forest (knightmetal/steeleaf/ironwood/fiery sets) — all accept polarity stamps from the Electromagnet GUI and feed the magnetized-armor pull system.
+- **Ferromagnetic tag coverage for 25+ mods** — Magnetizing, Create: Magnetics, Simulated, Alex's Caves, Twilight Forest, Create: New Age, Create: Crafts & Additions, Mekanism, Aether, Iron Chests / Sophisticated Storage, **Immersive Engineering** (Tesla Coil, Floodlight, Transformers, Capacitors, plus the full steel/aluminum architecture line — fences, gates, posts, doors, trapdoors, catwalks, scaffolding, ladders, sheetmetal), Modular Golems / Extra Golems / Cataclysm bosses / Bosses of Mass Destruction, Quark Oretoises, Supplementaries, **Macaw's mods** (Doors / Fences / Lights / Bridges / Trapdoors / Windows — every metal variant), **Immersive Aircraft + Aviator Dreams** (all 15 aircraft entities + crafting components), and broader `c:` metal tag coverage (steel, nickel, cobalt, zinc, brass, tin, lead, silver, osmium, uranium, aluminum, neodymium, electrum, invar, constantan, bronze) so any tech mod populating those gets free integration.
+
+## Commands
+
+`/magnetization help` lists every subcommand with a one-line description. `/magnetization version`, `/magnetization stats`, `/magnetization config show [filter]`, `/magnetization tp <biome> [player]`, `/magnetization spawn_test_ship [size] [material]`, plus debug subcommands for energy buffers, Curios slots, ship rotation, and surface diagnostics.
+
+## Configuration
+
+Generated config GUI covers physics constants, ship polarity/susceptibility weights, per-emitter GUI ceilings, item cooldowns and ranges, FE/RF buffer sizes, magnetized-tool toggles, worldgen flavor passes, LIRM toggle, command op-level gates, cross-mod compat toggles, and a per-block content disable list. Server owners can lock down specific tiers and ranges to keep things sane on shared worlds.
+
+## Requirements
+
+- NeoForge 21.1.230+
+- Create 6.0.9+
+- Sable 1.2.2+
+- Create: Aeronautics 1.2.1+
+- Simulated 1.2.1+
+- TerraBlender 4.1.0.8+

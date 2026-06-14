@@ -97,6 +97,6 @@ public final class ShipMagneticRegistry {
     }
 
     private static long scanIntervalTicks() {
-        try { return MagConfig.SHIP_SCAN_INTERVAL_TICKS.get(); } catch (final Throwable t) { return 100L; }
+        try { return MagConfig.SHIP_SCAN_INTERVAL_TICKS.get(); } catch (final Throwable t) { return 20L; }
     }
 }

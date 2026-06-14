@@ -15,6 +15,12 @@ public class PermanentMagnetBlockEntity extends AbstractEmitterBlockEntity {
         super(MagBlockEntities.PERMANENT_MAGNET.get(), pos, state);
     }
 
+    /** Passive magnet — always on, never consumes redstone/FE. Suppresses the
+     *  power-source / energy-buffer lines in WTHIT / Jade / goggles tooltips,
+     *  which would otherwise wrongly imply it can take power. */
+    @Override
+    protected boolean acceptsPower() { return false; }
+
     @Override
     protected @Nullable MagneticField computeField(final BlockState state) {
         return new MagneticField(

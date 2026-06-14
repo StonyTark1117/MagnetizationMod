@@ -144,6 +144,23 @@ public final class FieldApplicator {
         // sparing every emitter the cost of queryIntersecting.
         if (container == null || container.getAllSubLevels().isEmpty()) return;
 
+        final long now = level.getGameTime();
+
+        // Expand the single host sub-level into every sub-level of its assembly, so
+        // an emitter on a multi-part craft (body + bearing/spring-mounted subgroups,
+        // each its own rigid body) doesn't pull on the rest of its own craft. Walked
+        // (and cached, per host) only when there's actually something built — hence
+        // after the empty-container fast path above. With the toggle off we fall back
+        // to the pre-1.1.4 behaviour of excluding only the host itself.
+        final java.util.Set<java.util.UUID> excludedIds;
+        if (exclude == null) {
+            excludedIds = null;
+        } else if (MagConfig.excludeConnectedSubLevels()) {
+            excludedIds = SableBridge.connectedChainIds(exclude, now);
+        } else {
+            excludedIds = java.util.Set.of(exclude.getUniqueId());
+        }
+
         final double range = field.range();
         final Vec3 origin = field.origin();
         final BoundingBox3d searchBox = new BoundingBox3d(
@@ -151,7 +168,6 @@ public final class FieldApplicator {
                 origin.x + range, origin.y + range, origin.z + range
         );
 
-        final long now = level.getGameTime();
         final double cap = maxAccelPerTick();
         final int steps = Math.max(1, shipSampleSteps());
         final double drag = shipLinearDrag();
@@ -172,7 +188,8 @@ public final class FieldApplicator {
         for (SubLevel sub : container.queryIntersecting(searchBox)) {
             if (diag) candidates++;
             if (diag && sub instanceof ServerSubLevel s) candidateIds.add(s.getUniqueId().toString().substring(0, 8));
-            if (!(sub instanceof ServerSubLevel server) || server == exclude) continue;
+            if (!(sub instanceof ServerSubLevel server)) continue;
+            if (excludedIds != null && excludedIds.contains(server.getUniqueId())) continue;
             // Reject phantom sub-levels: stale entries Sable's spatial index
             // can return after a shatter/unload. Applying velocity to one of
             // these crashes Rapier with "No rigid body for id".
@@ -379,11 +396,24 @@ public final class FieldApplicator {
         // set so that pass runs at all. Without this branch, the susceptibility
         // code would be unreachable for everything except tagged mobs.
         if (e instanceof LivingEntity living) {
+            final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
-                if (armor.is(MagTags.METAL_ARMOR)) return true;
+                if (!armor.is(MagTags.METAL_ARMOR)) continue;
+                // The magnetic elytra is an exception to armorReactsToFields:
+                // magnetic reaction is its core function (rail-riding), so it
+                // stays a candidate even when the toggle is off.
+                if (armorReacts || isMagneticElytra(armor)) return true;
             }
         }
         return false;
+    }
+
+    /** The magnetic elytra reacts to fields even when {@code armorReactsToFields}
+     *  is off. That toggle exists so incidental metal armor doesn't yank a player
+     *  around; it must not disable a deliberately-crafted magnetic item whose
+     *  whole purpose is to surf along magnetic rails. */
+    private static boolean isMagneticElytra(final ItemStack stack) {
+        return stack.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem;
     }
 
     private static double susceptibilityOf(final Entity e) {
@@ -430,8 +460,13 @@ public final class FieldApplicator {
         // identically. Used to be Player-only.
         if (e instanceof LivingEntity living) {
             final long now = living.level().getGameTime();
+            final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
                 if (!armor.is(MagTags.METAL_ARMOR)) continue;
+                // armorReactsToFields off → only the magnetic elytra still
+                // contributes, so plain armor won't yank the player but the
+                // elytra rail-ride keeps working.
+                if (!armorReacts && !isMagneticElytra(armor)) continue;
                 sum += PER_ARMOR_SUSCEPTIBILITY;
                 if (armor.has(MagDataComponents.ARMOR_POLARITY.get())) {
                     // Permanent stamps return strength=1.0; LIRM stamps decay from 1.0 → 0.0.

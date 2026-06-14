@@ -59,6 +59,68 @@ public final class SableBridge {
     }
 
     /**
+     * Collect the UUIDs of every sub-level connected to {@code host} through the
+     * Sable assembly graph — i.e. every part of the same Create: Aeronautics craft,
+     * including parts joined to it by bearings, springs and hinges (each of which is
+     * its own rigid body). Always includes {@code host} itself.
+     *
+     * <p>Used to keep an emitter from applying force to its own craft: excluding
+     * only the single sub-level the emitter sits on leaves the constraint-connected
+     * subgroups free to be yanked around, which fights the joints holding the craft
+     * together and can spike the physics solver.
+     *
+     * <p>{@link dev.ryanhcode.sable.api.SubLevelHelper#getConnectedChain} is
+     * {@code @ApiStatus.Internal}, so this is wrapped defensively: any failure
+     * (signature drift, early-load nulls) falls back to just the host's own id, which
+     * reproduces the pre-1.1.4 single-sub-level exclusion rather than throwing.
+     *
+     * <p>Cached per host with a short TTL: the chain only changes on
+     * assembly/disassembly, but a magnet-heavy craft has many emitters each calling
+     * this every tick — without the cache they'd all re-walk the same assembly graph
+     * and rebuild the same set every tick. The cache collapses that to one walk per
+     * craft per TTL window. A detach/attach is reflected within {@link #CHAIN_CACHE_TTL}
+     * ticks, which is harmless (a subgroup is briefly still-excluded or not-yet-excluded).
+     */
+    public static java.util.Set<java.util.UUID> connectedChainIds(final ServerSubLevel host, final long now) {
+        final java.util.UUID id = host.getUniqueId();
+        final ChainEntry cached = CHAIN_CACHE.get(id);
+        if (cached != null && now - cached.tick() < CHAIN_CACHE_TTL) return cached.ids();
+
+        final java.util.Set<java.util.UUID> ids = new java.util.HashSet<>();
+        ids.add(id);
+        try {
+            for (final SubLevel sub : dev.ryanhcode.sable.api.SubLevelHelper.getConnectedChain(host)) {
+                if (sub != null) ids.add(sub.getUniqueId());
+            }
+        } catch (final Throwable t) {
+            warnThrottled("connectedChainIds", t, host);
+        }
+        CHAIN_CACHE.put(id, new ChainEntry(ids, now));
+        pruneChainCacheIfDue(now);
+        return ids;
+    }
+
+    /** TTL (ticks) for the connected-chain cache. 20 = 1 s, mirroring the ship
+     *  magnetic-state scan interval. */
+    private static final long CHAIN_CACHE_TTL = 20L;
+    /** How long (ticks) a chain entry may go un-refreshed before it's pruned, so
+     *  destroyed/unloaded ships don't pin entries for the session. */
+    private static final long CHAIN_CACHE_EVICT = 600L;
+    private static final ConcurrentHashMap<java.util.UUID, ChainEntry> CHAIN_CACHE = new ConcurrentHashMap<>();
+    private static long lastChainPruneTick = 0L;
+
+    private record ChainEntry(java.util.Set<java.util.UUID> ids, long tick) {}
+
+    private static void pruneChainCacheIfDue(final long now) {
+        // Coarse full sweep (not every call) to bound the map: drop entries that
+        // haven't been refreshed within the evict window — i.e. ships no longer
+        // hosting an active emitter (destroyed, unloaded, or powered down).
+        if (now - lastChainPruneTick < CHAIN_CACHE_EVICT) return;
+        lastChainPruneTick = now;
+        CHAIN_CACHE.entrySet().removeIf(e -> now - e.getValue().tick() >= CHAIN_CACHE_EVICT);
+    }
+
+    /**
      * Transform a sub-level-local field into world space using a contraption's
      * current pose. Both the origin and the directional axis are rotated and
      * translated, so as the ship moves and rotates the field follows.
