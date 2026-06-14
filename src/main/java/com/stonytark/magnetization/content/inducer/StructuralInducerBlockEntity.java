@@ -13,6 +13,7 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -71,9 +72,12 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     /** True until a capture fires; re-armed on a fresh power cycle. */
     private boolean armed = true;
 
+    /** Default scan depth when no range override is dialed in. */
+    private static final int DEFAULT_DEPTH = 16;
+
     /** The in-flight lifted structure, if any. */
     private @Nullable UUID liftedShipId = null;
-    private double liftOriginY = 0.0d;
+    private Vec3 liftOrigin = Vec3.ZERO;
     private long liftStartTick = 0L;
     /** Captured world states, for restoring if Sable culls the ship mid-lift. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
@@ -130,12 +134,26 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         }
     }
 
-    /** Scan the box above, gate on clearance, assemble into one lifting ship. */
+    /** The direction the inducer grabs + pushes along (its facing; default up). */
+    private Direction facing() {
+        final BlockState s = getBlockState();
+        return s.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)
+                ? s.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING) : Direction.UP;
+    }
+
+    /** Scan depth, configurable via the emitter range setting (4..48). */
+    private int scanDepth() {
+        final int r = getRangeOverride();
+        return net.minecraft.util.Mth.clamp(r > 0 ? r : DEFAULT_DEPTH, 4, 48);
+    }
+
+    /** Scan the box in front of the facing, gate on clearance, assemble + launch. */
     private void tryCapture(final ServerLevel server) {
-        final List<BlockPos> positions = collectStructure(server);
+        final Direction facing = facing();
+        final List<BlockPos> positions = collectStructure(server, facing);
         if (positions.isEmpty()) return;
-        if (!hasClearanceAbove(server, positions)) {
-            // Capped by a ceiling — can't lift cleanly. Buzz and bail.
+        if (!hasClearance(server, positions, facing)) {
+            // Capped by a wall ahead — can't push out cleanly. Buzz and bail.
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_BREAK, SoundSource.BLOCKS, 0.5f, 0.7f);
             return;
         }
@@ -161,7 +179,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                 return;
             }
             liftedShipId = ship.getUniqueId();
-            liftOriginY = ship.logicalPose().position().y();
+            final var op = ship.logicalPose().position();
+            liftOrigin = new Vec3(op.x(), op.y(), op.z());
             liftStartTick = server.getGameTime();
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
@@ -173,7 +192,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         }
     }
 
-    /** Drive the captured ship upward until it clears the ground, then release. */
+    /** Drive the captured ship along the facing until it clears, then release. */
     private void driveLift(final ServerLevel server) {
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) { liftedShipId = null; captured.clear(); return; }
@@ -185,30 +204,52 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
             captured.clear();
             return;
         }
+        final Direction facing = facing();
+        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
         final var shipPos = ship.logicalPose().position();
-        final double risen = shipPos.y() - liftOriginY;
-        if (risen >= LIFT_HEIGHT || server.getGameTime() - liftStartTick > LIFT_TIMEOUT_TICKS) {
-            // Cleared the ground — let it float free.
+        final double moved = (shipPos.x() - liftOrigin.x) * dir.x
+                + (shipPos.y() - liftOrigin.y) * dir.y
+                + (shipPos.z() - liftOrigin.z) * dir.z;
+        if (moved >= LIFT_HEIGHT || server.getGameTime() - liftStartTick > LIFT_TIMEOUT_TICKS) {
+            // Cleared — let it float free.
             liftedShipId = null;
             captured.clear();
             return;
         }
-        if (ship.latestLinearVelocity.y < MAX_LIFT_SPEED) {
+        final var v = ship.latestLinearVelocity;
+        final double along = v.x * dir.x + v.y * dir.y + v.z * dir.z;
+        if (along < MAX_LIFT_SPEED) {
             final double mass = Math.max(0.0001, ship.getMassTracker().getMass());
-            final Vec3 impulse = new Vec3(0.0d, LIFT_ACCEL * mass, 0.0d);
+            final Vec3 impulse = new Vec3(dir.x * LIFT_ACCEL * mass, dir.y * LIFT_ACCEL * mass, dir.z * LIFT_ACCEL * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
         }
     }
 
-    /** Solid blocks in the box directly above the inducer, bottom-up, capped. */
-    private List<BlockPos> collectStructure(final ServerLevel server) {
+    /** Offset perpendicular to the scan axis, for a given (u,v) in the face plane. */
+    private static BlockPos cellAt(final BlockPos origin, final Direction facing, final int d,
+                                   final int u, final int v, final BlockPos.MutableBlockPos cursor) {
+        final int dx, dy, dz;
+        switch (facing.getAxis()) {
+            case X -> { dx = 0; dy = u; dz = v; }
+            case Y -> { dx = u; dy = 0; dz = v; }
+            default -> { dx = u; dy = v; dz = 0; }
+        }
+        cursor.set(origin.getX() + facing.getStepX() * d + dx,
+                   origin.getY() + facing.getStepY() * d + dy,
+                   origin.getZ() + facing.getStepZ() * d + dz);
+        return cursor;
+    }
+
+    /** Solid blocks in the box ahead of the facing, near-first, capped. */
+    private List<BlockPos> collectStructure(final ServerLevel server, final Direction facing) {
         final BlockPos origin = getBlockPos();
+        final int depth = scanDepth();
         final List<BlockPos> out = new ArrayList<>();
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int dy = 1; dy <= SCAN_HEIGHT && out.size() < MAX_BLOCKS; dy++) {
-            for (int dx = -SCAN_RADIUS; dx <= SCAN_RADIUS; dx++) {
-                for (int dz = -SCAN_RADIUS; dz <= SCAN_RADIUS; dz++) {
-                    cursor.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
+        for (int d = 1; d <= depth && out.size() < MAX_BLOCKS; d++) {
+            for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
+                for (int v = -SCAN_RADIUS; v <= SCAN_RADIUS; v++) {
+                    cellAt(origin, facing, d, u, v, cursor);
                     if (!isGrabbable(server, cursor)) continue;
                     out.add(cursor.immutable());
                     if (out.size() >= MAX_BLOCKS) return out;
@@ -228,15 +269,20 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         return true;
     }
 
-    /** True if the layer directly above the captured structure's top is all air. */
-    private boolean hasClearanceAbove(final ServerLevel server, final List<BlockPos> positions) {
-        int maxY = Integer.MIN_VALUE;
-        for (final BlockPos p : positions) maxY = Math.max(maxY, p.getY());
+    /** True if the layer just beyond the structure's far face (along facing) is clear. */
+    private boolean hasClearance(final ServerLevel server, final List<BlockPos> positions, final Direction facing) {
         final BlockPos origin = getBlockPos();
+        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
+        int maxAlong = 0;
+        for (final BlockPos p : positions) {
+            final int along = (int) Math.round((p.getX() - origin.getX()) * dir.x
+                    + (p.getY() - origin.getY()) * dir.y + (p.getZ() - origin.getZ()) * dir.z);
+            maxAlong = Math.max(maxAlong, along);
+        }
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int dx = -SCAN_RADIUS; dx <= SCAN_RADIUS; dx++) {
-            for (int dz = -SCAN_RADIUS; dz <= SCAN_RADIUS; dz++) {
-                cursor.set(origin.getX() + dx, maxY + 1, origin.getZ() + dz);
+        for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
+            for (int v = -SCAN_RADIUS; v <= SCAN_RADIUS; v++) {
+                cellAt(origin, facing, maxAlong + 1, u, v, cursor);
                 final BlockState bs = server.getBlockState(cursor);
                 if (!bs.isAir() && bs.getFluidState().isEmpty()) return false;
             }
