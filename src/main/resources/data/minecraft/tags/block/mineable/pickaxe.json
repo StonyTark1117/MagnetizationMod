@@ -7,6 +7,7 @@
     "magnetization:titanomagnetite_anvil",
     "magnetization:tokamak_coil",
     "magnetization:tokamak_controller",
-    "magnetization:structural_inducer"
+    "magnetization:structural_inducer",
+    "magnetization:homopolar_motor"
   ]
 }

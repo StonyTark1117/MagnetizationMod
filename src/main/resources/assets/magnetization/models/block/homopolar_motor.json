@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "magnetization:block/homopolar_motor_end",
+    "side": "magnetization:block/homopolar_motor_side"
+  }
+}

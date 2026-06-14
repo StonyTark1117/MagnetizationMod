@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "magnetization:block/homopolar_motor"
+    },
+    "axis=z": {
+      "model": "magnetization:block/homopolar_motor_horizontal",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "magnetization:block/homopolar_motor_horizontal",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

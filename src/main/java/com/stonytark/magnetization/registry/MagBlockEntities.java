@@ -116,6 +116,14 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlockEntity::new, MagBlocks.MAGNETIC_ITEM_FRAME.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity>> HOMOPOLAR_MOTOR =
+            REGISTER.register("homopolar_motor", () -> BlockEntityType.Builder
+                    .<com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity>of(
+                            (pos, state) -> new com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity(
+                                    MagBlockEntities.HOMOPOLAR_MOTOR.get(), pos, state),
+                            MagBlocks.HOMOPOLAR_MOTOR.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.inducer.StructuralInducerBlockEntity>> STRUCTURAL_INDUCER =
             REGISTER.register("structural_inducer", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.inducer.StructuralInducerBlockEntity::new, MagBlocks.STRUCTURAL_INDUCER.get())
