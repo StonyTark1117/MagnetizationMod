@@ -112,7 +112,7 @@ public final class MagArmorMaterials {
                         Holder.direct(SoundEvents.ARMOR_EQUIP_LEATHER.value()),
                         () -> Ingredient.of(MagItems.MR_FLUID_BUCKET.get()),
                         List.of(new ArmorMaterial.Layer(
-                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "maghemite"),
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "mr_liquid"),
                                 "",
                                 false)),
                         0.0f,

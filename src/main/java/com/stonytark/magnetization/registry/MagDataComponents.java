@@ -65,6 +65,16 @@ public final class MagDataComponents {
                             .persistent(Codec.LONG)
                             .networkSynchronized(ByteBufCodecs.VAR_LONG));
 
+    /** Game-tick until which a piece of MR Liquid Armor stays "hardened" after
+     *  absorbing a hit. Drives the client-side {@code hardened} item-model
+     *  property (swaps the fluid icon for the rigid-plate variant) and is set by
+     *  {@code MrArmorHandler} on each mitigated impact. Network-synced. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>>
+            HARDENED_UNTIL = register("hardened_until",
+                    builder -> builder
+                            .persistent(Codec.LONG)
+                            .networkSynchronized(ByteBufCodecs.VAR_LONG));
+
     /** Block id the Ore Dowsing Compass is tuned to (set by anvil-combining it
      *  with a metallic ore). Absent = tracks any metallic ore. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.resources.ResourceLocation>>

@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "magnetization:item/mr_liquid_leggings"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "magnetization:hardened": 1
+      },
+      "model": "magnetization:item/mr_liquid_leggings_hardened"
+    }
+  ]
 }

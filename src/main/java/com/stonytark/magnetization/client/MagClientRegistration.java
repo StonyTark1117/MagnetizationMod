@@ -79,6 +79,7 @@ public final class MagClientRegistration {
             EmitterHumSound.touch();
             CompassPropertyHooks.install();
             registerGunFiredProperty();
+            registerArmorHardenedProperty();
         });
     }
 
@@ -104,6 +105,28 @@ public final class MagClientRegistration {
                 com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get(), fired, fn);
         net.minecraft.client.renderer.item.ItemProperties.register(
                 com.stonytark.magnetization.registry.MagItems.MAGNETIC_GRAPPLE.get(), fired, fn);
+    }
+
+    /** {@code magnetization:hardened} = 1 while an MR Liquid Armor piece is within
+     *  its post-hit hardened window (see {@code MrArmorHandler}); the model
+     *  {@code overrides} swap to the rigid-plate icon. */
+    @SuppressWarnings("deprecation")
+    private static void registerArmorHardenedProperty() {
+        final net.minecraft.resources.ResourceLocation hardened =
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("magnetization", "hardened");
+        final net.minecraft.client.renderer.item.ClampedItemPropertyFunction fn = (stack, level, entity, seed) -> {
+            if (level == null) return 0.0f;
+            final Long until = stack.get(com.stonytark.magnetization.registry.MagDataComponents.HARDENED_UNTIL.get());
+            return (until != null && level.getGameTime() < until) ? 1.0f : 0.0f;
+        };
+        for (final var armor : new net.neoforged.neoforge.registries.DeferredItem[]{
+                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_HELMET,
+                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_CHESTPLATE,
+                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_LEGGINGS,
+                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_BOOTS}) {
+            net.minecraft.client.renderer.item.ItemProperties.register(
+                    (net.minecraft.world.item.Item) armor.get(), hardened, fn);
+        }
     }
 
     @SubscribeEvent
