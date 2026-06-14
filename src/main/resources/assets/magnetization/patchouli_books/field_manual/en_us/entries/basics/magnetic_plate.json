@@ -3,7 +3,17 @@
   "icon": "magnetization:magnetic_plate",
   "category": "magnetization:basics",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_plate", "text": "book.magnetization.entry.magnetic_plate.spotlight" },
-    { "type": "patchouli:crafting", "recipe": "magnetization:magnetic_plate", "title": "book.magnetization.entry.magnetic_plate.recipe.title", "text": "book.magnetization.entry.magnetic_plate.recipe.text" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:magnetic_plate",
+      "text": "book.magnetization.entry.magnetic_plate.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:magnetic_plate",
+      "title": "book.magnetization.entry.magnetic_plate.recipe.title",
+      "text": "book.magnetization.entry.magnetic_plate.recipe.text"
+    }
   ]
 }

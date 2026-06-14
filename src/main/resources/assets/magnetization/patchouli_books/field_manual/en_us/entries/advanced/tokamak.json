@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.tokamak.name",
   "icon": "magnetization:tokamak_controller",
-  "category": "magnetization:advanced",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:tokamak_controller",
-      "text": "book.magnetization.entry.tokamak.spotlight"
+      "text": "book.magnetization.entry.tokamak.spotlight",
+      "link_recipe": true
     }
   ]
 }

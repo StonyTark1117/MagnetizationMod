@@ -198,6 +198,9 @@ public final class MagConfig {
     /** Lenz-effect eddy-current braking strength on magnetic ships over conductive
      *  (copper/aluminium) blocks. 0 disables; 1.0 = default. */
     public static final ModConfigSpec.DoubleValue LENZ_BRAKING_STRENGTH;
+    /** Solar Sail thrust factor at night (day = full). 0 = sail does nothing at
+     *  night; 0.5 = half power. Server-controlled — replaces a per-panel toggle. */
+    public static final ModConfigSpec.DoubleValue SOLAR_SAIL_NIGHT_FACTOR;
 
     static {
         // Two builders: `b` accumulates the COMMON (global, main-menu-editable)
@@ -446,6 +449,14 @@ public final class MagConfig {
                          "on right-click.")
                 .translation("magnetization.configuration.content.blockPlacementFirst")
                 .define("blockPlacementFirst", true);
+
+        SOLAR_SAIL_NIGHT_FACTOR = b
+                .comment("Magnetosphere Solar Sail thrust at night, as a fraction of daytime thrust.",
+                         "Daytime is always full power. 0.0 = sails are inert at night; 0.5 (default)",
+                         "= half power (the craft still gets some pull from Earth's field).",
+                         "Replaces the old per-panel right-click night toggle.")
+                .translation("magnetization.configuration.content.solarSailNightFactor")
+                .defineInRange("solarSailNightFactor", 0.5d, 0.0d, 1.0d);
 
         MAGNETITE_OXIDATION_ENABLED = b
                 .comment("Master switch for the magnetite → maghemite passive inventory decay.",
@@ -897,6 +908,10 @@ public final class MagConfig {
     }
 
     /** @return Lenz eddy-current braking strength (0 = off, 1 = default). */
+    public static double solarSailNightFactor() {
+        try { return SOLAR_SAIL_NIGHT_FACTOR.get(); } catch (final Throwable t) { return 0.5d; }
+    }
+
     public static double lenzBrakingStrength() {
         try { return LENZ_BRAKING_STRENGTH.get(); } catch (final Throwable t) { return 1.0d; }
     }

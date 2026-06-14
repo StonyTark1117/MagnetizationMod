@@ -32,17 +32,8 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
     private static final double MAX_SAIL_SPEED = 1.6;  // terminal cruising speed
     private static final double NIGHT_FACTOR = 0.5;
 
-    private boolean nightDisabled = false;
-
     public SolarSailBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.SOLAR_SAIL.get(), pos, state);
-    }
-
-    public boolean isNightDisabled() { return nightDisabled; }
-
-    public void toggleNightDisabled() {
-        nightDisabled = !nightDisabled;
-        setChanged();
     }
 
     /** Sable drives this when the panel is part of a moving sub-level. */
@@ -51,7 +42,9 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
         if (!(level instanceof ServerLevel server)) return;
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
 
-        final double dayFactor = server.isDay() ? 1.0 : (nightDisabled ? 0.0 : NIGHT_FACTOR);
+        // Day = full; night = server-config fraction (default 0.5, 0 disables).
+        final double dayFactor = server.isDay() ? 1.0
+                : com.stonytark.magnetization.config.MagConfig.solarSailNightFactor();
         if (dayFactor <= 0.0) return;
         // More effective the higher you fly; never fully zero at sea level.
         final double altFactor = Mth.clamp(0.3 + (getBlockPos().getY() - 64) / 256.0, 0.3, 1.5);
@@ -63,25 +56,14 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
 
         final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
                 ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.NORTH;
+        // Thrust OUT of the ribboned front face — the ship sails the way the front
+        // points, which is opposite the FACING normal (FACING points into the
+        // surface the panel was placed against). FACING is in the ship-local frame.
         final Vec3i n = facing.getNormal();
         final double f = BASE_FORCE * dayFactor * altFactor;
-        // FACING is in the ship's local frame, so a local-frame force needs no
-        // rotation; apply at the centre of mass for pure forward thrust (no spin).
         final Vector3dc com = host.getMassTracker().getCenterOfMass();
         SableBridge.applyLocalImpulse(host,
                 new Vector3d(com.x(), com.y(), com.z()),
-                new Vector3d(n.getX() * f, n.getY() * f, n.getZ() * f));
-    }
-
-    @Override
-    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("NightOff", nightDisabled);
-    }
-
-    @Override
-    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        nightDisabled = tag.getBoolean("NightOff");
+                new Vector3d(-n.getX() * f, -n.getY() * f, -n.getZ() * f));
     }
 }

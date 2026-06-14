@@ -759,5 +759,18 @@
   "tooltip.magnetization.mr_fluid.use": "Magnetorheological fluid: flows like a liquid, but a redstone signal stiffens it to a walkable solid.",
   "tooltip.magnetization.petrified_wood.use": "Weakly ferromagnetic wood from the Petrified Forest — faintly tugged by fields.",
   "tooltip.magnetization.magnetic_anvil.use": "A self-dampened anvil (no clang). Per-metal durability — titanomagnetite never degrades.",
-  "tooltip.magnetization.tokamak_status": "%s — Fuel: %ss — Energy: %s FE"
+  "tooltip.magnetization.tokamak_status": "%s — Fuel: %ss — Energy: %s FE",
+  "book.magnetization.category.machines.name": "Machines & Tech",
+  "book.magnetization.category.machines.desc": "Automation: generators, sensors, RNG, the tokamak, and the structural inducer.",
+  "book.magnetization.category.propulsion.name": "Propulsion",
+  "book.magnetization.category.propulsion.desc": "Move your ships: repulsor tracks, Lenz braking, jets, thrusters, and sails.",
+  "book.magnetization.category.fluids.name": "Fluids",
+  "book.magnetization.category.fluids.desc": "Ferrofluid, magnetized ferrofluid, and magnetorheological fluid.",
+  "book.magnetization.category.gear.name": "Gear & Utility",
+  "book.magnetization.category.gear.desc": "Wearables, the ore compass, item frame, anvils, and diamagnetic tricks.",
+  "tooltip.magnetization.tokamak_fusing": "Fusing",
+  "tooltip.magnetization.tokamak_no_ring": "Needs an 8-coil confinement ring",
+  "tooltip.magnetization.tokamak_no_fuel": "Ringed — load a Deuterium Cell",
+  "tooltip.magnetization.tokamak_fuel": "Fuel: %ss",
+  "tooltip.magnetization.tokamak_energy": "Energy: %s FE"
 }

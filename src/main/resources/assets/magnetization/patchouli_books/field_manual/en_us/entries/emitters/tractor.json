@@ -3,6 +3,11 @@
   "icon": "magnetization:tractor_beam",
   "category": "magnetization:emitters",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:tractor_beam", "text": "book.magnetization.entry.tractor.spotlight" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:tractor_beam",
+      "text": "book.magnetization.entry.tractor.spotlight",
+      "link_recipe": true
+    }
   ]
 }

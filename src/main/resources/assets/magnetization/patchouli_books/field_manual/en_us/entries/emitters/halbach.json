@@ -6,7 +6,8 @@
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:permanent_magnet",
-      "text": "book.magnetization.entry.halbach.spotlight"
+      "text": "book.magnetization.entry.halbach.spotlight",
+      "link_recipe": true
     }
   ]
 }

@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.magnetoresistive_boots.name",
   "icon": "magnetization:magnetoresistive_boots",
-  "category": "magnetization:advanced",
+  "category": "magnetization:gear",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:magnetoresistive_boots",
-      "text": "book.magnetization.entry.magnetoresistive_boots.spotlight"
+      "text": "book.magnetization.entry.magnetoresistive_boots.spotlight",
+      "link_recipe": true
     }
   ]
 }

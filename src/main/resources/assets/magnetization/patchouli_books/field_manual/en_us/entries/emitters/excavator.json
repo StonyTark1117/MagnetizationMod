@@ -3,7 +3,16 @@
   "icon": "magnetization:magnetic_excavator",
   "category": "magnetization:emitters",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_excavator", "text": "book.magnetization.entry.excavator.spotlight" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.excavator.fuel.title", "text": "book.magnetization.entry.excavator.fuel.text" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:magnetic_excavator",
+      "text": "book.magnetization.entry.excavator.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.excavator.fuel.title",
+      "text": "book.magnetization.entry.excavator.fuel.text"
+    }
   ]
 }

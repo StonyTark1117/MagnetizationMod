@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.ore_compass.name",
   "icon": "magnetization:ore_compass",
-  "category": "magnetization:advanced",
+  "category": "magnetization:gear",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:ore_compass",
-      "text": "book.magnetization.entry.ore_compass.spotlight"
+      "text": "book.magnetization.entry.ore_compass.spotlight",
+      "link_recipe": true
     }
   ]
 }

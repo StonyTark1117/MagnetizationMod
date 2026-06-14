@@ -1,0 +1,6 @@
+{
+  "name": "book.magnetization.category.fluids.name",
+  "description": "book.magnetization.category.fluids.desc",
+  "icon": "magnetization:ferrofluid_bucket",
+  "sortnum": 4
+}

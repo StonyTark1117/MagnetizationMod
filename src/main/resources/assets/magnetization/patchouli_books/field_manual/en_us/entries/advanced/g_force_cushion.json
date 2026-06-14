@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.g_force_cushion.name",
   "icon": "magnetization:g_force_cushion",
-  "category": "magnetization:advanced",
+  "category": "magnetization:gear",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:g_force_cushion",
-      "text": "book.magnetization.entry.g_force_cushion.spotlight"
+      "text": "book.magnetization.entry.g_force_cushion.spotlight",
+      "link_recipe": true
     }
   ]
 }

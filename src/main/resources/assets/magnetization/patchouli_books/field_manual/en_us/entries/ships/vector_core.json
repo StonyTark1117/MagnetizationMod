@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.vector_core.name",
   "icon": "magnetization:vector_core",
-  "category": "magnetization:ships",
+  "category": "magnetization:propulsion",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:vector_core",
-      "text": "book.magnetization.entry.vector_core.spotlight"
+      "text": "book.magnetization.entry.vector_core.spotlight",
+      "link_recipe": true
     }
   ]
 }

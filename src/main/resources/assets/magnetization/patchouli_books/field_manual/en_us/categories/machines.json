@@ -1,0 +1,6 @@
+{
+  "name": "book.magnetization.category.machines.name",
+  "description": "book.magnetization.category.machines.desc",
+  "icon": "magnetization:tokamak_controller",
+  "sortnum": 2
+}

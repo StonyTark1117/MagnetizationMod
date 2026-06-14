@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.induction_pad.name",
   "icon": "magnetization:induction_pad",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:induction_pad",
-      "text": "book.magnetization.entry.induction_pad.spotlight"
+      "text": "book.magnetization.entry.induction_pad.spotlight",
+      "link_recipe": true
     }
   ]
 }

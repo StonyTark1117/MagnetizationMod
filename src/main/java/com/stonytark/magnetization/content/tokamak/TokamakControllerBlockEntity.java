@@ -51,10 +51,15 @@ public class TokamakControllerBlockEntity extends BlockEntity implements Magneti
     @Override
     public java.util.List<net.minecraft.network.chat.Component> extraTooltipLines(final boolean verbose) {
         final boolean ringed = level != null && isRingFormed(level, getBlockPos());
-        final String state = burnTime > 0 ? (ringed ? "fusing" : "fuelled (no ring)") : "idle";
-        return java.util.List.of(net.minecraft.network.chat.Component.translatable(
-                "tooltip.magnetization.tokamak_status", state, burnTime / 20, energy.getEnergyStored())
-                .withStyle(ChatFormatting.GRAY));
+        final var status = ringed
+                ? (burnTime > 0
+                    ? net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_fusing").withStyle(ChatFormatting.GREEN)
+                    : net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_no_fuel").withStyle(ChatFormatting.YELLOW))
+                : net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_no_ring").withStyle(ChatFormatting.RED);
+        return java.util.List.of(
+                status,
+                net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_fuel", burnTime / 20).withStyle(ChatFormatting.GRAY),
+                net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_energy", energy.getEnergyStored()).withStyle(ChatFormatting.GRAY));
     }
 
     public IEnergyStorage energyBuffer() {

@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.alfven_backpack.name",
   "icon": "magnetization:alfven_backpack",
-  "category": "magnetization:ships",
+  "category": "magnetization:propulsion",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:alfven_backpack",
-      "text": "book.magnetization.entry.alfven_backpack.spotlight"
+      "text": "book.magnetization.entry.alfven_backpack.spotlight",
+      "link_recipe": true
     }
   ]
 }

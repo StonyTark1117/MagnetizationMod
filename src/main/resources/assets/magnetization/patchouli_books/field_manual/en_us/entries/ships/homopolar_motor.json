@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.homopolar_motor.name",
   "icon": "magnetization:homopolar_motor",
-  "category": "magnetization:ships",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:homopolar_motor",
-      "text": "book.magnetization.entry.homopolar_motor.spotlight"
+      "text": "book.magnetization.entry.homopolar_motor.spotlight",
+      "link_recipe": true
     }
   ]
 }

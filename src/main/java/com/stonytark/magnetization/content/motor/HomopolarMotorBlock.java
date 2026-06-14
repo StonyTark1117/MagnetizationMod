@@ -51,7 +51,8 @@ public final class HomopolarMotorBlock extends KineticBlock implements IBE<Homop
 
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
-        return defaultBlockState().setValue(AXIS, context.getClickedFace().getAxis());
+        // Orient the shaft along the player's view so a socket faces them.
+        return defaultBlockState().setValue(AXIS, context.getHorizontalDirection().getAxis());
     }
 
     @Override

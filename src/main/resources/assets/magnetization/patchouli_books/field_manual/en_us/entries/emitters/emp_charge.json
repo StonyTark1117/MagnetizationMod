@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.emp_charge.name",
   "icon": "magnetization:emp_charge",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:emp_charge",
-      "text": "book.magnetization.entry.emp_charge.spotlight"
+      "text": "book.magnetization.entry.emp_charge.spotlight",
+      "link_recipe": true
     }
   ]
 }

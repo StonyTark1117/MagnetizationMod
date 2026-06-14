@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.mhd_jet.name",
   "icon": "magnetization:mhd_jet",
-  "category": "magnetization:ships",
+  "category": "magnetization:propulsion",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:mhd_jet",
-      "text": "book.magnetization.entry.mhd_jet.spotlight"
+      "text": "book.magnetization.entry.mhd_jet.spotlight",
+      "link_recipe": true
     }
   ]
 }

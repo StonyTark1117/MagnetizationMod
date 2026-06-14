@@ -1,0 +1,6 @@
+{
+  "name": "book.magnetization.category.propulsion.name",
+  "description": "book.magnetization.category.propulsion.desc",
+  "icon": "magnetization:mhd_jet",
+  "sortnum": 3
+}

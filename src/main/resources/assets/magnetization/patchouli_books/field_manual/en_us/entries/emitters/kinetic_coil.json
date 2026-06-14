@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.kinetic_coil.name",
   "icon": "magnetization:kinetic_coil",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:kinetic_coil",
-      "text": "book.magnetization.entry.kinetic_coil.spotlight"
+      "text": "book.magnetization.entry.kinetic_coil.spotlight",
+      "link_recipe": true
     }
   ]
 }

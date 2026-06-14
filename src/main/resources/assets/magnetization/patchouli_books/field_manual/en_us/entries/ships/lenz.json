@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.lenz.name",
   "icon": "minecraft:copper_block",
-  "category": "magnetization:ships",
+  "category": "magnetization:propulsion",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:copper_block",
-      "text": "book.magnetization.entry.lenz.spotlight"
+      "text": "book.magnetization.entry.lenz.spotlight",
+      "link_recipe": true
     }
   ]
 }

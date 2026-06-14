@@ -3,7 +3,16 @@
   "icon": "magnetization:magnetic_switch",
   "category": "magnetization:emitters",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_switch", "text": "book.magnetization.entry.magnetic_switch.spotlight" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.magnetic_switch.usage.title", "text": "book.magnetization.entry.magnetic_switch.usage.text" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:magnetic_switch",
+      "text": "book.magnetization.entry.magnetic_switch.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.magnetic_switch.usage.title",
+      "text": "book.magnetization.entry.magnetic_switch.usage.text"
+    }
   ]
 }

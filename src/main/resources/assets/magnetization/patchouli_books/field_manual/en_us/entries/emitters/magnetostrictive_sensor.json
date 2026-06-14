@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.magnetostrictive_sensor.name",
   "icon": "magnetization:magnetostrictive_sensor",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:magnetostrictive_sensor",
-      "text": "book.magnetization.entry.magnetostrictive_sensor.spotlight"
+      "text": "book.magnetization.entry.magnetostrictive_sensor.spotlight",
+      "link_recipe": true
     }
   ]
 }

@@ -3,7 +3,17 @@
   "icon": "magnetization:field_compass",
   "category": "magnetization:advanced",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:field_compass", "text": "book.magnetization.entry.compass_grapple.compass" },
-    { "type": "patchouli:spotlight", "item": "magnetization:magnetic_grapple", "text": "book.magnetization.entry.compass_grapple.grapple" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:field_compass",
+      "text": "book.magnetization.entry.compass_grapple.compass",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:magnetic_grapple",
+      "text": "book.magnetization.entry.compass_grapple.grapple",
+      "link_recipe": true
+    }
   ]
 }

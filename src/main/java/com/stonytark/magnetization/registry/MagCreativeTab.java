@@ -23,38 +23,41 @@ public final class MagCreativeTab {
                     .title(Component.translatable("itemGroup.magnetization"))
                     .icon(() -> new ItemStack(MagItems.LODESTONE_CORE.get()))
                     .displayItems((params, output) -> {
-                        // ── Ores, raw drops, ingots & storage blocks (by metal family) ──
+                        // ── Ores (all metals, stone + deepslate) ──
                         accept(output, MagItems.MAGNETITE_ORE);
                         accept(output, MagItems.DEEPSLATE_MAGNETITE_ORE);
-                        accept(output, MagItems.RAW_MAGNETITE);
-                        accept(output, MagItems.RAW_MAGNETITE_BLOCK);
-                        accept(output, MagItems.MAGNETITE_INGOT);
-                        accept(output, MagItems.MAGNETITE_BLOCK);
-                        accept(output, MagItems.FERROMAGNETIC_INGOT);
                         accept(output, MagItems.MAGHEMITE_ORE);
                         accept(output, MagItems.DEEPSLATE_MAGHEMITE_ORE);
-                        accept(output, MagItems.RAW_MAGHEMITE);
-                        accept(output, MagItems.RAW_MAGHEMITE_BLOCK);
-                        accept(output, MagItems.MAGHEMITE_INGOT);
-                        accept(output, MagItems.MAGHEMITE_BLOCK);
                         accept(output, MagItems.PYRRHOTITE_ORE);
                         accept(output, MagItems.DEEPSLATE_PYRRHOTITE_ORE);
-                        accept(output, MagItems.RAW_PYRRHOTITE);
-                        accept(output, MagItems.RAW_PYRRHOTITE_BLOCK);
-                        accept(output, MagItems.PYRRHOTITE_INGOT);
-                        accept(output, MagItems.PYRRHOTITE_BLOCK);
                         accept(output, MagItems.HEMATITE_ORE);
                         accept(output, MagItems.DEEPSLATE_HEMATITE_ORE);
-                        accept(output, MagItems.RAW_HEMATITE);
-                        accept(output, MagItems.RAW_HEMATITE_BLOCK);
-                        accept(output, MagItems.HEMATITE_INGOT);
-                        accept(output, MagItems.HEMATITE_BLOCK);
                         accept(output, MagItems.TITANOMAGNETITE_ORE);
                         accept(output, MagItems.DEEPSLATE_TITANOMAGNETITE_ORE);
+                        // ── Raw drops ──
+                        accept(output, MagItems.RAW_MAGNETITE);
+                        accept(output, MagItems.RAW_MAGHEMITE);
+                        accept(output, MagItems.RAW_PYRRHOTITE);
+                        accept(output, MagItems.RAW_HEMATITE);
                         accept(output, MagItems.RAW_TITANOMAGNETITE);
-                        accept(output, MagItems.RAW_TITANOMAGNETITE_BLOCK);
+                        // ── Ingots ──
+                        accept(output, MagItems.MAGNETITE_INGOT);
+                        accept(output, MagItems.FERROMAGNETIC_INGOT);
+                        accept(output, MagItems.MAGHEMITE_INGOT);
+                        accept(output, MagItems.PYRRHOTITE_INGOT);
+                        accept(output, MagItems.HEMATITE_INGOT);
                         accept(output, MagItems.TITANOMAGNETITE_INGOT);
+                        // ── Storage blocks (refined + raw) ──
+                        accept(output, MagItems.MAGNETITE_BLOCK);
+                        accept(output, MagItems.RAW_MAGNETITE_BLOCK);
+                        accept(output, MagItems.MAGHEMITE_BLOCK);
+                        accept(output, MagItems.RAW_MAGHEMITE_BLOCK);
+                        accept(output, MagItems.PYRRHOTITE_BLOCK);
+                        accept(output, MagItems.RAW_PYRRHOTITE_BLOCK);
+                        accept(output, MagItems.HEMATITE_BLOCK);
+                        accept(output, MagItems.RAW_HEMATITE_BLOCK);
                         accept(output, MagItems.TITANOMAGNETITE_BLOCK);
+                        accept(output, MagItems.RAW_TITANOMAGNETITE_BLOCK);
 
                         // ── Worldgen stone, gravel & decoration ──
                         accept(output, MagItems.ANOMALY_STONE);

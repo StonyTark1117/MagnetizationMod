@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.gyrostabilizer.name",
   "icon": "magnetization:gyrostabilizer",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:gyrostabilizer",
-      "text": "book.magnetization.entry.gyrostabilizer.spotlight"
+      "text": "book.magnetization.entry.gyrostabilizer.spotlight",
+      "link_recipe": true
     }
   ]
 }

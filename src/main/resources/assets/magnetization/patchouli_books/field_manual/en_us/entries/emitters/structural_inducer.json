@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.structural_inducer.name",
   "icon": "magnetization:structural_inducer",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:structural_inducer",
-      "text": "book.magnetization.entry.structural_inducer.spotlight"
+      "text": "book.magnetization.entry.structural_inducer.spotlight",
+      "link_recipe": true
     }
   ]
 }

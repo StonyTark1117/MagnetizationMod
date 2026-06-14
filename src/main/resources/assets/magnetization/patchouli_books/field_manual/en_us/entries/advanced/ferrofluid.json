@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.ferrofluid.name",
   "icon": "magnetization:ferrofluid_bucket",
-  "category": "magnetization:advanced",
+  "category": "magnetization:fluids",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:ferrofluid_bucket",
-      "text": "book.magnetization.entry.ferrofluid.spotlight"
+      "text": "book.magnetization.entry.ferrofluid.spotlight",
+      "link_recipe": true
     }
   ]
 }

@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.magnetic_item_frame.name",
   "icon": "magnetization:magnetic_item_frame",
-  "category": "magnetization:advanced",
+  "category": "magnetization:gear",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:magnetic_item_frame",
-      "text": "book.magnetization.entry.magnetic_item_frame.spotlight"
+      "text": "book.magnetization.entry.magnetic_item_frame.spotlight",
+      "link_recipe": true
     }
   ]
 }

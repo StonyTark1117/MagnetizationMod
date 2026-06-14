@@ -1,12 +1,13 @@
 {
   "name": "book.magnetization.entry.barkhausen.name",
   "icon": "magnetization:barkhausen_generator",
-  "category": "magnetization:emitters",
+  "category": "magnetization:machines",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:barkhausen_generator",
-      "text": "book.magnetization.entry.barkhausen.spotlight"
+      "text": "book.magnetization.entry.barkhausen.spotlight",
+      "link_recipe": true
     }
   ]
 }

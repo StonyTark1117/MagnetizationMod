@@ -3,10 +3,31 @@
   "icon": "magnetization:raw_magnetite",
   "category": "magnetization:basics",
   "pages": [
-    { "type": "patchouli:text", "title": "book.magnetization.entry.magnetite.page1.title", "text": "book.magnetization.entry.magnetite.page1.text" },
-    { "type": "patchouli:spotlight", "item": "magnetization:raw_magnetite", "text": "book.magnetization.entry.magnetite.spotlight" },
-    { "type": "patchouli:smelting", "recipe": "magnetization:magnetite_ingot_from_smelting", "text": "book.magnetization.entry.magnetite.smelting" },
-    { "type": "patchouli:crafting", "recipe": "magnetization:magnetic_plate", "text": "book.magnetization.entry.magnetite.plate" },
-    { "type": "patchouli:crafting", "recipe": "magnetization:lodestone_core", "text": "book.magnetization.entry.magnetite.core" }
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.magnetite.page1.title",
+      "text": "book.magnetization.entry.magnetite.page1.text"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:raw_magnetite",
+      "text": "book.magnetization.entry.magnetite.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "magnetization:magnetite_ingot_from_smelting",
+      "text": "book.magnetization.entry.magnetite.smelting"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:magnetic_plate",
+      "text": "book.magnetization.entry.magnetite.plate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:lodestone_core",
+      "text": "book.magnetization.entry.magnetite.core"
+    }
   ]
 }

@@ -3,9 +3,26 @@
   "icon": "magnetization:repulsor_gun",
   "category": "magnetization:advanced",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:repulsor_gun", "text": "book.magnetization.entry.repulsor_gun.spotlight" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.repulsor_gun.effects.title", "text": "book.magnetization.entry.repulsor_gun.effects.text" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.repulsor_gun.curio.title", "text": "book.magnetization.entry.repulsor_gun.curio.text" },
-    { "type": "patchouli:crafting", "recipe": "magnetization:repulsor_gun", "text": "book.magnetization.entry.repulsor_gun.recipe" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:repulsor_gun",
+      "text": "book.magnetization.entry.repulsor_gun.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.repulsor_gun.effects.title",
+      "text": "book.magnetization.entry.repulsor_gun.effects.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.repulsor_gun.curio.title",
+      "text": "book.magnetization.entry.repulsor_gun.curio.text"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:repulsor_gun",
+      "text": "book.magnetization.entry.repulsor_gun.recipe"
+    }
   ]
 }
