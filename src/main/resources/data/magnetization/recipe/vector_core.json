@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "magnetization:titanomagnetite_ingot"
+    },
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "minecraft:redstone"
+    }
+  ],
+  "result": {
+    "id": "magnetization:vector_core",
+    "count": 1
+  }
+}

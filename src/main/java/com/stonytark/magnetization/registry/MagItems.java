@@ -56,6 +56,9 @@ public final class MagItems {
     /** Pyrolytic carbon — a strongly diamagnetic wafer; drop it over a magnet and it floats. */
     public static final DeferredItem<Item> PYROLYTIC_CARBON =
             REGISTER.registerSimpleItem("pyrolytic_carbon", new Item.Properties());
+    /** Vector Core — titanomagnetite chip; right-click a Repulsor to make it thrust ships along its facing. */
+    public static final DeferredItem<Item> VECTOR_CORE =
+            REGISTER.registerSimpleItem("vector_core", new Item.Properties());
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

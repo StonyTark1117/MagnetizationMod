@@ -73,7 +73,7 @@ public final class RepulsorCoilBlock extends DirectionalBlock implements EntityB
     ) {
         if (level.isClientSide || type != MagBlockEntities.REPULSOR_COIL.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<RepulsorCoilBlockEntity>)
-                RepulsorCoilBlockEntity::serverTick;
+                RepulsorCoilBlockEntity::tickRepulsor;
     }
 
     @Override
@@ -114,5 +114,18 @@ public final class RepulsorCoilBlock extends DirectionalBlock implements EntityB
         if (level.getBlockEntity(pos) instanceof RepulsorCoilBlockEntity repulsor) {
             repulsor.setPowered(nowPowered);
         }
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean moved) {
+        if (!state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof RepulsorCoilBlockEntity coil
+                && coil.hasVectorCore()) {
+            net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new net.minecraft.world.item.ItemStack(
+                            com.stonytark.magnetization.registry.MagItems.VECTOR_CORE.get()));
+        }
+        super.onRemove(state, level, pos, newState, moved);
     }
 }

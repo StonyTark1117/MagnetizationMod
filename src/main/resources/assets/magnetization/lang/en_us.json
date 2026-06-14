@@ -241,6 +241,8 @@
   "item.magnetization.cosmic_compass": "Cosmic Compass",
   "item.magnetization.ore_compass": "Ore Dowsing Compass",
   "item.magnetization.pyrolytic_carbon": "Pyrolytic Carbon",
+  "item.magnetization.vector_core": "Vector Core",
+  "message.magnetization.vector_core_installed": "Vector Core installed — the Repulsor now thrusts ships along its facing.",
   "block.magnetization.magnetic_item_frame": "Magnetic Item Frame",
   "block.magnetization.induction_pad": "Induction Charging Pad",
   "block.magnetization.kinetic_coil": "Kinetic Induction Coil",
