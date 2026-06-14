@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.client.screen;
 
+import com.stonytark.magnetization.menu.MachineGuiData;
 import com.stonytark.magnetization.menu.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -98,8 +99,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, menu.stat2())));
             }
             case THRUSTER -> lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.stat1())));
-            case MOTOR -> lines.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, menu.stat1())));
-            case JET -> { /* energy bar + magnet slot convey it */ }
+            case MOTOR -> {
+                lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
+                lines.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, menu.stat1())));
+            }
+            case JET -> lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
         }
         int ly = 22;
         for (final Component c : lines) {

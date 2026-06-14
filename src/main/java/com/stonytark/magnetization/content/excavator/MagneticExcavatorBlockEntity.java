@@ -243,6 +243,12 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
         return super.isPowered() || hasRedstoneFuel();
     }
 
+    /** The excavator owns its own POWERED visual via {@link #recomputePower()}
+     *  (external signal OR redstone-fuel), so the base FE-driven sync must not
+     *  override it. */
+    @Override
+    protected boolean managesOwnPoweredState() { return true; }
+
     /** Drop the redstone-fuel slot's contents into the world. Called from the
      *  block on break so the player doesn't lose redstone they parked here. */
     public void dropRedstoneFuelSlot(final Level level, final BlockPos pos) {

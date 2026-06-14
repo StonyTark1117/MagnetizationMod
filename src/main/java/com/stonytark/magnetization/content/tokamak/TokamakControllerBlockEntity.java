@@ -138,6 +138,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.putInt("Burn", burnTime);
+        tag.putInt("LastOutput", lastOutput); // synced via getUpdateTag → WTHIT/GUI output readout
         tag.put("Fuel", fuelSlot.createTag(registries));
     }
 
@@ -146,6 +147,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         energy.generate(tag.getInt("Energy"));
         burnTime = tag.getInt("Burn");
+        lastOutput = tag.getInt("LastOutput");
         fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 

@@ -332,6 +332,10 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             final ServerLevel server, final BlockState state, final @Nullable ServerSubLevel host
     ) {
         final MagneticField previous = cachedField;
+        // Reset the per-tick energy flag up front so the disabled/EMP early
+        // returns below leave it false — otherwise isPowered()/the synced HUD
+        // state could report a stale "energy-active" on a dark emitter.
+        energyActiveThisTick = false;
         // Soft-disable hook: if the operator has listed this block path in
         // config.content.disabledBlocks, treat the emitter as off regardless
         // of redstone state. Existing placements survive saves but stay inert.
@@ -345,6 +349,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                 cachedField = null;
                 markForClientSync(server);
             }
+            syncPoweredVisual(server);
             return;
         }
 
@@ -355,6 +360,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                 cachedField = null;
                 markForClientSync(server);
             }
+            syncPoweredVisual(server);
             return;
         }
 
@@ -396,6 +402,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (local == null) {
             cachedField = null;
             if (previous != null) markForClientSync(server);
+            syncPoweredVisual(server);
             return;
         }
 
@@ -472,6 +479,31 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // contraption can't have a stable adjacent inventory anyway.
         if (host == null) {
             InventorySink.tryIngest(server, getBlockPos());
+        }
+        syncPoweredVisual(server);
+    }
+
+    /** Subclasses that drive {@code POWERED} from their own logic (e.g. the
+     *  excavator, whose lit state is "external signal OR redstone-fuel", not the
+     *  generic redstone-OR-FE drive) override this to {@code true} so the base
+     *  sync below stays out of their way. */
+    protected boolean managesOwnPoweredState() { return false; }
+
+    /** Keep the block's {@code POWERED} visual (the active/glowing texture) in
+     *  step with whether the emitter is actually driven — true for redstone OR
+     *  FE. The redstone neighbour-signal path is the only <em>other</em> writer
+     *  of this property, so without this an FE-powered emitter would never light
+     *  up and WTHIT/Jade would read it as idle. Cheap: only writes on a state
+     *  change, which is rare once steady. */
+    protected void syncPoweredVisual(final ServerLevel server) {
+        if (managesOwnPoweredState()) return;
+        final BlockState s = getBlockState();
+        if (!s.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED)) return;
+        final boolean lit = isPowered();
+        if (s.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED) != lit) {
+            server.setBlock(getBlockPos(),
+                    s.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED, lit),
+                    2 /* UPDATE_CLIENTS */);
         }
     }
 
@@ -602,6 +634,9 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("Powered", powered);
+        // Transient, but synced so WTHIT/Jade can distinguish "energy" vs
+        // "redstone" vs "idle" on the client (recomputed every server tick).
+        if (energyActiveThisTick) tag.putBoolean("EnergyActive", true);
         if (cachedField != null) tag.put("Field", cachedField.toNbt());
         if (strengthOverride != null) tag.putString("StrengthOverride", strengthOverride.name());
         if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
@@ -615,6 +650,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         powered = tag.getBoolean("Powered");
+        energyActiveThisTick = tag.getBoolean("EnergyActive");
         cachedField = tag.contains("Field") ? MagneticField.fromNbt(tag.getCompound("Field")) : null;
         strengthOverride = tag.contains("StrengthOverride")
                 ? MagneticStrength.valueOf(tag.getString("StrengthOverride")) : null;
