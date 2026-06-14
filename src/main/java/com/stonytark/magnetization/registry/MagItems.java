@@ -36,6 +36,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> MAGHEMITE_ANVIL       = REGISTER.registerSimpleBlockItem(MagBlocks.MAGHEMITE_ANVIL);
     public static final DeferredItem<BlockItem> HEMATITE_ANVIL        = REGISTER.registerSimpleBlockItem(MagBlocks.HEMATITE_ANVIL);
     public static final DeferredItem<BlockItem> TITANOMAGNETITE_ANVIL = REGISTER.registerSimpleBlockItem(MagBlocks.TITANOMAGNETITE_ANVIL);
+    public static final DeferredItem<BlockItem> MICRO_THRUSTER       = REGISTER.registerSimpleBlockItem(MagBlocks.MICRO_THRUSTER);
     public static final DeferredItem<BlockItem> MHD_JET              = REGISTER.registerSimpleBlockItem(MagBlocks.MHD_JET);
     public static final DeferredItem<BlockItem> HOMOPOLAR_MOTOR      = REGISTER.registerSimpleBlockItem(MagBlocks.HOMOPOLAR_MOTOR);
     public static final DeferredItem<BlockItem> STRUCTURAL_INDUCER   = REGISTER.registerSimpleBlockItem(MagBlocks.STRUCTURAL_INDUCER);

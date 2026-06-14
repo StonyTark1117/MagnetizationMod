@@ -9,6 +9,7 @@
     "magnetization:tokamak_controller",
     "magnetization:structural_inducer",
     "magnetization:homopolar_motor",
-    "magnetization:mhd_jet"
+    "magnetization:mhd_jet",
+    "magnetization:micro_thruster"
   ]
 }

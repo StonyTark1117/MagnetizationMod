@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "magnetization:block/micro_thruster"
+    },
+    "facing=north,lit=true": {
+      "model": "magnetization:block/micro_thruster_active"
+    },
+    "facing=south,lit=false": {
+      "model": "magnetization:block/micro_thruster",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "magnetization:block/micro_thruster_active",
+      "y": 180
+    },
+    "facing=east,lit=false": {
+      "model": "magnetization:block/micro_thruster",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "magnetization:block/micro_thruster_active",
+      "y": 90
+    },
+    "facing=west,lit=false": {
+      "model": "magnetization:block/micro_thruster",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "magnetization:block/micro_thruster_active",
+      "y": 270
+    },
+    "facing=up,lit=false": {
+      "model": "magnetization:block/micro_thruster",
+      "x": 270
+    },
+    "facing=up,lit=true": {
+      "model": "magnetization:block/micro_thruster_active",
+      "x": 270
+    },
+    "facing=down,lit=false": {
+      "model": "magnetization:block/micro_thruster",
+      "x": 90
+    },
+    "facing=down,lit=true": {
+      "model": "magnetization:block/micro_thruster_active",
+      "x": 90
+    }
+  }
+}

@@ -312,6 +312,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
             REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
 
+    /** Ferrofluid Micro-Thruster — top-tier propulsion; burns ferrofluid + FE. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.jet.MicroThrusterBlock> MICRO_THRUSTER =
+            REGISTER.register("micro_thruster", () -> new com.stonytark.magnetization.content.jet.MicroThrusterBlock(poweredMetal()));
+
     /** MHD Jet Thruster — strongest ship propulsion; magnet sets ceiling, FE powers it. */
     public static final DeferredBlock<com.stonytark.magnetization.content.jet.MhdJetBlock> MHD_JET =
             REGISTER.register("mhd_jet", () -> new com.stonytark.magnetization.content.jet.MhdJetBlock(poweredMetal()));

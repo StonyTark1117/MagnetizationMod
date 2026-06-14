@@ -112,6 +112,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.KINETIC_COIL);
                         accept(output, MagItems.EMP_CHARGE);
                         accept(output, MagItems.GYROSTABILIZER);
+                        accept(output, MagItems.MHD_JET);
+                        accept(output, MagItems.MICRO_THRUSTER);
                         accept(output, MagItems.HOMOPOLAR_MOTOR);
                         accept(output, MagItems.STRUCTURAL_INDUCER);
                         accept(output, MagItems.TOKAMAK_CONTROLLER);
