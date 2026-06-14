@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {"id": "#c:storage_blocks/copper", "required": false},
+    {"id": "#c:storage_blocks/aluminum", "required": false},
+    {"id": "#c:storage_blocks/brass", "required": false},
+    {"id": "#c:storage_blocks/bronze", "required": false},
+    {"id": "#c:storage_blocks/tin", "required": false},
+    {"id": "#c:storage_blocks/silver", "required": false},
+    {"id": "#c:storage_blocks/lead", "required": false},
+    {"id": "minecraft:copper_block", "required": false},
+    {"id": "minecraft:exposed_copper", "required": false},
+    {"id": "minecraft:weathered_copper", "required": false},
+    {"id": "minecraft:oxidized_copper", "required": false},
+    {"id": "minecraft:waxed_copper_block", "required": false},
+    {"id": "minecraft:cut_copper", "required": false},
+    {"id": "minecraft:waxed_cut_copper", "required": false},
+    {"id": "minecraft:copper_grate", "required": false},
+    {"id": "minecraft:lightning_rod", "required": false}
+  ]
+}

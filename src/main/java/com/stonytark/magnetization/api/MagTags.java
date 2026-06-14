@@ -80,6 +80,12 @@ public final class MagTags {
     public static final TagKey<Block> ANVIL_DAMPENERS =
             TagKey.create(Registries.BLOCK, Magnetization.id("anvil_dampeners"));
 
+    /** Non-ferrous CONDUCTIVE blocks (copper, aluminium, …) that brake a moving
+     *  magnetic ship via induced eddy currents (the Lenz effect). Must be
+     *  conductive but NOT ferromagnetic — these don't attract, they drag. */
+    public static final TagKey<Block> EDDY_CONDUCTORS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("eddy_conductors"));
+
     /** Block-level escape hatch for the Magnetic Excavator: any block in this
      *  tag is treated like bedrock — the excavator will refuse to pull through
      *  it. The bedrock + block-entity safeguards are already wired in code;

@@ -9,6 +9,8 @@
   "magnetization.configuration.physics.tooltip": "Tunable physics constants for the Sable sub-level query and the entity force application path.",
   "magnetization.configuration.physics.strengthMultiplier": "Global Strength Multiplier",
   "magnetization.configuration.physics.strengthMultiplier.tooltip": "Multiplier applied to every emitter's tier force value. 1.0 = default. Set globally up or down to tune feel without editing each emitter.",
+  "magnetization.configuration.physics.lenzBrakingStrength": "Lenz Braking Strength",
+  "magnetization.configuration.physics.lenzBrakingStrength.tooltip": "Eddy-current braking on a magnetic ship moving over conductive (copper/aluminium) blocks — it drags to a slow float/coast like a magnet in a copper pipe. 0 disables; 1.0 = default; higher = stronger brake.",
   "magnetization.configuration.physics.entityVelocityScale": "Entity Velocity Scale",
   "magnetization.configuration.physics.entityVelocityScale.tooltip": "Scale factor for converting impulse units to vanilla entity delta-movement per tick. Default 1/20 = 0.05.",
   "magnetization.configuration.physics.conicalHalfAngleCos": "Conical Half-Angle (cos)",

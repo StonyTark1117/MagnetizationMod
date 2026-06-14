@@ -195,6 +195,9 @@ public final class MagConfig {
     /** Max FE per tick the emitter accepts from external sources. Higher values
      *  refill the buffer faster from heavy cabling. Default 200 FE/tick. */
     public static final ModConfigSpec.IntValue EMITTER_ENERGY_TRANSFER_RATE;
+    /** Lenz-effect eddy-current braking strength on magnetic ships over conductive
+     *  (copper/aluminium) blocks. 0 disables; 1.0 = default. */
+    public static final ModConfigSpec.DoubleValue LENZ_BRAKING_STRENGTH;
 
     static {
         // Two builders: `b` accumulates the COMMON (global, main-menu-editable)
@@ -211,6 +214,14 @@ public final class MagConfig {
                 .comment("Global multiplier applied to every emitter's tier force value.")
                 .translation("magnetization.configuration.physics.strengthMultiplier")
                 .defineInRange("strengthMultiplier", 1.0d, 0.0d, 100.0d);
+
+        LENZ_BRAKING_STRENGTH = b
+                .comment("Lenz-effect eddy-current braking: a magnetic ship moving over conductive",
+                         "(copper/aluminium etc., in #magnetization:eddy_conductors) blocks is dragged",
+                         "to a stop as if by induced eddy currents — it floats/slides slowly instead",
+                         "of zipping past. 0 disables; 1.0 = default. Higher = stronger brake.")
+                .translation("magnetization.configuration.physics.lenzBrakingStrength")
+                .defineInRange("lenzBrakingStrength", 1.0d, 0.0d, 10.0d);
 
         ENTITY_VELOCITY_SCALE = b
                 .comment("Scale factor applied when converting impulse units to vanilla entity",
@@ -883,6 +894,11 @@ public final class MagConfig {
         } catch (final Throwable t) {
             return true;
         }
+    }
+
+    /** @return Lenz eddy-current braking strength (0 = off, 1 = default). */
+    public static double lenzBrakingStrength() {
+        try { return LENZ_BRAKING_STRENGTH.get(); } catch (final Throwable t) { return 1.0d; }
     }
 
     /** @return true if holding a block and right-clicking our interactible
