@@ -20,5 +20,10 @@ public final class MagMenus {
             REGISTER.register("emitter",
                     () -> IMenuTypeExtension.create(EmitterMenu::fromNetwork));
 
+    /** One magnet slot — the Homopolar Motor's GUI. */
+    public static final DeferredHolder<MenuType<?>, MenuType<com.stonytark.magnetization.menu.HomopolarMotorMenu>> HOMOPOLAR_MOTOR =
+            REGISTER.register("homopolar_motor",
+                    () -> IMenuTypeExtension.create(com.stonytark.magnetization.menu.HomopolarMotorMenu::fromNetwork));
+
     private MagMenus() {}
 }
