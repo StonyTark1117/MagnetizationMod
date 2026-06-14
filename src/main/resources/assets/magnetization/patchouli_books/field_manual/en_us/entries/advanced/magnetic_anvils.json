@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.magnetic_anvils.name",
+  "icon": "magnetization:titanomagnetite_anvil",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:titanomagnetite_anvil",
+      "text": "book.magnetization.entry.magnetic_anvils.spotlight"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.magnetic_item_frame.name",
+  "icon": "magnetization:magnetic_item_frame",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:magnetic_item_frame",
+      "text": "book.magnetization.entry.magnetic_item_frame.spotlight"
+    }
+  ]
+}

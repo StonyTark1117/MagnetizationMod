@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.structural_inducer.name",
+  "icon": "magnetization:structural_inducer",
+  "category": "magnetization:emitters",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:structural_inducer",
+      "text": "book.magnetization.entry.structural_inducer.spotlight"
+    }
+  ]
+}

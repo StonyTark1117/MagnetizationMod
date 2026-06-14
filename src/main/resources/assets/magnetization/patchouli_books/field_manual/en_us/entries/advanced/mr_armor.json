@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.mr_armor.name",
+  "icon": "magnetization:mr_liquid_chestplate",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:mr_liquid_chestplate",
+      "text": "book.magnetization.entry.mr_armor.spotlight"
+    }
+  ]
+}

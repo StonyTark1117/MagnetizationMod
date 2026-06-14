@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.vector_core.name",
+  "icon": "magnetization:vector_core",
+  "category": "magnetization:ships",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:vector_core",
+      "text": "book.magnetization.entry.vector_core.spotlight"
+    }
+  ]
+}

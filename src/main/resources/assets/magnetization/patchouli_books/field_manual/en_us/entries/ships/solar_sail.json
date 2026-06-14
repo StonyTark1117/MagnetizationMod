@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.solar_sail.name",
+  "icon": "magnetization:solar_sail",
+  "category": "magnetization:ships",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:solar_sail",
+      "text": "book.magnetization.entry.solar_sail.spotlight"
+    }
+  ]
+}

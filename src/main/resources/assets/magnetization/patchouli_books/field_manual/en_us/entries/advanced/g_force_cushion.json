@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.g_force_cushion.name",
+  "icon": "magnetization:g_force_cushion",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:g_force_cushion",
+      "text": "book.magnetization.entry.g_force_cushion.spotlight"
+    }
+  ]
+}

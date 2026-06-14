@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.diamagnetic.name",
+  "icon": "magnetization:pyrolytic_carbon",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:pyrolytic_carbon",
+      "text": "book.magnetization.entry.diamagnetic.spotlight"
+    }
+  ]
+}

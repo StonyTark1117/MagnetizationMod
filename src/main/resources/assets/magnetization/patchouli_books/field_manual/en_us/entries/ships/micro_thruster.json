@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.micro_thruster.name",
+  "icon": "magnetization:micro_thruster",
+  "category": "magnetization:ships",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:micro_thruster",
+      "text": "book.magnetization.entry.micro_thruster.spotlight"
+    }
+  ]
+}

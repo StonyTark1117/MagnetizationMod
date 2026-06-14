@@ -1,0 +1,12 @@
+{
+  "name": "book.magnetization.entry.mr_fluid.name",
+  "icon": "magnetization:mr_fluid_bucket",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:mr_fluid_bucket",
+      "text": "book.magnetization.entry.mr_fluid.spotlight"
+    }
+  ]
+}
