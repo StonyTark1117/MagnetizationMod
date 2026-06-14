@@ -59,6 +59,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
     // ── MachineGuiData (shared GUI: fuel runtime + current FE output) ──
     @Override public net.minecraft.world.Container guiInput() { return fuelSlot; }
+    @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
+        return com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK;
+    }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return CAPACITY; }
     @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
@@ -87,6 +90,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
         }
         be.lastOutput = pushEnergy(server, pos, be.energy);
+        if (server.getGameTime() % 10L == 0L) {
+            server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
+        }
     }
 
     /** The 8 blocks around the controller in its own layer must all be Tokamak Coils. */
@@ -141,5 +147,17 @@ public class TokamakControllerBlockEntity extends BlockEntity
         energy.generate(tag.getInt("Energy"));
         burnTime = tag.getInt("Burn");
         fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 }

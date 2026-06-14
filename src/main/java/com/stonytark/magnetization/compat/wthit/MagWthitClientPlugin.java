@@ -25,6 +25,7 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
     @Override
     public void register(final IClientRegistrar registrar) {
         registrar.body(EmitterBodyProvider.INSTANCE, Block.class);
+        registrar.body(MachineBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);
         registrar.body(CatalystBodyProvider.INSTANCE, Block.class);
     }

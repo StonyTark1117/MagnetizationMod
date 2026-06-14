@@ -778,5 +778,7 @@
   "tooltip.magnetization.gui_output": "Output: %s FE/t",
   "tooltip.magnetization.gui_fluid": "Ferrofluid: %s mB",
   "tooltip.magnetization.gui_rpm": "Speed: %s RPM",
-  "tooltip.magnetization.gui_speed": "Thrust tier: %s"
+  "tooltip.magnetization.gui_speed": "Thrust tier: %s",
+  "tooltip.magnetization.machine_active": "Active",
+  "tooltip.magnetization.machine_idle": "Idle (needs magnet + power)"
 }

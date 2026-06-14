@@ -53,6 +53,9 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
 
     // ── MachineGuiData (shared GUI) ──
     @Override public Container guiInput() { return magnetSlot; }
+    @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
+        return com.stonytark.magnetization.menu.MachineMenu.Kind.MOTOR;
+    }
     @Override public int guiStat1() { return Math.round(Math.abs(getGeneratedSpeed())); } // RPM
     // No energy bar (it's a generator).
 
@@ -72,6 +75,12 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
         if (level != null && !level.isClientSide) {
             updateGeneratedRotation();
         }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide) updateGeneratedRotation();
     }
 
     /** RPM this magnet yields, or 0 for none / a non-magnet. Kept low — it's weak. */
@@ -98,8 +107,23 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
 
     @Override
     public float getGeneratedSpeed() {
-        return getBlockState().hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS)
-                ? speedFor(getMagnet()) : 0f;
+        final ItemStack m = getMagnet();
+        if (m.isEmpty() || !getBlockState().hasProperty(
+                com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING)) {
+            return 0f;
+        }
+        // Create generators must sign the speed by their facing.
+        return convertToDirection(speedFor(m),
+                getBlockState().getValue(com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING));
+    }
+
+    /** Kick the kinetic network when the generator (re)loads, like Create's own. */
+    @Override
+    public void initialize() {
+        super.initialize();
+        if (!hasSource() || getGeneratedSpeed() > getTheoreticalSpeed()) {
+            updateGeneratedRotation();
+        }
     }
 
     @Override

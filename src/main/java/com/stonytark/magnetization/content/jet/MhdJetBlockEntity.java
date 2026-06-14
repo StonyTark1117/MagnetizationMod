@@ -66,6 +66,9 @@ public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magn
 
     // ── MachineGuiData (shared GUI) ──
     @Override public net.minecraft.world.Container guiInput() { return magnetSlot; }
+    @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
+        return com.stonytark.magnetization.menu.MachineMenu.Kind.JET;
+    }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return CAPACITY; }
 
@@ -87,6 +90,9 @@ public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magn
         if (running) {
             be.energy.drainInternal((int) t[2]);
             be.thrust(server, pos, state, t[0], t[1]);
+        }
+        if (server.getGameTime() % 10L == 0L) {
+            server.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS); // refresh WTHIT (energy)
         }
         if (state.getValue(BlockStateProperties.LIT) != running) {
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, running), Block.UPDATE_CLIENTS);
@@ -133,6 +139,18 @@ public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magn
         super.loadAdditional(tag, registries);
         energy.setStored(tag.getInt("Energy"));
         magnetSlot.fromTag(tag.getList("Magnet", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
 

@@ -1,16 +1,29 @@
 {
   "variants": {
-    "axis=y": {
+    "facing=up": {
       "model": "magnetization:block/homopolar_motor"
     },
-    "axis=z": {
+    "facing=down": {
+      "model": "magnetization:block/homopolar_motor"
+    },
+    "facing=north": {
       "model": "magnetization:block/homopolar_motor_horizontal",
       "x": 90
     },
-    "axis=x": {
+    "facing=south": {
+      "model": "magnetization:block/homopolar_motor_horizontal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=east": {
       "model": "magnetization:block/homopolar_motor_horizontal",
       "x": 90,
       "y": 90
+    },
+    "facing=west": {
+      "model": "magnetization:block/homopolar_motor_horizontal",
+      "x": 90,
+      "y": 270
     }
   }
 }

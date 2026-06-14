@@ -30,5 +30,6 @@ public class MagJadePlugin implements IWailaPlugin {
         // EmitterFieldProvider self-filters by checking for MagneticFieldSource on
         // the BE, so non-emitter blocks see a no-op.
         registration.registerBlockComponent(EmitterFieldProvider.INSTANCE, Block.class);
+        registration.registerBlockComponent(MachineInfoProvider.INSTANCE, Block.class);
     }
 }
