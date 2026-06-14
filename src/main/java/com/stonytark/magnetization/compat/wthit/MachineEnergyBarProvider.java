@@ -1,6 +1,5 @@
 package com.stonytark.magnetization.compat.wthit;
 
-import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.menu.MachineGuiData;
 import mcp.mobius.waila.api.IBlockAccessor;
@@ -11,8 +10,10 @@ import mcp.mobius.waila.api.component.BarComponent;
 import mcp.mobius.waila.api.component.PairComponent;
 import mcp.mobius.waila.api.component.WrappedComponent;
 import mcp.mobius.waila.api.data.EnergyData;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 /**
  * Renders the stored-FE bar for our energy blocks (powered emitters + the
@@ -42,11 +43,20 @@ public enum MachineEnergyBarProvider implements IBlockComponentProvider {
             tooltip.setLine(EnergyData.ID, new PairComponent(
                     new WrappedComponent(EnergyData.DEFAULT_NAME),
                     new BarComponent(ratio, 0xFF000000 | EnergyData.DEFAULT_COLOR, text)));
-        } else if (isOurs(be) && tooltip.getLine(EnergyData.ID) != null) {
-            // Our non-FE block (magnet, sensor, …) — clear any energy line that
-            // WTHIT's shared-cache provider may have leaked onto it.
+        } else if (tooltip.getLine(EnergyData.ID) != null && !hasEnergy(accessor)) {
+            // WTHIT's built-in energy provider reads through a shared
+            // BlockCapabilityCache that can surface a previously-viewed block's
+            // value on an unrelated one (e.g. our magnets, or even a vanilla
+            // chest). If this block genuinely has no energy capability, that
+            // line is bogus — clear it.
             tooltip.setLine(EnergyData.ID);
         }
+    }
+
+    /** True only if the hovered block really exposes an energy capability. */
+    private static boolean hasEnergy(final IBlockAccessor accessor) {
+        return accessor.getLevel().getCapability(
+                Capabilities.EnergyStorage.BLOCK, accessor.getPosition(), (Direction) null) != null;
     }
 
     /** {stored, max} for our FE-storing blocks, or null if it has no FE buffer. */
@@ -59,10 +69,5 @@ public enum MachineEnergyBarProvider implements IBlockComponentProvider {
             return new long[]{machine.guiEnergyStored(), machine.guiEnergyMax()};
         }
         return null;
-    }
-
-    /** Whether this is one of our blocks (so we may clear a leaked energy line). */
-    private static boolean isOurs(final BlockEntity be) {
-        return be instanceof MagneticFieldSource || be instanceof MachineGuiData;
     }
 }
