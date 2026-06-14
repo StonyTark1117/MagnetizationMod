@@ -116,6 +116,11 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlockEntity::new, MagBlocks.MAGNETIC_ITEM_FRAME.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.sail.SolarSailBlockEntity>> SOLAR_SAIL =
+            REGISTER.register("solar_sail", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.sail.SolarSailBlockEntity::new, MagBlocks.SOLAR_SAIL.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity>> MICRO_THRUSTER =
             REGISTER.register("micro_thruster", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity::new, MagBlocks.MICRO_THRUSTER.get())

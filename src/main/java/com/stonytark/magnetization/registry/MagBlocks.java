@@ -312,6 +312,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
             REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
 
+    /** Magnetosphere Solar Sail — passive fuel-free forward thrust on airships by day. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.sail.SolarSailBlock> SOLAR_SAIL =
+            REGISTER.register("solar_sail", () -> new com.stonytark.magnetization.content.sail.SolarSailBlock(metal()));
+
     /** Ferrofluid Micro-Thruster — top-tier propulsion; burns ferrofluid + FE. */
     public static final DeferredBlock<com.stonytark.magnetization.content.jet.MicroThrusterBlock> MICRO_THRUSTER =
             REGISTER.register("micro_thruster", () -> new com.stonytark.magnetization.content.jet.MicroThrusterBlock(poweredMetal()));

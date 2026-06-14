@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/solar_sail_side",
+    "down": "magnetization:block/solar_sail_side",
+    "up": "magnetization:block/solar_sail_side",
+    "east": "magnetization:block/solar_sail_side",
+    "west": "magnetization:block/solar_sail_side",
+    "south": "magnetization:block/solar_sail_side",
+    "north": "magnetization:block/solar_sail_front"
+  }
+}

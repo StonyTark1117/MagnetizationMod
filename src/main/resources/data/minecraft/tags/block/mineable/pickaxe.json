@@ -10,6 +10,7 @@
     "magnetization:structural_inducer",
     "magnetization:homopolar_motor",
     "magnetization:mhd_jet",
-    "magnetization:micro_thruster"
+    "magnetization:micro_thruster",
+    "magnetization:solar_sail"
   ]
 }
