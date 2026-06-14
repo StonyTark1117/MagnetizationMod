@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "magnetization:block/kinetic_coil"
+    },
+    "powered=true": {
+      "model": "magnetization:block/kinetic_coil"
+    }
+  }
+}

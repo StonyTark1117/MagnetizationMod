@@ -275,6 +275,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock> MAGNETOSTRICTIVE_SENSOR =
             REGISTER.register("magnetostrictive_sensor", () -> new com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock(poweredMetal()));
 
+    /** Kinetic induction coil — a magnet passing through generates FE + a redstone pulse. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.induction.KineticCoilBlock> KINETIC_COIL =
+            REGISTER.register("kinetic_coil", () -> new com.stonytark.magnetization.content.induction.KineticCoilBlock(poweredMetal()));
+
     /** Induction charging pad — wirelessly tops up FE items a nearby player carries. */
     public static final DeferredBlock<com.stonytark.magnetization.content.induction.InductionPadBlock> INDUCTION_PAD =
             REGISTER.register("induction_pad", () -> new com.stonytark.magnetization.content.induction.InductionPadBlock(metal()));

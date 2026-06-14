@@ -242,6 +242,7 @@
   "item.magnetization.ore_compass": "Ore Dowsing Compass",
   "block.magnetization.magnetic_item_frame": "Magnetic Item Frame",
   "block.magnetization.induction_pad": "Induction Charging Pad",
+  "block.magnetization.kinetic_coil": "Kinetic Induction Coil",
   "block.magnetization.magnetostrictive_sensor": "Magnetostrictive Sensor",
   "block.magnetization.barkhausen_generator": "Barkhausen Noise Generator",
   "tooltip.magnetization.ore_compass.any": "Points to the nearest metallic ore vein",
