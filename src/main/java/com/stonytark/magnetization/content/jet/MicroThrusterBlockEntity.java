@@ -1,7 +1,5 @@
 package com.stonytark.magnetization.content.jet;
 
-import com.stonytark.magnetization.api.MagneticField;
-import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagFluids;
@@ -9,12 +7,10 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -39,10 +35,10 @@ import java.util.List;
  * propulsion. Ions fired from a magnetically-spiked ferrofluid bed: it burns
  * raw ferrofluid (held in an internal tank, topped up with ferrofluid buckets)
  * plus FE electricity to push a magnetic Sable craft along its facing harder and
- * faster than anything else. Its stored ferrofluid + FE show in WTHIT/Jade/TOP
- * (via {@link MagneticFieldSource#extraTooltipLines}).
+ * faster than anything else. Its stored ferrofluid + FE show automatically in
+ * WTHIT/Jade/TOP via the registered fluid + energy capabilities.
  */
-public class MicroThrusterBlockEntity extends BlockEntity implements MagneticFieldSource {
+public class MicroThrusterBlockEntity extends BlockEntity {
 
     public static final int TANK_CAPACITY = 8_000;       // 8 buckets of ferrofluid
     private static final int FE_CAPACITY = 400_000;
@@ -113,19 +109,6 @@ public class MicroThrusterBlockEntity extends BlockEntity implements MagneticFie
         }
     }
 
-    @Override
-    public @Nullable MagneticField currentField() {
-        return null; // a thruster, not a field source — but reuses the HUD hook below
-    }
-
-    @Override
-    public List<Component> extraTooltipLines(final boolean verbose) {
-        return List.of(
-                Component.translatable("tooltip.magnetization.thruster_fluid",
-                        tank.getFluidAmount(), TANK_CAPACITY).withStyle(ChatFormatting.AQUA),
-                Component.translatable("tooltip.magnetization.thruster_energy",
-                        energy.getEnergyStored()).withStyle(ChatFormatting.GOLD));
-    }
 
     @Override
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {

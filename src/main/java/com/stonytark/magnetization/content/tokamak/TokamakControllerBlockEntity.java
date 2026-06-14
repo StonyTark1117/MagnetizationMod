@@ -1,10 +1,7 @@
 package com.stonytark.magnetization.content.tokamak;
 
-import com.stonytark.magnetization.api.MagneticField;
-import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagBlocks;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -26,7 +23,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * pushes to adjacent machines/cables. Fuel is loaded by right-clicking with a
  * Deuterium Cell.
  */
-public class TokamakControllerBlockEntity extends BlockEntity implements MagneticFieldSource {
+public class TokamakControllerBlockEntity extends BlockEntity {
 
     private static final int CAPACITY = 4_000_000;
     private static final int GEN_PER_TICK = 2_000;     // FE/tick while fusing
@@ -39,27 +36,6 @@ public class TokamakControllerBlockEntity extends BlockEntity implements Magneti
 
     public TokamakControllerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.TOKAMAK_CONTROLLER.get(), pos, state);
-    }
-
-    /** Generator, not a field source — the hook exists only for the HUD line. */
-    @Override
-    public MagneticField currentField() {
-        return null;
-    }
-
-    /** Fuel + energy status, shown in WTHIT / Jade / The One Probe + goggles. */
-    @Override
-    public java.util.List<net.minecraft.network.chat.Component> extraTooltipLines(final boolean verbose) {
-        final boolean ringed = level != null && isRingFormed(level, getBlockPos());
-        final var status = ringed
-                ? (burnTime > 0
-                    ? net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_fusing").withStyle(ChatFormatting.GREEN)
-                    : net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_no_fuel").withStyle(ChatFormatting.YELLOW))
-                : net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_no_ring").withStyle(ChatFormatting.RED);
-        return java.util.List.of(
-                status,
-                net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_fuel", burnTime / 20).withStyle(ChatFormatting.GRAY),
-                net.minecraft.network.chat.Component.translatable("tooltip.magnetization.tokamak_energy", energy.getEnergyStored()).withStyle(ChatFormatting.GRAY));
     }
 
     public IEnergyStorage energyBuffer() {

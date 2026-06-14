@@ -1,7 +1,5 @@
 package com.stonytark.magnetization.content.jet;
 
-import com.stonytark.magnetization.api.MagneticField;
-import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagItems;
@@ -39,7 +37,7 @@ import java.util.List;
  * thrust, and the stronger the magnet the more FE it burns per tick, so a big
  * magnet only reaches full speed if you feed it matching power.
  */
-public class MhdJetBlockEntity extends BlockEntity implements MagneticFieldSource {
+public class MhdJetBlockEntity extends BlockEntity {
 
     private static final int CAPACITY = 400_000;
     private static final int MAX_RECEIVE = 8_000;
@@ -128,19 +126,6 @@ public class MhdJetBlockEntity extends BlockEntity implements MagneticFieldSourc
         magnet = tag.contains("Magnet") ? ItemStack.parseOptional(registries, tag.getCompound("Magnet")) : ItemStack.EMPTY;
     }
 
-    /** Pure thruster — no ambient field; the hook exists only for the HUD line below. */
-    @Override
-    public MagneticField currentField() {
-        return null;
-    }
-
-    /** Shown in WTHIT / Jade / The One Probe + goggles via the shared emitter providers. */
-    @Override
-    public java.util.List<Component> extraTooltipLines(final boolean verbose) {
-        return java.util.List.of(Component.translatable("tooltip.magnetization.mhd_status",
-                magnet.isEmpty() ? Component.translatable("tooltip.magnetization.motor_no_magnet") : magnet.getHoverName(),
-                energy.getEnergyStored()).withStyle(ChatFormatting.GRAY));
-    }
 
     /** Cable-fed buffer: external receive only; the jet drains it internally. */
     private static final class ReceiveBuffer extends EnergyStorage {
