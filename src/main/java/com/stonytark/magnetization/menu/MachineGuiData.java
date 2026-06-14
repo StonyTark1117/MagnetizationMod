@@ -1,6 +1,6 @@
 package com.stonytark.magnetization.menu;
 
-import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.content.MagneticMaterials;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -54,7 +54,7 @@ public interface MachineGuiData {
             }
             case JET -> {
                 out.add(magnetStatusLine(magnet));
-                final boolean running = !magnet.isEmpty();
+                final boolean running = magnetStrengthLevel(magnet) > 0 && guiEnergyStored() > 0;
                 out.add(Component.translatable(running
                         ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
                         .withStyle(running ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
@@ -63,26 +63,23 @@ public interface MachineGuiData {
         return out;
     }
 
-    /** Magnet strength tier for the slotted item: 1 = plate, 2 = temporary,
-     *  3 = permanent, 0 = empty / not a magnet. Shared by motor + MHD jet. */
+    /** Magnetic potency of the slotted material (0 = empty / not a magnet).
+     *  Scales with ore type + processing form — see {@link MagneticMaterials}. */
     static int magnetStrengthLevel(final ItemStack stack) {
-        if (stack.is(MagItems.PERMANENT_MAGNET.get())) return 3;
-        if (stack.is(MagItems.TEMPORARY_MAGNET.get())) return 2;
-        if (stack.is(MagItems.MAGNETIC_PLATE.get())) return 1;
-        return 0;
+        return MagneticMaterials.potency(stack);
     }
 
-    /** "Magnet: Permanent Magnet (Strength III)" or "No magnet" — the readout
-     *  the motor + MHD jet surface in their GUI and in WTHIT/Jade/TOP. */
+    /** "Magnet: Magnetite Ingot (Strength 10)" or "No magnet installed" — the
+     *  readout the motor + MHD jet surface in their GUI and in WTHIT/Jade/TOP. */
     static Component magnetStatusLine(final ItemStack magnet) {
-        final int level = magnetStrengthLevel(magnet);
-        if (level == 0) {
+        final int potency = MagneticMaterials.potency(magnet);
+        if (potency == 0) {
             return Component.translatable("tooltip.magnetization.gui_no_magnet").withStyle(ChatFormatting.DARK_GRAY);
         }
-        final String roman = level == 3 ? "III" : level == 2 ? "II" : "I";
-        return Component.translatable("tooltip.magnetization.gui_magnet",
-                        magnet.getHoverName(), roman)
-                .withStyle(level == 3 ? ChatFormatting.LIGHT_PURPLE
-                        : level == 2 ? ChatFormatting.AQUA : ChatFormatting.GRAY);
+        final ChatFormatting colour = potency >= 25 ? ChatFormatting.LIGHT_PURPLE
+                : potency >= 13 ? ChatFormatting.AQUA
+                : potency >= 7 ? ChatFormatting.GREEN : ChatFormatting.GRAY;
+        return Component.translatable("tooltip.magnetization.gui_magnet", magnet.getHoverName(), potency)
+                .withStyle(colour);
     }
 }

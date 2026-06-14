@@ -2,7 +2,6 @@ package com.stonytark.magnetization.content.jet;
 
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import com.stonytark.magnetization.registry.MagBlockEntities;
-import com.stonytark.magnetization.registry.MagItems;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -72,12 +71,17 @@ public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magn
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return CAPACITY; }
 
-    /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnet — STRONG by design. */
+    /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnetic material —
+     *  STRONG by design, and scaling with the material's potency. A stronger
+     *  magnet raises the speed ceiling + acceleration but also burns more FE per
+     *  tick, so it only reaches its ceiling if you feed it matching power. */
     private static double[] tier(final ItemStack stack) {
-        if (stack.is(MagItems.PERMANENT_MAGNET.get())) return new double[]{3.0, 0.18, 64};
-        if (stack.is(MagItems.TEMPORARY_MAGNET.get())) return new double[]{2.2, 0.12, 24};
-        if (stack.is(MagItems.MAGNETIC_PLATE.get()))   return new double[]{1.6, 0.07, 8};
-        return null;
+        final int potency = com.stonytark.magnetization.content.MagneticMaterials.potency(stack);
+        if (potency <= 0) return null;
+        final double maxSpeed = 1.0 + potency * 0.09;  // ~1.09 .. ~3.6
+        final double dv = 0.03 + potency * 0.007;       // accel toward the ceiling
+        final double feCost = 4 + potency * 4;          // bigger magnet → more FE/tick
+        return new double[]{maxSpeed, dv, feCost};
     }
 
     public static boolean isMagnet(final ItemStack stack) { return tier(stack) != null; }

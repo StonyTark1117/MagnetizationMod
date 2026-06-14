@@ -1,5 +1,7 @@
 package com.stonytark.magnetization.menu;
 
+import com.stonytark.magnetization.content.MagneticMaterials;
+import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.registry.MagMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -45,12 +47,20 @@ public final class MachineMenu extends AbstractContainerMenu {
         this.input = input;
         checkContainerSize(input, 1);
 
-        // Plain input slot. The BE container already enforces its own
-        // canPlaceItem (magnet / fuel cell / bucket) + one-item cap, and
-        // quickMoveStack() gates shift-click on it, so the slot itself stays
-        // permissive — overriding mayPlace here desynced client vs. server and
-        // blocked insertion entirely.
-        addSlot(new Slot(input, 0, INPUT_X, INPUT_Y));
+        // Input slot constrained to what this machine accepts. The filter is
+        // resolved from the item ID + this menu's kind, so it returns the SAME
+        // answer on the client and the server (no dummy-container desync), and
+        // the cap is a hard 1 on both sides.
+        addSlot(new Slot(input, 0, INPUT_X, INPUT_Y) {
+            @Override
+            public boolean mayPlace(final ItemStack stack) {
+                return accepts(stack);
+            }
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
@@ -101,6 +111,17 @@ public final class MachineMenu extends AbstractContainerMenu {
         super.broadcastChanges();
     }
 
+    /** What this machine's input slot accepts, by kind. Deterministic from the
+     *  item ID so it's identical client-side and server-side. */
+    public boolean accepts(final ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        return switch (kind) {
+            case MOTOR, JET -> MagneticMaterials.isMagnet(stack);
+            case TOKAMAK -> stack.is(MagItems.DEUTERIUM_CELL.get());
+            case THRUSTER -> stack.is(MagItems.FERROFLUID_BUCKET.get());
+        };
+    }
+
     @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
         final Slot slot = slots.get(index);
@@ -109,7 +130,7 @@ public final class MachineMenu extends AbstractContainerMenu {
         final ItemStack copy = original.copy();
         if (index == 0) {
             if (!moveItemStackTo(original, 1, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (input.canPlaceItem(0, original)) {
+        } else if (accepts(original)) {
             if (!moveItemStackTo(original, 0, 1, false)) return ItemStack.EMPTY;
         } else {
             return ItemStack.EMPTY;

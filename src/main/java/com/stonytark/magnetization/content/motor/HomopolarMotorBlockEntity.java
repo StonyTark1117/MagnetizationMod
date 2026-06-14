@@ -1,7 +1,6 @@
 package com.stonytark.magnetization.content.motor;
 
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -83,26 +82,23 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
         if (level != null && !level.isClientSide) updateGeneratedRotation();
     }
 
-    /** RPM this magnet yields, or 0 for none / a non-magnet. Kept low — it's weak. */
+    /** RPM this magnetic material yields, or 0 for a non-magnet. Deliberately
+     *  gentle (the motor is the weak machine): 2 RPM per potency point, so the
+     *  ladder runs ~6 RPM (hematite ore) up to ~58 RPM (titanomagnetite block). */
     public static float speedFor(final ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        if (stack.is(MagItems.PERMANENT_MAGNET.get())) return 32f;
-        if (stack.is(MagItems.TEMPORARY_MAGNET.get())) return 16f;
-        if (stack.is(MagItems.MAGNETIC_PLATE.get())) return 8f;
-        return 0f;
+        final int potency = com.stonytark.magnetization.content.MagneticMaterials.potency(stack);
+        return potency <= 0 ? 0f : potency * 2f;
     }
 
-    /** Stress capacity (su) this magnet provides. */
+    /** Stress capacity (su) this material provides — scales with potency so a
+     *  stronger magnet can drive a bigger Create network. */
     public static float capacityFor(final ItemStack stack) {
-        if (stack.isEmpty()) return 0f;
-        if (stack.is(MagItems.PERMANENT_MAGNET.get())) return 128f;
-        if (stack.is(MagItems.TEMPORARY_MAGNET.get())) return 64f;
-        if (stack.is(MagItems.MAGNETIC_PLATE.get())) return 32f;
-        return 0f;
+        final int potency = com.stonytark.magnetization.content.MagneticMaterials.potency(stack);
+        return potency <= 0 ? 0f : potency * 8f;
     }
 
     public static boolean isMagnet(final ItemStack stack) {
-        return speedFor(stack) > 0f;
+        return com.stonytark.magnetization.content.MagneticMaterials.isMagnet(stack);
     }
 
     @Override
