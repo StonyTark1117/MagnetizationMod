@@ -45,19 +45,12 @@ public final class MachineMenu extends AbstractContainerMenu {
         this.input = input;
         checkContainerSize(input, 1);
 
-        // Constrained input slot: honours the BE container's canPlaceItem filter
-        // (magnet / fuel cell / bucket) AND its max-stack-of-1, so shift-click,
-        // drag, and hopper insertion all respect the same rule.
-        addSlot(new Slot(input, 0, INPUT_X, INPUT_Y) {
-            @Override
-            public boolean mayPlace(final ItemStack stack) {
-                return input.canPlaceItem(0, stack);
-            }
-            @Override
-            public int getMaxStackSize() {
-                return input.getMaxStackSize();
-            }
-        });
+        // Plain input slot. The BE container already enforces its own
+        // canPlaceItem (magnet / fuel cell / bucket) + one-item cap, and
+        // quickMoveStack() gates shift-click on it, so the slot itself stays
+        // permissive — overriding mayPlace here desynced client vs. server and
+        // blocked insertion entirely.
+        addSlot(new Slot(input, 0, INPUT_X, INPUT_Y));
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
