@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "bbb",
+    " i ",
+    "iii"
+  ],
+  "key": {
+    "b": {
+      "item": "magnetization:titanomagnetite_block"
+    },
+    "i": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "result": {
+    "id": "magnetization:titanomagnetite_anvil",
+    "count": 1
+  }
+}

@@ -92,6 +92,11 @@ public final class MagTags {
     public static final TagKey<Block> EDDY_CONDUCTORS =
             TagKey.create(Registries.BLOCK, Magnetization.id("eddy_conductors"));
 
+    /** Our magnetic-metal anvils — self-dampened (quiet use-clang) and given a
+     *  per-metal break chance by {@code AnvilDampenerHandler}. */
+    public static final TagKey<Block> DAMPENED_ANVILS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("dampened_anvils"));
+
     /** Block-level escape hatch for the Magnetic Excavator: any block in this
      *  tag is treated like bedrock — the excavator will refuse to pull through
      *  it. The bedrock + block-entity safeguards are already wired in code;

@@ -299,6 +299,19 @@ public final class MagBlocks {
                             .mapColor(MapColor.METAL).strength(0.4f, 0.4f)
                             .sound(SoundType.NETHERITE_BLOCK).noOcclusion()));
 
+    /** Magnetic-metal anvils — vanilla anvil behaviour, but self-dampened + per-metal durability. */
+    private static BlockBehaviour.Properties anvilOf(final MapColor color) {
+        return BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.ANVIL).mapColor(color);
+    }
+    public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> MAGNETITE_ANVIL =
+            REGISTER.register("magnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_BLUE)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> MAGHEMITE_ANVIL =
+            REGISTER.register("maghemite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_ORANGE)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> HEMATITE_ANVIL =
+            REGISTER.register("hematite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_RED)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
+            REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
+
     /** Ferrofluid liquid block (holds the source fluid). */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> FERROFLUID_BLOCK =
             REGISTER.register("ferrofluid", () -> new net.minecraft.world.level.block.LiquidBlock(

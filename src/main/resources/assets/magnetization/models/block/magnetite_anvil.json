@@ -1,0 +1,6 @@
+{
+  "parent": "magnetization:block/magnetic_anvil_template",
+  "textures": {
+    "metal": "magnetization:block/magnetite_block"
+  }
+}

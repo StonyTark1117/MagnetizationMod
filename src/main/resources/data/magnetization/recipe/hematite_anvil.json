@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "bbb",
+    " i ",
+    "iii"
+  ],
+  "key": {
+    "b": {
+      "item": "magnetization:hematite_block"
+    },
+    "i": {
+      "item": "magnetization:hematite_ingot"
+    }
+  },
+  "result": {
+    "id": "magnetization:hematite_anvil",
+    "count": 1
+  }
+}

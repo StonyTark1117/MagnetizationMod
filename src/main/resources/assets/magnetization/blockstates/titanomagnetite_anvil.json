@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magnetization:block/titanomagnetite_anvil"
+    },
+    "facing=east": {
+      "model": "magnetization:block/titanomagnetite_anvil",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magnetization:block/titanomagnetite_anvil",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "magnetization:block/titanomagnetite_anvil",
+      "y": 270
+    }
+  }
+}

@@ -32,6 +32,10 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> KINETIC_COIL        = REGISTER.registerSimpleBlockItem(MagBlocks.KINETIC_COIL);
     public static final DeferredItem<BlockItem> EMP_CHARGE          = REGISTER.registerSimpleBlockItem(MagBlocks.EMP_CHARGE);
     public static final DeferredItem<BlockItem> GYROSTABILIZER      = REGISTER.registerSimpleBlockItem(MagBlocks.GYROSTABILIZER);
+    public static final DeferredItem<BlockItem> MAGNETITE_ANVIL       = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETITE_ANVIL);
+    public static final DeferredItem<BlockItem> MAGHEMITE_ANVIL       = REGISTER.registerSimpleBlockItem(MagBlocks.MAGHEMITE_ANVIL);
+    public static final DeferredItem<BlockItem> HEMATITE_ANVIL        = REGISTER.registerSimpleBlockItem(MagBlocks.HEMATITE_ANVIL);
+    public static final DeferredItem<BlockItem> TITANOMAGNETITE_ANVIL = REGISTER.registerSimpleBlockItem(MagBlocks.TITANOMAGNETITE_ANVIL);
     public static final DeferredItem<BlockItem> MAGNETOSTRICTIVE_SENSOR = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETOSTRICTIVE_SENSOR);
     public static final DeferredItem<BlockItem> BARKHAUSEN_GENERATOR = REGISTER.registerSimpleBlockItem(MagBlocks.BARKHAUSEN);
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);

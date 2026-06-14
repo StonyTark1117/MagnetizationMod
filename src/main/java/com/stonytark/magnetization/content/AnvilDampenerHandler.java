@@ -29,10 +29,29 @@ public final class AnvilDampenerHandler {
         final Player player = event.getEntity();
         if (!(player.containerMenu instanceof AnvilMenu menu)) return;
         final ContainerLevelAccess access = ((ItemCombinerMenuAccessor) (Object) menu).magnetization$access();
-        final boolean dampened = access.evaluate(AnvilDampenerHandler::hasAdjacentDampener).orElse(false);
-        if (dampened) {
-            event.setBreakChance(0.0f); // magnet steadies the anvil — never degrades
-        }
+        access.evaluate((level, pos) -> {
+            // Magnetic-metal anvils carry their own per-metal break chance.
+            final Float metalChance = magneticAnvilBreakChance(level.getBlockState(pos));
+            if (metalChance != null) event.setBreakChance(metalChance);
+            // An adjacent dampener magnet steadies any anvil — never degrades (wins).
+            if (hasAdjacentDampener(level, pos)) event.setBreakChance(0.0f);
+            return null;
+        });
+    }
+
+    /** Per-metal break chance for our anvils, or null if {@code state} isn't one.
+     *  Most are weaker than a vanilla anvil + dampener (which is 0); titanomagnetite
+     *  is the only one that beats it (0, never degrades). */
+    private static Float magneticAnvilBreakChance(final net.minecraft.world.level.block.state.BlockState state) {
+        if (!state.is(MagTags.DAMPENED_ANVILS)) return null;
+        final String path = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+        return switch (path) {
+            case "magnetite_anvil" -> 0.10f;
+            case "maghemite_anvil" -> 0.18f;   // oxidised, brittle
+            case "hematite_anvil" -> 0.15f;    // brittle
+            case "titanomagnetite_anvil" -> 0.0f; // premium — never degrades
+            default -> 0.12f;
+        };
     }
 
     /** True if any of the 6 blocks touching the anvil is an

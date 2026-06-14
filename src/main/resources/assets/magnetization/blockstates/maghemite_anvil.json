@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magnetization:block/maghemite_anvil"
+    },
+    "facing=east": {
+      "model": "magnetization:block/maghemite_anvil",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magnetization:block/maghemite_anvil",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "magnetization:block/maghemite_anvil",
+      "y": 270
+    }
+  }
+}

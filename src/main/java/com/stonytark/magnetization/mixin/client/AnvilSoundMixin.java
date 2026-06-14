@@ -26,7 +26,11 @@ public class AnvilSoundMixin {
                                                 final int data, final CallbackInfo ci) {
         if (type != ANVIL_USED) return;
         final Level level = Minecraft.getInstance().level;
-        if (level != null && AnvilDampenerHandler.hasAdjacentDampener(level, pos)) {
+        if (level == null) return;
+        // Deaden when a magnet sits beside the anvil, or the anvil is one of our
+        // self-dampened magnetic-metal anvils.
+        if (AnvilDampenerHandler.hasAdjacentDampener(level, pos)
+                || level.getBlockState(pos).is(com.stonytark.magnetization.api.MagTags.DAMPENED_ANVILS)) {
             ci.cancel();
         }
     }

@@ -112,6 +112,10 @@ public final class MagCreativeTab {
                         accept(output, MagItems.KINETIC_COIL);
                         accept(output, MagItems.EMP_CHARGE);
                         accept(output, MagItems.GYROSTABILIZER);
+                        accept(output, MagItems.MAGNETITE_ANVIL);
+                        accept(output, MagItems.MAGHEMITE_ANVIL);
+                        accept(output, MagItems.HEMATITE_ANVIL);
+                        accept(output, MagItems.TITANOMAGNETITE_ANVIL);
                         accept(output, MagItems.MAGNETOSTRICTIVE_SENSOR);
                         accept(output, MagItems.BARKHAUSEN_GENERATOR);
                         accept(output, MagItems.PETRIFIED_WOOD);
