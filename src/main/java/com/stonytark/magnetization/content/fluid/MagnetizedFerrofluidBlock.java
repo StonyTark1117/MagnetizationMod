@@ -1,14 +1,23 @@
 package com.stonytark.magnetization.content.fluid;
 
 import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.registry.MagBlocks;
+import com.stonytark.magnetization.registry.MagDataComponents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FlowingFluid;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Magnetized ferrofluid — a fully flowing fluid (it pours and spreads like the
@@ -24,6 +33,9 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
 
     public static final EnumProperty<MagneticPolarity> POLARITY =
             EnumProperty.create("polarity", MagneticPolarity.class, MagneticPolarity.NORTH, MagneticPolarity.SOUTH);
+
+    /** Ticks between mixing-spread steps — keeps the conversion gradual + cheap. */
+    private static final int MIX_DELAY = 5;
 
     public MagnetizedFerrofluidBlock(final FlowingFluid fluid, final Properties props) {
         super(fluid, props);
@@ -46,6 +58,46 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
         if (!level.isClientSide && state.getFluidState().isSource()) {
             MagnetizedFerrofluidRegistry.add(level, pos, state.getValue(POLARITY));
         }
+        if (!level.isClientSide) level.scheduleTick(pos, this, MIX_DELAY);
+    }
+
+    @Override
+    protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos,
+                                   final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        if (!level.isClientSide) level.scheduleTick(pos, this, MIX_DELAY);
+    }
+
+    /**
+     * Mixing rule — magnetization takes priority: any plain ferrofluid touching
+     * this cell is converted to magnetized ferrofluid carrying this cell's pole
+     * (keeping its fluid level). Each freshly-converted cell schedules its own
+     * pass via {@code onPlace}, so the charge spreads through a connected body.
+     */
+    @Override
+    protected void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource random) {
+        super.tick(state, level, pos, random);
+        final MagneticPolarity pole = state.getValue(POLARITY);
+        for (final Direction dir : Direction.values()) {
+            final BlockPos np = pos.relative(dir);
+            final BlockState ns = level.getBlockState(np);
+            if (ns.is(MagBlocks.FERROFLUID_BLOCK.get())) {
+                level.setBlock(np, defaultBlockState()
+                        .setValue(LEVEL, ns.getValue(LEVEL))
+                        .setValue(POLARITY, pole), Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    @Override
+    public ItemStack pickupBlock(final @Nullable Player player, final LevelAccessor level,
+                                 final BlockPos pos, final BlockState state) {
+        final MagneticPolarity pole = state.getValue(POLARITY);
+        final ItemStack bucket = super.pickupBlock(player, level, pos, state);
+        // The fluid's bucket is the plain ferrofluid bucket; re-stamp the pole so
+        // scooping magnetized ferrofluid keeps you a magnetized bucket.
+        if (!bucket.isEmpty()) bucket.set(MagDataComponents.ARMOR_POLARITY.get(), pole);
+        return bucket;
     }
 
     @Override
