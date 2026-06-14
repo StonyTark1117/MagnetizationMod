@@ -86,6 +86,11 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.meteorite.MeteoriteSaplingBlockEntity::new, MagBlocks.METEORITE_SAPLING.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gyro.GyrostabilizerBlockEntity>> GYROSTABILIZER =
+            REGISTER.register("gyrostabilizer", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.gyro.GyrostabilizerBlockEntity::new, MagBlocks.GYROSTABILIZER.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity>> BARKHAUSEN =
             REGISTER.register("barkhausen_generator", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity::new, MagBlocks.BARKHAUSEN.get())

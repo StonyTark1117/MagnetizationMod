@@ -275,6 +275,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock> MAGNETOSTRICTIVE_SENSOR =
             REGISTER.register("magnetostrictive_sensor", () -> new com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlock(poweredMetal()));
 
+    /** Magnetic Gyrostabilizer — on a ship + powered, freezes its rotation (only translates). */
+    public static final DeferredBlock<com.stonytark.magnetization.content.gyro.GyrostabilizerBlock> GYROSTABILIZER =
+            REGISTER.register("gyrostabilizer", () -> new com.stonytark.magnetization.content.gyro.GyrostabilizerBlock(poweredMetal()));
+
     /** EMP flux-compression charge — redstone-detonated; blanks emitters + wipes FE in range. */
     public static final DeferredBlock<com.stonytark.magnetization.content.emp.EmpChargeBlock> EMP_CHARGE =
             REGISTER.register("emp_charge", () -> new com.stonytark.magnetization.content.emp.EmpChargeBlock(

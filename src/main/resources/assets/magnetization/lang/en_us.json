@@ -247,6 +247,7 @@
   "block.magnetization.induction_pad": "Induction Charging Pad",
   "block.magnetization.kinetic_coil": "Kinetic Induction Coil",
   "block.magnetization.emp_charge": "EMP Flux Charge",
+  "block.magnetization.gyrostabilizer": "Magnetic Gyrostabilizer",
   "block.magnetization.magnetostrictive_sensor": "Magnetostrictive Sensor",
   "block.magnetization.barkhausen_generator": "Barkhausen Noise Generator",
   "tooltip.magnetization.ore_compass.any": "Points to the nearest metallic ore vein",

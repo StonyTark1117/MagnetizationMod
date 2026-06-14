@@ -31,6 +31,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> INDUCTION_PAD       = REGISTER.registerSimpleBlockItem(MagBlocks.INDUCTION_PAD);
     public static final DeferredItem<BlockItem> KINETIC_COIL        = REGISTER.registerSimpleBlockItem(MagBlocks.KINETIC_COIL);
     public static final DeferredItem<BlockItem> EMP_CHARGE          = REGISTER.registerSimpleBlockItem(MagBlocks.EMP_CHARGE);
+    public static final DeferredItem<BlockItem> GYROSTABILIZER      = REGISTER.registerSimpleBlockItem(MagBlocks.GYROSTABILIZER);
     public static final DeferredItem<BlockItem> MAGNETOSTRICTIVE_SENSOR = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETOSTRICTIVE_SENSOR);
     public static final DeferredItem<BlockItem> BARKHAUSEN_GENERATOR = REGISTER.registerSimpleBlockItem(MagBlocks.BARKHAUSEN);
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);

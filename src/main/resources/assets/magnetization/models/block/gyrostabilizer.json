@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/gyrostabilizer_top",
+    "bottom": "magnetization:block/gyrostabilizer_side",
+    "side": "magnetization:block/gyrostabilizer_side"
+  }
+}

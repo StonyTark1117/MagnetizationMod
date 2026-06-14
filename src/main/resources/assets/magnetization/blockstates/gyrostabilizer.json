@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "magnetization:block/gyrostabilizer"
+    },
+    "powered=true": {
+      "model": "magnetization:block/gyrostabilizer"
+    }
+  }
+}
