@@ -416,6 +416,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                     dampened, local.shape());
         }
 
+        // Halbach array boost: face-adjacent magnets of the SAME polarity
+        // concentrate the field, stepping the strength tier up (clamped to
+        // EXTREME). The opposite of the hematite dampener above.
+        final MagneticStrength boosted = com.stonytark.magnetization.content.HalbachArray
+                .boostedStrength(server, getBlockPos(), local.polarity(), local.strength());
+        if (boosted != local.strength()) {
+            local = new MagneticField(local.origin(), local.axis(), local.polarity(),
+                    boosted, local.shape());
+        }
+
         // Hematite Lens polarity lock: takes precedence over any Inverter flip
         // earlier in this tick. Set via the lens item's right-click; cleared
         // via shift+right-click.
