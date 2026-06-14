@@ -116,5 +116,10 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.itemframe.MagneticItemFrameBlockEntity::new, MagBlocks.MAGNETIC_ITEM_FRAME.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity>> TOKAMAK_CONTROLLER =
+            REGISTER.register("tokamak_controller", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity::new, MagBlocks.TOKAMAK_CONTROLLER.get())
+                    .build(null));
+
     private MagBlockEntities() {}
 }

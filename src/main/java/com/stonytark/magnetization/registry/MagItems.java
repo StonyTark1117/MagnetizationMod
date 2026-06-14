@@ -36,6 +36,8 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> MAGHEMITE_ANVIL       = REGISTER.registerSimpleBlockItem(MagBlocks.MAGHEMITE_ANVIL);
     public static final DeferredItem<BlockItem> HEMATITE_ANVIL        = REGISTER.registerSimpleBlockItem(MagBlocks.HEMATITE_ANVIL);
     public static final DeferredItem<BlockItem> TITANOMAGNETITE_ANVIL = REGISTER.registerSimpleBlockItem(MagBlocks.TITANOMAGNETITE_ANVIL);
+    public static final DeferredItem<BlockItem> TOKAMAK_COIL         = REGISTER.registerSimpleBlockItem(MagBlocks.TOKAMAK_COIL);
+    public static final DeferredItem<BlockItem> TOKAMAK_CONTROLLER   = REGISTER.registerSimpleBlockItem(MagBlocks.TOKAMAK_CONTROLLER);
     public static final DeferredItem<BlockItem> MAGNETOSTRICTIVE_SENSOR = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETOSTRICTIVE_SENSOR);
     public static final DeferredItem<BlockItem> BARKHAUSEN_GENERATOR = REGISTER.registerSimpleBlockItem(MagBlocks.BARKHAUSEN);
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);
@@ -61,6 +63,9 @@ public final class MagItems {
     /** Pyrolytic carbon — a strongly diamagnetic wafer; drop it over a magnet and it floats. */
     public static final DeferredItem<Item> PYROLYTIC_CARBON =
             REGISTER.registerSimpleItem("pyrolytic_carbon", new Item.Properties());
+    /** Deuterium Cell — D-T fusion fuel for the tokamak; right-click the controller to load it. */
+    public static final DeferredItem<Item> DEUTERIUM_CELL =
+            REGISTER.registerSimpleItem("deuterium_cell", new Item.Properties());
     /** Vector Core — titanomagnetite chip; right-click a Repulsor to make it thrust ships along its facing. */
     public static final DeferredItem<Item> VECTOR_CORE =
             REGISTER.registerSimpleItem("vector_core", new Item.Properties());

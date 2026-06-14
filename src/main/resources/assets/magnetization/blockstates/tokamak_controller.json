@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "magnetization:block/tokamak_controller"
+    },
+    "lit=true": {
+      "model": "magnetization:block/tokamak_controller_active"
+    }
+  }
+}

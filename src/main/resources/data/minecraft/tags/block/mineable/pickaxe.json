@@ -4,6 +4,8 @@
     "magnetization:magnetite_anvil",
     "magnetization:maghemite_anvil",
     "magnetization:hematite_anvil",
-    "magnetization:titanomagnetite_anvil"
+    "magnetization:titanomagnetite_anvil",
+    "magnetization:tokamak_coil",
+    "magnetization:tokamak_controller"
   ]
 }

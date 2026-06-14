@@ -312,6 +312,14 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.anvil.MagneticAnvilBlock> TITANOMAGNETITE_ANVIL =
             REGISTER.register("titanomagnetite_anvil", () -> new com.stonytark.magnetization.content.anvil.MagneticAnvilBlock(anvilOf(MapColor.COLOR_LIGHT_BLUE)));
 
+    /** Tokamak confinement coil — the structural ring of the fusion reactor. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.tokamak.TokamakCoilBlock> TOKAMAK_COIL =
+            REGISTER.register("tokamak_coil", () -> new com.stonytark.magnetization.content.tokamak.TokamakCoilBlock(metal()));
+
+    /** Tokamak controller — fuses deuterium fuel into a large FE output when ringed by coils. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.tokamak.TokamakControllerBlock> TOKAMAK_CONTROLLER =
+            REGISTER.register("tokamak_controller", () -> new com.stonytark.magnetization.content.tokamak.TokamakControllerBlock(poweredMetal()));
+
     /** Ferrofluid liquid block (holds the source fluid). */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> FERROFLUID_BLOCK =
             REGISTER.register("ferrofluid", () -> new net.minecraft.world.level.block.LiquidBlock(

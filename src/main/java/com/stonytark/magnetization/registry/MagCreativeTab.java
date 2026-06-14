@@ -112,6 +112,9 @@ public final class MagCreativeTab {
                         accept(output, MagItems.KINETIC_COIL);
                         accept(output, MagItems.EMP_CHARGE);
                         accept(output, MagItems.GYROSTABILIZER);
+                        accept(output, MagItems.TOKAMAK_CONTROLLER);
+                        accept(output, MagItems.TOKAMAK_COIL);
+                        accept(output, MagItems.DEUTERIUM_CELL);
                         accept(output, MagItems.MAGNETITE_ANVIL);
                         accept(output, MagItems.MAGHEMITE_ANVIL);
                         accept(output, MagItems.HEMATITE_ANVIL);

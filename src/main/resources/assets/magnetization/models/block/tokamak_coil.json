@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "magnetization:block/tokamak_coil_top",
+    "bottom": "magnetization:block/tokamak_coil_top",
+    "side": "magnetization:block/tokamak_coil_side"
+  }
+}
