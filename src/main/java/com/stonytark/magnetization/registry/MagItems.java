@@ -70,10 +70,10 @@ public final class MagItems {
     /** Vector Core — titanomagnetite chip; right-click a Repulsor to make it thrust ships along its facing. */
     public static final DeferredItem<Item> VECTOR_CORE =
             REGISTER.registerSimpleItem("vector_core", new Item.Properties());
-    /** Bucket of ferrofluid. */
-    public static final DeferredItem<net.minecraft.world.item.BucketItem> FERROFLUID_BUCKET =
+    /** Bucket of ferrofluid. Magnetizable in the electromagnet GUI (carries a polarity). */
+    public static final DeferredItem<com.stonytark.magnetization.content.fluid.FerrofluidBucketItem> FERROFLUID_BUCKET =
             REGISTER.registerItem("ferrofluid_bucket",
-                    p -> new net.minecraft.world.item.BucketItem(MagFluids.FERROFLUID.get(), p),
+                    p -> new com.stonytark.magnetization.content.fluid.FerrofluidBucketItem(MagFluids.FERROFLUID.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
     /** Bucket of magnetorheological fluid. */
     public static final DeferredItem<net.minecraft.world.item.BucketItem> MR_FLUID_BUCKET =

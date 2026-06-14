@@ -243,6 +243,8 @@
   "item.magnetization.pyrolytic_carbon": "Pyrolytic Carbon",
   "item.magnetization.vector_core": "Vector Core",
   "item.magnetization.ferrofluid_bucket": "Ferrofluid Bucket",
+  "item.magnetization.ferrofluid_bucket.magnetized": "Magnetized Ferrofluid Bucket",
+  "tooltip.magnetization.ferrofluid_polarity": "Polarity: %s",
   "block.magnetization.ferrofluid": "Ferrofluid",
   "fluid_type.magnetization.ferrofluid": "Ferrofluid",
   "item.magnetization.mr_fluid_bucket": "MR Fluid Bucket",
