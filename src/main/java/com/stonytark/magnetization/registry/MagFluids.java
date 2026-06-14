@@ -53,5 +53,30 @@ public final class MagFluids {
                 .bucket(MagItems.FERROFLUID_BUCKET);
     }
 
+    // ---------------- Magnetorheological fluid ----------------
+
+    public static final Supplier<FluidType> MR_FLUID_TYPE = FLUID_TYPES.register("mr_fluid",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(3000)
+                    .viscosity(3000)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MR_FLUID =
+            FLUIDS.register("mr_fluid", () -> new BaseFlowingFluid.Source(mrProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MR_FLUID_FLOWING =
+            FLUIDS.register("flowing_mr_fluid", () -> new BaseFlowingFluid.Flowing(mrProperties()));
+
+    private static BaseFlowingFluid.Properties mrProperties() {
+        return new BaseFlowingFluid.Properties(MR_FLUID_TYPE, MR_FLUID, MR_FLUID_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.MR_FLUID_BLOCK)
+                .bucket(MagItems.MR_FLUID_BUCKET);
+    }
+
     private MagFluids() {}
 }

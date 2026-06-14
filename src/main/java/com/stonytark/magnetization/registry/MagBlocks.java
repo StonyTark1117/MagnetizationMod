@@ -306,5 +306,12 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_BLACK)));
 
+    /** MR (magnetorheological) fluid block — solidifies (walkable) when redstone-powered. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.MRFluidBlock> MR_FLUID_BLOCK =
+            REGISTER.register("mr_fluid", () -> new com.stonytark.magnetization.content.fluid.MRFluidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.MR_FLUID.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_GRAY)));
+
     private MagBlocks() {}
 }

@@ -44,6 +44,22 @@ public final class MagClientRegistration {
                 return 0xFF14141C; // opaque near-black
             }
         }, com.stonytark.magnetization.registry.MagFluids.FERROFLUID_TYPE.get());
+
+        // MR fluid: water textures tinted iron-grey.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFF5A5A64; // iron grey
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.MR_FLUID_TYPE.get());
     }
 
     @SubscribeEvent

@@ -65,6 +65,11 @@ public final class MagItems {
             REGISTER.registerItem("ferrofluid_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.FERROFLUID.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of magnetorheological fluid. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> MR_FLUID_BUCKET =
+            REGISTER.registerItem("mr_fluid_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.MR_FLUID.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

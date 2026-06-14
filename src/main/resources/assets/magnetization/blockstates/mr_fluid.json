@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "magnetization:block/mr_fluid"
+    }
+  }
+}
