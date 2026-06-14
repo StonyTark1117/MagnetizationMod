@@ -240,6 +240,7 @@
   "item.magnetization.magnetic_elytra": "Magnetic Elytra",
   "item.magnetization.cosmic_compass": "Cosmic Compass",
   "item.magnetization.ore_compass": "Ore Dowsing Compass",
+  "item.magnetization.pyrolytic_carbon": "Pyrolytic Carbon",
   "block.magnetization.magnetic_item_frame": "Magnetic Item Frame",
   "block.magnetization.induction_pad": "Induction Charging Pad",
   "block.magnetization.kinetic_coil": "Kinetic Induction Coil",

@@ -53,6 +53,9 @@ public final class MagItems {
     /** Raw drop from magnetite ore. Smelt or blast to a magnetite ingot. */
     public static final DeferredItem<Item> RAW_MAGNETITE =
             REGISTER.registerSimpleItem("raw_magnetite", new Item.Properties());
+    /** Pyrolytic carbon — a strongly diamagnetic wafer; drop it over a magnet and it floats. */
+    public static final DeferredItem<Item> PYROLYTIC_CARBON =
+            REGISTER.registerSimpleItem("pyrolytic_carbon", new Item.Properties());
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

@@ -65,6 +65,10 @@ public final class FieldApplicator {
      *  weak, not LIRM-decayed. */
     public static final double PETRIFIED_WOOD_SUSCEPTIBILITY = 0.3d;
 
+    /** Diamagnetic repulsion gain — weak, so a diamagnetic item hovers a short
+     *  way above a magnet rather than rocketing off. */
+    public static final double DIAMAGNETIC_SUSCEPTIBILITY = 1.1d;
+
     private FieldApplicator() {}
 
     // Each accessor falls back to a default when the SPEC hasn't been loaded yet
@@ -362,6 +366,23 @@ public final class FieldApplicator {
             final Vec3 entityPos = entity.position().add(0, entity.getBbHeight() * 0.5d, 0);
             if (entityPos.distanceToSqr(field.origin()) > rSqr) continue;
 
+            // Diamagnetic items are repelled by BOTH poles — pushed away from the
+            // source regardless of field polarity. The field weakens with distance,
+            // so the repulsion balances gravity at a stable hover height; we also
+            // damp existing velocity each tick to settle the float instead of bob.
+            if (entity instanceof net.minecraft.world.entity.item.ItemEntity di
+                    && di.getItem().is(MagTags.DIAMAGNETIC_ITEMS)) {
+                final double mag = forceAtPrecomputed(field, entityPos, globalScalar, cosHalfAngle).length();
+                if (mag > 1.0e-6) {
+                    Vec3 away = entityPos.subtract(field.origin());
+                    away = away.lengthSqr() < 1.0e-6 ? new Vec3(0, 1, 0) : away.normalize();
+                    final Vec3 impulse = away.scale(mag * DIAMAGNETIC_SUSCEPTIBILITY * velScale);
+                    entity.setDeltaMovement(entity.getDeltaMovement().scale(0.55).add(impulse));
+                    entity.hurtMarked = true;
+                }
+                continue;
+            }
+
             final double susceptibility = susceptibilityOf(entity);
             if (susceptibility <= 0) continue;
 
@@ -387,7 +408,8 @@ public final class FieldApplicator {
         if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
         if (e instanceof ItemEntity item) {
             if (item.getItem().getItem() instanceof IMagnetizable) return true;
-            return item.getItem().is(MagTags.FERROMAGNETIC_ITEMS);
+            return item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)
+                    || item.getItem().is(MagTags.DIAMAGNETIC_ITEMS);
         }
         // Any living entity wearing tagged metal armor is magnetizable through
         // its gear — players (not in the entity tag by default) and modded

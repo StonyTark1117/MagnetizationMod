@@ -28,6 +28,12 @@ public final class MagTags {
     public static final TagKey<Item> METAL_ARMOR =
             TagKey.create(Registries.ITEM, Magnetization.id("metal_armor"));
 
+    /** Diamagnetic items — repelled by BOTH magnetic poles. Dropped in a field
+     *  they hover above the source instead of being pulled in (bismuth /
+     *  pyrolytic carbon). */
+    public static final TagKey<Item> DIAMAGNETIC_ITEMS =
+            TagKey.create(Registries.ITEM, Magnetization.id("diamagnetic"));
+
     /** Tools and weapons that can be magnetized via the electromagnet GUI.
      *  When a magnetized tool from this tag is held or worn, dropped
      *  ferromagnetic items within a small radius get pulled toward the

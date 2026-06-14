@@ -103,6 +103,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.METEORITE_FRAGMENT);
                         accept(output, MagItems.IMPRINT_MODULE);
                         accept(output, MagItems.MAGNETIC_PLATE);
+                        accept(output, MagItems.PYROLYTIC_CARBON);
                         accept(output, MagItems.MAGNETIC_ITEM_FRAME);
                         accept(output, MagItems.INDUCTION_PAD);
                         accept(output, MagItems.KINETIC_COIL);

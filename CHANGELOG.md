@@ -3,6 +3,7 @@
 ## 1.2.0 — (in development)
 
 ### New content
+- **Pyrolytic Carbon (diamagnetic levitation)**: a strongly diamagnetic wafer (crafted from 4 charcoal). Dropped within a magnetic field it's repelled by *both* poles — pushed away from the source with its motion damped, so it settles into a stable hover above a magnet instead of being pulled in. Real diamagnetic levitation, gamified. (Hover height/feel is a first tuning pass — `FieldApplicator.DIAMAGNETIC_SUSCEPTIBILITY`.)
 - **Halbach-array boost**: line up magnets of the *same* polarity so their faces touch and the field concentrates — each face-adjacent same-polarity magnet steps an emitter's strength tier up (clamped to EXTREME), so a row of aligned magnets reads as one powerful emitter. The exact mirror of the hematite dampener (which steps it down). Rewards deliberate magnet arrangements.
 - **EMP Flux Charge**: a single-use electromagnetic bomb. Power it with redstone and it detonates — every magnetic emitter in a 12-block radius goes dark for 10s and every machine/battery's stored FE is wiped, with a flash + thunderclap, then the charge is consumed. Fries electronics, not terrain (no block damage).
 - **Kinetic Induction Coil**: Faraday's law as a generator — a magnetic ship moving through the coil induces an EMF proportional to its speed, so the coil generates FE (pushed to adjacent machines/cables) and emits a redstone pulse while the magnet passes. No fuel; pure kinetic-to-electric. Pairs with Lenz braking and propulsion tracks.
