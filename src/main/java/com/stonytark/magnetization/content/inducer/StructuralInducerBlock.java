@@ -77,10 +77,11 @@ public final class StructuralInducerBlock extends DirectionalBlock implements En
                                                final Player player, final BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        // Range dial doubles as the scan-depth control; redstone-fuel slot powers
-        // it without an external signal (mirrors the excavator).
+        // Range dial doubles as the scan-depth control; strength buttons set the
+        // reel-in force/speed (mirrors the excavator); redstone-fuel slot powers
+        // it without an external signal.
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos,
-                EmitterMenu.CAP_RANGE | EmitterMenu.CAP_REDSTONE_FUEL,
+                EmitterMenu.CAP_RANGE | EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_REDSTONE_FUEL,
                 Component.translatable("block.magnetization.structural_inducer")).openFor(sp);
         return InteractionResult.CONSUME;
     }

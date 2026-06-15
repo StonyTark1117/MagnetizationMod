@@ -62,16 +62,15 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     private static final int MAX_REACH = 24;
     /** Cap on cells the flood may visit (air counts), so an open-air fill ends. */
     private static final int VISIT_CAP = 65_536;
-    /** Solid layers grabbed directly beneath the structure (farmland under crops,
-     *  ground under walls) so farms/floored builds come as a unit — not the deep
-     *  ground. */
-    private static final int SOIL_DEPTH = 2;
     /** Once the pulled structure's centre is within this many blocks of the
      *  inducer, release it as a free-floating craft (it's been reeled in). */
     private static final double ARRIVAL_DISTANCE = 2.5d;
-    /** Acceleration per tick toward the inducer (m/s²); must beat Sable gravity. */
+    /** Base acceleration per tick toward the inducer (m/s²) at the MEDIUM tier;
+     *  scaled by the strength buttons via {@link #pullMultiplier()}. Must beat
+     *  Sable gravity. */
     private static final double PULL_ACCEL = 16.0d;
-    /** Cap on the structure's pull speed so it reads as a smooth tractor beam. */
+    /** Base cap on the structure's pull speed (MEDIUM tier) so it reads as a
+     *  smooth tractor beam; scaled by {@link #pullMultiplier()}. */
     private static final double MAX_PULL_SPEED = 6.0d;
     /** Absolute age cap on a pull before we give up and release it. */
     private static final long PULL_TIMEOUT_TICKS = 600L;
@@ -203,6 +202,19 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         return net.minecraft.util.Mth.clamp(r > 0 ? r : DEFAULT_DEPTH, 4, 48);
     }
 
+    /** Reel-in force/speed multiplier from the strength buttons. Mirrors the
+     *  excavator's "tier controls pull force" model: WEAK reels slowly, EXTREME
+     *  hauls a structure in fast. Defaults to the STRONG tier (no override). */
+    private double pullMultiplier() {
+        return switch (effectiveStrength(com.stonytark.magnetization.api.MagneticStrength.STRONG)) {
+            case WEAK -> 0.5d;
+            case MEDIUM -> 1.0d;
+            case STRONG -> 1.75d;
+            case EXTREME -> 3.0d;
+            default -> 1.0d;
+        };
+    }
+
     /** Scan the box the inducer is aimed at (toward its visual front, i.e. the
      *  opposite of FACING — FACING points back at the player), assemble + reel in. */
     private void tryCapture(final ServerLevel server) {
@@ -296,11 +308,14 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         }
         final double inv = 1.0 / Math.max(dist, 0.0001);
         final double ux = dx * inv, uy = dy * inv, uz = dz * inv; // unit vector toward inducer
+        final double mult = pullMultiplier();
+        final double maxSpeed = MAX_PULL_SPEED * mult;
+        final double accel = PULL_ACCEL * mult;
         final var v = ship.latestLinearVelocity;
         final double toward = v.x * ux + v.y * uy + v.z * uz;
-        if (toward < MAX_PULL_SPEED) {
+        if (toward < maxSpeed) {
             final double mass = Math.max(0.0001, ship.getMassTracker().getMass());
-            final Vec3 impulse = new Vec3(ux * PULL_ACCEL * mass, uy * PULL_ACCEL * mass, uz * PULL_ACCEL * mass);
+            final Vec3 impulse = new Vec3(ux * accel * mass, uy * accel * mass, uz * accel * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
         }
         // Tunnel: clear world blocks on the structure's leading face so it drills
@@ -392,6 +407,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         visited.add(seed);
         while (!queue.isEmpty() && out.size() < MAX_BLOCKS && visited.size() < VISIT_CAP) {
             final BlockPos p = queue.poll();
+            if (p.equals(origin)) continue;                    // never grab the inducer itself
+            if (alongDepth(p, origin, grabDir) < 0) continue;  // stay in front, don't grab behind
             final boolean grabbable = isGrabbable(server, p);
             final boolean air = server.getBlockState(p).isAir();
             if (!grabbable && !air) continue; // terrain / fluid / immune / bedrock = boundary
@@ -403,32 +420,16 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 if (visited.add(ni)) queue.add(ni);
             }
         }
-        if (out.isEmpty()) return out;
-
-        // Second pass: grab the soil directly supporting the structure — the few
-        // solid layers beneath each built block (farmland under crops, ground
-        // under walls) — so farms and floored builds come as a unit. Stops at
-        // open space below, so the deep ground / a pen's interior isn't ripped up.
-        final java.util.Set<BlockPos> have = new java.util.HashSet<>(out);
-        final List<BlockPos> built = new ArrayList<>(out);
-        final BlockPos.MutableBlockPos f = new BlockPos.MutableBlockPos();
-        for (final BlockPos b : built) {
-            if (out.size() >= MAX_BLOCKS) break;
-            for (int dy = 1; dy <= SOIL_DEPTH; dy++) {
-                f.set(b.getX(), b.getY() - dy, b.getZ());
-                final BlockState bs = server.getBlockState(f);
-                if (bs.isAir() || !bs.getFluidState().isEmpty()) break; // open below → stop
-                if (bs.is(MagTags.EXCAVATOR_IMMUNE) || bs.getDestroySpeed(server, f) < 0) break;
-                final BlockPos at = f.immutable();
-                if (have.add(at)) {
-                    out.add(at);
-                    if (out.size() >= MAX_BLOCKS) break;
-                }
-            }
-        }
         // Bottom-up so positions.get(0) is the lowest block (the assembly anchor).
         out.sort(java.util.Comparator.comparingInt(BlockPos::getY));
         return out;
+    }
+
+    /** Depth of {@code p} along {@code grabDir} from the inducer (negative = behind). */
+    private static int alongDepth(final BlockPos p, final BlockPos origin, final Direction grabDir) {
+        return (p.getX() - origin.getX()) * grabDir.getStepX()
+                + (p.getY() - origin.getY()) * grabDir.getStepY()
+                + (p.getZ() - origin.getZ()) * grabDir.getStepZ();
     }
 
     /** Chebyshev (chessboard) distance — bounds the structure flood from the seed. */
