@@ -95,7 +95,15 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
         for (final Direction dir : Direction.values()) {
             final BlockPos np = pos.relative(dir);
             final BlockState ns = level.getBlockState(np);
-            if (ns.is(MagBlocks.FERROFLUID_BLOCK.get())) {
+            // Convert adjacent plain ferrofluid to this pole, AND propagate this
+            // pole onto adjacent magnetized FLOWING cells that carry a different
+            // (default) pole — so auxiliary/flowing cells of a body read the right
+            // pole instead of being stuck at NORTH. Magnetized SOURCE cells
+            // (LEVEL 0) are left alone, so two opposite-pole sources don't ping-pong.
+            final boolean plainCell = ns.is(MagBlocks.FERROFLUID_BLOCK.get());
+            final boolean flowingMagDiff = ns.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())
+                    && ns.getValue(LEVEL) != 0 && ns.getValue(POLARITY) != pole;
+            if (plainCell || flowingMagDiff) {
                 level.setBlock(np, defaultBlockState()
                         .setValue(LEVEL, ns.getValue(LEVEL))
                         .setValue(POLARITY, pole), Block.UPDATE_ALL);

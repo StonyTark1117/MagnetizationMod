@@ -44,7 +44,9 @@ public final class FerrofluidCreepHandler {
     private static final long MAG_INTERVAL = 4L;    // magnetized grows this often
     private static final long PLAIN_INTERVAL = 12L; // plain grows this often (slower)
     private static final long RECEDE_INTERVAL = 8L; // recede unsupported cells this often
-    private static final int MAX_CREEP_RADIUS = 6;  // scan bound per magnet
+    /** Scan bound per magnet — ferrofluid reacts out to (about) the field's reach,
+     *  capped so the per-tick cube scan stays affordable. */
+    private static final int MAX_CREEP_RADIUS = 16;
     private static final double ARRIVE_DIST = 1.7d; // a tendril this close has reached
 
     private FerrofluidCreepHandler() {}
@@ -101,7 +103,7 @@ public final class FerrofluidCreepHandler {
         final int r = s.radius;
         final BlockPos c = BlockPos.containing(s.origin.x, s.origin.y, s.origin.z);
         final BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
-        double globalMin = Double.MAX_VALUE;
+        double minSourceSq = Double.MAX_VALUE; // reached gate — SOURCE cells only
         BlockPos bestStep = null;
         double bestStepDist = Double.MAX_VALUE;
         BlockState bestState = null;
@@ -109,7 +111,7 @@ public final class FerrofluidCreepHandler {
             m.set(c.getX() + dx, c.getY() + dy, c.getZ() + dz);
             if (!server.isLoaded(m)) continue;
             final BlockState st = server.getBlockState(m);
-            if (!st.getFluidState().isSource()) continue;
+            if (st.getFluidState().isEmpty()) continue; // grow from source OR flowing edge
             final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
             final boolean mag = st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
             if (plain ? !growPlain : mag ? !growMag : true) continue;
@@ -120,7 +122,9 @@ public final class FerrofluidCreepHandler {
             }
             final double d = s.origin.distanceToSqr(Vec3.atCenterOf(m));
             if (d > (double) r * r) continue;
-            if (d < globalMin) globalMin = d;
+            // Only SOURCE cells count toward "reached" — a flowing edge spreading
+            // near the magnet must NOT false-flag arrival (that killed plain creep).
+            if (st.getFluidState().isSource() && d < minSourceSq) minSourceSq = d;
             final BlockPos step = bestStep(server, m.immutable(), s.origin, true);
             if (step == null) continue;
             final double sd = s.origin.distanceToSqr(Vec3.atCenterOf(step));
@@ -130,7 +134,7 @@ public final class FerrofluidCreepHandler {
                 bestState = stateFor(st);
             }
         }
-        if (globalMin <= ARRIVE_DIST * ARRIVE_DIST) return; // a tendril already reached
+        if (minSourceSq <= ARRIVE_DIST * ARRIVE_DIST) return; // a tendril already reached
         place(server, bestStep, bestState);
     }
 
@@ -148,7 +152,7 @@ public final class FerrofluidCreepHandler {
             m.set(c.getX() + dx, c.getY() + dy, c.getZ() + dz);
             if (!server.isLoaded(m)) continue;
             final BlockState st = server.getBlockState(m);
-            if (!st.getFluidState().isSource() || !st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())) continue;
+            if (st.getFluidState().isEmpty() || !st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())) continue;
             final MagneticPolarity pole = st.getValue(MagnetizedFerrofluidBlock.POLARITY);
             if (s.polarity == MagneticPolarity.NONE || pole != s.polarity) continue; // only like poles repel
             final double d = s.origin.distanceToSqr(Vec3.atCenterOf(m));
