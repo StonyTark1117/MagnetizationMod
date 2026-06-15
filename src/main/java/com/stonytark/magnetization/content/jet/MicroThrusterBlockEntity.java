@@ -1,12 +1,12 @@
 package com.stonytark.magnetization.content.jet;
 
-import com.stonytark.magnetization.physics.ShipMagneticRegistry;
+import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagFluids;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -39,14 +39,13 @@ import java.util.List;
  * WTHIT/Jade/TOP via the registered fluid + energy capabilities.
  */
 public class MicroThrusterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData {
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
 
     public static final int TANK_CAPACITY = 8_000;       // 8 buckets of ferrofluid
     private static final int FE_CAPACITY = 400_000;
     private static final int FE_MAX_RECEIVE = 16_000;
     private static final int FE_PER_TICK = 48;
     private static final int FLUID_PER_TICK = 2;
-    private static final double THRUST_RANGE = 7.0;
     private static final double MAX_SPEED = 3.6;          // top of the propulsion ladder
     private static final double THRUST_DV = 0.24;
 
@@ -87,52 +86,66 @@ public class MicroThrusterBlockEntity extends BlockEntity
         return true;
     }
 
+    /** Vanilla ticker: thruster in the open world (or defensively a contraption
+     *  still world-ticked) — resolve its host ship. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MicroThrusterBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
-        // Auto-drain a ferrofluid bucket from the input slot into the tank.
-        final net.minecraft.world.item.ItemStack in = be.bucketSlot.getItem(0);
-        if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && be.fillFromBucket()) {
-            be.bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
+        be.runEngine(server, SableBridge.subLevelAt(server, pos));
+    }
+
+    /** Sable sub-level tick: thruster is mounted on this ship — thrust it. */
+    @Override
+    public void sable$tick(final ServerSubLevel subLevel) {
+        if (level instanceof ServerLevel server) runEngine(server, subLevel);
+    }
+
+    private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        // Auto-drain a ferrofluid bucket into the tank (works anywhere).
+        final net.minecraft.world.item.ItemStack in = bucketSlot.getItem(0);
+        if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && fillFromBucket()) {
+            bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
         }
-        final boolean running = be.tank.getFluidAmount() >= FLUID_PER_TICK
-                && be.energy.getEnergyStored() >= FE_PER_TICK;
-        if (running) {
-            be.tank.drain(FLUID_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
-            be.energy.drainInternal(FE_PER_TICK);
-            be.thrust(server, pos, state);
-            be.setChanged();
+        final boolean firing = host != null
+                && tank.getFluidAmount() >= FLUID_PER_TICK
+                && energy.getEnergyStored() >= FE_PER_TICK;
+        if (firing) {
+            tank.drain(FLUID_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
+            energy.drainInternal(FE_PER_TICK);
+            thrustHost(host);
+            setChanged();
         }
-        if (state.getValue(BlockStateProperties.LIT) != running) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.LIT, running), Block.UPDATE_CLIENTS);
+        final BlockState state = getBlockState();
+        if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != firing) {
+            server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.LIT, firing), Block.UPDATE_CLIENTS);
         }
         if (server.getGameTime() % 10L == 0L) {
-            server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
+            server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }
 
-    private void thrust(final ServerLevel server, final BlockPos pos, final BlockState state) {
-        final SubLevelContainer container = SubLevelContainer.getContainer(server);
-        if (container == null) return;
-        final Direction facing = state.hasProperty(DirectionalBlock.FACING)
-                ? state.getValue(DirectionalBlock.FACING) : Direction.UP;
-        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
-        final double cx = pos.getX() + 0.5, cy = pos.getY() + 0.5, cz = pos.getZ() + 0.5;
-        final double rangeSqr = THRUST_RANGE * THRUST_RANGE;
-        for (final SubLevel sub : container.getAllSubLevels()) {
-            if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
-            final Vector3dc p = ship.logicalPose().position();
-            final double dx = p.x() - cx, dy = p.y() - cy, dz = p.z() - cz;
-            if (dx * dx + dy * dy + dz * dz > rangeSqr) continue;
-            final RigidBodyHandle handle = RigidBodyHandle.of(ship);
-            if (handle == null || !handle.isValid()) continue;
-            final Vector3dc v = handle.getLinearVelocity();
-            if (v.x() * dir.x + v.y() * dir.y + v.z() * dir.z >= MAX_SPEED) continue;
-            handle.addLinearAndAngularVelocity(
-                    new Vector3d(dir.x * THRUST_DV, dir.y * THRUST_DV, dir.z * THRUST_DV), new Vector3d(0, 0, 0));
-        }
+    /** Push the host ship along the thruster's facing (world-space), capped at
+     *  MAX_SPEED, applied at the centre of mass (pure forward thrust, no spin).
+     *  Force is mass-scaled so acceleration is consistent across ship sizes. */
+    private void thrustHost(final ServerSubLevel host) {
+        if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
+        final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
+                ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.UP;
+        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing.getNormal());
+
+        final RigidBodyHandle handle = RigidBodyHandle.of(host);
+        if (handle == null || !handle.isValid()) return;
+        final Pose3dc pose = host.logicalPose();
+        final Vec3 dirWorld = pose.transformNormal(new Vec3(dirLocal.x, dirLocal.y, dirLocal.z)).normalize();
+        final Vector3dc v = handle.getLinearVelocity();
+        if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= MAX_SPEED) return;
+
+        final double mass = host.getMassTracker().getMass();
+        final double force = THRUST_DV * 20.0 * mass;
+        final Vector3dc com = host.getMassTracker().getCenterOfMass();
+        SableBridge.applyLocalImpulse(host,
+                new Vector3d(com.x(), com.y(), com.z()),
+                new Vector3d(dirLocal.x * force, dirLocal.y * force, dirLocal.z * force));
     }
 
 

@@ -1,12 +1,11 @@
 package com.stonytark.magnetization.content.jet;
 
-import com.stonytark.magnetization.physics.ShipMagneticRegistry;
+import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagBlockEntities;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
@@ -36,11 +36,11 @@ import java.util.List;
  * thrust, and the stronger the magnet the more FE it burns per tick, so a big
  * magnet only reaches full speed if you feed it matching power.
  */
-public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magnetization.menu.MachineGuiData {
+public class MhdJetBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
 
     private static final int CAPACITY = 400_000;
     private static final int MAX_RECEIVE = 8_000;
-    private static final double THRUST_RANGE = 7.0;
 
     private final ReceiveBuffer energy = new ReceiveBuffer(CAPACITY, MAX_RECEIVE);
     private final net.minecraft.world.SimpleContainer magnetSlot = new net.minecraft.world.SimpleContainer(1) {
@@ -86,49 +86,63 @@ public class MhdJetBlockEntity extends BlockEntity implements com.stonytark.magn
 
     public static boolean isMagnet(final ItemStack stack) { return tier(stack) != null; }
 
+    /** Vanilla ticker: the jet is in the open world (or, defensively, a
+     *  contraption still driven by the world ticker) — resolve its host ship. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MhdJetBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
-        final double[] t = tier(be.getMagnet());
-        final boolean running = t != null && be.energy.getEnergyStored() >= (int) t[2];
-        if (running) {
-            be.energy.drainInternal((int) t[2]);
-            be.thrust(server, pos, state, t[0], t[1]);
+        be.runEngine(server, SableBridge.subLevelAt(server, pos));
+    }
+
+    /** Sable sub-level tick: the jet is mounted on this ship — thrust it. */
+    @Override
+    public void sable$tick(final ServerSubLevel subLevel) {
+        if (level instanceof ServerLevel server) runEngine(server, subLevel);
+    }
+
+    /** Engine logic shared by both tick paths. An MHD jet only does work when it
+     *  sits on a ship (its {@code host}); off-ship it's inert. */
+    private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        final double[] t = tier(getMagnet());
+        final boolean firing = t != null && host != null && energy.getEnergyStored() >= (int) t[2];
+        if (firing) {
+            energy.drainInternal((int) t[2]);
+            thrustHost(host, t[0], t[1]);
+        }
+        final BlockState state = getBlockState();
+        if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != firing) {
+            server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.LIT, firing), Block.UPDATE_CLIENTS);
         }
         if (server.getGameTime() % 10L == 0L) {
-            server.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS); // refresh WTHIT (energy)
-        }
-        if (state.getValue(BlockStateProperties.LIT) != running) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.LIT, running), Block.UPDATE_CLIENTS);
+            server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }
 
-    /** Push magnetic ships in range along the jet's facing, up to maxSpeed. */
-    private void thrust(final ServerLevel server, final BlockPos pos, final BlockState state,
-                        final double maxSpeed, final double dv) {
-        final SubLevelContainer container = SubLevelContainer.getContainer(server);
-        if (container == null) return;
-        final Direction facing = state.hasProperty(DirectionalBlock.FACING)
-                ? state.getValue(DirectionalBlock.FACING) : Direction.UP;
-        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
-        final double cx = pos.getX() + 0.5, cy = pos.getY() + 0.5, cz = pos.getZ() + 0.5;
-        final double rangeSqr = THRUST_RANGE * THRUST_RANGE;
+    /** Push the host ship along the jet's facing (transformed to world space),
+     *  capped at the magnet's speed ceiling. Applied at the centre of mass so it
+     *  is pure forward thrust (no spin). Force is mass-scaled so a given magnet
+     *  yields a consistent acceleration regardless of ship size. */
+    private void thrustHost(final ServerSubLevel host, final double maxSpeed, final double dv) {
+        if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
+        final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
+                ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.UP;
+        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing.getNormal());
 
-        for (final SubLevel sub : container.getAllSubLevels()) {
-            if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
-            final Vector3dc p = ship.logicalPose().position();
-            final double ddx = p.x() - cx, ddy = p.y() - cy, ddz = p.z() - cz;
-            if (ddx * ddx + ddy * ddy + ddz * ddz > rangeSqr) continue;
-            final RigidBodyHandle handle = RigidBodyHandle.of(ship);
-            if (handle == null || !handle.isValid()) continue;
-            final Vector3dc v = handle.getLinearVelocity();
-            final double along = v.x() * dir.x + v.y() * dir.y + v.z() * dir.z;
-            if (along >= maxSpeed) continue;
-            handle.addLinearAndAngularVelocity(
-                    new Vector3d(dir.x * dv, dir.y * dv, dir.z * dv), new Vector3d(0, 0, 0));
-        }
+        final RigidBodyHandle handle = RigidBodyHandle.of(host);
+        if (handle == null || !handle.isValid()) return;
+        // Speed-ceiling check against the host's world velocity along world-facing.
+        final Pose3dc pose = host.logicalPose();
+        final Vec3 dirWorld = pose.transformNormal(new Vec3(dirLocal.x, dirLocal.y, dirLocal.z)).normalize();
+        final Vector3dc v = handle.getLinearVelocity();
+        if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= maxSpeed) return;
+
+        // force = dv·(1/Δt)·m, so applyLocalImpulse's Δv = F·Δt/m collapses to dv.
+        final double mass = host.getMassTracker().getMass();
+        final double force = dv * 20.0 * mass;
+        final Vector3dc com = host.getMassTracker().getCenterOfMass();
+        SableBridge.applyLocalImpulse(host,
+                new Vector3d(com.x(), com.y(), com.z()),
+                new Vector3d(dirLocal.x * force, dirLocal.y * force, dirLocal.z * force));
     }
 
     @Override
