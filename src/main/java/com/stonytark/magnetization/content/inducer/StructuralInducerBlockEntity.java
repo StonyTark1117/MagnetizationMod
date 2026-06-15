@@ -52,10 +52,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger("magnetization/StructuralInducer");
 
-    /** Footprint half-width above the inducer (radius 4 → 9×9 column). */
+    /** Cross-section half-width of the aim used to find the target (9×9 seek). */
     private static final int SCAN_RADIUS = 4;
-    /** How tall a structure the inducer reaches above itself. */
-    private static final int SCAN_HEIGHT = 16;
     /** Hard cap on captured blocks — keeps one assembly bounded. */
     private static final int MAX_BLOCKS = 512;
     /** Once the pulled structure's centre is within this many blocks of the
@@ -107,6 +105,13 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     @Override
     protected @Nullable MagneticField computeField(final BlockState state) {
         return null;
+    }
+
+    /** Not a field emitter — don't show the "Inactive" field line; the Status
+     *  line from {@link #extraTooltipLines} reports what it's doing instead. */
+    @Override
+    public boolean showsFieldStatus() {
+        return false;
     }
 
     /** Never feed the standard ship-pull pass; we drive our one ship manually. */
@@ -264,22 +269,48 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         return cursor;
     }
 
-    /** Solid blocks in the box ahead of the facing, near-first, capped. */
-    private List<BlockPos> collectStructure(final ServerLevel server, final Direction facing) {
+    /** Find the aimed structure and flood-fill its connected built blocks.
+     *
+     * <p>The cone scan finds a seed (the first built block the inducer is aimed
+     * at), then a connected flood-fill grabs the WHOLE structure — roofs and
+     * upper floors included, since they're connected — while terrain (dirt,
+     * grass, stone, sand…) is excluded and acts as the boundary, so the building
+     * lifts off the ground instead of dragging it. Capped at {@link #MAX_BLOCKS}. */
+    private List<BlockPos> collectStructure(final ServerLevel server, final Direction grabDir) {
         final BlockPos origin = getBlockPos();
         final int depth = scanDepth();
-        final List<BlockPos> out = new ArrayList<>();
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int d = 1; d <= depth && out.size() < MAX_BLOCKS; d++) {
+
+        // Seed: nearest grabbable block in the aimed cross-section.
+        BlockPos seed = null;
+        seek:
+        for (int d = 1; d <= depth; d++) {
             for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
                 for (int v = -SCAN_RADIUS; v <= SCAN_RADIUS; v++) {
-                    cellAt(origin, facing, d, u, v, cursor);
-                    if (!isGrabbable(server, cursor)) continue;
-                    out.add(cursor.immutable());
-                    if (out.size() >= MAX_BLOCKS) return out;
+                    cellAt(origin, grabDir, d, u, v, cursor);
+                    if (isGrabbable(server, cursor)) { seed = cursor.immutable(); break seek; }
                 }
             }
         }
+        if (seed == null) return List.of();
+
+        // Flood-fill the connected structure from the seed.
+        final List<BlockPos> out = new ArrayList<>();
+        final java.util.Set<BlockPos> visited = new java.util.HashSet<>();
+        final java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        queue.add(seed);
+        visited.add(seed);
+        while (!queue.isEmpty() && out.size() < MAX_BLOCKS) {
+            final BlockPos p = queue.poll();
+            if (!isGrabbable(server, p)) continue;
+            out.add(p);
+            for (final Direction dir : Direction.values()) {
+                final BlockPos n = p.relative(dir);
+                if (visited.add(n)) queue.add(n);
+            }
+        }
+        // Bottom-up so positions.get(0) is the lowest block (the assembly anchor).
+        out.sort(java.util.Comparator.comparingInt(BlockPos::getY));
         return out;
     }
 
@@ -288,9 +319,27 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         if (bs.isAir()) return false;
         if (!bs.getFluidState().isEmpty()) return false;          // skip water/lava/ferrofluid
         if (bs.is(MagTags.EXCAVATOR_IMMUNE)) return false;        // protected/important
-        if (server.getBlockEntity(pos) != null) return false;     // chests, emitters, etc.
+        if (isTerrain(bs)) return false;                          // leave the ground behind
         if (bs.getDestroySpeed(server, pos) < 0) return false;     // bedrock / unbreakable
+        // NOTE: block entities (chests, beds, etc.) ARE grabbed — they're part of
+        // the building and Sable carries their data with the assembled craft.
         return true;
+    }
+
+    /** Natural ground/terrain the inducer should never grab (so a building lifts
+     *  off cleanly instead of ripping up the land). */
+    private static boolean isTerrain(final BlockState bs) {
+        return bs.is(net.minecraft.tags.BlockTags.DIRT)
+                || bs.is(net.minecraft.tags.BlockTags.SAND)
+                || bs.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD)
+                || bs.is(net.minecraft.tags.BlockTags.BASE_STONE_NETHER)
+                || bs.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                || bs.is(net.minecraft.world.level.block.Blocks.GRAVEL)
+                || bs.is(net.minecraft.world.level.block.Blocks.CLAY)
+                || bs.is(net.minecraft.world.level.block.Blocks.MUD)
+                || bs.is(net.minecraft.world.level.block.Blocks.SNOW_BLOCK)
+                || bs.is(net.minecraft.world.level.block.Blocks.MYCELIUM)
+                || bs.is(net.minecraft.world.level.block.Blocks.PODZOL);
     }
 
     /** Set the operational status and push it to clients (goggle/WTHIT readout). */

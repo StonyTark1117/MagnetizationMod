@@ -605,10 +605,12 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // are below the icon entirely and should render flush-left — indenting
         // them looks lopsided. So: 8-space prefix on the header line only,
         // content lines flush.
-        tooltip.add(Component.literal("        ").append(
-                Component.translatable("tooltip.magnetization.field_status")
-                        .withStyle(ChatFormatting.GRAY)));
-        tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
+        if (showsFieldStatus()) {
+            tooltip.add(Component.literal("        ").append(
+                    Component.translatable("tooltip.magnetization.field_status")
+                            .withStyle(ChatFormatting.GRAY)));
+            tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
+        }
         tooltip.addAll(extraTooltipLines(true));
         return true;
     }

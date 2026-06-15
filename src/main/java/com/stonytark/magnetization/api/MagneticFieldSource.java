@@ -23,6 +23,16 @@ public interface MagneticFieldSource {
     @Nullable MagneticField currentField();
 
     /**
+     * Whether this source should show the standard field-status line ("WEAK
+     * NORTH" / "Inactive"). Blocks that aren't field emitters (e.g. the
+     * Structural Inducer, a puller) return {@code false} so they don't
+     * misleadingly read "Inactive" — they surface their own status instead.
+     */
+    default boolean showsFieldStatus() {
+        return true;
+    }
+
+    /**
      * Optional extra HUD lines emitted by an emitter. Appended after the standard
      * field block by goggles, in-world hover, Jade, WTHIT, and TOP. Used for
      * source-specific status that doesn't fit the {@link MagneticField} model —

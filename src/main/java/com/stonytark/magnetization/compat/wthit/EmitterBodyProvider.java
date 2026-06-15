@@ -20,8 +20,10 @@ public enum EmitterBodyProvider implements IBlockComponentProvider {
     public void appendBody(final ITooltip tooltip, final IBlockAccessor accessor, final IPluginConfig config) {
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MagneticFieldSource source)) return;
-        for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
-            tooltip.addLine(line);
+        if (source.showsFieldStatus()) {
+            for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
+                tooltip.addLine(line);
+            }
         }
         for (Component line : source.extraTooltipLines(true)) {
             tooltip.addLine(line);
