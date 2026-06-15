@@ -77,10 +77,22 @@ public final class StructuralInducerBlock extends DirectionalBlock implements En
                                                final Player player, final BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        // Range dial doubles as the scan-depth control (StructuralInducerBlockEntity#scanDepth).
-        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, EmitterMenu.CAP_RANGE,
+        // Range dial doubles as the scan-depth control; redstone-fuel slot powers
+        // it without an external signal (mirrors the excavator).
+        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos,
+                EmitterMenu.CAP_RANGE | EmitterMenu.CAP_REDSTONE_FUEL,
                 Component.translatable("block.magnetization.structural_inducer")).openFor(sp);
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean isMoving) {
+        if (!state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof StructuralInducerBlockEntity be) {
+            be.dropRedstoneFuelSlot(level, pos);
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override

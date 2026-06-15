@@ -15,6 +15,7 @@ import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
@@ -48,7 +49,8 @@ import java.util.UUID;
  * {@code #magnetization:excavator_immune} are all skipped so the lift can't
  * grief protected/important blocks.
  */
-public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
+public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
+        implements com.stonytark.magnetization.content.RedstoneFuelHolder {
 
     private static final Logger LOG = LoggerFactory.getLogger("magnetization/StructuralInducer");
 
@@ -83,6 +85,16 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     /** True until a capture fires; re-armed on a fresh power cycle. */
     private boolean armed = true;
 
+    /** Internal redstone-fuel slot (mirrors the excavator): any redstone item
+     *  parked here keeps the inducer powered, like a constant signal. */
+    private final net.minecraft.world.SimpleContainer redstoneFuelSlot = new net.minecraft.world.SimpleContainer(1) {
+        @Override public int getMaxStackSize() { return 64; }
+        @Override public void setChanged() {
+            super.setChanged();
+            StructuralInducerBlockEntity.this.setChanged();
+        }
+    };
+
     /** Default scan depth when no range override is dialed in. */
     private static final int DEFAULT_DEPTH = 16;
 
@@ -113,6 +125,28 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                 && bs.getValue(BlockStateProperties.POWERED) != signal) {
             level.setBlock(getBlockPos(), bs.setValue(BlockStateProperties.POWERED, signal), Block.UPDATE_CLIENTS);
         }
+    }
+
+    @Override
+    public Container getRedstoneFuelSlot() {
+        return redstoneFuelSlot;
+    }
+
+    /** True when the redstone-fuel slot holds an item tagged REDSTONE_FUEL. */
+    public boolean hasRedstoneFuel() {
+        final net.minecraft.world.item.ItemStack stack = redstoneFuelSlot.getItem(0);
+        return !stack.isEmpty() && stack.is(MagTags.REDSTONE_FUEL);
+    }
+
+    /** Powered by external signal/FE (base) OR by parked redstone fuel. */
+    @Override
+    public boolean isPowered() {
+        return super.isPowered() || hasRedstoneFuel();
+    }
+
+    /** Drop the fuel slot's contents when the block breaks. */
+    public void dropRedstoneFuelSlot(final Level level, final BlockPos pos) {
+        net.minecraft.world.Containers.dropContents(level, pos, redstoneFuelSlot);
     }
 
     /** No standard pull field — the inducer acts only on the structure it grabs. */
@@ -446,6 +480,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                                   final net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString("LastResult", lastResult);
+        tag.put("RedstoneFuel", redstoneFuelSlot.createTag(registries));
     }
 
     @Override
@@ -453,6 +488,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                                   final net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains("LastResult")) lastResult = tag.getString("LastResult");
+        redstoneFuelSlot.fromTag(tag.getList("RedstoneFuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 
     private void restoreCaptured(final ServerLevel server) {

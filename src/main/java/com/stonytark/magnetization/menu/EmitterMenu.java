@@ -191,7 +191,10 @@ public final class EmitterMenu extends AbstractContainerMenu {
             final BlockEntity be = level.getBlockEntity(p);
             if (be instanceof com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity exc) {
                 toolHolder[0] = exc.getToolSlot();
-                fuelHolder[0] = exc.getRedstoneFuelSlot();
+            }
+            // Any machine with an internal redstone-fuel slot (excavator, inducer).
+            if (be instanceof com.stonytark.magnetization.content.RedstoneFuelHolder holder) {
+                fuelHolder[0] = holder.getRedstoneFuelSlot();
             }
         });
         addSlot(new ToolEnchantSlot(toolHolder[0], 0, 132, 20, hasCap(CAP_TOOL_SLOT)));

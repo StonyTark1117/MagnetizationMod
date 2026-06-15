@@ -79,7 +79,8 @@ import java.util.UUID;
  * {@code tickEmitter}) skip the pull pathway — Sable assembly is a world-level
  * operation and the ship-on-ship semantics aren't worth the complexity here.
  */
-public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity {
+public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
+        implements com.stonytark.magnetization.content.RedstoneFuelHolder {
 
     private static final Logger LOG = LoggerFactory.getLogger("magnetization/Excavator");
 
