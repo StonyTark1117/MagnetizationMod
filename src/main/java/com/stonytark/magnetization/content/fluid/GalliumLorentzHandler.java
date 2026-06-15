@@ -42,7 +42,7 @@ public final class GalliumLorentzHandler {
 
         for (final BlockPos pos : GalliumRegistry.snapshot(level)) {
             final BlockState state = level.getBlockState(pos);
-            if (!(state.getBlock() instanceof GalliumBlock)) {
+            if (!(state.getBlock() instanceof GalliumBlock || state.getBlock() instanceof MixedGalliumBlock)) {
                 GalliumRegistry.remove(level, pos);
                 continue;
             }

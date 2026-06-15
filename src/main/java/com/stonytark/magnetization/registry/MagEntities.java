@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.registry;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.content.golem.GalliumGolem;
 import com.stonytark.magnetization.content.golem.MrFluidGolem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -22,9 +23,17 @@ public final class MagEntities {
                     .clientTrackingRange(10)
                     .build("mr_fluid_golem"));
 
-    /** Mod-bus listener: supply the golem's attributes. */
+    public static final DeferredHolder<EntityType<?>, EntityType<GalliumGolem>> GALLIUM_GOLEM =
+            REGISTER.register("gallium_golem", () -> EntityType.Builder
+                    .of(GalliumGolem::new, MobCategory.MISC)
+                    .sized(1.4f, 2.7f)                 // iron-golem footprint
+                    .clientTrackingRange(10)
+                    .build("gallium_golem"));
+
+    /** Mod-bus listener: supply the golems' attributes. */
     public static void onAttributes(final EntityAttributeCreationEvent event) {
         event.put(MR_FLUID_GOLEM.get(), MrFluidGolem.createAttributes().build());
+        event.put(GALLIUM_GOLEM.get(), GalliumGolem.createAttributes().build());
     }
 
     private MagEntities() {}

@@ -15,9 +15,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Mixed gallium — gallium with magnetite/iron stirred in. The ferromagnetic
  * particles make it behave like plain ferrofluid (it registers as a plain source
- * so {@link FerrofluidCreepHandler} creeps it toward magnets), and crucially it
- * does NOT carry the Lorentz current that pure {@link GalliumBlock} does. It still
- * conducts redstone like the other fluids. Coloured between gallium and ferrofluid.
+ * so {@link FerrofluidCreepHandler} creeps it toward magnets), AND it keeps the
+ * gallium Lorentz entity/item current (it registers into {@link GalliumRegistry}
+ * too) — so mixed gallium has both abilities at once. It still conducts redstone
+ * like the other fluids. Coloured between gallium and ferrofluid.
  */
 public final class MixedGalliumBlock extends LiquidBlock implements FluidRedstone.Conductor {
 
@@ -37,7 +38,8 @@ public final class MixedGalliumBlock extends LiquidBlock implements FluidRedston
                            final BlockState oldState, final boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
         if (!level.isClientSide && state.getFluidState().isSource()) {
-            FerrofluidSourceRegistry.add(level, pos); // treated as a plain ferrofluid source
+            FerrofluidSourceRegistry.add(level, pos); // treated as a plain ferrofluid source (creep)
+            GalliumRegistry.add(level, pos);          // also carries the Lorentz current
         }
         FluidRedstone.onNeighborChanged(level, pos, this);
     }
@@ -47,6 +49,7 @@ public final class MixedGalliumBlock extends LiquidBlock implements FluidRedston
                             final BlockState newState, final boolean isMoving) {
         if (!level.isClientSide && !state.is(newState.getBlock())) {
             FerrofluidSourceRegistry.remove(level, pos);
+            GalliumRegistry.remove(level, pos);
         }
         super.onRemove(state, level, pos, newState, isMoving);
         if (!level.isClientSide && !state.is(newState.getBlock())) {

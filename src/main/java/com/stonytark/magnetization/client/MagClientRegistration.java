@@ -118,6 +118,8 @@ public final class MagClientRegistration {
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), MagneticItemFrameRenderer::new);
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM.get(),
                 MrFluidGolemRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.GALLIUM_GOLEM.get(),
+                GalliumGolemRenderer::new);
     }
 
     @SubscribeEvent
