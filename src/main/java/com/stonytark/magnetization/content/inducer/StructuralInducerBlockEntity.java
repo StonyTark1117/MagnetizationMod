@@ -78,10 +78,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     private static final long INIT_GRACE_TICKS = 10L;
     /** Absolute age cap on a pull before we give up and release it. */
     private static final long PULL_TIMEOUT_TICKS = 600L;
-    /** Max world blocks the tractor clears from the structure's path per tick. */
+    /** Max world blocks the structure punches through (on its leading faces) per tick. */
     private static final int TUNNEL_BUDGET = 96;
-    /** Hard cap on the tunnel's half-width regardless of structure size. */
-    private static final int MAX_TUNNEL_RADIUS = 8;
 
     /** External redstone signal, mirrored into block-state POWERED. */
     private boolean externalSignal = false;
@@ -104,9 +102,11 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** The in-flight structure being reeled in, if any. */
     private @Nullable UUID liftedShipId = null;
     private long liftStartTick = 0L;
-    /** Tunnel half-width for the in-flight structure (derived from its size). */
-    private int clearRadius = 1;
-    /** Captured world states, for restoring if Sable culls the ship mid-lift. */
+    /** Ship's logical-pose position at capture, so we can project the captured
+     *  blocks' current world cells as it travels (for path-punch-through). */
+    private Vec3 liftStartPos = Vec3.ZERO;
+    /** Captured world states (keyed by ORIGINAL position), for restoring if Sable
+     *  culls the ship mid-lift and for projecting the moving structure's cells. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
 
     /** Diagnostic state surfaced in goggles when debug.goggleDiagnostics is on. */
@@ -242,9 +242,6 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         }
         final BoundingBox3i bounds = new BoundingBox3i(minX, minY, minZ, maxX, maxY, maxZ);
         final BlockPos anchor = positions.get(0); // lowest block (list is bottom-up)
-        // Tunnel half-width ≈ the structure's largest horizontal half-extent.
-        clearRadius = Math.min(MAX_TUNNEL_RADIUS,
-                Math.max(1, Math.max(maxX - minX, maxZ - minZ) / 2 + 1));
 
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
@@ -262,6 +259,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             setResult(server, "reeling in " + positions.size() + " blocks");
             liftedShipId = ship.getUniqueId();
             liftStartTick = server.getGameTime();
+            final var sp = ship.logicalPose().position();
+            liftStartPos = new Vec3(sp.x(), sp.y(), sp.z());
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
                     getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
@@ -337,41 +336,61 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             final Vec3 impulse = new Vec3(ux * accel * mass, uy * accel * mass, uz * accel * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
         }
-        // Tunnel: clear world blocks on the structure's leading face so it drills
-        // its way to the inducer instead of jamming against terrain.
-        tunnel(server, BlockPos.containing(shipPos.x(), shipPos.y(), shipPos.z()), ux, uy, uz);
+        // Punch through: break only the world blocks directly on the leading
+        // faces of the structure's OWN blocks (like the excavator's pulled blocks
+        // break what's in front of them) — never a wide swath of untouched ground.
+        punchThrough(server, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), ux, uy, uz);
     }
 
-    /** Clear solid world blocks in the structure's leading volume toward the
-     *  inducer (the cells it's about to occupy), budgeted per tick. Mirrors the
-     *  excavator's tunnelling, but over the structure's footprint. Skips air,
-     *  unbreakable, and excavator-immune blocks; clears terrain so a building can
-     *  be dragged through hills/walls. */
-    private void tunnel(final ServerLevel server, final BlockPos center,
-                        final double ux, final double uy, final double uz) {
+    /** Break only the world blocks sitting directly on the leading faces of the
+     *  structure's OWN blocks — exactly the cells the moving structure is about
+     *  to occupy — so it punches through an obstruction in its path the way the
+     *  excavator's pulled blocks do. Never clears a wide radius of untouched
+     *  ground. The structure's current world cells are projected from its
+     *  captured footprint plus how far the ship has travelled since capture.
+     *  Skips the structure's own cells, air, fluids, BEs, immune + unbreakable. */
+    private void punchThrough(final ServerLevel server, final Vec3 shipPos,
+                              final double ux, final double uy, final double uz) {
+        // How far the ship has moved since capture, in whole cells.
+        final int dx = (int) Math.round(shipPos.x - liftStartPos.x);
+        final int dy = (int) Math.round(shipPos.y - liftStartPos.y);
+        final int dz = (int) Math.round(shipPos.z - liftStartPos.z);
+
+        // Current world cells the structure occupies.
+        final java.util.Set<BlockPos> cells = new java.util.HashSet<>(captured.size() * 2);
+        for (final BlockPos op : captured.keySet()) cells.add(op.offset(dx, dy, dz));
+
+        // Leading step(s): the axis directions the structure is actually moving.
+        final int sx = Math.abs(ux) > 0.3 ? (ux > 0 ? 1 : -1) : 0;
+        final int sy = Math.abs(uy) > 0.3 ? (uy > 0 ? 1 : -1) : 0;
+        final int sz = Math.abs(uz) > 0.3 ? (uz > 0 ? 1 : -1) : 0;
+
         int budget = TUNNEL_BUDGET;
-        final BlockPos.MutableBlockPos c = new BlockPos.MutableBlockPos();
-        final int r = clearRadius;
-        for (int ox = -r; ox <= r && budget > 0; ox++) {
-            for (int oy = -r; oy <= r && budget > 0; oy++) {
-                for (int oz = -r; oz <= r && budget > 0; oz++) {
-                    // Only the half of the volume facing the inducer (the leading edge).
-                    if (ox * ux + oy * uy + oz * uz <= 0.0) continue;
-                    c.set(center.getX() + ox, center.getY() + oy, center.getZ() + oz);
-                    final BlockState bs = server.getBlockState(c);
-                    if (bs.isAir()) continue;
-                    if (!bs.getFluidState().isEmpty()) continue;
-                    if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
-                    if (server.getBlockEntity(c) != null) continue; // don't pulverize chests etc. in the way
-                    if (bs.getDestroySpeed(server, c) < 0) continue; // bedrock / unbreakable
-                    final BlockPos at = c.immutable();
-                    Block.dropResources(bs, server, at);
-                    server.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
-                            Block.UPDATE_CLIENTS);
-                    budget--;
-                }
-            }
+        for (final BlockPos cell : cells) {
+            if (budget <= 0) break;
+            if (sx != 0) budget = breakAhead(server, cell.offset(sx, 0, 0), cells, budget);
+            if (budget > 0 && sy != 0) budget = breakAhead(server, cell.offset(0, sy, 0), cells, budget);
+            if (budget > 0 && sz != 0) budget = breakAhead(server, cell.offset(0, 0, sz), cells, budget);
         }
+    }
+
+    /** Break one world cell in a structure block's path, if it's a breakable
+     *  obstruction (not part of the structure, not air/fluid/BE/immune/unbreakable,
+     *  not the inducer). Returns the remaining budget. */
+    private int breakAhead(final ServerLevel server, final BlockPos at,
+                           final java.util.Set<BlockPos> structureCells, final int budget) {
+        if (structureCells.contains(at)) return budget;     // the structure's own block
+        if (at.equals(getBlockPos())) return budget;        // never the inducer itself
+        final BlockState bs = server.getBlockState(at);
+        if (bs.isAir()) return budget;
+        if (!bs.getFluidState().isEmpty()) return budget;
+        if (bs.is(MagTags.EXCAVATOR_IMMUNE)) return budget;
+        if (server.getBlockEntity(at) != null) return budget; // don't pulverize chests etc.
+        if (bs.getDestroySpeed(server, at) < 0) return budget; // bedrock / unbreakable
+        Block.dropResources(bs, server, at);
+        server.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+                Block.UPDATE_CLIENTS);
+        return budget - 1;
     }
 
     /** Offset perpendicular to the scan axis, for a given (u,v) in the face plane. */
