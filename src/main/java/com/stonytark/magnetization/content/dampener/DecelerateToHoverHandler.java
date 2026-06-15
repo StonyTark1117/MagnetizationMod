@@ -18,52 +18,60 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
- * Visual/feel flair for the two magnetoresistive fall-savers (Magnetoresistive
- * Boots + G-Force Cushion): instead of an instant zero-damage thud, the wearer
- * is <i>magnetically braked</i> as they approach the landing surface, slowing to
- * a gentle hover just above it before settling. Damage negation is still owned by
- * {@link FallSaveHandler} (boots) and {@link GForceCushionBlock#fallOn} (block);
- * this only shapes the descent and spawns spark particles for the brake effect.
+ * Feel flair for the two magnetoresistive fall-savers (Magnetic Cushion Boots +
+ * Magnetic Cushion block): a genuine fall is braked as it nears the surface, then
+ * held in a brief HOVER, then released to settle. One hover per descent — it is
+ * NOT a constant field, so walking up to the block doesn't get shoved around.
  *
- * <p>Activates only in the last {@link #ACTIVATION_HEIGHT} blocks of a fast fall,
- * so ordinary movement and short hops are untouched. Boots brake above any solid
- * ground; the cushion brakes only a wearer of metallic armor (the conductor the
- * field grips) approaching the cushion block.
+ * <p>Damage negation stays owned by {@link FallSaveHandler} (boots) and
+ * {@link GForceCushionBlock#fallOn} (block); this only shapes the descent.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class DecelerateToHoverHandler {
 
-    /** Only brake within this many blocks of the landing surface. */
+    /** Brake only within this many blocks of the landing surface. */
     private static final int ACTIVATION_HEIGHT = 7;
-    /** Within this many blocks of the surface the descent is held to a near-stop
-     *  hover ({@link #HOVER_CREEP}) before settling. */
-    private static final double HOVER_BAND = 1.6d;
-    /** Near-stop descent speed in the hover band — reads as a brief hover, then
-     *  drifts down onto the surface. */
-    private static final double HOVER_CREEP = 0.05d;
+    /** Only ENGAGE on a genuine fall this fast (blocks/tick, negative) — so
+     *  ordinary walking/stepping near the block never triggers it. */
+    private static final double ENGAGE_FALL_SPEED = -0.6d;
+    /** Start the hover once this close to the surface. */
+    private static final double HOVER_TRIGGER = 1.3d;
+    /** Descent speed held during the hover — a near-stop that reads as a hover. */
+    private static final double HOVER_DESCENT = 0.02d;
+    /** How long the hover holds (ticks) before releasing to settle. */
+    private static final long HOVER_DURATION = 16L;
     /** Cap on the braked descent speed far from the surface. */
     private static final double MAX_DESCENT = 0.7d;
+    /** Sentinel: this descent already had its hover — settle normally, don't re-hover. */
+    private static final long DONE = Long.MIN_VALUE;
+
+    /** Per-player hover state: gametick the hover ends, or {@link #DONE}. Cleared
+     *  when the player lands / flies / leaves the zone. Transient (server-side). */
+    private static final Map<UUID, Long> HOVER = new HashMap<>();
 
     private DecelerateToHoverHandler() {}
 
     @SubscribeEvent
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         final Player player = event.getEntity();
-        if (player.getAbilities().flying || player.isFallFlying() || player.onGround()) return;
-
-        final Vec3 vel = player.getDeltaMovement();
-        // Engage for the WHOLE descent (not just fast falls) so the brake can
-        // hold a hover instead of disengaging the moment it slows the player.
-        if (vel.y >= 0.0) return;
+        final UUID id = player.getUUID();
+        if (player.getAbilities().flying || player.isFallFlying() || player.onGround()) {
+            HOVER.remove(id); // reset for the next fall
+            return;
+        }
 
         final Level level = player.level();
         final boolean bootsWorn =
                 player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof MagnetoresistiveBootsItem;
         final boolean metallicArmor = hasMetallicArmor(player);
 
-        // Scan straight down for the first landing surface within reach: a G-Force
-        // Cushion (only grips metallic armor) or, with boots, any solid ground.
+        // Scan straight down for the first landing surface within reach: a Magnetic
+        // Cushion (grips metallic armor only) or, with boots, any solid ground.
         final BlockPos feet = player.blockPosition();
         double surfaceTop = Double.NaN;
         boolean cushioned = false;
@@ -80,37 +88,57 @@ public final class DecelerateToHoverHandler {
                 break;
             }
         }
-        if (Double.isNaN(surfaceTop)) return; // no eligible landing below
+        if (Double.isNaN(surfaceTop)) { HOVER.remove(id); return; }
 
         final double dist = player.getY() - surfaceTop;
-        if (dist <= 0.0) return; // already at/under the surface
+        if (dist <= 0.0) { HOVER.remove(id); return; }
 
-        // In the hover band, hold a near-stop descent (the visible hover); above
-        // it, ramp from that near-stop up to the max descent. Only ever slow the
-        // player, never speed them up.
-        final double allowed;
-        if (dist <= HOVER_BAND) {
-            allowed = -HOVER_CREEP;
-        } else {
-            final double f = Math.min(1.0, (dist - HOVER_BAND) / (ACTIVATION_HEIGHT - HOVER_BAND));
-            allowed = -(HOVER_CREEP + f * (MAX_DESCENT - HOVER_CREEP));
-        }
-        if (vel.y < allowed) {
-            player.setDeltaMovement(vel.x, allowed, vel.z);
-            player.hasImpulse = true;
-            player.hurtMarked = true;   // resync the braked velocity to the client
-            // NB: we deliberately do NOT reset fallDistance — the landing event
-            // still fires with the true height so FallSaveHandler (boots) negates
-            // damage + charges durability and the cushion's fallOn negates damage.
+        final Vec3 vel = player.getDeltaMovement();
+        final long now = level.getGameTime();
+        final Long state = HOVER.get(id);
 
-            if (level instanceof ServerLevel server && (player.tickCount % 2) == 0) {
-                server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
-                        player.getX(), player.getY() + 0.1, player.getZ(),
-                        3, 0.25, 0.05, 0.25, 0.02);
-                if (cushioned && dist < 1.5) {
-                    level.playSound(null, player.blockPosition(), SoundEvents.LODESTONE_PLACE,
-                            SoundSource.BLOCKS, 0.3f, 1.6f);
+        if (state != null) {
+            if (state == DONE) return;            // already hovered this descent — settle
+            if (now < state) {                    // holding the hover (near-stop)
+                if (vel.y < -HOVER_DESCENT) {
+                    apply(player, vel, -HOVER_DESCENT, level, cushioned, dist);
                 }
+                return;
+            }
+            HOVER.put(id, DONE);                  // hover over — release, settle from here
+            return;
+        }
+
+        // Not yet engaged: only a genuine fall triggers the brake.
+        if (vel.y >= ENGAGE_FALL_SPEED) return;
+
+        // Decelerate, ramping the allowed descent down as the surface nears.
+        final double f = Math.min(1.0, Math.max(0.0, (dist - HOVER_TRIGGER) / (ACTIVATION_HEIGHT - HOVER_TRIGGER)));
+        final double allowed = -(HOVER_DESCENT + f * (MAX_DESCENT - HOVER_DESCENT));
+        if (vel.y < allowed) {
+            apply(player, vel, allowed, level, cushioned, dist);
+        }
+        // Once close enough, begin the brief hover.
+        if (dist <= HOVER_TRIGGER) {
+            HOVER.put(id, now + HOVER_DURATION);
+        }
+    }
+
+    /** Clamp the player's descent to {@code targetY} (only ever slowing them) and
+     *  emit the brake spark/chime. Leaves fallDistance intact so the landing event
+     *  still fires for damage negation + boot durability. */
+    private static void apply(final Player player, final Vec3 vel, final double targetY,
+                              final Level level, final boolean cushioned, final double dist) {
+        player.setDeltaMovement(vel.x, targetY, vel.z);
+        player.hasImpulse = true;
+        player.hurtMarked = true;
+        if (level instanceof ServerLevel server && (player.tickCount % 2) == 0) {
+            server.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                    player.getX(), player.getY() + 0.1, player.getZ(),
+                    3, 0.25, 0.05, 0.25, 0.02);
+            if (cushioned && dist < 1.5) {
+                level.playSound(null, player.blockPosition(), SoundEvents.LODESTONE_PLACE,
+                        SoundSource.BLOCKS, 0.3f, 1.6f);
             }
         }
     }
