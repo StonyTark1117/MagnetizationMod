@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * entity. Plain (unmagnetized) ferrofluid emits nothing and is field-immune —
  * which is why the Anomaly biome's pools sit still instead of draining away.
  */
-public final class MagnetizedFerrofluidBlock extends LiquidBlock {
+public final class MagnetizedFerrofluidBlock extends LiquidBlock implements FluidRedstone.Conductor {
 
     public static final EnumProperty<MagneticPolarity> POLARITY =
             EnumProperty.create("polarity", MagneticPolarity.class, MagneticPolarity.NORTH, MagneticPolarity.SOUTH);
@@ -53,13 +53,33 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
 
     public MagnetizedFerrofluidBlock(final FlowingFluid fluid, final Properties props) {
         super(fluid, props);
-        registerDefaultState(defaultBlockState().setValue(POLARITY, MagneticPolarity.NORTH));
+        registerDefaultState(defaultBlockState()
+                .setValue(POLARITY, MagneticPolarity.NORTH)
+                .setValue(FluidRedstone.POWER, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(POLARITY);
+        builder.add(FluidRedstone.POWER);
+    }
+
+    @Override
+    protected boolean isSignalSource(final BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getSignal(final BlockState state, final net.minecraft.world.level.BlockGetter level,
+                            final BlockPos pos, final Direction direction) {
+        return FluidRedstone.signal(state);
+    }
+
+    @Override
+    public boolean canConnectRedstone(final BlockState state, final net.minecraft.world.level.BlockGetter level,
+                                      final BlockPos pos, final @Nullable Direction direction) {
+        return true;
     }
 
     @Override
@@ -73,6 +93,7 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
             MagnetizedFerrofluidRegistry.add(level, pos, state.getValue(POLARITY));
         }
         if (!level.isClientSide) level.scheduleTick(pos, this, MIX_DELAY);
+        FluidRedstone.onNeighborChanged(level, pos, this);
     }
 
     @Override
@@ -80,6 +101,7 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
                                    final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
         if (!level.isClientSide) level.scheduleTick(pos, this, MIX_DELAY);
+        FluidRedstone.onNeighborChanged(level, pos, this);
     }
 
     /**
@@ -129,5 +151,8 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
             MagnetizedFerrofluidRegistry.remove(level, pos);
         }
         super.onRemove(state, level, pos, newState, isMoving);
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            level.updateNeighborsAt(pos, this);
+        }
     }
 }
