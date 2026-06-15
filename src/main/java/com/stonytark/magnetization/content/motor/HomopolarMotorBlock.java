@@ -48,7 +48,11 @@ public final class HomopolarMotorBlock extends DirectionalKineticBlock implement
 
     @Override
     public boolean hasShaftTowards(final LevelReader level, final BlockPos pos, final BlockState state, final Direction face) {
-        return face == state.getValue(FACING);
+        // Output a shaft on BOTH ends of the facing axis (the model has a socket
+        // on each), so a shaft can be driven off either side; both turn together
+        // since they share the one rotation axis.
+        final Direction facing = state.getValue(FACING);
+        return face == facing || face == facing.getOpposite();
     }
 
     @Override

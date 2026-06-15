@@ -42,12 +42,21 @@ public final class MagneticMaterials {
             {"hematite", "1"},
     };
 
+    /** Crafted magnetic materials that aren't part of an ore's raw→block chain.
+     *  Magnetic plate = a basic fabricated magnet; ferromagnetic ingot = an
+     *  iron+magnetite alloy, a step above plain magnetite. */
+    private static final java.util.Map<String, Integer> SPECIALS = java.util.Map.of(
+            "magnetic_plate", 10,
+            "ferromagnetic_ingot", 16);
+
     /** Potency of the stack, or 0 if it isn't an accepted magnetic material. */
     public static int potency(final ItemStack stack) {
         if (stack.isEmpty()) return 0;
         final ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (id == null || !id.getNamespace().equals(Magnetization.MOD_ID)) return 0;
         final String path = id.getPath();
+        final Integer special = SPECIALS.get(path);
+        if (special != null) return special;
         for (final String[] material : MATERIALS) {
             final String name = material[0];
             if (!path.contains(name)) continue;
