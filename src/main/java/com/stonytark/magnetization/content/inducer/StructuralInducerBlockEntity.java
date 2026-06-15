@@ -334,6 +334,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                 || bs.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD)
                 || bs.is(net.minecraft.tags.BlockTags.BASE_STONE_NETHER)
                 || bs.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                || bs.is(net.minecraft.world.level.block.Blocks.DIRT_PATH)
+                || bs.is(net.minecraft.world.level.block.Blocks.FARMLAND)
                 || bs.is(net.minecraft.world.level.block.Blocks.GRAVEL)
                 || bs.is(net.minecraft.world.level.block.Blocks.CLAY)
                 || bs.is(net.minecraft.world.level.block.Blocks.MUD)
