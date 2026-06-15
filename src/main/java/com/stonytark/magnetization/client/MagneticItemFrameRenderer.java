@@ -55,10 +55,10 @@ public class MagneticItemFrameRenderer implements BlockEntityRenderer<MagneticIt
                 default    -> { } // SOUTH
             }
             // The plate sits flush on the mounting wall (the FACING.opposite face).
-            // Local +z points outward (toward FACING), so place the item JUST in
-            // front of that plate — not out at the far face, where it floated a
-            // whole block off the frame.
-            pose.translate(0.0, 0.0, -0.32);
+            // Local +z points outward (toward FACING). Sit the item just in front
+            // of the plate: -0.32 clipped into it, the far face (+0.48) floated a
+            // whole block off, so -0.20 keeps it perched on the frame.
+            pose.translate(0.0, 0.0, -0.20);
             pose.mulPose(Axis.ZP.rotationDegrees(spin));
             pose.scale(0.55f, 0.55f, 0.55f);
         }
