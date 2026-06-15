@@ -1,12 +1,18 @@
 {
   "name": "book.magnetization.entry.diamagnetic.name",
-  "icon": "magnetization:pyrolytic_carbon",
+  "icon": "magnetization:diamagnetic_block",
   "category": "magnetization:gear",
   "pages": [
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:pyrolytic_carbon",
       "text": "book.magnetization.entry.diamagnetic.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:diamagnetic_block",
+      "text": "book.magnetization.entry.diamagnetic.block",
       "link_recipe": true
     }
   ]

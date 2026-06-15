@@ -368,6 +368,13 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_GRAY)));
 
+    /** Diamagnetic block (pyrolytic-carbon block) — on a Sable craft it makes the
+     *  whole ship diamagnetic: repelled by BOTH poles of any field. */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> DIAMAGNETIC_BLOCK =
+            REGISTER.register("diamagnetic_block", () -> new net.minecraft.world.level.block.Block(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.COAL_BLOCK)
+                            .mapColor(MapColor.COLOR_BLACK)));
+
     /** Hardened MR fluid — solid grey block MR fluid snaps into inside a field. */
     public static final DeferredBlock<com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock> HARDENED_MR_FLUID =
             REGISTER.register("hardened_mr_fluid", () -> new com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock(

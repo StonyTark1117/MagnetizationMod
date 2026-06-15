@@ -29,6 +29,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> LODESTONE_CORE   = REGISTER.registerSimpleBlockItem(MagBlocks.LODESTONE_CORE);
     public static final DeferredItem<BlockItem> MAGNETIC_ITEM_FRAME = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_ITEM_FRAME);
     public static final DeferredItem<BlockItem> INDUCTION_PAD       = REGISTER.registerSimpleBlockItem(MagBlocks.INDUCTION_PAD);
+    public static final DeferredItem<BlockItem> DIAMAGNETIC_BLOCK    = REGISTER.registerSimpleBlockItem(MagBlocks.DIAMAGNETIC_BLOCK);
     public static final DeferredItem<BlockItem> KINETIC_COIL        = REGISTER.registerSimpleBlockItem(MagBlocks.KINETIC_COIL);
     public static final DeferredItem<BlockItem> EMP_CHARGE          = REGISTER.registerSimpleBlockItem(MagBlocks.EMP_CHARGE);
     public static final DeferredItem<BlockItem> GYROSTABILIZER      = REGISTER.registerSimpleBlockItem(MagBlocks.GYROSTABILIZER);

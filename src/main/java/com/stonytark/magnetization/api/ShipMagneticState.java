@@ -31,13 +31,21 @@ public record ShipMagneticState(
         double susceptibility,
         int ferrousBlockCount,
         int magnetBlockCount,
-        int inverterBlockCount) {
+        int inverterBlockCount,
+        int diamagneticBlockCount) {
+
+    /** True if the ship carries diamagnetic blocks — it's then repelled by BOTH
+     *  poles of any field (reacts to positive + negative the same way), instead
+     *  of the normal like-repel/unlike-attract polarity response. */
+    public boolean isDiamagnetic() {
+        return diamagneticBlockCount > 0;
+    }
 
     /** Fallback for ships that haven't been scanned yet (e.g. a freshly assembled
      *  contraption being touched by a field for the very first frame). NORTH with
      *  baseline susceptibility = the 1.0.0 default behaviour. */
     public static final ShipMagneticState DEFAULT =
-            new ShipMagneticState(MagneticPolarity.NORTH, 1.0d, 0, 0, 0);
+            new ShipMagneticState(MagneticPolarity.NORTH, 1.0d, 0, 0, 0, 0);
 
     /** Serialize for BE→client sync. The HUD/goggle tooltips read this snapshot
      *  off the BE rather than trying to recompute the ship state on the client,
@@ -49,6 +57,7 @@ public record ShipMagneticState(
         tag.putInt("f", ferrousBlockCount);
         tag.putInt("m", magnetBlockCount);
         tag.putInt("i", inverterBlockCount);
+        tag.putInt("d", diamagneticBlockCount);
         return tag;
     }
 
@@ -60,7 +69,8 @@ public record ShipMagneticState(
                     tag.getDouble("s"),
                     tag.getInt("f"),
                     tag.getInt("m"),
-                    tag.getInt("i"));
+                    tag.getInt("i"),
+                    tag.getInt("d"));
         } catch (final Throwable t) {
             return null;
         }

@@ -117,6 +117,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.IMPRINT_MODULE);
                         accept(output, MagItems.MAGNETIC_PLATE);
                         accept(output, MagItems.PYROLYTIC_CARBON);
+                        accept(output, MagItems.DIAMAGNETIC_BLOCK);
                         accept(output, MagItems.HEMATITE_LENS);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.DEUTERIUM_CELL);

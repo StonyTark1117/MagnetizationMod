@@ -218,7 +218,11 @@ public final class FieldApplicator {
             // no flip), -1 for SOUTH (flip), 0 for NONE (never returned by the
             // scanner today, but if it ever does, the ship feels no force).
             if (shipSign == 0.0) continue;
-            final double shipGain = shipState.susceptibility() * shipSign;
+            final double shipSusc = shipState.susceptibility();
+            // Diamagnetic ships are repelled by BOTH poles (reacts the same to
+            // positive + negative) — force points away from the origin regardless
+            // of the field's polarity, instead of the like-repel/unlike-attract sign.
+            final boolean diamagnetic = shipState.isDiamagnetic();
 
             // Integrate the field over a coarse grid of sample points spanning the
             // ship's AABB. Each sample contributes an impulse at its own world point,
@@ -238,7 +242,8 @@ public final class FieldApplicator {
                         Math.max(subBox.minZ(), Math.min(origin.z, subBox.maxZ()))
                 );
                 if (closest.distanceToSqr(origin) <= rangeSqr) {
-                    final Vec3 force = forceAtPrecomputed(field, closest, globalScalar, cosHalfAngle).scale(shipGain);
+                    final Vec3 force = shipSampleForce(field, closest, origin, globalScalar, cosHalfAngle,
+                            shipSusc, shipSign, diamagnetic, 1.0);
                     if (force.lengthSqr() >= 1.0e-6) {
                         samplePoints.add(closest);
                         sampleForces.add(force);
@@ -270,8 +275,8 @@ public final class FieldApplicator {
                             // ship's volume; weighting the sampled force by that
                             // fraction keeps total integrated force comparable to the
                             // single-sample path regardless of grid density.
-                            final Vec3 force = forceAtPrecomputed(field, sample, globalScalar, cosHalfAngle)
-                                    .scale(weight * shipGain);
+                            final Vec3 force = shipSampleForce(field, sample, origin, globalScalar, cosHalfAngle,
+                                    shipSusc, shipSign, diamagnetic, weight);
                             if (force.lengthSqr() < 1.0e-8) continue;
                             samplePoints.add(sample);
                             sampleForces.add(force);
@@ -533,6 +538,25 @@ public final class FieldApplicator {
         // Default convention: untagged entities present a NORTH face, so a SOUTH
         // emitter pulls them and a NORTH emitter pushes them.
         return MagneticPolarity.NORTH;
+    }
+
+    /** One ship sample's force. Normal ships use the polarity-encoded force
+     *  (like-repel/unlike-attract) scaled by susceptibility × ship sign. A
+     *  diamagnetic ship instead gets a force of the SAME magnitude pointing
+     *  away from the field origin regardless of the field's polarity — repelled
+     *  by both poles. */
+    private static Vec3 shipSampleForce(final MagneticField field, final Vec3 sample, final Vec3 origin,
+                                        final double globalScalar, final double cosHalfAngle,
+                                        final double susceptibility, final double shipSign,
+                                        final boolean diamagnetic, final double weight) {
+        final Vec3 base = forceAtPrecomputed(field, sample, globalScalar, cosHalfAngle);
+        if (!diamagnetic) {
+            return base.scale(shipSign * susceptibility * weight);
+        }
+        Vec3 away = sample.subtract(origin);
+        final double len2 = away.lengthSqr();
+        away = len2 < 1.0e-6 ? new Vec3(0, 1, 0) : away.scale(1.0 / Math.sqrt(len2));
+        return away.scale(base.length() * susceptibility * weight);
     }
 
     // ---------------- field math ----------------

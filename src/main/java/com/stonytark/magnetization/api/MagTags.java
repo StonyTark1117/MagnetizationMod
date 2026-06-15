@@ -73,6 +73,11 @@ public final class MagTags {
     public static final TagKey<Block> FERROMAGNETIC_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("ferromagnetic_blocks"));
 
+    /** Blocks that make a Sable ship diamagnetic — repelled by BOTH poles of any
+     *  field (reacts to positive + negative the same way). */
+    public static final TagKey<Block> DIAMAGNETIC_BLOCKS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("diamagnetic_blocks"));
+
     /** Metallic / magnetic ore blocks the Ore Dowsing Compass can point to and
      *  tune onto. Our ferrous ores plus vanilla metal ores; other mods extend
      *  by appending. Also gates the anvil-tuning (only ores in this tag tune the

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "cc", "cc" ],
+  "key": { "c": { "item": "magnetization:pyrolytic_carbon" } },
+  "result": { "id": "magnetization:diamagnetic_block", "count": 1 }
+}

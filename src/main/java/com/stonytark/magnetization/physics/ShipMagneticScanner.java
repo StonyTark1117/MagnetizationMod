@@ -39,6 +39,7 @@ public final class ShipMagneticScanner {
         int ferrous = 0;
         int magnets = 0;
         int inverters = 0;
+        int diamagnetic = 0;
 
         for (final PlotChunkHolder holder : subLevel.getPlot().getLoadedChunks()) {
             final LevelChunk chunk = holder.getChunk();
@@ -58,6 +59,10 @@ public final class ShipMagneticScanner {
                                 magnets++;
                                 continue;
                             }
+                            if (state.is(MagTags.DIAMAGNETIC_BLOCKS)) {
+                                diamagnetic++;
+                                continue;
+                            }
                             if (state.is(MagTags.FERROMAGNETIC_BLOCKS)) {
                                 ferrous++;
                             }
@@ -69,8 +74,8 @@ public final class ShipMagneticScanner {
 
         return new ShipMagneticState(
                 polarityFromInverterCount(inverters),
-                susceptibility(ferrous, magnets),
-                ferrous, magnets, inverters);
+                susceptibility(ferrous, magnets, diamagnetic),
+                ferrous, magnets, inverters, diamagnetic);
     }
 
     /** XOR-style: each inverter on board flips the ship's polarity once. Even
@@ -81,13 +86,16 @@ public final class ShipMagneticScanner {
         return (inverters & 1) == 1 ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH;
     }
 
-    /** baseline + ferrous*k_f + magnet*k_m, clamped to the configured max. */
-    static double susceptibility(final int ferrous, final int magnets) {
+    /** baseline + ferrous*k_f + magnet*k_m + diamagnetic*k_f, clamped to the
+     *  configured max. Diamagnetic blocks reuse the ferrous coefficient — they
+     *  scale the force magnitude the same way; the direction (repel-both) is
+     *  handled in {@link FieldApplicator}. */
+    static double susceptibility(final int ferrous, final int magnets, final int diamagnetic) {
         final double baseline = configDouble(MagConfig.SHIP_BASELINE_SUSCEPTIBILITY, 1.0d);
         final double kFerrous = configDouble(MagConfig.SHIP_PER_FERROUS_SUSCEPTIBILITY, 0.05d);
         final double kMagnet  = configDouble(MagConfig.SHIP_PER_MAGNET_SUSCEPTIBILITY, 0.15d);
         final double cap      = configDouble(MagConfig.SHIP_MAX_SUSCEPTIBILITY, 20.0d);
-        final double raw = baseline + ferrous * kFerrous + magnets * kMagnet;
+        final double raw = baseline + ferrous * kFerrous + magnets * kMagnet + diamagnetic * kFerrous;
         return Math.min(raw, cap);
     }
 
