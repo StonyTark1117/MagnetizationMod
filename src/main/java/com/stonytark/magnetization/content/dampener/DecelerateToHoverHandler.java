@@ -36,12 +36,12 @@ public final class DecelerateToHoverHandler {
 
     /** Only brake within this many blocks of the landing surface. */
     private static final int ACTIVATION_HEIGHT = 7;
-    /** Only brake while descending at least this fast (blocks/tick, negative). */
-    private static final double MIN_FALL_SPEED = -0.5d;
-    /** Final gentle descent speed right above the surface (a near-hover). */
-    private static final double HOVER_SPEED = 0.12d;
-    /** Extra allowed descent speed per block of remaining distance. */
-    private static final double DESCENT_PER_BLOCK = 0.13d;
+    /** Within this many blocks of the surface the descent is held to a near-stop
+     *  hover ({@link #HOVER_CREEP}) before settling. */
+    private static final double HOVER_BAND = 1.6d;
+    /** Near-stop descent speed in the hover band — reads as a brief hover, then
+     *  drifts down onto the surface. */
+    private static final double HOVER_CREEP = 0.05d;
     /** Cap on the braked descent speed far from the surface. */
     private static final double MAX_DESCENT = 0.7d;
 
@@ -53,7 +53,9 @@ public final class DecelerateToHoverHandler {
         if (player.getAbilities().flying || player.isFallFlying() || player.onGround()) return;
 
         final Vec3 vel = player.getDeltaMovement();
-        if (vel.y >= MIN_FALL_SPEED) return; // not falling fast enough to brake
+        // Engage for the WHOLE descent (not just fast falls) so the brake can
+        // hold a hover instead of disengaging the moment it slows the player.
+        if (vel.y >= 0.0) return;
 
         final Level level = player.level();
         final boolean bootsWorn =
@@ -83,9 +85,16 @@ public final class DecelerateToHoverHandler {
         final double dist = player.getY() - surfaceTop;
         if (dist <= 0.0) return; // already at/under the surface
 
-        // Allowed descent ramps down with remaining distance → a hover near the
-        // surface. Only ever slow the player (never speed them up).
-        final double allowed = -Math.min(MAX_DESCENT, HOVER_SPEED + dist * DESCENT_PER_BLOCK);
+        // In the hover band, hold a near-stop descent (the visible hover); above
+        // it, ramp from that near-stop up to the max descent. Only ever slow the
+        // player, never speed them up.
+        final double allowed;
+        if (dist <= HOVER_BAND) {
+            allowed = -HOVER_CREEP;
+        } else {
+            final double f = Math.min(1.0, (dist - HOVER_BAND) / (ACTIVATION_HEIGHT - HOVER_BAND));
+            allowed = -(HOVER_CREEP + f * (MAX_DESCENT - HOVER_CREEP));
+        }
         if (vel.y < allowed) {
             player.setDeltaMovement(vel.x, allowed, vel.z);
             player.hasImpulse = true;
