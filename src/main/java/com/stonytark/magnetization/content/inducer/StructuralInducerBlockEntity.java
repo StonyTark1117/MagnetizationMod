@@ -81,10 +81,14 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** Max world blocks the structure punches through (on its leading faces) per tick. */
     private static final int TUNNEL_BUDGET = 96;
 
+    /** Rescan the cone for new structures this often while powered. */
+    private static final long SCAN_INTERVAL = 10L;
+    /** Cap on concurrently-reeled structures, so one activation can't spawn a
+     *  runaway number of Sable sub-levels. */
+    private static final int MAX_STRUCTURES = 8;
+
     /** External redstone signal, mirrored into block-state POWERED. */
     private boolean externalSignal = false;
-    /** True until a capture fires; re-armed on a fresh power cycle. */
-    private boolean armed = true;
 
     /** Internal redstone-fuel slot (mirrors the excavator): any redstone item
      *  parked here keeps the inducer powered, like a constant signal. */
@@ -99,17 +103,30 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** Default scan depth when no range override is dialed in. */
     private static final int DEFAULT_DEPTH = 16;
 
-    /** The in-flight structure being reeled in, if any. */
-    private @Nullable UUID liftedShipId = null;
-    private long liftStartTick = 0L;
-    /** Each captured block's position in the ship's LOCAL (sub-level) frame,
-     *  taken at capture. Transforming these back through the ship's live pose
-     *  each tick gives the blocks' true current world cells — rotation included —
-     *  so punch-through only ever touches the structure's actual path. */
-    private final java.util.List<Vec3> localBlockCenters = new java.util.ArrayList<>();
-    /** Captured world states (keyed by ORIGINAL position), for restoring if Sable
-     *  culls the ship mid-lift and for projecting the moving structure's cells. */
-    private final Map<BlockPos, BlockState> captured = new HashMap<>();
+    /** One structure the inducer has assembled and is reeling in. */
+    private static final class Lift {
+        final long startTick;
+        /** Captured blocks in the ship's LOCAL (sub-level) frame, taken at
+         *  capture; transformed back through the live pose each tick to follow
+         *  the structure's true world cells (rotation included) for punch-through. */
+        final java.util.List<Vec3> localCenters;
+        /** Captured world states (keyed by ORIGINAL position), to restore if
+         *  Sable culls this ship mid-lift. */
+        final Map<BlockPos, BlockState> captured;
+        Lift(final long startTick, final java.util.List<Vec3> localCenters,
+             final Map<BlockPos, BlockState> captured) {
+            this.startTick = startTick;
+            this.localCenters = localCenters;
+            this.captured = captured;
+        }
+    }
+
+    /** Every structure this inducer made + is reeling in, keyed by ship UUID.
+     *  Only these ships are ever driven — never random/foreign craft. Kept across
+     *  power cycles so a stop/start resumes reeling them. Insertion-ordered. */
+    private final Map<UUID, Lift> lifted = new java.util.LinkedHashMap<>();
+    /** Last tick the cone was rescanned for new structures. */
+    private long lastScanTick = Long.MIN_VALUE;
 
     /** Diagnostic state surfaced in goggles when debug.goggleDiagnostics is on. */
     private String lastResult = "idle";
@@ -181,17 +198,18 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         if (host != null) return;
 
         if (!isPowered()) {
-            // Power dropped: stop lifting (the ship floats free) and re-arm.
-            liftedShipId = null;
-            captured.clear();
-            armed = true;
+            // Power dropped: stop reeling (the ships float free) but KEEP tracking
+            // them, so a restart resumes pulling the same ships.
             return;
         }
-        if (liftedShipId != null) {
-            driveLift(server);
-        } else if (armed) {
-            armed = false;
-            tryCapture(server);
+        // Drive every ship we own toward the inducer, each tick.
+        driveAll(server);
+        // Periodically rescan the cone and capture any NEW structures (already-
+        // assembled ones are no longer world blocks, so they aren't re-found).
+        final long now = server.getGameTime();
+        if (lastScanTick == Long.MIN_VALUE || now - lastScanTick >= SCAN_INTERVAL) {
+            lastScanTick = now;
+            captureNewStructures(server);
         }
     }
 
@@ -221,61 +239,62 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         };
     }
 
-    /** Scan the box the inducer is aimed at (toward its visual front, i.e. the
-     *  opposite of FACING — FACING points back at the player), assemble + reel in. */
-    private void tryCapture(final ServerLevel server) {
+    /** Scan the cone and assemble EVERY distinct structure in it (up to the
+     *  concurrent cap) into its own tracked ship — so all of them get reeled in,
+     *  not just one. Already-assembled structures aren't world blocks, so they're
+     *  not re-captured. */
+    private void captureNewStructures(final ServerLevel server) {
+        if (lifted.size() >= MAX_STRUCTURES) return;
         final Direction grabDir = facing().getOpposite();
-        final List<BlockPos> positions = collectStructure(server, grabDir);
-        if (positions.isEmpty()) {
-            setResult(server, "no grabbable structure ahead (" + grabDir + ")");
-            if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
-                LOG.info("Inducer {} found no grabbable blocks (grabDir {})", getBlockPos().toShortString(), grabDir);
-            }
-            return;
+        final List<List<BlockPos>> structures = collectAllStructures(server, grabDir);
+        if (structures.isEmpty()) return;
+        int captured = 0;
+        for (final List<BlockPos> positions : structures) {
+            if (lifted.size() >= MAX_STRUCTURES) break;
+            if (assembleAndTrack(server, positions)) captured++;
         }
+        if (captured > 0) {
+            server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                    getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
+                    24, SCAN_RADIUS * 0.4, 1.5, SCAN_RADIUS * 0.4, 0.02);
+        }
+    }
 
+    /** Assemble one structure's blocks into a tracked ship. Returns true on success. */
+    private boolean assembleAndTrack(final ServerLevel server, final List<BlockPos> positions) {
+        if (positions.isEmpty()) return false;
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
-        captured.clear();
+        final Map<BlockPos, BlockState> cap = new HashMap<>();
         for (final BlockPos p : positions) {
-            captured.put(p, server.getBlockState(p));
+            cap.put(p, server.getBlockState(p));
             minX = Math.min(minX, p.getX()); minY = Math.min(minY, p.getY()); minZ = Math.min(minZ, p.getZ());
             maxX = Math.max(maxX, p.getX()); maxY = Math.max(maxY, p.getY()); maxZ = Math.max(maxZ, p.getZ());
         }
         final BoundingBox3i bounds = new BoundingBox3i(minX, minY, minZ, maxX, maxY, maxZ);
         final BlockPos anchor = positions.get(0); // lowest block (list is bottom-up)
-
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
             if (ship.getMassTracker().isInvalid()) {
-                setResult(server, "assembled but mass invalid (" + positions.size() + " blocks) — reverted");
-                if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
-                    LOG.info("Inducer {} assembly produced invalid mass, reverting", getBlockPos().toShortString());
-                }
                 final SubLevelContainer container = SubLevelContainer.getContainer(server);
                 if (container != null) container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
-                restoreCaptured(server);
-                captured.clear();
-                return;
+                restoreCaptured(server, cap);
+                setResult(server, "assembly mass invalid (" + positions.size() + " blocks) — reverted");
+                return false;
             }
-            setResult(server, "reeling in " + positions.size() + " blocks");
-            liftedShipId = ship.getUniqueId();
-            liftStartTick = server.getGameTime();
-            // Record each captured block in the ship's local frame so we can
-            // follow its true world cell (through rotation) while it's reeled in.
             final var pose0 = ship.logicalPose();
-            localBlockCenters.clear();
+            final java.util.List<Vec3> localCenters = new ArrayList<>(positions.size());
             for (final BlockPos op : positions) {
-                localBlockCenters.add(pose0.transformPositionInverse(Vec3.atCenterOf(op)));
+                localCenters.add(pose0.transformPositionInverse(Vec3.atCenterOf(op)));
             }
-            server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
-            server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
-                    getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
-                    24, SCAN_RADIUS * 0.4, 1.5, SCAN_RADIUS * 0.4, 0.02);
+            lifted.put(ship.getUniqueId(), new Lift(server.getGameTime(), localCenters, cap));
+            setResult(server, "reeling in " + lifted.size() + " structure(s)");
+            return true;
         } catch (final Throwable t) {
             setResult(server, "assembly threw: " + t.getClass().getSimpleName());
             LOG.error("Structural Inducer assembly failed at {}", getBlockPos().toShortString(), t);
-            captured.clear();
+            return false;
         }
     }
 
@@ -291,45 +310,51 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         return lines;
     }
 
-    /** Reel the captured ship toward the inducer (like the excavator pulls ore),
-     *  releasing it as a free craft once it arrives or the pull times out. */
-    private void driveLift(final ServerLevel server) {
+    /** Reel EVERY tracked ship toward the inducer, releasing each one as a free
+     *  craft when it arrives or times out, and pruning any that Sable culled. */
+    private void driveAll(final ServerLevel server) {
+        if (lifted.isEmpty()) return;
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
-        if (container == null) { liftedShipId = null; captured.clear(); return; }
-        final var sub = container.getSubLevel(liftedShipId);
-        final boolean present = sub instanceof ServerSubLevel;
-        final boolean usable = present && !((ServerSubLevel) sub).getMassTracker().isInvalid();
-        if (!usable) {
-            // A freshly assembled body can read "invalid mass" for a tick or two
-            // while Sable initializes its rigid body. Don't tear it down on that
-            // first reading — wait out a short grace window before deciding.
-            if (present && server.getGameTime() - liftStartTick <= INIT_GRACE_TICKS) {
-                return;
+        if (container == null) return;
+        final var it = lifted.entrySet().iterator();
+        int reeling = 0;
+        while (it.hasNext()) {
+            final var entry = it.next();
+            final Lift lift = entry.getValue();
+            final var sub = container.getSubLevel(entry.getKey());
+            final boolean present = sub instanceof ServerSubLevel;
+            final boolean usable = present && !((ServerSubLevel) sub).getMassTracker().isInvalid();
+            if (!usable) {
+                // Fresh body may read invalid for a tick or two while Sable inits.
+                if (present && server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
+                // Cull/unload before arriving — remove the dead sub-level and
+                // restore the structure's blocks (no ghost left behind).
+                if (sub instanceof ServerSubLevel dead) {
+                    container.removeSubLevel(dead, SubLevelRemovalReason.REMOVED);
+                }
+                restoreCaptured(server, lift.captured);
+                it.remove();
+                continue;
             }
-            // Still unusable (bad mass) or vanished (cull/unload) before arriving.
-            // Destroy the dead sub-level FIRST — otherwise it lingers as a ghost
-            // ship clipping the structure we restore — then put the blocks back.
-            if (sub instanceof ServerSubLevel dead) {
-                container.removeSubLevel(dead, SubLevelRemovalReason.REMOVED);
+            if (driveOne(server, (ServerSubLevel) sub, lift)) {
+                it.remove(); // arrived / timed out — released as a free craft
+            } else {
+                reeling++;
             }
-            setResult(server, "assembly unstable — released structure");
-            restoreCaptured(server);
-            liftedShipId = null;
-            captured.clear();
-            return;
         }
-        final ServerSubLevel ship = (ServerSubLevel) sub;
-        // Vector from the ship toward the inducer — we pull along it.
+        if (reeling > 0) setResult(server, "reeling in " + reeling + " structure(s)");
+        else if (lifted.isEmpty()) setResult(server, "idle");
+    }
+
+    /** Reel one ship toward the inducer. Returns true once it should be released
+     *  (arrived or timed out). */
+    private boolean driveOne(final ServerLevel server, final ServerSubLevel ship, final Lift lift) {
         final Vec3 target = Vec3.atCenterOf(getBlockPos());
         final var shipPos = ship.logicalPose().position();
         final double dx = target.x - shipPos.x(), dy = target.y - shipPos.y(), dz = target.z - shipPos.z();
         final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist <= ARRIVAL_DISTANCE || server.getGameTime() - liftStartTick > PULL_TIMEOUT_TICKS) {
-            // Reeled in (or timed out) — release it as a free-floating craft.
-            setResult(server, "released near inducer");
-            liftedShipId = null;
-            captured.clear();
-            return;
+        if (dist <= ARRIVAL_DISTANCE || server.getGameTime() - lift.startTick > PULL_TIMEOUT_TICKS) {
+            return true; // reeled in (or timed out) — release as a free-floating craft
         }
         final double inv = 1.0 / Math.max(dist, 0.0001);
         final double ux = dx * inv, uy = dy * inv, uz = dz * inv; // unit vector toward inducer
@@ -343,10 +368,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             final Vec3 impulse = new Vec3(ux * accel * mass, uy * accel * mass, uz * accel * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
         }
-        // Punch through: break only the world blocks directly on the leading
-        // faces of the structure's OWN blocks (like the excavator's pulled blocks
-        // break what's in front of them) — never a wide swath of untouched ground.
-        punchThrough(ship, ux, uy, uz);
+        // Punch through only the world blocks directly on the leading faces of
+        // this structure's OWN blocks (never a wide swath of untouched ground).
+        punchThrough(ship, lift.localCenters, ux, uy, uz);
+        return false;
     }
 
     /** Break only the world blocks sitting directly on the leading faces of the
@@ -356,16 +381,16 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
      *  ground. The structure's current world cells are projected from its
      *  captured footprint plus how far the ship has travelled since capture.
      *  Skips the structure's own cells, air, fluids, BEs, immune + unbreakable. */
-    private void punchThrough(final ServerSubLevel ship,
+    private void punchThrough(final ServerSubLevel ship, final java.util.List<Vec3> localCenters,
                               final double ux, final double uy, final double uz) {
-        if (localBlockCenters.isEmpty()) return;
+        if (localCenters.isEmpty()) return;
         final ServerLevel server = (ServerLevel) level;
         // Project each captured block through the ship's LIVE pose (translation +
         // rotation) to its true current world cell — so we follow the structure
         // exactly instead of drifting off when it tilts.
         final var pose = ship.logicalPose();
-        final java.util.Set<BlockPos> cells = new java.util.HashSet<>(localBlockCenters.size() * 2);
-        for (final Vec3 lc : localBlockCenters) {
+        final java.util.Set<BlockPos> cells = new java.util.HashSet<>(localCenters.size() * 2);
+        for (final Vec3 lc : localCenters) {
             final Vec3 w = pose.transformPosition(lc);
             cells.add(BlockPos.containing(w.x, w.y, w.z));
         }
@@ -423,35 +448,44 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         return cursor;
     }
 
-    /** Find the aimed structure and flood-fill its connected built blocks.
+    /** Find EVERY distinct structure in the aimed cone (up to {@link #MAX_STRUCTURES}).
      *
-     * <p>The cone scan finds a seed (the first built block the inducer is aimed
-     * at), then a connected flood-fill grabs the WHOLE structure — roofs and
-     * upper floors included, since they're connected — while terrain (dirt,
-     * grass, stone, sand…) is excluded and acts as the boundary, so the building
-     * lifts off the ground instead of dragging it. Capped at {@link #MAX_BLOCKS}. */
-    private List<BlockPos> collectStructure(final ServerLevel server, final Direction grabDir) {
+     * <p>Walks the cone for grabbable seeds; each unclaimed seed flood-fills its
+     * own connected structure (through built blocks AND air, terrain/fluid/immune
+     * bounding it), and its blocks are claimed so a later seed in the same
+     * building doesn't start a duplicate. Two buildings that aren't connected
+     * within reach come back as separate structures, so all of them get pulled. */
+    private List<List<BlockPos>> collectAllStructures(final ServerLevel server, final Direction grabDir) {
         final BlockPos origin = getBlockPos();
         final int depth = scanDepth();
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        final java.util.Set<BlockPos> claimed = new java.util.HashSet<>();
+        final List<List<BlockPos>> structures = new ArrayList<>();
 
-        // Seed: nearest grabbable block in the aimed cross-section.
-        BlockPos seed = null;
-        seek:
-        for (int d = 1; d <= depth; d++) {
+        for (int d = 1; d <= depth && structures.size() < MAX_STRUCTURES; d++) {
             for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
-                for (int v = -SCAN_RADIUS; v <= SCAN_RADIUS; v++) {
-                    cellAt(origin, grabDir, d, u, v, cursor);
-                    if (isGrabbable(server, cursor)) { seed = cursor.immutable(); break seek; }
+                for (int vv = -SCAN_RADIUS; vv <= SCAN_RADIUS; vv++) {
+                    cellAt(origin, grabDir, d, u, vv, cursor);
+                    if (!isGrabbable(server, cursor)) continue;
+                    final BlockPos seed = cursor.immutable();
+                    if (claimed.contains(seed)) continue; // already part of a found structure
+                    final List<BlockPos> comp = floodComponent(server, seed, grabDir, depth, claimed);
+                    if (!comp.isEmpty()) structures.add(comp);
+                    if (structures.size() >= MAX_STRUCTURES) return structures;
                 }
             }
         }
-        if (seed == null) return List.of();
+        return structures;
+    }
 
-        // Flood the structure from the seed, travelling through BUILT blocks AND
-        // through AIR (so fences, gaps, and detached decorations are all reached),
-        // but never through terrain/fluids/immune/unbreakable — those bound the
-        // fill so the ground isn't grabbed. Reach is capped from the seed.
+    /** Flood one structure from {@code seed} through built blocks + air (terrain,
+     *  fluids, immune, unbreakable bound it). Grabbable blocks are added to the
+     *  component AND to {@code claimed} so other seeds in the same build skip it.
+     *  Returns the component sorted bottom-up (so element 0 is the assembly anchor). */
+    private List<BlockPos> floodComponent(final ServerLevel server, final BlockPos seed,
+                                          final Direction grabDir, final int depth,
+                                          final java.util.Set<BlockPos> claimed) {
+        final BlockPos origin = getBlockPos();
         final int reach = net.minecraft.util.Mth.clamp(depth, 4, MAX_REACH);
         final List<BlockPos> out = new ArrayList<>();
         final java.util.Set<BlockPos> visited = new java.util.HashSet<>();
@@ -465,7 +499,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             final boolean grabbable = isGrabbable(server, p);
             final boolean air = server.getBlockState(p).isAir();
             if (!grabbable && !air) continue; // terrain / fluid / immune / bedrock = boundary
-            if (grabbable) out.add(p);
+            if (grabbable) {
+                if (!claimed.add(p)) continue; // already in another structure this scan
+                out.add(p);
+            }
             for (final Direction dir : Direction.values()) {
                 final BlockPos n = p.relative(dir);
                 if (chebyshev(n, seed) > reach) continue;
@@ -473,7 +510,6 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 if (visited.add(ni)) queue.add(ni);
             }
         }
-        // Bottom-up so positions.get(0) is the lowest block (the assembly anchor).
         out.sort(java.util.Comparator.comparingInt(BlockPos::getY));
         return out;
     }
@@ -545,7 +581,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         redstoneFuelSlot.fromTag(tag.getList("RedstoneFuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 
-    private void restoreCaptured(final ServerLevel server) {
+    private void restoreCaptured(final ServerLevel server, final Map<BlockPos, BlockState> captured) {
         for (final Map.Entry<BlockPos, BlockState> e : captured.entrySet()) {
             if (server.getBlockState(e.getKey()).isAir()) {
                 server.setBlock(e.getKey(), e.getValue(), Block.UPDATE_ALL);
