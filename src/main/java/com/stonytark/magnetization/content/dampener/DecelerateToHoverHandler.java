@@ -37,21 +37,27 @@ public final class DecelerateToHoverHandler {
     /** Brake only within this many blocks of the landing surface. */
     private static final int ACTIVATION_HEIGHT = 7;
     /** Only ENGAGE on a genuine fall this fast (blocks/tick, negative) — so
-     *  ordinary walking/stepping near the block never triggers it. */
+     *  ordinary walking/stepping near the block never triggers it. Once engaged,
+     *  control persists (regardless of current speed) until the player lands. */
     private static final double ENGAGE_FALL_SPEED = -0.6d;
     /** Start the hover once this close to the surface. */
-    private static final double HOVER_TRIGGER = 1.3d;
+    private static final double HOVER_TRIGGER = 1.5d;
     /** Descent speed held during the hover — a near-stop that reads as a hover. */
     private static final double HOVER_DESCENT = 0.02d;
     /** How long the hover holds (ticks) before releasing to settle. */
-    private static final long HOVER_DURATION = 16L;
-    /** Cap on the braked descent speed far from the surface. */
-    private static final double MAX_DESCENT = 0.7d;
+    private static final long HOVER_DURATION = 18L;
+    /** Cap on the braked descent speed — applied across the whole approach once
+     *  engaged, so the fall is visibly arrested, not just slowed at the very end. */
+    private static final double MAX_DESCENT = 0.35d;
+
+    /** Per-player state value: engaged-and-decelerating (no hover yet). */
+    private static final long ENGAGED = 0L;
     /** Sentinel: this descent already had its hover — settle normally, don't re-hover. */
     private static final long DONE = Long.MIN_VALUE;
 
-    /** Per-player hover state: gametick the hover ends, or {@link #DONE}. Cleared
-     *  when the player lands / flies / leaves the zone. Transient (server-side). */
+    /** Per-player state: {@link #ENGAGED}, a positive gametick the hover ends, or
+     *  {@link #DONE}. Absent = not engaged. Cleared on land / fly / leaving the
+     *  zone. Transient (server-side). */
     private static final Map<UUID, Long> HOVER = new HashMap<>();
 
     private DecelerateToHoverHandler() {}
@@ -95,24 +101,27 @@ public final class DecelerateToHoverHandler {
 
         final Vec3 vel = player.getDeltaMovement();
         final long now = level.getGameTime();
-        final Long state = HOVER.get(id);
+        Long state = HOVER.get(id);
 
-        if (state != null) {
-            if (state == DONE) return;            // already hovered this descent — settle
-            if (now < state) {                    // holding the hover (near-stop)
-                if (vel.y < -HOVER_DESCENT) {
-                    apply(player, vel, -HOVER_DESCENT, level, cushioned, dist);
-                }
+        // Engage only on a genuine fall; thereafter control PERSISTS (the clamp
+        // raises vy above the engage threshold, so we must not re-gate on speed).
+        if (state == null) {
+            if (vel.y >= ENGAGE_FALL_SPEED) return;
+            state = ENGAGED;
+            HOVER.put(id, ENGAGED);
+        }
+
+        if (state == DONE) return;                // already hovered this descent — settle
+        if (state > ENGAGED) {                     // holding the hover (near-stop)
+            if (now < state) {
+                if (vel.y < -HOVER_DESCENT) apply(player, vel, -HOVER_DESCENT, level, cushioned, dist);
                 return;
             }
-            HOVER.put(id, DONE);                  // hover over — release, settle from here
+            HOVER.put(id, DONE);                   // hover over — release, settle from here
             return;
         }
 
-        // Not yet engaged: only a genuine fall triggers the brake.
-        if (vel.y >= ENGAGE_FALL_SPEED) return;
-
-        // Decelerate, ramping the allowed descent down as the surface nears.
+        // ENGAGED: decelerate, ramping the allowed descent down as the surface nears.
         final double f = Math.min(1.0, Math.max(0.0, (dist - HOVER_TRIGGER) / (ACTIVATION_HEIGHT - HOVER_TRIGGER)));
         final double allowed = -(HOVER_DESCENT + f * (MAX_DESCENT - HOVER_DESCENT));
         if (vel.y < allowed) {
