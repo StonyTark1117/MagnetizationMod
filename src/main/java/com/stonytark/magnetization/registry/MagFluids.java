@@ -95,5 +95,32 @@ public final class MagFluids {
                 .bucket(MagItems.MR_FLUID_BUCKET);
     }
 
+    // ---------------- Deuterium oxide (heavy water) ----------------
+    // Functionally identical to water — just a darker blue. Fuel for the
+    // Deuterium Fuel Cell.
+
+    public static final Supplier<FluidType> DEUTERIUM_OXIDE_TYPE = FLUID_TYPES.register("deuterium_oxide",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(1100)          // a touch denser than water (it IS heavy water)
+                    .viscosity(1000)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(true)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DEUTERIUM_OXIDE =
+            FLUIDS.register("deuterium_oxide", () -> new BaseFlowingFluid.Source(deuteriumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> DEUTERIUM_OXIDE_FLOWING =
+            FLUIDS.register("flowing_deuterium_oxide", () -> new BaseFlowingFluid.Flowing(deuteriumProperties()));
+
+    private static BaseFlowingFluid.Properties deuteriumProperties() {
+        return new BaseFlowingFluid.Properties(DEUTERIUM_OXIDE_TYPE, DEUTERIUM_OXIDE, DEUTERIUM_OXIDE_FLOWING)
+                .slopeFindDistance(4)        // spreads like water
+                .levelDecreasePerBlock(1)
+                .block(MagBlocks.DEUTERIUM_OXIDE_BLOCK)
+                .bucket(MagItems.DEUTERIUM_OXIDE_BUCKET);
+    }
+
     private MagFluids() {}
 }

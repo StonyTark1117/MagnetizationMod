@@ -368,5 +368,12 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_GRAY)));
 
+    /** Deuterium oxide (heavy water) liquid block — water-like, darker blue. */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> DEUTERIUM_OXIDE_BLOCK =
+            REGISTER.register("deuterium_oxide", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.DEUTERIUM_OXIDE.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_BLUE)));
+
     private MagBlocks() {}
 }

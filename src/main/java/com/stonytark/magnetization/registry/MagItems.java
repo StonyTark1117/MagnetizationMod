@@ -90,6 +90,11 @@ public final class MagItems {
             REGISTER.registerItem("mr_fluid_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.MR_FLUID.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of deuterium oxide (heavy water) — fuel for the Deuterium Fuel Cell. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> DEUTERIUM_OXIDE_BUCKET =
+            REGISTER.registerItem("deuterium_oxide_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.DEUTERIUM_OXIDE.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

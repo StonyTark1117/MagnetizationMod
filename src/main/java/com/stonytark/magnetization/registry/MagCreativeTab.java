@@ -130,6 +130,7 @@ public final class MagCreativeTab {
                         // ── Fluids ──
                         accept(output, MagItems.FERROFLUID_BUCKET);
                         accept(output, MagItems.MR_FLUID_BUCKET);
+                        accept(output, MagItems.DEUTERIUM_OXIDE_BUCKET);
 
                         // ── Compasses & handheld tools ──
                         accept(output, MagItems.FIELD_COMPASS);

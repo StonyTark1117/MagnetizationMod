@@ -60,6 +60,22 @@ public final class MagClientRegistration {
                 return 0xFF5A5A64; // iron grey
             }
         }, com.stonytark.magnetization.registry.MagFluids.MR_FLUID_TYPE.get());
+
+        // Deuterium oxide (heavy water): water textures tinted a darker blue.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFF1E3A8A; // darker blue
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.DEUTERIUM_OXIDE_TYPE.get());
     }
 
     @SubscribeEvent

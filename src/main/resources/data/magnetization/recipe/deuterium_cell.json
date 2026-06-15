@@ -16,7 +16,7 @@
       "item": "minecraft:glowstone_dust"
     },
     "w": {
-      "item": "minecraft:water_bucket"
+      "item": "magnetization:deuterium_oxide_bucket"
     }
   },
   "result": {
