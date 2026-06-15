@@ -65,6 +65,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     private static final double MAX_PULL_SPEED = 6.0d;
     /** Absolute age cap on a pull before we give up and release it. */
     private static final long PULL_TIMEOUT_TICKS = 600L;
+    /** Max world blocks the tractor clears from the structure's path per tick. */
+    private static final int TUNNEL_BUDGET = 96;
+    /** Hard cap on the tunnel's half-width regardless of structure size. */
+    private static final int MAX_TUNNEL_RADIUS = 8;
 
     /** External redstone signal, mirrored into block-state POWERED. */
     private boolean externalSignal = false;
@@ -77,6 +81,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     /** The in-flight structure being reeled in, if any. */
     private @Nullable UUID liftedShipId = null;
     private long liftStartTick = 0L;
+    /** Tunnel half-width for the in-flight structure (derived from its size). */
+    private int clearRadius = 1;
     /** Captured world states, for restoring if Sable culls the ship mid-lift. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
 
@@ -178,6 +184,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         }
         final BoundingBox3i bounds = new BoundingBox3i(minX, minY, minZ, maxX, maxY, maxZ);
         final BlockPos anchor = positions.get(0); // lowest block (list is bottom-up)
+        // Tunnel half-width ≈ the structure's largest horizontal half-extent.
+        clearRadius = Math.min(MAX_TUNNEL_RADIUS,
+                Math.max(1, Math.max(maxX - minX, maxZ - minZ) / 2 + 1));
 
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
@@ -251,6 +260,39 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
             final double mass = Math.max(0.0001, ship.getMassTracker().getMass());
             final Vec3 impulse = new Vec3(ux * PULL_ACCEL * mass, uy * PULL_ACCEL * mass, uz * PULL_ACCEL * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
+        }
+        // Tunnel: clear world blocks on the structure's leading face so it drills
+        // its way to the inducer instead of jamming against terrain.
+        tunnel(server, BlockPos.containing(shipPos.x(), shipPos.y(), shipPos.z()), ux, uy, uz);
+    }
+
+    /** Clear solid world blocks in the structure's leading volume toward the
+     *  inducer (the cells it's about to occupy), budgeted per tick. Mirrors the
+     *  excavator's tunnelling, but over the structure's footprint. Skips air,
+     *  unbreakable, and excavator-immune blocks; clears terrain so a building can
+     *  be dragged through hills/walls. */
+    private void tunnel(final ServerLevel server, final BlockPos center,
+                        final double ux, final double uy, final double uz) {
+        int budget = TUNNEL_BUDGET;
+        final BlockPos.MutableBlockPos c = new BlockPos.MutableBlockPos();
+        final int r = clearRadius;
+        for (int ox = -r; ox <= r && budget > 0; ox++) {
+            for (int oy = -r; oy <= r && budget > 0; oy++) {
+                for (int oz = -r; oz <= r && budget > 0; oz++) {
+                    // Only the half of the volume facing the inducer (the leading edge).
+                    if (ox * ux + oy * uy + oz * uz <= 0.0) continue;
+                    c.set(center.getX() + ox, center.getY() + oy, center.getZ() + oz);
+                    final BlockState bs = server.getBlockState(c);
+                    if (bs.isAir()) continue;
+                    if (!bs.getFluidState().isEmpty()) continue;
+                    if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
+                    if (server.getBlockEntity(c) != null) continue; // don't pulverize chests etc. in the way
+                    if (bs.getDestroySpeed(server, c) < 0) continue; // bedrock / unbreakable
+                    server.setBlock(c.immutable(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+                            Block.UPDATE_CLIENTS);
+                    budget--;
+                }
+            }
         }
     }
 
