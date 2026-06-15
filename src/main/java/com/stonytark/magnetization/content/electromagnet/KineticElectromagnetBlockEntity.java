@@ -123,12 +123,6 @@ public class KineticElectromagnetBlockEntity extends KineticBlockEntity
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        // TEMP DIAGNOSTIC (kinetic electromagnet accepts no rotation): shows
-        // whether it joins a kinetic network at all vs joins-but-reads-0-speed.
-        tooltip.add(Component.literal(String.format(
-                        "  [diag] rpm=%.0f src=%b net=%b needsUpdate=%b",
-                        getSpeed(), hasSource(), hasNetwork(), needsSpeedUpdate()))
-                .withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.magnetization.field_status")
                 .withStyle(ChatFormatting.GRAY));
         tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
