@@ -166,6 +166,7 @@ public final class MagClientRegistration {
             if (renderer instanceof LivingEntityRenderer<?, ?> living) {
                 ((LivingEntityRenderer) living).addLayer(
                         new MagneticElytraLayer<>((LivingEntityRenderer) living, event.getEntityModels()));
+                addMrArmorLayer((LivingEntityRenderer) living, event);
             }
         }
         // Armor stands — vanilla elytra works on them, so ours should too.
@@ -173,6 +174,18 @@ public final class MagClientRegistration {
         if (stand instanceof LivingEntityRenderer<?, ?> living) {
             ((LivingEntityRenderer) living).addLayer(
                     new MagneticElytraLayer<>((LivingEntityRenderer) living, event.getEntityModels()));
+            addMrArmorLayer((LivingEntityRenderer) living, event);
+        }
+    }
+
+    /** Add the animated Magnetorheological-armor layer to a humanoid renderer.
+     *  Guards on the parent model being a {@link net.minecraft.client.model.HumanoidModel}
+     *  (the layer copies humanoid pose onto its armor models). */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void addMrArmorLayer(final LivingEntityRenderer living,
+                                        final EntityRenderersEvent.AddLayers event) {
+        if (living.getModel() instanceof net.minecraft.client.model.HumanoidModel) {
+            living.addLayer(new MrLiquidArmorLayer(living, event.getEntityModels()));
         }
     }
 
