@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "magnetization:ferrofluid_bucket"
+    }
+  ],
+  "result": {
+    "id": "minecraft:black_dye",
+    "count": 4
+  }
+}
