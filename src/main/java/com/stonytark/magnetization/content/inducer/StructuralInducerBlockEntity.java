@@ -58,14 +58,15 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     private static final int SCAN_HEIGHT = 16;
     /** Hard cap on captured blocks — keeps one assembly bounded. */
     private static final int MAX_BLOCKS = 512;
-    /** Blocks of clearance the structure must rise before it's released. */
-    private static final double LIFT_HEIGHT = 8.0d;
-    /** Upward acceleration per tick (m/s²); must exceed Sable's scaled gravity. */
-    private static final double LIFT_ACCEL = 16.0d;
-    /** Cap on the structure's climb speed so the lift reads as an animation. */
-    private static final double MAX_LIFT_SPEED = 6.0d;
-    /** Absolute age cap on a lift before we give up and release it. */
-    private static final long LIFT_TIMEOUT_TICKS = 600L;
+    /** Once the pulled structure's centre is within this many blocks of the
+     *  inducer, release it as a free-floating craft (it's been reeled in). */
+    private static final double ARRIVAL_DISTANCE = 2.5d;
+    /** Acceleration per tick toward the inducer (m/s²); must beat Sable gravity. */
+    private static final double PULL_ACCEL = 16.0d;
+    /** Cap on the structure's pull speed so it reads as a smooth tractor beam. */
+    private static final double MAX_PULL_SPEED = 6.0d;
+    /** Absolute age cap on a pull before we give up and release it. */
+    private static final long PULL_TIMEOUT_TICKS = 600L;
 
     /** External redstone signal, mirrored into block-state POWERED. */
     private boolean externalSignal = false;
@@ -75,9 +76,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     /** Default scan depth when no range override is dialed in. */
     private static final int DEFAULT_DEPTH = 16;
 
-    /** The in-flight lifted structure, if any. */
+    /** The in-flight structure being reeled in, if any. */
     private @Nullable UUID liftedShipId = null;
-    private Vec3 liftOrigin = Vec3.ZERO;
     private long liftStartTick = 0L;
     /** Captured world states, for restoring if Sable culls the ship mid-lift. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
@@ -155,20 +155,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         final Direction facing = facing();
         final List<BlockPos> positions = collectStructure(server, facing);
         if (positions.isEmpty()) {
-            lastResult = "no grabbable blocks in front of " + facing;
+            lastResult = "no grabbable structure in front of " + facing;
             if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
                 LOG.info("Inducer {} found no grabbable blocks (facing {})", getBlockPos().toShortString(), facing);
             }
-            return;
-        }
-        if (!hasClearance(server, positions, facing)) {
-            // Capped by a wall ahead — can't push out cleanly. Buzz and bail.
-            lastResult = "blocked: no clearance past " + positions.size() + " blocks";
-            if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
-                LOG.info("Inducer {} blocked: no clearance ({} blocks, facing {})",
-                        getBlockPos().toShortString(), positions.size(), facing);
-            }
-            server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_BREAK, SoundSource.BLOCKS, 0.5f, 0.7f);
             return;
         }
 
@@ -196,10 +186,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                 captured.clear();
                 return;
             }
-            lastResult = "lifting " + positions.size() + " blocks";
+            lastResult = "reeling in " + positions.size() + " blocks";
             liftedShipId = ship.getUniqueId();
-            final var op = ship.logicalPose().position();
-            liftOrigin = new Vec3(op.x(), op.y(), op.z());
             liftStartTick = server.getGameTime();
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
@@ -225,35 +213,38 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         return added || com.stonytark.magnetization.config.MagConfig.goggleDiagnostics();
     }
 
-    /** Drive the captured ship along the facing until it clears, then release. */
+    /** Reel the captured ship toward the inducer (like the excavator pulls ore),
+     *  releasing it as a free craft once it arrives or the pull times out. */
     private void driveLift(final ServerLevel server) {
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) { liftedShipId = null; captured.clear(); return; }
         if (!(container.getSubLevel(liftedShipId) instanceof ServerSubLevel ship)
                 || ship.getMassTracker().isInvalid()) {
-            // Ship vanished (cull/unload) before lifting — put the blocks back.
+            // Ship vanished (cull/unload) before arriving — put the blocks back.
             restoreCaptured(server);
             liftedShipId = null;
             captured.clear();
             return;
         }
-        final Direction facing = facing();
-        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
+        // Vector from the ship toward the inducer — we pull along it.
+        final Vec3 target = Vec3.atCenterOf(getBlockPos());
         final var shipPos = ship.logicalPose().position();
-        final double moved = (shipPos.x() - liftOrigin.x) * dir.x
-                + (shipPos.y() - liftOrigin.y) * dir.y
-                + (shipPos.z() - liftOrigin.z) * dir.z;
-        if (moved >= LIFT_HEIGHT || server.getGameTime() - liftStartTick > LIFT_TIMEOUT_TICKS) {
-            // Cleared — let it float free.
+        final double dx = target.x - shipPos.x(), dy = target.y - shipPos.y(), dz = target.z - shipPos.z();
+        final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist <= ARRIVAL_DISTANCE || server.getGameTime() - liftStartTick > PULL_TIMEOUT_TICKS) {
+            // Reeled in (or timed out) — release it as a free-floating craft.
+            lastResult = "released near inducer";
             liftedShipId = null;
             captured.clear();
             return;
         }
+        final double inv = 1.0 / Math.max(dist, 0.0001);
+        final double ux = dx * inv, uy = dy * inv, uz = dz * inv; // unit vector toward inducer
         final var v = ship.latestLinearVelocity;
-        final double along = v.x * dir.x + v.y * dir.y + v.z * dir.z;
-        if (along < MAX_LIFT_SPEED) {
+        final double toward = v.x * ux + v.y * uy + v.z * uz;
+        if (toward < MAX_PULL_SPEED) {
             final double mass = Math.max(0.0001, ship.getMassTracker().getMass());
-            final Vec3 impulse = new Vec3(dir.x * LIFT_ACCEL * mass, dir.y * LIFT_ACCEL * mass, dir.z * LIFT_ACCEL * mass);
+            final Vec3 impulse = new Vec3(ux * PULL_ACCEL * mass, uy * PULL_ACCEL * mass, uz * PULL_ACCEL * mass);
             SableBridge.applyWorldImpulse(ship, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), impulse);
         }
     }
@@ -299,27 +290,6 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         if (bs.is(MagTags.EXCAVATOR_IMMUNE)) return false;        // protected/important
         if (server.getBlockEntity(pos) != null) return false;     // chests, emitters, etc.
         if (bs.getDestroySpeed(server, pos) < 0) return false;     // bedrock / unbreakable
-        return true;
-    }
-
-    /** True if the layer just beyond the structure's far face (along facing) is clear. */
-    private boolean hasClearance(final ServerLevel server, final List<BlockPos> positions, final Direction facing) {
-        final BlockPos origin = getBlockPos();
-        final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
-        int maxAlong = 0;
-        for (final BlockPos p : positions) {
-            final int along = (int) Math.round((p.getX() - origin.getX()) * dir.x
-                    + (p.getY() - origin.getY()) * dir.y + (p.getZ() - origin.getZ()) * dir.z);
-            maxAlong = Math.max(maxAlong, along);
-        }
-        final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
-            for (int v = -SCAN_RADIUS; v <= SCAN_RADIUS; v++) {
-                cellAt(origin, facing, maxAlong + 1, u, v, cursor);
-                final BlockState bs = server.getBlockState(cursor);
-                if (!bs.isAir() && bs.getFluidState().isEmpty()) return false;
-            }
-        }
         return true;
     }
 
