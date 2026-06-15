@@ -122,5 +122,60 @@ public final class MagFluids {
                 .bucket(MagItems.DEUTERIUM_OXIDE_BUCKET);
     }
 
+    // ---------------- Gallium (Lorentz liquid metal) ----------------
+    // A soft, dense, silvery liquid metal. Conducts redstone; in a field + powered
+    // it pushes entities along a Lorentz current (GalliumLorentzHandler). Freezes
+    // solid next to a cooling source, melts back otherwise (GalliumBlock).
+
+    public static final Supplier<FluidType> GALLIUM_TYPE = FLUID_TYPES.register("gallium",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(6000)          // gallium is a heavy metal
+                    .viscosity(1500)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(true)  // boats float on it so the current can carry them
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> GALLIUM =
+            FLUIDS.register("gallium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(galliumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> GALLIUM_FLOWING =
+            FLUIDS.register("flowing_gallium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(galliumProperties()));
+
+    private static BaseFlowingFluid.Properties galliumProperties() {
+        return new BaseFlowingFluid.Properties(GALLIUM_TYPE, GALLIUM, GALLIUM_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.GALLIUM_BLOCK)
+                .bucket(MagItems.GALLIUM_BUCKET);
+    }
+
+    // ---------------- Mixed gallium (ferrofluid-like, no Lorentz) ----------------
+    // Gallium with magnetite/iron stirred in: acts like plain ferrofluid (creeps to
+    // magnets), no Lorentz current. Coloured between gallium and ferrofluid.
+
+    public static final Supplier<FluidType> MIXED_GALLIUM_TYPE = FLUID_TYPES.register("mixed_gallium",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(4000)
+                    .viscosity(2200)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MIXED_GALLIUM =
+            FLUIDS.register("mixed_gallium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(mixedGalliumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MIXED_GALLIUM_FLOWING =
+            FLUIDS.register("flowing_mixed_gallium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(mixedGalliumProperties()));
+
+    private static BaseFlowingFluid.Properties mixedGalliumProperties() {
+        return new BaseFlowingFluid.Properties(MIXED_GALLIUM_TYPE, MIXED_GALLIUM, MIXED_GALLIUM_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.MIXED_GALLIUM_BLOCK)
+                .bucket(MagItems.MIXED_GALLIUM_BUCKET);
+    }
+
     private MagFluids() {}
 }

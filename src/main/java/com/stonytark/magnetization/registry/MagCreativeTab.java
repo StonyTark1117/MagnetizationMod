@@ -124,6 +124,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGNETIC_PLATE);
                         accept(output, MagItems.PYROLYTIC_CARBON);
                         accept(output, MagItems.DIAMAGNETIC_BLOCK);
+                        accept(output, MagItems.GALLIUM_INGOT);
+                        accept(output, MagItems.SOLID_GALLIUM);
                         accept(output, MagItems.HEMATITE_LENS);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.DEUTERIUM_CELL);
@@ -138,6 +140,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.FERROFLUID_BUCKET);
                         accept(output, MagItems.MR_FLUID_BUCKET);
                         accept(output, MagItems.DEUTERIUM_OXIDE_BUCKET);
+                        accept(output, MagItems.GALLIUM_BUCKET);
+                        accept(output, MagItems.MIXED_GALLIUM_BUCKET);
                         accept(output, MagItems.MR_FLUID_GOLEM_SPAWN_EGG);
 
                         // ── Compasses & handheld tools ──

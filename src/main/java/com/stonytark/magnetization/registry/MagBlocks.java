@@ -390,5 +390,27 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_BLUE)));
 
+    /** Liquid gallium — silvery Lorentz-current metal; freezes solid next to cooling. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.GalliumBlock> GALLIUM_BLOCK =
+            REGISTER.register("gallium", () -> new com.stonytark.magnetization.content.fluid.GalliumBlock(
+                    com.stonytark.magnetization.registry.MagFluids.GALLIUM.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.METAL)));
+
+    /** Mixed gallium (gallium + magnetite/iron) — ferrofluid-like, no Lorentz. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.MixedGalliumBlock> MIXED_GALLIUM_BLOCK =
+            REGISTER.register("mixed_gallium", () -> new com.stonytark.magnetization.content.fluid.MixedGalliumBlock(
+                    com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_GRAY)));
+
+    /** Solid gallium — frozen form (+ storage block / gear material). Soft; melts
+     *  back to a fluid source unless a cooling source is adjacent. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.SolidGalliumBlock> SOLID_GALLIUM =
+            REGISTER.register("solid_gallium", () -> new com.stonytark.magnetization.content.fluid.SolidGalliumBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)
+                            .mapColor(MapColor.METAL)
+                            .strength(0.5f)));
+
     private MagBlocks() {}
 }

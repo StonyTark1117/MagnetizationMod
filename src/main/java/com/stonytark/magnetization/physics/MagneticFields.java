@@ -7,6 +7,7 @@ import com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Shared query: is a world position inside any active magnetic field? Used by
@@ -42,5 +43,30 @@ public final class MagneticFields {
     /** Convenience overload for a block position. */
     public static boolean isInField(final ServerLevel level, final BlockPos pos) {
         return isInField(level, Vec3.atCenterOf(pos));
+    }
+
+    /**
+     * The active emitter field whose range covers {@code pos} and whose origin is
+     * nearest to it, or {@code null} if none. Used by gallium's Lorentz current,
+     * which needs the field's origin (current direction) and polarity (toward vs
+     * away). Magnetized-ferrofluid pools are intentionally ignored here — only a
+     * real, directional emitter field drives the gallium current.
+     */
+    public static @Nullable MagneticField nearestField(final ServerLevel level, final Vec3 pos) {
+        final MagneticField[] best = {null};
+        final double[] bestSq = {Double.MAX_VALUE};
+        EmitterRegistry.forEach(level, (lvl, p) -> {
+            if (lvl.getBlockEntity(p) instanceof MagneticFieldSource src) {
+                final MagneticField f = src.currentField();
+                if (f != null) {
+                    final double d = f.origin().distanceToSqr(pos);
+                    if (d <= f.range() * f.range() && d < bestSq[0]) {
+                        bestSq[0] = d;
+                        best[0] = f;
+                    }
+                }
+            }
+        });
+        return best[0];
     }
 }

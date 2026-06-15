@@ -96,6 +96,22 @@ public final class MagItems {
             REGISTER.registerItem("deuterium_oxide_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.DEUTERIUM_OXIDE.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of liquid gallium (Lorentz current metal). */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> GALLIUM_BUCKET =
+            REGISTER.registerItem("gallium_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.GALLIUM.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of mixed gallium (gallium + magnetite/iron; ferrofluid-like). */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> MIXED_GALLIUM_BUCKET =
+            REGISTER.registerItem("mixed_gallium_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.MIXED_GALLIUM.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Gallium ingot — soft, low-melting silvery metal; gear material (gold-like but worse). */
+    public static final DeferredItem<Item> GALLIUM_INGOT =
+            REGISTER.registerSimpleItem("gallium_ingot", new Item.Properties());
+    /** Solid gallium block item (the frozen form / storage block). */
+    public static final DeferredItem<BlockItem> SOLID_GALLIUM =
+            REGISTER.registerSimpleBlockItem(MagBlocks.SOLID_GALLIUM);
     /** Spawn egg for the MR Fluid Golem (crafted, not multiblock — it's fluid-based). */
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MR_FLUID_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("mr_fluid_golem_spawn_egg",

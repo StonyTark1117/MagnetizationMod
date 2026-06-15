@@ -99,7 +99,7 @@ public final class FerrofluidCreepHandler {
         final Set<BlockPos> out = new HashSet<>();
         for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {
             final BlockState st = server.getBlockState(p);
-            if (st.is(MagBlocks.FERROFLUID_BLOCK.get()) && st.getFluidState().isSource()) out.add(p);
+            if (isPlain(st) && st.getFluidState().isSource()) out.add(p);
             else FerrofluidSourceRegistry.remove(server, p);
         }
         for (final BlockPos p : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
@@ -123,7 +123,7 @@ public final class FerrofluidCreepHandler {
             final Vec3 ac = Vec3.atCenterOf(a);
             if (!m.covers(ac)) continue;
             final BlockState st = server.getBlockState(a);
-            final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
+            final boolean plain = isPlain(st);
             final boolean mag = st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
             if (!plain && !mag) continue;
 
@@ -196,7 +196,7 @@ public final class FerrofluidCreepHandler {
 
     /** Whether a ferrofluid cell at {@code cc} (state {@code st}) is still driven. */
     private static boolean sustained(final BlockState st, final Vec3 cc, final List<Magnet> magnets) {
-        final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
+        final boolean plain = isPlain(st);
         final MagneticPolarity pole = plain ? null : st.getValue(MagnetizedFerrofluidBlock.POLARITY);
         for (final Magnet m : magnets) {
             if (!m.covers(cc)) continue;
@@ -229,8 +229,14 @@ public final class FerrofluidCreepHandler {
         return budget;
     }
 
+    /** Plain (non-magnetized) field-reactive fluids: ferrofluid + mixed gallium.
+     *  Both creep the same way; mixed gallium just keeps its own block/colour. */
+    private static boolean isPlain(final BlockState st) {
+        return st.is(MagBlocks.FERROFLUID_BLOCK.get()) || st.is(MagBlocks.MIXED_GALLIUM_BLOCK.get());
+    }
+
     private static boolean isFerro(final BlockState st) {
-        return st.is(MagBlocks.FERROFLUID_BLOCK.get()) || st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
+        return isPlain(st) || st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
     }
 
     private static BlockState stateFor(final BlockState frontier) {
@@ -239,7 +245,8 @@ public final class FerrofluidCreepHandler {
                     .setValue(MagnetizedFerrofluidBlock.POLARITY,
                             frontier.getValue(MagnetizedFerrofluidBlock.POLARITY));
         }
-        return MagBlocks.FERROFLUID_BLOCK.get().defaultBlockState();
+        // Plain frontier (ferrofluid or mixed gallium) grows its own block type.
+        return frontier.getBlock().defaultBlockState();
     }
 
     private static void place(final ServerLevel server, final BlockPos at, final BlockState state) {

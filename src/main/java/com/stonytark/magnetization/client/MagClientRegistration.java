@@ -76,6 +76,38 @@ public final class MagClientRegistration {
                 return 0xFF1E3A8A; // darker blue
             }
         }, com.stonytark.magnetization.registry.MagFluids.DEUTERIUM_OXIDE_TYPE.get());
+
+        // Gallium: water textures tinted bright silvery metal.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFFC2C8D2; // bright silver
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.GALLIUM_TYPE.get());
+
+        // Mixed gallium: dark steel-blue (gallium silver darkened by ferrofluid).
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFF4A5570; // dark steel blue
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
     }
 
     @SubscribeEvent
