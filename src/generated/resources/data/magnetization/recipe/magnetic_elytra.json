@@ -6,7 +6,7 @@
       "item": "minecraft:elytra"
     },
     "F": {
-      "item": "magnetization:ferromagnetic_ingot"
+      "tag": "c:ingots/magnetic_alloy"
     },
     "P": {
       "item": "magnetization:magnetic_plate"

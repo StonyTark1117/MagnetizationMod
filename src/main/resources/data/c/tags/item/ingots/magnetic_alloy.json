@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:ferromagnetic_ingot",
+    {
+      "id": "tfmg:magnetic_alloy_ingot",
+      "required": false
+    }
+  ]
+}

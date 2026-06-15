@@ -6,7 +6,7 @@
       "item": "magnetization:lodestone_core"
     },
     "F": {
-      "item": "magnetization:ferromagnetic_ingot"
+      "tag": "c:ingots/magnetic_alloy"
     },
     "O": {
       "item": "minecraft:obsidian"

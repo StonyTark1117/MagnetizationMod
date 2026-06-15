@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "M": {
-      "item": "magnetization:ferromagnetic_ingot"
+      "tag": "c:ingots/magnetic_alloy"
     }
   },
   "pattern": [

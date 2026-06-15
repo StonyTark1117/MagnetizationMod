@@ -37,6 +37,10 @@ public final class MagRecipeProvider extends RecipeProvider {
 
     private static final TagKey<Item> C_INGOTS_MAGNETITE =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/magnetite"));
+    /** Our ferromagnetic ingot + TFMG's magnetic alloy ingot — interchangeable
+     *  in every recipe that wants a "magnetic alloy" (see c:ingots/magnetic_alloy). */
+    private static final TagKey<Item> C_INGOTS_MAGNETIC_ALLOY =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/magnetic_alloy"));
     private static final TagKey<Item> C_PLATES =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:plates"));
     private static final TagKey<Item> C_STRINGS =
@@ -58,6 +62,9 @@ public final class MagRecipeProvider extends RecipeProvider {
         final Item rawMag = MagItems.RAW_MAGNETITE.get();
         final Item magIngot = MagItems.MAGNETITE_INGOT.get();
         final Ingredient magTag = Ingredient.of(C_INGOTS_MAGNETITE);
+        // Anywhere a recipe consumes a ferromagnetic ingot, accept any magnetic
+        // alloy ingot (ours or TFMG's) so the two are interchangeable.
+        final Ingredient magAlloy = Ingredient.of(C_INGOTS_MAGNETIC_ALLOY);
 
         // -------- core materials --------
 
@@ -70,13 +77,13 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, plate, 3)
                 .pattern("FFF")
-                .define('F', ferro)
+                .define('F', magAlloy)
                 .unlockedBy("has_ferro", has(ferro))
                 .save(out, id("magnetic_plate"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, core)
                 .pattern("PLP").pattern("LFL").pattern("PLP")
-                .define('P', plate).define('L', Blocks.LODESTONE).define('F', ferro)
+                .define('P', plate).define('L', Blocks.LODESTONE).define('F', magAlloy)
                 .unlockedBy("has_plate", has(plate))
                 .save(out, id("lodestone_core"));
 
@@ -90,7 +97,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_ANCHOR.get())
                 .pattern("OFO").pattern("FCF").pattern("OFO")
-                .define('O', Blocks.OBSIDIAN).define('F', ferro).define('C', core)
+                .define('O', Blocks.OBSIDIAN).define('F', magAlloy).define('C', core)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("magnetic_anchor"));
 
@@ -102,7 +109,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.TRACTOR_BEAM.get())
                 .pattern("FPF").pattern("PCP").pattern("FPF")
-                .define('F', ferro).define('P', plate).define('C', core)
+                .define('F', magAlloy).define('P', plate).define('C', core)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("tractor_beam"));
 
@@ -121,7 +128,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.PERMANENT_MAGNET.get(), 2)
                 .pattern("FFF").pattern("PLP").pattern("FFF")
-                .define('F', ferro).define('P', plate)
+                .define('F', magAlloy).define('P', plate)
                 .define('L', Ingredient.of(Items.LODESTONE, MagBlocks.MAGNETITE_BLOCK.get().asItem()))
                 .unlockedBy("has_plate", has(plate))
                 .save(out, id("permanent_magnet"));
@@ -157,13 +164,13 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MagItems.REPULSOR_GUN.get())
                 .pattern("PCR").pattern(" IR").pattern("  R")
-                .define('P', plate).define('C', core).define('I', ferro).define('R', Items.IRON_INGOT)
+                .define('P', plate).define('C', core).define('I', magAlloy).define('R', Items.IRON_INGOT)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("repulsor_gun"));
 
         // -------- ferromagnetic equipment (M = ferromagnetic_ingot) --------
 
-        equipmentSet(out, Ingredient.of(ferro), "ferromagnetic",
+        equipmentSet(out, magAlloy, "ferromagnetic",
                 MagItems.FERROMAGNETIC_SWORD.get(),
                 MagItems.FERROMAGNETIC_PICKAXE.get(),
                 MagItems.FERROMAGNETIC_AXE.get(),
@@ -217,7 +224,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.FERROMAGNETIC_HORSE_ARMOR.get())
                 .pattern("M M").pattern("MMM").pattern("M M")
-                .define('M', ferro)
+                .define('M', magAlloy)
                 .unlockedBy("has_material", has(ferro))
                 .save(out, id("ferromagnetic_horse_armor"));
 
@@ -299,7 +306,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.METEORITE_CORE.get())
                 .pattern(" F ").pattern("FIF").pattern(" F ")
                 .define('F', MagItems.METEORITE_FRAGMENT.get())
-                .define('I', MagItems.FERROMAGNETIC_INGOT.get())
+                .define('I', magAlloy)
                 .unlockedBy("has_fragment", has(MagItems.METEORITE_FRAGMENT.get()))
                 .save(out, id("meteorite_core_from_fragments"));
 
@@ -342,7 +349,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         // -------- Magnetic Elytra (vanilla elytra + ferromagnetic gear) --------
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, MagItems.MAGNETIC_ELYTRA.get())
                 .pattern("FPF").pattern("FEF").pattern(" F ")
-                .define('F', ferro)
+                .define('F', magAlloy)
                 .define('P', MagItems.MAGNETIC_PLATE.get())
                 .define('E', Items.ELYTRA)
                 .unlockedBy("has_elytra", has(Items.ELYTRA))

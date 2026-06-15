@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "M": {
-      "item": "magnetization:ferromagnetic_ingot"
+      "tag": "c:ingots/magnetic_alloy"
     },
     "S": {
       "item": "minecraft:stick"

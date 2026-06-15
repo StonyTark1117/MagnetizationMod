@@ -6,7 +6,7 @@
       "item": "magnetization:meteorite_fragment"
     },
     "I": {
-      "item": "magnetization:ferromagnetic_ingot"
+      "tag": "c:ingots/magnetic_alloy"
     }
   },
   "pattern": [
