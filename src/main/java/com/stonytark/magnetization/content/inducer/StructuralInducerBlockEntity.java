@@ -54,8 +54,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
 
     private static final Logger LOG = LoggerFactory.getLogger("magnetization/StructuralInducer");
 
-    /** Cross-section half-width of the aim used to find the target (9×9 seek). */
+    /** Cross-section half-width of the aim at the inducer face (widens with depth). */
     private static final int SCAN_RADIUS = 4;
+    /** Cap on the seek cone's half-width at depth. */
+    private static final int MAX_CONE_RADIUS = 10;
     /** Hard cap on captured blocks — keeps one assembly bounded (large building). */
     private static final int MAX_BLOCKS = 4096;
     /** Max distance the structure flood reaches from the seed (chessboard). */
@@ -274,6 +276,27 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         }
         final BoundingBox3i bounds = new BoundingBox3i(minX, minY, minZ, maxX, maxY, maxZ);
         final BlockPos anchor = positions.get(0); // lowest block (list is bottom-up)
+
+        // Clear soil-family terrain (dirt, farmland, grass, …) sitting INSIDE the
+        // structure's bounds to air, so a farm's internal farmland/dirt doesn't
+        // anchor or block the lift. Only soil — never stone — and never a grabbed
+        // block. Requested behaviour: it just turns to air.
+        final java.util.Set<BlockPos> grabbed = cap.keySet();
+        final BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    m.set(x, y, z);
+                    if (grabbed.contains(m)) continue;
+                    final BlockState bs = server.getBlockState(m);
+                    if (isSoilTerrain(bs)) {
+                        server.setBlock(m.immutable(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+                                Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
+        }
+
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
             if (ship.getMassTracker().isInvalid()) {
@@ -322,21 +345,26 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             final var entry = it.next();
             final Lift lift = entry.getValue();
             final var sub = container.getSubLevel(entry.getKey());
-            final boolean present = sub instanceof ServerSubLevel;
-            final boolean usable = present && !((ServerSubLevel) sub).getMassTracker().isInvalid();
-            if (!usable) {
-                // Fresh body may read invalid for a tick or two while Sable inits.
-                if (present && server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
-                // Cull/unload before arriving — remove the dead sub-level and
-                // restore the structure's blocks (no ghost left behind).
-                if (sub instanceof ServerSubLevel dead) {
-                    container.removeSubLevel(dead, SubLevelRemovalReason.REMOVED);
-                }
+            if (!(sub instanceof ServerSubLevel ship)) {
+                // The ship is simply GONE — shattered via /magnetization, culled,
+                // or chunk-unloaded. Do NOT restore the blocks (that resurrected
+                // shattered structures back to their origin). Just stop tracking.
+                it.remove();
+                continue;
+            }
+            if (ship.getMassTracker().isInvalid()) {
+                // A fresh body may read invalid for a tick or two while Sable
+                // initializes it — wait out the grace window before deciding.
+                if (server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
+                // Genuine assembly failure (bad mass past grace): tear down the
+                // dead sub-level and put the structure's blocks back so they
+                // aren't lost. (A shattered/gone ship hits the branch above.)
+                container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
                 restoreCaptured(server, lift.captured);
                 it.remove();
                 continue;
             }
-            if (driveOne(server, (ServerSubLevel) sub, lift)) {
+            if (driveOne(server, ship, lift)) {
                 it.remove(); // arrived / timed out — released as a free craft
             } else {
                 reeling++;
@@ -463,8 +491,11 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         final List<List<BlockPos>> structures = new ArrayList<>();
 
         for (int d = 1; d <= depth && structures.size() < MAX_STRUCTURES; d++) {
-            for (int u = -SCAN_RADIUS; u <= SCAN_RADIUS; u++) {
-                for (int vv = -SCAN_RADIUS; vv <= SCAN_RADIUS; vv++) {
+            // Cone widens with depth so structures off the centre line are still
+            // seen + seeded (a fixed cross-section only caught one structure).
+            final int r = Math.min(MAX_CONE_RADIUS, SCAN_RADIUS + d / 3);
+            for (int u = -r; u <= r; u++) {
+                for (int vv = -r; vv <= r; vv++) {
                     cellAt(origin, grabDir, d, u, vv, cursor);
                     if (!isGrabbable(server, cursor)) continue;
                     final BlockPos seed = cursor.immutable();
@@ -553,6 +584,20 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 || bs.is(net.minecraft.world.level.block.Blocks.CLAY)
                 || bs.is(net.minecraft.world.level.block.Blocks.MUD)
                 || bs.is(net.minecraft.world.level.block.Blocks.SNOW_BLOCK)
+                || bs.is(net.minecraft.world.level.block.Blocks.MYCELIUM)
+                || bs.is(net.minecraft.world.level.block.Blocks.PODZOL);
+    }
+
+    /** Soil-family terrain cleared to air inside a captured structure's bounds
+     *  (a farm's farmland/dirt floor, a dirt-floored build) so it doesn't anchor
+     *  the lift. Deliberately excludes stone so a build cut into rock doesn't
+     *  carve the mountain. */
+    private static boolean isSoilTerrain(final BlockState bs) {
+        return bs.is(net.minecraft.tags.BlockTags.DIRT)
+                || bs.is(net.minecraft.world.level.block.Blocks.GRASS_BLOCK)
+                || bs.is(net.minecraft.world.level.block.Blocks.DIRT_PATH)
+                || bs.is(net.minecraft.world.level.block.Blocks.FARMLAND)
+                || bs.is(net.minecraft.world.level.block.Blocks.MUD)
                 || bs.is(net.minecraft.world.level.block.Blocks.MYCELIUM)
                 || bs.is(net.minecraft.world.level.block.Blocks.PODZOL);
     }
