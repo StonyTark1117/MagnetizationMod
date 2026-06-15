@@ -787,5 +787,8 @@
   "tooltip.magnetization.gui_magnet": "%s (Strength %s)",
   "tooltip.magnetization.gui_no_magnet": "No magnet installed",
   "tooltip.magnetization.machine_active": "Active",
-  "tooltip.magnetization.machine_idle": "Idle (needs magnet + power)"
+  "tooltip.magnetization.machine_idle": "Idle (needs magnet + power)",
+  "tooltip.magnetization.gyro_stabilizing": "Stabilizing — rotation locked",
+  "tooltip.magnetization.gyro_idle": "Powered — mount on a craft",
+  "tooltip.magnetization.gyro_off": "Unpowered — free rotation"
 }

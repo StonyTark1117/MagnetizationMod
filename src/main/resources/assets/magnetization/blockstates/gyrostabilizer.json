@@ -4,7 +4,7 @@
       "model": "magnetization:block/gyrostabilizer"
     },
     "powered=true": {
-      "model": "magnetization:block/gyrostabilizer"
+      "model": "magnetization:block/gyrostabilizer_active"
     }
   }
 }
