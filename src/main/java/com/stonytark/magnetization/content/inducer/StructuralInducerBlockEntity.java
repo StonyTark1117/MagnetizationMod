@@ -150,14 +150,15 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         return net.minecraft.util.Mth.clamp(r > 0 ? r : DEFAULT_DEPTH, 4, 48);
     }
 
-    /** Scan the box in front of the facing, gate on clearance, assemble + launch. */
+    /** Scan the box the inducer is aimed at (toward its visual front, i.e. the
+     *  opposite of FACING — FACING points back at the player), assemble + reel in. */
     private void tryCapture(final ServerLevel server) {
-        final Direction facing = facing();
-        final List<BlockPos> positions = collectStructure(server, facing);
+        final Direction grabDir = facing().getOpposite();
+        final List<BlockPos> positions = collectStructure(server, grabDir);
         if (positions.isEmpty()) {
-            lastResult = "no grabbable structure in front of " + facing;
+            setResult(server, "no grabbable structure ahead (" + grabDir + ")");
             if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
-                LOG.info("Inducer {} found no grabbable blocks (facing {})", getBlockPos().toShortString(), facing);
+                LOG.info("Inducer {} found no grabbable blocks (grabDir {})", getBlockPos().toShortString(), grabDir);
             }
             return;
         }
@@ -176,7 +177,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
             if (ship.getMassTracker().isInvalid()) {
-                lastResult = "assembled but mass invalid (" + positions.size() + " blocks) — reverted";
+                setResult(server, "assembled but mass invalid (" + positions.size() + " blocks) — reverted");
                 if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
                     LOG.info("Inducer {} assembly produced invalid mass, reverting", getBlockPos().toShortString());
                 }
@@ -186,7 +187,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                 captured.clear();
                 return;
             }
-            lastResult = "reeling in " + positions.size() + " blocks";
+            setResult(server, "reeling in " + positions.size() + " blocks");
             liftedShipId = ship.getUniqueId();
             liftStartTick = server.getGameTime();
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
@@ -194,23 +195,22 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                     getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
                     24, SCAN_RADIUS * 0.4, 1.5, SCAN_RADIUS * 0.4, 0.02);
         } catch (final Throwable t) {
-            lastResult = "assembly threw: " + t.getClass().getSimpleName();
+            setResult(server, "assembly threw: " + t.getClass().getSimpleName());
             LOG.error("Structural Inducer assembly failed at {}", getBlockPos().toShortString(), t);
             captured.clear();
         }
     }
 
+    /** Surface the inducer's live operational status (synced) in goggles + WTHIT,
+     *  so it reads as working rather than "inactive" (it has no field of its own). */
     @Override
-    public boolean addToGoggleTooltip(final java.util.List<net.minecraft.network.chat.Component> tooltip,
-                                      final boolean isPlayerSneaking) {
-        final boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        if (com.stonytark.magnetization.config.MagConfig.goggleDiagnostics()) {
-            tooltip.add(net.minecraft.network.chat.Component.literal(String.format(
-                            "  [diag] powered=%b armed=%b lifting=%b last=%s",
-                            isPowered(), armed, liftedShipId != null, lastResult))
-                    .withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
-        }
-        return added || com.stonytark.magnetization.config.MagConfig.goggleDiagnostics();
+    public java.util.List<net.minecraft.network.chat.Component> extraTooltipLines(final boolean verbose) {
+        final java.util.List<net.minecraft.network.chat.Component> lines =
+                new java.util.ArrayList<>(super.extraTooltipLines(verbose));
+        lines.add(net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.inducer_status", lastResult)
+                .withStyle(net.minecraft.ChatFormatting.GRAY));
+        return lines;
     }
 
     /** Reel the captured ship toward the inducer (like the excavator pulls ore),
@@ -233,7 +233,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
         if (dist <= ARRIVAL_DISTANCE || server.getGameTime() - liftStartTick > PULL_TIMEOUT_TICKS) {
             // Reeled in (or timed out) — release it as a free-floating craft.
-            lastResult = "released near inducer";
+            setResult(server, "released near inducer");
             liftedShipId = null;
             captured.clear();
             return;
@@ -291,6 +291,28 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         if (server.getBlockEntity(pos) != null) return false;     // chests, emitters, etc.
         if (bs.getDestroySpeed(server, pos) < 0) return false;     // bedrock / unbreakable
         return true;
+    }
+
+    /** Set the operational status and push it to clients (goggle/WTHIT readout). */
+    private void setResult(final ServerLevel server, final String result) {
+        if (this.lastResult.equals(result)) return;
+        this.lastResult = result;
+        setChanged();
+        markForClientSync(server);
+    }
+
+    @Override
+    protected void saveAdditional(final net.minecraft.nbt.CompoundTag tag,
+                                  final net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putString("LastResult", lastResult);
+    }
+
+    @Override
+    protected void loadAdditional(final net.minecraft.nbt.CompoundTag tag,
+                                  final net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("LastResult")) lastResult = tag.getString("LastResult");
     }
 
     private void restoreCaptured(final ServerLevel server) {
