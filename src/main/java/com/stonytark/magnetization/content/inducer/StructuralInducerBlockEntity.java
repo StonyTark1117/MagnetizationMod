@@ -72,6 +72,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** Base cap on the structure's pull speed (MEDIUM tier) so it reads as a
      *  smooth tractor beam; scaled by {@link #pullMultiplier()}. */
     private static final double MAX_PULL_SPEED = 6.0d;
+    /** Grace ticks after assembly during which an "invalid mass" reading is
+     *  treated as the body still initializing, not a cull — so we don't tear a
+     *  fresh craft down (and leave a ghost) before Sable finishes setting it up. */
+    private static final long INIT_GRACE_TICKS = 10L;
     /** Absolute age cap on a pull before we give up and release it. */
     private static final long PULL_TIMEOUT_TICKS = 600L;
     /** Max world blocks the tractor clears from the structure's path per tick. */
@@ -286,14 +290,29 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     private void driveLift(final ServerLevel server) {
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) { liftedShipId = null; captured.clear(); return; }
-        if (!(container.getSubLevel(liftedShipId) instanceof ServerSubLevel ship)
-                || ship.getMassTracker().isInvalid()) {
-            // Ship vanished (cull/unload) before arriving — put the blocks back.
+        final var sub = container.getSubLevel(liftedShipId);
+        final boolean present = sub instanceof ServerSubLevel;
+        final boolean usable = present && !((ServerSubLevel) sub).getMassTracker().isInvalid();
+        if (!usable) {
+            // A freshly assembled body can read "invalid mass" for a tick or two
+            // while Sable initializes its rigid body. Don't tear it down on that
+            // first reading — wait out a short grace window before deciding.
+            if (present && server.getGameTime() - liftStartTick <= INIT_GRACE_TICKS) {
+                return;
+            }
+            // Still unusable (bad mass) or vanished (cull/unload) before arriving.
+            // Destroy the dead sub-level FIRST — otherwise it lingers as a ghost
+            // ship clipping the structure we restore — then put the blocks back.
+            if (sub instanceof ServerSubLevel dead) {
+                container.removeSubLevel(dead, SubLevelRemovalReason.REMOVED);
+            }
+            setResult(server, "assembly unstable — released structure");
             restoreCaptured(server);
             liftedShipId = null;
             captured.clear();
             return;
         }
+        final ServerSubLevel ship = (ServerSubLevel) sub;
         // Vector from the ship toward the inducer — we pull along it.
         final Vec3 target = Vec3.atCenterOf(getBlockPos());
         final var shipPos = ship.logicalPose().position();
