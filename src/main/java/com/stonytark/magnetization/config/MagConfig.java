@@ -40,6 +40,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue SHIP_MAX_SUSCEPTIBILITY;
     public static final ModConfigSpec.IntValue    SHIP_SCAN_INTERVAL_TICKS;
     public static final ModConfigSpec.BooleanValue EXCLUDE_CONNECTED_SUBLEVELS;
+    public static final ModConfigSpec.BooleanValue DIAMAGNETIC_DEFAULT_REPEL;
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
@@ -335,6 +336,15 @@ public final class MagConfig {
                          "want emitters to act on connected subgroups of their own craft.")
                 .translation("magnetization.configuration.physics.excludeConnectedSubLevels")
                 .define("excludeConnectedSubLevels", true);
+
+        DIAMAGNETIC_DEFAULT_REPEL = b
+                .comment("Default reaction of a diamagnetic craft (a Sable ship built with",
+                         "Diamagnetic Blocks) to a magnetic field. true = repelled by BOTH poles",
+                         "(real diamagnetism — the ship is pushed away from any emitter regardless",
+                         "of polarity); false = ATTRACTED to both poles. A Polarity Inverter on the",
+                         "ship flips whichever default you pick (repel <-> attract).")
+                .translation("magnetization.configuration.physics.diamagneticDefaultRepel")
+                .define("diamagneticDefaultRepel", true);
 
         b.pop();
 
@@ -952,6 +962,15 @@ public final class MagConfig {
     public static boolean excludeConnectedSubLevels() {
         try {
             return EXCLUDE_CONNECTED_SUBLEVELS.get();
+        } catch (final Throwable t) {
+            return true;
+        }
+    }
+
+    /** Default diamagnetic reaction: true = repel both poles, false = attract both. */
+    public static boolean diamagneticDefaultRepel() {
+        try {
+            return DIAMAGNETIC_DEFAULT_REPEL.get();
         } catch (final Throwable t) {
             return true;
         }

@@ -219,10 +219,13 @@ public final class FieldApplicator {
             // scanner today, but if it ever does, the ship feels no force).
             if (shipSign == 0.0) continue;
             final double shipSusc = shipState.susceptibility();
-            // Diamagnetic ships are repelled by BOTH poles (reacts the same to
-            // positive + negative) — force points away from the origin regardless
-            // of the field's polarity, instead of the like-repel/unlike-attract sign.
+            // Diamagnetic ships react the SAME to both poles. By default they're
+            // repelled by both (config diamagneticDefaultRepel); a Polarity
+            // Inverter on the ship (odd count → SOUTH polarity) flips that to
+            // attract-both, the same way it flips a ferrous ship's attract/repel.
             final boolean diamagnetic = shipState.isDiamagnetic();
+            final boolean diaRepel = MagConfig.diamagneticDefaultRepel()
+                    ^ (shipState.polarity() == com.stonytark.magnetization.api.MagneticPolarity.SOUTH);
 
             // Integrate the field over a coarse grid of sample points spanning the
             // ship's AABB. Each sample contributes an impulse at its own world point,
@@ -243,7 +246,7 @@ public final class FieldApplicator {
                 );
                 if (closest.distanceToSqr(origin) <= rangeSqr) {
                     final Vec3 force = shipSampleForce(field, closest, origin, globalScalar, cosHalfAngle,
-                            shipSusc, shipSign, diamagnetic, 1.0);
+                            shipSusc, shipSign, diamagnetic, diaRepel, 1.0);
                     if (force.lengthSqr() >= 1.0e-6) {
                         samplePoints.add(closest);
                         sampleForces.add(force);
@@ -276,7 +279,7 @@ public final class FieldApplicator {
                             // fraction keeps total integrated force comparable to the
                             // single-sample path regardless of grid density.
                             final Vec3 force = shipSampleForce(field, sample, origin, globalScalar, cosHalfAngle,
-                                    shipSusc, shipSign, diamagnetic, weight);
+                                    shipSusc, shipSign, diamagnetic, diaRepel, weight);
                             if (force.lengthSqr() < 1.0e-8) continue;
                             samplePoints.add(sample);
                             sampleForces.add(force);
@@ -542,13 +545,13 @@ public final class FieldApplicator {
 
     /** One ship sample's force. Normal ships use the polarity-encoded force
      *  (like-repel/unlike-attract) scaled by susceptibility × ship sign. A
-     *  diamagnetic ship instead gets a force of the SAME magnitude pointing
-     *  away from the field origin regardless of the field's polarity — repelled
-     *  by both poles. */
+     *  diamagnetic ship instead gets a force of the SAME magnitude pointing the
+     *  same way for BOTH poles — away from the field origin when {@code diaRepel}
+     *  (default), toward it when an inverter has flipped it to attract-both. */
     private static Vec3 shipSampleForce(final MagneticField field, final Vec3 sample, final Vec3 origin,
                                         final double globalScalar, final double cosHalfAngle,
                                         final double susceptibility, final double shipSign,
-                                        final boolean diamagnetic, final double weight) {
+                                        final boolean diamagnetic, final boolean diaRepel, final double weight) {
         final Vec3 base = forceAtPrecomputed(field, sample, globalScalar, cosHalfAngle);
         if (!diamagnetic) {
             return base.scale(shipSign * susceptibility * weight);
@@ -556,7 +559,8 @@ public final class FieldApplicator {
         Vec3 away = sample.subtract(origin);
         final double len2 = away.lengthSqr();
         away = len2 < 1.0e-6 ? new Vec3(0, 1, 0) : away.scale(1.0 / Math.sqrt(len2));
-        return away.scale(base.length() * susceptibility * weight);
+        final double dir = diaRepel ? 1.0 : -1.0; // repel = away, attract = toward
+        return away.scale(dir * base.length() * susceptibility * weight);
     }
 
     // ---------------- field math ----------------
