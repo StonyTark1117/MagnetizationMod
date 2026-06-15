@@ -34,6 +34,20 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock {
     public static final EnumProperty<MagneticPolarity> POLARITY =
             EnumProperty.create("polarity", MagneticPolarity.class, MagneticPolarity.NORTH, MagneticPolarity.SOUTH);
 
+    /** Shared overlay line for magnetized ferrofluid's pole (WTHIT/Jade/TOP), or
+     *  {@code null} for plain ferrofluid / any non-magnetized block. */
+    public static @Nullable net.minecraft.network.chat.Component polarityTooltip(final BlockState state) {
+        if (!state.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get()) || !state.hasProperty(POLARITY)) return null;
+        final MagneticPolarity pole = state.getValue(POLARITY);
+        final net.minecraft.ChatFormatting colour = pole == MagneticPolarity.NORTH
+                ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.AQUA;
+        return net.minecraft.network.chat.Component.translatable("tooltip.magnetization.ferrofluid_magnetized",
+                        net.minecraft.network.chat.Component.translatable(
+                                        "tooltip.magnetization.polarity." + pole.name().toLowerCase())
+                                .withStyle(colour))
+                .withStyle(net.minecraft.ChatFormatting.GRAY);
+    }
+
     /** Ticks between mixing-spread steps — keeps the conversion gradual + cheap. */
     private static final int MIX_DELAY = 5;
 

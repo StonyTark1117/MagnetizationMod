@@ -26,6 +26,11 @@ public enum EmitterFieldProvider implements IBlockComponentProvider {
 
     @Override
     public void appendTooltip(final ITooltip tooltip, final BlockAccessor accessor, final IPluginConfig config) {
+        // Magnetized ferrofluid has no BE — surface its pole from the blockstate.
+        final Component fluidLine = com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock
+                .polarityTooltip(accessor.getBlockState());
+        if (fluidLine != null) tooltip.add(fluidLine);
+
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MagneticFieldSource source)) return;
         final MagneticField field = source.currentField();
