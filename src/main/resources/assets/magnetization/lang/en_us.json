@@ -147,6 +147,8 @@
   "magnetization.configuration.debug.tooltip": "Diagnostic logging toggles. Off by default — only useful when investigating emitter or anchor behavior.",
   "magnetization.configuration.debug.debugLogging": "Debug Logging",
   "magnetization.configuration.debug.debugLogging.tooltip": "Master toggle for FieldApplicator + anchor-binding debug logs. Leave off on busy servers; spammy at default.",
+  "magnetization.configuration.debug.goggleDiagnostics": "Goggle Diagnostics",
+  "magnetization.configuration.debug.goggleDiagnostics.tooltip": "Show extra diagnostic lines in goggle/HUD tooltips (e.g. a machine's live kinetic speed / source / network state). Off by default; handy when diagnosing why a block won't power.",
   "magnetization.configuration.commands": "Command Permissions",
   "magnetization.configuration.commands.tooltip": "Required permission level for each /magnetization command group. 0 = any player, 2 = operator (vanilla default), 3-4 = higher op tiers. Read live so /reload picks up edits.",
   "magnetization.configuration.commands.debugPermission": "/magnetization debug — Required Op Level",

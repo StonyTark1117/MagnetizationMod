@@ -92,6 +92,10 @@ public final class MagConfig {
     /** Master toggle for the field-applicator and anchor-binding debug logs. Off by default. */
     public static final ModConfigSpec.BooleanValue DEBUG_LOGGING;
 
+    /** Show extra diagnostic lines (e.g. live kinetic speed/source/network) in
+     *  goggle/HUD tooltips. Off by default — for diagnosing machine behaviour. */
+    public static final ModConfigSpec.BooleanValue GOGGLE_DIAGNOSTICS;
+
     // Per-command-group permission levels. 0 = any player, 2 = operator (vanilla
     // default), 3/4 = higher op levels. Read live via brigadier .requires(),
     // so admins reload-config can adjust permissions without restarting.
@@ -722,6 +726,13 @@ public final class MagConfig {
                 .translation("magnetization.configuration.debug.debugLogging")
                 .define("debugLogging", false);
 
+        GOGGLE_DIAGNOSTICS = sb
+                .comment("Show extra diagnostic lines in goggle/HUD tooltips (e.g. a",
+                         "machine's live kinetic speed / source / network state).",
+                         "Handy when diagnosing why a block won't power; off by default.")
+                .translation("magnetization.configuration.debug.goggleDiagnostics")
+                .define("goggleDiagnostics", false);
+
         sb.pop();
 
         sb.comment("Required permission level for each /magnetization command group.",
@@ -892,6 +903,15 @@ public final class MagConfig {
     public static boolean debugLogging() {
         try {
             return DEBUG_LOGGING.get();
+        } catch (final Throwable t) {
+            return false;
+        }
+    }
+
+    /** @return whether to show extra diagnostic lines in goggle/HUD tooltips. */
+    public static boolean goggleDiagnostics() {
+        try {
+            return GOGGLE_DIAGNOSTICS.get();
         } catch (final Throwable t) {
             return false;
         }
