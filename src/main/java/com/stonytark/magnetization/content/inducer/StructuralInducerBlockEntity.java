@@ -54,8 +54,16 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
 
     /** Cross-section half-width of the aim used to find the target (9×9 seek). */
     private static final int SCAN_RADIUS = 4;
-    /** Hard cap on captured blocks — keeps one assembly bounded. */
-    private static final int MAX_BLOCKS = 512;
+    /** Hard cap on captured blocks — keeps one assembly bounded (large building). */
+    private static final int MAX_BLOCKS = 4096;
+    /** Max distance the structure flood reaches from the seed (chessboard). */
+    private static final int MAX_REACH = 24;
+    /** Cap on cells the flood may visit (air counts), so an open-air fill ends. */
+    private static final int VISIT_CAP = 65_536;
+    /** Solid layers grabbed directly beneath the structure (farmland under crops,
+     *  ground under walls) so farms/floored builds come as a unit — not the deep
+     *  ground. */
+    private static final int SOIL_DEPTH = 2;
     /** Once the pulled structure's centre is within this many blocks of the
      *  inducer, release it as a free-floating craft (it's been reeled in). */
     private static final double ARRIVAL_DISTANCE = 2.5d;
@@ -338,24 +346,61 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         }
         if (seed == null) return List.of();
 
-        // Flood-fill the connected structure from the seed.
+        // Flood the structure from the seed, travelling through BUILT blocks AND
+        // through AIR (so fences, gaps, and detached decorations are all reached),
+        // but never through terrain/fluids/immune/unbreakable — those bound the
+        // fill so the ground isn't grabbed. Reach is capped from the seed.
+        final int reach = net.minecraft.util.Mth.clamp(depth, 4, MAX_REACH);
         final List<BlockPos> out = new ArrayList<>();
         final java.util.Set<BlockPos> visited = new java.util.HashSet<>();
         final java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
         queue.add(seed);
         visited.add(seed);
-        while (!queue.isEmpty() && out.size() < MAX_BLOCKS) {
+        while (!queue.isEmpty() && out.size() < MAX_BLOCKS && visited.size() < VISIT_CAP) {
             final BlockPos p = queue.poll();
-            if (!isGrabbable(server, p)) continue;
-            out.add(p);
+            final boolean grabbable = isGrabbable(server, p);
+            final boolean air = server.getBlockState(p).isAir();
+            if (!grabbable && !air) continue; // terrain / fluid / immune / bedrock = boundary
+            if (grabbable) out.add(p);
             for (final Direction dir : Direction.values()) {
                 final BlockPos n = p.relative(dir);
-                if (visited.add(n)) queue.add(n);
+                if (chebyshev(n, seed) > reach) continue;
+                final BlockPos ni = n.immutable();
+                if (visited.add(ni)) queue.add(ni);
+            }
+        }
+        if (out.isEmpty()) return out;
+
+        // Second pass: grab the soil directly supporting the structure — the few
+        // solid layers beneath each built block (farmland under crops, ground
+        // under walls) — so farms and floored builds come as a unit. Stops at
+        // open space below, so the deep ground / a pen's interior isn't ripped up.
+        final java.util.Set<BlockPos> have = new java.util.HashSet<>(out);
+        final List<BlockPos> built = new ArrayList<>(out);
+        final BlockPos.MutableBlockPos f = new BlockPos.MutableBlockPos();
+        for (final BlockPos b : built) {
+            if (out.size() >= MAX_BLOCKS) break;
+            for (int dy = 1; dy <= SOIL_DEPTH; dy++) {
+                f.set(b.getX(), b.getY() - dy, b.getZ());
+                final BlockState bs = server.getBlockState(f);
+                if (bs.isAir() || !bs.getFluidState().isEmpty()) break; // open below → stop
+                if (bs.is(MagTags.EXCAVATOR_IMMUNE) || bs.getDestroySpeed(server, f) < 0) break;
+                final BlockPos at = f.immutable();
+                if (have.add(at)) {
+                    out.add(at);
+                    if (out.size() >= MAX_BLOCKS) break;
+                }
             }
         }
         // Bottom-up so positions.get(0) is the lowest block (the assembly anchor).
         out.sort(java.util.Comparator.comparingInt(BlockPos::getY));
         return out;
+    }
+
+    /** Chebyshev (chessboard) distance — bounds the structure flood from the seed. */
+    private static int chebyshev(final BlockPos a, final BlockPos b) {
+        return Math.max(Math.abs(a.getX() - b.getX()),
+                Math.max(Math.abs(a.getY() - b.getY()), Math.abs(a.getZ() - b.getZ())));
     }
 
     private boolean isGrabbable(final ServerLevel server, final BlockPos pos) {
