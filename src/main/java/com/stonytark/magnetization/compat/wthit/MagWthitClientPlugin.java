@@ -28,8 +28,13 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
         registrar.body(MachineBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);
         registrar.body(CatalystBodyProvider.INSTANCE, Block.class);
-        // Runs after WTHIT's built-in energy renderer (500) so our per-block
-        // stored-FE bar wins the EnergyData line and the magnet leak is cleared.
-        registrar.body(MachineEnergyBarProvider.INSTANCE, Block.class, MachineEnergyBarProvider.PRIORITY);
+        // MUST register against BlockEntity.class (not Block.class): WTHIT gathers
+        // Block-class providers in an earlier pass than BlockEntity-class ones, so
+        // priority only orders us after WTHIT's energy renderer (also BE-class,
+        // priority 500) when we're in the SAME pass. Then our per-block stored-FE
+        // bar wins the EnergyData line and the leak onto non-energy blocks (chests,
+        // magnets) is cleared.
+        registrar.body(MachineEnergyBarProvider.INSTANCE,
+                net.minecraft.world.level.block.entity.BlockEntity.class, MachineEnergyBarProvider.PRIORITY);
     }
 }
