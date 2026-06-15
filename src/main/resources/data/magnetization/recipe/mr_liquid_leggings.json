@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:leather_leggings"
+      "item": "minecraft:iron_leggings"
     },
     {
       "item": "magnetization:mr_fluid_bucket"

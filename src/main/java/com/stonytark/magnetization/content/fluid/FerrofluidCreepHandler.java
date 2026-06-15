@@ -116,7 +116,7 @@ public final class FerrofluidCreepHandler {
                              final boolean growPlain, final boolean growMag) {
         boolean reachedAttract = false;
         BlockPos attractStep = null, repelStep = null;
-        double attractStepSq = Double.MAX_VALUE, repelStepSq = -1.0;
+        double attractStepSq = Double.MAX_VALUE, repelAnchorSq = Double.MAX_VALUE;
         BlockState attractState = null, repelState = null;
 
         for (final BlockPos a : anchors) {
@@ -146,10 +146,13 @@ public final class FerrofluidCreepHandler {
                     if (sq < attractStepSq) { attractStepSq = sq; attractStep = step; attractState = stateFor(st); }
                 }
             } else {
+                // Flee from the cell CLOSEST to the magnet (the most-repelled edge),
+                // so the fluid starts moving away promptly instead of building from
+                // the far end.
                 final BlockPos step = bestStep(server, a, m.origin, false, st.getBlock());
                 if (step != null) {
-                    final double sq = m.origin.distanceToSqr(Vec3.atCenterOf(step));
-                    if (sq > repelStepSq) { repelStepSq = sq; repelStep = step; repelState = stateFor(st); }
+                    final double anchorSq = m.origin.distanceToSqr(ac);
+                    if (anchorSq < repelAnchorSq) { repelAnchorSq = anchorSq; repelStep = step; repelState = stateFor(st); }
                 }
             }
         }
@@ -157,28 +160,77 @@ public final class FerrofluidCreepHandler {
         place(server, repelStep, repelState);
     }
 
-    /** Remove creep cells no magnet drives any more, so the path recedes. Emitters
-     *  always sustain; a magnetized cell is ALSO sustained by an opposing-pole pool
-     *  (what it's attracted to) but NOT by its own-pole pool; plain by any magnet. */
+    /** Cap on cells cleared per recede pass (across all tendrils), so a runaway
+     *  flood can't stall the tick. */
+    private static final int RECEDE_BUDGET = 1024;
+
+    /** Recede tendrils no magnet drives any more. For each unsustained creep cell
+     *  we flood-clear the WHOLE connected ferrofluid body it belongs to — creep
+     *  cells AND the flowing spread they fed — stopping at the player's ORIGINAL
+     *  (non-creep) source pools, which stay. Single-pass removal beats fluid
+     *  reflow (removing cells one at a time just lets neighbours flow back in).
+     *  Emitters always sustain a cell; a magnetized cell is also sustained by an
+     *  opposing-pole pool (what it's attracted to) but never its own-pole pool;
+     *  plain by any magnet. */
     private static void recedeUnsupported(final ServerLevel server, final List<Magnet> magnets) {
-        for (final BlockPos pos : FerrofluidCreepRegistry.snapshot(server)) {
-            if (!server.isLoaded(pos)) continue;
-            final BlockState st = server.getBlockState(pos);
-            final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
-            final boolean mag = st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
-            if (!plain && !mag) { FerrofluidCreepRegistry.remove(server, pos); continue; }
-            final MagneticPolarity pole = mag ? st.getValue(MagnetizedFerrofluidBlock.POLARITY) : null;
-            final Vec3 cc = Vec3.atCenterOf(pos);
-            boolean sustained = false;
-            for (final Magnet m : magnets) {
-                if (!m.covers(cc)) continue;
-                if (m.emitter || plain || m.polarity != pole) { sustained = true; break; }
-            }
-            if (!sustained) {
-                server.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                FerrofluidCreepRegistry.remove(server, pos);
+        // The player's own fluid — source registry entries that aren't creep cells.
+        final Set<BlockPos> originals = new HashSet<>();
+        for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {
+            if (!FerrofluidCreepRegistry.contains(server, p)) originals.add(p);
+        }
+        for (final BlockPos p : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
+            if (!FerrofluidCreepRegistry.contains(server, p)) originals.add(p);
+        }
+
+        int budget = RECEDE_BUDGET;
+        final Set<BlockPos> cleared = new HashSet<>();
+        for (final BlockPos start : FerrofluidCreepRegistry.snapshot(server)) {
+            if (budget <= 0) break;
+            if (cleared.contains(start) || !server.isLoaded(start)) continue;
+            final BlockState st = server.getBlockState(start);
+            if (!isFerro(st)) { FerrofluidCreepRegistry.remove(server, start); continue; }
+            if (sustained(st, Vec3.atCenterOf(start), magnets)) continue;
+            budget = floodClear(server, start, originals, cleared, budget);
+        }
+    }
+
+    /** Whether a ferrofluid cell at {@code cc} (state {@code st}) is still driven. */
+    private static boolean sustained(final BlockState st, final Vec3 cc, final List<Magnet> magnets) {
+        final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
+        final MagneticPolarity pole = plain ? null : st.getValue(MagnetizedFerrofluidBlock.POLARITY);
+        for (final Magnet m : magnets) {
+            if (!m.covers(cc)) continue;
+            if (m.emitter || plain || m.polarity != pole) return true;
+        }
+        return false;
+    }
+
+    /** Flood the connected ferrofluid body from {@code start}, clearing it to air
+     *  (and untracking creep cells), but never the player's {@code originals}. */
+    private static int floodClear(final ServerLevel server, final BlockPos start,
+                                  final Set<BlockPos> originals, final Set<BlockPos> cleared, int budget) {
+        final java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        queue.add(start);
+        cleared.add(start);
+        while (!queue.isEmpty() && budget > 0) {
+            final BlockPos p = queue.poll();
+            if (originals.contains(p)) continue;          // leave the player's own pour
+            if (!isFerro(server.getBlockState(p))) { FerrofluidCreepRegistry.remove(server, p); continue; }
+            server.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            FerrofluidCreepRegistry.remove(server, p);
+            budget--;
+            for (final Direction d : Direction.values()) {
+                final BlockPos n = p.relative(d).immutable();
+                if (cleared.add(n) && server.isLoaded(n) && isFerro(server.getBlockState(n))) {
+                    queue.add(n);
+                }
             }
         }
+        return budget;
+    }
+
+    private static boolean isFerro(final BlockState st) {
+        return st.is(MagBlocks.FERROFLUID_BLOCK.get()) || st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
     }
 
     private static BlockState stateFor(final BlockState frontier) {

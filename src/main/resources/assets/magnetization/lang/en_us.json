@@ -738,7 +738,7 @@
   "book.magnetization.entry.magnetic_anvils.name": "Magnetic-Metal Anvils",
   "book.magnetization.entry.magnetic_anvils.spotlight": "Anvils cast from our metals — full vanilla anvil behaviour, but $(l)self-dampened$() (no clang) with per-metal durability. Magnetite/maghemite/hematite are convenient-but-degrading; $(l)Titanomagnetite never degrades$() — the only metal that beats a vanilla anvil + dampener.",
   "book.magnetization.entry.mr_armor.name": "Magnetorheological Armor",
-  "book.magnetization.entry.mr_armor.spotlight": "Leather-light, flexible armor that $(l)hardens the instant you're hit$(): a kinetic impact (physical, fall, or blast) pulses the fluid rigid and absorbs most of it. Mitigation scales with pieces worn — a $(l)full set ≈ 90%$(). Made by infusing leather armor with magnetorheological fluid.",
+  "book.magnetization.entry.mr_armor.spotlight": "Leather-light, flexible armor that $(l)hardens the instant you're hit$(): a kinetic impact (physical, fall, or blast) pulses the fluid rigid and absorbs most of it. Mitigation scales with pieces worn — a $(l)full set ≈ 90%$(). Made by infusing iron armor with magnetorheological fluid.",
   "book.magnetization.entry.magnetoresistive_boots.name": "Magnetic Cushion Boots",
   "book.magnetization.entry.magnetoresistive_boots.spotlight": "Magnetic-metal boots that $(l)auto-save you from any fall$() (costing a little durability per save). Uniquely, they're $(l)inert to fields$() — never yanked by emitters — until you magnetize them in the electromagnet GUI, after which they react like other magnetized gear.",
   "book.magnetization.entry.g_force_cushion.name": "Magnetic Cushion",

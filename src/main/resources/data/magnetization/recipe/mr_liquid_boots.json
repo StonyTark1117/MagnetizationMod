@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:leather_boots"
+      "item": "minecraft:iron_boots"
     },
     {
       "item": "magnetization:mr_fluid_bucket"

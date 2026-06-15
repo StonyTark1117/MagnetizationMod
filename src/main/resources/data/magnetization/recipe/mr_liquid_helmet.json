@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:leather_helmet"
+      "item": "minecraft:iron_helmet"
     },
     {
       "item": "magnetization:mr_fluid_bucket"

@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:leather_chestplate"
+      "item": "minecraft:iron_chestplate"
     },
     {
       "item": "magnetization:mr_fluid_bucket"
