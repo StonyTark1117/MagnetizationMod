@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.mr_fluid_golem.name",
+  "icon": "magnetization:mr_fluid_golem_spawn_egg",
+  "category": "magnetization:machines",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:mr_fluid_golem_spawn_egg",
+      "text": "book.magnetization.entry.mr_fluid_golem.spotlight",
+      "link_recipe": true
+    }
+  ]
+}

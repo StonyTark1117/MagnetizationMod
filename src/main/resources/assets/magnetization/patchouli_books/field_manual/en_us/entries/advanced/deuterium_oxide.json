@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.deuterium_oxide.name",
+  "icon": "magnetization:deuterium_oxide_bucket",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:deuterium_oxide_bucket",
+      "text": "book.magnetization.entry.deuterium_oxide.spotlight",
+      "link_recipe": true
+    }
+  ]
+}
