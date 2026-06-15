@@ -53,7 +53,7 @@ public final class MagnetizedFerrofluidFieldHandler {
             }
             final MagneticField field = new MagneticField(
                     Vec3.atCenterOf(pos), new Vec3(0, 1, 0),
-                    e.getValue(), MagneticStrength.WEAK, MagneticField.Shape.OMNIDIRECTIONAL);
+                    e.getValue(), MagneticStrength.MEDIUM, MagneticField.Shape.OMNIDIRECTIONAL);
             FieldApplicator.apply(server, field);
         }
         for (final BlockPos pos : stale) MagnetizedFerrofluidRegistry.remove(server, pos);
