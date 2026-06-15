@@ -288,7 +288,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                     if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
                     if (server.getBlockEntity(c) != null) continue; // don't pulverize chests etc. in the way
                     if (bs.getDestroySpeed(server, c) < 0) continue; // bedrock / unbreakable
-                    server.setBlock(c.immutable(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+                    final BlockPos at = c.immutable();
+                    Block.dropResources(bs, server, at);
+                    server.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
                             Block.UPDATE_CLIENTS);
                     budget--;
                 }
