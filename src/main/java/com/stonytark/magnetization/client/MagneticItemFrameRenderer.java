@@ -40,11 +40,12 @@ public class MagneticItemFrameRenderer implements BlockEntityRenderer<MagneticIt
         pose.translate(0.5, 0.5, 0.5);
 
         if (facing == Direction.UP || facing == Direction.DOWN) {
-            // Floor/ceiling: the item stands upright and hovers off the plate,
-            // spinning about the vertical axis.
-            pose.translate(0.0, facing == Direction.UP ? 0.45 : -0.45, 0.0);
+            // Floor/ceiling: the plate lies flush on the surface (thin, ~1px), so
+            // the item hovers in the open middle of the block — clear of the plate
+            // and of any neighbouring block — spinning about the vertical axis.
+            pose.translate(0.0, facing == Direction.UP ? 0.1 : -0.1, 0.0);
             pose.mulPose(Axis.YP.rotationDegrees(spin));
-            pose.scale(0.7f, 0.7f, 0.7f);
+            pose.scale(0.6f, 0.6f, 0.6f);
         } else {
             // Wall: the item sits flat on the outward face, spinning in-plane.
             switch (facing) {

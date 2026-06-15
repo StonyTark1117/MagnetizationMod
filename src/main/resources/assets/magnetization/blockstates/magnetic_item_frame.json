@@ -16,12 +16,10 @@
       "y": 270
     },
     "facing=up": {
-      "model": "magnetization:block/magnetic_item_frame",
-      "x": 270
+      "model": "magnetization:block/magnetic_item_frame_floor"
     },
     "facing=down": {
-      "model": "magnetization:block/magnetic_item_frame",
-      "x": 90
+      "model": "magnetization:block/magnetic_item_frame_ceiling"
     }
   }
 }
