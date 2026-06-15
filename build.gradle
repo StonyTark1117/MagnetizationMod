@@ -25,7 +25,15 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     localRuntime
 }
-configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+// The soft-dep / smoke-test mods on localRuntime are needed for runClient/runServer,
+// but several are client-only and NPE in the headless data run (e.g. immersive_aircraft
+// and sodium call Minecraft.getInstance() during mod construction, which is null in
+// datagen). The data run uses runtimeClasspath, so only fold localRuntime in when we're
+// NOT running datagen — keeping `./gradlew runData` clean while dev runs still get them.
+def runningDatagen = gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('rundata') }
+if (!runningDatagen) {
+    configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+}
 
 // Substitute ${...} placeholders in neoforge.mods.toml at processResources time.
 // Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
