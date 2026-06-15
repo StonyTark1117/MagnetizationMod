@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "gallium_ingot",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": "#c:ingots/zinc",
+  "result": {
+    "id": "magnetization:gallium_ingot"
+  }
+}

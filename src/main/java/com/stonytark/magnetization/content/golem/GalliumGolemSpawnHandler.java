@@ -57,6 +57,9 @@ public final class GalliumGolemSpawnHandler {
         final BlockPos body = match.getBlock(1, 1, 0).getPos();
         golem.moveTo(body.getX() + 0.5, body.getY() + 0.05, body.getZ() + 0.5, 0.0f, 0.0f);
         level.addFreshEntity(golem);
+        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
+            net.minecraft.advancements.CriteriaTriggers.SUMMONED_ENTITY.trigger(player, golem);
+        }
 
         // Consume the structure: clear every pattern cell + break particles + updates.
         for (int x = 0; x < match.getWidth(); x++) {

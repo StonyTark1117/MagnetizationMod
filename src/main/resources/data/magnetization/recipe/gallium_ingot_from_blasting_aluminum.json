@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "gallium_ingot",
+  "cookingtime": 100,
+  "experience": 0.7,
+  "ingredient": "#c:ingots/aluminum",
+  "result": {
+    "id": "magnetization:gallium_ingot"
+  }
+}

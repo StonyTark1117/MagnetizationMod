@@ -106,6 +106,9 @@ public final class MagItems {
             REGISTER.registerItem("mixed_gallium_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.MIXED_GALLIUM.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Raw gallium — rare byproduct of mining zinc/aluminium-bearing ores; smelts to an ingot. */
+    public static final DeferredItem<Item> RAW_GALLIUM =
+            REGISTER.registerSimpleItem("raw_gallium", new Item.Properties());
     /** Gallium ingot — soft, low-melting silvery metal; gear material (gold-like but worse). */
     public static final DeferredItem<Item> GALLIUM_INGOT =
             REGISTER.registerSimpleItem("gallium_ingot", new Item.Properties());

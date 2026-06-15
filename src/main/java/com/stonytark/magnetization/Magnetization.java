@@ -48,6 +48,7 @@ public final class Magnetization {
         MagEffects.POTIONS.register(modBus);
         MagParticles.REGISTER.register(modBus);
         MagBiomeModifiers.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagLootModifiers.REGISTER.register(modBus);
         MagDataComponents.REGISTER.register(modBus);
         MagMenus.REGISTER.register(modBus);
         MagTriggers.REGISTER.register(modBus);

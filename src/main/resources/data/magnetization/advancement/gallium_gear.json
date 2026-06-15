@@ -1,0 +1,45 @@
+{
+  "parent": "magnetization:gallium_ingot",
+  "display": {
+    "icon": {
+      "id": "magnetization:gallium_sword"
+    },
+    "title": {
+      "translate": "advancement.magnetization.gallium_gear.title"
+    },
+    "description": {
+      "translate": "advancement.magnetization.gallium_gear.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "magnetization:gallium_sword",
+              "magnetization:gallium_pickaxe",
+              "magnetization:gallium_axe",
+              "magnetization:gallium_shovel",
+              "magnetization:gallium_hoe",
+              "magnetization:gallium_helmet",
+              "magnetization:gallium_chestplate",
+              "magnetization:gallium_leggings",
+              "magnetization:gallium_boots",
+              "magnetization:gallium_horse_armor"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ]
+}

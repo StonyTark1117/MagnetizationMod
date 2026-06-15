@@ -251,6 +251,12 @@ dependencies {
     localRuntime("maven.modrinth:immersive-aircraft:lEyfKM50")
     localRuntime("maven.modrinth:create-new-age:eQ9rbApE")
 
+    // Create: The Factory Must Grow (TFMG) — soft dep for gallium's aluminium
+    // sourcing (gallium occurs with bauxite/aluminium). Present in dev so we can
+    // verify the real aluminium ingot/ore IDs the gallium recipes + ore-byproduct
+    // loot modifier hook onto. Without TFMG, gallium still comes from Create zinc.
+    localRuntime("maven.modrinth:create-tfmg:uDi14nbt")
+
     // === Crash-repro deps (player's modpack StackOverflowError in
     // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
     // `#spartan_weaponry_unofficial:quivers` into both curios:back and

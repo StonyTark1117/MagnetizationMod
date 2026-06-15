@@ -115,3 +115,14 @@ type = "required"
 versionRange = "[4.1,)"
 ordering = "BEFORE"
 side = "BOTH"
+
+# Create: The Factory Must Grow — optional. Supplies aluminium: gallium ingots
+# can be re-smelted from aluminium ingots (#c:ingots/aluminum) and raw gallium
+# drops as a byproduct of mining bauxite. Without TFMG, gallium comes entirely
+# from Create's zinc, so this stays optional.
+[[dependencies.${mod_id}]]
+modId = "tfmg"
+type = "optional"
+versionRange = "[1.1,)"
+ordering = "AFTER"
+side = "BOTH"

@@ -1,0 +1,38 @@
+{
+  "parent": "magnetization:gallium_ingot",
+  "display": {
+    "icon": {
+      "id": "magnetization:solid_gallium"
+    },
+    "title": {
+      "translate": "advancement.magnetization.gallium_golem.title"
+    },
+    "description": {
+      "translate": "advancement.magnetization.gallium_golem.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "summoned": {
+      "trigger": "minecraft:summoned_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "magnetization:gallium_golem"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "summoned"
+    ]
+  ]
+}

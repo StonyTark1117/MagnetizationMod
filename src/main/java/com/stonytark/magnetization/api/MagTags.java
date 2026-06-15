@@ -78,6 +78,12 @@ public final class MagTags {
     public static final TagKey<Block> DIAMAGNETIC_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("diamagnetic_blocks"));
 
+    /** Ores that can rarely drop raw gallium as a byproduct (gallium occurs with
+     *  zinc/aluminium in nature). Create's zinc ore by default; TFMG bauxite is
+     *  opted in via a {@code required:false} entry, so it's a soft dependency. */
+    public static final TagKey<Block> GALLIUM_BEARING_ORES =
+            TagKey.create(Registries.BLOCK, Magnetization.id("gallium_bearing_ores"));
+
     /** Metallic / magnetic ore blocks the Ore Dowsing Compass can point to and
      *  tune onto. Our ferrous ores plus vanilla metal ores; other mods extend
      *  by appending. Also gates the anvil-tuning (only ores in this tag tune the

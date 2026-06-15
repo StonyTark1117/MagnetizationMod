@@ -134,6 +134,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGNETIC_PLATE);
                         accept(output, MagItems.PYROLYTIC_CARBON);
                         accept(output, MagItems.DIAMAGNETIC_BLOCK);
+                        accept(output, MagItems.RAW_GALLIUM);
                         accept(output, MagItems.GALLIUM_INGOT);
                         accept(output, MagItems.SOLID_GALLIUM);
                         accept(output, MagItems.HEMATITE_LENS);

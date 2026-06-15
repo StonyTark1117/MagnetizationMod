@@ -1,0 +1,34 @@
+{
+  "parent": "magnetization:root",
+  "display": {
+    "icon": {
+      "id": "magnetization:raw_gallium"
+    },
+    "title": {
+      "translate": "advancement.magnetization.raw_gallium.title"
+    },
+    "description": {
+      "translate": "advancement.magnetization.raw_gallium.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:raw_gallium"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ]
+}

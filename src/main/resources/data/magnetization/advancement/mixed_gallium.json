@@ -1,0 +1,34 @@
+{
+  "parent": "magnetization:liquid_gallium",
+  "display": {
+    "icon": {
+      "id": "magnetization:mixed_gallium_bucket"
+    },
+    "title": {
+      "translate": "advancement.magnetization.mixed_gallium.title"
+    },
+    "description": {
+      "translate": "advancement.magnetization.mixed_gallium.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:mixed_gallium_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has"
+    ]
+  ]
+}
