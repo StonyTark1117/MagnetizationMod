@@ -48,6 +48,35 @@ public final class MagArmorMaterials {
                 );
             });
 
+    /** Magnetic Cushion Boots material — iron-equivalent like magnetite, but with
+     *  its own BLUE worn layer texture so the boots match the Magnetic Cushion
+     *  block instead of reusing the grey magnetite layer. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> MAGNETIC_CUSHION =
+            REGISTER.register("magnetic_cushion", () -> {
+                final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+                defense.put(ArmorItem.Type.HELMET, 2);
+                defense.put(ArmorItem.Type.CHESTPLATE, 6);
+                defense.put(ArmorItem.Type.LEGGINGS, 5);
+                defense.put(ArmorItem.Type.BOOTS, 2);
+                defense.put(ArmorItem.Type.BODY, 5);
+                return new ArmorMaterial(
+                        defense,
+                        14,
+                        Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value()),
+                        () -> Ingredient.of(MagItems.MAGNETITE_INGOT.get()),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "magnetic_cushion"),
+                                "",
+                                false)),
+                        0.0f,
+                        0.0f
+                );
+            });
+
+    public static Holder<ArmorMaterial> magneticCushion() {
+        return MAGNETIC_CUSHION;
+    }
+
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> MAGHEMITE =
             REGISTER.register("maghemite", () -> {
                 final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);

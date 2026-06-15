@@ -21,7 +21,7 @@ import java.util.List;
 public final class MagnetoresistiveBootsItem extends ArmorItem {
 
     public MagnetoresistiveBootsItem(final Properties props) {
-        super(MagArmorMaterials.magnetite(), ArmorItem.Type.BOOTS, props);
+        super(MagArmorMaterials.magneticCushion(), ArmorItem.Type.BOOTS, props);
     }
 
     @Override
