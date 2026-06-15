@@ -54,7 +54,11 @@ public class MagneticItemFrameRenderer implements BlockEntityRenderer<MagneticIt
                 case EAST  -> pose.mulPose(Axis.YP.rotationDegrees(270));
                 default    -> { } // SOUTH
             }
-            pose.translate(0.0, 0.0, 0.5 - 0.02); // out to just under the face
+            // The plate sits flush on the mounting wall (the FACING.opposite face).
+            // Local +z points outward (toward FACING), so place the item JUST in
+            // front of that plate — not out at the far face, where it floated a
+            // whole block off the frame.
+            pose.translate(0.0, 0.0, -0.32);
             pose.mulPose(Axis.ZP.rotationDegrees(spin));
             pose.scale(0.55f, 0.55f, 0.55f);
         }
