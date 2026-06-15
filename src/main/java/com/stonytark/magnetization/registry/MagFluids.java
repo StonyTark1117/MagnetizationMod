@@ -41,9 +41,9 @@ public final class MagFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FERROFLUID =
-            FLUIDS.register("ferrofluid", () -> new BaseFlowingFluid.Source(properties()));
+            FLUIDS.register("ferrofluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(properties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FERROFLUID_FLOWING =
-            FLUIDS.register("flowing_ferrofluid", () -> new BaseFlowingFluid.Flowing(properties()));
+            FLUIDS.register("flowing_ferrofluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(properties()));
 
     private static BaseFlowingFluid.Properties properties() {
         return new BaseFlowingFluid.Properties(FERROFLUID_TYPE, FERROFLUID, FERROFLUID_FLOWING)
@@ -58,9 +58,9 @@ public final class MagFluids {
     // difference is the POLARITY blockstate + the field it emits.
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MAGNETIZED_FERROFLUID =
-            FLUIDS.register("magnetized_ferrofluid", () -> new BaseFlowingFluid.Source(magnetizedProperties()));
+            FLUIDS.register("magnetized_ferrofluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(magnetizedProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MAGNETIZED_FERROFLUID_FLOWING =
-            FLUIDS.register("flowing_magnetized_ferrofluid", () -> new BaseFlowingFluid.Flowing(magnetizedProperties()));
+            FLUIDS.register("flowing_magnetized_ferrofluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(magnetizedProperties()));
 
     private static BaseFlowingFluid.Properties magnetizedProperties() {
         return new BaseFlowingFluid.Properties(FERROFLUID_TYPE, MAGNETIZED_FERROFLUID, MAGNETIZED_FERROFLUID_FLOWING)
@@ -83,9 +83,9 @@ public final class MagFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MR_FLUID =
-            FLUIDS.register("mr_fluid", () -> new BaseFlowingFluid.Source(mrProperties()));
+            FLUIDS.register("mr_fluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(mrProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> MR_FLUID_FLOWING =
-            FLUIDS.register("flowing_mr_fluid", () -> new BaseFlowingFluid.Flowing(mrProperties()));
+            FLUIDS.register("flowing_mr_fluid", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(mrProperties()));
 
     private static BaseFlowingFluid.Properties mrProperties() {
         return new BaseFlowingFluid.Properties(MR_FLUID_TYPE, MR_FLUID, MR_FLUID_FLOWING)
