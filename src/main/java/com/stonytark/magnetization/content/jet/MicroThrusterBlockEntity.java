@@ -47,8 +47,8 @@ public class MicroThrusterBlockEntity extends BlockEntity
     private static final int FE_PER_TICK = 48;
     private static final int FLUID_PER_TICK = 2;
     // Top of the propulsion ladder — the strongest engine in the mod.
-    private static final double MAX_SPEED = 5.0;          // 100 b/s cruising ceiling
-    private static final double THRUST_DV = 1.0;          // 20 b/s^2 acceleration
+    private static final double MAX_SPEED = 14.0;         // 280 b/s cruising ceiling
+    private static final double THRUST_DV = 2.5;          // 50 b/s^2 acceleration
 
     private final FluidTank tank = new FluidTank(TANK_CAPACITY,
             fs -> fs.getFluid() == MagFluids.FERROFLUID.get());

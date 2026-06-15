@@ -80,8 +80,8 @@ public class MhdJetBlockEntity extends BlockEntity
         if (potency <= 0) return null;
         // Strong jet engine: punchy acceleration + a high cruising ceiling, both
         // scaling with magnet potency. (blocks/tick; ×20 = blocks/second.)
-        final double maxSpeed = 1.5 + potency * 0.10;   // ~1.6 .. ~4.4 b/t  (32..88 b/s)
-        final double dv = 0.15 + potency * 0.025;       // ~0.18 .. ~0.88 b/t per tick
+        final double maxSpeed = 4.0 + potency * 0.30;   // ~4.3 .. ~12.7 b/t  (86..254 b/s)
+        final double dv = 0.4 + potency * 0.06;         // ~0.46 .. ~2.1 b/t per tick
         final double feCost = 8 + potency * 8;          // bigger magnet → more FE/tick
         return new double[]{maxSpeed, dv, feCost};
     }
