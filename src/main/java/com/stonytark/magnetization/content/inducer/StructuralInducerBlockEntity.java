@@ -82,6 +82,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     /** Captured world states, for restoring if Sable culls the ship mid-lift. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
 
+    /** Diagnostic state surfaced in goggles when debug.goggleDiagnostics is on. */
+    private String lastResult = "idle";
+
     public StructuralInducerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.STRUCTURAL_INDUCER.get(), pos, state);
     }
@@ -151,9 +154,21 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     private void tryCapture(final ServerLevel server) {
         final Direction facing = facing();
         final List<BlockPos> positions = collectStructure(server, facing);
-        if (positions.isEmpty()) return;
+        lastScanCount = positions.size();
+        if (positions.isEmpty()) {
+            lastResult = "no grabbable blocks in front of " + facing;
+            if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
+                LOG.info("Inducer {} found no grabbable blocks (facing {})", getBlockPos().toShortString(), facing);
+            }
+            return;
+        }
         if (!hasClearance(server, positions, facing)) {
             // Capped by a wall ahead — can't push out cleanly. Buzz and bail.
+            lastResult = "blocked: no clearance past " + positions.size() + " blocks";
+            if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
+                LOG.info("Inducer {} blocked: no clearance ({} blocks, facing {})",
+                        getBlockPos().toShortString(), positions.size(), facing);
+            }
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_BREAK, SoundSource.BLOCKS, 0.5f, 0.7f);
             return;
         }
@@ -172,12 +187,17 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
             if (ship.getMassTracker().isInvalid()) {
+                lastResult = "assembled but mass invalid (" + positions.size() + " blocks) — reverted";
+                if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
+                    LOG.info("Inducer {} assembly produced invalid mass, reverting", getBlockPos().toShortString());
+                }
                 final SubLevelContainer container = SubLevelContainer.getContainer(server);
                 if (container != null) container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
                 restoreCaptured(server);
                 captured.clear();
                 return;
             }
+            lastResult = "lifting " + positions.size() + " blocks";
             liftedShipId = ship.getUniqueId();
             final var op = ship.logicalPose().position();
             liftOrigin = new Vec3(op.x(), op.y(), op.z());
@@ -187,9 +207,23 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
                     getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
                     24, SCAN_RADIUS * 0.4, 1.5, SCAN_RADIUS * 0.4, 0.02);
         } catch (final Throwable t) {
+            lastResult = "assembly threw: " + t.getClass().getSimpleName();
             LOG.error("Structural Inducer assembly failed at {}", getBlockPos().toShortString(), t);
             captured.clear();
         }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(final java.util.List<net.minecraft.network.chat.Component> tooltip,
+                                      final boolean isPlayerSneaking) {
+        final boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        if (com.stonytark.magnetization.config.MagConfig.goggleDiagnostics()) {
+            tooltip.add(net.minecraft.network.chat.Component.literal(String.format(
+                            "  [diag] powered=%b armed=%b lifting=%b last=%s",
+                            isPowered(), armed, liftedShipId != null, lastResult))
+                    .withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+        }
+        return added || com.stonytark.magnetization.config.MagConfig.goggleDiagnostics();
     }
 
     /** Drive the captured ship along the facing until it clears, then release. */
