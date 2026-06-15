@@ -30,6 +30,8 @@
     {"id": "#c:ores/aluminum", "required": false},
     {"id": "#c:ores/osmium", "required": false},
     {"id": "#c:ores/uranium", "required": false},
-    {"id": "#c:ores/neodymium", "required": false}
+    {"id": "#c:ores/neodymium", "required": false},
+    {"id": "#c:ores/lithium", "required": false},
+    {"id": "tfmg:bauxite", "required": false}
   ]
 }

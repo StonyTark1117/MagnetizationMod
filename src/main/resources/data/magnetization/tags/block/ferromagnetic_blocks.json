@@ -33,6 +33,8 @@
     {"id": "#c:storage_blocks/brass", "required": false},
     {"id": "#c:ores/steel", "required": false},
     {"id": "#c:storage_blocks/steel", "required": false},
+    {"id": "#c:storage_blocks/cast_iron", "required": false},
+    {"id": "tfmg:laminated_magnetic_alloy_block", "required": false},
     {"id": "#c:ores/nickel", "required": false},
     {"id": "#c:storage_blocks/nickel", "required": false},
     {"id": "#c:storage_blocks/raw_nickel", "required": false},

@@ -67,6 +67,12 @@
     {"id": "mekanism:steel_pickaxe", "required": false},
     {"id": "mekanism:steel_axe", "required": false},
     {"id": "mekanism:steel_shovel", "required": false},
-    {"id": "mekanism:steel_hoe", "required": false}
+    {"id": "mekanism:steel_hoe", "required": false},
+
+    {"id": "tfmg:steel_sword", "required": false},
+    {"id": "tfmg:steel_pickaxe", "required": false},
+    {"id": "tfmg:steel_axe", "required": false},
+    {"id": "tfmg:steel_shovel", "required": false},
+    {"id": "tfmg:steel_hoe", "required": false}
   ]
 }
