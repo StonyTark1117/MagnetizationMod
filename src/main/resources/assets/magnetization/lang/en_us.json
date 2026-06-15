@@ -244,6 +244,7 @@
   "item.magnetization.mr_fluid_bucket": "Magnetorheological Fluid Bucket",
   "block.magnetization.mr_fluid": "Magnetorheological Fluid",
   "fluid_type.magnetization.mr_fluid": "Magnetorheological Fluid",
+  "block.magnetization.hardened_mr_fluid": "Hardened MR Fluid",
   "item.magnetization.deuterium_oxide_bucket": "Deuterium Oxide Bucket",
   "block.magnetization.deuterium_oxide": "Deuterium Oxide",
   "fluid_type.magnetization.deuterium_oxide": "Deuterium Oxide",

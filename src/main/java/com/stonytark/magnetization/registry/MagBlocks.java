@@ -368,6 +368,14 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_GRAY)));
 
+    /** Hardened MR fluid — solid grey block MR fluid snaps into inside a field. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock> HARDENED_MR_FLUID =
+            REGISTER.register("hardened_mr_fluid", () -> new com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)
+                            .mapColor(MapColor.COLOR_GRAY)
+                            .strength(0.6f)
+                            .noLootTable()));
+
     /** Deuterium oxide (heavy water) liquid block — water-like, darker blue. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> DEUTERIUM_OXIDE_BLOCK =
             REGISTER.register("deuterium_oxide", () -> new net.minecraft.world.level.block.LiquidBlock(

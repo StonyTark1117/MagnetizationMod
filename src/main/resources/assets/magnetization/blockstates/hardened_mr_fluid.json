@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "source=true":  { "model": "magnetization:block/hardened_mr_fluid" },
+    "source=false": { "model": "magnetization:block/hardened_mr_fluid" }
+  }
+}

@@ -46,7 +46,19 @@ public final class MRFluidBlock extends LiquidBlock {
     protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
                            final BlockState oldState, final boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
-        if (!level.isClientSide) updateSolid(state, level, pos);
+        if (!level.isClientSide) {
+            updateSolid(state, level, pos);
+            if (state.getFluidState().isSource()) MrFluidSourceRegistry.add(level, pos);
+        }
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean isMoving) {
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            MrFluidSourceRegistry.remove(level, pos);
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override
