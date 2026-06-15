@@ -431,7 +431,7 @@ public final class FieldApplicator {
                 // MR (magnetorheological) armor is NEVER pulled by a field — instead
                 // it hardens in one (see MrArmorHandler). Skip it entirely so it
                 // can't contribute pull susceptibility, even if polarity-stamped.
-                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem) continue;
+                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
                 // A piece reacts if it's metal armor, OR if it's been explicitly
                 // magnetized (carries a polarity stamp) — the latter lets gear
                 // that's otherwise field-inert by design (e.g. the Magnetoresistive
@@ -503,7 +503,7 @@ public final class FieldApplicator {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
                 // MR armor never contributes pull susceptibility (it hardens, not pulls).
-                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem) continue;
+                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
                 final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
                 if (!armor.is(MagTags.METAL_ARMOR) && !magnetized) continue;
                 // armorReactsToFields off → only the magnetic elytra and

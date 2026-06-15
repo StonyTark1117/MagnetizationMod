@@ -141,6 +141,30 @@ public final class MagItems {
             REGISTER.registerItem("maghemite_hoe",
                     p -> new HoeItem(MagTiers.MAGHEMITE, p),
                     new Item.Properties().attributes(HoeItem.createAttributes(MagTiers.MAGHEMITE, -2, -1.0f)));
+    // Magnetorheological-fluid tools — iron-equivalent, barely wear (the fluid
+    // hardens on use). Icons ripple when idle and snap to the rigid plate while
+    // actively swung/mined (magnetization:hardened item property). See MrFluidTools.
+    public static final DeferredItem<com.stonytark.magnetization.content.mrtools.MrFluidTools.Sword> MR_FLUID_SWORD =
+            REGISTER.registerItem("mr_fluid_sword",
+                    com.stonytark.magnetization.content.mrtools.MrFluidTools.Sword::new,
+                    new Item.Properties().attributes(SwordItem.createAttributes(MagTiers.MR_FLUID, 3, -2.4f)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrtools.MrFluidTools.Pickaxe> MR_FLUID_PICKAXE =
+            REGISTER.registerItem("mr_fluid_pickaxe",
+                    com.stonytark.magnetization.content.mrtools.MrFluidTools.Pickaxe::new,
+                    new Item.Properties().attributes(PickaxeItem.createAttributes(MagTiers.MR_FLUID, 1, -2.8f)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrtools.MrFluidTools.Axe> MR_FLUID_AXE =
+            REGISTER.registerItem("mr_fluid_axe",
+                    com.stonytark.magnetization.content.mrtools.MrFluidTools.Axe::new,
+                    new Item.Properties().attributes(AxeItem.createAttributes(MagTiers.MR_FLUID, 6, -3.1f)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrtools.MrFluidTools.Shovel> MR_FLUID_SHOVEL =
+            REGISTER.registerItem("mr_fluid_shovel",
+                    com.stonytark.magnetization.content.mrtools.MrFluidTools.Shovel::new,
+                    new Item.Properties().attributes(ShovelItem.createAttributes(MagTiers.MR_FLUID, 1.5f, -3.0f)));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrtools.MrFluidTools.Hoe> MR_FLUID_HOE =
+            REGISTER.registerItem("mr_fluid_hoe",
+                    com.stonytark.magnetization.content.mrtools.MrFluidTools.Hoe::new,
+                    new Item.Properties().attributes(HoeItem.createAttributes(MagTiers.MR_FLUID, -2, -1.0f)));
+
     public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem> MR_LIQUID_HELMET =
             REGISTER.registerItem("mr_liquid_helmet",
                     p -> new com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem(ArmorItem.Type.HELMET, p),
@@ -176,6 +200,11 @@ public final class MagItems {
     public static final DeferredItem<AnimalArmorItem> MAGHEMITE_HORSE_ARMOR =
             REGISTER.registerItem("maghemite_horse_armor",
                     p -> new AnimalArmorItem(MagArmorMaterials.maghemite(),
+                            AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
+                    new Item.Properties().stacksTo(1));
+    public static final DeferredItem<com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem> MR_FLUID_HORSE_ARMOR =
+            REGISTER.registerItem("mr_fluid_horse_armor",
+                    p -> new com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem(
                             AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
                     new Item.Properties().stacksTo(1));
 

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_hoe"
+    },
+    {
+      "item": "magnetization:mr_fluid_bucket"
+    }
+  ],
+  "result": {
+    "id": "magnetization:mr_fluid_hoe",
+    "count": 1
+  }
+}

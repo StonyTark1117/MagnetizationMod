@@ -50,6 +50,18 @@ public final class MrArmorHandler {
         }
     }
 
+    /** Same field-hardening for non-player wearers — e.g. a horse in MR barding. */
+    @SubscribeEvent
+    public static void onEntityTick(final net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
+        if (!(event.getEntity() instanceof LivingEntity living) || living instanceof Player) return;
+        if (!(living.level() instanceof ServerLevel server)) return;
+        if (server.getGameTime() % 5L != 0L) return;
+        if (pieces(living) == 0) return;
+        if (MagneticFields.isInField(server, living.position())) {
+            hardenWorn(living, server.getGameTime() + HARDEN_TICKS);
+        }
+    }
+
     @SubscribeEvent
     public static void onIncomingDamage(final LivingIncomingDamageEvent event) {
         final LivingEntity living = event.getEntity();
@@ -74,17 +86,23 @@ public final class MrArmorHandler {
         hardenWorn(living, living.level().getGameTime() + HARDEN_TICKS);
     }
 
+    /** An MR piece is either a player-worn MR armor item or MR horse barding. */
+    private static boolean isMrPiece(final ItemStack stack) {
+        return stack.getItem() instanceof MrLiquidArmorItem
+                || stack.getItem() instanceof MrFluidHorseArmorItem;
+    }
+
     private static int pieces(final LivingEntity living) {
         int n = 0;
         for (final ItemStack armor : living.getArmorSlots()) {
-            if (armor.getItem() instanceof MrLiquidArmorItem) n++;
+            if (isMrPiece(armor)) n++;
         }
         return n;
     }
 
     private static void hardenWorn(final LivingEntity living, final long until) {
         for (final ItemStack armor : living.getArmorSlots()) {
-            if (armor.getItem() instanceof MrLiquidArmorItem) {
+            if (isMrPiece(armor)) {
                 armor.set(MagDataComponents.HARDENED_UNTIL.get(), until);
             }
         }

@@ -51,5 +51,20 @@ public final class MagTiers {
         }
     };
 
+    /** Magnetorheological-fluid tools. Functionally iron-tier (same speed,
+     *  damage, mining level) but with a very deep durability pool — the fluid
+     *  hardens on every swing/strike, so the cutting surface barely wears.
+     *  Repaired with MR fluid buckets. */
+    public static final Tier MR_FLUID = new Tier() {
+        @Override public int getUses() { return 2500; }                   // iron 250 — "barely wears"
+        @Override public float getSpeed() { return 6.0f; }                 // iron 6.0
+        @Override public float getAttackDamageBonus() { return 2.0f; }     // iron 2.0
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
+        @Override public int getEnchantmentValue() { return 14; }          // iron 14
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.MR_FLUID_BUCKET.get());
+        }
+    };
+
     private MagTiers() {}
 }

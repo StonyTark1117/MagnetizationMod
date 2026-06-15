@@ -141,7 +141,12 @@ public final class MagClientRegistration {
                 com.stonytark.magnetization.registry.MagItems.MR_LIQUID_HELMET,
                 com.stonytark.magnetization.registry.MagItems.MR_LIQUID_CHESTPLATE,
                 com.stonytark.magnetization.registry.MagItems.MR_LIQUID_LEGGINGS,
-                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_BOOTS}) {
+                com.stonytark.magnetization.registry.MagItems.MR_LIQUID_BOOTS,
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_SWORD,
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_PICKAXE,
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_AXE,
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_SHOVEL,
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_HOE}) {
             net.minecraft.client.renderer.item.ItemProperties.register(
                     (net.minecraft.world.item.Item) armor.get(), hardened, fn);
         }
@@ -193,6 +198,13 @@ public final class MagClientRegistration {
             ((LivingEntityRenderer) living).addLayer(
                     new MagneticElytraLayer<>((LivingEntityRenderer) living, event.getEntityModels()));
             addMrArmorLayer((LivingEntityRenderer) living, event);
+        }
+        // Horses — animated MR fluid barding (mirror of the player MR armor layer).
+        EntityRenderer<?> horse = event.getRenderer(EntityType.HORSE);
+        if (horse instanceof LivingEntityRenderer<?, ?> living
+                && living.getModel() instanceof net.minecraft.client.model.HorseModel) {
+            ((LivingEntityRenderer) living).addLayer(
+                    new MrFluidHorseArmorLayer((LivingEntityRenderer) living, event.getEntityModels()));
         }
     }
 

@@ -86,6 +86,11 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGHEMITE_AXE);
                         accept(output, MagItems.MAGHEMITE_SHOVEL);
                         accept(output, MagItems.MAGHEMITE_HOE);
+                        accept(output, MagItems.MR_FLUID_SWORD);
+                        accept(output, MagItems.MR_FLUID_PICKAXE);
+                        accept(output, MagItems.MR_FLUID_AXE);
+                        accept(output, MagItems.MR_FLUID_SHOVEL);
+                        accept(output, MagItems.MR_FLUID_HOE);
 
                         // ── Armor & horse armor (by metal) ──
                         accept(output, MagItems.MAGNETITE_HELMET);
@@ -103,6 +108,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGHEMITE_LEGGINGS);
                         accept(output, MagItems.MAGHEMITE_BOOTS);
                         accept(output, MagItems.MAGHEMITE_HORSE_ARMOR);
+                        accept(output, MagItems.MR_FLUID_HORSE_ARMOR);
 
                         // ── Specialty wearables ──
                         accept(output, MagItems.MAGNETIC_ELYTRA);
