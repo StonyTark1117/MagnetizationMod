@@ -62,9 +62,11 @@ public class KineticElectromagnetBlockEntity extends KineticBlockEntity
     }
 
     private void emitField(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        final MagneticField previous = cachedField;
         final float rpm = Math.abs(getSpeed());
         if (rpm < 16f) {
             cachedField = null;
+            if (previous != null) sendData(); // sync the "off" state to clients
             return;
         }
         final MagneticStrength tier;
@@ -89,13 +91,33 @@ public class KineticElectromagnetBlockEntity extends KineticBlockEntity
             field = SableBridge.promoteToWorldSpace(host.logicalPose(), field);
         }
 
+        final boolean changed = previous == null
+                || previous.strength() != field.strength()
+                || previous.polarity() != field.polarity();
         cachedField = field;
+        if (changed) sendData(); // push the active field/tier/polarity to clients
         FieldApplicator.apply(server, field, host);
     }
 
     @Override
     public @Nullable MagneticField currentField() {
         return cachedField;
+    }
+
+    // Sync the emitted field to clients so WTHIT/goggles report it as active
+    // (this BE isn't an AbstractEmitterBlockEntity, so it has no sync of its own).
+    @Override
+    protected void write(final net.minecraft.nbt.CompoundTag tag,
+                         final net.minecraft.core.HolderLookup.Provider registries, final boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
+        if (cachedField != null) tag.put("Field", cachedField.toNbt());
+    }
+
+    @Override
+    protected void read(final net.minecraft.nbt.CompoundTag tag,
+                        final net.minecraft.core.HolderLookup.Provider registries, final boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
+        cachedField = tag.contains("Field") ? MagneticField.fromNbt(tag.getCompound("Field")) : null;
     }
 
     @Override
