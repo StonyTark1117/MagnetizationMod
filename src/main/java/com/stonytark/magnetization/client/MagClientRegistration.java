@@ -84,6 +84,8 @@ public final class MagClientRegistration {
         event.registerBlockEntityRenderer(MagBlockEntities.KINETIC_ELECTROMAGNET.get(), KineticElectromagnetRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_EXCAVATOR.get(), ExcavatorPreviewRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), MagneticItemFrameRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM.get(),
+                MrFluidGolemRenderer::new);
     }
 
     @SubscribeEvent

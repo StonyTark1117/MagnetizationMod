@@ -131,6 +131,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.FERROFLUID_BUCKET);
                         accept(output, MagItems.MR_FLUID_BUCKET);
                         accept(output, MagItems.DEUTERIUM_OXIDE_BUCKET);
+                        accept(output, MagItems.MR_FLUID_GOLEM_SPAWN_EGG);
 
                         // ── Compasses & handheld tools ──
                         accept(output, MagItems.FIELD_COMPASS);

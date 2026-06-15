@@ -42,6 +42,7 @@ public final class Magnetization {
         com.stonytark.magnetization.registry.MagFluids.FLUID_TYPES.register(modBus);
         com.stonytark.magnetization.registry.MagFluids.FLUIDS.register(modBus);
         MagBlockEntities.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagEntities.REGISTER.register(modBus);
         MagCreativeTab.REGISTER.register(modBus);
         MagEffects.EFFECTS.register(modBus);
         MagEffects.POTIONS.register(modBus);
@@ -62,6 +63,7 @@ public final class Magnetization {
         // toggles are loaded early (before FMLCommonSetup region registration).
         modContainer.registerConfig(ModConfig.Type.COMMON, MagConfig.COMMON_SPEC);
 
+        modBus.addListener(com.stonytark.magnetization.registry.MagEntities::onAttributes);
         modBus.addListener(Magnetization::onCommonSetup);
         modBus.addListener(Magnetization::onRegisterCapabilities);
         modBus.addListener(Magnetization::onRegisterPayloads);

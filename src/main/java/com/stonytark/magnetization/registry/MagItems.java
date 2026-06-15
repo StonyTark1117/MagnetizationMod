@@ -95,6 +95,12 @@ public final class MagItems {
             REGISTER.registerItem("deuterium_oxide_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.DEUTERIUM_OXIDE.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Spawn egg for the MR Fluid Golem (crafted, not multiblock — it's fluid-based). */
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MR_FLUID_GOLEM_SPAWN_EGG =
+            REGISTER.registerItem("mr_fluid_golem_spawn_egg",
+                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
+                            com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM, 0x4A4E54, 0x9AA0A8, p),
+                    new Item.Properties());
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

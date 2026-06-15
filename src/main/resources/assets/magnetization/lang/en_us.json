@@ -245,6 +245,8 @@
   "block.magnetization.mr_fluid": "Magnetorheological Fluid",
   "fluid_type.magnetization.mr_fluid": "Magnetorheological Fluid",
   "block.magnetization.hardened_mr_fluid": "Hardened MR Fluid",
+  "entity.magnetization.mr_fluid_golem": "MR Fluid Golem",
+  "item.magnetization.mr_fluid_golem_spawn_egg": "MR Fluid Golem Spawn Egg",
   "item.magnetization.deuterium_oxide_bucket": "Deuterium Oxide Bucket",
   "block.magnetization.deuterium_oxide": "Deuterium Oxide",
   "fluid_type.magnetization.deuterium_oxide": "Deuterium Oxide",
