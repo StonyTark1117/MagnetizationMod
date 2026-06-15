@@ -1,8 +1,7 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "top": "magnetization:block/electromagnet_top",
-    "bottom": "magnetization:block/electromagnet_bottom",
+    "end": "magnetization:block/kinetic_electromagnet_end",
     "side": "magnetization:block/electromagnet_side"
   }
 }
