@@ -154,7 +154,6 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity {
     private void tryCapture(final ServerLevel server) {
         final Direction facing = facing();
         final List<BlockPos> positions = collectStructure(server, facing);
-        lastScanCount = positions.size();
         if (positions.isEmpty()) {
             lastResult = "no grabbable blocks in front of " + facing;
             if (com.stonytark.magnetization.config.MagConfig.debugLogging()) {
