@@ -19,40 +19,44 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Ferrofluid creeps toward (or away from) nearby magnets by growing a path of
- * auxiliary fluid cells — the player's poured fluid stays put.
+ * Ferrofluid reacts to magnets by growing a path of auxiliary fluid cells from
+ * the player's fluid to the field source. Instead of cube-scanning each magnet's
+ * (up to 128-block) field, it iterates the small set of ferrofluid SOURCE cells
+ * (from {@link FerrofluidSourceRegistry} + {@link MagnetizedFerrofluidRegistry}),
+ * tests each against active fields by distance, and advances the nearest one.
  *
  * <ul>
- *   <li><b>Plain</b> ferrofluid grows a path TOWARD any field source (any pole).</li>
- *   <li><b>Magnetized</b> ferrofluid grows TOWARD an opposing pole and AWAY from a
- *       matching one (a path trying to leave the field), and reacts faster.</li>
+ *   <li><b>Plain</b> grows TOWARD any magnet (any pole), at half the magnetized rate.</li>
+ *   <li><b>Magnetized</b> grows TOWARD an opposing pole and AWAY from a matching one.</li>
  * </ul>
  *
- * <p>Each grown cell is tracked in {@link FerrofluidCreepRegistry}; when no magnet
- * drives a cell any more (the emitter powered off / was removed) the path recedes
- * back to normal. Magnets are powered emitters with a live field plus the player's
- * own magnetized-ferrofluid <em>source</em> blocks (creep-added cells don't count
- * as magnets, so paths recede and don't self-sustain).
+ * <p>Grown cells are tracked in {@link FerrofluidCreepRegistry} and recede when no
+ * magnet drives them. A magnetized cell's OWN-pole fluid pool does NOT sustain it
+ * (it's the cell's own body) — only emitters and opposing-pole pools do — so a
+ * magnetized tendril recedes when its (opposing) magnet powers off even though the
+ * fluid it grew from is itself a weak magnet.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class FerrofluidCreepHandler {
 
-    private static final long MAG_INTERVAL = 4L;    // magnetized grows this often
-    private static final long PLAIN_INTERVAL = 12L; // plain grows this often (slower)
-    private static final long RECEDE_INTERVAL = 8L; // recede unsupported cells this often
-    /** Scan bound per magnet — ferrofluid reacts out to (about) the field's reach,
-     *  capped so the per-tick cube scan stays affordable. */
-    private static final int MAX_CREEP_RADIUS = 16;
-    private static final double ARRIVE_DIST = 1.7d; // a tendril this close has reached
+    private static final long MAG_INTERVAL = 4L;     // magnetized grows this often
+    private static final long PLAIN_INTERVAL = 8L;   // plain grows half as often
+    private static final long RECEDE_INTERVAL = 8L;  // recede unsupported cells this often
+    private static final double ARRIVE_DIST = 1.7d;  // a tendril this close has reached
 
     private FerrofluidCreepHandler() {}
 
-    /** One field source the fluid reacts to: where it is and its pole. */
-    private record Source(Vec3 origin, MagneticPolarity polarity, int radius) {}
+    /** An active magnet: where it is, its pole, its field reach, and whether it's
+     *  a real emitter (vs a magnetized-ferrofluid pool). */
+    private record Magnet(Vec3 origin, MagneticPolarity polarity, double range, boolean emitter) {
+        boolean covers(final Vec3 p) { return origin.distanceToSqr(p) <= range * range; }
+    }
 
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
@@ -63,127 +67,114 @@ public final class FerrofluidCreepHandler {
         final boolean recede = (time % RECEDE_INTERVAL) == 0L;
         if (!growMag && !growPlain && !recede) return;
 
-        final List<Source> sources = gatherSources(server);
+        final List<Magnet> magnets = gatherMagnets(server);
+        if (recede) recedeUnsupported(server, magnets);
+        if (magnets.isEmpty() || (!growMag && !growPlain)) return;
 
-        if (recede) recedeUnsupported(server, sources);
-        if (sources.isEmpty()) return;
-
-        for (final Source s : sources) {
-            if (growPlain || growMag) growAttract(server, s, growPlain, growMag);
-            if (growMag) growRepel(server, s);
-        }
+        final List<BlockPos> anchors = gatherAnchors(server); // fluid SOURCE cells
+        if (anchors.isEmpty()) return;
+        for (final Magnet m : magnets) grow(server, m, anchors, growPlain, growMag);
     }
 
-    /** Powered emitters with a live field + the player's magnetized-ferrofluid
-     *  SOURCE blocks. Creep-added cells are excluded so they don't act as magnets
-     *  (which would stop paths ever receding). */
-    private static List<Source> gatherSources(final ServerLevel server) {
-        final List<Source> sources = new ArrayList<>();
+    /** Real emitters (live field) + magnetized-ferrofluid pools, EXCLUDING creep
+     *  cells (so a path doesn't act as its own magnet). */
+    private static List<Magnet> gatherMagnets(final ServerLevel server) {
+        final List<Magnet> magnets = new ArrayList<>();
         EmitterRegistry.forEach(server, (lvl, pos) -> {
             if (!(lvl.getBlockEntity(pos) instanceof MagneticFieldSource src)) return;
             final MagneticField f = src.currentField();
             if (f == null) return;
-            sources.add(new Source(f.origin(), f.polarity(),
-                    Math.min(MAX_CREEP_RADIUS, (int) Math.ceil(f.range()))));
+            magnets.add(new Magnet(f.origin(), f.polarity(), f.range(), true));
         });
-        final Map<BlockPos, MagneticPolarity> mag = MagnetizedFerrofluidRegistry.forLevel(server);
-        final int magRadius = Math.min(MAX_CREEP_RADIUS, (int) Math.ceil(MagneticStrength.WEAK.range()));
-        for (final Map.Entry<BlockPos, MagneticPolarity> e : mag.entrySet()) {
-            if (FerrofluidCreepRegistry.contains(server, e.getKey())) continue; // not a creep cell
-            sources.add(new Source(Vec3.atCenterOf(e.getKey()), e.getValue(), magRadius));
+        for (final Map.Entry<BlockPos, MagneticPolarity> e : MagnetizedFerrofluidRegistry.forLevel(server).entrySet()) {
+            if (FerrofluidCreepRegistry.contains(server, e.getKey())) continue;
+            magnets.add(new Magnet(Vec3.atCenterOf(e.getKey()), e.getValue(), MagneticStrength.WEAK.range(), false));
         }
-        return sources;
+        return magnets;
     }
 
-    /** Grow the path one cell toward {@code s} from the eligible source cell whose
-     *  step toward the magnet lands closest to it. Plain reacts to any pole;
-     *  magnetized only to an opposing pole. Stops once a tendril has arrived. */
-    private static void growAttract(final ServerLevel server, final Source s,
-                                    final boolean growPlain, final boolean growMag) {
-        final int r = s.radius;
-        final BlockPos c = BlockPos.containing(s.origin.x, s.origin.y, s.origin.z);
-        final BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
-        double minSourceSq = Double.MAX_VALUE; // reached gate — SOURCE cells only
-        BlockPos bestStep = null;
-        double bestStepDist = Double.MAX_VALUE;
-        BlockState bestState = null;
-        for (int dx = -r; dx <= r; dx++) for (int dy = -r; dy <= r; dy++) for (int dz = -r; dz <= r; dz++) {
-            m.set(c.getX() + dx, c.getY() + dy, c.getZ() + dz);
-            if (!server.isLoaded(m)) continue;
-            final BlockState st = server.getBlockState(m);
-            if (st.getFluidState().isEmpty()) continue; // grow from source OR flowing edge
+    /** Every ferrofluid SOURCE cell (plain + magnetized), pruning registry entries
+     *  that are no longer a source (drained / flowed away). */
+    private static List<BlockPos> gatherAnchors(final ServerLevel server) {
+        final Set<BlockPos> out = new HashSet<>();
+        for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {
+            final BlockState st = server.getBlockState(p);
+            if (st.is(MagBlocks.FERROFLUID_BLOCK.get()) && st.getFluidState().isSource()) out.add(p);
+            else FerrofluidSourceRegistry.remove(server, p);
+        }
+        for (final BlockPos p : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
+            final BlockState st = server.getBlockState(p);
+            if (st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get()) && st.getFluidState().isSource()) out.add(p);
+        }
+        return new ArrayList<>(out);
+    }
+
+    /** Advance the path one cell for magnet {@code m}: the nearest reacting anchor
+     *  that can step toward (attract) / away (repel). Plain attracts to any pole;
+     *  magnetized attracts to an opposing pole, repels a matching one. */
+    private static void grow(final ServerLevel server, final Magnet m, final List<BlockPos> anchors,
+                             final boolean growPlain, final boolean growMag) {
+        boolean reachedAttract = false;
+        BlockPos attractStep = null, repelStep = null;
+        double attractStepSq = Double.MAX_VALUE, repelStepSq = -1.0;
+        BlockState attractState = null, repelState = null;
+
+        for (final BlockPos a : anchors) {
+            final Vec3 ac = Vec3.atCenterOf(a);
+            if (!m.covers(ac)) continue;
+            final BlockState st = server.getBlockState(a);
             final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
             final boolean mag = st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
-            if (plain ? !growPlain : mag ? !growMag : true) continue;
-            if (mag) {
+            if (!plain && !mag) continue;
+
+            boolean attract;
+            if (plain) {
+                if (!growPlain) continue;
+                attract = true;
+            } else {
+                if (!growMag) continue;
                 final MagneticPolarity pole = st.getValue(MagnetizedFerrofluidBlock.POLARITY);
-                if (s.polarity == MagneticPolarity.NONE || pole == MagneticPolarity.NONE
-                        || pole == s.polarity) continue; // matching/none → not attracted
+                if (m.polarity == MagneticPolarity.NONE || pole == MagneticPolarity.NONE) continue;
+                attract = pole != m.polarity; // opposing → attract, matching → repel
             }
-            final double d = s.origin.distanceToSqr(Vec3.atCenterOf(m));
-            if (d > (double) r * r) continue;
-            // Only SOURCE cells count toward "reached" — a flowing edge spreading
-            // near the magnet must NOT false-flag arrival (that killed plain creep).
-            if (st.getFluidState().isSource() && d < minSourceSq) minSourceSq = d;
-            final BlockPos step = bestStep(server, m.immutable(), s.origin, true);
-            if (step == null) continue;
-            final double sd = s.origin.distanceToSqr(Vec3.atCenterOf(step));
-            if (sd < bestStepDist) {
-                bestStepDist = sd;
-                bestStep = step;
-                bestState = stateFor(st);
+
+            if (attract) {
+                if (m.origin.distanceToSqr(ac) <= ARRIVE_DIST * ARRIVE_DIST) reachedAttract = true;
+                final BlockPos step = bestStep(server, a, m.origin, true, st.getBlock());
+                if (step != null) {
+                    final double sq = m.origin.distanceToSqr(Vec3.atCenterOf(step));
+                    if (sq < attractStepSq) { attractStepSq = sq; attractStep = step; attractState = stateFor(st); }
+                }
+            } else {
+                final BlockPos step = bestStep(server, a, m.origin, false, st.getBlock());
+                if (step != null) {
+                    final double sq = m.origin.distanceToSqr(Vec3.atCenterOf(step));
+                    if (sq > repelStepSq) { repelStepSq = sq; repelStep = step; repelState = stateFor(st); }
+                }
             }
         }
-        if (minSourceSq <= ARRIVE_DIST * ARRIVE_DIST) return; // a tendril already reached
-        place(server, bestStep, bestState);
+        if (!reachedAttract) place(server, attractStep, attractState);
+        place(server, repelStep, repelState);
     }
 
-    /** Grow a path one cell AWAY from {@code s} (a path trying to leave the field)
-     *  from the magnetized matching-pole source cell whose away-step lands farthest
-     *  from the magnet, bounded by the scan radius. */
-    private static void growRepel(final ServerLevel server, final Source s) {
-        final int r = s.radius;
-        final BlockPos c = BlockPos.containing(s.origin.x, s.origin.y, s.origin.z);
-        final BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
-        BlockPos bestStep = null;
-        double bestStepDist = -1.0;
-        BlockState bestState = null;
-        for (int dx = -r; dx <= r; dx++) for (int dy = -r; dy <= r; dy++) for (int dz = -r; dz <= r; dz++) {
-            m.set(c.getX() + dx, c.getY() + dy, c.getZ() + dz);
-            if (!server.isLoaded(m)) continue;
-            final BlockState st = server.getBlockState(m);
-            if (st.getFluidState().isEmpty() || !st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())) continue;
-            final MagneticPolarity pole = st.getValue(MagnetizedFerrofluidBlock.POLARITY);
-            if (s.polarity == MagneticPolarity.NONE || pole != s.polarity) continue; // only like poles repel
-            final double d = s.origin.distanceToSqr(Vec3.atCenterOf(m));
-            if (d > (double) r * r) continue;
-            final BlockPos step = bestStep(server, m.immutable(), s.origin, false);
-            if (step == null) continue;
-            final double sd = s.origin.distanceToSqr(Vec3.atCenterOf(step));
-            if (sd <= (double) r * r && sd > bestStepDist) {
-                bestStepDist = sd;
-                bestStep = step;
-                bestState = stateFor(st);
-            }
-        }
-        place(server, bestStep, bestState);
-    }
-
-    /** Remove creep cells no magnet drives any more, so the path recedes to normal. */
-    private static void recedeUnsupported(final ServerLevel server, final List<Source> sources) {
+    /** Remove creep cells no magnet drives any more, so the path recedes. Emitters
+     *  always sustain; a magnetized cell is ALSO sustained by an opposing-pole pool
+     *  (what it's attracted to) but NOT by its own-pole pool; plain by any magnet. */
+    private static void recedeUnsupported(final ServerLevel server, final List<Magnet> magnets) {
         for (final BlockPos pos : FerrofluidCreepRegistry.snapshot(server)) {
             if (!server.isLoaded(pos)) continue;
             final BlockState st = server.getBlockState(pos);
-            if (!st.is(MagBlocks.FERROFLUID_BLOCK.get()) && !st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())) {
-                FerrofluidCreepRegistry.remove(server, pos); // no longer our fluid — drop tracking
-                continue;
-            }
-            boolean driven = false;
+            final boolean plain = st.is(MagBlocks.FERROFLUID_BLOCK.get());
+            final boolean mag = st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get());
+            if (!plain && !mag) { FerrofluidCreepRegistry.remove(server, pos); continue; }
+            final MagneticPolarity pole = mag ? st.getValue(MagnetizedFerrofluidBlock.POLARITY) : null;
             final Vec3 cc = Vec3.atCenterOf(pos);
-            for (final Source s : sources) {
-                if (s.origin.distanceToSqr(cc) <= (double) s.radius * s.radius) { driven = true; break; }
+            boolean sustained = false;
+            for (final Magnet m : magnets) {
+                if (!m.covers(cc)) continue;
+                if (m.emitter || plain || m.polarity != pole) { sustained = true; break; }
             }
-            if (!driven) {
+            if (!sustained) {
                 server.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                 FerrofluidCreepRegistry.remove(server, pos);
             }
@@ -205,23 +196,28 @@ public final class FerrofluidCreepHandler {
         FerrofluidCreepRegistry.add(server, at);
     }
 
-    /** The air/replaceable neighbour of {@code cell} stepping toward (or away from)
-     *  the magnet origin — strictly closer (toward) / farther (away). Null if none. */
-    private static BlockPos bestStep(final ServerLevel server, final BlockPos cell,
-                                     final Vec3 origin, final boolean toward) {
+    /** Neighbour of {@code cell} stepping toward (or away from) the magnet — into
+     *  air, a replaceable block, or the fluid's OWN flowing tongue (so a buried
+     *  source still marches out through its own puddle). Strictly closer (toward)
+     *  / farther (away). Null if none. */
+    private static BlockPos bestStep(final ServerLevel server, final BlockPos cell, final Vec3 origin,
+                                     final boolean toward, final Block fluidBlock) {
         final Vec3 dir = toward ? origin.subtract(Vec3.atCenterOf(cell))
                 : Vec3.atCenterOf(cell).subtract(origin);
         final double here = origin.distanceToSqr(Vec3.atCenterOf(cell));
         BlockPos best = null;
-        double bestDot = 0.0; // require a positive component in the chosen direction
+        double bestDot = 0.0;
         for (final Direction d : Direction.values()) {
             final double dot = d.getStepX() * dir.x + d.getStepY() * dir.y + d.getStepZ() * dir.z;
             if (dot <= bestDot) continue;
             final BlockPos np = cell.relative(d);
             final double nd = origin.distanceToSqr(Vec3.atCenterOf(np));
-            if (toward ? nd >= here : nd <= here) continue; // must make progress
+            if (toward ? nd >= here : nd <= here) continue;
             final BlockState ns = server.getBlockState(np);
-            if (!ns.isAir() && !(ns.canBeReplaced() && ns.getFluidState().isEmpty())) continue;
+            final boolean ok = ns.isAir()
+                    || (ns.is(fluidBlock) && !ns.getFluidState().isSource())   // own flowing tongue
+                    || (ns.canBeReplaced() && ns.getFluidState().isEmpty());   // grass etc.
+            if (!ok) continue;
             best = np.immutable();
             bestDot = dot;
         }

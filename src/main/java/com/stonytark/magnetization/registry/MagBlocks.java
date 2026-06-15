@@ -346,9 +346,10 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.tokamak.TokamakControllerBlock> TOKAMAK_CONTROLLER =
             REGISTER.register("tokamak_controller", () -> new com.stonytark.magnetization.content.tokamak.TokamakControllerBlock(poweredMetal()));
 
-    /** Ferrofluid liquid block (holds the source fluid). */
-    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> FERROFLUID_BLOCK =
-            REGISTER.register("ferrofluid", () -> new net.minecraft.world.level.block.LiquidBlock(
+    /** Ferrofluid liquid block (holds the source fluid). Custom class registers
+     *  its source positions for the creep handler. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.FerrofluidBlock> FERROFLUID_BLOCK =
+            REGISTER.register("ferrofluid", () -> new com.stonytark.magnetization.content.fluid.FerrofluidBlock(
                     com.stonytark.magnetization.registry.MagFluids.FERROFLUID.get(),
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_BLACK)));
