@@ -5,6 +5,7 @@ import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
+import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +54,15 @@ public final class KineticElectromagnetBlock extends KineticBlock implements IBE
 
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
-        return defaultBlockState().setValue(AXIS, context.getClickedFace().getAxis());
+        // Like Create's own axis-based kinetic blocks: snap to an adjacent shaft's
+        // axis if there is one, otherwise orient the rotation axis along the
+        // player's look direction (so the two shaft faces face toward/away from
+        // the player) rather than the arbitrary clicked face.
+        final Direction.Axis preferred = RotatedPillarKineticBlock.getPreferredAxis(context);
+        final Direction.Axis axis = preferred != null
+                ? preferred
+                : context.getNearestLookingDirection().getAxis();
+        return defaultBlockState().setValue(AXIS, axis);
     }
 
     @Override
