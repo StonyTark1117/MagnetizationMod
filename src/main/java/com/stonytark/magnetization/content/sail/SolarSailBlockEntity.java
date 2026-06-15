@@ -28,9 +28,12 @@ import org.joml.Vector3dc;
  */
 public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
 
-    private static final double BASE_FORCE = 20.0;     // per-panel force at full strength
-    private static final double MAX_SAIL_SPEED = 1.6;  // terminal cruising speed
-    private static final double NIGHT_FACTOR = 0.5;
+    private static final double BASE_FORCE = 60.0;          // per-panel force at full strength
+    // Cruising-speed ceiling scales with sail area: a bigger sail both accelerates
+    // harder (each panel adds force) AND tops out faster.
+    private static final double SAIL_SPEED_BASE = 0.7;
+    private static final double SAIL_SPEED_PER_PANEL = 0.05;
+    private static final double SAIL_SPEED_CAP = 4.0;
 
     public SolarSailBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.SOLAR_SAIL.get(), pos, state);
@@ -51,8 +54,11 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
 
         final RigidBodyHandle handle = RigidBodyHandle.of(host);
         if (handle == null || !handle.isValid()) return;
+        // Bigger sail → higher cruising-speed ceiling (more total panels).
+        final int panels = SailPanelCounter.count(server, host);
+        final double maxSpeed = Math.min(SAIL_SPEED_CAP, SAIL_SPEED_BASE + SAIL_SPEED_PER_PANEL * panels);
         final Vector3dc v = handle.getLinearVelocity();
-        if (Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z()) >= MAX_SAIL_SPEED) return;
+        if (Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z()) >= maxSpeed) return;
 
         final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
                 ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.NORTH;
