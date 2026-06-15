@@ -53,6 +53,13 @@ public final class HardenedMrFluidBlock extends Block implements FluidRedstone.C
     }
 
     @Override
+    public void animateTick(final BlockState state, final Level level, final BlockPos pos,
+                            final net.minecraft.util.RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        FluidRedstone.spawnSignalParticles(state, level, pos, random);
+    }
+
+    @Override
     protected boolean isSignalSource(final BlockState state) {
         return true;
     }

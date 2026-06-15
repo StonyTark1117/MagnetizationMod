@@ -2,10 +2,13 @@ package com.stonytark.magnetization.content.fluid;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.joml.Vector3f;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -52,6 +55,29 @@ public final class FluidRedstone {
     /** Stored conducted level (weak power emitted to all sides). */
     public static int signal(final BlockState state) {
         return state.hasProperty(POWER) ? state.getValue(POWER) : 0;
+    }
+
+    /**
+     * Client visual cue: a conductor carrying a signal lightly drifts a redstone
+     * dust particle off its surface, tinted brighter as the carried level rises
+     * (the same colour ramp as vanilla redstone wire). Call from {@code animateTick}.
+     */
+    public static void spawnSignalParticles(final BlockState state, final Level level,
+                                            final BlockPos pos, final RandomSource random) {
+        final int power = signal(state);
+        if (power <= 0 || random.nextInt(6) != 0) return; // keep it light
+        final float f = power / 15.0f;
+        final float r = f * 0.6f + 0.4f;
+        final float g = Math.max(0.0f, f * f * 0.7f - 0.5f);
+        final float b = Math.max(0.0f, f * f * 0.6f - 0.7f);
+        final DustParticleOptions dust = new DustParticleOptions(new Vector3f(r, g, b), 1.0f);
+        final double yTop = state.getFluidState().isEmpty()
+                ? 0.95 : Math.max(0.1, state.getFluidState().getOwnHeight());
+        level.addParticle(dust,
+                pos.getX() + 0.25 + random.nextDouble() * 0.5,
+                pos.getY() + yTop,
+                pos.getZ() + 0.25 + random.nextDouble() * 0.5,
+                0.0, 0.0, 0.0);
     }
 
     /** Hook for a conductor's {@code neighborChanged}/{@code onPlace}. */
