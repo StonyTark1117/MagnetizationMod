@@ -102,9 +102,11 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** The in-flight structure being reeled in, if any. */
     private @Nullable UUID liftedShipId = null;
     private long liftStartTick = 0L;
-    /** Ship's logical-pose position at capture, so we can project the captured
-     *  blocks' current world cells as it travels (for path-punch-through). */
-    private Vec3 liftStartPos = Vec3.ZERO;
+    /** Each captured block's position in the ship's LOCAL (sub-level) frame,
+     *  taken at capture. Transforming these back through the ship's live pose
+     *  each tick gives the blocks' true current world cells — rotation included —
+     *  so punch-through only ever touches the structure's actual path. */
+    private final java.util.List<Vec3> localBlockCenters = new java.util.ArrayList<>();
     /** Captured world states (keyed by ORIGINAL position), for restoring if Sable
      *  culls the ship mid-lift and for projecting the moving structure's cells. */
     private final Map<BlockPos, BlockState> captured = new HashMap<>();
@@ -259,8 +261,13 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             setResult(server, "reeling in " + positions.size() + " blocks");
             liftedShipId = ship.getUniqueId();
             liftStartTick = server.getGameTime();
-            final var sp = ship.logicalPose().position();
-            liftStartPos = new Vec3(sp.x(), sp.y(), sp.z());
+            // Record each captured block in the ship's local frame so we can
+            // follow its true world cell (through rotation) while it's reeled in.
+            final var pose0 = ship.logicalPose();
+            localBlockCenters.clear();
+            for (final BlockPos op : positions) {
+                localBlockCenters.add(pose0.transformPositionInverse(Vec3.atCenterOf(op)));
+            }
             server.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.8f);
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
                     getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
@@ -339,7 +346,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         // Punch through: break only the world blocks directly on the leading
         // faces of the structure's OWN blocks (like the excavator's pulled blocks
         // break what's in front of them) — never a wide swath of untouched ground.
-        punchThrough(server, new Vec3(shipPos.x(), shipPos.y(), shipPos.z()), ux, uy, uz);
+        punchThrough(ship, ux, uy, uz);
     }
 
     /** Break only the world blocks sitting directly on the leading faces of the
@@ -349,38 +356,46 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
      *  ground. The structure's current world cells are projected from its
      *  captured footprint plus how far the ship has travelled since capture.
      *  Skips the structure's own cells, air, fluids, BEs, immune + unbreakable. */
-    private void punchThrough(final ServerLevel server, final Vec3 shipPos,
+    private void punchThrough(final ServerSubLevel ship,
                               final double ux, final double uy, final double uz) {
-        // How far the ship has moved since capture, in whole cells.
-        final int dx = (int) Math.round(shipPos.x - liftStartPos.x);
-        final int dy = (int) Math.round(shipPos.y - liftStartPos.y);
-        final int dz = (int) Math.round(shipPos.z - liftStartPos.z);
-
-        // Current world cells the structure occupies.
-        final java.util.Set<BlockPos> cells = new java.util.HashSet<>(captured.size() * 2);
-        for (final BlockPos op : captured.keySet()) cells.add(op.offset(dx, dy, dz));
+        if (localBlockCenters.isEmpty()) return;
+        final ServerLevel server = (ServerLevel) level;
+        // Project each captured block through the ship's LIVE pose (translation +
+        // rotation) to its true current world cell — so we follow the structure
+        // exactly instead of drifting off when it tilts.
+        final var pose = ship.logicalPose();
+        final java.util.Set<BlockPos> cells = new java.util.HashSet<>(localBlockCenters.size() * 2);
+        for (final Vec3 lc : localBlockCenters) {
+            final Vec3 w = pose.transformPosition(lc);
+            cells.add(BlockPos.containing(w.x, w.y, w.z));
+        }
 
         // Leading step(s): the axis directions the structure is actually moving.
         final int sx = Math.abs(ux) > 0.3 ? (ux > 0 ? 1 : -1) : 0;
         final int sy = Math.abs(uy) > 0.3 ? (uy > 0 ? 1 : -1) : 0;
         final int sz = Math.abs(uz) > 0.3 ? (uz > 0 ? 1 : -1) : 0;
 
+        final BlockPos inducer = getBlockPos();
+        final Direction grabDir = facing().getOpposite();
         int budget = TUNNEL_BUDGET;
         for (final BlockPos cell : cells) {
             if (budget <= 0) break;
-            if (sx != 0) budget = breakAhead(server, cell.offset(sx, 0, 0), cells, budget);
-            if (budget > 0 && sy != 0) budget = breakAhead(server, cell.offset(0, sy, 0), cells, budget);
-            if (budget > 0 && sz != 0) budget = breakAhead(server, cell.offset(0, 0, sz), cells, budget);
+            if (sx != 0) budget = breakAhead(server, cell.offset(sx, 0, 0), cells, inducer, grabDir, budget);
+            if (budget > 0 && sy != 0) budget = breakAhead(server, cell.offset(0, sy, 0), cells, inducer, grabDir, budget);
+            if (budget > 0 && sz != 0) budget = breakAhead(server, cell.offset(0, 0, sz), cells, inducer, grabDir, budget);
         }
     }
 
     /** Break one world cell in a structure block's path, if it's a breakable
      *  obstruction (not part of the structure, not air/fluid/BE/immune/unbreakable,
-     *  not the inducer). Returns the remaining budget. */
+     *  not the inducer, and strictly in front of the inducer — never at or behind
+     *  it). Returns the remaining budget. */
     private int breakAhead(final ServerLevel server, final BlockPos at,
-                           final java.util.Set<BlockPos> structureCells, final int budget) {
+                           final java.util.Set<BlockPos> structureCells,
+                           final BlockPos inducer, final Direction grabDir, final int budget) {
         if (structureCells.contains(at)) return budget;     // the structure's own block
-        if (at.equals(getBlockPos())) return budget;        // never the inducer itself
+        if (at.equals(inducer)) return budget;              // never the inducer itself
+        if (alongDepth(at, inducer, grabDir) < 1) return budget; // only in front of the inducer
         final BlockState bs = server.getBlockState(at);
         if (bs.isAir()) return budget;
         if (!bs.getFluidState().isEmpty()) return budget;
