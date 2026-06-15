@@ -149,6 +149,35 @@ public final class MagArmorMaterials {
                 );
             });
 
+    /** Gallium armor — gold-like but worse (soft metal): a touch less defense than
+     *  gold and the same low durability handled by the tier/durability factor. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> GALLIUM =
+            REGISTER.register("gallium", () -> {
+                final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+                // Slightly below gold (helmet 2, chest 5, legs 3, boots 1, body 7).
+                defense.put(ArmorItem.Type.HELMET, 1);
+                defense.put(ArmorItem.Type.CHESTPLATE, 4);
+                defense.put(ArmorItem.Type.LEGGINGS, 3);
+                defense.put(ArmorItem.Type.BOOTS, 1);
+                defense.put(ArmorItem.Type.BODY, 6);
+                return new ArmorMaterial(
+                        defense,
+                        22,                                   // gold-tier enchantability
+                        Holder.direct(SoundEvents.ARMOR_EQUIP_GOLD.value()),
+                        () -> Ingredient.of(MagItems.GALLIUM_INGOT.get()),
+                        List.of(new ArmorMaterial.Layer(
+                                ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "gallium"),
+                                "",
+                                false)),
+                        0.0f,
+                        0.0f
+                );
+            });
+
+    public static Holder<ArmorMaterial> gallium() {
+        return GALLIUM;
+    }
+
     public static Holder<ArmorMaterial> mrLiquid() {
         return MR_LIQUID;
     }

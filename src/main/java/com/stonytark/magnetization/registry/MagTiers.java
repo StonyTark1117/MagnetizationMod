@@ -66,5 +66,19 @@ public final class MagTiers {
         }
     };
 
+    /** Gallium gear — functionally like gold, but worse: gallium is a very soft
+     *  metal, so durability is even lower than gold's. Same fast mining speed,
+     *  no attack bonus, high enchantability; repaired with gallium ingots. */
+    public static final Tier GALLIUM = new Tier() {
+        @Override public int getUses() { return 16; }                     // gold 32 — even softer
+        @Override public float getSpeed() { return 12.0f; }                // gold 12.0
+        @Override public float getAttackDamageBonus() { return 0.0f; }     // gold 0.0
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_GOLD_TOOL; }
+        @Override public int getEnchantmentValue() { return 22; }          // gold 22
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.GALLIUM_INGOT.get());
+        }
+    };
+
     private MagTiers() {}
 }

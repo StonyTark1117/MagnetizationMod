@@ -112,6 +112,40 @@ public final class MagItems {
     /** Solid gallium block item (the frozen form / storage block). */
     public static final DeferredItem<BlockItem> SOLID_GALLIUM =
             REGISTER.registerSimpleBlockItem(MagBlocks.SOLID_GALLIUM);
+
+    // Gallium gear — gold-like but worse (very soft): low durability, fast mining,
+    // no attack bonus (see MagTiers.GALLIUM / MagArmorMaterials.GALLIUM).
+    public static final DeferredItem<SwordItem> GALLIUM_SWORD =
+            REGISTER.registerItem("gallium_sword", p -> new SwordItem(MagTiers.GALLIUM, p),
+                    new Item.Properties().attributes(SwordItem.createAttributes(MagTiers.GALLIUM, 3, -2.4f)));
+    public static final DeferredItem<PickaxeItem> GALLIUM_PICKAXE =
+            REGISTER.registerItem("gallium_pickaxe", p -> new PickaxeItem(MagTiers.GALLIUM, p),
+                    new Item.Properties().attributes(PickaxeItem.createAttributes(MagTiers.GALLIUM, 1, -2.8f)));
+    public static final DeferredItem<AxeItem> GALLIUM_AXE =
+            REGISTER.registerItem("gallium_axe", p -> new AxeItem(MagTiers.GALLIUM, p),
+                    new Item.Properties().attributes(AxeItem.createAttributes(MagTiers.GALLIUM, 6, -3.1f)));
+    public static final DeferredItem<ShovelItem> GALLIUM_SHOVEL =
+            REGISTER.registerItem("gallium_shovel", p -> new ShovelItem(MagTiers.GALLIUM, p),
+                    new Item.Properties().attributes(ShovelItem.createAttributes(MagTiers.GALLIUM, 1.5f, -3.0f)));
+    public static final DeferredItem<HoeItem> GALLIUM_HOE =
+            REGISTER.registerItem("gallium_hoe", p -> new HoeItem(MagTiers.GALLIUM, p),
+                    new Item.Properties().attributes(HoeItem.createAttributes(MagTiers.GALLIUM, 0, -3.0f)));
+    public static final DeferredItem<ArmorItem> GALLIUM_HELMET =
+            REGISTER.registerItem("gallium_helmet", p -> new ArmorItem(MagArmorMaterials.gallium(), ArmorItem.Type.HELMET, p),
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(5)));
+    public static final DeferredItem<ArmorItem> GALLIUM_CHESTPLATE =
+            REGISTER.registerItem("gallium_chestplate", p -> new ArmorItem(MagArmorMaterials.gallium(), ArmorItem.Type.CHESTPLATE, p),
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(5)));
+    public static final DeferredItem<ArmorItem> GALLIUM_LEGGINGS =
+            REGISTER.registerItem("gallium_leggings", p -> new ArmorItem(MagArmorMaterials.gallium(), ArmorItem.Type.LEGGINGS, p),
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(5)));
+    public static final DeferredItem<ArmorItem> GALLIUM_BOOTS =
+            REGISTER.registerItem("gallium_boots", p -> new ArmorItem(MagArmorMaterials.gallium(), ArmorItem.Type.BOOTS, p),
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(5)));
+    public static final DeferredItem<AnimalArmorItem> GALLIUM_HORSE_ARMOR =
+            REGISTER.registerItem("gallium_horse_armor",
+                    p -> new AnimalArmorItem(MagArmorMaterials.gallium(), AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
+                    new Item.Properties().stacksTo(1));
     /** Spawn egg for the MR Fluid Golem (crafted, not multiblock — it's fluid-based). */
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MR_FLUID_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("mr_fluid_golem_spawn_egg",
