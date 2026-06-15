@@ -97,7 +97,7 @@ public final class MagneticItemFrameBlock extends DirectionalBlock implements En
         if (!ctx.getLevel().isClientSide
                 && ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof MagneticItemFrameBlockEntity frame
                 && !frame.getDisplayedItem().isEmpty()) {
-            frame.cycleSpinDirection();
+            frame.cycleSpin();
         }
         return InteractionResult.SUCCESS;
     }
@@ -139,7 +139,7 @@ public final class MagneticItemFrameBlock extends DirectionalBlock implements En
                         net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.6f);
             } else {
                 // Plain right-click flips the spin direction.
-                frame.cycleSpinDirection();
+                frame.cycleSpin();
                 level.playSound(null, pos, SoundType.METAL.getHitSound(),
                         net.minecraft.sounds.SoundSource.BLOCKS, 0.4f, 1.2f);
             }

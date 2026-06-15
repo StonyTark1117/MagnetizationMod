@@ -25,11 +25,16 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
     private static final int FE_CAPACITY = 8_000;
     private static final int FE_PER_TICK = 2;
 
+    /** Spin modes, cycled by right-click: turn left / turn right / tumble up /
+     *  tumble down. Two axes (yaw for left-right, pitch for up-down) × two signs. */
+    public static final int SPIN_LEFT = 0, SPIN_RIGHT = 1, SPIN_UP = 2, SPIN_DOWN = 3;
+
     private ItemStack displayed = ItemStack.EMPTY;
     private final ReceiveBuffer energy = new ReceiveBuffer(FE_CAPACITY, 200);
-    /** Synced: is the item currently spinning, and which way (+1/-1). */
+    /** Synced: is the item currently spinning. */
     private boolean spinning = false;
-    private int spinDir = 1;
+    /** Synced spin mode (one of {@code SPIN_*}). */
+    private int spinMode = SPIN_LEFT;
 
     public MagneticItemFrameBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), pos, state);
@@ -38,7 +43,7 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
     public IEnergyStorage energyBuffer() { return energy; }
     public ItemStack getDisplayedItem() { return displayed; }
     public boolean isSpinning() { return spinning; }
-    public int spinDir() { return spinDir; }
+    public int spinMode() { return spinMode; }
 
     public void setDisplayedItem(final ItemStack stack) {
         this.displayed = stack;
@@ -54,9 +59,9 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
         return out;
     }
 
-    /** Flip the spin direction (right-click / wrench). */
-    public void cycleSpinDirection() {
-        spinDir = -spinDir;
+    /** Cycle the spin mode left → right → up → down → … (right-click / wrench). */
+    public void cycleSpin() {
+        spinMode = (spinMode + 1) % 4;
         setChanged();
         sync();
     }
@@ -90,7 +95,7 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
         if (!displayed.isEmpty()) tag.put("Item", displayed.save(registries));
         tag.putInt("Energy", energy.getEnergyStored());
         tag.putBoolean("Spinning", spinning);
-        tag.putInt("SpinDir", spinDir);
+        tag.putInt("SpinMode", spinMode);
     }
 
     @Override
@@ -101,7 +106,13 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
                 : ItemStack.EMPTY;
         energy.setStored(tag.getInt("Energy"));
         spinning = tag.getBoolean("Spinning");
-        spinDir = tag.contains("SpinDir") ? tag.getInt("SpinDir") : 1;
+        if (tag.contains("SpinMode")) {
+            spinMode = Math.floorMod(tag.getInt("SpinMode"), 4);
+        } else if (tag.contains("SpinDir")) { // legacy: -1 was "right", else "left"
+            spinMode = tag.getInt("SpinDir") < 0 ? SPIN_RIGHT : SPIN_LEFT;
+        } else {
+            spinMode = SPIN_LEFT;
+        }
     }
 
     @Override
