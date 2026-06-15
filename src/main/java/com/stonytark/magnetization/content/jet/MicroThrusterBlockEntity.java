@@ -131,7 +131,9 @@ public class MicroThrusterBlockEntity extends BlockEntity
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
         final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
                 ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.UP;
-        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing.getNormal());
+        // Thrust OUT of the nozzle — opposite the FACING normal — so the ship is
+        // pushed the way the thruster visually points (exhaust the other way).
+        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing.getOpposite().getNormal());
 
         final RigidBodyHandle handle = RigidBodyHandle.of(host);
         if (handle == null || !handle.isValid()) return;
