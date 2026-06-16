@@ -54,19 +54,16 @@ public final class AnomalyMagneticChaos {
 
     /** Peak per-tick velocity-injection magnitude (m/s) for players + items.
      *  Scaled by per-target susceptibility before application. */
-    private static final double ENTITY_PEAK_IMPULSE = 0.18d;
 
     /** Peak Newtons applied to Sable ships per chaos update. Roughly half a
      *  STRONG emitter at point-blank (~2400 N) so the anomaly feels like a
      *  comparable-but-erratic disturbance rather than a polite nudge. The
      *  per-tick acceleration cap in {@link MagConfig#MAX_ACCEL_PER_TICK}
      *  clamps the effective dV; this just sets the unclamped ceiling. */
-    private static final double SHIP_PEAK_FORCE_N = 1500.0d;
 
     /** Search radius around each player for affected ItemEntities. Items in
      *  unloaded chunks won't tick and don't matter; this keeps the scan
      *  cheap by ignoring items the player can't see anyway. */
-    private static final double ITEM_SCAN_RADIUS = 48.0d;
 
     private AnomalyMagneticChaos() {}
 
@@ -121,28 +118,28 @@ public final class AnomalyMagneticChaos {
         }
         if (susceptibility <= 0) return;
         final Vec3 chaos = chaosVectorAt(now, player.position());
-        final Vec3 delta = chaos.scale(ENTITY_PEAK_IMPULSE * Math.min(susceptibility, 2.0d) * strength);
+        final Vec3 delta = chaos.scale(com.stonytark.magnetization.config.MagConfig.anomalyEntityImpulse() * Math.min(susceptibility, 2.0d) * strength);
         player.setDeltaMovement(player.getDeltaMovement().add(delta));
         player.hurtMarked = true;
     }
 
     private static void applyChaosToNearbyItems(final ServerLevel server, final ServerPlayer player, final long now, final double strength) {
         final AABB box = AABB.ofSize(player.position(),
-                2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS, 2 * ITEM_SCAN_RADIUS);
+                2 * com.stonytark.magnetization.config.MagConfig.anomalyItemScanRadius(), 2 * com.stonytark.magnetization.config.MagConfig.anomalyItemScanRadius(), 2 * com.stonytark.magnetization.config.MagConfig.anomalyItemScanRadius());
         // Filter during traversal (skip pickup-delayed + non-ferromagnetic items)
         // instead of materialising every item in this large box and filtering after.
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box,
                 i -> !i.hasPickUpDelay() && i.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
             if (!AnomalyBiome.isAtAssumeEnabled(server, item.blockPosition())) continue;
             final Vec3 chaos = chaosVectorAt(now, item.position());
-            item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(ENTITY_PEAK_IMPULSE * strength)));
+            item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(com.stonytark.magnetization.config.MagConfig.anomalyEntityImpulse() * strength)));
             item.hasImpulse = true;
         }
     }
 
     private static void applyChaosToShip(final ServerSubLevel ship, final Vec3 shipPos, final long now, final double strength) {
         final Vec3 chaos = chaosVectorAt(now, shipPos);
-        final Vec3 force = chaos.scale(SHIP_PEAK_FORCE_N * strength);
+        final Vec3 force = chaos.scale(com.stonytark.magnetization.config.MagConfig.anomalyShipForce() * strength);
         SableBridge.applyWorldImpulse(ship, shipPos, force);
     }
 

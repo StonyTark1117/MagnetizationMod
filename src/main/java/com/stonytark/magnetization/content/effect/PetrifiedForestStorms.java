@@ -32,15 +32,6 @@ import java.util.List;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class PetrifiedForestStorms {
 
-    /** Per-player probability of a strike on each evaluation tick.
-     *  0.5 × (1 / 5 s) ≈ 6 strikes/minute when a player is in the biome. */
-    private static final double STRIKE_CHANCE_PER_PLAYER = 0.5d;
-
-    /** Lateral radius (blocks) within which strikes can land around the player.
-     *  Small enough that strikes feel local; large enough that most don't
-     *  actually hit the player. */
-    private static final int STRIKE_HORIZONTAL_RADIUS = 16;
-
     private PetrifiedForestStorms() {}
 
     @SubscribeEvent
@@ -58,14 +49,13 @@ public final class PetrifiedForestStorms {
         for (final ServerPlayer player : players) {
             if (player.isSpectator() || player.isDeadOrDying()) continue;
             if (!PetrifiedForestBiome.isAt(server, player.blockPosition())) continue;
-            if (server.random.nextDouble() >= STRIKE_CHANCE_PER_PLAYER) continue;
+            if (server.random.nextDouble() >= com.stonytark.magnetization.config.MagConfig.petrifiedStormStrikeChance()) continue;
 
             // Random offset in a horizontal disc around the player; find the
             // top surface block so the strike lands visibly on terrain.
-            final int dx = server.random.nextInt(STRIKE_HORIZONTAL_RADIUS * 2 + 1)
-                    - STRIKE_HORIZONTAL_RADIUS;
-            final int dz = server.random.nextInt(STRIKE_HORIZONTAL_RADIUS * 2 + 1)
-                    - STRIKE_HORIZONTAL_RADIUS;
+            final int radius = com.stonytark.magnetization.config.MagConfig.petrifiedStormStrikeRadius();
+            final int dx = server.random.nextInt(radius * 2 + 1) - radius;
+            final int dz = server.random.nextInt(radius * 2 + 1) - radius;
             final int x = player.getBlockX() + dx;
             final int z = player.getBlockZ() + dz;
             // Re-check biome at the target — players near the edge might roll a

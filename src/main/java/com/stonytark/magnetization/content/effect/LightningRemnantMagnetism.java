@@ -61,15 +61,6 @@ public final class LightningRemnantMagnetism {
 
     private static final Logger LOG = LoggerFactory.getLogger("magnetization/LIRM");
 
-    /** Block-conversion radius around a lightning bolt's spawn position. */
-    private static final int CONVERSION_RADIUS = 3;
-    /** Per-log probability of petrification once it falls in the conversion radius. */
-    private static final double LOG_PETRIFICATION_CHANCE = 0.75d;
-    /** Radius of the one-shot "magnetic shockwave" pulse on every lightning strike.
-     *  Pulls every ferromagnetic item entity within range toward the struck entity. */
-    private static final double SHOCKWAVE_RADIUS = 12.0d;
-    /** Pull velocity applied to items inside the shockwave radius. Decays with distance. */
-    private static final double SHOCKWAVE_STRENGTH = 0.8d;
 
     private LightningRemnantMagnetism() {}
 
@@ -175,7 +166,7 @@ public final class LightningRemnantMagnetism {
      * <ol>
      *   <li>A burst of polarity-tinted particles around the target — the "field flash".</li>
      *   <li>An amethyst-resonate sound (also used by hoe dowsing) — sells the "magnetic event".</li>
-     *   <li>Every ferromagnetic item entity within {@link #SHOCKWAVE_RADIUS} gets a
+     *   <li>Every ferromagnetic item entity within the configured shockwave radius gets a
      *       velocity nudge toward the target — without nearby emitters, this is the only
      *       gameplay-visible magnetic effect the player gets out of LIRM, and the user
      *       reported the previous quiet stamp was unnoticeable.</li>
@@ -194,14 +185,15 @@ public final class LightningRemnantMagnetism {
                 SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.WEATHER, 1.4f, 1.6f);
 
         // Pull ferromagnetic items toward the target — the visible "magnetic burst."
-        final AABB box = AABB.ofSize(center, 2 * SHOCKWAVE_RADIUS, 2 * SHOCKWAVE_RADIUS, 2 * SHOCKWAVE_RADIUS);
+        final double shockwaveRadius = com.stonytark.magnetization.config.MagConfig.lirmShockwaveRadius();
+        final AABB box = AABB.ofSize(center, 2 * shockwaveRadius, 2 * shockwaveRadius, 2 * shockwaveRadius);
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box,
                 e -> !e.getItem().isEmpty() && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
             final Vec3 toCenter = center.subtract(item.position());
             final double dist = toCenter.length();
-            if (dist < 0.5 || dist > SHOCKWAVE_RADIUS) continue;
-            final double falloff = 1.0d - dist / SHOCKWAVE_RADIUS;
-            final Vec3 nudge = toCenter.normalize().scale(SHOCKWAVE_STRENGTH * falloff);
+            if (dist < 0.5 || dist > shockwaveRadius) continue;
+            final double falloff = 1.0d - dist / shockwaveRadius;
+            final Vec3 nudge = toCenter.normalize().scale(com.stonytark.magnetization.config.MagConfig.lirmShockwaveStrength() * falloff);
             item.setDeltaMovement(item.getDeltaMovement().add(nudge));
             item.hasImpulse = true;
         }
@@ -243,13 +235,14 @@ public final class LightningRemnantMagnetism {
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         final long now = level.getGameTime();
         int converted = 0;
-        for (int dx = -CONVERSION_RADIUS; dx <= CONVERSION_RADIUS; dx++) {
-            for (int dy = -CONVERSION_RADIUS; dy <= CONVERSION_RADIUS; dy++) {
-                for (int dz = -CONVERSION_RADIUS; dz <= CONVERSION_RADIUS; dz++) {
+        final int conversionRadius = com.stonytark.magnetization.config.MagConfig.lirmConversionRadius();
+        for (int dx = -conversionRadius; dx <= conversionRadius; dx++) {
+            for (int dy = -conversionRadius; dy <= conversionRadius; dy++) {
+                for (int dz = -conversionRadius; dz <= conversionRadius; dz++) {
                     cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
                     final BlockState here = level.getBlockState(cursor);
                     if (!here.is(BlockTags.LOGS)) continue;
-                    if (level.random.nextDouble() >= LOG_PETRIFICATION_CHANCE) continue;
+                    if (level.random.nextDouble() >= com.stonytark.magnetization.config.MagConfig.lirmLogPetrifyChance()) continue;
                     final BlockPos at = cursor.immutable();
                     level.setBlock(at, target, Block.UPDATE_CLIENTS);
                     // Newly petrified wood emits a weak temporary magnetic

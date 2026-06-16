@@ -587,7 +587,7 @@ public final class FieldApplicator {
     /**
      * Hot-loop fast path. Caller pre-computes the global scalar (which folds
      * field.strength.force × polarity.sign × {@link #strengthMultiplier()}, plus
-     * the {@link AnomalyBiome#STRENGTH_BONUS} when the emitter is inside the
+     * the the configured anomaly strength bonus when the emitter is inside the
      * anomaly biome) and the cone cosine cap. Eliminates a per-sample biome
      * lookup + 2 per-sample config getters from {@code forceAt} — meaningful on
      * servers where many emitters each sample many ships many times per tick.
@@ -652,7 +652,7 @@ public final class FieldApplicator {
     static double computeGlobalScalar(final @Nullable ServerLevel level, final MagneticField field) {
         double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
         if (level != null && AnomalyBiome.isAt(level, BlockPos.containing(field.origin()))) {
-            scalar *= AnomalyBiome.STRENGTH_BONUS;
+            scalar *= com.stonytark.magnetization.config.MagConfig.anomalyStrengthBonus();
         }
         return scalar;
     }

@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li><b>Freshly petrified wood</b> — every log a lightning bolt converts to
  *       {@code petrified_wood} (see {@link LightningRemnantMagnetism#petrifyLogsAround})
  *       leaves a weak omnidirectional field at its position, decaying to zero
- *       over {@link #DURATION_TICKS}. The block itself stays petrified after the
+ *       over a configurable duration. The block itself stays petrified after the
  *       field fades; that's the new "inert" state.</li>
  *   <li><b>Ground strikes</b> — a lightning bolt landing on a solid cell has a
  *       biome-biased chance of leaving a stronger temporary field at the strike
@@ -52,31 +52,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class TemporaryLirmFields {
 
-    /** How long each registered field stays active. 30 seconds is long
-     *  enough to be visible while keeping the in-memory list bounded. */
-    private static final int DURATION_TICKS = 600;
-
-
-    /** Base chance a ground strike leaves a temporary field, outside the
-     *  petrified forest. Already-rare vanilla lightning means the global
-     *  rate stays low. */
-    private static final double GROUND_FIELD_CHANCE = 0.30d;
-
-    /** Chance inside the petrified forest. Combined with the biome's
-     *  custom-storm rate, the player sees several active fields at any time
-     *  while inside the biome — its defining environmental quirk. */
-    private static final double PETRIFIED_GROUND_FIELD_CHANCE = 0.75d;
-
-    /** Field properties for petrified-wood emitters. Weak + short range
-     *  so a tree-load of stamps doesn't dominate the world. */
+    /** Field tiers (the ranges/chances/duration are config — see MagConfig 'effects'). */
     private static final MagneticStrength PETRIFIED_LOG_TIER = MagneticStrength.WEAK;
-    private static final double PETRIFIED_LOG_RANGE_BASE = 4.0d;
-
-    /** Ground-strike field is stronger and reaches further — the bolt's
-     *  energy was deposited directly into the ground, no log filter. */
     private static final MagneticStrength GROUND_FIELD_TIER = MagneticStrength.MEDIUM;
-    private static final double GROUND_FIELD_RANGE_BASE = 6.0d;
-    private static final double PETRIFIED_GROUND_FIELD_RANGE_BASE = 9.0d;
 
     /** Live entries by level. Key by dimension resource key so this stays
      *  correct across multi-world servers. Outer map is concurrent; inner
@@ -112,7 +90,7 @@ public final class TemporaryLirmFields {
     public static void registerPetrifiedLog(final ServerLevel level, final BlockPos pos, final long now) {
         final MagneticPolarity pol = randomPolarity(level);
         addEntry(level, new Entry(Vec3.atCenterOf(pos), pol,
-                PETRIFIED_LOG_TIER, PETRIFIED_LOG_RANGE_BASE, now));
+                PETRIFIED_LOG_TIER, com.stonytark.magnetization.config.MagConfig.petrifiedLogFieldRange(), now));
     }
 
     /** Convenience for callers that want a random polarity but custom range/tier. */
@@ -127,9 +105,9 @@ public final class TemporaryLirmFields {
      *  landed in air / on entities. */
     public static void maybeRegisterGroundStrike(final ServerLevel level, final BlockPos pos, final long now) {
         final boolean inForest = PetrifiedForestBiome.isAt(level, pos);
-        final double chance = inForest ? PETRIFIED_GROUND_FIELD_CHANCE : GROUND_FIELD_CHANCE;
+        final double chance = inForest ? com.stonytark.magnetization.config.MagConfig.petrifiedGroundFieldChance() : com.stonytark.magnetization.config.MagConfig.groundFieldChance();
         if (level.random.nextDouble() >= chance) return;
-        final double range = inForest ? PETRIFIED_GROUND_FIELD_RANGE_BASE : GROUND_FIELD_RANGE_BASE;
+        final double range = inForest ? com.stonytark.magnetization.config.MagConfig.petrifiedGroundFieldRange() : com.stonytark.magnetization.config.MagConfig.groundFieldRange();
         final MagneticPolarity pol = randomPolarity(level);
         addEntry(level, new Entry(Vec3.atCenterOf(pos), pol, GROUND_FIELD_TIER, range, now));
     }
@@ -160,13 +138,13 @@ public final class TemporaryLirmFields {
             while (it.hasNext()) {
                 final Entry e = it.next();
                 final long age = now - e.bornTick;
-                if (age >= DURATION_TICKS) {
+                if (age >= com.stonytark.magnetization.config.MagConfig.tempFieldDurationTicks()) {
                     it.remove();
                     continue;
                 }
                 // Linear decay: full range at birth, zero at expiration. Skip
                 // pump-throughs where the effective range collapsed below 1.
-                final double remaining = 1.0d - (age / (double) DURATION_TICKS);
+                final double remaining = 1.0d - (age / (double) com.stonytark.magnetization.config.MagConfig.tempFieldDurationTicks());
                 final double range = e.baseRange * remaining;
                 if (range < 1.0d) continue;
                 final MagneticField field = new MagneticField(

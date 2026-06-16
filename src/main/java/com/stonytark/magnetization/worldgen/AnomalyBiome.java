@@ -18,7 +18,6 @@ import net.minecraft.world.level.biome.Biome;
 public final class AnomalyBiome {
 
     /** Strength multiplier applied to emitter output when the emitter sits inside the anomaly. */
-    public static final double STRENGTH_BONUS = 1.5d;
 
     public static final ResourceKey<Biome> KEY =
             ResourceKey.create(Registries.BIOME, Magnetization.id("anomaly"));

@@ -41,12 +41,10 @@ public final class ExtraLirmSources {
 
     /** Multiplier on explosion radius for the residual field's range. 2.0 lets
      *  a TNT (r=4) leave an 8-block field, charged-creeper (r=6) a 12-block field. */
-    private static final double EXPLOSION_RANGE_MULT = 2.0d;
 
     /** Extra multiplier applied to charged-creeper explosions only — they
      *  should feel categorically different from a normal creeper, not just
      *  "the radius is bigger." 1.6× brings their field to ~19 blocks. */
-    private static final double CHARGED_CREEPER_FIELD_MULT = 1.6d;
 
     /** Range thresholds: explosions with radius below these get the listed tier. */
     private static final float TIER_BOUNDARY_WEAK_TO_MEDIUM = 4.0f;
@@ -54,14 +52,11 @@ public final class ExtraLirmSources {
 
     /** Per-break probability of seeding a tiny residual field on a ferromagnetic
      *  ore break. Tuned low so routine mining doesn't drown the registry. */
-    private static final double ORE_BREAK_FIELD_CHANCE = 0.05d;
 
     /** Field params for the iron-golem-death residual. */
-    private static final double GOLEM_DEATH_RANGE = 5.0d;
     private static final MagneticStrength GOLEM_DEATH_TIER = MagneticStrength.WEAK;
 
     /** Field params for ore-break residuals. */
-    private static final double ORE_BREAK_RANGE = 3.0d;
     private static final MagneticStrength ORE_BREAK_TIER = MagneticStrength.WEAK;
 
     private ExtraLirmSources() {}
@@ -73,10 +68,10 @@ public final class ExtraLirmSources {
         final float radius = explosion.radius();
         if (radius <= 0.1f) return;
 
-        double range = radius * EXPLOSION_RANGE_MULT;
+        double range = radius * com.stonytark.magnetization.config.MagConfig.lirmExplosionRangeMult();
         // Charged creepers get the extra-large field the player can't miss.
         if (explosion.getDirectSourceEntity() instanceof Creeper creeper && creeper.isPowered()) {
-            range *= CHARGED_CREEPER_FIELD_MULT;
+            range *= com.stonytark.magnetization.config.MagConfig.lirmChargedCreeperMult();
         }
 
         final MagneticStrength tier = tierForRadius(radius);
@@ -99,16 +94,16 @@ public final class ExtraLirmSources {
         // Iron-rich body coming apart — brief residual at its corpse position.
         final Vec3 origin = entity.position().add(0, entity.getBbHeight() * 0.5d, 0);
         TemporaryLirmFields.registerRandomPolarity(server, origin,
-                GOLEM_DEATH_TIER, GOLEM_DEATH_RANGE, server.getGameTime());
+                GOLEM_DEATH_TIER, com.stonytark.magnetization.config.MagConfig.lirmGolemDeathRange(), server.getGameTime());
     }
 
     @SubscribeEvent
     public static void onBlockBreak(final BlockEvent.BreakEvent event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
         if (!event.getState().is(MagTags.FERROMAGNETIC_BLOCKS)) return;
-        if (server.random.nextDouble() >= ORE_BREAK_FIELD_CHANCE) return;
+        if (server.random.nextDouble() >= com.stonytark.magnetization.config.MagConfig.lirmOreBreakChance()) return;
         final BlockPos pos = event.getPos();
         TemporaryLirmFields.registerRandomPolarity(server, Vec3.atCenterOf(pos),
-                ORE_BREAK_TIER, ORE_BREAK_RANGE, server.getGameTime());
+                ORE_BREAK_TIER, com.stonytark.magnetization.config.MagConfig.lirmOreBreakRange(), server.getGameTime());
     }
 }

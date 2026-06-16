@@ -85,6 +85,29 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue LENZ_MIN_SPEED;
     public static final ModConfigSpec.IntValue    LENZ_CONDUCTOR_CAP;
 
+    // ── effects: lightning / LIRM / anomaly balance ──
+    public static final ModConfigSpec.DoubleValue PETRIFIED_STORM_STRIKE_CHANCE;
+    public static final ModConfigSpec.IntValue    PETRIFIED_STORM_STRIKE_RADIUS;
+    public static final ModConfigSpec.IntValue    TEMP_FIELD_DURATION_TICKS;
+    public static final ModConfigSpec.DoubleValue GROUND_FIELD_CHANCE;
+    public static final ModConfigSpec.DoubleValue PETRIFIED_GROUND_FIELD_CHANCE;
+    public static final ModConfigSpec.DoubleValue PETRIFIED_LOG_FIELD_RANGE;
+    public static final ModConfigSpec.DoubleValue GROUND_FIELD_RANGE;
+    public static final ModConfigSpec.DoubleValue PETRIFIED_GROUND_FIELD_RANGE;
+    public static final ModConfigSpec.IntValue    LIRM_CONVERSION_RADIUS;
+    public static final ModConfigSpec.DoubleValue LIRM_LOG_PETRIFY_CHANCE;
+    public static final ModConfigSpec.DoubleValue LIRM_SHOCKWAVE_RADIUS;
+    public static final ModConfigSpec.DoubleValue LIRM_SHOCKWAVE_STRENGTH;
+    public static final ModConfigSpec.DoubleValue LIRM_ORE_BREAK_CHANCE;
+    public static final ModConfigSpec.DoubleValue LIRM_GOLEM_DEATH_RANGE;
+    public static final ModConfigSpec.DoubleValue LIRM_ORE_BREAK_RANGE;
+    public static final ModConfigSpec.DoubleValue LIRM_EXPLOSION_RANGE_MULT;
+    public static final ModConfigSpec.DoubleValue LIRM_CHARGED_CREEPER_MULT;
+    public static final ModConfigSpec.DoubleValue ANOMALY_ENTITY_IMPULSE;
+    public static final ModConfigSpec.DoubleValue ANOMALY_SHIP_FORCE;
+    public static final ModConfigSpec.DoubleValue ANOMALY_ITEM_SCAN_RADIUS;
+    public static final ModConfigSpec.DoubleValue ANOMALY_STRENGTH_BONUS;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -574,6 +597,99 @@ public final class MagConfig {
                 .comment("Conductor blocks past which Lenz braking sees diminishing returns.")
                 .translation("magnetization.configuration.mechanics.lenzConductorCap")
                 .defineInRange("lenzConductorCap", 8, 1, 4096);
+
+        b.pop();
+
+        b.comment("Balance for lightning, lightning-remnant magnetism (LIRM), and the Anomaly",
+                  "biome's chaos field. Whether these systems are ENABLED lives under 'lightning'",
+                  "and 'worldgen'; these are their magnitudes. Defaults match the previous values.")
+         .translation("magnetization.configuration.effects")
+         .push("effects");
+
+        PETRIFIED_STORM_STRIKE_CHANCE = b
+                .comment("Per-player chance of a Petrified Forest lightning strike on each storm roll.")
+                .translation("magnetization.configuration.effects.petrifiedStormStrikeChance")
+                .defineInRange("petrifiedStormStrikeChance", 0.5d, 0.0d, 1.0d);
+        PETRIFIED_STORM_STRIKE_RADIUS = b
+                .comment("Lateral radius (blocks) around a player a Petrified Forest strike can land.")
+                .translation("magnetization.configuration.effects.petrifiedStormStrikeRadius")
+                .defineInRange("petrifiedStormStrikeRadius", 16, 1, 128);
+        TEMP_FIELD_DURATION_TICKS = b
+                .comment("Lifetime (ticks) of a temporary lightning-seeded field. 600 = 30 s.")
+                .translation("magnetization.configuration.effects.tempFieldDurationTicks")
+                .defineInRange("tempFieldDurationTicks", 600, 1, 72000);
+        GROUND_FIELD_CHANCE = b
+                .comment("Chance a ground lightning strike leaves a temporary field (outside Petrified Forest).")
+                .translation("magnetization.configuration.effects.groundFieldChance")
+                .defineInRange("groundFieldChance", 0.30d, 0.0d, 1.0d);
+        PETRIFIED_GROUND_FIELD_CHANCE = b
+                .comment("Same, inside the Petrified Forest.")
+                .translation("magnetization.configuration.effects.petrifiedGroundFieldChance")
+                .defineInRange("petrifiedGroundFieldChance", 0.75d, 0.0d, 1.0d);
+        PETRIFIED_LOG_FIELD_RANGE = b
+                .comment("Range (blocks) of the temporary field a struck petrified log emits.")
+                .translation("magnetization.configuration.effects.petrifiedLogFieldRange")
+                .defineInRange("petrifiedLogFieldRange", 4.0d, 0.0d, 64.0d);
+        GROUND_FIELD_RANGE = b
+                .comment("Range (blocks) of a ground-strike temporary field (outside Petrified Forest).")
+                .translation("magnetization.configuration.effects.groundFieldRange")
+                .defineInRange("groundFieldRange", 6.0d, 0.0d, 64.0d);
+        PETRIFIED_GROUND_FIELD_RANGE = b
+                .comment("Range (blocks) of a ground-strike temporary field inside the Petrified Forest.")
+                .translation("magnetization.configuration.effects.petrifiedGroundFieldRange")
+                .defineInRange("petrifiedGroundFieldRange", 9.0d, 0.0d, 64.0d);
+        LIRM_CONVERSION_RADIUS = b
+                .comment("Block radius around a lightning strike where logs can petrify.")
+                .translation("magnetization.configuration.effects.lirmConversionRadius")
+                .defineInRange("lirmConversionRadius", 3, 0, 16);
+        LIRM_LOG_PETRIFY_CHANCE = b
+                .comment("Per-log chance to petrify inside the conversion radius.")
+                .translation("magnetization.configuration.effects.lirmLogPetrifyChance")
+                .defineInRange("lirmLogPetrifyChance", 0.75d, 0.0d, 1.0d);
+        LIRM_SHOCKWAVE_RADIUS = b
+                .comment("Radius (blocks) of the one-shot item pull on a successful LIRM strike.")
+                .translation("magnetization.configuration.effects.lirmShockwaveRadius")
+                .defineInRange("lirmShockwaveRadius", 12.0d, 0.0d, 64.0d);
+        LIRM_SHOCKWAVE_STRENGTH = b
+                .comment("Pull velocity of the LIRM shockwave on nearby ferromagnetic items.")
+                .translation("magnetization.configuration.effects.lirmShockwaveStrength")
+                .defineInRange("lirmShockwaveStrength", 0.8d, 0.0d, 5.0d);
+        LIRM_ORE_BREAK_CHANCE = b
+                .comment("Chance breaking a ferromagnetic ore seeds a brief LIRM field.")
+                .translation("magnetization.configuration.effects.lirmOreBreakChance")
+                .defineInRange("lirmOreBreakChance", 0.05d, 0.0d, 1.0d);
+        LIRM_GOLEM_DEATH_RANGE = b
+                .comment("Range (blocks) of the LIRM field left when an iron golem dies.")
+                .translation("magnetization.configuration.effects.lirmGolemDeathRange")
+                .defineInRange("lirmGolemDeathRange", 5.0d, 0.0d, 64.0d);
+        LIRM_ORE_BREAK_RANGE = b
+                .comment("Range (blocks) of the LIRM field from an ore break.")
+                .translation("magnetization.configuration.effects.lirmOreBreakRange")
+                .defineInRange("lirmOreBreakRange", 3.0d, 0.0d, 64.0d);
+        LIRM_EXPLOSION_RANGE_MULT = b
+                .comment("Multiplier on an explosion's radius for the residual LIRM field range.")
+                .translation("magnetization.configuration.effects.lirmExplosionRangeMult")
+                .defineInRange("lirmExplosionRangeMult", 2.0d, 0.0d, 16.0d);
+        LIRM_CHARGED_CREEPER_MULT = b
+                .comment("Extra range multiplier for a charged-creeper explosion's LIRM field.")
+                .translation("magnetization.configuration.effects.lirmChargedCreeperMult")
+                .defineInRange("lirmChargedCreeperMult", 1.6d, 0.0d, 16.0d);
+        ANOMALY_ENTITY_IMPULSE = b
+                .comment("Peak chaos velocity (m/s) injected into players + items in the Anomaly biome.")
+                .translation("magnetization.configuration.effects.anomalyEntityImpulse")
+                .defineInRange("anomalyEntityImpulse", 0.18d, 0.0d, 5.0d);
+        ANOMALY_SHIP_FORCE = b
+                .comment("Peak chaos force (Newtons) applied to Sable ships in the Anomaly biome.")
+                .translation("magnetization.configuration.effects.anomalyShipForce")
+                .defineInRange("anomalyShipForce", 1500.0d, 0.0d, 1000000.0d);
+        ANOMALY_ITEM_SCAN_RADIUS = b
+                .comment("Per-player search radius (blocks) for items affected by anomaly chaos.")
+                .translation("magnetization.configuration.effects.anomalyItemScanRadius")
+                .defineInRange("anomalyItemScanRadius", 48.0d, 0.0d, 128.0d);
+        ANOMALY_STRENGTH_BONUS = b
+                .comment("Multiplier on emitter force while inside the Anomaly biome (1.5 = +50%).")
+                .translation("magnetization.configuration.effects.anomalyStrengthBonus")
+                .defineInRange("anomalyStrengthBonus", 1.5d, 0.0d, 16.0d);
 
         b.pop();
 
@@ -1147,6 +1263,27 @@ public final class MagConfig {
     public static double lenzMaxDrag()              { return doubleOr(LENZ_MAX_DRAG, 0.55d); }
     public static double lenzMinSpeed()             { return doubleOr(LENZ_MIN_SPEED, 0.04d); }
     public static int    lenzConductorCap()         { return Math.max(1, intOr(LENZ_CONDUCTOR_CAP, 8)); }
+    public static double petrifiedStormStrikeChance(){ return doubleOr(PETRIFIED_STORM_STRIKE_CHANCE, 0.5d); }
+    public static int    petrifiedStormStrikeRadius(){ return intOr(PETRIFIED_STORM_STRIKE_RADIUS, 16); }
+    public static int    tempFieldDurationTicks()    { return intOr(TEMP_FIELD_DURATION_TICKS, 600); }
+    public static double groundFieldChance()         { return doubleOr(GROUND_FIELD_CHANCE, 0.30d); }
+    public static double petrifiedGroundFieldChance(){ return doubleOr(PETRIFIED_GROUND_FIELD_CHANCE, 0.75d); }
+    public static double petrifiedLogFieldRange()    { return doubleOr(PETRIFIED_LOG_FIELD_RANGE, 4.0d); }
+    public static double groundFieldRange()          { return doubleOr(GROUND_FIELD_RANGE, 6.0d); }
+    public static double petrifiedGroundFieldRange() { return doubleOr(PETRIFIED_GROUND_FIELD_RANGE, 9.0d); }
+    public static int    lirmConversionRadius()      { return intOr(LIRM_CONVERSION_RADIUS, 3); }
+    public static double lirmLogPetrifyChance()      { return doubleOr(LIRM_LOG_PETRIFY_CHANCE, 0.75d); }
+    public static double lirmShockwaveRadius()       { return doubleOr(LIRM_SHOCKWAVE_RADIUS, 12.0d); }
+    public static double lirmShockwaveStrength()     { return doubleOr(LIRM_SHOCKWAVE_STRENGTH, 0.8d); }
+    public static double lirmOreBreakChance()        { return doubleOr(LIRM_ORE_BREAK_CHANCE, 0.05d); }
+    public static double lirmGolemDeathRange()       { return doubleOr(LIRM_GOLEM_DEATH_RANGE, 5.0d); }
+    public static double lirmOreBreakRange()         { return doubleOr(LIRM_ORE_BREAK_RANGE, 3.0d); }
+    public static double lirmExplosionRangeMult()    { return doubleOr(LIRM_EXPLOSION_RANGE_MULT, 2.0d); }
+    public static double lirmChargedCreeperMult()    { return doubleOr(LIRM_CHARGED_CREEPER_MULT, 1.6d); }
+    public static double anomalyEntityImpulse()      { return doubleOr(ANOMALY_ENTITY_IMPULSE, 0.18d); }
+    public static double anomalyShipForce()          { return doubleOr(ANOMALY_SHIP_FORCE, 1500.0d); }
+    public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
+    public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }
