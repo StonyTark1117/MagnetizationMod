@@ -108,6 +108,13 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue ANOMALY_ITEM_SCAN_RADIUS;
     public static final ModConfigSpec.DoubleValue ANOMALY_STRENGTH_BONUS;
 
+    // ── anvils: per-metal break chance ──
+    public static final ModConfigSpec.DoubleValue ANVIL_BREAK_MAGNETITE;
+    public static final ModConfigSpec.DoubleValue ANVIL_BREAK_MAGHEMITE;
+    public static final ModConfigSpec.DoubleValue ANVIL_BREAK_HEMATITE;
+    public static final ModConfigSpec.DoubleValue ANVIL_BREAK_TITANOMAGNETITE;
+    public static final ModConfigSpec.DoubleValue ANVIL_BREAK_DEFAULT;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -690,6 +697,32 @@ public final class MagConfig {
                 .comment("Multiplier on emitter force while inside the Anomaly biome (1.5 = +50%).")
                 .translation("magnetization.configuration.effects.anomalyStrengthBonus")
                 .defineInRange("anomalyStrengthBonus", 1.5d, 0.0d, 16.0d);
+
+        b.pop();
+
+        b.comment("Per-metal anvil break chance (probability an anvil degrades a tier on use).",
+                  "0 = never degrades. Defaults match the previous values.")
+         .translation("magnetization.configuration.anvils")
+         .push("anvils");
+
+        ANVIL_BREAK_MAGNETITE = b
+                .translation("magnetization.configuration.anvils.magnetiteBreakChance")
+                .defineInRange("magnetiteBreakChance", 0.10d, 0.0d, 1.0d);
+        ANVIL_BREAK_MAGHEMITE = b
+                .comment("Maghemite is oxidised + brittle, so it degrades faster by default.")
+                .translation("magnetization.configuration.anvils.maghemiteBreakChance")
+                .defineInRange("maghemiteBreakChance", 0.18d, 0.0d, 1.0d);
+        ANVIL_BREAK_HEMATITE = b
+                .translation("magnetization.configuration.anvils.hematiteBreakChance")
+                .defineInRange("hematiteBreakChance", 0.15d, 0.0d, 1.0d);
+        ANVIL_BREAK_TITANOMAGNETITE = b
+                .comment("Premium anvil — 0 by default (never degrades).")
+                .translation("magnetization.configuration.anvils.titanomagnetiteBreakChance")
+                .defineInRange("titanomagnetiteBreakChance", 0.0d, 0.0d, 1.0d);
+        ANVIL_BREAK_DEFAULT = b
+                .comment("Fallback break chance for any magnetic anvil not listed above.")
+                .translation("magnetization.configuration.anvils.defaultBreakChance")
+                .defineInRange("defaultBreakChance", 0.12d, 0.0d, 1.0d);
 
         b.pop();
 
@@ -1284,6 +1317,11 @@ public final class MagConfig {
     public static double anomalyShipForce()          { return doubleOr(ANOMALY_SHIP_FORCE, 1500.0d); }
     public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
     public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
+    public static float  anvilBreakMagnetite()       { return (float) doubleOr(ANVIL_BREAK_MAGNETITE, 0.10d); }
+    public static float  anvilBreakMaghemite()       { return (float) doubleOr(ANVIL_BREAK_MAGHEMITE, 0.18d); }
+    public static float  anvilBreakHematite()        { return (float) doubleOr(ANVIL_BREAK_HEMATITE, 0.15d); }
+    public static float  anvilBreakTitanomagnetite() { return (float) doubleOr(ANVIL_BREAK_TITANOMAGNETITE, 0.0d); }
+    public static float  anvilBreakDefault()         { return (float) doubleOr(ANVIL_BREAK_DEFAULT, 0.12d); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }

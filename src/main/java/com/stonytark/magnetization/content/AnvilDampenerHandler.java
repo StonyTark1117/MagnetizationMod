@@ -46,11 +46,11 @@ public final class AnvilDampenerHandler {
         if (!state.is(MagTags.DAMPENED_ANVILS)) return null;
         final String path = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
         return switch (path) {
-            case "magnetite_anvil" -> 0.10f;
-            case "maghemite_anvil" -> 0.18f;   // oxidised, brittle
-            case "hematite_anvil" -> 0.15f;    // brittle
-            case "titanomagnetite_anvil" -> 0.0f; // premium — never degrades
-            default -> 0.12f;
+            case "magnetite_anvil" -> com.stonytark.magnetization.config.MagConfig.anvilBreakMagnetite();
+            case "maghemite_anvil" -> com.stonytark.magnetization.config.MagConfig.anvilBreakMaghemite();
+            case "hematite_anvil" -> com.stonytark.magnetization.config.MagConfig.anvilBreakHematite();
+            case "titanomagnetite_anvil" -> com.stonytark.magnetization.config.MagConfig.anvilBreakTitanomagnetite();
+            default -> com.stonytark.magnetization.config.MagConfig.anvilBreakDefault();
         };
     }
 
