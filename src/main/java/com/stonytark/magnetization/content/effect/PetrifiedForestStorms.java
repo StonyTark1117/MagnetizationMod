@@ -32,9 +32,6 @@ import java.util.List;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class PetrifiedForestStorms {
 
-    /** Ticks between strike-chance evaluations per level. 100 = 5 s. */
-    private static final int INTERVAL_TICKS = 100;
-
     /** Per-player probability of a strike on each evaluation tick.
      *  0.5 × (1 / 5 s) ≈ 6 strikes/minute when a player is in the biome. */
     private static final double STRIKE_CHANCE_PER_PLAYER = 0.5d;
@@ -51,7 +48,7 @@ public final class PetrifiedForestStorms {
         if (!PetrifiedForestBiome.enabled()) return;
         final Level level = event.getLevel();
         if (!(level instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % INTERVAL_TICKS) != 0L) return;
+        if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.petrifiedStormTicks()) != 0L) return;
 
         // Snapshot the player list: lightning spawn can mutate per-player state
         // (entity damage / death) and we don't want concurrent-modification.

@@ -56,6 +56,9 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue ANOMALY_CHAOS_TICKS;
     public static final ModConfigSpec.IntValue LENZ_BRAKING_TICKS;
     public static final ModConfigSpec.IntValue METEORITE_FIELD_TICKS;
+    public static final ModConfigSpec.IntValue PETRIFIED_STORM_TICKS;
+    public static final ModConfigSpec.IntValue TEMPORARY_LIRM_APPLY_TICKS;
+    public static final ModConfigSpec.IntValue METEORITE_SAPLING_CHECK_TICKS;
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
@@ -431,6 +434,19 @@ public final class MagConfig {
                 .comment("How often (ticks) registered meteorite cores re-apply their field.")
                 .translation("magnetization.configuration.performance.meteoriteFieldTicks")
                 .defineInRange("meteoriteFieldTicks", 4, 1, 1200);
+        PETRIFIED_STORM_TICKS = b
+                .comment("How often (ticks) the Petrified Forest rolls its lightning-strike chance per player.",
+                         "100 = every 5 s. (The strike CHANCE/radius are under the lightning category.)")
+                .translation("magnetization.configuration.performance.petrifiedStormTicks")
+                .defineInRange("petrifiedStormTicks", 100, 1, 24000);
+        TEMPORARY_LIRM_APPLY_TICKS = b
+                .comment("How often (ticks) temporary lightning-seeded fields re-apply their pull.")
+                .translation("magnetization.configuration.performance.temporaryLirmApplyTicks")
+                .defineInRange("temporaryLirmApplyTicks", 4, 1, 1200);
+        METEORITE_SAPLING_CHECK_TICKS = b
+                .comment("How often (ticks) a planted meteorite sapling checks its growth progress.")
+                .translation("magnetization.configuration.performance.meteoriteSaplingCheckTicks")
+                .defineInRange("meteoriteSaplingCheckTicks", 200, 1, 24000);
 
         b.pop();
 
@@ -991,6 +1007,9 @@ public final class MagConfig {
     public static int anomalyChaosTicks()           { return Math.max(1, intOr(ANOMALY_CHAOS_TICKS, 4)); }
     public static int lenzBrakingTicks()            { return Math.max(1, intOr(LENZ_BRAKING_TICKS, 2)); }
     public static int meteoriteFieldTicks()         { return Math.max(1, intOr(METEORITE_FIELD_TICKS, 4)); }
+    public static int petrifiedStormTicks()         { return Math.max(1, intOr(PETRIFIED_STORM_TICKS, 100)); }
+    public static int temporaryLirmApplyTicks()     { return Math.max(1, intOr(TEMPORARY_LIRM_APPLY_TICKS, 4)); }
+    public static int meteoriteSaplingCheckTicks()  { return Math.max(1, intOr(METEORITE_SAPLING_CHECK_TICKS, 200)); }
 
     public static int commandDebugPermission()    { return permissionOr(COMMAND_DEBUG_PERMISSION, 2); }
     public static int commandSpawnTestPermission(){ return permissionOr(COMMAND_SPAWN_TEST_PERMISSION, 2); }

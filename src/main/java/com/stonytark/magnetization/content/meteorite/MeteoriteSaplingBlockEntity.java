@@ -41,10 +41,6 @@ public final class MeteoriteSaplingBlockEntity extends BlockEntity {
         }
     }
 
-    /** Cadence of the growth check. We don't need precise per-tick resolution
-     *  for a 30-minute timer — 200 ticks = 10s is plenty. */
-    private static final int TICK_INTERVAL = 200;
-
     private static final long UNINITIALISED = Long.MIN_VALUE;
     private long plantedAtTick = UNINITIALISED;
 
@@ -61,7 +57,7 @@ public final class MeteoriteSaplingBlockEntity extends BlockEntity {
             be.setChanged();
             return;
         }
-        if ((now % TICK_INTERVAL) != 0L) return;
+        if ((now % com.stonytark.magnetization.config.MagConfig.meteoriteSaplingCheckTicks()) != 0L) return;
         if ((now - be.plantedAtTick) < growTicks()) return;
 
         // Time's up — promote to a fully-charged meteorite core. The core's

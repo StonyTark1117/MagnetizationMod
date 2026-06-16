@@ -56,10 +56,6 @@ public final class TemporaryLirmFields {
      *  enough to be visible while keeping the in-memory list bounded. */
     private static final int DURATION_TICKS = 600;
 
-    /** How often the handler iterates entries and applies fields. 4 ticks
-     *  (5 Hz) is smooth enough for visible motion on entities + sub-levels
-     *  without re-doing the spatial query 20×/sec. */
-    private static final int APPLY_INTERVAL_TICKS = 4;
 
     /** Base chance a ground strike leaves a temporary field, outside the
      *  petrified forest. Already-rare vanilla lightning means the global
@@ -151,7 +147,7 @@ public final class TemporaryLirmFields {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % APPLY_INTERVAL_TICKS) != 0L) return;
+        if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.temporaryLirmApplyTicks()) != 0L) return;
         final List<Entry> entries = ENTRIES_BY_LEVEL.get(server.dimension());
         if (entries == null || entries.isEmpty()) return;
 
