@@ -36,7 +36,7 @@ public class MrFluidGolem extends IronGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return IronGolem.createAttributes()
-                .add(Attributes.MAX_HEALTH, com.stonytark.magnetization.config.MagConfig.mrGolemHealth())
+                .add(Attributes.MAX_HEALTH, 80.0)        // a touch less than the iron golem's 100
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 

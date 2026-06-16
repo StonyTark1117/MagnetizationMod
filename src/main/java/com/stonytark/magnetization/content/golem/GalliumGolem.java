@@ -37,7 +37,7 @@ public class GalliumGolem extends IronGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return IronGolem.createAttributes()
-                .add(Attributes.MAX_HEALTH, com.stonytark.magnetization.config.MagConfig.galliumGolemHealth())
+                .add(Attributes.MAX_HEALTH, 50.0)            // weaker than iron's 100, even in the cold
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.0);  // soft — no knockback resistance
     }
 

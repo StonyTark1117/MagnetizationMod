@@ -68,8 +68,6 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    MR_ARMOR_HARDEN_TICKS;
     public static final ModConfigSpec.DoubleValue MR_GOLEM_BASE_MITIGATION;
     public static final ModConfigSpec.DoubleValue MR_GOLEM_FIELD_MITIGATION;
-    public static final ModConfigSpec.IntValue    MR_GOLEM_HEALTH;
-    public static final ModConfigSpec.IntValue    GALLIUM_GOLEM_HEALTH;
     public static final ModConfigSpec.IntValue    GALLIUM_GOLEM_MELT_TICKS;
     public static final ModConfigSpec.DoubleValue GALLIUM_GOLEM_WARM_DAMAGE_MULT;
     public static final ModConfigSpec.DoubleValue ARMOR_VACUUM_RADIUS_PER_PIECE;
@@ -502,14 +500,6 @@ public final class MagConfig {
                 .comment("MR fluid golem damage mitigation while hardened in a field.")
                 .translation("magnetization.configuration.combat.mrGolemFieldMitigation")
                 .defineInRange("mrGolemFieldMitigation", 0.92d, 0.0d, 1.0d);
-        MR_GOLEM_HEALTH = b
-                .comment("MR fluid golem max health (iron golem = 100). Applied at spawn.")
-                .translation("magnetization.configuration.combat.mrGolemHealth")
-                .defineInRange("mrGolemHealth", 80, 1, 1024);
-        GALLIUM_GOLEM_HEALTH = b
-                .comment("Gallium golem max health (soft metal — weaker than iron's 100). Applied at spawn.")
-                .translation("magnetization.configuration.combat.galliumGolemHealth")
-                .defineInRange("galliumGolemHealth", 50, 1, 1024);
         GALLIUM_GOLEM_MELT_TICKS = b
                 .comment("How long (ticks) a gallium golem survives outside a cold biome before melting.")
                 .translation("magnetization.configuration.combat.galliumGolemMeltTicks")
@@ -1097,8 +1087,6 @@ public final class MagConfig {
     public static long   mrArmorHardenTicks()       { return intOr(MR_ARMOR_HARDEN_TICKS, 30); }
     public static float  mrGolemBaseMitigation()    { return (float) doubleOr(MR_GOLEM_BASE_MITIGATION, 0.30d); }
     public static float  mrGolemFieldMitigation()   { return (float) doubleOr(MR_GOLEM_FIELD_MITIGATION, 0.92d); }
-    public static double mrGolemHealth()            { return intOr(MR_GOLEM_HEALTH, 80); }
-    public static double galliumGolemHealth()       { return intOr(GALLIUM_GOLEM_HEALTH, 50); }
     public static int    galliumGolemMeltTicks()    { return intOr(GALLIUM_GOLEM_MELT_TICKS, 1200); }
     public static float  galliumGolemWarmDamageMult(){ return (float) doubleOr(GALLIUM_GOLEM_WARM_DAMAGE_MULT, 1.5d); }
     public static double armorVacuumRadiusPerPiece(){ return doubleOr(ARMOR_VACUUM_RADIUS_PER_PIECE, 2.0d); }
