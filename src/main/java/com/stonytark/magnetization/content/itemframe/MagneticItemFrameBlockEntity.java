@@ -22,15 +22,13 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  */
 public class MagneticItemFrameBlockEntity extends BlockEntity {
 
-    private static final int FE_CAPACITY = 8_000;
-    private static final int FE_PER_TICK = 2;
-
     /** Spin modes, cycled by right-click: turn left / turn right / tumble up /
      *  tumble down. Two axes (yaw for left-right, pitch for up-down) × two signs. */
     public static final int SPIN_LEFT = 0, SPIN_RIGHT = 1, SPIN_UP = 2, SPIN_DOWN = 3;
 
     private ItemStack displayed = ItemStack.EMPTY;
-    private final ReceiveBuffer energy = new ReceiveBuffer(FE_CAPACITY, 200);
+    private final ReceiveBuffer energy = new ReceiveBuffer(
+            com.stonytark.magnetization.config.MagConfig.itemFrameFeCapacity(), 200);
     /** Synced: is the item currently spinning. */
     private boolean spinning = false;
     /** Synced spin mode (one of {@code SPIN_*}). */
@@ -70,8 +68,9 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
                                   final MagneticItemFrameBlockEntity be) {
         if (!(level instanceof ServerLevel)) return;
         boolean powered = level.hasNeighborSignal(pos);
-        if (!powered && be.energy.getEnergyStored() >= FE_PER_TICK) {
-            be.energy.drainInternal(FE_PER_TICK);
+        final int fePerTick = com.stonytark.magnetization.config.MagConfig.itemFrameFePerTick();
+        if (!powered && fePerTick > 0 && be.energy.getEnergyStored() >= fePerTick) {
+            be.energy.drainInternal(fePerTick);
             powered = true;
         }
         // Only spin a held item.

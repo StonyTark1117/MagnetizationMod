@@ -27,13 +27,9 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 public class TokamakControllerBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData {
 
-    private static final int CAPACITY = 4_000_000;
-    private static final int GEN_PER_TICK = 2_000;     // FE/tick while fusing
-    private static final int OUTPUT_RATE = 16_000;     // FE/tick pushed out
-    public static final int BURN_TICKS_PER_CELL = 4_800; // 4 min per cell
-    private static final int MAX_BURN = BURN_TICKS_PER_CELL * 4;
-
-    private final GenBuffer energy = new GenBuffer(CAPACITY, OUTPUT_RATE);
+    private final GenBuffer energy = new GenBuffer(
+            com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
+            com.stonytark.magnetization.config.MagConfig.tokamakOutputRate());
     private int burnTime = 0;
     private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
 
@@ -63,7 +59,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
         return com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK;
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
-    @Override public int guiEnergyMax() { return CAPACITY; }
+    @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(); }
     @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
     @Override public int guiStat2() { return lastOutput; }        // FE/tick out
 
@@ -71,18 +67,19 @@ public class TokamakControllerBlockEntity extends BlockEntity
                                   final TokamakControllerBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
         // Auto-feed: pull a spare cell from the slot when the burn buffer has room.
-        if (be.burnTime <= MAX_BURN - BURN_TICKS_PER_CELL) {
+        final int burnPerCell = com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksPerCell();
+        if (be.burnTime <= (burnPerCell * 4) - burnPerCell) {
             final ItemStack cell = be.fuelSlot.getItem(0);
             if (cell.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get())) {
                 cell.shrink(1);
                 be.fuelSlot.setItem(0, cell);
-                be.burnTime += BURN_TICKS_PER_CELL;
+                be.burnTime += burnPerCell;
                 be.setChanged();
             }
         }
         final boolean fusing = be.burnTime > 0 && isRingFormed(level, pos);
         if (fusing) {
-            be.energy.generate(GEN_PER_TICK);
+            be.energy.generate(com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick());
             be.burnTime--;
             be.setChanged();
         }
@@ -117,7 +114,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
             final IEnergyStorage target = level.getCapability(
                     Capabilities.EnergyStorage.BLOCK, pos.relative(dir), dir.getOpposite());
             if (target == null || !target.canReceive()) continue;
-            final int offered = Math.min(OUTPUT_RATE - pushed, energy.getEnergyStored());
+            final int offered = Math.min(com.stonytark.magnetization.config.MagConfig.tokamakOutputRate() - pushed, energy.getEnergyStored());
             final int accepted = target.receiveEnergy(offered, false);
             if (accepted > 0) { energy.extractEnergy(accepted, false); pushed += accepted; }
         }

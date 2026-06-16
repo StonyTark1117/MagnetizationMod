@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Cheap, transient companion to the Permanent Magnet. Always-on (no redstone
- * gate) but expires after {@link #LIFETIME_TICKS} and reverts to an iron block
+ * gate) but expires after {@link #lifetimeTicks()} and reverts to an iron block
  * — the resource it was made from, minus the redstone consumed at crafting.
  *
  * <p>Polarity is chosen randomly at placement and stored as a blockstate
@@ -33,10 +33,13 @@ import java.util.List;
  */
 public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
 
-    /** 10 in-game minutes (12 000 ticks). Long enough to lay down a short
-     *  propulsion-track run, short enough that the player has to maintain
-     *  it — distinguishing the block from the Permanent Magnet. */
-    public static final long LIFETIME_TICKS = 12_000L;
+    /** Configurable lifetime (default 10 in-game minutes / 12 000 ticks). Long
+     *  enough to lay down a short propulsion-track run, short enough that the
+     *  player has to maintain it — distinguishing the block from the Permanent
+     *  Magnet. */
+    private static long lifetimeTicks() {
+        return com.stonytark.magnetization.config.MagConfig.temporaryMagnetLifetime();
+    }
 
     /** Tick the block was placed. {@link Long#MIN_VALUE} = not yet stamped
      *  (legacy save / freshly created BE); first tick fills it in. */
@@ -72,7 +75,7 @@ public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
         }
         // Expiration check before pumping the field — keeps the block from
         // applying a force on the same tick it reverts to iron.
-        if (server.getGameTime() - placedTick >= LIFETIME_TICKS) {
+        if (server.getGameTime() - placedTick >= lifetimeTicks()) {
             revertToIron(server);
             return;
         }
@@ -94,8 +97,8 @@ public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
     /** Remaining lifetime in ticks (0 = expiring this tick). Used by the
      *  item tooltip / Jade/Goggles overlay if exposed later. */
     public long remainingTicks(final long now) {
-        if (placedTick == Long.MIN_VALUE) return LIFETIME_TICKS;
-        return Math.max(0L, LIFETIME_TICKS - (now - placedTick));
+        if (placedTick == Long.MIN_VALUE) return lifetimeTicks();
+        return Math.max(0L, lifetimeTicks() - (now - placedTick));
     }
 
     @Override
@@ -109,7 +112,8 @@ public class TemporaryMagnetBlockEntity extends AbstractEmitterBlockEntity {
         final int totalSeconds = (int) (remaining / 20L);
         final int minutes = totalSeconds / 60;
         final int seconds = totalSeconds % 60;
-        final float frac = LIFETIME_TICKS > 0 ? remaining / (float) LIFETIME_TICKS : 0f;
+        final long life = lifetimeTicks();
+        final float frac = life > 0 ? remaining / (float) life : 0f;
         final ChatFormatting color = frac > 0.5f
                 ? ChatFormatting.GREEN
                 : frac > 0.2f ? ChatFormatting.YELLOW : ChatFormatting.RED;

@@ -24,13 +24,9 @@ import net.neoforged.fml.ModList;
  */
 public class InductionPadBlockEntity extends BlockEntity {
 
-    private static final int CAPACITY = 400_000;
-    private static final int TRANSFER_IN = 4_000;     // FE/tick accepted from external sources
-    private static final int CHARGE_PER_TICK = 4_000; // FE/tick handed out to items
-    private static final double RANGE = 4.0;
-    private static final int INTERVAL = 2;
-
-    private final InternalBuffer energy = new InternalBuffer(CAPACITY, TRANSFER_IN);
+    private final InternalBuffer energy = new InternalBuffer(
+            com.stonytark.magnetization.config.MagConfig.inductionPadCapacity(),
+            com.stonytark.magnetization.config.MagConfig.inductionPadTransferIn());
 
     public InductionPadBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.INDUCTION_PAD.get(), pos, state);
@@ -44,11 +40,12 @@ public class InductionPadBlockEntity extends BlockEntity {
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final InductionPadBlockEntity be) {
         if (level.isClientSide) return;
-        if ((level.getGameTime() % INTERVAL) != 0L) return;
-        int budget = Math.min(CHARGE_PER_TICK * INTERVAL, be.energy.getEnergyStored());
+        final int interval = com.stonytark.magnetization.config.MagConfig.inductionPadInterval();
+        if ((level.getGameTime() % interval) != 0L) return;
+        int budget = Math.min(com.stonytark.magnetization.config.MagConfig.inductionPadChargePerTick() * interval, be.energy.getEnergyStored());
         if (budget <= 0) return;
 
-        final AABB box = new AABB(pos).inflate(RANGE);
+        final AABB box = new AABB(pos).inflate(com.stonytark.magnetization.config.MagConfig.inductionPadRange());
         int spent = 0;
         for (final Player player : level.getEntitiesOfClass(Player.class, box)) {
             if (budget - spent <= 0) break;

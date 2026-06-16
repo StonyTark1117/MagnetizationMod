@@ -143,6 +143,24 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue MOTOR_RPM_PER_POTENCY;
     public static final ModConfigSpec.DoubleValue MOTOR_STRESS_PER_POTENCY;
 
+    // ── machines: tokamak / induction pad / sensor / item frame / temporary magnet ──
+    public static final ModConfigSpec.IntValue    TOKAMAK_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK;
+    public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE;
+    public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_PER_CELL;
+    public static final ModConfigSpec.IntValue    INDUCTION_PAD_CAPACITY;
+    public static final ModConfigSpec.IntValue    INDUCTION_PAD_TRANSFER_IN;
+    public static final ModConfigSpec.IntValue    INDUCTION_PAD_CHARGE_PER_TICK;
+    public static final ModConfigSpec.DoubleValue INDUCTION_PAD_RANGE;
+    public static final ModConfigSpec.IntValue    INDUCTION_PAD_INTERVAL;
+    public static final ModConfigSpec.DoubleValue SENSOR_RANGE;
+    public static final ModConfigSpec.DoubleValue SENSOR_MOVE_THRESHOLD;
+    public static final ModConfigSpec.IntValue    SENSOR_INTERVAL;
+    public static final ModConfigSpec.IntValue    SENSOR_DECAY_PER_STEP;
+    public static final ModConfigSpec.IntValue    ITEM_FRAME_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    ITEM_FRAME_FE_PER_TICK;
+    public static final ModConfigSpec.IntValue    TEMPORARY_MAGNET_LIFETIME;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -815,6 +833,47 @@ public final class MagConfig {
 
         b.pop();
 
+        b.comment("Machine tuning: tokamak reactor, induction charging pad, magnetostrictive",
+                  "sensor, magnetic item frame, and temporary-magnet lifetime. FE buffers +",
+                  "lifetimes apply to newly-placed machines. Defaults match the previous values.")
+         .translation("magnetization.configuration.machines")
+         .push("machines");
+
+        TOKAMAK_FE_CAPACITY = b.translation("magnetization.configuration.machines.tokamakFeCapacity")
+                .defineInRange("tokamakFeCapacity", 4_000_000, 0, 1_000_000_000);
+        TOKAMAK_GEN_PER_TICK = b.translation("magnetization.configuration.machines.tokamakGenPerTick")
+                .defineInRange("tokamakGenPerTick", 2000, 0, 1_000_000);
+        TOKAMAK_OUTPUT_RATE = b.translation("magnetization.configuration.machines.tokamakOutputRate")
+                .defineInRange("tokamakOutputRate", 16000, 0, 1_000_000_000);
+        TOKAMAK_BURN_TICKS_PER_CELL = b.translation("magnetization.configuration.machines.tokamakBurnTicksPerCell")
+                .defineInRange("tokamakBurnTicksPerCell", 4800, 1, 1_000_000_000);
+        INDUCTION_PAD_CAPACITY = b.translation("magnetization.configuration.machines.inductionPadCapacity")
+                .defineInRange("inductionPadCapacity", 400_000, 0, 1_000_000_000);
+        INDUCTION_PAD_TRANSFER_IN = b.translation("magnetization.configuration.machines.inductionPadTransferIn")
+                .defineInRange("inductionPadTransferIn", 4000, 0, 1_000_000_000);
+        INDUCTION_PAD_CHARGE_PER_TICK = b.translation("magnetization.configuration.machines.inductionPadChargePerTick")
+                .defineInRange("inductionPadChargePerTick", 4000, 0, 1_000_000_000);
+        INDUCTION_PAD_RANGE = b.translation("magnetization.configuration.machines.inductionPadRange")
+                .defineInRange("inductionPadRange", 4.0d, 0.0d, 64.0d);
+        INDUCTION_PAD_INTERVAL = b.translation("magnetization.configuration.machines.inductionPadInterval")
+                .defineInRange("inductionPadInterval", 2, 1, 1200);
+        SENSOR_RANGE = b.translation("magnetization.configuration.machines.sensorRange")
+                .defineInRange("sensorRange", 8.0d, 0.0d, 64.0d);
+        SENSOR_MOVE_THRESHOLD = b.translation("magnetization.configuration.machines.sensorMoveThreshold")
+                .defineInRange("sensorMoveThreshold", 0.02d, 0.0d, 64.0d);
+        SENSOR_INTERVAL = b.translation("magnetization.configuration.machines.sensorInterval")
+                .defineInRange("sensorInterval", 2, 1, 1200);
+        SENSOR_DECAY_PER_STEP = b.translation("magnetization.configuration.machines.sensorDecayPerStep")
+                .defineInRange("sensorDecayPerStep", 3, 0, 15);
+        ITEM_FRAME_FE_CAPACITY = b.translation("magnetization.configuration.machines.itemFrameFeCapacity")
+                .defineInRange("itemFrameFeCapacity", 8000, 0, 1_000_000_000);
+        ITEM_FRAME_FE_PER_TICK = b.translation("magnetization.configuration.machines.itemFrameFePerTick")
+                .defineInRange("itemFrameFePerTick", 2, 0, 1_000_000);
+        TEMPORARY_MAGNET_LIFETIME = b.translation("magnetization.configuration.machines.temporaryMagnetLifetime")
+                .defineInRange("temporaryMagnetLifetime", 12000, 1, 1_000_000_000);
+
+        b.pop();
+
         sb.comment("Per-emitter GUI ceilings. The in-game config menu can't dial above these",
                   "values, so server owners can prevent griefer-tier loadouts.")
          .translation("magnetization.configuration.guiLimits")
@@ -1437,6 +1496,24 @@ public final class MagConfig {
     public static double repulsorTrackMaxSpeed()    { return doubleOr(REPULSOR_TRACK_MAX_SPEED, 1.1d); }
     public static float  motorRpmPerPotency()       { return (float) doubleOr(MOTOR_RPM_PER_POTENCY, 2.0d); }
     public static float  motorStressPerPotency()    { return (float) doubleOr(MOTOR_STRESS_PER_POTENCY, 8.0d); }
+
+    // ── machines: tokamak / induction pad / sensor / item frame / temporary magnet ──
+    public static int    tokamakFeCapacity()        { return intOr(TOKAMAK_FE_CAPACITY, 4_000_000); }
+    public static int    tokamakGenPerTick()        { return intOr(TOKAMAK_GEN_PER_TICK, 2000); }
+    public static int    tokamakOutputRate()        { return intOr(TOKAMAK_OUTPUT_RATE, 16000); }
+    public static int    tokamakBurnTicksPerCell()  { return intOr(TOKAMAK_BURN_TICKS_PER_CELL, 4800); }
+    public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
+    public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }
+    public static int    inductionPadChargePerTick(){ return intOr(INDUCTION_PAD_CHARGE_PER_TICK, 4000); }
+    public static double inductionPadRange()        { return doubleOr(INDUCTION_PAD_RANGE, 4.0d); }
+    public static int    inductionPadInterval()     { return Math.max(1, intOr(INDUCTION_PAD_INTERVAL, 2)); }
+    public static double sensorRange()              { return doubleOr(SENSOR_RANGE, 8.0d); }
+    public static double sensorMoveThreshold()      { return doubleOr(SENSOR_MOVE_THRESHOLD, 0.02d); }
+    public static int    sensorInterval()           { return Math.max(1, intOr(SENSOR_INTERVAL, 2)); }
+    public static int    sensorDecayPerStep()       { return intOr(SENSOR_DECAY_PER_STEP, 3); }
+    public static int    itemFrameFeCapacity()      { return intOr(ITEM_FRAME_FE_CAPACITY, 8000); }
+    public static int    itemFrameFePerTick()       { return intOr(ITEM_FRAME_FE_PER_TICK, 2); }
+    public static int    temporaryMagnetLifetime()  { return intOr(TEMPORARY_MAGNET_LIFETIME, 12000); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }

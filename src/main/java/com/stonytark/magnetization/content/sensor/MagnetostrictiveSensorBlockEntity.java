@@ -20,11 +20,6 @@ import net.minecraft.world.phys.AABB;
  */
 public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
 
-    private static final double RANGE = 8.0;
-    private static final double MOVE_THRESHOLD = 0.02; // (blocks/tick)^2 — sprint/jump, not idle drift
-    private static final int INTERVAL = 2;
-    private static final int DECAY_PER_STEP = 3;       // signal points shed per scan when quiet
-
     private int signal = 0;
 
     public MagnetostrictiveSensorBlockEntity(final BlockPos pos, final BlockState state) {
@@ -37,22 +32,24 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MagnetostrictiveSensorBlockEntity be) {
-        if (level.isClientSide || (level.getGameTime() % INTERVAL) != 0L) return;
+        if (level.isClientSide || (level.getGameTime() % com.stonytark.magnetization.config.MagConfig.sensorInterval()) != 0L) return;
 
-        final AABB box = new AABB(pos).inflate(RANGE);
+        final double range = com.stonytark.magnetization.config.MagConfig.sensorRange();
+        final double moveThreshold = com.stonytark.magnetization.config.MagConfig.sensorMoveThreshold();
+        final AABB box = new AABB(pos).inflate(range);
         double best = 0.0;
         for (final LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, box)) {
             final double speedSqr = e.getDeltaMovement().lengthSqr();
-            if (speedSqr < MOVE_THRESHOLD) continue;
+            if (speedSqr < moveThreshold) continue;
             final double dist = Math.sqrt(e.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
-            final double proximity = Math.max(0.0, 1.0 - dist / RANGE);
+            final double proximity = Math.max(0.0, 1.0 - dist / range);
             // Faster + closer = stronger reading.
             final double reading = Math.min(1.0, Math.sqrt(speedSqr) * 3.0) * proximity;
             best = Math.max(best, reading);
         }
 
         final int target = (int) Math.ceil(best * 15.0);
-        final int next = target > be.signal ? target : Math.max(0, be.signal - DECAY_PER_STEP);
+        final int next = target > be.signal ? target : Math.max(0, be.signal - com.stonytark.magnetization.config.MagConfig.sensorDecayPerStep());
         if (next != be.signal) {
             be.signal = next;
             be.setChanged();
