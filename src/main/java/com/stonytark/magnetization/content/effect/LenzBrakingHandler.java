@@ -29,6 +29,7 @@ import org.joml.Vector3dc;
 public final class LenzBrakingHandler {
 
     private static final int SAMPLE_CAP = 160;        // hard cap on blocks examined per ship
+    private static final int BELOW_REACH = 3;         // blocks below the hull to scan for a pad it flies over
 
     private LenzBrakingHandler() {}
 
@@ -70,7 +71,7 @@ public final class LenzBrakingHandler {
     /** Count conductor blocks in (and just around) the ship's bounding box, capped. */
     private static int countOverlappingConductors(final ServerLevel level, final BoundingBox3dc bb) {
         final int minX = (int) Math.floor(bb.minX()) - 1;
-        final int minY = (int) Math.floor(bb.minY()) - 1;
+        final int minY = (int) Math.floor(bb.minY()) - BELOW_REACH;
         final int minZ = (int) Math.floor(bb.minZ()) - 1;
         final int maxX = (int) Math.ceil(bb.maxX()) + 1;
         final int maxY = (int) Math.ceil(bb.maxY()) + 1;
