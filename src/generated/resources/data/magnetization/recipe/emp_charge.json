@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "g": {
+      "item": "minecraft:gunpowder"
+    },
+    "l": {
+      "item": "magnetization:lodestone_core"
+    }
+  },
+  "pattern": [
+    "gcg",
+    "clc",
+    "gcg"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:emp_charge"
+  }
+}

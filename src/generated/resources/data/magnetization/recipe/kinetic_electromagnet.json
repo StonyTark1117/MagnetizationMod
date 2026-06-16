@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "E": {
+      "item": "magnetization:electromagnet"
+    },
+    "P": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    "PSP",
+    "ECE",
+    "PSP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:kinetic_electromagnet"
+  }
+}

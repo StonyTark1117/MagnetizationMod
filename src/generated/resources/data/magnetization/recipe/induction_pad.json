@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "l": {
+      "item": "magnetization:lodestone_core"
+    },
+    "p": {
+      "item": "magnetization:magnetic_plate"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "cpc",
+    "clc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:induction_pad"
+  }
+}

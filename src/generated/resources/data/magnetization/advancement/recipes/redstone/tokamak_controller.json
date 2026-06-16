@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_coil": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:tokamak_coil"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:tokamak_controller"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_coil"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:tokamak_controller"
+    ]
+  }
+}

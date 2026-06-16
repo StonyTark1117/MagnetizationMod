@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_magnetite_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:magnetite_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:g_force_cushion"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_magnetite_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:g_force_cushion"
+    ]
+  }
+}

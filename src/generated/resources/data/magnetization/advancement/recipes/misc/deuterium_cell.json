@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_deuterium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:deuterium_oxide_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:deuterium_cell"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_deuterium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:deuterium_cell"
+    ]
+  }
+}

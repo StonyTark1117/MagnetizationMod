@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -582,6 +583,139 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .requires(MagItems.GALLIUM_BUCKET.get())
                 .unlockedBy("has_gallium", has(MagItems.GALLIUM_BUCKET.get()))
                 .save(out, id("light_gray_dye_from_gallium"));
+
+        // -------- Machines / gadgets (migrated from hand-written JSON) --------
+        final Ingredient shaft = ingr("create:shaft");
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.FERROFLUID_BUCKET.get())
+                .requires(Items.WATER_BUCKET).requires(MagItems.RAW_MAGNETITE.get()).requires(MagItems.RAW_MAGNETITE.get())
+                .unlockedBy("has_raw", has(MagItems.RAW_MAGNETITE.get())).save(out, id("ferrofluid_bucket"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MR_FLUID_BUCKET.get())
+                .requires(Items.WATER_BUCKET).requires(Items.IRON_INGOT).requires(MagItems.RAW_MAGNETITE.get())
+                .unlockedBy("has_raw", has(MagItems.RAW_MAGNETITE.get())).save(out, id("mr_fluid_bucket"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.DEUTERIUM_OXIDE_BUCKET.get())
+                .requires(Items.WATER_BUCKET).requires(Items.GLOWSTONE_DUST)
+                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET)).save(out, id("deuterium_oxide_bucket"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, MagItems.ORE_COMPASS.get())
+                .requires(Items.COMPASS).requires(MagItems.RAW_MAGNETITE.get()).requires(MagItems.RAW_MAGNETITE.get())
+                .unlockedBy("has_compass", has(Items.COMPASS)).save(out, id("ore_compass"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.PYROLYTIC_CARBON.get())
+                .requires(Items.CHARCOAL).requires(Items.CHARCOAL).requires(Items.CHARCOAL).requires(Items.CHARCOAL)
+                .unlockedBy("has_charcoal", has(Items.CHARCOAL)).save(out, id("pyrolytic_carbon"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, MagItems.MAGNETIC_ITEM_FRAME.get())
+                .requires(Items.ITEM_FRAME).requires(plate)
+                .unlockedBy("has_plate", has(plate)).save(out, id("magnetic_item_frame"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.VECTOR_CORE.get())
+                .requires(MagItems.TITANOMAGNETITE_INGOT.get()).requires(Items.COMPASS).requires(Items.REDSTONE)
+                .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("vector_core"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, MagItems.MAGNETORESISTIVE_BOOTS.get())
+                .requires(MagItems.MAGNETITE_BOOTS.get()).requires(Items.SLIME_BALL).requires(Items.SLIME_BALL).requires(Items.REDSTONE)
+                .unlockedBy("has_boots", has(MagItems.MAGNETITE_BOOTS.get())).save(out, id("magnetoresistive_boots"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.DIAMAGNETIC_BLOCK.get())
+                .pattern("cc").pattern("cc").define('c', MagItems.PYROLYTIC_CARBON.get())
+                .unlockedBy("has_carbon", has(MagItems.PYROLYTIC_CARBON.get())).save(out, id("diamagnetic_block"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.EMP_CHARGE.get())
+                .pattern("gcg").pattern("clc").pattern("gcg")
+                .define('g', Items.GUNPOWDER).define('c', Items.COPPER_INGOT).define('l', core)
+                .unlockedBy("has_core", has(core)).save(out, id("emp_charge"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.GYROSTABILIZER.get())
+                .pattern("iri").pattern("rcr").pattern("iri")
+                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('c', core)
+                .unlockedBy("has_core", has(core)).save(out, id("gyrostabilizer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.BARKHAUSEN_GENERATOR.get())
+                .pattern("rir").pattern("ipi").pattern("rir")
+                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', plate)
+                .unlockedBy("has_plate", has(plate)).save(out, id("barkhausen_generator"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.MAGNETOSTRICTIVE_SENSOR.get())
+                .pattern("iri").pattern("rpr").pattern("iri")
+                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', plate)
+                .unlockedBy("has_plate", has(plate)).save(out, id("magnetostrictive_sensor"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.INDUCTION_PAD.get())
+                .pattern("ccc").pattern("cpc").pattern("clc")
+                .define('c', Items.COPPER_INGOT).define('p', plate).define('l', core)
+                .unlockedBy("has_core", has(core)).save(out, id("induction_pad"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.KINETIC_COIL.get())
+                .pattern("ccc").pattern("cic").pattern("ccc")
+                .define('c', Items.COPPER_INGOT).define('i', Items.IRON_INGOT)
+                .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("kinetic_coil"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.KINETIC_ELECTROMAGNET.get())
+                .pattern("PSP").pattern("ECE").pattern("PSP")
+                .define('P', plate).define('S', shaft).define('E', MagItems.ELECTROMAGNET.get()).define('C', core)
+                .unlockedBy("has_core", has(core)).save(out, id("kinetic_electromagnet"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.HOMOPOLAR_MOTOR.get())
+                .pattern(" h ").pattern("cmc").pattern("ccc")
+                .define('h', shaft).define('c', Items.COPPER_INGOT).define('m', MagItems.MAGNETITE_BLOCK.get())
+                .unlockedBy("has_magnetite_block", has(MagItems.MAGNETITE_BLOCK.get())).save(out, id("homopolar_motor"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.G_FORCE_CUSHION.get())
+                .pattern("iii").pattern("sms").pattern("iii")
+                .define('i', Items.IRON_INGOT).define('s', Items.SLIME_BALL).define('m', MagItems.MAGNETITE_BLOCK.get())
+                .unlockedBy("has_magnetite_block", has(MagItems.MAGNETITE_BLOCK.get())).save(out, id("g_force_cushion"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, MagItems.SOLAR_SAIL.get(), 3)
+                .pattern("cwc").pattern("wmw").pattern("cwc")
+                .define('c', Items.COPPER_INGOT).define('w', Items.STRING).define('m', MagItems.MAGNETITE_INGOT.get())
+                .unlockedBy("has_magnetite", has(MagItems.MAGNETITE_INGOT.get())).save(out, id("solar_sail"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, MagItems.ALFVEN_BACKPACK.get())
+                .pattern("s s").pattern("sps").pattern("c c")
+                .define('s', MagItems.SOLAR_SAIL.get()).define('p', Items.PHANTOM_MEMBRANE).define('c', Items.COPPER_INGOT)
+                .unlockedBy("has_sail", has(MagItems.SOLAR_SAIL.get())).save(out, id("alfven_backpack"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, MagItems.MHD_JET.get())
+                .pattern("cic").pattern("tet").pattern("cic")
+                .define('c', Items.COPPER_INGOT).define('i', Items.IRON_INGOT)
+                .define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('e', MagItems.ELECTROMAGNET.get())
+                .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("mhd_jet"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, MagItems.MICRO_THRUSTER.get())
+                .pattern("ctc").pattern("tjt").pattern("ctc")
+                .define('c', Items.COPPER_BLOCK).define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('j', MagItems.MHD_JET.get())
+                .unlockedBy("has_mhd_jet", has(MagItems.MHD_JET.get())).save(out, id("micro_thruster"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.STRUCTURAL_INDUCER.get())
+                .pattern("tmt").pattern("mlm").pattern("tmt")
+                .define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('m', MagItems.MAGNETITE_BLOCK.get()).define('l', Items.LODESTONE)
+                .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("structural_inducer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.TOKAMAK_COIL.get(), 2)
+                .pattern("ccc").pattern("ctc").pattern("ccc")
+                .define('c', Items.COPPER_INGOT).define('t', MagItems.TITANOMAGNETITE_INGOT.get())
+                .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("tokamak_coil"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.TOKAMAK_CONTROLLER.get())
+                .pattern("tct").pattern("cec").pattern("tct")
+                .define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('c', MagItems.TOKAMAK_COIL.get()).define('e', MagItems.ELECTROMAGNET.get())
+                .unlockedBy("has_coil", has(MagItems.TOKAMAK_COIL.get())).save(out, id("tokamak_controller"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.DEUTERIUM_CELL.get())
+                .pattern("rir").pattern("gwg").pattern("rir")
+                .define('r', Items.REDSTONE).define('i', Items.IRON_INGOT).define('g', Items.GLOWSTONE_DUST)
+                .define('w', MagItems.DEUTERIUM_OXIDE_BUCKET.get())
+                .unlockedBy("has_deuterium", has(MagItems.DEUTERIUM_OXIDE_BUCKET.get())).save(out, id("deuterium_cell"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get())
+                .pattern(" b ").pattern("bpb").pattern(" b ")
+                .define('b', MagItems.MR_FLUID_BUCKET.get()).define('p', Items.CARVED_PUMPKIN)
+                .unlockedBy("has_mr_fluid", has(MagItems.MR_FLUID_BUCKET.get())).save(out, id("mr_fluid_golem_spawn_egg"));
+
+        // Magnetic-metal anvils (b = storage block, i = ingot of the same metal).
+        magneticAnvil(out, MagItems.MAGNETITE_ANVIL.get(), MagItems.MAGNETITE_BLOCK.get(), MagItems.MAGNETITE_INGOT.get(), "magnetite_anvil");
+        magneticAnvil(out, MagItems.MAGHEMITE_ANVIL.get(), MagItems.MAGHEMITE_BLOCK.get(), MagItems.MAGHEMITE_INGOT.get(), "maghemite_anvil");
+        magneticAnvil(out, MagItems.HEMATITE_ANVIL.get(), MagItems.HEMATITE_BLOCK.get(), MagItems.HEMATITE_INGOT.get(), "hematite_anvil");
+        magneticAnvil(out, MagItems.TITANOMAGNETITE_ANVIL.get(), MagItems.TITANOMAGNETITE_BLOCK.get(), MagItems.TITANOMAGNETITE_INGOT.get(), "titanomagnetite_anvil");
+
+        // Lodestone from a ring of chiseled stone bricks + a magnetite ingot.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.LODESTONE)
+                .pattern("SSS").pattern("SMS").pattern("SSS")
+                .define('S', Items.CHISELED_STONE_BRICKS).define('M', Ingredient.of(C_INGOTS_MAGNETITE))
+                .unlockedBy("has_magnetite", has(C_INGOTS_MAGNETITE)).save(out, id("lodestone_from_magnetite"));
+    }
+
+    /** Cross-namespace ingredient by item id — resolved at datagen time (hard deps are loaded). */
+    private static Ingredient ingr(final String id) {
+        return Ingredient.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)));
+    }
+
+    /** Vanilla-anvil-shaped recipe: bbb / _i_ / iii (b = storage block, i = ingot). */
+    private static void magneticAnvil(final RecipeOutput out, final ItemLike anvil,
+                                      final ItemLike block, final ItemLike ingot, final String id) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, anvil)
+                .pattern("bbb").pattern(" i ").pattern("iii")
+                .define('b', block).define('i', ingot)
+                .unlockedBy("has_block", has(block))
+                .save(out, id(id));
     }
 
     /** Shapeless "base item + fluid bucket -> fluid-coated variant" (MR tools/armor). */

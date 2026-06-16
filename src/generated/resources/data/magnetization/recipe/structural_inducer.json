@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "l": {
+      "item": "minecraft:lodestone"
+    },
+    "m": {
+      "item": "magnetization:magnetite_block"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "tmt",
+    "mlm",
+    "tmt"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:structural_inducer"
+  }
+}

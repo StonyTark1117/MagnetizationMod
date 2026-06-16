@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:item_frame"
+    },
+    {
+      "item": "magnetization:magnetic_plate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:magnetic_item_frame"
+  }
+}

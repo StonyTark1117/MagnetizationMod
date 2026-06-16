@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "p": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "rir",
+    "ipi",
+    "rir"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:barkhausen_generator"
+  }
+}

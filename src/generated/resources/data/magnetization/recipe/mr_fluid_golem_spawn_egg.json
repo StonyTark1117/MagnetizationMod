@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "magnetization:mr_fluid_bucket"
+    },
+    "p": {
+      "item": "minecraft:carved_pumpkin"
+    }
+  },
+  "pattern": [
+    " b ",
+    "bpb",
+    " b "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:mr_fluid_golem_spawn_egg"
+  }
+}

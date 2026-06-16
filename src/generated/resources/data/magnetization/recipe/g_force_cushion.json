@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "m": {
+      "item": "magnetization:magnetite_block"
+    },
+    "s": {
+      "item": "minecraft:slime_ball"
+    }
+  },
+  "pattern": [
+    "iii",
+    "sms",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:g_force_cushion"
+  }
+}

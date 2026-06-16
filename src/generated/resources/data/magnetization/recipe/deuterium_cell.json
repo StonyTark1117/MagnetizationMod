@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "w": {
+      "item": "magnetization:deuterium_oxide_bucket"
+    }
+  },
+  "pattern": [
+    "rir",
+    "gwg",
+    "rir"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:deuterium_cell"
+  }
+}

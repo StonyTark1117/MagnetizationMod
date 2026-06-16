@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "magnetization:tokamak_coil"
+    },
+    "e": {
+      "item": "magnetization:electromagnet"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "tct",
+    "cec",
+    "tct"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:tokamak_controller"
+  }
+}

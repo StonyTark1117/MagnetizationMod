@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_block"
+    },
+    "j": {
+      "item": "magnetization:mhd_jet"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "ctc",
+    "tjt",
+    "ctc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:micro_thruster"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "magnetization:maghemite_block"
+    },
+    "i": {
+      "item": "magnetization:maghemite_ingot"
+    }
+  },
+  "pattern": [
+    "bbb",
+    " i ",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:maghemite_anvil"
+  }
+}

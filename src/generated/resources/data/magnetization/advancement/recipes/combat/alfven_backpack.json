@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sail": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:solar_sail"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:alfven_backpack"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sail"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:alfven_backpack"
+    ]
+  }
+}

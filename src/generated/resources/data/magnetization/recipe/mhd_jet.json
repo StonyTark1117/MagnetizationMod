@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "e": {
+      "item": "magnetization:electromagnet"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "cic",
+    "tet",
+    "cic"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:mhd_jet"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "magnetization:raw_magnetite"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:mr_fluid_bucket"
+  }
+}

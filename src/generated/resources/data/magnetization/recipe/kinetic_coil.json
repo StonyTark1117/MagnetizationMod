@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "cic",
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:kinetic_coil"
+  }
+}

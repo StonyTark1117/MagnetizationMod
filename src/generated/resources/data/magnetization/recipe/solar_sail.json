@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "m": {
+      "item": "magnetization:magnetite_ingot"
+    },
+    "w": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "cwc",
+    "wmw",
+    "cwc"
+  ],
+  "result": {
+    "count": 3,
+    "id": "magnetization:solar_sail"
+  }
+}

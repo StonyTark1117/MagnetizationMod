@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mhd_jet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:mhd_jet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:micro_thruster"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mhd_jet"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:micro_thruster"
+    ]
+  }
+}
