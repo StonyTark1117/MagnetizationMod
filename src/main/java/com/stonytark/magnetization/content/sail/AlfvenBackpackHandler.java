@@ -42,8 +42,8 @@ public final class AlfvenBackpackHandler {
         Vec3 dm = player.getDeltaMovement();
 
         // Forward thrust toward the look direction, up to an altitude-scaled cap.
-        if (dm.dot(look) < BASE_MAX_SPEED * altFactor) {
-            dm = dm.add(look.scale(BASE_ACCEL * altFactor));
+        if (dm.dot(look) < com.stonytark.magnetization.config.MagConfig.alfvenMaxSpeed() * altFactor) {
+            dm = dm.add(look.scale(com.stonytark.magnetization.config.MagConfig.alfvenAccel() * altFactor));
         }
         // Lift assist: ease the vertical velocity up to a floor so the sail keeps
         // you airborne in daylight — gentle level glide low down, a real climb up high.

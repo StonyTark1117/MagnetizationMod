@@ -42,7 +42,7 @@ public class MhdJetBlockEntity extends BlockEntity
     private static final int CAPACITY = 400_000;
     private static final int MAX_RECEIVE = 8_000;
 
-    private final ReceiveBuffer energy = new ReceiveBuffer(CAPACITY, MAX_RECEIVE);
+    private final ReceiveBuffer energy = new ReceiveBuffer(com.stonytark.magnetization.config.MagConfig.mhdJetFeCapacity(), com.stonytark.magnetization.config.MagConfig.mhdJetFeReceive());
     private final net.minecraft.world.SimpleContainer magnetSlot = new net.minecraft.world.SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final ItemStack st) { return isMagnet(st); }
         @Override public int getMaxStackSize() { return 1; }
@@ -69,7 +69,7 @@ public class MhdJetBlockEntity extends BlockEntity
         return com.stonytark.magnetization.menu.MachineMenu.Kind.JET;
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
-    @Override public int guiEnergyMax() { return CAPACITY; }
+    @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.mhdJetFeCapacity(); }
 
     /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnetic material —
      *  STRONG by design, and scaling with the material's potency. A stronger
@@ -80,9 +80,9 @@ public class MhdJetBlockEntity extends BlockEntity
         if (potency <= 0) return null;
         // Strong jet engine: punchy acceleration + a high cruising ceiling, both
         // scaling with magnet potency. (blocks/tick; ×20 = blocks/second.)
-        final double maxSpeed = 4.0 + potency * 0.30;   // ~4.3 .. ~12.7 b/t  (86..254 b/s)
-        final double dv = 0.4 + potency * 0.06;         // ~0.46 .. ~2.1 b/t per tick
-        final double feCost = 8 + potency * 8;          // bigger magnet → more FE/tick
+        final double maxSpeed = com.stonytark.magnetization.config.MagConfig.mhdJetMaxSpeedBase() + potency * com.stonytark.magnetization.config.MagConfig.mhdJetMaxSpeedPerPotency();   // ~4.3 .. ~12.7 b/t  (86..254 b/s)
+        final double dv = com.stonytark.magnetization.config.MagConfig.mhdJetThrustBase() + potency * com.stonytark.magnetization.config.MagConfig.mhdJetThrustPerPotency();         // ~0.46 .. ~2.1 b/t per tick
+        final double feCost = com.stonytark.magnetization.config.MagConfig.mhdJetFeCostBase() + potency * com.stonytark.magnetization.config.MagConfig.mhdJetFeCostPerPotency();          // bigger magnet → more FE/tick
         return new double[]{maxSpeed, dv, feCost};
     }
 

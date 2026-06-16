@@ -56,7 +56,7 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
         if (handle == null || !handle.isValid()) return;
         // Bigger sail → higher cruising-speed ceiling (more total panels).
         final int panels = SailPanelCounter.count(server, host);
-        final double maxSpeed = Math.min(SAIL_SPEED_CAP, SAIL_SPEED_BASE + SAIL_SPEED_PER_PANEL * panels);
+        final double maxSpeed = Math.min(com.stonytark.magnetization.config.MagConfig.solarSailSpeedCap(), com.stonytark.magnetization.config.MagConfig.solarSailSpeedBase() + com.stonytark.magnetization.config.MagConfig.solarSailSpeedPerPanel() * panels);
         final Vector3dc v = handle.getLinearVelocity();
         if (Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z()) >= maxSpeed) return;
 
@@ -66,7 +66,7 @@ public class SolarSailBlockEntity extends BlockEntity implements BlockEntitySubL
         // points, which is opposite the FACING normal (FACING points into the
         // surface the panel was placed against). FACING is in the ship-local frame.
         final Vec3i n = facing.getNormal();
-        final double f = BASE_FORCE * dayFactor * altFactor;
+        final double f = com.stonytark.magnetization.config.MagConfig.solarSailForce() * dayFactor * altFactor;
         final Vector3dc com = host.getMassTracker().getCenterOfMass();
         SableBridge.applyLocalImpulse(host,
                 new Vector3d(com.x(), com.y(), com.z()),

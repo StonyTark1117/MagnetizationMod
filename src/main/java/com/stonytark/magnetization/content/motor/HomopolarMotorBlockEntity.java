@@ -87,14 +87,14 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
      *  ladder runs ~6 RPM (hematite ore) up to ~58 RPM (titanomagnetite block). */
     public static float speedFor(final ItemStack stack) {
         final int potency = com.stonytark.magnetization.content.MagneticMaterials.potency(stack);
-        return potency <= 0 ? 0f : potency * 2f;
+        return potency <= 0 ? 0f : potency * com.stonytark.magnetization.config.MagConfig.motorRpmPerPotency();
     }
 
     /** Stress capacity (su) this material provides — scales with potency so a
      *  stronger magnet can drive a bigger Create network. */
     public static float capacityFor(final ItemStack stack) {
         final int potency = com.stonytark.magnetization.content.MagneticMaterials.potency(stack);
-        return potency <= 0 ? 0f : potency * 8f;
+        return potency <= 0 ? 0f : potency * com.stonytark.magnetization.config.MagConfig.motorStressPerPotency();
     }
 
     public static boolean isMagnet(final ItemStack stack) {

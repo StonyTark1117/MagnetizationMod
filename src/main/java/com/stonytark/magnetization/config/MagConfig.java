@@ -115,6 +115,34 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue ANVIL_BREAK_TITANOMAGNETITE;
     public static final ModConfigSpec.DoubleValue ANVIL_BREAK_DEFAULT;
 
+    // ── propulsion: thrusters / sail / backpack / repulsor-track / motor ──
+    public static final ModConfigSpec.IntValue    MICRO_THRUSTER_TANK;
+    public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_RECEIVE;
+    public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_PER_TICK;
+    public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FLUID_PER_TICK;
+    public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_THRUST;
+    public static final ModConfigSpec.IntValue    MHD_JET_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    MHD_JET_FE_RECEIVE;
+    public static final ModConfigSpec.DoubleValue MHD_JET_MAX_SPEED_BASE;
+    public static final ModConfigSpec.DoubleValue MHD_JET_MAX_SPEED_PER_POTENCY;
+    public static final ModConfigSpec.DoubleValue MHD_JET_THRUST_BASE;
+    public static final ModConfigSpec.DoubleValue MHD_JET_THRUST_PER_POTENCY;
+    public static final ModConfigSpec.DoubleValue MHD_JET_FE_COST_BASE;
+    public static final ModConfigSpec.DoubleValue MHD_JET_FE_COST_PER_POTENCY;
+    public static final ModConfigSpec.DoubleValue SOLAR_SAIL_FORCE;
+    public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_BASE;
+    public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_PER_PANEL;
+    public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_CAP;
+    public static final ModConfigSpec.DoubleValue ALFVEN_ACCEL;
+    public static final ModConfigSpec.DoubleValue ALFVEN_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_RANGE;
+    public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_THRUST;
+    public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue MOTOR_RPM_PER_POTENCY;
+    public static final ModConfigSpec.DoubleValue MOTOR_STRESS_PER_POTENCY;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -726,6 +754,67 @@ public final class MagConfig {
 
         b.pop();
 
+        b.comment("Propulsion machine tuning: micro-thruster, MHD jet, solar sail, Alfvén",
+                  "backpack, repulsor track, and homopolar motor. FE buffer sizes apply to",
+                  "newly-placed machines. Defaults match the previous values.")
+         .translation("magnetization.configuration.propulsion")
+         .push("propulsion");
+
+        MICRO_THRUSTER_TANK = b.translation("magnetization.configuration.propulsion.microThrusterTank")
+                .defineInRange("microThrusterTank", 8000, 1, 1_000_000);
+        MICRO_THRUSTER_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.microThrusterFeCapacity")
+                .defineInRange("microThrusterFeCapacity", 400_000, 0, 1_000_000_000);
+        MICRO_THRUSTER_FE_RECEIVE = b.translation("magnetization.configuration.propulsion.microThrusterFeReceive")
+                .defineInRange("microThrusterFeReceive", 16_000, 0, 1_000_000_000);
+        MICRO_THRUSTER_FE_PER_TICK = b.translation("magnetization.configuration.propulsion.microThrusterFePerTick")
+                .defineInRange("microThrusterFePerTick", 48, 0, 1_000_000);
+        MICRO_THRUSTER_FLUID_PER_TICK = b.translation("magnetization.configuration.propulsion.microThrusterFluidPerTick")
+                .defineInRange("microThrusterFluidPerTick", 2, 0, 10_000);
+        MICRO_THRUSTER_MAX_SPEED = b.translation("magnetization.configuration.propulsion.microThrusterMaxSpeed")
+                .defineInRange("microThrusterMaxSpeed", 14.0d, 0.0d, 100.0d);
+        MICRO_THRUSTER_THRUST = b.translation("magnetization.configuration.propulsion.microThrusterThrust")
+                .defineInRange("microThrusterThrust", 2.5d, 0.0d, 100.0d);
+        MHD_JET_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.mhdJetFeCapacity")
+                .defineInRange("mhdJetFeCapacity", 400_000, 0, 1_000_000_000);
+        MHD_JET_FE_RECEIVE = b.translation("magnetization.configuration.propulsion.mhdJetFeReceive")
+                .defineInRange("mhdJetFeReceive", 8_000, 0, 1_000_000_000);
+        MHD_JET_MAX_SPEED_BASE = b.translation("magnetization.configuration.propulsion.mhdJetMaxSpeedBase")
+                .defineInRange("mhdJetMaxSpeedBase", 4.0d, 0.0d, 100.0d);
+        MHD_JET_MAX_SPEED_PER_POTENCY = b.translation("magnetization.configuration.propulsion.mhdJetMaxSpeedPerPotency")
+                .defineInRange("mhdJetMaxSpeedPerPotency", 0.30d, 0.0d, 100.0d);
+        MHD_JET_THRUST_BASE = b.translation("magnetization.configuration.propulsion.mhdJetThrustBase")
+                .defineInRange("mhdJetThrustBase", 0.4d, 0.0d, 100.0d);
+        MHD_JET_THRUST_PER_POTENCY = b.translation("magnetization.configuration.propulsion.mhdJetThrustPerPotency")
+                .defineInRange("mhdJetThrustPerPotency", 0.06d, 0.0d, 100.0d);
+        MHD_JET_FE_COST_BASE = b.translation("magnetization.configuration.propulsion.mhdJetFeCostBase")
+                .defineInRange("mhdJetFeCostBase", 8.0d, 0.0d, 1_000_000.0d);
+        MHD_JET_FE_COST_PER_POTENCY = b.translation("magnetization.configuration.propulsion.mhdJetFeCostPerPotency")
+                .defineInRange("mhdJetFeCostPerPotency", 8.0d, 0.0d, 1_000_000.0d);
+        SOLAR_SAIL_FORCE = b.translation("magnetization.configuration.propulsion.solarSailForce")
+                .defineInRange("solarSailForce", 60.0d, 0.0d, 100_000.0d);
+        SOLAR_SAIL_SPEED_BASE = b.translation("magnetization.configuration.propulsion.solarSailSpeedBase")
+                .defineInRange("solarSailSpeedBase", 0.7d, 0.0d, 100.0d);
+        SOLAR_SAIL_SPEED_PER_PANEL = b.translation("magnetization.configuration.propulsion.solarSailSpeedPerPanel")
+                .defineInRange("solarSailSpeedPerPanel", 0.05d, 0.0d, 100.0d);
+        SOLAR_SAIL_SPEED_CAP = b.translation("magnetization.configuration.propulsion.solarSailSpeedCap")
+                .defineInRange("solarSailSpeedCap", 4.0d, 0.0d, 100.0d);
+        ALFVEN_ACCEL = b.translation("magnetization.configuration.propulsion.alfvenAccel")
+                .defineInRange("alfvenAccel", 0.08d, 0.0d, 100.0d);
+        ALFVEN_MAX_SPEED = b.translation("magnetization.configuration.propulsion.alfvenMaxSpeed")
+                .defineInRange("alfvenMaxSpeed", 1.4d, 0.0d, 100.0d);
+        REPULSOR_TRACK_RANGE = b.translation("magnetization.configuration.propulsion.repulsorTrackRange")
+                .defineInRange("repulsorTrackRange", 6.0d, 0.0d, 64.0d);
+        REPULSOR_TRACK_THRUST = b.translation("magnetization.configuration.propulsion.repulsorTrackThrust")
+                .defineInRange("repulsorTrackThrust", 0.045d, 0.0d, 100.0d);
+        REPULSOR_TRACK_MAX_SPEED = b.translation("magnetization.configuration.propulsion.repulsorTrackMaxSpeed")
+                .defineInRange("repulsorTrackMaxSpeed", 1.1d, 0.0d, 100.0d);
+        MOTOR_RPM_PER_POTENCY = b.translation("magnetization.configuration.propulsion.motorRpmPerPotency")
+                .defineInRange("motorRpmPerPotency", 2.0d, 0.0d, 1000.0d);
+        MOTOR_STRESS_PER_POTENCY = b.translation("magnetization.configuration.propulsion.motorStressPerPotency")
+                .defineInRange("motorStressPerPotency", 8.0d, 0.0d, 10000.0d);
+
+        b.pop();
+
         sb.comment("Per-emitter GUI ceilings. The in-game config menu can't dial above these",
                   "values, so server owners can prevent griefer-tier loadouts.")
          .translation("magnetization.configuration.guiLimits")
@@ -1322,6 +1411,32 @@ public final class MagConfig {
     public static float  anvilBreakHematite()        { return (float) doubleOr(ANVIL_BREAK_HEMATITE, 0.15d); }
     public static float  anvilBreakTitanomagnetite() { return (float) doubleOr(ANVIL_BREAK_TITANOMAGNETITE, 0.0d); }
     public static float  anvilBreakDefault()         { return (float) doubleOr(ANVIL_BREAK_DEFAULT, 0.12d); }
+    public static int    microThrusterTank()        { return intOr(MICRO_THRUSTER_TANK, 8000); }
+    public static int    microThrusterFeCapacity()  { return intOr(MICRO_THRUSTER_FE_CAPACITY, 400_000); }
+    public static int    microThrusterFeReceive()   { return intOr(MICRO_THRUSTER_FE_RECEIVE, 16_000); }
+    public static int    microThrusterFePerTick()   { return intOr(MICRO_THRUSTER_FE_PER_TICK, 48); }
+    public static int    microThrusterFluidPerTick(){ return intOr(MICRO_THRUSTER_FLUID_PER_TICK, 2); }
+    public static double microThrusterMaxSpeed()    { return doubleOr(MICRO_THRUSTER_MAX_SPEED, 14.0d); }
+    public static double microThrusterThrust()      { return doubleOr(MICRO_THRUSTER_THRUST, 2.5d); }
+    public static int    mhdJetFeCapacity()         { return intOr(MHD_JET_FE_CAPACITY, 400_000); }
+    public static int    mhdJetFeReceive()          { return intOr(MHD_JET_FE_RECEIVE, 8_000); }
+    public static double mhdJetMaxSpeedBase()       { return doubleOr(MHD_JET_MAX_SPEED_BASE, 4.0d); }
+    public static double mhdJetMaxSpeedPerPotency() { return doubleOr(MHD_JET_MAX_SPEED_PER_POTENCY, 0.30d); }
+    public static double mhdJetThrustBase()         { return doubleOr(MHD_JET_THRUST_BASE, 0.4d); }
+    public static double mhdJetThrustPerPotency()   { return doubleOr(MHD_JET_THRUST_PER_POTENCY, 0.06d); }
+    public static double mhdJetFeCostBase()         { return doubleOr(MHD_JET_FE_COST_BASE, 8.0d); }
+    public static double mhdJetFeCostPerPotency()   { return doubleOr(MHD_JET_FE_COST_PER_POTENCY, 8.0d); }
+    public static double solarSailForce()           { return doubleOr(SOLAR_SAIL_FORCE, 60.0d); }
+    public static double solarSailSpeedBase()       { return doubleOr(SOLAR_SAIL_SPEED_BASE, 0.7d); }
+    public static double solarSailSpeedPerPanel()   { return doubleOr(SOLAR_SAIL_SPEED_PER_PANEL, 0.05d); }
+    public static double solarSailSpeedCap()        { return doubleOr(SOLAR_SAIL_SPEED_CAP, 4.0d); }
+    public static double alfvenAccel()              { return doubleOr(ALFVEN_ACCEL, 0.08d); }
+    public static double alfvenMaxSpeed()           { return doubleOr(ALFVEN_MAX_SPEED, 1.4d); }
+    public static double repulsorTrackRange()       { return doubleOr(REPULSOR_TRACK_RANGE, 6.0d); }
+    public static double repulsorTrackThrust()      { return doubleOr(REPULSOR_TRACK_THRUST, 0.045d); }
+    public static double repulsorTrackMaxSpeed()    { return doubleOr(REPULSOR_TRACK_MAX_SPEED, 1.1d); }
+    public static float  motorRpmPerPotency()       { return (float) doubleOr(MOTOR_RPM_PER_POTENCY, 2.0d); }
+    public static float  motorStressPerPotency()    { return (float) doubleOr(MOTOR_STRESS_PER_POTENCY, 8.0d); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }

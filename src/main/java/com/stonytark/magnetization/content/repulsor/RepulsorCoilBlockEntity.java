@@ -67,7 +67,7 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
                 ? state.getValue(DirectionalBlock.FACING) : Direction.UP;
         final Vec3 dir = Vec3.atLowerCornerOf(facing.getNormal());
         final double cx = pos.getX() + 0.5, cy = pos.getY() + 0.5, cz = pos.getZ() + 0.5;
-        final double rangeSqr = THRUST_RANGE * THRUST_RANGE;
+        final double range = com.stonytark.magnetization.config.MagConfig.repulsorTrackRange(); final double rangeSqr = range * range;
 
         for (final SubLevel sub : container.getAllSubLevels()) {
             if (!(sub instanceof ServerSubLevel ship)) continue;
@@ -80,9 +80,9 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
             if (handle == null || !handle.isValid()) continue;
             final Vector3dc v = handle.getLinearVelocity();
             final double along = v.x() * dir.x + v.y() * dir.y + v.z() * dir.z;
-            if (along >= MAX_TRACK_SPEED) continue; // already at track speed
+            if (along >= com.stonytark.magnetization.config.MagConfig.repulsorTrackMaxSpeed()) continue; // already at track speed
             handle.addLinearAndAngularVelocity(
-                    new Vector3d(dir.x * THRUST_DV, dir.y * THRUST_DV, dir.z * THRUST_DV),
+                    new Vector3d(dir.x * com.stonytark.magnetization.config.MagConfig.repulsorTrackThrust(), dir.y * com.stonytark.magnetization.config.MagConfig.repulsorTrackThrust(), dir.z * com.stonytark.magnetization.config.MagConfig.repulsorTrackThrust()),
                     new Vector3d(0, 0, 0));
         }
     }

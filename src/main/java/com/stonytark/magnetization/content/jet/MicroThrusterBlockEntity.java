@@ -50,9 +50,9 @@ public class MicroThrusterBlockEntity extends BlockEntity
     private static final double MAX_SPEED = 14.0;         // 280 b/s cruising ceiling
     private static final double THRUST_DV = 2.5;          // 50 b/s^2 acceleration
 
-    private final FluidTank tank = new FluidTank(TANK_CAPACITY,
+    private final FluidTank tank = new FluidTank(com.stonytark.magnetization.config.MagConfig.microThrusterTank(),
             fs -> fs.getFluid() == MagFluids.FERROFLUID.get());
-    private final ReceiveBuffer energy = new ReceiveBuffer(FE_CAPACITY, FE_MAX_RECEIVE);
+    private final ReceiveBuffer energy = new ReceiveBuffer(com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(), com.stonytark.magnetization.config.MagConfig.microThrusterFeReceive());
     /** Bucket-input slot — ferrofluid buckets are auto-drained into the tank. */
     private final net.minecraft.world.SimpleContainer bucketSlot = new net.minecraft.world.SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final net.minecraft.world.item.ItemStack st) {
@@ -75,7 +75,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
         return com.stonytark.magnetization.menu.MachineMenu.Kind.THRUSTER;
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
-    @Override public int guiEnergyMax() { return FE_CAPACITY; }
+    @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(); }
     @Override public int guiStat1() { return tank.getFluidAmount(); }
 
     /** Try to pour one ferrofluid bucket (1000 mB) into the tank. */
@@ -108,11 +108,11 @@ public class MicroThrusterBlockEntity extends BlockEntity
             bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
         }
         final boolean firing = host != null
-                && tank.getFluidAmount() >= FLUID_PER_TICK
-                && energy.getEnergyStored() >= FE_PER_TICK;
+                && tank.getFluidAmount() >= com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick()
+                && energy.getEnergyStored() >= com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick();
         if (firing) {
-            tank.drain(FLUID_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
-            energy.drainInternal(FE_PER_TICK);
+            tank.drain(com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick(), IFluidHandler.FluidAction.EXECUTE);
+            energy.drainInternal(com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick());
             thrustHost(host);
             setChanged();
         }
@@ -141,10 +141,10 @@ public class MicroThrusterBlockEntity extends BlockEntity
         final Pose3dc pose = host.logicalPose();
         final Vec3 dirWorld = pose.transformNormal(new Vec3(dirLocal.x, dirLocal.y, dirLocal.z)).normalize();
         final Vector3dc v = handle.getLinearVelocity();
-        if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= MAX_SPEED) return;
+        if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= com.stonytark.magnetization.config.MagConfig.microThrusterMaxSpeed()) return;
 
         final double mass = host.getMassTracker().getMass();
-        final double force = THRUST_DV * 20.0 * mass;
+        final double force = com.stonytark.magnetization.config.MagConfig.microThrusterThrust() * 20.0 * mass;
         final Vector3dc com = host.getMassTracker().getCenterOfMass();
         SableBridge.applyLocalImpulse(host,
                 new Vector3d(com.x(), com.y(), com.z()),
