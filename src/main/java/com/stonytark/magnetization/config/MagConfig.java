@@ -76,6 +76,15 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue WEAPON_YANK_SAME;
     public static final ModConfigSpec.IntValue    MAGNETIZED_EFFECT_DURATION_TICKS;
 
+    // ── mechanics: gallium current + freeze/melt, Lenz braking ──
+    public static final ModConfigSpec.DoubleValue GALLIUM_CURRENT_SPEED;
+    public static final ModConfigSpec.IntValue    GALLIUM_FREEZE_DELAY;
+    public static final ModConfigSpec.IntValue    GALLIUM_MELT_DELAY;
+    public static final ModConfigSpec.DoubleValue LENZ_BASE_DRAG;
+    public static final ModConfigSpec.DoubleValue LENZ_MAX_DRAG;
+    public static final ModConfigSpec.DoubleValue LENZ_MIN_SPEED;
+    public static final ModConfigSpec.IntValue    LENZ_CONDUCTOR_CAP;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -528,6 +537,43 @@ public final class MagConfig {
                 .comment("Duration (ticks) of the Magnetized status effect applied by a magnetic weapon hit.")
                 .translation("magnetization.configuration.combat.magnetizedEffectDurationTicks")
                 .defineInRange("magnetizedEffectDurationTicks", 60, 1, 12000);
+
+        b.pop();
+
+        b.comment("Misc mechanic tuning: the gallium Lorentz current, gallium freeze/melt timing,",
+                  "and eddy-current (Lenz) ship braking. Defaults match the previous values.")
+         .translation("magnetization.configuration.mechanics")
+         .push("mechanics");
+
+        GALLIUM_CURRENT_SPEED = b
+                .comment("Peak per-application velocity nudge the gallium Lorentz current gives entities,",
+                         "at full redstone signal.")
+                .translation("magnetization.configuration.mechanics.galliumCurrentSpeed")
+                .defineInRange("galliumCurrentSpeed", 0.09d, 0.0d, 5.0d);
+        GALLIUM_FREEZE_DELAY = b
+                .comment("Ticks for liquid gallium to freeze once a cooling source is adjacent.")
+                .translation("magnetization.configuration.mechanics.galliumFreezeDelayTicks")
+                .defineInRange("galliumFreezeDelayTicks", 40, 1, 24000);
+        GALLIUM_MELT_DELAY = b
+                .comment("Ticks for solid gallium to melt back once no cooling source is adjacent.")
+                .translation("magnetization.configuration.mechanics.galliumMeltDelayTicks")
+                .defineInRange("galliumMeltDelayTicks", 120, 1, 24000);
+        LENZ_BASE_DRAG = b
+                .comment("Fraction of a braking ship's velocity removed per application (before scaling).")
+                .translation("magnetization.configuration.mechanics.lenzBaseDrag")
+                .defineInRange("lenzBaseDrag", 0.13d, 0.0d, 1.0d);
+        LENZ_MAX_DRAG = b
+                .comment("Hard cap on per-application velocity loss, so braking never reverses a ship.")
+                .translation("magnetization.configuration.mechanics.lenzMaxDrag")
+                .defineInRange("lenzMaxDrag", 0.55d, 0.0d, 1.0d);
+        LENZ_MIN_SPEED = b
+                .comment("Below this speed (blocks/tick) Lenz braking doesn't bother applying.")
+                .translation("magnetization.configuration.mechanics.lenzMinSpeed")
+                .defineInRange("lenzMinSpeed", 0.04d, 0.0d, 5.0d);
+        LENZ_CONDUCTOR_CAP = b
+                .comment("Conductor blocks past which Lenz braking sees diminishing returns.")
+                .translation("magnetization.configuration.mechanics.lenzConductorCap")
+                .defineInRange("lenzConductorCap", 8, 1, 4096);
 
         b.pop();
 
@@ -1094,6 +1140,13 @@ public final class MagConfig {
     public static double weaponYankOpposite()       { return doubleOr(WEAPON_YANK_OPPOSITE, 0.55d); }
     public static double weaponYankSame()           { return doubleOr(WEAPON_YANK_SAME, 0.30d); }
     public static int    magnetizedEffectDurationTicks() { return intOr(MAGNETIZED_EFFECT_DURATION_TICKS, 60); }
+    public static double galliumCurrentSpeed()      { return doubleOr(GALLIUM_CURRENT_SPEED, 0.09d); }
+    public static int    galliumFreezeDelayTicks()  { return intOr(GALLIUM_FREEZE_DELAY, 40); }
+    public static int    galliumMeltDelayTicks()    { return intOr(GALLIUM_MELT_DELAY, 120); }
+    public static double lenzBaseDrag()             { return doubleOr(LENZ_BASE_DRAG, 0.13d); }
+    public static double lenzMaxDrag()              { return doubleOr(LENZ_MAX_DRAG, 0.55d); }
+    public static double lenzMinSpeed()             { return doubleOr(LENZ_MIN_SPEED, 0.04d); }
+    public static int    lenzConductorCap()         { return Math.max(1, intOr(LENZ_CONDUCTOR_CAP, 8)); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }

@@ -15,11 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public final class Gallium {
 
-    /** Ticks for liquid gallium to freeze once a cooling source is adjacent. */
-    public static final int FREEZE_DELAY = 40;
-    /** Ticks for solid gallium to melt once no cooling source is adjacent. */
-    public static final int MELT_DELAY = 120;
-
     private Gallium() {}
 
     /** A block cold enough to keep gallium solid. */

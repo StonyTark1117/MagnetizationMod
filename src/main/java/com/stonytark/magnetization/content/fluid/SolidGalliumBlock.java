@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Solid gallium — the frozen form of liquid {@link GalliumBlock}. Gallium melts
  * just above room temperature, so this block only holds its shape while a cooling
  * source (ice/snow/powder snow) sits next to it; remove the cooling and it melts
- * back into a gallium fluid source after {@link Gallium#MELT_DELAY} ticks. It also
+ * back into a gallium fluid source after a configurable melt delay. It also
  * doubles as the gallium storage block / crafting material for gallium gear.
  */
 public final class SolidGalliumBlock extends Block {
@@ -38,7 +38,7 @@ public final class SolidGalliumBlock extends Block {
     private void scheduleMeltCheck(final Level level, final BlockPos pos) {
         if (!level.isClientSide && !Gallium.coolingAdjacent(level, pos)
                 && !level.getBlockTicks().hasScheduledTick(pos, this)) {
-            level.scheduleTick(pos, this, Gallium.MELT_DELAY);
+            level.scheduleTick(pos, this, com.stonytark.magnetization.config.MagConfig.galliumMeltDelayTicks());
         }
     }
 

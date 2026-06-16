@@ -28,8 +28,6 @@ import java.util.List;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class GalliumLorentzHandler {
 
-    /** Peak per-tick velocity nudge, at full signal strength. */
-    private static final double SPEED = 0.09;
     private GalliumLorentzHandler() {}
 
     @SubscribeEvent
@@ -55,7 +53,7 @@ public final class GalliumLorentzHandler {
             final Vec3 flat = new Vec3(radial.x, 0.0, radial.z);
             if (flat.lengthSqr() < 1.0e-4) continue; // directly above/below the source
             final Vec3 dir = flat.normalize().scale(field.polarity().sign());
-            final double mag = SPEED * (power / 15.0);
+            final double mag = com.stonytark.magnetization.config.MagConfig.galliumCurrentSpeed() * (power / 15.0);
 
             final AABB box = new AABB(pos);
             final List<Entity> entities = level.getEntities((Entity) null, box, e -> true);

@@ -68,7 +68,7 @@ public final class GalliumBlock extends LiquidBlock implements FluidRedstone.Con
 
     private void scheduleFreezeCheck(final Level level, final BlockPos pos) {
         if (Gallium.coolingAdjacent(level, pos) && !level.getBlockTicks().hasScheduledTick(pos, this)) {
-            level.scheduleTick(pos, this, Gallium.FREEZE_DELAY);
+            level.scheduleTick(pos, this, com.stonytark.magnetization.config.MagConfig.galliumFreezeDelayTicks());
         }
     }
 

@@ -28,10 +28,6 @@ import org.joml.Vector3dc;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class LenzBrakingHandler {
 
-    private static final double MIN_SPEED = 0.04;     // blocks/tick below which we don't bother
-    private static final double BASE_DRAG = 0.13;     // fraction of velocity removed per application
-    private static final double MAX_DRAG = 0.55;      // never reverse the ship
-    private static final int CONDUCTOR_CAP = 8;       // diminishing returns past this many
     private static final int SAMPLE_CAP = 160;        // hard cap on blocks examined per ship
 
     private LenzBrakingHandler() {}
@@ -55,13 +51,14 @@ public final class LenzBrakingHandler {
             if (handle == null || !handle.isValid()) continue;
             final Vector3dc vel = handle.getLinearVelocity();
             final double speed = Math.sqrt(vel.x() * vel.x() + vel.y() * vel.y() + vel.z() * vel.z());
-            if (speed < MIN_SPEED) continue;
+            if (speed < MagConfig.lenzMinSpeed()) continue;
 
             final int conductors = countOverlappingConductors(server, ship.boundingBox());
             if (conductors <= 0) continue;
 
-            final double factor = (double) Math.min(conductors, CONDUCTOR_CAP) / CONDUCTOR_CAP;
-            final double drag = Math.min(MAX_DRAG, BASE_DRAG * factor * strength);
+            final int conductorCap = MagConfig.lenzConductorCap();
+            final double factor = (double) Math.min(conductors, conductorCap) / conductorCap;
+            final double drag = Math.min(MagConfig.lenzMaxDrag(), MagConfig.lenzBaseDrag() * factor * strength);
             // Subtract a fraction of the current velocity — opposes motion in every axis,
             // so a descending ship floats down slowly and a sliding one coasts to rest.
             handle.addLinearAndAngularVelocity(
