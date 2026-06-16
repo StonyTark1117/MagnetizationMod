@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.api.EquippedArmor;
@@ -32,11 +33,17 @@ import java.util.List;
 public final class MagneticToolPullHandler {
 
     /** Pull radius (blocks) per magnetized tool the player carries. */
-    private static final double RADIUS_PER_TOOL = 4.0d;
+    private static double radiusPerTool() {
+        try { return MagConfig.TOOL_PULL_RADIUS_PER_TOOL.get(); } catch (Throwable t) { return 4.0d; }
+    }
     /** Per-tick velocity boost applied to each pulled item entity, scaled by inverse distance. */
-    private static final double PULL_VELOCITY = 0.08d;
+    private static double pullVelocity() {
+        try { return MagConfig.TOOL_PULL_VELOCITY.get(); } catch (Throwable t) { return 0.08d; }
+    }
     /** Upper bound on per-tick velocity injected — prevents tunneling at very close range. */
-    private static final double MAX_PER_TICK = 0.6d;
+    private static double maxPerTick() {
+        try { return MagConfig.TOOL_PULL_MAX_PER_TICK.get(); } catch (Throwable t) { return 0.6d; }
+    }
 
     private MagneticToolPullHandler() {}
 
@@ -61,7 +68,7 @@ public final class MagneticToolPullHandler {
         }
         if (magnetCount == 0 || netPolarity == 0) return;
 
-        final double radius = RADIUS_PER_TOOL * magnetCount;
+        final double radius = radiusPerTool() * magnetCount;
         final Vec3 playerPos = player.position().add(0, player.getBbHeight() * 0.5d, 0);
         final AABB box = AABB.ofSize(playerPos, 2 * radius, 2 * radius, 2 * radius);
         final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
@@ -77,8 +84,8 @@ public final class MagneticToolPullHandler {
             final Vec3 toward = playerPos.subtract(item.position()).normalize();
             final double distance = item.distanceTo(player);
             // Inverse-distance falloff with a soft floor so close items don't NaN.
-            final double scale = Math.min(MAX_PER_TICK,
-                    PULL_VELOCITY * Math.max(1.0d, distance) / Math.max(1.0d, distance * distance));
+            final double scale = Math.min(maxPerTick(),
+                    pullVelocity() * Math.max(1.0d, distance) / Math.max(1.0d, distance * distance));
             item.setDeltaMovement(item.getDeltaMovement().add(toward.scale(sign * scale)));
             item.hasImpulse = true;
         }

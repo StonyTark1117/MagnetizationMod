@@ -251,6 +251,8 @@ public final class MagConfig {
      *  a 1×1 magnetite test cube from launching across the world when the
      *  impulse/mass ratio explodes. */
     public static final ModConfigSpec.DoubleValue REPULSOR_GUN_SHIP_MAX_VELOCITY_DELTA;
+    public static final ModConfigSpec.DoubleValue REPULSOR_GUN_LOOSE_OBJECT_PUSH;
+    public static final ModConfigSpec.DoubleValue ELYTRA_GLIDE_SUSCEPTIBILITY_BONUS;
 
     // Per-tool magnetized-effect toggles. Each tool gets a unique signature
     // ability on top of the shared "pull dropped ferromagnetic items" handler.
@@ -272,6 +274,15 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue  TOOL_SHOVEL_PAN_CHANCE;
     public static final ModConfigSpec.IntValue     TOOL_HOE_DOWSE_RADIUS;
     public static final ModConfigSpec.IntValue     TOOL_HOE_DOWSE_COOLDOWN_TICKS;
+    public static final ModConfigSpec.DoubleValue  TOOL_PULL_RADIUS_PER_TOOL;
+    public static final ModConfigSpec.DoubleValue  TOOL_PULL_VELOCITY;
+    public static final ModConfigSpec.DoubleValue  TOOL_PULL_MAX_PER_TICK;
+    public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_RADIUS;
+    public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_STRENGTH;
+    public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_MAX_DELTA;
+    public static final ModConfigSpec.DoubleValue  TOOL_AXE_PETRIFIED_PULL_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue  TOOL_AXE_PETRIFIED_CHANCE;
+    public static final ModConfigSpec.IntValue     MR_TOOL_HARDEN_TICKS;
 
     /** How our Magnetized status effect coexists with Alex's Caves' Magnetizing
      *  effect when both mods are loaded. Three modes: BOTH (parallel, default
@@ -1094,6 +1105,20 @@ public final class MagConfig {
                 .translation("magnetization.configuration.items.repulsorGunShipMaxVelocityDelta")
                 .defineInRange("repulsorGunShipMaxVelocityDelta", 64.0d, 0.0d, 500.0d);
 
+        REPULSOR_GUN_LOOSE_OBJECT_PUSH = b
+                .comment("Per-shot velocity injection (blocks/tick) applied to loose drops, mobs,",
+                         "and other non-ship objects inside the Repulsor Gun's cone. Falls off",
+                         "linearly to zero at the cone's range.")
+                .translation("magnetization.configuration.items.repulsorGunLooseObjectPush")
+                .defineInRange("repulsorGunLooseObjectPush", 8.0d, 0.0d, 100.0d);
+
+        ELYTRA_GLIDE_SUSCEPTIBILITY_BONUS = b
+                .comment("While gliding with a Magnetic Elytra, the wearer's pull-by-field",
+                         "susceptibility is multiplied by this factor — magnetic emitters tug a",
+                         "gliding player far harder, enabling field-assisted flight. 1.0 = no bonus.")
+                .translation("magnetization.configuration.items.elytraGlideSusceptibilityBonus")
+                .defineInRange("elytraGlideSusceptibilityBonus", 4.0d, 0.0d, 100.0d);
+
         b.pop();
 
         b.comment("Magnetized-tool signature abilities. Each tool in #magnetization:metal_tools",
@@ -1153,6 +1178,52 @@ public final class MagConfig {
                 .comment("Cooldown (ticks) between hoe dowsing pings.")
                 .translation("magnetization.configuration.tools.hoeDowseCooldownTicks")
                 .defineInRange("hoeDowseCooldownTicks", 60, 10, 600);
+
+        TOOL_PULL_RADIUS_PER_TOOL = b
+                .comment("Shared 'pull dropped items' handler: scan radius (blocks) per magnetized",
+                         "tool the player is holding. Two magnetized tools doubles the radius.")
+                .translation("magnetization.configuration.tools.pullRadiusPerTool")
+                .defineInRange("pullRadiusPerTool", 4.0d, 0.0d, 64.0d);
+        TOOL_PULL_VELOCITY = b
+                .comment("Base pull velocity (blocks/tick) applied to dropped ferromagnetic items",
+                         "by the shared tool-pull handler, before distance falloff.")
+                .translation("magnetization.configuration.tools.pullVelocity")
+                .defineInRange("pullVelocity", 0.08d, 0.0d, 10.0d);
+        TOOL_PULL_MAX_PER_TICK = b
+                .comment("Per-tick cap (blocks/tick) on the velocity the tool-pull handler can add",
+                         "to any one item, so nearby drops don't snap instantly.")
+                .translation("magnetization.configuration.tools.pullMaxPerTick")
+                .defineInRange("pullMaxPerTick", 0.6d, 0.0d, 10.0d);
+
+        TOOL_AXE_PULSE_RADIUS = b
+                .comment("Radius (blocks) of the radial pull emitted when a magnetized axe chops a log.")
+                .translation("magnetization.configuration.tools.axePulseRadius")
+                .defineInRange("axePulseRadius", 10.0d, 0.0d, 64.0d);
+        TOOL_AXE_PULSE_STRENGTH = b
+                .comment("Peak pull velocity (blocks/tick) of the axe chop pulse at point-blank,",
+                         "before distance falloff.")
+                .translation("magnetization.configuration.tools.axePulseStrength")
+                .defineInRange("axePulseStrength", 0.35d, 0.0d, 10.0d);
+        TOOL_AXE_PULSE_MAX_DELTA = b
+                .comment("Per-target cap (blocks/tick) on the velocity the axe pulse can add.")
+                .translation("magnetization.configuration.tools.axePulseMaxDelta")
+                .defineInRange("axePulseMaxDelta", 0.5d, 0.0d, 10.0d);
+        TOOL_AXE_PETRIFIED_PULL_MULTIPLIER = b
+                .comment("Multiplier applied to the axe pulse for petrified-wood drops (they react",
+                         "more strongly to the magnetic axe).")
+                .translation("magnetization.configuration.tools.axePetrifiedPullMultiplier")
+                .defineInRange("axePetrifiedPullMultiplier", 3.0d, 0.0d, 100.0d);
+        TOOL_AXE_PETRIFIED_CHANCE = b
+                .comment("Chance, per log chopped with a magnetized axe, that a petrified-wood",
+                         "drop is produced (0.05 = 5%). 0 disables petrified drops.")
+                .translation("magnetization.configuration.tools.axePetrifiedChance")
+                .defineInRange("axePetrifiedChance", 0.05d, 0.0d, 1.0d);
+
+        MR_TOOL_HARDEN_TICKS = b
+                .comment("How many ticks an MR Fluid tool stays in its hardened (struck) visual",
+                         "state after use before relaxing back to the fluid appearance.")
+                .translation("magnetization.configuration.tools.mrToolHardenTicks")
+                .defineInRange("mrToolHardenTicks", 14, 0, 1200);
 
         b.pop();
 

@@ -35,17 +35,27 @@ public final class MagAxePulse {
 
     /** Magnetized-axe pulse radius. Notably larger than the pickaxe rip radius —
      *  the axe is the long-arm magnet of the toolset. */
-    private static final double PULSE_RADIUS = 10.0d;
-    private static final double PULSE_STRENGTH = 0.35d;
-    private static final double MAX_DELTA = 0.5d;
+    private static double pulseRadius() {
+        try { return MagConfig.TOOL_AXE_PULSE_RADIUS.get(); } catch (Throwable t) { return 10.0d; }
+    }
+    private static double pulseStrength() {
+        try { return MagConfig.TOOL_AXE_PULSE_STRENGTH.get(); } catch (Throwable t) { return 0.35d; }
+    }
+    private static double maxDelta() {
+        try { return MagConfig.TOOL_AXE_PULSE_MAX_DELTA.get(); } catch (Throwable t) { return 0.5d; }
+    }
     /** Multiplier on the pulse strength when the target item is petrified wood — the
      *  axe's signature target. ~3× the base pull, so petrified drops snap to the
      *  player even when other ferromagnetic clutter is closer. */
-    private static final double PETRIFIED_PULL_MULTIPLIER = 3.0d;
+    private static double petrifiedPullMultiplier() {
+        try { return MagConfig.TOOL_AXE_PETRIFIED_PULL_MULTIPLIER.get(); } catch (Throwable t) { return 3.0d; }
+    }
 
     /** Per-chop chance to convert ONE of the log's drops into a Petrified Wood item.
      *  Only fires on magnetized axes — regular axes never produce petrified wood. */
-    private static final double PETRIFIED_CHANCE_MAGNETIZED = 0.05d; // 5%
+    private static double petrifiedChanceMagnetized() {
+        try { return MagConfig.TOOL_AXE_PETRIFIED_CHANCE.get(); } catch (Throwable t) { return 0.05d; }
+    }
 
     private MagAxePulse() {}
 
@@ -60,7 +70,7 @@ public final class MagAxePulse {
 
         // Petrified-wood drop only fires on magnetized axes — regular axes get nothing.
         final boolean magnetized = isMagnetized(axe);
-        if (magnetized && level.random.nextDouble() < PETRIFIED_CHANCE_MAGNETIZED) {
+        if (magnetized && level.random.nextDouble() < petrifiedChanceMagnetized()) {
             dropPetrifiedWood(level, event.getPos());
         }
 
@@ -68,12 +78,12 @@ public final class MagAxePulse {
         if (!enabled() || !magnetized) return;
 
         final Vec3 origin = Vec3.atCenterOf(event.getPos());
-        final AABB box = AABB.ofSize(origin, 2 * PULSE_RADIUS, 2 * PULSE_RADIUS, 2 * PULSE_RADIUS);
+        final AABB box = AABB.ofSize(origin, 2 * pulseRadius(), 2 * pulseRadius(), 2 * pulseRadius());
 
         for (final ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, box,
                 e -> !e.getItem().isEmpty() && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
             final boolean petrified = item.getItem().is(MagItems.PETRIFIED_WOOD.get());
-            pull(item, player.position(), petrified ? PETRIFIED_PULL_MULTIPLIER : 1.0d);
+            pull(item, player.position(), petrified ? petrifiedPullMultiplier() : 1.0d);
         }
         for (final Entity entity : level.getEntities(player, box,
                 e -> e.getType().is(MagTags.MAGNETIZABLE_ENTITIES))) {
@@ -98,9 +108,9 @@ public final class MagAxePulse {
     private static void pull(final Entity target, final Vec3 toward, final double multiplier) {
         final Vec3 vec = toward.subtract(target.position());
         final double dist = vec.length();
-        if (dist < 0.5 || dist > PULSE_RADIUS) return;
-        final double falloff = Math.max(0.0d, 1.0d - dist / PULSE_RADIUS);
-        final Vec3 nudge = vec.normalize().scale(Math.min(MAX_DELTA * multiplier, PULSE_STRENGTH * falloff * multiplier));
+        if (dist < 0.5 || dist > pulseRadius()) return;
+        final double falloff = Math.max(0.0d, 1.0d - dist / pulseRadius());
+        final Vec3 nudge = vec.normalize().scale(Math.min(maxDelta() * multiplier, pulseStrength() * falloff * multiplier));
         target.setDeltaMovement(target.getDeltaMovement().add(nudge));
         target.hurtMarked = true;
         target.hasImpulse = true;

@@ -26,7 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class MrFluidTools {
 
     /** How long after a use the tool reads as hardened (texture-swap window). */
-    private static final long HARDEN_TICKS = 14L;
+    private static long hardenTicks() {
+        try { return com.stonytark.magnetization.config.MagConfig.MR_TOOL_HARDEN_TICKS.get(); }
+        catch (Throwable t) { return 14L; }
+    }
 
     /** Marker for every MR-fluid tool — used to register the hardened icon swap. */
     public interface Marker {}
@@ -35,7 +38,7 @@ public final class MrFluidTools {
 
     static void harden(final ItemStack stack, final LivingEntity user) {
         if (user != null && user.level() != null) {
-            stack.set(MagDataComponents.HARDENED_UNTIL.get(), user.level().getGameTime() + HARDEN_TICKS);
+            stack.set(MagDataComponents.HARDENED_UNTIL.get(), user.level().getGameTime() + hardenTicks());
         }
     }
 

@@ -25,7 +25,7 @@ class ShipMagneticStateTest {
     @Test
     void nbtRoundTripSouthHeavy() {
         final ShipMagneticState before = new ShipMagneticState(
-                MagneticPolarity.SOUTH, 3.275d, 24, 5, 1);
+                MagneticPolarity.SOUTH, 3.275d, 24, 5, 1, 0);
         final CompoundTag tag = before.toNbt();
         final ShipMagneticState after = ShipMagneticState.fromNbt(tag);
 
@@ -36,7 +36,7 @@ class ShipMagneticStateTest {
     void nbtRoundTripNorthFreshShip() {
         // Counts at zero (just-assembled ship) survive the round trip.
         final ShipMagneticState before = new ShipMagneticState(
-                MagneticPolarity.NORTH, 1.0d, 0, 0, 0);
+                MagneticPolarity.NORTH, 1.0d, 0, 0, 0, 0);
         final ShipMagneticState after = ShipMagneticState.fromNbt(before.toNbt());
 
         assertEquals(before, after);
@@ -46,7 +46,7 @@ class ShipMagneticStateTest {
     void nbtRoundTripExtremeSusceptibility() {
         // Cap-edge (shipMaxSusceptibility default 20.0) survives serialization.
         final ShipMagneticState before = new ShipMagneticState(
-                MagneticPolarity.NORTH, 20.0d, 400, 50, 0);
+                MagneticPolarity.NORTH, 20.0d, 400, 50, 0, 0);
         final ShipMagneticState after = ShipMagneticState.fromNbt(before.toNbt());
 
         assertEquals(before, after);

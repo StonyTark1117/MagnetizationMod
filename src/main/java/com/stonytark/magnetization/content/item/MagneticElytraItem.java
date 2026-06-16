@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
  * equip, same gliding hook), but the wearer becomes dramatically more
  * susceptible to passing magnetic fields while gliding — the
  * {@code MagneticElytraGlideBonus} hook in {@code FieldApplicator} multiplies
- * the entity's pull-by-field susceptibility by {@link #GLIDE_SUSCEPTIBILITY_BONUS}
+ * the entity's pull-by-field susceptibility by {@link #glideSusceptibilityBonus()}
  * whenever {@link LivingEntity#isFallFlying()} is true and a magnetic elytra
  * is in the chest slot.
  *
@@ -30,7 +30,10 @@ public final class MagneticElytraItem extends ElytraItem {
      *  a magnetic elytra over a single magnetized chestplate (~2.0 base
      *  susceptibility once stamped) produces a noticeable in-flight tug from
      *  WEAK emitters at point-blank, but doesn't dominate at long range. */
-    public static final double GLIDE_SUSCEPTIBILITY_BONUS = 4.0d;
+    public static double glideSusceptibilityBonus() {
+        try { return com.stonytark.magnetization.config.MagConfig.ELYTRA_GLIDE_SUSCEPTIBILITY_BONUS.get(); }
+        catch (Throwable t) { return 4.0d; }
+    }
 
     public MagneticElytraItem(final Properties props) {
         super(props);

@@ -49,21 +49,21 @@ class ShipMagneticScannerTest {
     @Test
     void baselineSusceptibilityOnly() {
         // No ferrous, no magnets → baseline only.
-        assertEquals(1.0, ShipMagneticScanner.susceptibility(0, 0), EPS);
+        assertEquals(1.0, ShipMagneticScanner.susceptibility(0, 0, 0), EPS);
     }
 
     @Test
     void ferrousBlocksAddLinear() {
         // 1.0 baseline + 20 ferrous × 0.05 = 2.0
-        assertEquals(2.0, ShipMagneticScanner.susceptibility(20, 0), EPS);
+        assertEquals(2.0, ShipMagneticScanner.susceptibility(20, 0, 0), EPS);
     }
 
     @Test
     void magnetsWeighMoreThanFerrous() {
         // Each magnet contributes more than each ferrous block — user's spec
         // says magnets are "ferrous-plus". Defaults: 0.15 vs 0.05.
-        final double withTenFerrous = ShipMagneticScanner.susceptibility(10, 0);
-        final double withTenMagnets = ShipMagneticScanner.susceptibility(0, 10);
+        final double withTenFerrous = ShipMagneticScanner.susceptibility(10, 0, 0);
+        final double withTenMagnets = ShipMagneticScanner.susceptibility(0, 10, 0);
         assertTrue(withTenMagnets > withTenFerrous,
                 "10 magnets (" + withTenMagnets + ") should exceed 10 ferrous (" + withTenFerrous + ")");
     }
@@ -71,12 +71,12 @@ class ShipMagneticScannerTest {
     @Test
     void cappedAtMax() {
         // 10 000 ferrous would be 1 + 500 = 501× without a cap; default cap is 20×.
-        assertEquals(20.0, ShipMagneticScanner.susceptibility(10_000, 0), EPS);
+        assertEquals(20.0, ShipMagneticScanner.susceptibility(10_000, 0, 0), EPS);
     }
 
     @Test
     void ferrousAndMagnetsStack() {
         // 1.0 baseline + 10 × 0.05 (ferrous) + 10 × 0.15 (magnets) = 1.0 + 0.5 + 1.5 = 3.0
-        assertEquals(3.0, ShipMagneticScanner.susceptibility(10, 10), EPS);
+        assertEquals(3.0, ShipMagneticScanner.susceptibility(10, 10, 0), EPS);
     }
 }

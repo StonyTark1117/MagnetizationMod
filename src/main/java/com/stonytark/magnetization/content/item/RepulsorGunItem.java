@@ -192,7 +192,7 @@ public class RepulsorGunItem extends Item {
         // clear shove. ItemEntity air friction (0.98/tick) decays the boost
         // fast, so the launch needs to be dramatic to read as "blown away"
         // rather than "nudged".
-        final double pushStrength = 8.0;
+        final double pushStrength = repulsorGunLooseObjectPush();
         final double cosHalfAngle = repulsorGunConicalHalfAngleCos();
         final net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(
                 origin.x - range, origin.y - range, origin.z - range,
@@ -282,6 +282,9 @@ public class RepulsorGunItem extends Item {
 
     private static double repulsorGunRange() {
         try { return MagConfig.REPULSOR_GUN_RANGE.get(); } catch (Throwable t) { return 12.0d; }
+    }
+    private static double repulsorGunLooseObjectPush() {
+        try { return MagConfig.REPULSOR_GUN_LOOSE_OBJECT_PUSH.get(); } catch (Throwable t) { return 8.0d; }
     }
 
     private static double repulsorGunConicalHalfAngleCos() {

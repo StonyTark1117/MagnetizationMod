@@ -466,7 +466,7 @@ public final class FieldApplicator {
             if (living.isFallFlying()) {
                 final ItemStack chest = living.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
                 if (chest.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem) {
-                    base *= com.stonytark.magnetization.content.item.MagneticElytraItem.GLIDE_SUSCEPTIBILITY_BONUS;
+                    base *= com.stonytark.magnetization.content.item.MagneticElytraItem.glideSusceptibilityBonus();
                 }
             }
             // Magnetized status effect multiplies pull strength.
