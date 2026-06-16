@@ -67,6 +67,12 @@ public final class MagnetizedArmorVacuum {
         if (!(player.level() instanceof ServerLevel level)) return;
         if (player.isSpectator() || player.isDeadOrDying()) return;
 
+        // Throttle the item scan: only sweep every N ticks. The per-pull impulse
+        // is multiplied by the same N below, so the average force (and feel) is
+        // unchanged while we do far fewer entity scans.
+        final int interval = com.stonytark.magnetization.config.MagConfig.armorVacuumTicks();
+        if (level.getGameTime() % interval != 0L) return;
+
         // Sum signed polarity contributions of every currently-magnetized
         // armor piece. NORTH = +1, SOUTH = -1. The net sign decides
         // attract vs repel; the absolute piece count drives radius +
@@ -109,7 +115,7 @@ public final class MagnetizedArmorVacuum {
             // and disappears at the edge of the radius.
             final double falloff = Math.pow(1.0d - dist / radius, FALLOFF_POWER);
             final double pieceScale = Math.min(1.0d, pieces / 4.0d);
-            final double mag = MAX_IMPULSE_PER_TICK * falloff * (0.25d + 0.75d * pieceScale);
+            final double mag = MAX_IMPULSE_PER_TICK * interval * falloff * (0.25d + 0.75d * pieceScale);
             final Vec3 unit = delta.scale(1.0d / dist);
             final Vec3 impulse = attract ? unit.scale(-mag) : unit.scale(mag);
             item.setDeltaMovement(item.getDeltaMovement().add(impulse));

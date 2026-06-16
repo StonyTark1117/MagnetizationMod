@@ -44,9 +44,6 @@ import java.util.List;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MeteoriteFieldRegistry {
 
-    /** Cadence of the apply-tick. 4 ticks (5 Hz) matches TemporaryLirmFields. */
-    private static final int APPLY_INTERVAL_TICKS = 4;
-
     private MeteoriteFieldRegistry() {}
 
     /** One AE2-sourced meteorite. NORTH polarity, decaying strength tier. */
@@ -88,7 +85,7 @@ public final class MeteoriteFieldRegistry {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % APPLY_INTERVAL_TICKS) != 0L) return;
+        if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.meteoriteFieldTicks()) != 0L) return;
         final State state = State.get(server);
         if (state.entries.isEmpty()) return;
 

@@ -42,6 +42,21 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue EXCLUDE_CONNECTED_SUBLEVELS;
     public static final ModConfigSpec.BooleanValue DIAMAGNETIC_DEFAULT_REPEL;
 
+    // ── performance: tick-rate gatings for the per-tick reaction handlers ──
+    public static final ModConfigSpec.IntValue PYRRHOTITE_SCAN_TICKS;
+    public static final ModConfigSpec.IntValue PYRRHOTITE_RESIDUAL_SCAN_TICKS;
+    public static final ModConfigSpec.IntValue ARMOR_VACUUM_TICKS;
+    public static final ModConfigSpec.IntValue MR_FLUID_HARDEN_TICKS;
+    public static final ModConfigSpec.IntValue MAGNETIZED_FERROFLUID_TICKS;
+    public static final ModConfigSpec.IntValue GALLIUM_CURRENT_TICKS;
+    public static final ModConfigSpec.IntValue FERROFLUID_MAG_TICKS;
+    public static final ModConfigSpec.IntValue FERROFLUID_PLAIN_TICKS;
+    public static final ModConfigSpec.IntValue MR_ARMOR_REFRESH_TICKS;
+    public static final ModConfigSpec.IntValue GOLEM_FIELD_CHECK_TICKS;
+    public static final ModConfigSpec.IntValue ANOMALY_CHAOS_TICKS;
+    public static final ModConfigSpec.IntValue LENZ_BRAKING_TICKS;
+    public static final ModConfigSpec.IntValue METEORITE_FIELD_TICKS;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -345,6 +360,77 @@ public final class MagConfig {
                          "ship flips whichever default you pick (repel <-> attract).")
                 .translation("magnetization.configuration.physics.diamagneticDefaultRepel")
                 .define("diamagneticDefaultRepel", true);
+
+        b.pop();
+
+        b.comment("Tick-rate gatings for the per-tick magnetic-reaction handlers. These trade",
+                  "responsiveness for CPU: higher = the effect re-evaluates less often (cheaper,",
+                  "slightly laggier reactions); lower = snappier but more work. Defaults match the",
+                  "values that were previously hard-coded, so leaving them alone changes nothing.")
+         .translation("magnetization.configuration.performance")
+         .push("performance");
+
+        PYRRHOTITE_SCAN_TICKS = b
+                .comment("How often (ticks) an idle/cold pyrrhotite rescans its surroundings for heat",
+                         "sources + catalysts (a 15x15x15 block scan). 20 = 1 s. Higher = a newly-lit",
+                         "burner takes longer to spin the pyrrhotite up.")
+                .translation("magnetization.configuration.performance.pyrrhotiteScanTicks")
+                .defineInRange("pyrrhotiteScanTicks", 20, 1, 6000);
+        PYRRHOTITE_RESIDUAL_SCAN_TICKS = b
+                .comment("How often (ticks) an ALREADY-HOT pyrrhotite re-checks its heat. Longer than",
+                         "pyrrhotiteScanTicks so a running pyrrhotite coasts on residual heat and stays",
+                         "warm for a beat after its source is removed (and costs less while active).")
+                .translation("magnetization.configuration.performance.pyrrhotiteResidualScanTicks")
+                .defineInRange("pyrrhotiteResidualScanTicks", 60, 1, 6000);
+        ARMOR_VACUUM_TICKS = b
+                .comment("How often (ticks) magnetized armor sweeps for nearby items. 1 = every tick",
+                         "(1.x behaviour). The per-pull impulse is scaled by this interval, so raising",
+                         "it stays visually identical while doing fewer item scans.")
+                .translation("magnetization.configuration.performance.armorVacuumTicks")
+                .defineInRange("armorVacuumTicks", 2, 1, 100);
+        MR_FLUID_HARDEN_TICKS = b
+                .comment("How often (ticks) MR fluid / hardened MR fluid re-checks whether it's in a",
+                         "field (harden / revert). 5 = 4x/s.")
+                .translation("magnetization.configuration.performance.mrFluidHardenTicks")
+                .defineInRange("mrFluidHardenTicks", 5, 1, 1200);
+        MAGNETIZED_FERROFLUID_TICKS = b
+                .comment("How often (ticks) magnetized ferrofluid pools re-emit their weak field.")
+                .translation("magnetization.configuration.performance.magnetizedFerrofluidTicks")
+                .defineInRange("magnetizedFerrofluidTicks", 3, 1, 1200);
+        GALLIUM_CURRENT_TICKS = b
+                .comment("How often (ticks) powered gallium in a field pushes entities (Lorentz current).",
+                         "Lower = smoother flow, more entity scans.")
+                .translation("magnetization.configuration.performance.galliumCurrentTicks")
+                .defineInRange("galliumCurrentTicks", 2, 1, 1200);
+        FERROFLUID_MAG_TICKS = b
+                .comment("How often (ticks) MAGNETIZED ferrofluid creeps one cell toward/away from a field.")
+                .translation("magnetization.configuration.performance.ferrofluidMagTicks")
+                .defineInRange("ferrofluidMagTicks", 4, 1, 1200);
+        FERROFLUID_PLAIN_TICKS = b
+                .comment("How often (ticks) PLAIN ferrofluid creeps (and the recede pass runs). Slower",
+                         "than magnetized by default.")
+                .translation("magnetization.configuration.performance.ferrofluidPlainTicks")
+                .defineInRange("ferrofluidPlainTicks", 8, 1, 1200);
+        MR_ARMOR_REFRESH_TICKS = b
+                .comment("How often (ticks) worn MR armor refreshes its in-field hardened state.")
+                .translation("magnetization.configuration.performance.mrArmorRefreshTicks")
+                .defineInRange("mrArmorRefreshTicks", 5, 1, 1200);
+        GOLEM_FIELD_CHECK_TICKS = b
+                .comment("How often (ticks) an MR fluid golem re-checks whether it's in a field.")
+                .translation("magnetization.configuration.performance.golemFieldCheckTicks")
+                .defineInRange("golemFieldCheckTicks", 5, 1, 1200);
+        ANOMALY_CHAOS_TICKS = b
+                .comment("How often (ticks) the Anomaly biome rolls its random chaos impulses.")
+                .translation("magnetization.configuration.performance.anomalyChaosTicks")
+                .defineInRange("anomalyChaosTicks", 4, 1, 1200);
+        LENZ_BRAKING_TICKS = b
+                .comment("How often (ticks) a moving magnetic ship scans for eddy-current (Lenz) brakes.")
+                .translation("magnetization.configuration.performance.lenzBrakingTicks")
+                .defineInRange("lenzBrakingTicks", 2, 1, 1200);
+        METEORITE_FIELD_TICKS = b
+                .comment("How often (ticks) registered meteorite cores re-apply their field.")
+                .translation("magnetization.configuration.performance.meteoriteFieldTicks")
+                .defineInRange("meteoriteFieldTicks", 4, 1, 1200);
 
         b.pop();
 
@@ -885,6 +971,26 @@ public final class MagConfig {
     private static int permissionOr(final ModConfigSpec.IntValue v, final int fallback) {
         try { return v.get(); } catch (final Throwable t) { return fallback; }
     }
+
+    /** Config-not-loaded-tolerant int read (early registration / datagen). */
+    private static int intOr(final ModConfigSpec.IntValue v, final int fallback) {
+        try { return v.get(); } catch (final Throwable t) { return fallback; }
+    }
+
+    // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
+    public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }
+    public static int pyrrhotiteResidualScanTicks() { return intOr(PYRRHOTITE_RESIDUAL_SCAN_TICKS, 60); }
+    public static int armorVacuumTicks()            { return Math.max(1, intOr(ARMOR_VACUUM_TICKS, 2)); }
+    public static int mrFluidHardenTicks()          { return Math.max(1, intOr(MR_FLUID_HARDEN_TICKS, 5)); }
+    public static int magnetizedFerrofluidTicks()   { return Math.max(1, intOr(MAGNETIZED_FERROFLUID_TICKS, 3)); }
+    public static int galliumCurrentTicks()         { return Math.max(1, intOr(GALLIUM_CURRENT_TICKS, 2)); }
+    public static int ferrofluidMagTicks()          { return Math.max(1, intOr(FERROFLUID_MAG_TICKS, 4)); }
+    public static int ferrofluidPlainTicks()        { return Math.max(1, intOr(FERROFLUID_PLAIN_TICKS, 8)); }
+    public static int mrArmorRefreshTicks()         { return Math.max(1, intOr(MR_ARMOR_REFRESH_TICKS, 5)); }
+    public static int golemFieldCheckTicks()        { return Math.max(1, intOr(GOLEM_FIELD_CHECK_TICKS, 5)); }
+    public static int anomalyChaosTicks()           { return Math.max(1, intOr(ANOMALY_CHAOS_TICKS, 4)); }
+    public static int lenzBrakingTicks()            { return Math.max(1, intOr(LENZ_BRAKING_TICKS, 2)); }
+    public static int meteoriteFieldTicks()         { return Math.max(1, intOr(METEORITE_FIELD_TICKS, 4)); }
 
     public static int commandDebugPermission()    { return permissionOr(COMMAND_DEBUG_PERMISSION, 2); }
     public static int commandSpawnTestPermission(){ return permissionOr(COMMAND_SPAWN_TEST_PERMISSION, 2); }

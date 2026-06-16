@@ -45,9 +45,6 @@ import java.util.Set;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class FerrofluidCreepHandler {
 
-    private static final long MAG_INTERVAL = 4L;     // magnetized grows this often
-    private static final long PLAIN_INTERVAL = 8L;   // plain grows half as often
-    private static final long RECEDE_INTERVAL = 8L;  // recede unsupported cells this often
     private static final double ARRIVE_DIST = 1.7d;  // a tendril this close has reached
 
     private FerrofluidCreepHandler() {}
@@ -62,9 +59,9 @@ public final class FerrofluidCreepHandler {
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
         final long time = server.getGameTime();
-        final boolean growMag = (time % MAG_INTERVAL) == 0L;
-        final boolean growPlain = (time % PLAIN_INTERVAL) == 0L;
-        final boolean recede = (time % RECEDE_INTERVAL) == 0L;
+        final boolean growMag = (time % com.stonytark.magnetization.config.MagConfig.ferrofluidMagTicks()) == 0L;
+        final boolean growPlain = (time % com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks()) == 0L;
+        final boolean recede = (time % com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks()) == 0L;
         if (!growMag && !growPlain && !recede) return;
 
         final List<Magnet> magnets = gatherMagnets(server);

@@ -51,9 +51,6 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class AnomalyMagneticChaos {
 
-    /** Ticks between chaos updates. 4 ticks (200 ms) is smooth enough that
-     *  impulse jitter isn't visible while keeping per-tick cost low. */
-    private static final int TICK_INTERVAL = 4;
 
     /** Peak per-tick velocity-injection magnitude (m/s) for players + items.
      *  Scaled by per-target susceptibility before application. */
@@ -82,7 +79,7 @@ public final class AnomalyMagneticChaos {
         if (!AnomalyBiome.enabled()) return;
         if (!(event.getLevel() instanceof ServerLevel server)) return;
         final long now = server.getGameTime();
-        if ((now % TICK_INTERVAL) != 0L) return;
+        if ((now % com.stonytark.magnetization.config.MagConfig.anomalyChaosTicks()) != 0L) return;
 
         final double strength = chaosStrength();
         if (strength <= 0.0d) return;

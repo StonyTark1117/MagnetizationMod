@@ -30,15 +30,12 @@ public final class GalliumLorentzHandler {
 
     /** Peak per-tick velocity nudge, at full signal strength. */
     private static final double SPEED = 0.09;
-    /** Run every other tick — the push is cumulative so this stays smooth. */
-    private static final int INTERVAL = 2;
-
     private GalliumLorentzHandler() {}
 
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if (level.getGameTime() % INTERVAL != 0L) return;
+        if (level.getGameTime() % com.stonytark.magnetization.config.MagConfig.galliumCurrentTicks() != 0L) return;
 
         for (final BlockPos pos : GalliumRegistry.snapshot(level)) {
             final BlockState state = level.getBlockState(pos);

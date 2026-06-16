@@ -30,14 +30,12 @@ import java.util.Map;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagnetizedFerrofluidFieldHandler {
 
-    private static final long INTERVAL = 3L; // apply every 3 ticks — gentle + cheap
-
     private MagnetizedFerrofluidFieldHandler() {}
 
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % INTERVAL) != 0L) return;
+        if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.magnetizedFerrofluidTicks()) != 0L) return;
 
         final Map<BlockPos, MagneticPolarity> sources = MagnetizedFerrofluidRegistry.forLevel(server);
         if (sources.isEmpty()) return;

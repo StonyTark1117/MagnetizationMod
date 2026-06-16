@@ -57,7 +57,7 @@ public class MrFluidGolem extends IronGolem {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!level().isClientSide && (tickCount % 5) == 0 && level() instanceof ServerLevel server) {
+        if (!level().isClientSide && (tickCount % com.stonytark.magnetization.config.MagConfig.golemFieldCheckTicks()) == 0 && level() instanceof ServerLevel server) {
             final boolean inField = MagneticFields.isInField(server, position());
             if (this.entityData.get(HARDENED) != inField) this.entityData.set(HARDENED, inField);
         }

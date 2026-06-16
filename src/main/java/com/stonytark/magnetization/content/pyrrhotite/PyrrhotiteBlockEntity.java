@@ -48,10 +48,43 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
      *  7³ = 729 block-state reads at worst per pyrrhotite tick — still cheap. */
     private static final int MAX_CATALYST_SCAN_RADIUS = 7;
 
+    /** Tick of the last full heat/catalyst scan; gates the expensive cube scan. */
+    private long lastScanTick = Long.MIN_VALUE;
+
     @Override
     protected @Nullable MagneticField computeField(final BlockState state) {
         final Level level = getLevel();
         if (level == null) return null;
+
+        // Throttle the 15x15x15 catalyst scan. A cold pyrrhotite polls on the short
+        // interval to notice newly-added heat; an already-hot one re-checks on the
+        // longer "residual" interval, so it coasts on residual heat and stays warm a
+        // beat after its source is removed (and costs less while running). The field
+        // is rebuilt from the cached heat every tick (cheap), so it never flickers
+        // between scans.
+        final int interval = (lastObservedHeat == BlazeBurnerBlock.HeatLevel.NONE)
+                ? com.stonytark.magnetization.config.MagConfig.pyrrhotiteScanTicks()
+                : com.stonytark.magnetization.config.MagConfig.pyrrhotiteResidualScanTicks();
+        final long gameTime = level.getGameTime();
+        if (gameTime - lastScanTick >= interval) {
+            lastScanTick = gameTime;
+            recomputeHeat(level);
+        }
+
+        final MagneticStrength strength = strengthForHeat(lastObservedHeat);
+        if (strength == null) return null;
+        return new MagneticField(
+                Vec3.atCenterOf(getBlockPos()),
+                new Vec3(0, 1, 0),
+                MagneticPolarity.NORTH,
+                strength,
+                MagneticField.Shape.OMNIDIRECTIONAL
+        );
+    }
+
+    /** Full heat re-evaluation: 6-neighbour direct heat + the catalyst cube scan.
+     *  Updates {@link #lastObservedHeat} (+ syncs on change). Gated by computeField. */
+    private void recomputeHeat(final Level level) {
         final BlockPos pos = getBlockPos();
 
         // 1) Direct heat sources touching the pyrrhotite itself.
@@ -74,9 +107,7 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
             }
         }
 
-        // Persist + sync only when the observed heat actually changes —
-        // tooltip line shows the cached value, and without an explicit sync
-        // the client copy stays at the boot-time NONE.
+        // Persist + sync only when the observed heat actually changes.
         if (lastObservedHeat != max) {
             lastObservedHeat = max;
             setChanged();
@@ -84,16 +115,6 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
                 markForClientSync(server);
             }
         }
-        final MagneticStrength strength = strengthForHeat(max);
-        if (strength == null) return null;
-
-        return new MagneticField(
-                Vec3.atCenterOf(pos),
-                new Vec3(0, 1, 0),
-                MagneticPolarity.NORTH,
-                strength,
-                MagneticField.Shape.OMNIDIRECTIONAL
-        );
     }
 
     /** Pure heat→strength mapping. Extracted so the boundary cases and the

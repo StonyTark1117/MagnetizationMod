@@ -28,7 +28,6 @@ import org.joml.Vector3dc;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class LenzBrakingHandler {
 
-    private static final long INTERVAL = 2L;          // apply every 2 ticks
     private static final double MIN_SPEED = 0.04;     // blocks/tick below which we don't bother
     private static final double BASE_DRAG = 0.13;     // fraction of velocity removed per application
     private static final double MAX_DRAG = 0.55;      // never reverse the ship
@@ -40,7 +39,7 @@ public final class LenzBrakingHandler {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % INTERVAL) != 0L) return;
+        if ((server.getGameTime() % MagConfig.lenzBrakingTicks()) != 0L) return;
         final double strength = MagConfig.lenzBrakingStrength();
         if (strength <= 0.0d) return;
         final SubLevelContainer container = SubLevelContainer.getContainer(server);

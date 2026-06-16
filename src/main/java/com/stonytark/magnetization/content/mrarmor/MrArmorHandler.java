@@ -43,7 +43,7 @@ public final class MrArmorHandler {
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         final Player player = event.getEntity();
         if (!(player.level() instanceof ServerLevel server)) return;
-        if (server.getGameTime() % 5L != 0L) return; // refresh a few times a second
+        if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
         if (pieces(player) == 0) return;
         if (MagneticFields.isInField(server, player.position())) {
             hardenWorn(player, server.getGameTime() + HARDEN_TICKS);
@@ -55,7 +55,7 @@ public final class MrArmorHandler {
     public static void onEntityTick(final net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity living) || living instanceof Player) return;
         if (!(living.level() instanceof ServerLevel server)) return;
-        if (server.getGameTime() % 5L != 0L) return;
+        if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
         if (pieces(living) == 0) return;
         if (MagneticFields.isInField(server, living.position())) {
             hardenWorn(living, server.getGameTime() + HARDEN_TICKS);

@@ -29,7 +29,6 @@ import java.util.Set;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MrFluidHardenHandler {
 
-    private static final long INTERVAL = 5L;
     private static final int FLOOD_BUDGET = 512;
 
     private MrFluidHardenHandler() {}
@@ -37,7 +36,7 @@ public final class MrFluidHardenHandler {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if ((server.getGameTime() % INTERVAL) != 0L) return;
+        if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrFluidHardenTicks()) != 0L) return;
 
         // Harden: any MR-fluid source now in a field flood-hardens its body.
         int budget = FLOOD_BUDGET;
