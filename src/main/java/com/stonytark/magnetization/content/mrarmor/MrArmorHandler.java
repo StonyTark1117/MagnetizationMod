@@ -30,12 +30,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MrArmorHandler {
 
-    private static final float IMPACT_PER_PIECE = 0.225f;   // out-of-field, kinetic only
-    private static final float IMPACT_MAX = 0.9f;
-    private static final float FIELD_PER_PIECE = 0.30f;     // in-field, all damage
-    private static final float FIELD_MAX = 0.95f;
-    private static final long HARDEN_TICKS = 30L;           // rigid-look window after a trigger
-
     private MrArmorHandler() {}
 
     /** Keep worn MR armor visibly hardened the whole time the wearer is in a field. */
@@ -46,7 +40,7 @@ public final class MrArmorHandler {
         if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
         if (pieces(player) == 0) return;
         if (MagneticFields.isInField(server, player.position())) {
-            hardenWorn(player, server.getGameTime() + HARDEN_TICKS);
+            hardenWorn(player, server.getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks());
         }
     }
 
@@ -58,7 +52,7 @@ public final class MrArmorHandler {
         if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
         if (pieces(living) == 0) return;
         if (MagneticFields.isInField(server, living.position())) {
-            hardenWorn(living, server.getGameTime() + HARDEN_TICKS);
+            hardenWorn(living, server.getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks());
         }
     }
 
@@ -75,15 +69,17 @@ public final class MrArmorHandler {
             // Constantly hardened: mitigate nearly all damage. Can't block the
             // unblockable (void / out-of-world / /kill).
             if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return;
-            final float mit = Math.min(FIELD_MAX, FIELD_PER_PIECE * pieces);
+            final float mit = Math.min(com.stonytark.magnetization.config.MagConfig.mrArmorFieldMax(),
+                    com.stonytark.magnetization.config.MagConfig.mrArmorFieldPerPiece() * pieces);
             event.setAmount(event.getAmount() * (1.0f - mit));
         } else {
             // Out of a field: only kinetic impacts trigger the snap-rigid response.
             if (!isKinetic(event.getSource())) return;
-            final float mit = Math.min(IMPACT_MAX, IMPACT_PER_PIECE * pieces);
+            final float mit = Math.min(com.stonytark.magnetization.config.MagConfig.mrArmorImpactMax(),
+                    com.stonytark.magnetization.config.MagConfig.mrArmorImpactPerPiece() * pieces);
             event.setAmount(event.getAmount() * (1.0f - mit));
         }
-        hardenWorn(living, living.level().getGameTime() + HARDEN_TICKS);
+        hardenWorn(living, living.level().getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks());
     }
 
     /** An MR piece is either a player-worn MR armor item or MR horse barding. */

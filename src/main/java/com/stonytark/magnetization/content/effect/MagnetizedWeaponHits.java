@@ -37,8 +37,6 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagnetizedWeaponHits {
 
-    private static final int EFFECT_DURATION_TICKS = 60; // 3 seconds
-
     private MagnetizedWeaponHits() {}
 
     @SubscribeEvent
@@ -64,7 +62,8 @@ public final class MagnetizedWeaponHits {
         } else {
             amp = 0; // same-pole repel or unmagnetized target — light tag only
         }
-        target.addEffect(new MobEffectInstance(MagEffects.MAGNETIZED, EFFECT_DURATION_TICKS, amp,
+        target.addEffect(new MobEffectInstance(MagEffects.MAGNETIZED,
+                com.stonytark.magnetization.config.MagConfig.magnetizedEffectDurationTicks(), amp,
                 false, true));
 
         // Sword signature ability: yank ANY target wearing metal armor (regardless of polarity).
@@ -80,7 +79,9 @@ public final class MagnetizedWeaponHits {
         if (dist < 0.1) return;
         // Stronger pull on opposite-pole grabs (pin amp) — the same field that pins also
         // accelerates the lunge.
-        final double strength = amp == MagnetizedEffect.PIN_AMPLIFIER ? 0.55d : 0.30d;
+        final double strength = amp == MagnetizedEffect.PIN_AMPLIFIER
+                ? com.stonytark.magnetization.config.MagConfig.weaponYankOpposite()
+                : com.stonytark.magnetization.config.MagConfig.weaponYankSame();
         final Vec3 nudge = pull.scale(strength / dist);
         target.setDeltaMovement(target.getDeltaMovement().add(nudge.x, 0.1d, nudge.z));
         target.hurtMarked = true;

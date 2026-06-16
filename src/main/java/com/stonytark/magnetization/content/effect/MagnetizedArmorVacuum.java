@@ -42,14 +42,6 @@ public final class MagnetizedArmorVacuum {
     /** Block radius added per magnetized armor piece. With 4 pieces the
      *  effective radius is 8 blocks — generous but not so wide that a
      *  mining player ends up sweeping items from outside their FOV. */
-    private static final double RADIUS_PER_PIECE = 2.0d;
-
-    /** Peak per-tick impulse applied to an item right next to the player.
-     *  Tuned so a single piece can still measurably tug an item against
-     *  gravity (~0.04 m/s²/tick); a full set produces a clear, snappy
-     *  vacuum without launching items past the player. */
-    private static final double MAX_IMPULSE_PER_TICK = 0.18d;
-
     /** Distance falloff exponent. 1.5 keeps the tug strong near the player
      *  and falls off cleanly to 0 at {@link #RADIUS_PER_PIECE} × pieces. */
     private static final double FALLOFF_POWER = 1.5d;
@@ -93,7 +85,7 @@ public final class MagnetizedArmorVacuum {
         // Item entities default to NORTH (see FieldApplicator#polarityOf);
         // opposites attract, so SOUTH-net player pulls items inward.
         final boolean attract = netPole < 0;
-        final double radius = pieces * RADIUS_PER_PIECE;
+        final double radius = pieces * com.stonytark.magnetization.config.MagConfig.armorVacuumRadiusPerPiece();
         final boolean fullSet = pieces >= 4;
 
         final Vec3 origin = player.position().add(0, player.getBbHeight() * 0.5d, 0);
@@ -115,7 +107,8 @@ public final class MagnetizedArmorVacuum {
             // and disappears at the edge of the radius.
             final double falloff = Math.pow(1.0d - dist / radius, FALLOFF_POWER);
             final double pieceScale = Math.min(1.0d, pieces / 4.0d);
-            final double mag = MAX_IMPULSE_PER_TICK * interval * falloff * (0.25d + 0.75d * pieceScale);
+            final double mag = com.stonytark.magnetization.config.MagConfig.armorVacuumMaxImpulse()
+                    * interval * falloff * (0.25d + 0.75d * pieceScale);
             final Vec3 unit = delta.scale(1.0d / dist);
             final Vec3 impulse = attract ? unit.scale(-mag) : unit.scale(mag);
             item.setDeltaMovement(item.getDeltaMovement().add(impulse));

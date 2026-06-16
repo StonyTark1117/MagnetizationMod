@@ -60,6 +60,24 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue TEMPORARY_LIRM_APPLY_TICKS;
     public static final ModConfigSpec.IntValue METEORITE_SAPLING_CHECK_TICKS;
 
+    // ── combat: armor/golem/weapon balance ──
+    public static final ModConfigSpec.DoubleValue MR_ARMOR_IMPACT_PER_PIECE;
+    public static final ModConfigSpec.DoubleValue MR_ARMOR_IMPACT_MAX;
+    public static final ModConfigSpec.DoubleValue MR_ARMOR_FIELD_PER_PIECE;
+    public static final ModConfigSpec.DoubleValue MR_ARMOR_FIELD_MAX;
+    public static final ModConfigSpec.IntValue    MR_ARMOR_HARDEN_TICKS;
+    public static final ModConfigSpec.DoubleValue MR_GOLEM_BASE_MITIGATION;
+    public static final ModConfigSpec.DoubleValue MR_GOLEM_FIELD_MITIGATION;
+    public static final ModConfigSpec.IntValue    MR_GOLEM_HEALTH;
+    public static final ModConfigSpec.IntValue    GALLIUM_GOLEM_HEALTH;
+    public static final ModConfigSpec.IntValue    GALLIUM_GOLEM_MELT_TICKS;
+    public static final ModConfigSpec.DoubleValue GALLIUM_GOLEM_WARM_DAMAGE_MULT;
+    public static final ModConfigSpec.DoubleValue ARMOR_VACUUM_RADIUS_PER_PIECE;
+    public static final ModConfigSpec.DoubleValue ARMOR_VACUUM_MAX_IMPULSE;
+    public static final ModConfigSpec.DoubleValue WEAPON_YANK_OPPOSITE;
+    public static final ModConfigSpec.DoubleValue WEAPON_YANK_SAME;
+    public static final ModConfigSpec.IntValue    MAGNETIZED_EFFECT_DURATION_TICKS;
+
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
@@ -447,6 +465,79 @@ public final class MagConfig {
                 .comment("How often (ticks) a planted meteorite sapling checks its growth progress.")
                 .translation("magnetization.configuration.performance.meteoriteSaplingCheckTicks")
                 .defineInRange("meteoriteSaplingCheckTicks", 200, 1, 24000);
+
+        b.pop();
+
+        b.comment("Combat / defensive balance: MR armor & golem mitigation, golem health,",
+                  "magnetized-armor item vacuum, and magnetic-weapon yank. Defaults match the",
+                  "previously hard-coded values.")
+         .translation("magnetization.configuration.combat")
+         .push("combat");
+
+        MR_ARMOR_IMPACT_PER_PIECE = b
+                .comment("Out-of-field kinetic-hit damage mitigation per MR armor piece (0.225 = 22.5%).")
+                .translation("magnetization.configuration.combat.mrArmorImpactPerPiece")
+                .defineInRange("mrArmorImpactPerPiece", 0.225d, 0.0d, 1.0d);
+        MR_ARMOR_IMPACT_MAX = b
+                .comment("Cap on out-of-field kinetic mitigation across the whole set.")
+                .translation("magnetization.configuration.combat.mrArmorImpactMax")
+                .defineInRange("mrArmorImpactMax", 0.9d, 0.0d, 1.0d);
+        MR_ARMOR_FIELD_PER_PIECE = b
+                .comment("In-field (hardened) all-damage mitigation per MR armor piece (0.30 = 30%).")
+                .translation("magnetization.configuration.combat.mrArmorFieldPerPiece")
+                .defineInRange("mrArmorFieldPerPiece", 0.30d, 0.0d, 1.0d);
+        MR_ARMOR_FIELD_MAX = b
+                .comment("Cap on in-field mitigation across the whole set.")
+                .translation("magnetization.configuration.combat.mrArmorFieldMax")
+                .defineInRange("mrArmorFieldMax", 0.95d, 0.0d, 1.0d);
+        MR_ARMOR_HARDEN_TICKS = b
+                .comment("How long (ticks) MR armor reads as rigid after a trigger (visual + window).")
+                .translation("magnetization.configuration.combat.mrArmorHardenTicks")
+                .defineInRange("mrArmorHardenTicks", 30, 1, 1200);
+        MR_GOLEM_BASE_MITIGATION = b
+                .comment("MR fluid golem damage mitigation out of a field.")
+                .translation("magnetization.configuration.combat.mrGolemBaseMitigation")
+                .defineInRange("mrGolemBaseMitigation", 0.30d, 0.0d, 1.0d);
+        MR_GOLEM_FIELD_MITIGATION = b
+                .comment("MR fluid golem damage mitigation while hardened in a field.")
+                .translation("magnetization.configuration.combat.mrGolemFieldMitigation")
+                .defineInRange("mrGolemFieldMitigation", 0.92d, 0.0d, 1.0d);
+        MR_GOLEM_HEALTH = b
+                .comment("MR fluid golem max health (iron golem = 100). Applied at spawn.")
+                .translation("magnetization.configuration.combat.mrGolemHealth")
+                .defineInRange("mrGolemHealth", 80, 1, 1024);
+        GALLIUM_GOLEM_HEALTH = b
+                .comment("Gallium golem max health (soft metal — weaker than iron's 100). Applied at spawn.")
+                .translation("magnetization.configuration.combat.galliumGolemHealth")
+                .defineInRange("galliumGolemHealth", 50, 1, 1024);
+        GALLIUM_GOLEM_MELT_TICKS = b
+                .comment("How long (ticks) a gallium golem survives outside a cold biome before melting.")
+                .translation("magnetization.configuration.combat.galliumGolemMeltTicks")
+                .defineInRange("galliumGolemMeltTicks", 1200, 20, 72000);
+        GALLIUM_GOLEM_WARM_DAMAGE_MULT = b
+                .comment("Extra damage a gallium golem takes outside a cold biome (1.5 = +50%).")
+                .translation("magnetization.configuration.combat.galliumGolemWarmDamageMult")
+                .defineInRange("galliumGolemWarmDamageMult", 1.5d, 1.0d, 10.0d);
+        ARMOR_VACUUM_RADIUS_PER_PIECE = b
+                .comment("Item-pull radius (blocks) per magnetized armor piece worn.")
+                .translation("magnetization.configuration.combat.armorVacuumRadiusPerPiece")
+                .defineInRange("armorVacuumRadiusPerPiece", 2.0d, 0.0d, 32.0d);
+        ARMOR_VACUUM_MAX_IMPULSE = b
+                .comment("Peak per-application impulse the armor vacuum gives an item right next to you.")
+                .translation("magnetization.configuration.combat.armorVacuumMaxImpulse")
+                .defineInRange("armorVacuumMaxImpulse", 0.18d, 0.0d, 5.0d);
+        WEAPON_YANK_OPPOSITE = b
+                .comment("Impulse when a magnetized weapon hits an opposite-pole target (pull).")
+                .translation("magnetization.configuration.combat.weaponYankOpposite")
+                .defineInRange("weaponYankOpposite", 0.55d, 0.0d, 5.0d);
+        WEAPON_YANK_SAME = b
+                .comment("Impulse when a magnetized weapon hits a same-pole target (push).")
+                .translation("magnetization.configuration.combat.weaponYankSame")
+                .defineInRange("weaponYankSame", 0.30d, 0.0d, 5.0d);
+        MAGNETIZED_EFFECT_DURATION_TICKS = b
+                .comment("Duration (ticks) of the Magnetized status effect applied by a magnetic weapon hit.")
+                .translation("magnetization.configuration.combat.magnetizedEffectDurationTicks")
+                .defineInRange("magnetizedEffectDurationTicks", 60, 1, 12000);
 
         b.pop();
 
@@ -992,6 +1083,29 @@ public final class MagConfig {
     private static int intOr(final ModConfigSpec.IntValue v, final int fallback) {
         try { return v.get(); } catch (final Throwable t) { return fallback; }
     }
+
+    /** Config-not-loaded-tolerant double read. */
+    private static double doubleOr(final ModConfigSpec.DoubleValue v, final double fallback) {
+        try { return v.get(); } catch (final Throwable t) { return fallback; }
+    }
+
+    // ── combat accessors (fallbacks = previous hard-coded values) ──
+    public static float  mrArmorImpactPerPiece()    { return (float) doubleOr(MR_ARMOR_IMPACT_PER_PIECE, 0.225d); }
+    public static float  mrArmorImpactMax()         { return (float) doubleOr(MR_ARMOR_IMPACT_MAX, 0.9d); }
+    public static float  mrArmorFieldPerPiece()     { return (float) doubleOr(MR_ARMOR_FIELD_PER_PIECE, 0.30d); }
+    public static float  mrArmorFieldMax()          { return (float) doubleOr(MR_ARMOR_FIELD_MAX, 0.95d); }
+    public static long   mrArmorHardenTicks()       { return intOr(MR_ARMOR_HARDEN_TICKS, 30); }
+    public static float  mrGolemBaseMitigation()    { return (float) doubleOr(MR_GOLEM_BASE_MITIGATION, 0.30d); }
+    public static float  mrGolemFieldMitigation()   { return (float) doubleOr(MR_GOLEM_FIELD_MITIGATION, 0.92d); }
+    public static double mrGolemHealth()            { return intOr(MR_GOLEM_HEALTH, 80); }
+    public static double galliumGolemHealth()       { return intOr(GALLIUM_GOLEM_HEALTH, 50); }
+    public static int    galliumGolemMeltTicks()    { return intOr(GALLIUM_GOLEM_MELT_TICKS, 1200); }
+    public static float  galliumGolemWarmDamageMult(){ return (float) doubleOr(GALLIUM_GOLEM_WARM_DAMAGE_MULT, 1.5d); }
+    public static double armorVacuumRadiusPerPiece(){ return doubleOr(ARMOR_VACUUM_RADIUS_PER_PIECE, 2.0d); }
+    public static double armorVacuumMaxImpulse()    { return doubleOr(ARMOR_VACUUM_MAX_IMPULSE, 0.18d); }
+    public static double weaponYankOpposite()       { return doubleOr(WEAPON_YANK_OPPOSITE, 0.55d); }
+    public static double weaponYankSame()           { return doubleOr(WEAPON_YANK_SAME, 0.30d); }
+    public static int    magnetizedEffectDurationTicks() { return intOr(MAGNETIZED_EFFECT_DURATION_TICKS, 60); }
 
     // ── performance tick-rate accessors (fallbacks = the previous hard-coded values) ──
     public static int pyrrhotiteScanTicks()         { return intOr(PYRRHOTITE_SCAN_TICKS, 20); }

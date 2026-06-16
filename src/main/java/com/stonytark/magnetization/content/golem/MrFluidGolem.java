@@ -29,9 +29,6 @@ public class MrFluidGolem extends IronGolem {
     private static final EntityDataAccessor<Boolean> HARDENED =
             SynchedEntityData.defineId(MrFluidGolem.class, EntityDataSerializers.BOOLEAN);
 
-    /** Inherent mitigation out of a field; near-total while hardened in a field. */
-    private static final float BASE_MITIGATION = 0.30f;
-    private static final float FIELD_MITIGATION = 0.92f;
 
     public MrFluidGolem(final EntityType<? extends IronGolem> type, final Level level) {
         super(type, level);
@@ -39,7 +36,7 @@ public class MrFluidGolem extends IronGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return IronGolem.createAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0)        // a touch less than the iron golem's 100
+                .add(Attributes.MAX_HEALTH, com.stonytark.magnetization.config.MagConfig.mrGolemHealth())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
@@ -67,7 +64,9 @@ public class MrFluidGolem extends IronGolem {
     public boolean hurt(final DamageSource source, float amount) {
         if (!level().isClientSide && level() instanceof ServerLevel server
                 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            final float mit = MagneticFields.isInField(server, position()) ? FIELD_MITIGATION : BASE_MITIGATION;
+            final float mit = MagneticFields.isInField(server, position())
+                    ? com.stonytark.magnetization.config.MagConfig.mrGolemFieldMitigation()
+                    : com.stonytark.magnetization.config.MagConfig.mrGolemBaseMitigation();
             amount *= (1.0f - mit);
         }
         return super.hurt(source, amount);

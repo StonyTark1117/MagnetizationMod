@@ -26,10 +26,6 @@ import net.minecraft.world.level.block.Block;
  */
 public class GalliumGolem extends IronGolem {
 
-    /** Ticks a warm (non-cold-biome) golem survives before it melts. */
-    private static final int MELT_LIFETIME = 1200; // ~60s
-    /** Extra damage taken outside a cold biome (softer when warm). */
-    private static final float WARM_DAMAGE_MULT = 1.5f;
 
     private int warmTicks = 0;
     /** Set on the melt path so the death/loot drop is skipped (we leave a fluid source instead). */
@@ -41,7 +37,7 @@ public class GalliumGolem extends IronGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return IronGolem.createAttributes()
-                .add(Attributes.MAX_HEALTH, 50.0)            // weaker than iron's 100, even in the cold
+                .add(Attributes.MAX_HEALTH, com.stonytark.magnetization.config.MagConfig.galliumGolemHealth())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.0);  // soft — no knockback resistance
     }
 
@@ -57,7 +53,7 @@ public class GalliumGolem extends IronGolem {
             warmTicks = 0;
             return;
         }
-        if (++warmTicks >= MELT_LIFETIME) melt(server);
+        if (++warmTicks >= com.stonytark.magnetization.config.MagConfig.galliumGolemMeltTicks()) melt(server);
     }
 
     /** Melt away: leave a gallium fluid source where it stood, no loot. */
@@ -74,7 +70,7 @@ public class GalliumGolem extends IronGolem {
     @Override
     public boolean hurt(final DamageSource source, float amount) {
         if (!level().isClientSide && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !inColdBiome()) {
-            amount *= WARM_DAMAGE_MULT; // softer when warm
+            amount *= com.stonytark.magnetization.config.MagConfig.galliumGolemWarmDamageMult(); // softer when warm
         }
         return super.hurt(source, amount);
     }
