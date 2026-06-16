@@ -139,6 +139,10 @@ public final class MagLootTableProvider {
             dropSelf(MagBlocks.ENHANCED_PYRRHOTITE_CATALYST.get());
             dropSelf(MagBlocks.COSMIC_PYRRHOTITE_CATALYST.get());
 
+            // 1.2 blocks (fluid blocks need no loot; hardened MR uses noLootTable()).
+            dropSelf(MagBlocks.DIAMAGNETIC_BLOCK.get());
+            dropSelf(MagBlocks.SOLID_GALLIUM.get());
+
             // Meteorite sapling drops self when broken (fragile, players can
             // recover their investment if they planted in a bad spot).
             dropSelf(MagBlocks.METEORITE_SAPLING.get());
@@ -175,6 +179,7 @@ public final class MagLootTableProvider {
                     MagBlocks.METEORITE_CORE, MagBlocks.METEORITE_SAPLING,
                     MagBlocks.PYRRHOTITE_CATALYST, MagBlocks.ENHANCED_PYRRHOTITE_CATALYST,
                     MagBlocks.COSMIC_PYRRHOTITE_CATALYST,
+                    MagBlocks.DIAMAGNETIC_BLOCK, MagBlocks.SOLID_GALLIUM,
                     MagBlocks.ANOMALY_STONE, MagBlocks.COBBLED_ANOMALY_STONE,
                     MagBlocks.ANOMALY_STONE_STAIRS, MagBlocks.ANOMALY_STONE_SLAB,
                     MagBlocks.COBBLED_ANOMALY_STONE_STAIRS, MagBlocks.COBBLED_ANOMALY_STONE_SLAB,

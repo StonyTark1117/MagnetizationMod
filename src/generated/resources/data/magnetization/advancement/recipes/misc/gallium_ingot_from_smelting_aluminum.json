@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_input": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/aluminum"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:gallium_ingot_from_smelting_aluminum"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_input"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:gallium_ingot_from_smelting_aluminum"
+    ]
+  }
+}

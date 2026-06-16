@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "magnetization:gallium_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "MM ",
+    " S ",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:gallium_hoe"
+  }
+}

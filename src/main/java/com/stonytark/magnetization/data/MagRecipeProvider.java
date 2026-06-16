@@ -41,6 +41,10 @@ public final class MagRecipeProvider extends RecipeProvider {
      *  in every recipe that wants a "magnetic alloy" (see c:ingots/magnetic_alloy). */
     private static final TagKey<Item> C_INGOTS_MAGNETIC_ALLOY =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/magnetic_alloy"));
+    private static final TagKey<Item> C_INGOTS_ZINC =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/zinc"));
+    private static final TagKey<Item> C_INGOTS_ALUMINUM =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/aluminum"));
     private static final TagKey<Item> C_PLATES =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:plates"));
     private static final TagKey<Item> C_STRINGS =
@@ -509,6 +513,95 @@ public final class MagRecipeProvider extends RecipeProvider {
                         RecipeCategory.BUILDING_BLOCKS, MagBlocks.COBBLED_ANOMALY_STONE_WALL.get())
                 .unlockedBy("has_cobbled", has(MagBlocks.COBBLED_ANOMALY_STONE.get()))
                 .save(out, id("cobbled_anomaly_stone_wall_from_stonecutting"));
+
+        // ================= 1.2 content (migrated from hand-written JSON) =================
+
+        // -------- Magnetorheological fluid tools (iron tool + MR fluid bucket) --------
+        final Item mrBucket = MagItems.MR_FLUID_BUCKET.get();
+        shapelessFluidTool(out, MagItems.MR_FLUID_SWORD.get(), Items.IRON_SWORD, mrBucket, "mr_fluid_sword");
+        shapelessFluidTool(out, MagItems.MR_FLUID_PICKAXE.get(), Items.IRON_PICKAXE, mrBucket, "mr_fluid_pickaxe");
+        shapelessFluidTool(out, MagItems.MR_FLUID_AXE.get(), Items.IRON_AXE, mrBucket, "mr_fluid_axe");
+        shapelessFluidTool(out, MagItems.MR_FLUID_SHOVEL.get(), Items.IRON_SHOVEL, mrBucket, "mr_fluid_shovel");
+        shapelessFluidTool(out, MagItems.MR_FLUID_HOE.get(), Items.IRON_HOE, mrBucket, "mr_fluid_hoe");
+        shapelessFluidTool(out, MagItems.MR_FLUID_HORSE_ARMOR.get(), Items.IRON_HORSE_ARMOR, mrBucket, "mr_fluid_horse_armor");
+        // -------- MR liquid armor (iron armor + MR fluid bucket) --------
+        shapelessFluidTool(out, MagItems.MR_LIQUID_HELMET.get(), Items.IRON_HELMET, mrBucket, "mr_liquid_helmet");
+        shapelessFluidTool(out, MagItems.MR_LIQUID_CHESTPLATE.get(), Items.IRON_CHESTPLATE, mrBucket, "mr_liquid_chestplate");
+        shapelessFluidTool(out, MagItems.MR_LIQUID_LEGGINGS.get(), Items.IRON_LEGGINGS, mrBucket, "mr_liquid_leggings");
+        shapelessFluidTool(out, MagItems.MR_LIQUID_BOOTS.get(), Items.IRON_BOOTS, mrBucket, "mr_liquid_boots");
+
+        // -------- Gallium gear (gold-like; M = gallium_ingot) --------
+        final Item gIngot = MagItems.GALLIUM_INGOT.get();
+        equipmentSet(out, Ingredient.of(gIngot), "gallium",
+                MagItems.GALLIUM_SWORD.get(), MagItems.GALLIUM_PICKAXE.get(), MagItems.GALLIUM_AXE.get(),
+                MagItems.GALLIUM_SHOVEL.get(), MagItems.GALLIUM_HOE.get(),
+                MagItems.GALLIUM_HELMET.get(), MagItems.GALLIUM_CHESTPLATE.get(),
+                MagItems.GALLIUM_LEGGINGS.get(), MagItems.GALLIUM_BOOTS.get(), gIngot);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.GALLIUM_HORSE_ARMOR.get())
+                .pattern("M M").pattern("MMM").pattern("M M")
+                .define('M', gIngot)
+                .unlockedBy("has_material", has(gIngot))
+                .save(out, id("gallium_horse_armor"));
+
+        // -------- Gallium ingot: smelt/blast raw gallium, zinc (Create), or aluminium (TFMG) --------
+        galliumIngotCook(out, Ingredient.of(MagItems.RAW_GALLIUM.get()), has(MagItems.RAW_GALLIUM.get()), "raw_gallium");
+        galliumIngotCook(out, Ingredient.of(C_INGOTS_ZINC), has(C_INGOTS_ZINC), "zinc");
+        galliumIngotCook(out, Ingredient.of(C_INGOTS_ALUMINUM), has(C_INGOTS_ALUMINUM), "aluminum");
+
+        // -------- Solid gallium storage block <-> 9 ingots --------
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, MagBlocks.SOLID_GALLIUM.get())
+                .pattern("MMM").pattern("MMM").pattern("MMM")
+                .define('M', gIngot)
+                .unlockedBy("has_material", has(gIngot))
+                .save(out, id("solid_gallium"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gIngot, 9)
+                .requires(MagBlocks.SOLID_GALLIUM.get())
+                .unlockedBy("has_block", has(MagBlocks.SOLID_GALLIUM.get()))
+                .save(out, id("gallium_ingot_from_block"));
+
+        // -------- Mixed gallium = gallium bucket + magnetite or iron --------
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MIXED_GALLIUM_BUCKET.get())
+                .requires(MagItems.GALLIUM_BUCKET.get()).requires(MagItems.MAGNETITE_INGOT.get())
+                .unlockedBy("has_gallium_bucket", has(MagItems.GALLIUM_BUCKET.get()))
+                .save(out, id("mixed_gallium_bucket_from_magnetite"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MIXED_GALLIUM_BUCKET.get())
+                .requires(MagItems.GALLIUM_BUCKET.get()).requires(Items.IRON_INGOT)
+                .unlockedBy("has_gallium_bucket", has(MagItems.GALLIUM_BUCKET.get()))
+                .save(out, id("mixed_gallium_bucket_from_iron"));
+
+        // -------- Conductive-fluid buckets as dyes --------
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.BLACK_DYE, 4)
+                .requires(MagItems.FERROFLUID_BUCKET.get())
+                .unlockedBy("has_ferrofluid", has(MagItems.FERROFLUID_BUCKET.get()))
+                .save(out, id("black_dye_from_ferrofluid"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.GRAY_DYE, 4)
+                .requires(mrBucket)
+                .unlockedBy("has_mr_fluid", has(mrBucket))
+                .save(out, id("gray_dye_from_mr_fluid"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.LIGHT_GRAY_DYE, 4)
+                .requires(MagItems.GALLIUM_BUCKET.get())
+                .unlockedBy("has_gallium", has(MagItems.GALLIUM_BUCKET.get()))
+                .save(out, id("light_gray_dye_from_gallium"));
+    }
+
+    /** Shapeless "base item + fluid bucket -> fluid-coated variant" (MR tools/armor). */
+    private static void shapelessFluidTool(final RecipeOutput out, final ItemLike result,
+                                           final ItemLike base, final ItemLike bucket, final String id) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, result)
+                .requires(base).requires(bucket)
+                .unlockedBy("has_fluid", has(bucket))
+                .save(out, id(id));
+    }
+
+    /** Smelting + blasting of {@code in} -> a gallium ingot. */
+    private static void galliumIngotCook(final RecipeOutput out, final Ingredient in,
+                                         final net.minecraft.advancements.Criterion<?> unlock, final String from) {
+        SimpleCookingRecipeBuilder.smelting(in, RecipeCategory.MISC, MagItems.GALLIUM_INGOT.get(), 0.7f, 200)
+                .unlockedBy("has_input", unlock)
+                .save(out, id("gallium_ingot_from_smelting_" + from));
+        SimpleCookingRecipeBuilder.blasting(in, RecipeCategory.MISC, MagItems.GALLIUM_INGOT.get(), 0.7f, 100)
+                .unlockedBy("has_input", unlock)
+                .save(out, id("gallium_ingot_from_blasting_" + from));
     }
 
     /** Bulk emit a full sword + 4 tools + 4 armor set keyed off one ingredient.

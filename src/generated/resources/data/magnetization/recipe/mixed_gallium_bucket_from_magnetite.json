@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:gallium_bucket"
+    },
+    {
+      "item": "magnetization:magnetite_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:mixed_gallium_bucket"
+  }
+}

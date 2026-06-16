@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_ferrofluid": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:ferrofluid_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:black_dye_from_ferrofluid"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ferrofluid"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:black_dye_from_ferrofluid"
+    ]
+  }
+}

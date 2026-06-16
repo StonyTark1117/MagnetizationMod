@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "M": {
+      "item": "magnetization:gallium_ingot"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:solid_gallium"
+  }
+}

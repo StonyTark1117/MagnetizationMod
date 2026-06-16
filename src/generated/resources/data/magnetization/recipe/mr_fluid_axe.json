@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_axe"
+    },
+    {
+      "item": "magnetization:mr_fluid_bucket"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:mr_fluid_axe"
+  }
+}

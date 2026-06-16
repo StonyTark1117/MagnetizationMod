@@ -1,4 +1,4 @@
-// 1.21.1	2026-05-18T03:40:21.40330431	Loot Tables
+// 1.21.1	2026-06-15T17:40:47.260756622	Loot Tables
 f21258bbdbc58951e64d6984127d1c905773b7c7 data/magnetization/loot_table/blocks/anomaly_stone.json
 b09b647b2ddcbc4a2c2368076365742ba63398a0 data/magnetization/loot_table/blocks/anomaly_stone_slab.json
 d93b76c7d0361310a2d77a40826bb227916e18a4 data/magnetization/loot_table/blocks/anomaly_stone_stairs.json
@@ -12,6 +12,7 @@ b8907f70abd6027f582e1e3b3d427d9e51dca902 data/magnetization/loot_table/blocks/de
 11bb8bebb1a8de731fed7ce2032e2cf299490978 data/magnetization/loot_table/blocks/deepslate_magnetite_ore.json
 7d287b0218bf3d379b51f4125c4d867f18552b72 data/magnetization/loot_table/blocks/deepslate_pyrrhotite_ore.json
 9a0aece804321ed37f27d9238b7936ca39e2ff96 data/magnetization/loot_table/blocks/deepslate_titanomagnetite_ore.json
+d06dee55837bd5e87c487ff79d0ac1d28cdf056c data/magnetization/loot_table/blocks/diamagnetic_block.json
 f6f26bbe6054a6b00557bb12dfb35dd6dd425041 data/magnetization/loot_table/blocks/electromagnet.json
 7b6171acf95f2c1fdbef401c82d8401c532a516c data/magnetization/loot_table/blocks/enhanced_pyrrhotite_catalyst.json
 62b1a1497ba0b776265b7eb946720f95cf9eaaf1 data/magnetization/loot_table/blocks/hematite_block.json
@@ -40,6 +41,7 @@ f20daf5103c339387ce6735110b1c7af7cbd54f1 data/magnetization/loot_table/blocks/ra
 ce87ee3ba63139f6e979d7a88b700df96a584732 data/magnetization/loot_table/blocks/raw_pyrrhotite_block.json
 62fd00cc65587e4599db860089d4b8e3cf9fc740 data/magnetization/loot_table/blocks/raw_titanomagnetite_block.json
 9746f1d2595175101697fe4a362acfa8c9ec4c1e data/magnetization/loot_table/blocks/repulsor_coil.json
+e7119bb30150046fbce7ec468366e7c7f6d9ec6a data/magnetization/loot_table/blocks/solid_gallium.json
 81af56c21388a3dd7318185ac87bce1ac27be577 data/magnetization/loot_table/blocks/temporary_magnet.json
 725df20e9111d3b112ecb22a510ea0373f3359d7 data/magnetization/loot_table/blocks/titanomagnetite_block.json
 9d5b9ae457560b386c04b3a70e91632204b8f92e data/magnetization/loot_table/blocks/titanomagnetite_ore.json
