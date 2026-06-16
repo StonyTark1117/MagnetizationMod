@@ -82,6 +82,48 @@ public final class MagGameTests {
      * resolution + drain in a real tick cycle — the bit unit tests can't reach
      * because there's no real {@code ServerLevel} to drive {@code serverTick}.
      */
+    /**
+     * A magnetostrictive sensor emits an analog redstone signal when a living
+     * entity moves within range. Regression guard for the bug where it read
+     * {@code getDeltaMovement()} (≈0 for players server-side) instead of
+     * {@code getKnownMovement()} — which made it appear to do nothing. Uses a
+     * mob (whose getKnownMovement == getDeltaMovement) with motion re-applied
+     * each tick so the sensor samples a non-zero speed regardless of drag/timing.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void sensorEmitsRedstoneOnMovement(final GameTestHelper helper) {
+        final BlockPos sensorPos = new BlockPos(1, 1, 1);
+        helper.setBlock(sensorPos, MagBlocks.MAGNETOSTRICTIVE_SENSOR.get());
+
+        // Spawn a cow two blocks away (well within the 8-block range), AI/gravity
+        // off so it stays put except for the velocity we inject.
+        final net.minecraft.world.entity.animal.Cow cow =
+                helper.spawn(net.minecraft.world.entity.EntityType.COW, new BlockPos(3, 1, 1));
+        cow.setNoAi(true);
+        cow.setNoGravity(true);
+
+        // Re-apply horizontal motion every tick for the first 9 ticks so that,
+        // whatever tick the sensor's 2-tick scan lands on, getKnownMovement is
+        // non-zero and above the move threshold.
+        for (long t = 1; t <= 9; t++) {
+            helper.runAfterDelay(t, () -> cow.setDeltaMovement(0.3, 0.0, 0.0));
+        }
+
+        helper.runAfterDelay(10L, () -> {
+            final BlockEntity be = helper.getBlockEntity(sensorPos);
+            if (!(be instanceof com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlockEntity sensor)) {
+                helper.fail("Expected a MagnetostrictiveSensorBlockEntity at " + sensorPos + ", got " + be);
+                return;
+            }
+            helper.assertTrue(sensor.getSignal() > 0,
+                    "Sensor should emit redstone for a moving entity in range; signal=" + sensor.getSignal());
+            helper.assertTrue(helper.getBlockState(sensorPos)
+                            .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED),
+                    "Sensor block should be POWERED while emitting");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would

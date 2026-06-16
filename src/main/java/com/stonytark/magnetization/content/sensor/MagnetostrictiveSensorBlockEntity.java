@@ -39,12 +39,11 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
         final AABB box = new AABB(pos).inflate(range);
         double best = 0.0;
         for (final LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, box)) {
-            // Position delta, NOT getDeltaMovement(): a player's server-side
-            // delta-movement stays ~0 (client-authoritative motion), so the
-            // sensor would only ever see mobs. xOld/yOld/zOld are updated
-            // server-side for players too, giving real per-tick speed.
-            final double dx = e.getX() - e.xOld, dy = e.getY() - e.yOld, dz = e.getZ() - e.zOld;
-            final double speedSqr = dx * dx + dy * dy + dz * dz;
+            // getKnownMovement(), NOT getDeltaMovement(): a player's server-side
+            // delta-movement stays ~0 (client-authoritative motion). getKnownMovement
+            // is the purpose-built API that returns real movement for players too,
+            // and falls back to getDeltaMovement() for mobs.
+            final double speedSqr = e.getKnownMovement().lengthSqr();
             if (speedSqr < moveThreshold) continue;
             final double dist = Math.sqrt(e.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
             final double proximity = Math.max(0.0, 1.0 - dist / range);
