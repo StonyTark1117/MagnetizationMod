@@ -124,6 +124,54 @@ public final class MagGameTests {
         });
     }
 
+    /**
+     * Lenz braking detects a conductor pad the ship flies <em>over</em>, not just
+     * blocks its own hull overlaps. Regression guard for the bug where the scan
+     * used only the ship's bounding box, so a ship gliding above a ground copper
+     * pad induced nothing and never slowed. The fix scans {@code BELOW_REACH}
+     * blocks below the hull; this test calls the scan directly with a hull box
+     * floating above placed copper and asserts the pad is counted — and that a
+     * hull beyond reach counts nothing.
+     *
+     * <p>Scope: this proves the conductor-detection scan (the part that was
+     * broken). It does not assemble a real Sable ship, so it does not exercise
+     * the velocity-drag application — that still needs in-world testing.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void lenzCountsConductorPadBelowHull(final GameTestHelper helper) {
+        // A two-block copper pad on the floor.
+        helper.setBlock(new BlockPos(1, 1, 1), Blocks.COPPER_BLOCK);
+        helper.setBlock(new BlockPos(1, 1, 2), Blocks.COPPER_BLOCK);
+
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos pad = helper.absolutePos(new BlockPos(1, 1, 1));
+        final double cx = pad.getX();
+        final double cy = pad.getY();
+        final double cz = pad.getZ();
+
+        // Hull box hovering 3 blocks above the pad — within BELOW_REACH (3), so
+        // the downward scan (floor(minY) - 3) reaches the copper at cy.
+        final dev.ryanhcode.sable.companion.math.BoundingBox3d overPad =
+                new dev.ryanhcode.sable.companion.math.BoundingBox3d(
+                        cx, cy + 3, cz, cx + 1, cy + 4, cz + 2);
+        final int counted = com.stonytark.magnetization.content.effect.LenzBrakingHandler
+                .countOverlappingConductors(level, overPad);
+        helper.assertTrue(counted >= 2,
+                "Lenz scan should detect the copper pad 3 blocks below the hull; counted=" + counted);
+
+        // Hull box 5 blocks up — beyond BELOW_REACH, so the scan stops above the
+        // copper and counts nothing. Confirms the reach is bounded, not infinite.
+        final dev.ryanhcode.sable.companion.math.BoundingBox3d tooHigh =
+                new dev.ryanhcode.sable.companion.math.BoundingBox3d(
+                        cx, cy + 5, cz, cx + 1, cy + 6, cz + 2);
+        final int countedHigh = com.stonytark.magnetization.content.effect.LenzBrakingHandler
+                .countOverlappingConductors(level, tooHigh);
+        helper.assertTrue(countedHigh == 0,
+                "Lenz scan should not reach a pad beyond BELOW_REACH; counted=" + countedHigh);
+
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would

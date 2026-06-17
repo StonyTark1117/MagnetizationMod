@@ -68,8 +68,13 @@ public final class LenzBrakingHandler {
         }
     }
 
-    /** Count conductor blocks in (and just around) the ship's bounding box, capped. */
-    private static int countOverlappingConductors(final ServerLevel level, final BoundingBox3dc bb) {
+    /**
+     * Count conductor blocks in (and just around) the ship's bounding box, capped.
+     * Scans {@link #BELOW_REACH} blocks below the hull so a ship flying over a
+     * ground conductor pad still induces eddy braking. Public for GameTest
+     * verification of that below-hull reach ({@code lenzCountsConductorPadBelowHull}).
+     */
+    public static int countOverlappingConductors(final ServerLevel level, final BoundingBox3dc bb) {
         final int minX = (int) Math.floor(bb.minX()) - 1;
         final int minY = (int) Math.floor(bb.minY()) - BELOW_REACH;
         final int minZ = (int) Math.floor(bb.minZ()) - 1;

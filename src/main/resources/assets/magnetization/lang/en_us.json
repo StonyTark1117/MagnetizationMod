@@ -1080,6 +1080,7 @@
   "tooltip.magnetization.gui_fuel": "Fuel: %ss",
   "tooltip.magnetization.gui_output": "Output: %s FE/t",
   "tooltip.magnetization.induction_pad.status": "Wireless charge: %s blocks · %s FE/t",
+  "tooltip.magnetization.sensor.status": "Redstone output: %s · Range: %s blocks",
   "tooltip.magnetization.gui_fluid": "Ferrofluid: %s mB",
   "tooltip.magnetization.gui_rpm": "Speed: %s RPM",
   "tooltip.magnetization.gui_speed": "Thrust tier: %s",
