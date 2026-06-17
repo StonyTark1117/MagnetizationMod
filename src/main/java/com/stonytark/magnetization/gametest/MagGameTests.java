@@ -172,6 +172,91 @@ public final class MagGameTests {
         helper.succeed();
     }
 
+    /**
+     * End-to-end Lenz braking on a real Sable ship. Two single-block iron ships
+     * get the same downward velocity; one falls right beside a copper wall, the
+     * other in open air. After they fall, the ship next to the conductor must be
+     * moving downward measurably slower — eddy-current drag opposing its motion.
+     *
+     * <p>This is the test the conductor-scan unit test could not be: it assembles
+     * real ships via {@link dev.ryanhcode.sable.api.SubLevelAssemblyHelper}, lets
+     * the live {@code LevelTickEvent} handler run, and reads the physics body's
+     * velocity — proving drag is actually applied to a ship, not just that the
+     * scan finds conductors. Uses a side wall (not a floor pad) to also prove the
+     * uniform {@code CONDUCTOR_REACH} brakes a ship flying past a wall.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 200)
+    public static void lenzBrakesFallingShipBesideCopperWall(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos baseA = helper.absolutePos(new BlockPos(1, 2, 1));   // ship beside copper
+        final BlockPos baseB = baseA.offset(12, 0, 0);                      // control ship, open air
+
+        helper.runAfterDelay(2L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel shipA =
+                    assembleSingleBlockShip(level, baseA, Blocks.IRON_BLOCK);
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel shipB =
+                    assembleSingleBlockShip(level, baseB, Blocks.IRON_BLOCK);
+
+            // Copper wall hugging ship A's east face, spanning its fall path. Well
+            // over the conductor cap (8) so A gets near-maximal drag.
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = -6; dy <= 1; dy++) {
+                    level.setBlock(baseA.offset(1, dy, dz),
+                            Blocks.COPPER_BLOCK.defaultBlockState(),
+                            net.minecraft.world.level.block.Block.UPDATE_ALL);
+                }
+            }
+
+            helper.runAfterDelay(2L, () -> {
+                final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle hA =
+                        dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(shipA);
+                final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle hB =
+                        dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(shipB);
+                if (hA == null || hB == null) {
+                    helper.fail("Could not obtain physics handles for the assembled ships");
+                    return;
+                }
+                // Same downward kick to both, well above lenzMinSpeed (0.04).
+                hA.addLinearAndAngularVelocity(new org.joml.Vector3d(0, -1.5, 0), new org.joml.Vector3d());
+                hB.addLinearAndAngularVelocity(new org.joml.Vector3d(0, -1.5, 0), new org.joml.Vector3d());
+
+                helper.runAfterDelay(24L, () -> {
+                    final org.joml.Vector3d vA = hA.getLinearVelocity(new org.joml.Vector3d());
+                    final org.joml.Vector3d vB = hB.getLinearVelocity(new org.joml.Vector3d());
+                    // Both fall (negative y). A is braked, so its downward speed is
+                    // smaller → vA.y is the less-negative (greater) of the two.
+                    helper.assertTrue(vA.y > vB.y + 0.1,
+                            "Ship beside the copper wall should fall slower (Lenz drag): "
+                                    + "vA.y=" + vA.y + " vB.y=" + vB.y);
+                    helper.succeed();
+                });
+            });
+        });
+    }
+
+    /** Place a single block at {@code pos}, assemble it into a Sable ship, and
+     *  teleport the ship back onto that world position so callers can stage
+     *  conductors around it. Mirrors Sable's own AssemblyTest setup. */
+    private static dev.ryanhcode.sable.sublevel.ServerSubLevel assembleSingleBlockShip(
+            final net.minecraft.server.level.ServerLevel level,
+            final BlockPos pos,
+            final net.minecraft.world.level.block.Block block) {
+        level.setBlock(pos, block.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        final dev.ryanhcode.sable.companion.math.BoundingBox3i bounds =
+                new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                        pos.getX(), pos.getY(), pos.getZ(),
+                        pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+        final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(
+                        level, pos, java.util.List.of(pos), bounds);
+        final dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer container =
+                dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        container.physicsSystem().getPipeline().teleport(ship,
+                new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+                new org.joml.Quaterniond());
+        return ship;
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would

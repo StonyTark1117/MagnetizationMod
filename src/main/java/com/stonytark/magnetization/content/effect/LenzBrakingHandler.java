@@ -18,18 +18,20 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 /**
- * Lenz-effect eddy-current braking. A magnetic Sable ship moving over conductive
+ * Lenz-effect eddy-current braking. A magnetic Sable ship moving near conductive
  * non-ferrous blocks ({@code #magnetization:eddy_conductors} — copper, aluminium,
  * …) induces opposing eddy currents that drag it to a near-stop: it floats/slides
  * slowly instead of zipping through, exactly like a magnet falling through a
- * copper pipe. Linear-velocity drag only (no attraction); scaled by how many
- * conductor blocks the ship overlaps and the configured strength.
+ * copper pipe. Ships fly, so the conductor can be below, beside, or above the
+ * hull — the scan reaches {@link #CONDUCTOR_REACH} blocks past every face.
+ * Linear-velocity drag only (no attraction); scaled by how many conductor blocks
+ * the ship is near and the configured strength.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class LenzBrakingHandler {
 
-    private static final int SAMPLE_CAP = 160;        // hard cap on blocks examined per ship
-    private static final int BELOW_REACH = 3;         // blocks below the hull to scan for a pad it flies over
+    private static final int SAMPLE_CAP = 2048;       // hard cap on blocks examined per ship
+    private static final int CONDUCTOR_REACH = 3;     // blocks scanned past the hull on EVERY face — a wall/ceiling/floor brakes a flying ship, not just a pad below
 
     private LenzBrakingHandler() {}
 
@@ -69,18 +71,20 @@ public final class LenzBrakingHandler {
     }
 
     /**
-     * Count conductor blocks in (and just around) the ship's bounding box, capped.
-     * Scans {@link #BELOW_REACH} blocks below the hull so a ship flying over a
-     * ground conductor pad still induces eddy braking. Public for GameTest
-     * verification of that below-hull reach ({@code lenzCountsConductorPadBelowHull}).
+     * Count conductor blocks within {@link #CONDUCTOR_REACH} of the ship's
+     * bounding box on every face, capped. The uniform reach means a ship induces
+     * eddy braking whether it skims a floor pad, hugs a wall, or passes under a
+     * ceiling — ships fly, so braking can't be below-only. Public for GameTest
+     * verification ({@code lenzCountsConductorPadBelowHull} /
+     * {@code lenzBrakesFallingShipBesideCopperWall}).
      */
     public static int countOverlappingConductors(final ServerLevel level, final BoundingBox3dc bb) {
-        final int minX = (int) Math.floor(bb.minX()) - 1;
-        final int minY = (int) Math.floor(bb.minY()) - BELOW_REACH;
-        final int minZ = (int) Math.floor(bb.minZ()) - 1;
-        final int maxX = (int) Math.ceil(bb.maxX()) + 1;
-        final int maxY = (int) Math.ceil(bb.maxY()) + 1;
-        final int maxZ = (int) Math.ceil(bb.maxZ()) + 1;
+        final int minX = (int) Math.floor(bb.minX()) - CONDUCTOR_REACH;
+        final int minY = (int) Math.floor(bb.minY()) - CONDUCTOR_REACH;
+        final int minZ = (int) Math.floor(bb.minZ()) - CONDUCTOR_REACH;
+        final int maxX = (int) Math.ceil(bb.maxX()) + CONDUCTOR_REACH;
+        final int maxY = (int) Math.ceil(bb.maxY()) + CONDUCTOR_REACH;
+        final int maxZ = (int) Math.ceil(bb.maxZ()) + CONDUCTOR_REACH;
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         int count = 0;
         int examined = 0;
