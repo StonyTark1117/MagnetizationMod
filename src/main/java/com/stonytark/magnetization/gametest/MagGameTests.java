@@ -188,20 +188,27 @@ public final class MagGameTests {
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 200)
     public static void lenzBrakesFallingShipBesideCopperWall(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
-        final BlockPos baseA = helper.absolutePos(new BlockPos(1, 2, 1));   // ship beside copper
-        final BlockPos baseB = baseA.offset(12, 0, 0);                      // control ship, open air
+        final BlockPos baseA = helper.absolutePos(new BlockPos(1, 2, 1));
+        final BlockPos baseB = baseA.offset(12, 0, 0);
+        // Drop the ships in open sky (well above any terrain) so the fall window is
+        // never cut short by hitting the ground — that would zero both velocities
+        // and erase the difference we're measuring. High Y is in a loaded chunk.
+        final BlockPos skyA = new BlockPos(baseA.getX(), 240, baseA.getZ());
+        final BlockPos skyB = new BlockPos(baseB.getX(), 240, baseB.getZ());
 
         helper.runAfterDelay(2L, () -> {
             final dev.ryanhcode.sable.sublevel.ServerSubLevel shipA =
                     assembleSingleBlockShip(level, baseA, Blocks.IRON_BLOCK);
             final dev.ryanhcode.sable.sublevel.ServerSubLevel shipB =
                     assembleSingleBlockShip(level, baseB, Blocks.IRON_BLOCK);
+            teleportShip(level, shipA, skyA);
+            teleportShip(level, shipB, skyB);
 
-            // Copper wall hugging ship A's east face, spanning its fall path. Well
-            // over the conductor cap (8) so A gets near-maximal drag.
+            // Copper wall hugging ship A's east face up in the sky, spanning its
+            // fall path. Well over the conductor cap (8) so A gets near-maximal drag.
             for (int dz = -1; dz <= 1; dz++) {
-                for (int dy = -6; dy <= 1; dy++) {
-                    level.setBlock(baseA.offset(1, dy, dz),
+                for (int dy = -8; dy <= 1; dy++) {
+                    level.setBlock(skyA.offset(1, dy, dz),
                             Blocks.COPPER_BLOCK.defaultBlockState(),
                             net.minecraft.world.level.block.Block.UPDATE_ALL);
                 }
@@ -255,6 +262,179 @@ public final class MagGameTests {
                 new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
                 new org.joml.Quaterniond());
         return ship;
+    }
+
+    /** Teleport an already-assembled ship to a new world position (identity orientation). */
+    private static void teleportShip(final net.minecraft.server.level.ServerLevel level,
+                                     final dev.ryanhcode.sable.sublevel.ServerSubLevel ship,
+                                     final BlockPos pos) {
+        final dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer container =
+                dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        container.physicsSystem().getPipeline().teleport(ship,
+                new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+                new org.joml.Quaterniond());
+    }
+
+    /**
+     * #80 — Barkhausen Generator emits a jittering analog redstone signal while a
+     * magnet block touches it, and 0 with no magnet. Signal is {@code random(0..15)}
+     * every 2 ticks, so we sample many ticks and assert the magnetized generator
+     * produced a non-zero reading (and toggled POWERED) at least once, while a bare
+     * generator with no adjacent magnet stays flat at 0.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void barkhausenJittersWithAdjacentMagnet(final GameTestHelper helper) {
+        final BlockPos withMagnet = new BlockPos(1, 1, 1);
+        final BlockPos noMagnet = new BlockPos(1, 1, 2);
+        helper.setBlock(withMagnet, MagBlocks.BARKHAUSEN.get());
+        helper.setBlock(new BlockPos(1, 1, 0), MagBlocks.PERMANENT_MAGNET.get()); // touches the first generator
+        helper.setBlock(noMagnet, MagBlocks.BARKHAUSEN.get());                     // no magnet anywhere near
+
+        final com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity beMag =
+                (com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity) helper.getBlockEntity(withMagnet);
+        final com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity beBare =
+                (com.stonytark.magnetization.content.sensor.BarkhausenBlockEntity) helper.getBlockEntity(noMagnet);
+
+        final int[] maxMagSignal = {0};
+        final boolean[] sawPowered = {false};
+        final int[] maxBareSignal = {0};
+        for (long t = 2; t <= 40; t += 2) {
+            helper.runAfterDelay(t, () -> {
+                maxMagSignal[0] = Math.max(maxMagSignal[0], beMag.getSignal());
+                maxBareSignal[0] = Math.max(maxBareSignal[0], beBare.getSignal());
+                if (helper.getBlockState(withMagnet)
+                        .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED)) {
+                    sawPowered[0] = true;
+                }
+            });
+        }
+        helper.runAfterDelay(42L, () -> {
+            helper.assertTrue(maxMagSignal[0] > 0,
+                    "Magnetized Barkhausen should emit a non-zero signal across 20 samples; max=" + maxMagSignal[0]);
+            helper.assertTrue(sawPowered[0], "Magnetized Barkhausen should toggle POWERED true at least once");
+            helper.assertTrue(maxBareSignal[0] == 0,
+                    "Barkhausen with no adjacent magnet must stay at 0; max=" + maxBareSignal[0]);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #85 — Magnetic anvil dampener detection. The break-chance override keys off
+     * {@link com.stonytark.magnetization.content.AnvilDampenerHandler#hasAdjacentDampener}:
+     * an anvil with a dampener magnet orthogonally adjacent has its break chance
+     * forced to 0. We test that pure check directly (no anvil GUI needed) and
+     * sanity-check the per-metal config defaults.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void anvilDampenerDetectedWhenMagnetAdjacent(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos anvil = new BlockPos(1, 1, 1);
+        helper.setBlock(anvil, MagBlocks.MAGNETITE_ANVIL.get());
+        final BlockPos anvilAbs = helper.absolutePos(anvil);
+
+        helper.assertTrue(!com.stonytark.magnetization.content.AnvilDampenerHandler.hasAdjacentDampener(level, anvilAbs),
+                "No dampener adjacent yet → should be false");
+
+        helper.setBlock(new BlockPos(1, 1, 0), MagBlocks.MAGNETITE_BLOCK.get()); // magnetite block is a dampener
+        helper.assertTrue(com.stonytark.magnetization.content.AnvilDampenerHandler.hasAdjacentDampener(level, anvilAbs),
+                "Magnetite block adjacent → dampener should be detected");
+
+        // Per-metal defaults: titanomagnetite never breaks; magnetite has a real chance.
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.anvilBreakTitanomagnetite() == 0.0f,
+                "Titanomagnetite anvil break chance should default to 0");
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.anvilBreakMagnetite() > 0.0f,
+                "Magnetite anvil break chance should default above 0");
+        helper.succeed();
+    }
+
+    /**
+     * #90 — Tokamak generates FE when its 8-coil ring is complete and a Deuterium
+     * Cell is loaded. Builds the ring, loads fuel via the controller's fuel
+     * container, ticks, and asserts the buffer charges and the block lights.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void tokamakGeneratesWithRingAndFuel(final GameTestHelper helper) {
+        final BlockPos controller = new BlockPos(1, 1, 1);
+        helper.setBlock(controller, MagBlocks.TOKAMAK_CONTROLLER.get());
+        // 8-coil ring on the controller's Y layer.
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
+                helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
+            }
+        }
+        final com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity be =
+                (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity) helper.getBlockEntity(controller);
+        be.fuelContainer().setItem(0,
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get()));
+
+        helper.assertTrue(com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
+                        .isRingFormed(helper.getLevel(), helper.absolutePos(controller)),
+                "Ring of 8 coils should read as formed");
+
+        helper.runAfterDelay(20L, () -> {
+            helper.assertTrue(be.energyBuffer().getEnergyStored() > 0,
+                    "Tokamak should charge its buffer with a ring + fuel; FE=" + be.energyBuffer().getEnergyStored());
+            helper.assertTrue(helper.getBlockState(controller)
+                            .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
+                    "Tokamak should be LIT while fusing");
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
+     * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
+     * the fluid cell becomes {@code hardened_mr_fluid} once the field reaches it.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void mrFluidHardensInField(final GameTestHelper helper) {
+        helper.setBlock(new BlockPos(1, 1, 1), MagBlocks.ELECTROMAGNET.get());
+        helper.setBlock(new BlockPos(1, 2, 1), Blocks.REDSTONE_BLOCK);            // powers the electromagnet
+        final BlockPos fluid = new BlockPos(2, 1, 1);
+        helper.setBlock(new BlockPos(2, 0, 1), Blocks.STONE);                     // floor so the source stays put
+        helper.setBlock(fluid, MagBlocks.MR_FLUID_BLOCK.get());
+
+        helper.runAfterDelay(40L, () -> {
+            final net.minecraft.world.level.block.Block here = helper.getBlockState(fluid).getBlock();
+            helper.assertTrue(here == MagBlocks.HARDENED_MR_FLUID.get(),
+                    "MR fluid in an active field should harden to hardened_mr_fluid; got "
+                            + net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(here));
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #99 — Conductive fluids carry redstone like dust, with 1-level attenuation
+     * per cell; deuterium oxide does not (negative control). A redstone block feeds
+     * a 2-cell gallium chain (far cell must read powered) and a 2-cell deuterium
+     * chain (far cell must have no power property at all).
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 80)
+    public static void conductiveFluidsCarryRedstone(final GameTestHelper helper) {
+        // Gallium chain: redstone(0,1,0) → gallium(1,1,0) → gallium(2,1,0)
+        for (int x = 0; x <= 2; x++) helper.setBlock(new BlockPos(x, 0, 0), Blocks.STONE);
+        helper.setBlock(new BlockPos(1, 1, 0), MagBlocks.GALLIUM_BLOCK.get());
+        helper.setBlock(new BlockPos(2, 1, 0), MagBlocks.GALLIUM_BLOCK.get());
+        // Deuterium chain (control): redstone(0,1,2) → d2o(1,1,2) → d2o(2,1,2)
+        for (int x = 0; x <= 2; x++) helper.setBlock(new BlockPos(x, 0, 2), Blocks.STONE);
+        helper.setBlock(new BlockPos(1, 1, 2), MagBlocks.DEUTERIUM_OXIDE_BLOCK.get());
+        helper.setBlock(new BlockPos(2, 1, 2), MagBlocks.DEUTERIUM_OXIDE_BLOCK.get());
+        // Place the sources last so the conduction network recomputes with them present.
+        helper.setBlock(new BlockPos(0, 1, 0), Blocks.REDSTONE_BLOCK);
+        helper.setBlock(new BlockPos(0, 1, 2), Blocks.REDSTONE_BLOCK);
+
+        helper.runAfterDelay(4L, () -> {
+            final net.minecraft.world.level.block.state.BlockState galliumFar = helper.getBlockState(new BlockPos(2, 1, 0));
+            helper.assertTrue(galliumFar.hasProperty(com.stonytark.magnetization.content.fluid.FluidRedstone.POWER)
+                            && galliumFar.getValue(com.stonytark.magnetization.content.fluid.FluidRedstone.POWER) > 0,
+                    "Gallium 2 cells from a redstone source should be powered; state=" + galliumFar);
+
+            final net.minecraft.world.level.block.state.BlockState d2oFar = helper.getBlockState(new BlockPos(2, 1, 2));
+            helper.assertTrue(!d2oFar.hasProperty(com.stonytark.magnetization.content.fluid.FluidRedstone.POWER),
+                    "Deuterium oxide must NOT conduct (no signal_power property); state=" + d2oFar);
+            helper.succeed();
+        });
     }
 
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)

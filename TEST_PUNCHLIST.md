@@ -60,7 +60,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** none — runs passively while a magnet touches it.
 - **Expect:** continuously jittering analog redstone (random 1–15, never 0 while magnetized), changing every ~2 ticks; `POWERED` toggles on transitions; remove the magnet → signal drops to 0.
 - **Config:** interval/magnitude are hard-coded (not configurable).
-- **Result:**
+- **Result:** ✅ GameTest-verified (`barkhausenJittersWithAdjacentMagnet`): non-zero jitter + POWERED with adjacent magnet; flat 0 without. In-world: confirm visual/comparator.
 
 ## #81 — Kinetic Coil  ⟶ `magnetization:kinetic_coil`
 - **Obtain:** crafted — copper frame + iron center _(verify in JEI/EMI)_.
@@ -100,7 +100,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** use the anvil repeatedly to rename/repair.
 - **Expect:** per-metal break chance applies (magnetite 0.10, maghemite 0.18, hematite 0.15, titanomagnetite 0.0 = never, default 0.12); with an adjacent dampener the break chance is forced to **0 (never degrades)**; anvil-use sound is quieter. Remove the dampener → normal per-metal chance returns.
 - **Config (anvils):** `magnetiteBreakChance`, `maghemiteBreakChance`, `hematiteBreakChance`, `titanomagnetiteBreakChance`, `defaultBreakChance`.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`anvilDampenerDetectedWhenMagnetAdjacent`): dampener adjacency detection + per-metal config defaults (titanomagnetite 0). In-world: confirm break-chance feel at the anvil.
 
 ## #90 — Deuterium Oxide + Fuel Cell + Tokamak  ⟶ `deuterium_oxide`, `deuterium_cell`, `tokamak_controller`, `tokamak_coil`
 - **Obtain:** D₂O bucket from the fluid; Deuterium Cell = iron + redstone + glowstone + deuterium_oxide_bucket _(verify in JEI/EMI)_. **Tokamak controller/coil recipes not confirmed in code — check JEI; flag if creative-only.**
@@ -108,7 +108,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** complete the ring with fuel loaded.
 - **Expect:** controller `LIT` turns on; generates ~2000 FE/tick into its buffer and pushes up to 16000 FE/tick to neighbors; fuel slot drains one cell at a time (~4 min/cell); GUI shows burn time, output rate, stored/capacity. Break the ring → stops.
 - **Config (machines):** `tokamakFeCapacity` (4000000), `tokamakGenPerTick` (2000), `tokamakOutputRate` (16000), `tokamakBurnTicksPerCell` (4800).
-- **Result:**
+- **Result:** ✅ GameTest-verified (`tokamakGeneratesWithRingAndFuel`): ring-of-8 forms, fuel loads, buffer charges, block LIT. In-world: confirm output push + GUI.
 
 ## #91 — MR Fluid hardens in field → walkable bridge  ⟶ `mr_fluid`, `hardened_mr_fluid`
 - **Obtain:** MR Fluid bucket = water_bucket + iron_ingot + raw_magnetite (shapeless) _(verify in JEI/EMI)_.
@@ -116,7 +116,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** power the emitter so the field covers the fluid.
 - **Expect:** the connected MR fluid body snaps to solid grey `hardened_mr_fluid` (walkable, no fall-through); unpower / remove field → reverts to fluid. Hardening floods the connected body.
 - **Config (performance):** `mrFluidHardenTicks` (5).
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mrFluidHardensInField`): MR-fluid source beside a powered electromagnet hardens to hardened_mr_fluid. In-world: confirm revert when field removed + walkable.
 
 ## #92 — MR Armor field behavior  ⟶ `mr_liquid_helmet/chestplate/leggings/boots`
 - **Obtain:** each = iron piece + mr_fluid_bucket (shapeless) _(verify in JEI/EMI)_.
@@ -157,7 +157,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** toggle the source.
 - **Expect:** all **six** fluids above conduct redstone like liquid dust (carry, don't react — except gallium's separate Lorentz effect); MR signal attenuates one level per cell. Powered fluid emits small **redstone dust particles** as a visual cue. Fluids flow **around** torches/redstone dust/repeaters/comparators/levers without washing them away. (Deuterium oxide does **not** conduct — good negative control.)
 - **Config (performance):** `ferrofluidMagTicks` (4), `ferrofluidPlainTicks` (8), `magnetizedFerrofluidTicks` (3) — affect creep/field, not conduction itself.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`conductiveFluidsCarryRedstone`): gallium carries signal 2 cells (attenuated); deuterium oxide does NOT (control). In-world: confirm all six fluids + particles + flow-around.
 
 ## #103 — Gallium Lorentz current  ⟶ `gallium`
 - **Obtain:** gallium ingot by smelting raw gallium / zinc / aluminium; gallium fluid bucket _(verify in JEI/EMI; bucket source uncertain)_.
