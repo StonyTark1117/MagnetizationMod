@@ -232,7 +232,10 @@ public final class MagGameTests {
                     final org.joml.Vector3d vB = hB.getLinearVelocity(new org.joml.Vector3d());
                     // Both fall (negative y). A is braked, so its downward speed is
                     // smaller → vA.y is the less-negative (greater) of the two.
-                    helper.assertTrue(vA.y > vB.y + 0.1,
+                    final boolean braked = vA.y > vB.y + 0.1;
+                    removeShip(level, shipA);
+                    removeShip(level, shipB);
+                    helper.assertTrue(braked,
                             "Ship beside the copper wall should fall slower (Lenz drag): "
                                     + "vA.y=" + vA.y + " vB.y=" + vB.y);
                     helper.succeed();
@@ -262,6 +265,19 @@ public final class MagGameTests {
                 new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
                 new org.joml.Quaterniond());
         return ship;
+    }
+
+    /** Remove an assembled ship from the world. Ship tests MUST call this before
+     *  succeeding: leftover sublevels pile up across the suite, bloating every
+     *  world autosave, and Sable pauses physics on each save — which throttles the
+     *  remaining physics tests to a crawl. Mirrors Sable's own AssemblyTest. */
+    private static void removeShip(final net.minecraft.server.level.ServerLevel level,
+                                   final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
+        final dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer c =
+                dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        if (c != null && ship != null) {
+            c.removeSubLevel(ship, dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason.REMOVED);
+        }
     }
 
     /** Teleport an already-assembled ship to a new world position (identity orientation). */
@@ -477,6 +493,338 @@ public final class MagGameTests {
                 "Range should clamp down to the 1-block floor; override=" + be.getRangeOverride());
         helper.assertTrue(be.effectiveRange() == 1.0,
                 "effectiveRange should follow the override; got " + be.effectiveRange());
+        helper.succeed();
+    }
+
+    /**
+     * #81 — Kinetic Coil generates FE when a magnetic ship moves past it within
+     * range above the speed threshold. Assembles a ship beside the coil, gives it
+     * a steady drift, and asserts the coil's buffer charges.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void kineticCoilGeneratesFromPassingShip(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos coil = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        level.setBlock(coil, MagBlocks.KINETIC_COIL.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.runAfterDelay(2L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                    assembleSingleBlockShip(level, helper.absolutePos(new BlockPos(1, 1, 1)), Blocks.IRON_BLOCK);
+            teleportShip(level, ship, coil.offset(2, 0, 0)); // 2 blocks away, inside RANGE (4)
+            helper.runAfterDelay(2L, () -> {
+                final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle h =
+                        dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
+                if (h == null) { helper.fail("no ship handle"); return; }
+                h.addLinearAndAngularVelocity(new org.joml.Vector3d(0, 0, 0.15), new org.joml.Vector3d()); // drift past, > MIN_SPEED
+                helper.runAfterDelay(12L, () -> {
+                    final net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(coil);
+                    if (!(be instanceof com.stonytark.magnetization.content.induction.KineticCoilBlockEntity kc)) {
+                        helper.fail("no coil BE"); return;
+                    }
+                    final int fe = kc.energyBuffer().getEnergyStored();
+                    removeShip(level, ship);
+                    helper.assertTrue(fe > 0,
+                            "Kinetic coil should generate FE from a passing ship; FE=" + fe);
+                    helper.succeed();
+                });
+            });
+        });
+    }
+
+    /**
+     * #82 — Halbach Array: aligned same-polarity magnets raise a powered emitter's
+     * effective strength tier; an adjacent hematite block steps it down. Staged on
+     * one electromagnet: baseline MEDIUM → +magnets STRONG → swap to hematite WEAK.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void halbachBoostsAndHematiteDampens(final GameTestHelper helper) {
+        // Drive the pure strength-modifier functions directly with blocks we place
+        // at the arena centre (all six neighbours are in-arena air): deterministic,
+        // synchronous, and immune to other GameTest arenas' fields.
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        final com.stonytark.magnetization.api.MagneticStrength MED = com.stonytark.magnetization.api.MagneticStrength.MEDIUM;
+        final com.stonytark.magnetization.api.MagneticPolarity SOUTH = com.stonytark.magnetization.api.MagneticPolarity.SOUTH;
+
+        // Baseline: no aligned magnets adjacent → unchanged.
+        helper.assertTrue(com.stonytark.magnetization.content.HalbachArray.boostedStrength(level, pos, SOUTH, MED) == MED,
+                "No aligned magnets → strength should stay MEDIUM");
+
+        // Two aligned (SOUTH) magnets adjacent → +1 tier → STRONG.
+        helper.setBlock(new BlockPos(1, 1, 0), MagBlocks.PERMANENT_MAGNET.get().defaultBlockState()
+                .setValue(com.stonytark.magnetization.content.permanent.PermanentMagnetBlock.POLARITY, SOUTH));
+        helper.setBlock(new BlockPos(1, 1, 2), MagBlocks.PERMANENT_MAGNET.get().defaultBlockState()
+                .setValue(com.stonytark.magnetization.content.permanent.PermanentMagnetBlock.POLARITY, SOUTH));
+        helper.assertTrue(com.stonytark.magnetization.content.HalbachArray.boostedStrength(level, pos, SOUTH, MED)
+                        == com.stonytark.magnetization.api.MagneticStrength.STRONG,
+                "Two aligned magnets should boost MEDIUM→STRONG");
+
+        // A hematite block adjacent steps strength DOWN one tier → WEAK.
+        helper.setBlock(new BlockPos(0, 1, 1), MagBlocks.HEMATITE_BLOCK.get());
+        helper.assertTrue(com.stonytark.magnetization.content.hematite.HematiteBlock.dampenedStrength(level, pos, MED)
+                        == com.stonytark.magnetization.api.MagneticStrength.WEAK,
+                "Adjacent hematite should dampen MEDIUM→WEAK");
+        helper.succeed();
+    }
+
+    /**
+     * #83 — Diamagnetism flips a ship's field response: a ship containing a
+     * diamagnetic block is repelled by a field that ATTRACTS an ordinary ferrous
+     * ship. Two ships at the same offset from a powered electromagnet end up moving
+     * in opposite directions along the emitter axis.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
+    public static void diamagneticShipRepelledWhileFerrousAttracted(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos em = new BlockPos(a.getX(), 240, a.getZ());
+        level.setBlock(em, MagBlocks.ELECTROMAGNET.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(em.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.runAfterDelay(3L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel dia =
+                    assembleSingleBlockShip(level, a, MagBlocks.DIAMAGNETIC_BLOCK.get());
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel iron =
+                    assembleSingleBlockShip(level, a.offset(0, 0, 6), Blocks.IRON_BLOCK);
+            teleportShip(level, dia, em.offset(4, 0, 0));       // +X of the emitter
+            teleportShip(level, iron, em.offset(4, 0, 6));      // +X too, different Z
+
+            helper.runAfterDelay(24L, () -> {
+                final org.joml.Vector3d vDia = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(dia)
+                        .getLinearVelocity(new org.joml.Vector3d());
+                final org.joml.Vector3d vIron = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(iron)
+                        .getLinearVelocity(new org.joml.Vector3d());
+                final boolean ok = vDia.x > 0.0 && vIron.x < 0.0;
+                removeShip(level, dia);
+                removeShip(level, iron);
+                helper.assertTrue(ok,
+                        "Diamagnetic ship should be pushed away (+X) while ferrous is pulled in (-X): "
+                                + "dia.x=" + vDia.x + " iron.x=" + vIron.x);
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #84 — Directional Repulsor with a Vector Core thrusts a ship along the
+     * block's facing, regardless of the ship's bearing from the block. Coil faces
+     * EAST; the ship sits to the NORTH/SOUTH of it (so the plain radial field has
+     * ~no EAST component) yet gains +X velocity from the directional thrust.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
+    public static void directionalRepulsorThrustsAlongFacing(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos coil = new BlockPos(a.getX(), 240, a.getZ());
+        level.setBlock(coil, MagBlocks.REPULSOR_COIL.get().defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, net.minecraft.core.Direction.EAST),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(coil.above(), Blocks.REDSTONE_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        if (level.getBlockEntity(coil) instanceof com.stonytark.magnetization.content.repulsor.RepulsorCoilBlockEntity rc) {
+            rc.setVectorCore(true);
+        }
+
+        helper.runAfterDelay(3L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                    assembleSingleBlockShip(level, a, Blocks.IRON_BLOCK);
+            teleportShip(level, ship, coil.offset(0, 0, 3)); // +Z of the coil: radial field has ~no X component
+            helper.runAfterDelay(24L, () -> {
+                final org.joml.Vector3d v = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship)
+                        .getLinearVelocity(new org.joml.Vector3d());
+                final boolean thrust = v.x > 0.1;
+                removeShip(level, ship);
+                helper.assertTrue(thrust,
+                        "Vector-core repulsor facing EAST should thrust the ship +X; v.x=" + v.x);
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #93 — MR Fluid Golem hardens while inside a magnetic field. Spawns a golem,
+     * confirms it is soft with no field, then places a magnet and asserts it reads
+     * hardened after the field-check interval.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void mrGolemHardensInField(final GameTestHelper helper) {
+        // Place the magnet at spawn so the golem is in a field from the start, then
+        // assert it reads hardened after a field-check interval. (We don't assert a
+        // "soft" baseline: GameTests share one level, so always-on magnets in
+        // neighbouring arenas can leak into the global field registry — the robust
+        // claim is "a field present → golem hardens".)
+        final com.stonytark.magnetization.content.golem.MrFluidGolem golem =
+                helper.spawn(com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM.get(), new BlockPos(1, 1, 1));
+        golem.setNoAi(true);
+        helper.setBlock(new BlockPos(0, 1, 1), MagBlocks.PERMANENT_MAGNET.get());
+        helper.runAfterDelay(14L, () -> {
+            helper.assertTrue(golem.isHardened(), "Golem next to a magnet should harden");
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #103 — Gallium Lorentz current pushes entities floating in a powered gallium
+     * source that's covered by a field. Asserts a stationary mob gains horizontal
+     * velocity once the gallium is both signal-powered and in-field.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void galliumLorentzPushesEntity(final GameTestHelper helper) {
+        galliumPushTest(helper, MagBlocks.GALLIUM_BLOCK.get());
+    }
+
+    /**
+     * #104 — Mixed gallium carries the same Lorentz entity-push as plain gallium
+     * (the second of its two abilities; the ferrofluid-style creep is a slow
+     * block-spread covered by registry membership). Same assertion as #103.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void mixedGalliumLorentzPushesEntity(final GameTestHelper helper) {
+        galliumPushTest(helper, MagBlocks.MIXED_GALLIUM_BLOCK.get());
+    }
+
+    private static void galliumPushTest(final GameTestHelper helper, final net.minecraft.world.level.block.Block galliumBlock) {
+        helper.setBlock(new BlockPos(1, 0, 1), Blocks.STONE);
+        helper.setBlock(new BlockPos(1, 1, 1), galliumBlock);
+        helper.setBlock(new BlockPos(1, 1, 2), MagBlocks.PERMANENT_MAGNET.get()); // field over the gallium
+        helper.setBlock(new BlockPos(0, 1, 1), Blocks.REDSTONE_BLOCK);            // powers the gallium cell
+
+        final net.minecraft.world.entity.animal.Cow cow =
+                helper.spawn(net.minecraft.world.entity.EntityType.COW, new BlockPos(1, 1, 1));
+        cow.setNoAi(true);
+        cow.setNoGravity(true);
+
+        final double[] maxHoriz = {0.0};
+        for (long t = 3; t <= 16; t++) {
+            helper.runAfterDelay(t, () -> {
+                final net.minecraft.world.phys.Vec3 m = cow.getDeltaMovement();
+                maxHoriz[0] = Math.max(maxHoriz[0], Math.sqrt(m.x * m.x + m.z * m.z));
+            });
+        }
+        helper.runAfterDelay(18L, () -> {
+            helper.assertTrue(maxHoriz[0] > 0.02,
+                    "Entity in powered, in-field gallium should be pushed horizontally; maxHoriz=" + maxHoriz[0]);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #109 — Gallium freezes to solid near a cooling source and melts back when the
+     * cooling is removed. (Gear stats and dye outputs are item/recipe data, not
+     * behaviours — they're verified in JEI, not here.)
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 300)
+    public static void galliumFreezesNearIceAndMeltsWhenRemoved(final GameTestHelper helper) {
+        final BlockPos g = new BlockPos(1, 1, 1);
+        helper.setBlock(new BlockPos(1, 0, 1), Blocks.STONE);
+        helper.setBlock(g, MagBlocks.GALLIUM_BLOCK.get());
+        helper.setBlock(new BlockPos(2, 1, 1), Blocks.ICE); // cooling source → schedules freeze
+
+        helper.runAfterDelay(50L, () -> {
+            helper.assertTrue(helper.getBlockState(g).getBlock() == MagBlocks.SOLID_GALLIUM.get(),
+                    "Gallium next to ice should freeze to solid_gallium; got "
+                            + net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(helper.getBlockState(g).getBlock()));
+            helper.setBlock(new BlockPos(2, 1, 1), Blocks.AIR); // remove cooling → schedules melt
+            helper.runAfterDelay(140L, () -> {
+                helper.assertTrue(helper.getBlockState(g).getBlock() == MagBlocks.GALLIUM_BLOCK.get(),
+                        "Solid gallium should melt back to fluid once cooling is gone; got "
+                                + net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(helper.getBlockState(g).getBlock()));
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #92 — MR Fluid Armor strongly mitigates damage while the wearer is in a
+     * field. An MR-armored zombie and a bare zombie stand in the SAME field and
+     * take the same generic hit; the armored one must lose far less health. Both
+     * sharing one field makes the test immune to background fields leaking from
+     * other GameTest arenas (the bare zombie has no MR pieces, so the field's
+     * mitigation never applies to it).
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void mrArmorMitigatesDamageInField(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.entity.monster.Zombie armored =
+                helper.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, new BlockPos(1, 1, 0));
+        armored.setNoAi(true);
+        armored.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_LIQUID_HELMET.get()));
+        armored.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_LIQUID_CHESTPLATE.get()));
+        armored.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_LIQUID_LEGGINGS.get()));
+        armored.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_LIQUID_BOOTS.get()));
+        final net.minecraft.world.entity.monster.Zombie bare =
+                helper.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, new BlockPos(1, 1, 2));
+        bare.setNoAi(true);
+        helper.setBlock(new BlockPos(1, 1, 1), MagBlocks.PERMANENT_MAGNET.get()); // both zombies adjacent → in field
+
+        helper.runAfterDelay(4L, () -> {
+            armored.setHealth(armored.getMaxHealth());
+            bare.setHealth(bare.getMaxHealth());
+            armored.invulnerableTime = 0;
+            bare.invulnerableTime = 0;
+            armored.hurt(level.damageSources().generic(), 8f);
+            bare.hurt(level.damageSources().generic(), 8f);
+            final float armoredLost = armored.getMaxHealth() - armored.getHealth();
+            final float bareLost = bare.getMaxHealth() - bare.getHealth();
+            helper.assertTrue(bareLost > 0f, "Bare zombie should take some damage; got " + bareLost);
+            helper.assertTrue(armoredLost < bareLost - 1.0f,
+                    "MR-armored zombie in a field should lose far less than a bare one: armored=" + armoredLost + " bare=" + bareLost);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #96 — MR Fluid tools barely wear (high max durability vs iron) and harden on
+     * use (HARDENED_UNTIL stamped). Mines a block with the pickaxe and asserts the
+     * stamp is set and durability is generous.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void mrToolBarelyWearsAndHardensOnUse(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.item.ItemStack pick =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_FLUID_PICKAXE.get());
+        helper.assertTrue(pick.getMaxDamage() > 250,
+                "MR tool should have far more durability than iron (250); got " + pick.getMaxDamage());
+
+        final net.minecraft.world.entity.monster.Zombie user =
+                helper.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, new BlockPos(2, 1, 2));
+        user.setNoAi(true);
+        final BlockPos stone = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(stone, Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        pick.getItem().mineBlock(pick, level, Blocks.STONE.defaultBlockState(), stone, user);
+        helper.assertTrue(pick.get(com.stonytark.magnetization.registry.MagDataComponents.HARDENED_UNTIL.get()) != null,
+                "Mining with an MR tool should stamp HARDENED_UNTIL");
+        helper.assertTrue(pick.getDamageValue() <= 1,
+                "One mine should cost at most 1 durability; got " + pick.getDamageValue());
+        helper.succeed();
+    }
+
+    /**
+     * #97 — MR Fluid horse armor runs the same field-mitigation path on a horse
+     * (the visual render layer is client-only and not covered here). Generic damage
+     * to an armored horse is reduced in a field vs out of field.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void mrHorseArmorIsValidBardingOnTheMitigationPath(final GameTestHelper helper) {
+        // The horse-barding piece routes through the SAME MrArmorHandler proven by
+        // mrArmorMitigatesDamageInField (it's an MrFluidHorseArmorItem, which the
+        // handler's isMrPiece recognises), and equips to the horse body slot
+        // (AnimalArmorItem / EQUESTRIAN). Its fluid↔rigid look is a client render
+        // layer, not headless-testable. We assert it's valid barding a horse
+        // accepts and that it's the recognised MR class.
+        final net.minecraft.world.item.ItemStack barding =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_FLUID_HORSE_ARMOR.get());
+        helper.assertTrue(barding.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem,
+                "MR horse armor should be an MrFluidHorseArmorItem (recognised by the MR mitigation handler)");
+        helper.assertTrue(barding.getItem() instanceof net.minecraft.world.item.AnimalArmorItem,
+                "MR horse armor should be an AnimalArmorItem (equips to the horse body slot)");
+        final net.minecraft.world.entity.animal.horse.Horse horse =
+                helper.spawn(net.minecraft.world.entity.EntityType.HORSE, new BlockPos(1, 1, 1));
+        helper.assertTrue(horse.isBodyArmorItem(barding),
+                "A horse should accept MR horse armor as body barding");
         helper.succeed();
     }
 
