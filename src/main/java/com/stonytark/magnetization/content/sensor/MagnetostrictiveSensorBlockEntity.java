@@ -18,9 +18,12 @@ import net.minecraft.world.phys.AABB;
  * fastest-moving living entity within {@link #RANGE} and maps its speed +
  * proximity to a 0–15 output, which decays a few ticks after movement stops.
  */
-public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
+public class MagnetostrictiveSensorBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.RangeConfigurable {
 
     private int signal = 0;
+    /** Per-block detection-range override in blocks; 0 = use the config default. */
+    private int rangeOverride = 0;
 
     public MagnetostrictiveSensorBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETOSTRICTIVE_SENSOR.get(), pos, state);
@@ -30,11 +33,39 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
         return signal;
     }
 
+    /** Effective detection radius: the dialed override if set, else the config
+     *  default — always clamped to {@code [1, sensorMaxRange]}. */
+    public double effectiveRange() {
+        final int max = com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
+        final double base = rangeOverride > 0
+                ? rangeOverride
+                : com.stonytark.magnetization.config.MagConfig.sensorRange();
+        return Math.max(1.0, Math.min(base, max));
+    }
+
+    @Override public int getRangeOverride() { return rangeOverride; }
+
+    @Override public void setRangeOverride(final int blocks) {
+        final int max = com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
+        this.rangeOverride = blocks <= 0 ? 0 : Math.max(1, Math.min(blocks, max));
+        setChanged();
+    }
+
+    @Override public int defaultRangeBlocks() {
+        final int max = com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
+        return (int) Math.round(Math.max(1.0,
+                Math.min(com.stonytark.magnetization.config.MagConfig.sensorRange(), max)));
+    }
+
+    @Override public int maxRangeBlocks() {
+        return com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
+    }
+
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MagnetostrictiveSensorBlockEntity be) {
         if (level.isClientSide || (level.getGameTime() % com.stonytark.magnetization.config.MagConfig.sensorInterval()) != 0L) return;
 
-        final double range = com.stonytark.magnetization.config.MagConfig.sensorRange();
+        final double range = be.effectiveRange();
         final double moveThreshold = com.stonytark.magnetization.config.MagConfig.sensorMoveThreshold();
         final AABB box = new AABB(pos).inflate(range);
         double best = 0.0;
@@ -84,11 +115,13 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity {
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Signal", signal);
+        tag.putInt("RangeOverride", rangeOverride);
     }
 
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.signal = tag.getInt("Signal");
+        this.rangeOverride = tag.getInt("RangeOverride");
     }
 }

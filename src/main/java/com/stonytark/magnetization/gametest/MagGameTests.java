@@ -437,6 +437,49 @@ public final class MagGameTests {
         });
     }
 
+    /**
+     * #79 (GUI) — the sensor's range knob, driven through the shared emitter menu.
+     * Constructs an {@link com.stonytark.magnetization.menu.EmitterMenu} with only
+     * the range cap on a real sensor and clicks the +/- buttons, asserting the
+     * per-block override moves and clamps to {@code [1, sensorMaxRange]}. Verifies
+     * the menu↔BlockEntity range wiring without rendering a screen.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void sensorRangeGuiClampsToConfig(final GameTestHelper helper) {
+        final BlockPos rel = new BlockPos(1, 1, 1);
+        helper.setBlock(rel, MagBlocks.MAGNETOSTRICTIVE_SENSOR.get());
+        final BlockPos pos = helper.absolutePos(rel);
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.entity.player.Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
+
+        final com.stonytark.magnetization.menu.EmitterMenu menu =
+                new com.stonytark.magnetization.menu.EmitterMenu(1, player.getInventory(),
+                        net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        com.stonytark.magnetization.menu.EmitterMenu.CAP_RANGE);
+
+        final com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlockEntity be =
+                (com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlockEntity) helper.getBlockEntity(rel);
+        final int max = com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
+
+        // One increase from the untouched default (8) → 9.
+        menu.clickMenuButton(player, com.stonytark.magnetization.menu.EmitterMenu.BUTTON_RANGE_INC);
+        helper.assertTrue(be.getRangeOverride() == be.defaultRangeBlocks() + 1,
+                "First +1 should step off the default; override=" + be.getRangeOverride());
+
+        // Spam increase → clamps at the admin max.
+        for (int i = 0; i < 100; i++) menu.clickMenuButton(player, com.stonytark.magnetization.menu.EmitterMenu.BUTTON_RANGE_INC);
+        helper.assertTrue(be.getRangeOverride() == max,
+                "Range should clamp up to sensorMaxRange (" + max + "); override=" + be.getRangeOverride());
+
+        // Spam decrease → clamps at the 1-block floor.
+        for (int i = 0; i < 100; i++) menu.clickMenuButton(player, com.stonytark.magnetization.menu.EmitterMenu.BUTTON_RANGE_DEC);
+        helper.assertTrue(be.getRangeOverride() == 1,
+                "Range should clamp down to the 1-block floor; override=" + be.getRangeOverride());
+        helper.assertTrue(be.effectiveRange() == 1.0,
+                "effectiveRange should follow the override; got " + be.effectiveRange());
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would

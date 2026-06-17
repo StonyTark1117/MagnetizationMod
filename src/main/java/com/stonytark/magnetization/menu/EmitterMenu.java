@@ -236,6 +236,11 @@ public final class EmitterMenu extends AbstractContainerMenu {
                 rangeBlocks.set(emitter.getRangeOverride());
                 defaultRange.set((int) Math.round(
                         emitter.effectiveRange(emitter.effectiveStrength(MagneticStrength.STRONG))));
+            } else if (be instanceof RangeConfigurable rc) {
+                // Non-emitter machines (e.g. the sensor) that only expose a range knob.
+                strengthOrdinal.set(-1);
+                rangeBlocks.set(rc.getRangeOverride());
+                defaultRange.set(rc.defaultRangeBlocks());
             } else {
                 strengthOrdinal.set(-1);
                 rangeBlocks.set(0);
@@ -386,6 +391,16 @@ public final class EmitterMenu extends AbstractContainerMenu {
             if (next > ceiling) next = ceiling;
             em.setRangeOverride(next);
             rangeBlocks.set(em.getRangeOverride());
+        } else if (be instanceof RangeConfigurable rc) {
+            // Non-emitter range knob (sensor): start from its default when untouched,
+            // step, then clamp to the implementor's own [min, max].
+            int current = rc.getRangeOverride();
+            if (current <= 0) current = rc.defaultRangeBlocks();
+            int next = current + delta;
+            if (next < rc.minRangeBlocks()) next = rc.minRangeBlocks();
+            if (next > rc.maxRangeBlocks()) next = rc.maxRangeBlocks();
+            rc.setRangeOverride(next);
+            rangeBlocks.set(rc.getRangeOverride());
         }
     }
 
@@ -424,6 +439,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
      *  control. */
     private static int rangeStepFor(final @Nullable BlockEntity be) {
         if (be instanceof RepulsorCoilBlockEntity) return 1;
+        if (be instanceof RangeConfigurable rc) return rc.rangeStep();
         return RANGE_STEP;
     }
 

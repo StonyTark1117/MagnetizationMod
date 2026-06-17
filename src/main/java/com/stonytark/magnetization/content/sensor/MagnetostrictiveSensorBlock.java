@@ -1,8 +1,15 @@
 package com.stonytark.magnetization.content.sensor;
 
+import com.stonytark.magnetization.menu.EmitterMenu;
+import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,6 +53,21 @@ public final class MagnetostrictiveSensorBlock extends Block implements EntityBl
         if (level.isClientSide || type != MagBlockEntities.MAGNETOSTRICTIVE_SENSOR.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<MagnetostrictiveSensorBlockEntity>)
                 MagnetostrictiveSensorBlockEntity::serverTick;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final BlockHitResult hit
+    ) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        // Reuse the shared emitter GUI with only the range row — lets the player
+        // dial detection radius in-world, clamped to the admin sensorMaxRange.
+        new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos,
+                EmitterMenu.CAP_RANGE,
+                Component.translatable("block.magnetization.magnetostrictive_sensor")).openFor(sp);
+        return InteractionResult.CONSUME;
     }
 
     @Override

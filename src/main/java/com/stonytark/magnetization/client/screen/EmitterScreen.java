@@ -289,6 +289,9 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         // (158..168) right-aligns with the range +/- button right edge at
         // x=154+14=168. Previously barX=160 put the border's right edge at
         // 169 — one pixel past the button row, which read as misaligned.
+        // No FE buffer (e.g. the sensor's range-only GUI) → no bar at all, rather
+        // than a permanently-empty meter.
+        if (menu.energyCapacity() <= 0) return;
         final int barX = 159;
         final int barY = 5;
         final int barW = 8;

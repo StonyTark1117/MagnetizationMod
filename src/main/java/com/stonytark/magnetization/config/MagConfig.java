@@ -154,6 +154,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue INDUCTION_PAD_RANGE;
     public static final ModConfigSpec.IntValue    INDUCTION_PAD_INTERVAL;
     public static final ModConfigSpec.DoubleValue SENSOR_RANGE;
+    public static final ModConfigSpec.IntValue    SENSOR_MAX_RANGE;
     public static final ModConfigSpec.DoubleValue SENSOR_MOVE_THRESHOLD;
     public static final ModConfigSpec.IntValue    SENSOR_INTERVAL;
     public static final ModConfigSpec.IntValue    SENSOR_DECAY_PER_STEP;
@@ -870,6 +871,8 @@ public final class MagConfig {
                 .defineInRange("inductionPadInterval", 2, 1, 1200);
         SENSOR_RANGE = b.translation("magnetization.configuration.machines.sensorRange")
                 .defineInRange("sensorRange", 8.0d, 0.0d, 64.0d);
+        SENSOR_MAX_RANGE = b.translation("magnetization.configuration.machines.sensorMaxRange")
+                .defineInRange("sensorMaxRange", 32, 1, 512);
         SENSOR_MOVE_THRESHOLD = b.translation("magnetization.configuration.machines.sensorMoveThreshold")
                 .defineInRange("sensorMoveThreshold", 0.02d, 0.0d, 64.0d);
         SENSOR_INTERVAL = b.translation("magnetization.configuration.machines.sensorInterval")
@@ -1579,6 +1582,7 @@ public final class MagConfig {
     public static double inductionPadRange()        { return doubleOr(INDUCTION_PAD_RANGE, 4.0d); }
     public static int    inductionPadInterval()     { return Math.max(1, intOr(INDUCTION_PAD_INTERVAL, 2)); }
     public static double sensorRange()              { return doubleOr(SENSOR_RANGE, 8.0d); }
+    public static int    sensorMaxRange()           { return Math.max(1, intOr(SENSOR_MAX_RANGE, 32)); }
     public static double sensorMoveThreshold()      { return doubleOr(SENSOR_MOVE_THRESHOLD, 0.02d); }
     public static int    sensorInterval()           { return Math.max(1, intOr(SENSOR_INTERVAL, 2)); }
     public static int    sensorDecayPerStep()       { return intOr(SENSOR_DECAY_PER_STEP, 3); }
