@@ -1,0 +1,17 @@
+{
+  "name": "book.magnetization.entry.gallium.name",
+  "icon": "magnetization:gallium_bucket",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:gallium_bucket",
+      "text": "book.magnetization.entry.gallium.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.gallium.lorentz"
+    }
+  ]
+}

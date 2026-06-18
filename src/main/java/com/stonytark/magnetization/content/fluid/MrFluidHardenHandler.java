@@ -31,6 +31,14 @@ public final class MrFluidHardenHandler {
 
     private static final int FLOOD_BUDGET = 512;
 
+    /** True only while the handler is clearing a reverting body to air. When set,
+     *  {@link HardenedMrFluidBlock#onRemove} must NOT run its "broken by a player →
+     *  becomes MR fluid source" branch — otherwise every flowing cell we clear
+     *  would be recreated as a source, duplicating the fluid. */
+    private static boolean fieldReverting = false;
+
+    public static boolean isFieldReverting() { return fieldReverting; }
+
     private MrFluidHardenHandler() {}
 
     @SubscribeEvent
@@ -49,20 +57,30 @@ public final class MrFluidHardenHandler {
             if (MagneticFields.isInField(server, src)) budget = floodHarden(server, src, done, budget);
         }
 
-        // Revert: any hardened block no longer in a field melts back.
-        for (final BlockPos pos : HardenedMrFluidRegistry.snapshot(server)) {
-            if (!server.isLoaded(pos)) continue;
-            final BlockState st = server.getBlockState(pos);
-            if (!st.is(MagBlocks.HARDENED_MR_FLUID.get())) { HardenedMrFluidRegistry.remove(server, pos); continue; }
-            if (!MagneticFields.isInField(server, pos)) {
-                final boolean wasSource = st.getValue(HardenedMrFluidBlock.SOURCE);
-                // Source cells become fluid sources (re-flow to refill); other
-                // cells become air and the source re-spreads into them.
-                server.setBlock(pos, wasSource
-                        ? MagBlocks.MR_FLUID_BLOCK.get().defaultBlockState()
-                        : Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                HardenedMrFluidRegistry.remove(server, pos);
+        // Revert: any hardened block no longer in a field melts back. Mirror how
+        // ferrofluid resets a pool — clear the WHOLE reverting body to AIR first,
+        // then restore ONLY the cells that were sources and let them re-flow to
+        // refill. Restoring sources inline (the old approach) let a restored
+        // source's flow reach a not-yet-cleared cell and leave a flowing cell as a
+        // NEW source, duplicating fluid.
+        final java.util.List<BlockPos> restoreSources = new java.util.ArrayList<>();
+        fieldReverting = true; // suppress onRemove's "broken → MR source" branch while we clear
+        try {
+            for (final BlockPos pos : HardenedMrFluidRegistry.snapshot(server)) {
+                if (!server.isLoaded(pos)) continue;
+                final BlockState st = server.getBlockState(pos);
+                if (!st.is(MagBlocks.HARDENED_MR_FLUID.get())) { HardenedMrFluidRegistry.remove(server, pos); continue; }
+                if (!MagneticFields.isInField(server, pos)) {
+                    if (st.getValue(HardenedMrFluidBlock.SOURCE)) restoreSources.add(pos.immutable());
+                    server.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                    HardenedMrFluidRegistry.remove(server, pos);
+                }
             }
+        } finally {
+            fieldReverting = false;
+        }
+        for (final BlockPos src : restoreSources) {
+            server.setBlock(src, MagBlocks.MR_FLUID_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 

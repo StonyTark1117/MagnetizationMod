@@ -1,0 +1,21 @@
+{
+  "name": "book.magnetization.entry.gallium_gear.name",
+  "icon": "magnetization:gallium_ingot",
+  "category": "magnetization:gear",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:gallium_ingot",
+      "text": "book.magnetization.entry.gallium_gear.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.gallium_gear.tools"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.gallium_gear.dyes"
+    }
+  ]
+}

@@ -32,6 +32,12 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
         registrar.body(GyrostabilizerBodyProvider.INSTANCE, Block.class);
         registrar.body(InductionPadBodyProvider.INSTANCE, Block.class);
         registrar.body(SensorBodyProvider.INSTANCE, Block.class);
+        registrar.body(BarkhausenBodyProvider.INSTANCE, Block.class);
+        registrar.body(KineticCoilBodyProvider.INSTANCE, Block.class);
+        registrar.body(AnvilBodyProvider.INSTANCE, Block.class);
+        registrar.body(GalliumStatusBodyProvider.INSTANCE, Block.class);
+        registrar.body(GalliumGolemBodyProvider.INSTANCE,
+                com.stonytark.magnetization.content.golem.GalliumGolem.class);
         // MUST register against BlockEntity.class (not Block.class): WTHIT gathers
         // Block-class providers in an earlier pass than BlockEntity-class ones, so
         // priority only orders us after WTHIT's energy renderer (also BE-class,

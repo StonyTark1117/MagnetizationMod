@@ -44,7 +44,10 @@ public final class MrFluidHorseArmorLayer extends RenderLayer<Horse, HorseModel<
                        final Horse horse, final float limbSwing, final float limbSwingAmount,
                        final float partialTicks, final float ageInTicks,
                        final float netHeadYaw, final float headPitch) {
-        final ItemStack stack = horse.getItemBySlot(EquipmentSlot.CHEST);
+        // Horse barding lives in the BODY slot in 1.21.1 (not CHEST) — reading CHEST
+        // returned empty, so the animated layer never drew and the armor looked
+        // invisible (vanilla's layer is suppressed by the transparent item texture).
+        final ItemStack stack = horse.getItemBySlot(EquipmentSlot.BODY);
         if (!(stack.getItem() instanceof MrFluidHorseArmorItem)) return;
 
         getParentModel().copyPropertiesTo(model);

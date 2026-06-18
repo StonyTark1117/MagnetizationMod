@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.fluid;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,6 +45,12 @@ public final class RedstoneSafeFluid {
             if (isProtected(state)) return;
             super.spreadTo(level, pos, state, direction, target);
         }
+
+        // Never let flowing cells coalesce into new sources — these are finite
+        // fluids; infinite-source conversion would duplicate fluid (e.g. when a
+        // hardened MR bridge reverts and the source re-flows).
+        @Override
+        protected boolean canConvertToSource(final Level level) { return false; }
     }
 
     public static final class Flowing extends BaseFlowingFluid.Flowing {
@@ -55,5 +62,8 @@ public final class RedstoneSafeFluid {
             if (isProtected(state)) return;
             super.spreadTo(level, pos, state, direction, target);
         }
+
+        @Override
+        protected boolean canConvertToSource(final Level level) { return false; }
     }
 }

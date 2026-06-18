@@ -129,6 +129,7 @@ public final class MagItemTooltips {
         m.put(MagItems.TOKAMAK_CONTROLLER.get(),       "tooltip.magnetization.tokamak_controller.use");
         m.put(MagItems.TOKAMAK_COIL.get(),             "tooltip.magnetization.tokamak_coil.use");
         m.put(MagItems.DEUTERIUM_CELL.get(),           "tooltip.magnetization.deuterium_cell.use");
+        m.put(MagItems.DEUTERIUM_OXIDE_BUCKET.get(),   "tooltip.magnetization.deuterium_oxide.use");
         m.put(MagItems.MAGNETOSTRICTIVE_SENSOR.get(),  "tooltip.magnetization.magnetostrictive_sensor.use");
         m.put(MagItems.BARKHAUSEN_GENERATOR.get(),     "tooltip.magnetization.barkhausen.use");
         m.put(MagItems.VECTOR_CORE.get(),              "tooltip.magnetization.vector_core.use");

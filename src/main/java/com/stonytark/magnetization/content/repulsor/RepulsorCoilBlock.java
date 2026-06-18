@@ -83,7 +83,7 @@ public final class RepulsorCoilBlock extends DirectionalBlock implements EntityB
     ) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
+        final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE | EmitterMenu.CAP_VECTOR_CORE;
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
                 Component.translatable("block.magnetization.repulsor_coil")).openFor(sp);
         return InteractionResult.CONSUME;

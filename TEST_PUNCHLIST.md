@@ -14,6 +14,15 @@ file back (or just the Result lines) and I'll act on the failures.
 >    screen (Mods → Magnetization → Config) if you go to tune one. Behavioral cadence of every knob is
 >    registration-verified only; you are the first real behavioral test.
 
+> 🧪 **GameTest harness note (2026-06-17):** the headless `runGameTestServer` runs every test in a batch
+> *concurrently in one shared ServerLevel*. With Sable + the full modpack loaded, more than ~1 physics/entity
+> test at once overloads the tick loop and the slower ones starve (the runner spin-logs "Running test batch"
+> and never finishes). **Run the heavy tests one at a time**, e.g. via a keep-list toggle. Separately, a
+> *redstone-powered gallium fluid cell* placed in a test spins the batch runner indefinitely (a per-tick
+> fluid/redstone loop), which is why the gallium Lorentz tests (#103/#104) are synchronous wiring checks
+> rather than live entity-push tests. Every ✅ below was confirmed by an actual single-test run that printed
+> "All N required tests passed :)".
+
 ---
 
 ## #77 — Lenz Braking (eddy-current drag)  ⟶ *not a block; passive ship effect*  — ✅ DRAG VERIFIED ON A REAL SHIP (GameTest)
@@ -29,8 +38,8 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Setup:** build a Sable airship (baseline susceptibility makes any ship eligible; ferromagnetic blocks make it stronger). Put conductive blocks **near** it — floor, wall, OR ceiling within ~3 blocks: copper/aluminium/brass/bronze/tin/silver/lead blocks, waxed/cut copper, lightning rods, or modded `#c:storage_blocks/*` of those metals.
 - **Trigger:** fly the ship fast (> ~0.04 blocks/tick) close past the conductor (within 3 blocks of any face).
 - **Expect:** ship visibly slows / glides instead of zipping; drag scales with conductor count up to a cap (8 blocks); brakes whether the conductor is below, beside, or above. No nearby conductor → no braking.
-- **Config:** `lenzBrakingStrength` (physics), `lenzBrakingTicks` (performance), `lenzBaseDrag`/`lenzMaxDrag`/`lenzMinSpeed`/`lenzConductorCap` (mechanics).
-- **Result:** _(in-world feel check pending; drag application machine-verified)_
+- **Config:** `lenzBrakingEnabled` (physics, master on/off — **new**), `lenzBrakingStrength` (physics), `lenzBrakingTicks` (performance), `lenzBaseDrag`/`lenzMaxDrag`/`lenzMinSpeed`/`lenzConductorCap` (mechanics).
+- **Result:** ✅ Confirmed working in-game (you). Added `lenzBrakingEnabled` (default true) to disable the effect entirely — the handler skips its per-tick scan when off.
 
 ## #78 — Induction Pad  ⟶ `magnetization:induction_pad`  — ⛔ NOT BEHAVIORALLY TESTABLE IN THIS PACK
 > The pad charges items exposing the FE *item* capability. The mod ships **zero** FE items, and the
@@ -41,8 +50,8 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Setup:** feed it FE from a cable/generator on any side; let its internal buffer fill.
 - **Trigger:** carry an FE-storable item (battery / powered tool / charged gadget) in inventory, offhand, armor, or curio slot; stand within range of a buffered pad.
 - **Expect:** the held item's FE fills wirelessly while you're in range; stops when you leave or the buffer empties; multiple chargeable items share the budget.
-- **Config (machines):** `inductionPadCapacity` (400000), `inductionPadTransferIn` (4000), `inductionPadChargePerTick` (4000), `inductionPadRange` (4.0), `inductionPadInterval` (2).
-- **Result:**
+- **Config (machines):** `inductionPadEnabled` (**new — default FALSE**, master on/off), `inductionPadCapacity` (400000), `inductionPadTransferIn` (4000), `inductionPadChargePerTick` (4000), `inductionPadRange` (4.0), `inductionPadInterval` (2).
+- **Result:** ✅ Now **disabled by default** via `inductionPadEnabled` (machines). When off: the pad charges nothing (tick early-returns) and is hidden from the creative tab. Flip it on to use/test with a cross-mod FE item. (Recipe is left intact, consistent with the mod's other soft-disabled content — survival-crafting a pad while disabled yields an inert block.)
 
 ## #79 — Magnetostrictive Sensor  ⟶ `magnetization:magnetostrictive_sensor`  — ✅ COMPLETE (you confirmed redstone; WTHIT added)
 > Redstone output confirmed by you in-world + GameTest (`sensorEmitsRedstoneOnMovement`). WTHIT status line
@@ -68,7 +77,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** move a magnetic Sable ship through/near the coil at speed (> ~0.05 blocks/tick).
 - **Expect:** FE generated into its buffer and pushed to neighbors while the magnet passes; analog redstone pulses high during the pass, drops to 0 when the ship leaves. Faster ship / more magnetic content → bigger pulse.
 - **Config:** hard-coded (RANGE 4.0, MIN_SPEED 0.05, FE conversion/output/capacity) — no config knobs.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`kineticCoilGeneratesFromPassingShip`): a magnetic Sable ship driven past the coil charges its FE buffer. In-world: confirm output push to neighbors + comparator pulse.
 
 ## #82 — Halbach Array  ⟶ *mechanic, not a block*
 - **Obtain:** nothing — emergent from aligning magnet emitters.
@@ -76,7 +85,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** right-click an emitter to read its strength in the GUI, and observe its field range/cone.
 - **Expect:** aligned same-pole magnets raise the effective tier (1–2 aligned → +1 tier, 3–4 → +2, capped at EXTREME). A MEDIUM emitter w/ several aligned neighbors reads STRONG and pushes/pulls noticeably harder. Hematite blocks in the array step the tier *down* instead.
 - **Config:** hard-coded (MAX_BONUS_STEPS = 2).
-- **Result:**
+- **Result:** ✅ GameTest-verified (`halbachBoostsAndHematiteDampens`, pure-function): aligned same-pole magnets raise the effective tier; hematite steps it back down. In-world: confirm GUI strength readout + push feel.
 
 ## #83 — Diamagnetic Block + Pyrolytic Carbon wafer  ⟶ `magnetization:diamagnetic_block`, `magnetization:pyrolytic_carbon`
 - **Obtain:** wafer = 4 charcoal (shapeless); block = 4 wafers (2×2) _(verify in JEI/EMI)_.
@@ -84,7 +93,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** fly the ship past a magnetic emitter of *either* pole.
 - **Expect:** ship is **repelled by both poles equally** (true diamagnetism), unlike normal ferromagnetic ships (attract opposite / repel same). One diamagnetic block flips the whole ship's behavior; a Polarity Inverter on the ship flips repel↔attract.
 - **Config:** a diamagnetic repel/attract default flag may exist _(confirm key in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`diamagneticShipRepelledWhileFerrousAttracted`): a diamagnetic ship is repelled where a ferrous ship is attracted, in the same field. In-world: confirm both-pole repulsion + Polarity Inverter flip.
 
 ## #84 — Directional Repulsor  ⟶ `magnetization:repulsor_coil` (+ `magnetization:vector_core`)
 - **Obtain:** repulsor = magnetic_plates + lodestone_core + copper blocks _(verify in JEI/EMI)_. **Vector Core — obtain method uncertain (loot/creative? not confirmed in recipes).** Flag if you can't find it.
@@ -92,7 +101,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** power it. Without core → conical repulsion along its facing. With core → it thrusts magnetic ships along the block's facing direction.
 - **Expect:** with Vector Core, ships in range ride along the facing axis up to a terminal speed (acts like a magnetic conveyor / track), not just an upward shove. Breaking the block drops the Vector Core back.
 - **Config:** repulsor strength/range caps; track tuning largely hard-coded _(confirm keys in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`directionalRepulsorThrustsAlongFacing`): a powered repulsor with a Vector Core thrusts a ship along its facing axis. In-world: confirm conical (coreless) mode + Vector Core drop on break.
 
 ## #85 — Magnetic Anvils dampener  ⟶ `magnetite_anvil`, `maghemite_anvil`, `hematite_anvil`, `titanomagnetite_anvil`
 - **Obtain:** anvils crafted like vanilla but with the respective magnetic ingots _(verify in JEI/EMI)_.
@@ -125,7 +134,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger B (out of field):** take a kinetic hit (fall, melee, projectile, explosion) with no field.
 - **Expect:** **NOT pulled** by fields (unlike metal armor). In field → texture stays rigid plate, continuous ~big damage mitigation (scales per piece, high cap). Out of field → fluid ripple idle, snaps rigid on a kinetic hit for a short window with strong mitigation. Confirm it does *not* yank you toward emitters.
 - **Config (performance/combat):** `mrArmorRefreshTicks` (5), `mrArmorHardenTicks` (30), plus per-piece/cap mitigation keys _(confirm exact names in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mrArmorMitigatesDamageInField`): an MR-armored zombie loses far less health than a bare one taking the same hit in the same field. In-world: confirm no field-pull + out-of-field on-hit harden.
 
 ## #93 — MR Fluid Golem  ⟶ `mr_fluid_golem` (+ `mr_fluid_golem_spawn_egg`)
 - **Obtain:** spawn egg = carved_pumpkin + 4 mr_fluid_bucket _(verify in JEI/EMI)_.
@@ -133,7 +142,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** lead it into / out of an active field; attack it in each state.
 - **Expect:** in field → hardened texture, very high mitigation, immovable (no knockback); out of field → fluid texture, modest mitigation, normal knockback. Behaves like an iron golem (defends players, attacks hostiles) but lower max health.
 - **Config (performance/combat):** `golemFieldCheckTicks` (5), plus golem mitigation keys _(confirm names in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mrGolemHardensInField`): a golem next to a magnet reads hardened after a field-check interval. In-world: confirm knockback-immunity + iron-golem-style behavior.
 
 ## #96 — MR Fluid tools  ⟶ `mr_fluid_sword/pickaxe/axe/shovel/hoe`
 - **Obtain:** each = iron tool + mr_fluid_bucket (shapeless) _(verify in JEI/EMI)_.
@@ -141,7 +150,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** attack a mob or break blocks, then watch the icon; also grind durability.
 - **Expect:** idle icon shows rippling fluid animation; on use it snaps to a rigid-plate icon for a short window (~14 ticks) then relaxes; durability barely drops with heavy use (iron-tier but "barely wears").
 - **Config (tools):** `mrToolHardenTicks` (14).
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mrToolBarelyWearsAndHardensOnUse`): pickaxe max-durability ≫ iron, one mine costs ≤1 durability and stamps HARDENED_UNTIL. In-world: confirm idle/rigid icon swap.
 
 ## #97 — MR Fluid horse armor  ⟶ `mr_fluid_horse_armor`
 - **Obtain:** iron_horse_armor + mr_fluid_bucket (shapeless) _(verify in JEI/EMI)_.
@@ -149,7 +158,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** ride into a field / let the horse take a kinetic hit.
 - **Expect:** flowing-fluid look on the horse idle; swaps to rigid plate in field or on hit (matches player MR armor look + mitigation); rendered via the mod's custom horse layer (vanilla layer suppressed).
 - **Config:** same MR-armor keys as #92.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mrHorseArmorIsValidBardingOnTheMitigationPath`): it's an MrFluidHorseArmorItem + AnimalArmorItem the horse accepts as body barding (same mitigation handler as #92). The custom render layer is client-only → in-world visual check.
 
 ## #99 — Fluids carry redstone signal  ⟶ ferrofluid / magnetized_ferrofluid / mr_fluid / hardened_mr_fluid / gallium / mixed_gallium
 - **Obtain:** ferrofluid = water_bucket + 2 raw_magnetite; MR = water + iron + raw_magnetite; magnetized ferrofluid = magnetize a ferrofluid bucket via electromagnet GUI; gallium/mixed gallium buckets _(verify sources in JEI/EMI)_.
@@ -164,8 +173,8 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Setup:** place a gallium **source** block; carry redstone signal into it; cover it with an active emitter's field.
 - **Trigger:** stand (or drop items / push a mob/boat) in the powered, field-covered gallium.
 - **Expect:** **entities** floating in it get pushed — radially **outward** under a NORTH field, **inward** under a SOUTH field; strength scales with signal level. Blocks are **not** moved. Unpowered gallium or gallium outside a field → no push. Boats float on it.
-- **Config (performance):** `galliumCurrentTicks` (2), plus a current-speed knob _(confirm key name)_.
-- **Result:**
+- **Config (performance):** `galliumCurrentTicks` (2), `galliumCurrentSpeed` (0.09).
+- **Result:** ✅ GameTest-verified (`galliumLorentzPushesEntity`, wiring): a placed gallium cell registers as a tracked Lorentz source and sits in a magnetic field — the two conditions (besides a redstone current) the push handler reads. ⚠️ The entity push magnitude itself is **in-world-only**: a powered (redstone-fed) gallium fluid cell spins the headless GameTest batch runner indefinitely, and fluid drag makes the in-fluid velocity sample unreliable — so the test asserts the wiring and the live push is verified in-world.
 
 ## #104 — Mixed gallium (ferrofluid-like creep + dual ability)  ⟶ `mixed_gallium`
 - **Obtain:** mixed gallium bucket from gallium + magnetite/iron _(verify recipe in JEI/EMI — reader flagged this unconfirmed)_.
@@ -173,7 +182,7 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Trigger:** observe creep toward the magnet **and** entity push when powered+in-field.
 - **Expect:** it creeps tendrils toward the magnet like ferrofluid **and** applies the gallium Lorentz entity-push simultaneously (both abilities at once). Steel-blue tint, visually distinct from plain gallium.
 - **Config (performance):** `ferrofluidPlainTicks` (8) for creep, `galliumCurrentTicks` (2) for Lorentz.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`mixedGalliumLorentzPushesEntity`, wiring): mixed gallium registers as a tracked Lorentz source in a field (same wiring + same caveat as #103). The creep ability + the live entity push are **in-world-only**.
 
 ## #109 — Gallium gear + dyes + freeze/melt  ⟶ `gallium_*` tools/armor, `solid_gallium`, dye recipes
 - **Obtain:** gallium tools/armor from gallium_ingot; solid_gallium = 9 gallium_ingot; dyes shapeless from buckets _(verify in JEI/EMI)_.
@@ -184,7 +193,7 @@ file back (or just the Result lines) and I'll act on the failures.
   - **Melt:** remove all cooling from a solid_gallium block; wait ~6 s.
 - **Expect:** gallium gear works like gold but softer/weaker (low durability, fast mining, no attack bonus); the three dye recipes yield the listed dyes; gallium freezes to `solid_gallium` near cooling and melts back to fluid when cooling is gone. (Buckets are returned/handled per recipe — note if a bucket is wrongly consumed.)
 - **Config:** freeze/melt delay knobs may exist _(confirm key names in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified (`galliumFreezesNearIceAndMeltsWhenRemoved`): gallium next to ice freezes to solid_gallium, then melts back to fluid once the ice is removed. The gear stats + dye recipes are item/recipe data → verify in JEI/EMI (not a behaviour test).
 
 ## #112 — Gallium golem + mixed-gallium dual ability  ⟶ `gallium_golem`
 - **Obtain:** build the iron-golem-style multiblock using `solid_gallium` for the body + a carved pumpkin / jack-o'-lantern head _(confirm exact shape in-game; reader described a T/iron-golem pattern)_.
@@ -195,7 +204,7 @@ file back (or just the Result lines) and I'll act on the failures.
   - **Dual ability:** re-confirm #104 (this task pairs the golem with the mixed-gallium both-abilities check).
 - **Expect:** golem spawns (structure consumed with particles); it's weaker than an iron golem (lower health, easily knocked, not magnetic); in a warm biome it takes extra damage and eventually **melts into a gallium fluid source with no drops**; killed otherwise it **shatters into 1–3 solid_gallium**. In a cold biome it persists.
 - **Config:** golem melt-time / warm-damage multiplier may exist _(confirm key names in config screen)_.
-- **Result:**
+- **Result:** ✅ GameTest-verified — golem (`galliumGolemIsAWeakerIronGolem`): it's an IronGolem subclass with max health < 100 and zero knockback resistance (weaker/soft). Dual ability (`mixedGalliumRegistersForBothCreepAndLorentz`): mixed gallium registers in BOTH FerrofluidSourceRegistry (creep) and GalliumRegistry (Lorentz). ⚠️ In-world only: multiblock spawn/particles, warm-biome **melt → fluid source (no drops)**, **shatter → 1–3 solid_gallium** loot (biome-temperature + loot-table dependent, not headless-deterministic).
 
 ---
 

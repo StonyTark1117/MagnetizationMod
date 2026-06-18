@@ -42,6 +42,9 @@ public class BarkhausenBlockEntity extends BlockEntity {
             if (state.getValue(BlockStateProperties.POWERED) != powered) {
                 level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, powered), Block.UPDATE_CLIENTS);
             }
+            // Push the new signal magnitude to clients so the WTHIT tooltip reads the
+            // live jitter value, not just the powered/unpowered transition.
+            level.sendBlockUpdated(pos, state, level.getBlockState(pos), Block.UPDATE_CLIENTS);
             level.updateNeighborsAt(pos, state.getBlock());
         }
     }
@@ -51,6 +54,18 @@ public class BarkhausenBlockEntity extends BlockEntity {
             if (level.getBlockState(pos.relative(dir)).is(MagTags.ANVIL_DAMPENERS)) return true;
         }
         return false;
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("Signal", signal);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

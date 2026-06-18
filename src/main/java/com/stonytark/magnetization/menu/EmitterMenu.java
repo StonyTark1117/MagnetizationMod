@@ -66,6 +66,9 @@ public final class EmitterMenu extends AbstractContainerMenu {
      *  slot keeps the excavator active — equivalent to an external redstone
      *  signal, but safe from being mined by its own pulls. Items aren't consumed. */
     public static final int CAP_REDSTONE_FUEL = 64;
+    /** Repulsor-only: a slot for the Vector Core, plus a button to cycle the
+     *  perpendicular direction the in-cone thrust pushes ships. */
+    public static final int CAP_VECTOR_CORE = 128;
 
     // Button IDs sent through clickMenuButton(playerId, buttonId) on click.
     public static final int BUTTON_POLARITY_NORTH = 0;
@@ -79,6 +82,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
     public static final int BUTTON_RANGE_INC = 21;
     public static final int BUTTON_INFLIGHT_DEC = 30;
     public static final int BUTTON_INFLIGHT_INC = 31;
+    public static final int BUTTON_THRUST_CYCLE = 40;
 
     /** Per-emitter in-flight cap floor / step. The upper bound comes from
      *  {@link com.stonytark.magnetization.config.MagConfig#EXCAVATOR_MAX_IN_FLIGHT}. */
@@ -106,7 +110,10 @@ public final class EmitterMenu extends AbstractContainerMenu {
      *  com.stonytark.magnetization.client.screen.EmitterScreen} (recess rendering)
      *  so they stay aligned. */
     public static int inventoryYOffset(final int caps) {
-        return (caps & CAP_INFLIGHT) != 0 ? EXTRA_HEIGHT_FOR_INFLIGHT : 0;
+        // Both the excavator's "Pulls" row and the repulsor's thrust-direction
+        // button sit at y=66 and would collide with the inventory label — push the
+        // inventory (and GUI height) down to make room for either.
+        return ((caps & CAP_INFLIGHT) != 0 || (caps & CAP_VECTOR_CORE) != 0) ? EXTRA_HEIGHT_FOR_INFLIGHT : 0;
     }
 
     /** Open-payload schema. Sent from the server when the player triggers the menu. */
@@ -150,6 +157,9 @@ public final class EmitterMenu extends AbstractContainerMenu {
     /** 0 = idle, 1 = redstone-driven, 2 = energy-driven. Drives the
      *  "Source: …" label and the bar's tint colour. */
     private final DataSlot powerSource = DataSlot.standalone();
+    /** Repulsor-only: current thrust-direction index (0..3) into the perpendicular
+     *  directions of the coil's facing. */
+    private final DataSlot thrustDir = DataSlot.standalone();
 
     /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
     public static EmitterMenu fromNetwork(final int id, final Inventory inv,
@@ -187,6 +197,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
         // armor slot keeps slot indices stable across cap variants.
         final Container[] toolHolder = { new SimpleContainer(1) };
         final Container[] fuelHolder = { new SimpleContainer(1) };
+        final Container[] coreHolder = { new SimpleContainer(1) };
         access.execute((level, p) -> {
             final BlockEntity be = level.getBlockEntity(p);
             if (be instanceof com.stonytark.magnetization.content.excavator.MagneticExcavatorBlockEntity exc) {
@@ -196,11 +207,17 @@ public final class EmitterMenu extends AbstractContainerMenu {
             if (be instanceof com.stonytark.magnetization.content.RedstoneFuelHolder holder) {
                 fuelHolder[0] = holder.getRedstoneFuelSlot();
             }
+            if (be instanceof RepulsorCoilBlockEntity repulsor) {
+                coreHolder[0] = repulsor.getVectorCoreSlot();
+            }
         });
         addSlot(new ToolEnchantSlot(toolHolder[0], 0, 132, 20, hasCap(CAP_TOOL_SLOT)));
         // Redstone-fuel slot at (28, 20) — accepts only redstone dust. Internal
         // power source that's immune to the excavator destroying its own redstone.
         addSlot(new RedstoneFuelSlot(fuelHolder[0], 0, 28, 20, hasCap(CAP_REDSTONE_FUEL)));
+        // Vector Core slot at (132, 20) — bound to the repulsor BE so its contents
+        // persist; only accepts the Vector Core item.
+        addSlot(new VectorCoreSlot(coreHolder[0], 0, 132, 20, hasCap(CAP_VECTOR_CORE)));
 
         // Player inventory rows (3) + hotbar (1). Slot indices 3..29 (main) and
         // 30..38 (hotbar) — the +3 offset accounts for armor + tool + fuel ahead.
@@ -224,6 +241,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
         addDataSlot(energyStored);
         addDataSlot(energyCapacity);
         addDataSlot(powerSource);
+        addDataSlot(thrustDir);
         // Initial sync from BE (server-side path only — client passes NULL access).
         // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
         // ContainerLevelAccess wraps the lambda return in Optional.of() — which NPEs
@@ -251,8 +269,13 @@ public final class EmitterMenu extends AbstractContainerMenu {
             } else {
                 inflightCap.set(0);
             }
+            thrustDir.set(be instanceof RepulsorCoilBlockEntity rc ? rc.thrustDirection().ordinal() : 0);
         });
     }
+
+    /** Repulsor-only: resolved thrust {@link net.minecraft.core.Direction#ordinal()}
+     *  the in-cone thrust currently pushes ships in (for the screen label). */
+    public int thrustDir() { return thrustDir.get(); }
 
     public int caps() { return caps; }
     public BlockPos pos() { return pos; }
@@ -333,6 +356,12 @@ public final class EmitterMenu extends AbstractContainerMenu {
                 case BUTTON_RANGE_INC -> bumpRange(be, +rangeStepFor(be));
                 case BUTTON_INFLIGHT_DEC -> bumpInflightCap(be, -INFLIGHT_STEP);
                 case BUTTON_INFLIGHT_INC -> bumpInflightCap(be, +INFLIGHT_STEP);
+                case BUTTON_THRUST_CYCLE -> {
+                    if (hasCap(CAP_VECTOR_CORE) && be instanceof RepulsorCoilBlockEntity rc) {
+                        rc.cycleThrustDir();
+                        thrustDir.set(rc.thrustDirection().ordinal());
+                    }
+                }
                 default -> { return false; }
             }
             return true;
@@ -472,14 +501,14 @@ public final class EmitterMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
-        // 0 = armor, 1 = tool, 2 = redstone fuel, 3..29 = inv main, 30..38 = hotbar.
+        // 0 = armor, 1 = tool, 2 = redstone fuel, 3 = vector core, 4..30 = inv main, 31..39 = hotbar.
         final Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         final ItemStack original = slot.getItem();
         final ItemStack copy = original.copy();
-        if (index <= 2) {
-            // armor / tool / fuel → player inventory
-            if (!moveItemStackTo(original, 3, slots.size(), true)) return ItemStack.EMPTY;
+        if (index <= 3) {
+            // armor / tool / fuel / vector core → player inventory
+            if (!moveItemStackTo(original, 4, slots.size(), true)) return ItemStack.EMPTY;
         } else {
             // player inv → first matching slot.
             boolean moved = false;
@@ -499,6 +528,10 @@ public final class EmitterMenu extends AbstractContainerMenu {
             if (!moved && hasCap(CAP_REDSTONE_FUEL)
                     && original.is(MagTags.REDSTONE_FUEL)) {
                 moved = moveItemStackTo(original, 2, 3, false);
+            }
+            if (!moved && hasCap(CAP_VECTOR_CORE)
+                    && original.is(com.stonytark.magnetization.registry.MagItems.VECTOR_CORE.get())) {
+                moved = moveItemStackTo(original, 3, 4, false);
             }
             if (!moved) return ItemStack.EMPTY;
         }
@@ -539,6 +572,21 @@ public final class EmitterMenu extends AbstractContainerMenu {
             return enabled && stack.is(MagTags.REDSTONE_FUEL);
         }
         @Override public boolean isActive() { return enabled; }
+    }
+
+    /** Persistent slot for the Repulsor's Vector Core. Accepts only the Vector
+     *  Core item; hidden + locked when CAP_VECTOR_CORE is off. */
+    private static final class VectorCoreSlot extends Slot {
+        private final boolean enabled;
+        VectorCoreSlot(final Container c, final int s, final int x, final int y, final boolean enabled) {
+            super(c, s, x, y);
+            this.enabled = enabled;
+        }
+        @Override public boolean mayPlace(final ItemStack stack) {
+            return enabled && stack.is(com.stonytark.magnetization.registry.MagItems.VECTOR_CORE.get());
+        }
+        @Override public boolean isActive() { return enabled; }
+        @Override public int getMaxStackSize() { return 1; }
     }
 
     /** Persistent slot for an enchanted item / book. Accepts any item carrying

@@ -39,6 +39,12 @@ public final class AnvilDampenerHandler {
         });
     }
 
+    /** Public read-only view of a magnetic anvil's per-metal break chance (or null
+     *  if {@code state} isn't one of our anvils) — for HUD/WTHIT display. */
+    public static Float breakChanceFor(final net.minecraft.world.level.block.state.BlockState state) {
+        return magneticAnvilBreakChance(state);
+    }
+
     /** Per-metal break chance for our anvils, or null if {@code state} isn't one.
      *  Most are weaker than a vanilla anvil + dampener (which is 0); titanomagnetite
      *  is the only one that beats it (0, never degrades). */

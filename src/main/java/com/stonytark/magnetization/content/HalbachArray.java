@@ -29,6 +29,7 @@ public final class HalbachArray {
     /** Tier after applying the Halbach boost for {@code polarity} at {@code pos}. */
     public static MagneticStrength boostedStrength(final Level level, final BlockPos pos,
                                                    final MagneticPolarity polarity, final MagneticStrength base) {
+        if (!com.stonytark.magnetization.config.MagConfig.halbachEnabled()) return base;
         if (polarity == null || polarity == MagneticPolarity.NONE || base == MagneticStrength.NONE) return base;
         int aligned = 0;
         for (final Direction dir : Direction.values()) {

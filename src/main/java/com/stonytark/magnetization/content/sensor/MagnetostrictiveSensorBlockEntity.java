@@ -49,6 +49,11 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity
         final int max = com.stonytark.magnetization.config.MagConfig.sensorMaxRange();
         this.rangeOverride = blocks <= 0 ? 0 : Math.max(1, Math.min(blocks, max));
         setChanged();
+        // Push the new range to clients so the WTHIT tooltip reflects the GUI change
+        // immediately (otherwise it lags until the next signal-change block update).
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override public int defaultRangeBlocks() {
@@ -103,6 +108,7 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity
     public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
         final CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Signal", signal);
+        tag.putInt("RangeOverride", rangeOverride);
         return tag;
     }
 

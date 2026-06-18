@@ -41,6 +41,7 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
     private @Nullable RepeatButton rangePlus;
     private @Nullable RepeatButton inflightMinus;
     private @Nullable RepeatButton inflightPlus;
+    private @Nullable Button thrustButton;
 
     public EmitterScreen(final EmitterMenu menu, final Inventory inv, final Component title) {
         super(menu, inv, title);
@@ -117,6 +118,25 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
                     Component.literal("+"),
                     () -> sendButton(EmitterMenu.BUTTON_INFLIGHT_INC)));
         }
+        if (menu.hasCap(EmitterMenu.CAP_VECTOR_CORE)) {
+            // Thrust-direction cycle button on the free row below strength/range.
+            thrustButton = addRenderableWidget(Button.builder(thrustLabel(),
+                            b -> sendButton(EmitterMenu.BUTTON_THRUST_CYCLE))
+                    .bounds(x0 + 8, y0 + 66, 120, 16).build());
+        }
+    }
+
+    /** Label for the thrust-direction cycle button: "Thrust: North" when a core
+     *  is installed, or a prompt to install one when the slot is empty. */
+    private Component thrustLabel() {
+        final ItemStack core = menu.slots.get(3).getItem(); // slot 3 = vector core
+        if (core.isEmpty()) {
+            return Component.translatable("gui.magnetization.thrust.no_core");
+        }
+        final net.minecraft.core.Direction dir =
+                net.minecraft.core.Direction.values()[Math.floorMod(menu.thrustDir(), 6)];
+        return Component.translatable("gui.magnetization.thrust.dir",
+                Component.translatable("tooltip.magnetization.direction." + dir.getSerializedName()));
     }
 
     @Override
@@ -126,6 +146,9 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         if (rangePlus != null) rangePlus.repeatTick();
         if (inflightMinus != null) inflightMinus.repeatTick();
         if (inflightPlus != null) inflightPlus.repeatTick();
+        // Keep the thrust button label in sync with the (server-driven) direction
+        // and whether a core is slotted.
+        if (thrustButton != null) thrustButton.setMessage(thrustLabel());
     }
 
     @Override
@@ -144,6 +167,8 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
                 hint = Component.translatable("gui.magnetization.tool_slot"); }
             case 2 -> { if (menu.hasCap(EmitterMenu.CAP_REDSTONE_FUEL))
                 hint = Component.translatable("gui.magnetization.redstone_fuel_slot"); }
+            case 3 -> { if (menu.hasCap(EmitterMenu.CAP_VECTOR_CORE))
+                hint = Component.translatable("gui.magnetization.vector_core_slot"); }
             default -> { /* player inventory slot — no custom hint */ }
         }
         if (hint != null) g.renderTooltip(font, hint, mouseX, mouseY);
@@ -172,6 +197,13 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         if (menu.hasCap(EmitterMenu.CAP_REDSTONE_FUEL)) {
             drawSlotRecess(g, leftPos + 28, topPos + 20, 0xFF2B1B1B);
             drawSlotLetter(g, leftPos + 28, topPos + 20, "R", 0x60D08080);
+        }
+        // Vector Core slot recess (repulsor) — purple tint to read as the core
+        // input. Shares the (132,20) cell with the excavator tool slot; the two
+        // caps are never set together.
+        if (menu.hasCap(EmitterMenu.CAP_VECTOR_CORE)) {
+            drawSlotRecess(g, leftPos + 132, topPos + 20, 0xFF2B1B2B);
+            drawSlotLetter(g, leftPos + 132, topPos + 20, "V", 0x60C080D0);
         }
         // Tool-slot recess if the cap is on. Slight green tint to telegraph it's
         // a separate slot from the armor magnetize one.

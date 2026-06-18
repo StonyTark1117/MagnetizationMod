@@ -1,0 +1,15 @@
+{
+  "name": "book.magnetization.entry.gallium_golem.name",
+  "icon": "magnetization:solid_gallium",
+  "category": "magnetization:machines",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.gallium_golem.intro"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.gallium_golem.thermal"
+    }
+  ]
+}

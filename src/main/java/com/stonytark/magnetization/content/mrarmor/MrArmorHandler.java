@@ -38,9 +38,21 @@ public final class MrArmorHandler {
         final Player player = event.getEntity();
         if (!(player.level() instanceof ServerLevel server)) return;
         if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
-        if (pieces(player) == 0) return;
-        if (MagneticFields.isInField(server, player.position())) {
-            hardenWorn(player, server.getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks());
+        final boolean inField = MagneticFields.isInField(server, player.position());
+        if (inField) {
+            final long until = server.getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks();
+            if (pieces(player) > 0) hardenWorn(player, until);
+            // An MR-fluid tool held in hand also hardens while in a field — same as
+            // the armor — so a wielded tool reads rigid, not just on use.
+            hardenHeldTool(player.getMainHandItem(), until);
+            hardenHeldTool(player.getOffhandItem(), until);
+        }
+    }
+
+    /** Stamp the hardened window onto a held MR-fluid tool (no-op for anything else). */
+    private static void hardenHeldTool(final ItemStack stack, final long until) {
+        if (stack.getItem() instanceof com.stonytark.magnetization.content.mrtools.MrFluidTools.Marker) {
+            stack.set(MagDataComponents.HARDENED_UNTIL.get(), until);
         }
     }
 
@@ -93,6 +105,9 @@ public final class MrArmorHandler {
         for (final ItemStack armor : living.getArmorSlots()) {
             if (isMrPiece(armor)) n++;
         }
+        // getArmorSlots() omits the BODY slot — where horse barding (and wolf/llama
+        // body armor) lives — so count it explicitly.
+        if (isMrPiece(living.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.BODY))) n++;
         return n;
     }
 
@@ -101,6 +116,10 @@ public final class MrArmorHandler {
             if (isMrPiece(armor)) {
                 armor.set(MagDataComponents.HARDENED_UNTIL.get(), until);
             }
+        }
+        final ItemStack body = living.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.BODY);
+        if (isMrPiece(body)) {
+            body.set(MagDataComponents.HARDENED_UNTIL.get(), until);
         }
     }
 

@@ -247,7 +247,11 @@ dependencies {
     // Sodium — the renderer most users run. localRuntime so we validate our
     // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
     // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
-    localRuntime("maven.modrinth:sodium:mc1.21.1-0.8.12-beta.1-neoforge")
+    //localRuntime("maven.modrinth:sodium:${sodium_version}")
+    // Iris — shaders, on top of Sodium. localRuntime (client-only) so we validate
+    // our render layers under shaders in dev. Declared optional/CLIENT in the
+    // mods.toml; the runningDatagen guard above keeps it out of runData.
+    // localRuntime("maven.modrinth:iris:${iris_version}")
     // Aether intentionally disabled — its transitive `accessories` mod has a
     // broken mixin against this NeoForge build (EntityRenderers lambda
     // numbering mismatch crashes during render setup). Re-enable when the

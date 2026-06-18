@@ -37,6 +37,7 @@ public class KineticCoilBlockEntity extends BlockEntity {
 
     private final GenBuffer energy = new GenBuffer(CAPACITY, OUTPUT_RATE);
     private int signal = 0;
+    private int lastSyncedEnergy = -1;
 
     public KineticCoilBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.KINETIC_COIL.get(), pos, state);
@@ -50,6 +51,16 @@ public class KineticCoilBlockEntity extends BlockEntity {
         return signal;
     }
 
+    /** Live FE in the buffer (synced to client for WTHIT). */
+    public int getEnergyStored() {
+        return energy.getEnergyStored();
+    }
+
+    /** Buffer capacity (constant; exposed for the WTHIT readout). */
+    public int getEnergyCapacity() {
+        return CAPACITY;
+    }
+
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final KineticCoilBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
@@ -60,6 +71,7 @@ public class KineticCoilBlockEntity extends BlockEntity {
         }
         // Redstone tracks the live EMF (instant pulse while a magnet passes).
         final int sig = (int) Math.ceil(Math.min(1.0, emf * 1.5) * 15.0);
+        boolean sync = false;
         if (sig != be.signal) {
             be.signal = sig;
             be.setChanged();
@@ -68,8 +80,18 @@ public class KineticCoilBlockEntity extends BlockEntity {
                 level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, powered), Block.UPDATE_CLIENTS);
             }
             level.updateNeighborsAt(pos, state.getBlock());
+            sync = true;
         }
         pushEnergy(server, pos, be.energy);
+        // Throttled FE sync so the WTHIT readout tracks the buffer without spamming
+        // a packet every tick while energy drains/charges.
+        if (!sync && (server.getGameTime() % 20L) == 0L && be.energy.getEnergyStored() != be.lastSyncedEnergy) {
+            sync = true;
+        }
+        if (sync) {
+            be.lastSyncedEnergy = be.energy.getEnergyStored();
+            level.sendBlockUpdated(pos, state, level.getBlockState(pos), Block.UPDATE_CLIENTS);
+        }
     }
 
     /** Strongest induced EMF (speed × susceptibility) from any magnetic ship in range. */
@@ -118,17 +140,35 @@ public class KineticCoilBlockEntity extends BlockEntity {
         void generate(final int amount) {
             this.energy = Math.min(this.capacity, this.energy + amount);
         }
+        void set(final int amount) {
+            this.energy = Math.max(0, Math.min(this.capacity, amount));
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        tag.putInt("Energy", energy.getEnergyStored());
+        tag.putInt("Signal", signal);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
+        tag.putInt("Signal", signal);
     }
 
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        energy.generate(tag.getInt("Energy"));
+        energy.set(tag.getInt("Energy")); // set, not accumulate — handles repeated client update tags
+        this.signal = tag.getInt("Signal");
     }
 }

@@ -40,6 +40,7 @@ public class InductionPadBlockEntity extends BlockEntity {
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final InductionPadBlockEntity be) {
         if (level.isClientSide) return;
+        if (!com.stonytark.magnetization.config.MagConfig.inductionPadEnabled()) return; // master switch — pad inert when off
         final int interval = com.stonytark.magnetization.config.MagConfig.inductionPadInterval();
         if ((level.getGameTime() % interval) != 0L) return;
         int budget = Math.min(com.stonytark.magnetization.config.MagConfig.inductionPadChargePerTick() * interval, be.energy.getEnergyStored());

@@ -53,6 +53,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     /** True for the current tick if energy was successfully consumed this tick
      *  to drive the field. Reset/recomputed each {@link #tickEmitter} call. */
     private boolean energyActiveThisTick = false;
+    /** True for the current tick if the field tier was stepped UP by a Halbach
+     *  array (face-adjacent same-pole magnets) / stepped DOWN by adjacent hematite.
+     *  Synced for the WTHIT/goggle "boosted/dampened" annotation. */
+    private boolean halbachBoosted = false;
+    private boolean hematiteDampened = false;
     /** Snapshot of {@link #energyActiveThisTick} from the prior tick; used to
      *  fire the {@code energy_activated} advancement trigger on the rising
      *  edge only, not every tick the emitter is active. Not persisted — a
@@ -336,6 +341,9 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // returns below leave it false — otherwise isPowered()/the synced HUD
         // state could report a stale "energy-active" on a dark emitter.
         energyActiveThisTick = false;
+        // Same for the Halbach/hematite annotations — a dark emitter is neither.
+        halbachBoosted = false;
+        hematiteDampened = false;
         // Soft-disable hook: if the operator has listed this block path in
         // config.content.disabledBlocks, treat the emitter as off regardless
         // of redstone state. Existing placements survive saves but stay inert.
@@ -416,9 +424,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // Adjacent Hematite blocks dampen the field strength tier (one step per
         // adjacent block, clamped to WEAK). Antiferromagnetic flavour — hematite
         // cancels out applied fields.
+        final MagneticStrength preDampen = local.strength();
         final MagneticStrength dampened = com.stonytark.magnetization.content.hematite.HematiteBlock
-                .dampenedStrength(server, getBlockPos(), local.strength());
-        if (dampened != local.strength()) {
+                .dampenedStrength(server, getBlockPos(), preDampen);
+        hematiteDampened = dampened != preDampen;
+        if (hematiteDampened) {
             local = new MagneticField(local.origin(), local.axis(), local.polarity(),
                     dampened, local.shape());
         }
@@ -426,9 +436,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // Halbach array boost: face-adjacent magnets of the SAME polarity
         // concentrate the field, stepping the strength tier up (clamped to
         // EXTREME). The opposite of the hematite dampener above.
+        final MagneticStrength preBoost = local.strength();
         final MagneticStrength boosted = com.stonytark.magnetization.content.HalbachArray
-                .boostedStrength(server, getBlockPos(), local.polarity(), local.strength());
-        if (boosted != local.strength()) {
+                .boostedStrength(server, getBlockPos(), local.polarity(), preBoost);
+        halbachBoosted = boosted != preBoost;
+        if (halbachBoosted) {
             local = new MagneticField(local.origin(), local.axis(), local.polarity(),
                     boosted, local.shape());
         }
@@ -569,6 +581,14 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
                         .withStyle(ChatFormatting.GRAY));
             }
         }
+        if (halbachBoosted) {
+            lines.add(Component.translatable("tooltip.magnetization.halbach_boosted")
+                    .withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
+        if (hematiteDampened) {
+            lines.add(Component.translatable("tooltip.magnetization.hematite_dampened")
+                    .withStyle(ChatFormatting.DARK_AQUA));
+        }
         if (cachedShipState != null) {
             lines.addAll(shipStateTooltipLines(cachedShipState, verbose));
         }
@@ -634,6 +654,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // Transient, but synced so WTHIT/Jade can distinguish "energy" vs
         // "redstone" vs "idle" on the client (recomputed every server tick).
         if (energyActiveThisTick) tag.putBoolean("EnergyActive", true);
+        if (halbachBoosted) tag.putBoolean("Halbach", true);
+        if (hematiteDampened) tag.putBoolean("HematiteDamp", true);
         if (cachedField != null) tag.put("Field", cachedField.toNbt());
         if (strengthOverride != null) tag.putString("StrengthOverride", strengthOverride.name());
         if (rangeOverride > 0) tag.putInt("RangeOverride", rangeOverride);
@@ -648,6 +670,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         powered = tag.getBoolean("Powered");
         energyActiveThisTick = tag.getBoolean("EnergyActive");
+        halbachBoosted = tag.getBoolean("Halbach");
+        hematiteDampened = tag.getBoolean("HematiteDamp");
         cachedField = tag.contains("Field") ? MagneticField.fromNbt(tag.getCompound("Field")) : null;
         strengthOverride = tag.contains("StrengthOverride")
                 ? MagneticStrength.valueOf(tag.getString("StrengthOverride")) : null;

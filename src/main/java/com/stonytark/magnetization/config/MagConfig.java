@@ -84,6 +84,9 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue LENZ_MAX_DRAG;
     public static final ModConfigSpec.DoubleValue LENZ_MIN_SPEED;
     public static final ModConfigSpec.IntValue    LENZ_CONDUCTOR_CAP;
+    /** Master on/off for the Halbach-array strength boost (aligned same-pole
+     *  magnets stepping an emitter's tier up). Off → emitters ignore neighbours. */
+    public static final ModConfigSpec.BooleanValue HALBACH_ENABLED;
 
     // ── effects: lightning / LIRM / anomaly balance ──
     public static final ModConfigSpec.DoubleValue PETRIFIED_STORM_STRIKE_CHANCE;
@@ -140,6 +143,9 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_RANGE;
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_THRUST;
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_MAX_SPEED;
+    /** Fraction of a guided ship's spin removed per tick while a Vector Core steers
+     *  it, so it tracks the chosen direction instead of tumbling. 0 = none, 1 = full. */
+    public static final ModConfigSpec.DoubleValue REPULSOR_SPIN_DAMP;
     public static final ModConfigSpec.DoubleValue MOTOR_RPM_PER_POTENCY;
     public static final ModConfigSpec.DoubleValue MOTOR_STRESS_PER_POTENCY;
 
@@ -148,6 +154,10 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK;
     public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE;
     public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_PER_CELL;
+    /** Master on/off for the induction charging pad. Off by default — the pad
+     *  charges FE-storing items the mod doesn't itself ship, so it's opt-in. When
+     *  off the pad charges nothing and is hidden from the creative tab. */
+    public static final ModConfigSpec.BooleanValue INDUCTION_PAD_ENABLED;
     public static final ModConfigSpec.IntValue    INDUCTION_PAD_CAPACITY;
     public static final ModConfigSpec.IntValue    INDUCTION_PAD_TRANSFER_IN;
     public static final ModConfigSpec.IntValue    INDUCTION_PAD_CHARGE_PER_TICK;
@@ -331,6 +341,9 @@ public final class MagConfig {
     /** Max FE per tick the emitter accepts from external sources. Higher values
      *  refill the buffer faster from heavy cabling. Default 200 FE/tick. */
     public static final ModConfigSpec.IntValue EMITTER_ENERGY_TRANSFER_RATE;
+    /** Master on/off for Lenz-effect eddy-current ship braking. When false the
+     *  effect is skipped entirely (no per-tick scan), regardless of strength. */
+    public static final ModConfigSpec.BooleanValue LENZ_BRAKING_ENABLED;
     /** Lenz-effect eddy-current braking strength on magnetic ships over conductive
      *  (copper/aluminium) blocks. 0 disables; 1.0 = default. */
     public static final ModConfigSpec.DoubleValue LENZ_BRAKING_STRENGTH;
@@ -353,6 +366,12 @@ public final class MagConfig {
                 .comment("Global multiplier applied to every emitter's tier force value.")
                 .translation("magnetization.configuration.physics.strengthMultiplier")
                 .defineInRange("strengthMultiplier", 1.0d, 0.0d, 100.0d);
+
+        LENZ_BRAKING_ENABLED = b
+                .comment("Master switch for Lenz-effect eddy-current ship braking. Set false to",
+                         "disable the effect entirely (skips the per-tick conductor scan too).")
+                .translation("magnetization.configuration.physics.lenzBrakingEnabled")
+                .define("lenzBrakingEnabled", true);
 
         LENZ_BRAKING_STRENGTH = b
                 .comment("Lenz-effect eddy-current braking: a magnetic ship moving over conductive",
@@ -662,6 +681,11 @@ public final class MagConfig {
                 .comment("Conductor blocks past which Lenz braking sees diminishing returns.")
                 .translation("magnetization.configuration.mechanics.lenzConductorCap")
                 .defineInRange("lenzConductorCap", 8, 1, 4096);
+        HALBACH_ENABLED = b
+                .comment("Halbach-array boost: aligning same-polarity magnets face-to-face steps an",
+                         "emitter's strength tier up. Set false to disable the boost entirely.")
+                .translation("magnetization.configuration.mechanics.halbachEnabled")
+                .define("halbachEnabled", true);
 
         b.pop();
 
@@ -835,9 +859,11 @@ public final class MagConfig {
         REPULSOR_TRACK_RANGE = b.translation("magnetization.configuration.propulsion.repulsorTrackRange")
                 .defineInRange("repulsorTrackRange", 6.0d, 0.0d, 64.0d);
         REPULSOR_TRACK_THRUST = b.translation("magnetization.configuration.propulsion.repulsorTrackThrust")
-                .defineInRange("repulsorTrackThrust", 0.045d, 0.0d, 100.0d);
+                .defineInRange("repulsorTrackThrust", 0.5d, 0.0d, 100.0d);
         REPULSOR_TRACK_MAX_SPEED = b.translation("magnetization.configuration.propulsion.repulsorTrackMaxSpeed")
-                .defineInRange("repulsorTrackMaxSpeed", 1.1d, 0.0d, 100.0d);
+                .defineInRange("repulsorTrackMaxSpeed", 5.0d, 0.0d, 100.0d);
+        REPULSOR_SPIN_DAMP = b.translation("magnetization.configuration.propulsion.repulsorSpinDamp")
+                .defineInRange("repulsorSpinDamp", 0.75d, 0.0d, 1.0d);
         MOTOR_RPM_PER_POTENCY = b.translation("magnetization.configuration.propulsion.motorRpmPerPotency")
                 .defineInRange("motorRpmPerPotency", 2.0d, 0.0d, 1000.0d);
         MOTOR_STRESS_PER_POTENCY = b.translation("magnetization.configuration.propulsion.motorStressPerPotency")
@@ -859,6 +885,12 @@ public final class MagConfig {
                 .defineInRange("tokamakOutputRate", 16000, 0, 1_000_000_000);
         TOKAMAK_BURN_TICKS_PER_CELL = b.translation("magnetization.configuration.machines.tokamakBurnTicksPerCell")
                 .defineInRange("tokamakBurnTicksPerCell", 4800, 1, 1_000_000_000);
+        INDUCTION_PAD_ENABLED = b
+                .comment("Master switch for the induction charging pad. Off by default: it charges",
+                         "FE-storing items this mod doesn't itself ship, so it's opt-in. When off the",
+                         "pad charges nothing and is hidden from the creative tab.")
+                .translation("magnetization.configuration.machines.inductionPadEnabled")
+                .define("inductionPadEnabled", false);
         INDUCTION_PAD_CAPACITY = b.translation("magnetization.configuration.machines.inductionPadCapacity")
                 .defineInRange("inductionPadCapacity", 400_000, 0, 1_000_000_000);
         INDUCTION_PAD_TRANSFER_IN = b.translation("magnetization.configuration.machines.inductionPadTransferIn")
@@ -1518,6 +1550,7 @@ public final class MagConfig {
     public static double lenzMaxDrag()              { return doubleOr(LENZ_MAX_DRAG, 0.55d); }
     public static double lenzMinSpeed()             { return doubleOr(LENZ_MIN_SPEED, 0.04d); }
     public static int    lenzConductorCap()         { return Math.max(1, intOr(LENZ_CONDUCTOR_CAP, 8)); }
+    public static boolean halbachEnabled()          { try { return HALBACH_ENABLED.get(); } catch (final Throwable t) { return true; } }
     public static double petrifiedStormStrikeChance(){ return doubleOr(PETRIFIED_STORM_STRIKE_CHANCE, 0.5d); }
     public static int    petrifiedStormStrikeRadius(){ return intOr(PETRIFIED_STORM_STRIKE_RADIUS, 16); }
     public static int    tempFieldDurationTicks()    { return intOr(TEMP_FIELD_DURATION_TICKS, 600); }
@@ -1566,8 +1599,9 @@ public final class MagConfig {
     public static double alfvenAccel()              { return doubleOr(ALFVEN_ACCEL, 0.08d); }
     public static double alfvenMaxSpeed()           { return doubleOr(ALFVEN_MAX_SPEED, 1.4d); }
     public static double repulsorTrackRange()       { return doubleOr(REPULSOR_TRACK_RANGE, 6.0d); }
-    public static double repulsorTrackThrust()      { return doubleOr(REPULSOR_TRACK_THRUST, 0.045d); }
-    public static double repulsorTrackMaxSpeed()    { return doubleOr(REPULSOR_TRACK_MAX_SPEED, 1.1d); }
+    public static double repulsorTrackThrust()      { return doubleOr(REPULSOR_TRACK_THRUST, 0.5d); }
+    public static double repulsorTrackMaxSpeed()    { return doubleOr(REPULSOR_TRACK_MAX_SPEED, 5.0d); }
+    public static double repulsorSpinDamp()         { return Math.max(0.0d, Math.min(1.0d, doubleOr(REPULSOR_SPIN_DAMP, 0.75d))); }
     public static float  motorRpmPerPotency()       { return (float) doubleOr(MOTOR_RPM_PER_POTENCY, 2.0d); }
     public static float  motorStressPerPotency()    { return (float) doubleOr(MOTOR_STRESS_PER_POTENCY, 8.0d); }
 
@@ -1576,6 +1610,7 @@ public final class MagConfig {
     public static int    tokamakGenPerTick()        { return intOr(TOKAMAK_GEN_PER_TICK, 2000); }
     public static int    tokamakOutputRate()        { return intOr(TOKAMAK_OUTPUT_RATE, 16000); }
     public static int    tokamakBurnTicksPerCell()  { return intOr(TOKAMAK_BURN_TICKS_PER_CELL, 4800); }
+    public static boolean inductionPadEnabled()     { try { return INDUCTION_PAD_ENABLED.get(); } catch (final Throwable t) { return false; } }
     public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
     public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }
     public static int    inductionPadChargePerTick(){ return intOr(INDUCTION_PAD_CHARGE_PER_TICK, 4000); }
@@ -1615,8 +1650,12 @@ public final class MagConfig {
     public static int commandTpPermission()       { return permissionOr(COMMAND_TP_PERMISSION, 0); }
 
     /** Convenience: lookup whether a block path is in the disabled list. Tolerates
-     *  config-not-yet-loaded by returning false. */
+     *  config-not-yet-loaded by returning false. The induction pad has its own
+     *  dedicated toggle (off by default) but routes through here so it gets the
+     *  same treatment as any soft-disabled block (creative-tab hide, GUI skip,
+     *  recipe removal). */
     public static boolean isBlockDisabled(final String path) {
+        if ("induction_pad".equals(path) && !inductionPadEnabled()) return true;
         try {
             return DISABLED_BLOCKS.get().contains(path);
         } catch (final Throwable t) {
@@ -1666,6 +1705,11 @@ public final class MagConfig {
 
     public static double lenzBrakingStrength() {
         try { return LENZ_BRAKING_STRENGTH.get(); } catch (final Throwable t) { return 1.0d; }
+    }
+
+    /** @return false to disable Lenz eddy-current ship braking entirely. */
+    public static boolean lenzBrakingEnabled() {
+        try { return LENZ_BRAKING_ENABLED.get(); } catch (final Throwable t) { return true; }
     }
 
     /** @return true if holding a block and right-clicking our interactible

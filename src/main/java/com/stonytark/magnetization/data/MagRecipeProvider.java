@@ -335,6 +335,17 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_raw", has(rawMag))
                 .save(out, id("magnetite_ingot_from_blasting"));
 
+        // Smelt a water bucket into deuterium oxide (heavy water) — the off-the-shelf
+        // way to get D2O without a dedicated machine.
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.WATER_BUCKET), RecipeCategory.MISC,
+                        MagItems.DEUTERIUM_OXIDE_BUCKET.get(), 0.2f, 200)
+                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(out, id("deuterium_oxide_from_smelting"));
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(Items.WATER_BUCKET), RecipeCategory.MISC,
+                        MagItems.DEUTERIUM_OXIDE_BUCKET.get(), 0.2f, 100)
+                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(out, id("deuterium_oxide_from_blasting"));
+
         // -------- Meteorite Sapling (fragment + 4 raw_magnetite cradle) --------
         // Plantable; takes ~30 in-game min to grow into a fresh meteorite_core.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.METEORITE_SAPLING.get())

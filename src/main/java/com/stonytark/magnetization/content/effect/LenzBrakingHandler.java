@@ -38,6 +38,7 @@ public final class LenzBrakingHandler {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
+        if (!MagConfig.lenzBrakingEnabled()) return; // master switch — skips the scan entirely
         if ((server.getGameTime() % MagConfig.lenzBrakingTicks()) != 0L) return;
         final double strength = MagConfig.lenzBrakingStrength();
         if (strength <= 0.0d) return;

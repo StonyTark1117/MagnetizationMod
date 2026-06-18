@@ -176,7 +176,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.POLARITY_INVERTER);
 
                         // ── Machines & tech ──
-                        accept(output, MagItems.INDUCTION_PAD);
+                        accept(output, MagItems.INDUCTION_PAD); // hidden automatically when disabled (isBlockDisabled)
                         accept(output, MagItems.KINETIC_COIL);
                         accept(output, MagItems.EMP_CHARGE);
                         accept(output, MagItems.GYROSTABILIZER);

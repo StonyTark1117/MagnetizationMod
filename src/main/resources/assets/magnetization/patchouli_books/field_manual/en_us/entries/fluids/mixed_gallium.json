@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.mixed_gallium.name",
+  "icon": "magnetization:mixed_gallium_bucket",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:mixed_gallium_bucket",
+      "text": "book.magnetization.entry.mixed_gallium.spotlight",
+      "link_recipe": true
+    }
+  ]
+}

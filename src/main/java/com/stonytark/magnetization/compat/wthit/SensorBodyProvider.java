@@ -1,6 +1,5 @@
 package com.stonytark.magnetization.compat.wthit;
 
-import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.sensor.MagnetostrictiveSensorBlockEntity;
 import mcp.mobius.waila.api.IBlockAccessor;
 import mcp.mobius.waila.api.IBlockComponentProvider;
@@ -25,6 +24,6 @@ public enum SensorBodyProvider implements IBlockComponentProvider {
         if (!(be instanceof MagnetostrictiveSensorBlockEntity sensor)) return;
         tooltip.addLine(Component.translatable("tooltip.magnetization.sensor.status",
                 sensor.getSignal(),
-                String.format("%.0f", MagConfig.sensorRange())).withStyle(ChatFormatting.AQUA));
+                String.format("%.0f", sensor.effectiveRange())).withStyle(ChatFormatting.AQUA));
     }
 }

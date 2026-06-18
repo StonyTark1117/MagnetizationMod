@@ -42,8 +42,16 @@ public final class MrFluidTools {
         }
     }
 
+    /** Only re-play the first-person equip animation on a real swap, not when our
+     *  {@code HARDENED_UNTIL} stamp (or durability) ticks over — otherwise the
+     *  held tool visibly "bounces" every time it hardens. */
+    static boolean reequip(final ItemStack oldStack, final ItemStack newStack, final boolean slotChanged) {
+        return slotChanged || oldStack.getItem() != newStack.getItem();
+    }
+
     public static final class Sword extends SwordItem implements Marker {
         public Sword(final Properties props) { super(MagTiers.MR_FLUID, props); }
+        @Override public boolean shouldCauseReequipAnimation(final ItemStack o, final ItemStack n, final boolean slotChanged) { return reequip(o, n, slotChanged); }
         @Override public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity attacker) {
             harden(stack, attacker);
             return super.hurtEnemy(stack, target, attacker);
@@ -56,6 +64,7 @@ public final class MrFluidTools {
 
     public static final class Pickaxe extends PickaxeItem implements Marker {
         public Pickaxe(final Properties props) { super(MagTiers.MR_FLUID, props); }
+        @Override public boolean shouldCauseReequipAnimation(final ItemStack o, final ItemStack n, final boolean slotChanged) { return reequip(o, n, slotChanged); }
         @Override public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity attacker) {
             harden(stack, attacker);
             return super.hurtEnemy(stack, target, attacker);
@@ -68,6 +77,7 @@ public final class MrFluidTools {
 
     public static final class Axe extends AxeItem implements Marker {
         public Axe(final Properties props) { super(MagTiers.MR_FLUID, props); }
+        @Override public boolean shouldCauseReequipAnimation(final ItemStack o, final ItemStack n, final boolean slotChanged) { return reequip(o, n, slotChanged); }
         @Override public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity attacker) {
             harden(stack, attacker);
             return super.hurtEnemy(stack, target, attacker);
@@ -80,6 +90,7 @@ public final class MrFluidTools {
 
     public static final class Shovel extends ShovelItem implements Marker {
         public Shovel(final Properties props) { super(MagTiers.MR_FLUID, props); }
+        @Override public boolean shouldCauseReequipAnimation(final ItemStack o, final ItemStack n, final boolean slotChanged) { return reequip(o, n, slotChanged); }
         @Override public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity attacker) {
             harden(stack, attacker);
             return super.hurtEnemy(stack, target, attacker);
@@ -92,6 +103,7 @@ public final class MrFluidTools {
 
     public static final class Hoe extends HoeItem implements Marker {
         public Hoe(final Properties props) { super(MagTiers.MR_FLUID, props); }
+        @Override public boolean shouldCauseReequipAnimation(final ItemStack o, final ItemStack n, final boolean slotChanged) { return reequip(o, n, slotChanged); }
         @Override public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, final LivingEntity attacker) {
             harden(stack, attacker);
             return super.hurtEnemy(stack, target, attacker);

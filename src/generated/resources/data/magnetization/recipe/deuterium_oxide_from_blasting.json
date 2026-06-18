@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.2,
+  "ingredient": {
+    "item": "minecraft:water_bucket"
+  },
+  "result": {
+    "count": 1,
+    "id": "magnetization:deuterium_oxide_bucket"
+  }
+}

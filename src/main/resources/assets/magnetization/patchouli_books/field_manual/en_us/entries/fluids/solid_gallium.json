@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.solid_gallium.name",
+  "icon": "magnetization:solid_gallium",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:solid_gallium",
+      "text": "book.magnetization.entry.solid_gallium.spotlight",
+      "link_recipe": true
+    }
+  ]
+}

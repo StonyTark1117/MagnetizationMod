@@ -88,9 +88,9 @@ public final class HardenedMrFluidBlock extends Block implements FluidRedstone.C
         if (!level.isClientSide) HardenedMrFluidRegistry.remove(level, pos);
         super.onRemove(state, level, pos, newState, isMoving);
         // Broken by a player (replaced with air) → turn into MR fluid, not nothing.
-        // The field-revert path sets MR fluid directly (newState is the fluid), so
-        // it doesn't hit this branch.
-        if (!level.isClientSide && newState.isAir()) {
+        // BUT the field-revert path also clears flowing cells to air; it sets a
+        // guard so we DON'T recreate those as sources (that duplicated the fluid).
+        if (!level.isClientSide && newState.isAir() && !MrFluidHardenHandler.isFieldReverting()) {
             level.setBlock(pos, MagBlocks.MR_FLUID_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
