@@ -32,15 +32,20 @@ public final class MagDataGenerator {
         final CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         final boolean server = event.includeServer();
+        final ExistingFileHelper existing = event.getExistingFileHelper();
 
-        // Tag providers are intentionally NOT wired. The hand-written tag JSONs
-        // under src/main/resources/data/.../tags/ carry rich cross-mod content
-        // (Simulated, Magnetizing, Create:Magnetics, AC, IE, Mekanism, TF, etc.)
-        // that the providers don't replicate. Until those providers are extended
-        // with `addOptional(...)` entries for every cross-mod ID, hand-written
-        // remains the source of truth for tags. See MagBlockTagsProvider /
-        // MagItemTagsProvider / MagEntityTypeTagsProvider — kept as scaffolding
-        // for a future migration.
+        // MagBlockTagsProvider owns the *vanilla* tool tags (mineable/* and
+        // needs_*_tool) only. Those are self-contained (our blocks alone) and are
+        // generated automatically from the registry, so a new block can never be
+        // forgotten the way hematite was when the hand-written pickaxe JSON got
+        // overwritten during the 1.2 anvil work.
+        //
+        // The cross-mod `magnetization:*` block/item tags (magnetic_emitter,
+        // ferromagnetic_blocks, metallic_ores, …) stay HAND-WRITTEN under
+        // src/main/resources/data/.../tags/: they carry other-mod IDs (Simulated,
+        // IE, AC, Mekanism, TFMG, …) the registry can't know about. Do not wire
+        // MagItemTagsProvider / MagEntityTypeTagsProvider for the same reason.
+        gen.addProvider(server, new MagBlockTagsProvider(out, lookup, existing));
         gen.addProvider(server, new MagRecipeProvider(out, lookup));
         gen.addProvider(server, MagLootTableProvider.create(out, lookup));
         gen.addProvider(server, new MagCraterTemplateProvider(out));
