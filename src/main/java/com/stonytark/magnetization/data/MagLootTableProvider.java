@@ -13,7 +13,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * Generates the per-block loot tables that previously lived as hand-written
@@ -44,8 +43,18 @@ public final class MagLootTableProvider {
      *  unless silk-touched. */
     public static final class BlockLoot extends BlockLootSubProvider {
 
+        /** Blocks given an explicit table below, so the registry-driven fallback
+         *  at the end of {@link #generate()} doesn't double-add them. */
+        private final java.util.Set<Block> handled = new java.util.HashSet<>();
+
         protected BlockLoot(final HolderLookup.Provider provider) {
             super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
+        }
+
+        @Override
+        protected void add(final Block block, final net.minecraft.world.level.storage.loot.LootTable.Builder builder) {
+            handled.add(block);
+            super.add(block, builder);
         }
 
         @Override
@@ -156,35 +165,37 @@ public final class MagLootTableProvider {
                     .withPool(net.minecraft.world.level.storage.loot.LootPool.lootPool()
                             .setRolls(net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between(1.0f, 3.0f))
                             .add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(MagItems.METEORITE_FRAGMENT.get()))));
+
+            // Durable safety net: any registered block NOT given an explicit table
+            // above, and that isn't a fluid or a noLootTable() block, drops itself.
+            // This stops the silent "added a block but forgot its loot table -> it
+            // drops nothing" drift — exactly what left the 1.2 machines
+            // (barkhausen_generator, gyrostabilizer, induction_pad, kinetic_coil,
+            // magnetostrictive_sensor, emp_charge, magnetic_item_frame) with no drop.
+            for (final var holder : MagBlocks.REGISTER.getEntries()) {
+                final Block b = holder.get();
+                if (lootless(b) || handled.contains(b)) continue;
+                dropSelf(b);
+            }
         }
 
+        /** True for blocks that intentionally have no loot table: fluid blocks (no
+         *  BlockItem) and the hardened MR fluid (registered with noLootTable()). */
+        private static boolean lootless(final Block b) {
+            return b instanceof net.minecraft.world.level.block.LiquidBlock
+                    || b == MagBlocks.HARDENED_MR_FLUID.get();
+        }
+
+        // Registry-driven: every registered block except the intentionally-lootless
+        // ones. Because BlockLootSubProvider validates that every known block got a
+        // table, a future block with no drop now FAILS runData loudly instead of
+        // silently shipping undroppable.
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return Stream.of(
-                    MagBlocks.ELECTROMAGNET, MagBlocks.KINETIC_ELECTROMAGNET, MagBlocks.MAGNETIC_ANCHOR,
-                    MagBlocks.REPULSOR_COIL, MagBlocks.TRACTOR_BEAM, MagBlocks.MAGNETIC_EXCAVATOR,
-                    MagBlocks.MAGNETIC_SWITCH, MagBlocks.LODESTONE_CORE,
-                    MagBlocks.PERMANENT_MAGNET, MagBlocks.TEMPORARY_MAGNET, MagBlocks.POLARITY_INVERTER,
-                    MagBlocks.MAGNETITE_BLOCK, MagBlocks.RAW_MAGNETITE_BLOCK, MagBlocks.PETRIFIED_WOOD,
-                    MagBlocks.MAGNETITE_ORE, MagBlocks.DEEPSLATE_MAGNETITE_ORE,
-                    // Iron-oxide family
-                    MagBlocks.MAGHEMITE_ORE, MagBlocks.DEEPSLATE_MAGHEMITE_ORE,
-                    MagBlocks.MAGHEMITE_BLOCK, MagBlocks.RAW_MAGHEMITE_BLOCK,
-                    MagBlocks.PYRRHOTITE_ORE, MagBlocks.DEEPSLATE_PYRRHOTITE_ORE,
-                    MagBlocks.PYRRHOTITE_BLOCK, MagBlocks.RAW_PYRRHOTITE_BLOCK,
-                    MagBlocks.HEMATITE_ORE, MagBlocks.DEEPSLATE_HEMATITE_ORE,
-                    MagBlocks.HEMATITE_BLOCK, MagBlocks.RAW_HEMATITE_BLOCK,
-                    MagBlocks.TITANOMAGNETITE_ORE, MagBlocks.DEEPSLATE_TITANOMAGNETITE_ORE,
-                    MagBlocks.TITANOMAGNETITE_BLOCK, MagBlocks.RAW_TITANOMAGNETITE_BLOCK,
-                    MagBlocks.METEORITE_CORE, MagBlocks.METEORITE_SAPLING,
-                    MagBlocks.PYRRHOTITE_CATALYST, MagBlocks.ENHANCED_PYRRHOTITE_CATALYST,
-                    MagBlocks.COSMIC_PYRRHOTITE_CATALYST,
-                    MagBlocks.DIAMAGNETIC_BLOCK, MagBlocks.SOLID_GALLIUM,
-                    MagBlocks.ANOMALY_STONE, MagBlocks.COBBLED_ANOMALY_STONE,
-                    MagBlocks.ANOMALY_STONE_STAIRS, MagBlocks.ANOMALY_STONE_SLAB,
-                    MagBlocks.COBBLED_ANOMALY_STONE_STAIRS, MagBlocks.COBBLED_ANOMALY_STONE_SLAB,
-                    MagBlocks.COBBLED_ANOMALY_STONE_WALL, MagBlocks.MAGNETIC_GRAVEL
-            ).map(holder -> (Block) holder.get())::iterator;
+            return MagBlocks.REGISTER.getEntries().stream()
+                    .map(holder -> (Block) holder.get())
+                    .filter(b -> !lootless(b))
+                    .toList();
         }
     }
 

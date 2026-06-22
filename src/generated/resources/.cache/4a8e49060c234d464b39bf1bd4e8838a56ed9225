@@ -1,0 +1,6 @@
+// 1.21.1	2026-06-21T16:59:46.620047678	Tags for minecraft:block mod id magnetization
+7969c22f2eb5e017b85fc547d85c8ea1c9cea2e3 data/minecraft/tags/block/mineable/axe.json
+0d2f16a4384422f08395d244ca1ef019f2c92ea8 data/minecraft/tags/block/mineable/pickaxe.json
+e25bd4cd0fabca6c453b4018f02826c45bfd6c19 data/minecraft/tags/block/mineable/shovel.json
+cddba5cbfbeb6aa8e1f34dc882727b186bc0b3f4 data/minecraft/tags/block/needs_iron_tool.json
+a0a1aa13de17aa5659f6e560a3f8993f3f4973ba data/minecraft/tags/block/needs_stone_tool.json
