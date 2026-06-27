@@ -124,12 +124,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         super(type, pos, state);
     }
 
-    /** Returns the <em>effective</em> powered state — true if redstone signal
-     *  is active AND that source is allowed, OR if energy was successfully
-     *  drained this tick AND that source is allowed. Subclasses' field-builder
-     *  methods consult this to decide whether to emit. */
+    /** Returns the <em>effective</em> powered state. In the default either-or mode
+     *  this is true if redstone is active (and allowed), OR if energy was drained
+     *  this tick (and allowed). When {@link #requireRedstoneAndEnergy()} is on it
+     *  instead requires BOTH at once — the emitter only runs while a redstone signal
+     *  and a successful energy drain coincide. Subclasses' field-builder methods
+     *  consult this to decide whether to emit. */
     public boolean isPowered() {
-        return (allowRedstonePower() && powered) || (allowEnergyPower() && energyActiveThisTick);
+        final boolean redstoneOn = allowRedstonePower() && powered;
+        final boolean energyOn = allowEnergyPower() && energyActiveThisTick;
+        return requireRedstoneAndEnergy() ? (redstoneOn && energyOn) : (redstoneOn || energyOn);
     }
 
     /** Knock this emitter dark for {@code ticks} (an EMP pulse). Also empties its
@@ -172,6 +176,10 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
 
     private static boolean allowEnergyPower() {
         try { return MagConfig.ALLOW_ENERGY_POWER.get(); } catch (Throwable t) { return true; }
+    }
+
+    private static boolean requireRedstoneAndEnergy() {
+        try { return MagConfig.REQUIRE_REDSTONE_AND_ENERGY.get(); } catch (Throwable t) { return false; }
     }
 
     private static int emitterEnergyCapacity() {
@@ -372,13 +380,20 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             return;
         }
 
-        // Power-source resolution: redstone takes priority (it's free; no
-        // reason to burn energy if it's already running). If redstone isn't
-        // driving us, try to consume one tick's worth of energy. The drain is
-        // a single extract — if the buffer can't cover it, energyActiveThisTick
-        // stays false and the field falls off.
+        // Power-source resolution. Two modes:
+        //  - Default (either-or): redstone takes priority (it's free; no reason to
+        //    burn energy if it's already running). If redstone isn't driving us, try
+        //    to consume one tick's worth of energy.
+        //  - require-both: the emitter only burns energy (and only runs) while a
+        //    redstone signal is ALSO present. With no redstone we skip the drain
+        //    entirely, so the buffer keeps filling and is held in reserve until
+        //    redstone switches the emitter on.
+        // Either way the drain is a single extract — if the buffer can't cover it,
+        // energyActiveThisTick stays false and the field falls off.
         energyActiveThisTick = false;
-        if (!(allowRedstonePower() && powered) && allowEnergyPower()) {
+        final boolean redstoneOn = allowRedstonePower() && powered;
+        final boolean tryEnergy = requireRedstoneAndEnergy() ? redstoneOn : !redstoneOn;
+        if (tryEnergy && allowEnergyPower()) {
             final int drain = emitterEnergyDrainPerTick();
             if (drain <= 0) {
                 // Free-energy mode: any buffer content (or even an empty one)

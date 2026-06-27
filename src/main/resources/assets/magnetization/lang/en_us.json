@@ -279,6 +279,8 @@
   "magnetization.configuration.compat.allowRedstonePower.tooltip": "Whether redstone signal activates the addon's redstone-powered emitters. Default true. Set false to force players to feed FE/RF — useful on hardcore servers.",
   "magnetization.configuration.compat.allowEnergyPower": "Allow FE/RF Power",
   "magnetization.configuration.compat.allowEnergyPower.tooltip": "Whether FE/RF energy activates the addon's emitters. Default true. Any FE-providing mod (C&A, Mekanism, Thermal, IE, AE2) works. Set false to disable energy-driven emitters.",
+  "magnetization.configuration.compat.requireRedstoneAndEnergy": "Require Redstone And Energy",
+  "magnetization.configuration.compat.requireRedstoneAndEnergy.tooltip": "Require BOTH redstone and energy at once to run an emitter, instead of either-or. Default off (redstone OR FE runs it). When on: the emitter still accepts and buffers FE/RF at all times, but stays off — and burns no energy — until it also receives a redstone signal; with both present it runs and drains energy. Lets you pre-charge a magnet and gate its activation with redstone. Needs both Allow Redstone Power and Allow FE/RF Power on.",
   "magnetization.configuration.compat.emitterEnergyCapacity": "Emitter Energy Buffer",
   "magnetization.configuration.compat.emitterEnergyCapacity.tooltip": "Internal FE buffer size per emitter. 50 000 ≈ 4 minutes of continuous operation at the default drain.",
   "magnetization.configuration.compat.emitterEnergyDrainPerTick": "Energy Drain per Tick (FE)",

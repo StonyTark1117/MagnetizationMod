@@ -341,6 +341,13 @@ public final class MagConfig {
      *  capability is still exposed (NeoForge can't conditionally hide it) but
      *  energy stays buffered and never activates the field. */
     public static final ModConfigSpec.BooleanValue ALLOW_ENERGY_POWER;
+    /** Admin toggle: when true, redstone-powered emitters require BOTH a redstone
+     *  signal AND enough buffered FE in the SAME tick to emit a field. The buffer
+     *  still fills from FE/RF sources at all times; the emitter simply won't run
+     *  (and won't drain energy) until redstone also switches it on. Default false
+     *  (legacy redstone-OR-energy behaviour). For players who want to pre-charge a
+     *  magnet and gate its activation with redstone for finer control. */
+    public static final ModConfigSpec.BooleanValue REQUIRE_REDSTONE_AND_ENERGY;
     /** Give the Patchouli field manual to each player on their first login.
      *  Default true. Per-player flag is stored in the player's persistent NBT
      *  so reconnecting doesn't re-give the manual. Set false if your server
@@ -1483,6 +1490,20 @@ public final class MagConfig {
                          "Set false to disable energy-driven emitters — they fall back to redstone-only.")
                 .translation("magnetization.configuration.compat.allowEnergyPower")
                 .define("allowEnergyPower", true);
+
+        REQUIRE_REDSTONE_AND_ENERGY = b
+                .comment("Require BOTH redstone AND energy at once to run an emitter, instead of",
+                         "either-or. Default false (legacy: redstone OR FE runs it; redstone has",
+                         "priority and is free).",
+                         "When true: the emitter still accepts FE/RF and fills its buffer at all",
+                         "times, but it stays OFF — and burns no energy — until it ALSO receives a",
+                         "redstone signal. With redstone applied and buffered FE available, it runs",
+                         "and drains energy normally; remove either and it stops. Lets you pre-charge",
+                         "a magnet and gate its activation with a redstone pulse for finer control.",
+                         "Requires both allowRedstonePower and allowEnergyPower to be on to have any",
+                         "effect (with one source disabled there's nothing to combine).")
+                .translation("magnetization.configuration.compat.requireRedstoneAndEnergy")
+                .define("requireRedstoneAndEnergy", false);
 
         FIELD_MANUAL_AUTO_GIVE = b
                 .comment("Give the Patchouli field manual to each player on their first login.",

@@ -928,6 +928,66 @@ public final class MagGameTests {
                 com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL);
     }
 
+    /**
+     * The {@code requireRedstoneAndEnergy} config gates an emitter on BOTH a redstone
+     * signal and buffered FE at once (instead of either-or). Drives the emitter BE's
+     * power resolution directly — {@code setPowered} + {@code setEnergyForDebug} + a
+     * manual {@code serverTick} — with the flag flipped on, then restores the default
+     * and confirms either-or still powers it. Fully synchronous; a try/finally always
+     * restores the shared-server config so sibling tests are unaffected.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void requireBothRedstoneAndEnergyGate(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos rel = new BlockPos(1, 1, 1);
+        helper.setBlock(rel, MagBlocks.ELECTROMAGNET.get());
+        final BlockPos pos = helper.absolutePos(rel);
+        final AbstractEmitterBlockEntity be = (AbstractEmitterBlockEntity) helper.getBlockEntity(rel);
+        final int cap = be.getEnergyBuffer().getMaxEnergyStored();
+
+        final boolean prior = com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.get();
+        try {
+            com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(true);
+
+            // (A) require-both, full buffer but NO redstone → stays off AND burns no energy.
+            be.setPowered(false);
+            be.setEnergyForDebug(cap);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            helper.assertTrue(!be.isPowered(),
+                    "require-both: full buffer but no redstone must NOT power the emitter");
+            helper.assertTrue(be.getEnergyBuffer().getEnergyStored() == cap,
+                    "require-both: with no redstone the buffer must not drain; got "
+                            + be.getEnergyBuffer().getEnergyStored());
+
+            // (B) require-both, redstone ON + energy → runs and drains.
+            be.setPowered(true);
+            be.setEnergyForDebug(cap);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            helper.assertTrue(be.isPowered(),
+                    "require-both: redstone + buffered FE should power the emitter");
+            helper.assertTrue(be.getEnergyBuffer().getEnergyStored() < cap,
+                    "require-both: a running emitter should drain energy");
+
+            // (C) require-both, redstone ON but EMPTY buffer → stays off.
+            be.setPowered(true);
+            be.setEnergyForDebug(0);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            helper.assertTrue(!be.isPowered(),
+                    "require-both: redstone but no energy must NOT power the emitter");
+
+            // (D) default either-or restored: energy alone (no redstone) powers it.
+            com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(false);
+            be.setPowered(false);
+            be.setEnergyForDebug(cap);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            helper.assertTrue(be.isPowered(),
+                    "default either-or: energy alone should power the emitter");
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(prior);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would
