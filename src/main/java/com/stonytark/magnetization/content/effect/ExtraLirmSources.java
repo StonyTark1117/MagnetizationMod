@@ -103,7 +103,12 @@ public final class ExtraLirmSources {
         if (!event.getState().is(MagTags.FERROMAGNETIC_BLOCKS)) return;
         if (server.random.nextDouble() >= com.stonytark.magnetization.config.MagConfig.lirmOreBreakChance()) return;
         final BlockPos pos = event.getPos();
+        // The two flags are the narrow ore→armor / ore→items toggles: with each off,
+        // this residual won't pull the breaker through their gear / won't tug loose
+        // item drops, while other field sources keep doing both.
         TemporaryLirmFields.registerRandomPolarity(server, Vec3.atCenterOf(pos),
-                ORE_BREAK_TIER, com.stonytark.magnetization.config.MagConfig.lirmOreBreakRange(), server.getGameTime());
+                ORE_BREAK_TIER, com.stonytark.magnetization.config.MagConfig.lirmOreBreakRange(), server.getGameTime(),
+                com.stonytark.magnetization.config.MagConfig.oreBreakAffectsArmor(),
+                com.stonytark.magnetization.config.MagConfig.oreBreakAffectsItems());
     }
 }

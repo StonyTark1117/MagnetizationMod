@@ -835,6 +835,99 @@ public final class MagGameTests {
         helper.succeed();
     }
 
+    /**
+     * The ore-break residual field (seeded by {@code ExtraLirmSources#onBlockBreak}
+     * and run through {@link com.stonytark.magnetization.physics.FieldApplicator}) honours
+     * the {@code oreBreakAffectsArmor} config. We drive the exact path the config feeds —
+     * {@code FieldApplicator.apply(level, field, affectsArmor, affectsItems)} — rather than
+     * the break event + decay scheduler, so the result is deterministic.
+     *
+     * <p>A cow is NOT in {@code #magnetization:magnetizable} (only iron golems / projectiles
+     * are), so it can be magnetized ONLY through worn metal armor. Wearing an iron helmet
+     * (in {@code #magnetization:metal_armor}), the same field pulls it with the armor flag
+     * on and leaves it motionless with the flag off — proving the toggle isolates the
+     * ore→armor interaction without disabling any other susceptibility.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void oreBreakArmorToggleGatesArmorPull(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.entity.animal.Cow cow =
+                helper.spawn(net.minecraft.world.entity.EntityType.COW, new BlockPos(1, 1, 1));
+        cow.setNoAi(true);
+        cow.setNoGravity(true);
+        cow.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_HELMET));
+
+        final com.stonytark.magnetization.api.MagneticField field = strongOreBreakField(helper, new BlockPos(4, 1, 1));
+
+        // Delay so the freshly-spawned cow is indexed for the AABB entity query.
+        helper.runAfterDelay(3L, () -> {
+            // affectsArmor = true → the armored cow is pulled (gains velocity).
+            cow.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+            final double pulled = cow.getDeltaMovement().lengthSqr();
+            helper.assertTrue(pulled > 1.0e-6,
+                    "oreBreakAffectsArmor ON → the ore-break field should pull the armored cow; v^2=" + pulled);
+
+            // affectsArmor = false → armor is exempt and the cow has no other
+            // susceptibility, so it is never even a field candidate → exactly zero motion.
+            cow.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, false, true);
+            final double exempt = cow.getDeltaMovement().lengthSqr();
+            helper.assertTrue(exempt == 0.0,
+                    "oreBreakAffectsArmor OFF → the ore-break field must NOT move the armored cow; v^2=" + exempt);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Companion to {@link #oreBreakArmorToggleGatesArmorPull} for the {@code oreBreakAffectsItems}
+     * config. A loose ferromagnetic item drop is pulled by the ore-break field with the item
+     * flag on, and completely ignored with it off — while leaving armor/mobs/ships untouched.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void oreBreakItemsToggleGatesItemPull(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final net.minecraft.world.entity.item.ItemEntity drop =
+                new net.minecraft.world.entity.item.ItemEntity(level, abs.getX() + 0.5, abs.getY() + 0.5, abs.getZ() + 0.5,
+                        new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.FERROMAGNETIC_INGOT.get()));
+        drop.setNoGravity(true);
+        level.addFreshEntity(drop);
+
+        final com.stonytark.magnetization.api.MagneticField field = strongOreBreakField(helper, new BlockPos(4, 1, 1));
+
+        helper.runAfterDelay(3L, () -> {
+            // affectsItems = true → the ferromagnetic drop is pulled.
+            drop.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+            final double pulled = drop.getDeltaMovement().lengthSqr();
+            helper.assertTrue(pulled > 1.0e-6,
+                    "oreBreakAffectsItems ON → the ore-break field should pull the ferromagnetic drop; v^2=" + pulled);
+
+            // affectsItems = false → item drops are filtered out of the field entirely.
+            drop.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, false);
+            final double exempt = drop.getDeltaMovement().lengthSqr();
+            helper.assertTrue(exempt == 0.0,
+                    "oreBreakAffectsItems OFF → the ore-break field must NOT move the item drop; v^2=" + exempt);
+            helper.succeed();
+        });
+    }
+
+    /** A STRONG omnidirectional field centred at {@code rel} (range 16) — stands in for the
+     *  ore-break residual so the {@code affectsArmor}/{@code affectsItems} flags can be driven
+     *  directly. SOUTH polarity attracts a default-NORTH target toward the origin. */
+    private static com.stonytark.magnetization.api.MagneticField strongOreBreakField(
+            final GameTestHelper helper, final BlockPos rel) {
+        return new com.stonytark.magnetization.api.MagneticField(
+                net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(rel)),
+                new net.minecraft.world.phys.Vec3(0, 1, 0),
+                com.stonytark.magnetization.api.MagneticPolarity.SOUTH,
+                com.stonytark.magnetization.api.MagneticStrength.STRONG,
+                com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL);
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
         // Guard against a configured drain of 0 or a tiny capacity — both would

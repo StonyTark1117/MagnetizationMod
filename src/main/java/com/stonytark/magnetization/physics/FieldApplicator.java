@@ -129,7 +129,25 @@ public final class FieldApplicator {
     ) {
         if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
         applyToSubLevels(level, field, exclude, shipFilter);
-        applyToEntities(level, field);
+        applyToEntities(level, field, true, true);
+    }
+
+    /**
+     * Apply with control over whether worn armor reacts to this particular field.
+     * Used by the ore-break residual ({@link com.stonytark.magnetization.content.effect.ExtraLirmSources}
+     * via {@link com.stonytark.magnetization.content.effect.TemporaryLirmFields}) so server
+     * owners can stop ore-mining from yanking players through their gear without
+     * disabling armor reaction to every other field. {@code affectsArmor == false}
+     * suppresses ALL armor-derived susceptibility (plain, magnetized, and the magnetic
+     * elytra) for this field; {@code affectsItems == false} drops loose ferromagnetic /
+     * diamagnetic item entities from the field's reach. Intrinsically-magnetic mobs and
+     * ships are unaffected by either flag.
+     */
+    public static void apply(final ServerLevel level, final MagneticField field,
+                             final boolean affectsArmor, final boolean affectsItems) {
+        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
+        applyToSubLevels(level, field, null, null);
+        applyToEntities(level, field, affectsArmor, affectsItems);
     }
 
     // ---------------- ships (Sable sub-levels) ----------------
@@ -354,13 +372,14 @@ public final class FieldApplicator {
      *  while the entity path still gives mob knockback). */
     public static void applyEntitiesOnly(final ServerLevel level, final MagneticField field) {
         if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
-        applyToEntities(level, field);
+        applyToEntities(level, field, true, true);
     }
 
-    private static void applyToEntities(final ServerLevel level, final MagneticField field) {
+    private static void applyToEntities(final ServerLevel level, final MagneticField field,
+                                        final boolean affectsArmor, final boolean affectsItems) {
         final double r = field.range();
         final AABB box = AABB.ofSize(field.origin(), 2 * r, 2 * r, 2 * r);
-        final List<Entity> nearby = level.getEntities((Entity) null, box, FieldApplicator::isMagnetizable);
+        final List<Entity> nearby = level.getEntities((Entity) null, box, e -> isMagnetizable(e, affectsArmor, affectsItems));
         if (nearby.isEmpty()) return;
 
         // Per-emitter-tick constants — pulled out of the per-entity loop so we
@@ -391,7 +410,7 @@ public final class FieldApplicator {
                 continue;
             }
 
-            final double susceptibility = susceptibilityOf(entity);
+            final double susceptibility = susceptibilityOf(entity, affectsArmor);
             if (susceptibility <= 0) continue;
 
             // Like polarities repel, unlike attract. Entity NORTH (default) preserves
@@ -407,7 +426,7 @@ public final class FieldApplicator {
         }
     }
 
-    private static boolean isMagnetizable(final Entity e) {
+    private static boolean isMagnetizable(final Entity e, final boolean affectsArmor, final boolean affectsItems) {
         // Cross-mod opt-out: respect Magnetizing's unmoveable list so admin/server
         // owners only need to curate one tag for both mods. Checked first because
         // it's a hard veto.
@@ -415,6 +434,10 @@ public final class FieldApplicator {
         if (e instanceof IMagnetizable) return true;
         if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
         if (e instanceof ItemEntity item) {
+            // affectsItems == false (ore-break residual with the ore→items toggle off)
+            // drops loose item entities from this field entirely — both the ferromagnetic
+            // pull and the diamagnetic float handled downstream in applyToEntities.
+            if (!affectsItems) return false;
             if (item.getItem().getItem() instanceof IMagnetizable) return true;
             return item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)
                     || item.getItem().is(MagTags.DIAMAGNETIC_ITEMS);
@@ -425,7 +448,10 @@ public final class FieldApplicator {
         // returns a non-zero value; this gate just keeps them in the candidate
         // set so that pass runs at all. Without this branch, the susceptibility
         // code would be unreachable for everything except tagged mobs.
-        if (e instanceof LivingEntity living) {
+        // affectsArmor == false (ore-break residual with the ore→armor toggle off)
+        // skips the whole worn-gear path, so this field can't make a player
+        // magnetizable through any armor — plain, magnetized, or the elytra.
+        if (affectsArmor && e instanceof LivingEntity living) {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
                 // MR (magnetorheological) armor is NEVER pulled by a field — instead
@@ -456,8 +482,8 @@ public final class FieldApplicator {
         return stack.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem;
     }
 
-    private static double susceptibilityOf(final Entity e) {
-        double base = baseSusceptibility(e);
+    private static double susceptibilityOf(final Entity e, final boolean affectsArmor) {
+        double base = baseSusceptibility(e, affectsArmor);
         if (base <= 0) return 0;
         if (e instanceof LivingEntity living) {
             // Magnetic elytra rail-ride: while gliding with the magnetic
@@ -478,7 +504,7 @@ public final class FieldApplicator {
         return base;
     }
 
-    private static double baseSusceptibility(final Entity e) {
+    private static double baseSusceptibility(final Entity e, final boolean affectsArmor) {
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
         if (e instanceof ItemEntity item) {
             if (item.getItem().getItem() instanceof IMagnetizable m) return m.magneticSusceptibility();
@@ -498,7 +524,10 @@ public final class FieldApplicator {
         // in magnetized iron plate, an iron golem with a chestplate stuffed on
         // it via /summon, or a player in fresh ferromagnetic armor all behave
         // identically. Used to be Player-only.
-        if (e instanceof LivingEntity living) {
+        // Gate the entire worn-armor contribution on affectsArmor — the ore-break
+        // residual passes false when the ore→armor toggle is off, so plain plate
+        // adds no pull while the entity's own (tag/IMagnetizable) susceptibility stays.
+        if (affectsArmor && e instanceof LivingEntity living) {
             final long now = living.level().getGameTime();
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {

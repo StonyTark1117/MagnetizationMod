@@ -70,7 +70,9 @@ public final class TemporaryLirmFields {
             MagneticPolarity polarity,
             MagneticStrength tier,
             double baseRange,
-            long bornTick
+            long bornTick,
+            boolean affectsArmor,
+            boolean affectsItems
     ) {}
 
     private TemporaryLirmFields() {}
@@ -82,7 +84,18 @@ public final class TemporaryLirmFields {
                                 final MagneticPolarity polarity,
                                 final MagneticStrength tier,
                                 final double range, final long now) {
-        addEntry(level, new Entry(origin, polarity, tier, range, now));
+        register(level, origin, polarity, tier, range, now, true, true);
+    }
+
+    /** As {@link #register}, but {@code affectsArmor}/{@code affectsItems == false} mark
+     *  this field so the applicator skips worn-armor susceptibility / loose item drops for
+     *  it (the ore-break residual uses these when the ore→armor / ore→items toggles are off). */
+    public static void register(final ServerLevel level, final Vec3 origin,
+                                final MagneticPolarity polarity,
+                                final MagneticStrength tier,
+                                final double range, final long now,
+                                final boolean affectsArmor, final boolean affectsItems) {
+        addEntry(level, new Entry(origin, polarity, tier, range, now, affectsArmor, affectsItems));
     }
 
     /** Register a temporary field at a just-petrified log. Called from
@@ -90,14 +103,24 @@ public final class TemporaryLirmFields {
     public static void registerPetrifiedLog(final ServerLevel level, final BlockPos pos, final long now) {
         final MagneticPolarity pol = randomPolarity(level);
         addEntry(level, new Entry(Vec3.atCenterOf(pos), pol,
-                PETRIFIED_LOG_TIER, com.stonytark.magnetization.config.MagConfig.petrifiedLogFieldRange(), now));
+                PETRIFIED_LOG_TIER, com.stonytark.magnetization.config.MagConfig.petrifiedLogFieldRange(), now, true, true));
     }
 
     /** Convenience for callers that want a random polarity but custom range/tier. */
     public static void registerRandomPolarity(final ServerLevel level, final Vec3 origin,
                                               final MagneticStrength tier,
                                               final double range, final long now) {
-        register(level, origin, randomPolarity(level), tier, range, now);
+        registerRandomPolarity(level, origin, tier, range, now, true, true);
+    }
+
+    /** As {@link #registerRandomPolarity}, with explicit armor / item reaction control
+     *  (the ore-break residual passes {@link com.stonytark.magnetization.config.MagConfig#oreBreakAffectsArmor()}
+     *  and {@link com.stonytark.magnetization.config.MagConfig#oreBreakAffectsItems()}). */
+    public static void registerRandomPolarity(final ServerLevel level, final Vec3 origin,
+                                              final MagneticStrength tier,
+                                              final double range, final long now,
+                                              final boolean affectsArmor, final boolean affectsItems) {
+        register(level, origin, randomPolarity(level), tier, range, now, affectsArmor, affectsItems);
     }
 
     /** Roll for a temporary ground field at a strike position. Higher chance
@@ -109,7 +132,7 @@ public final class TemporaryLirmFields {
         if (level.random.nextDouble() >= chance) return;
         final double range = inForest ? com.stonytark.magnetization.config.MagConfig.petrifiedGroundFieldRange() : com.stonytark.magnetization.config.MagConfig.groundFieldRange();
         final MagneticPolarity pol = randomPolarity(level);
-        addEntry(level, new Entry(Vec3.atCenterOf(pos), pol, GROUND_FIELD_TIER, range, now));
+        addEntry(level, new Entry(Vec3.atCenterOf(pos), pol, GROUND_FIELD_TIER, range, now, true, true));
     }
 
     private static void addEntry(final ServerLevel level, final Entry entry) {
@@ -154,7 +177,7 @@ public final class TemporaryLirmFields {
                         e.tier,
                         MagneticField.Shape.OMNIDIRECTIONAL,
                         range);
-                FieldApplicator.apply(server, field);
+                FieldApplicator.apply(server, field, e.affectsArmor(), e.affectsItems());
             }
         }
     }

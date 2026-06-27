@@ -208,6 +208,20 @@ public final class MagConfig {
      *  or any field through their gear. Default true (current behaviour). Added for
      *  players who kept getting yanked into ore deposits and hazards by their armor. */
     public static final ModConfigSpec.BooleanValue ARMOR_REACTS_TO_FIELDS;
+    /** When false, the transient residual field left by breaking a ferromagnetic
+     *  ore/block (see {@code ExtraLirmSources#onBlockBreak}) no longer pulls the
+     *  breaker through their worn metal armor. Narrower than {@link #ARMOR_REACTS_TO_FIELDS}
+     *  (which disables armor reaction to ALL fields — emitters, rails, everything):
+     *  this only exempts armor from the ore-break residual. The residual still nudges
+     *  loose ferromagnetic item drops and magnetizable mobs/ships. Default true
+     *  (current behaviour). */
+    public static final ModConfigSpec.BooleanValue ORE_BREAK_AFFECTS_ARMOR;
+    /** When false, the ore-break residual field (see {@code ExtraLirmSources#onBlockBreak})
+     *  no longer tugs loose ferromagnetic/diamagnetic item drops on the ground. Companion
+     *  to {@link #ORE_BREAK_AFFECTS_ARMOR} for the "magnetic ore has no effect on magnetic
+     *  items" ask. Default true (current behaviour); other field sources (emitters, etc.)
+     *  still move item drops regardless of this flag. */
+    public static final ModConfigSpec.BooleanValue ORE_BREAK_AFFECTS_ITEMS;
     /** When true (default), right-clicking an interactible emitter block while
      *  holding a block PLACES that block, and shift-right-click opens the
      *  GUI / flips polarity. When false, the legacy behavior: right-click
@@ -1022,6 +1036,31 @@ public final class MagConfig {
                 .translation("magnetization.configuration.content.armorReactsToFields")
                 .define("armorReactsToFields", true);
 
+        ORE_BREAK_AFFECTS_ARMOR = b
+                .comment("Whether the brief residual magnetic field left when you BREAK a",
+                         "ferromagnetic ore/block can pull the breaker through their metal armor.",
+                         "On (default): breaking magnetite / hematite / iron ore etc. leaves a",
+                         "short-lived field that tugs nearby magnetic things, armored players",
+                         "included. Off: that ore-break residual no longer reacts with worn armor,",
+                         "so mining won't yank you around — but it still nudges loose ferromagnetic",
+                         "item drops and magnetizable mobs. This is the narrow, ore-only version of",
+                         "armorReactsToFields, which disables armor reaction to ALL fields",
+                         "(emitters, magnetic rails, everything).")
+                .translation("magnetization.configuration.content.oreBreakAffectsArmor")
+                .define("oreBreakAffectsArmor", true);
+
+        ORE_BREAK_AFFECTS_ITEMS = b
+                .comment("Whether the brief residual field left when you BREAK a ferromagnetic",
+                         "ore/block can pull loose magnetic ITEM drops lying on the ground toward it.",
+                         "On (default): the ore-break residual tugs nearby ferromagnetic (and floats",
+                         "diamagnetic) item entities, like every other field. Off: that residual",
+                         "ignores item drops entirely, so mining doesn't scatter/gather your loot.",
+                         "Companion to oreBreakAffectsArmor — together they make a broken ore have",
+                         "no magnetic effect on armor or items. Only the ore-break source honours",
+                         "these; emitters and other fields still move items normally.")
+                .translation("magnetization.configuration.content.oreBreakAffectsItems")
+                .define("oreBreakAffectsItems", true);
+
         BLOCK_PLACEMENT_FIRST = b
                 .comment("How right-clicking our interactible blocks (Electromagnet, Anchor,",
                          "Repulsor, Tractor Beam, Excavator, Permanent/Temporary Magnet) behaves",
@@ -1693,6 +1732,28 @@ public final class MagConfig {
     public static boolean armorReactsToFields() {
         try {
             return ARMOR_REACTS_TO_FIELDS.get();
+        } catch (final Throwable t) {
+            return true;
+        }
+    }
+
+    /** @return whether the ore-break residual field may pull a wearer through their
+     *  armor. Defaults to true when the spec isn't loaded yet (matches the declared
+     *  default). Only the ore-break source consults this; all other fields ignore it. */
+    public static boolean oreBreakAffectsArmor() {
+        try {
+            return ORE_BREAK_AFFECTS_ARMOR.get();
+        } catch (final Throwable t) {
+            return true;
+        }
+    }
+
+    /** @return whether the ore-break residual field may pull loose magnetic item drops.
+     *  Defaults to true when the spec isn't loaded yet (matches the declared default).
+     *  Only the ore-break source consults this; all other fields ignore it. */
+    public static boolean oreBreakAffectsItems() {
+        try {
+            return ORE_BREAK_AFFECTS_ITEMS.get();
         } catch (final Throwable t) {
             return true;
         }
