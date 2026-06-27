@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2 — Finer power & ore-magnetism control
+
+### New config
+- **`compat.requireRedstoneAndEnergy`** (default off): require **both** a redstone signal **and** buffered FE at once to run an emitter, instead of the default either-or. The internal FE buffer still fills from cables/generators at all times, but with this on the emitter stays dark — and **burns no energy** — until it *also* receives redstone; with both present it runs and drains FE normally. Lets you pre-charge a magnet and gate its activation with a redstone pulse for finer control. (Needs both `allowRedstonePower` and `allowEnergyPower` on to have any effect.)
+- **`content.oreBreakAffectsArmor`** (default on): whether the brief residual magnetic field left when you **break a ferromagnetic ore/block** can pull the breaker through their worn metal armor. Turn off so mining no longer yanks you around — a narrow, ore-only version of `armorReactsToFields` (which disables armor reaction to *all* fields). The residual still nudges loose item drops and magnetizable mobs.
+- **`content.oreBreakAffectsItems`** (default on): companion toggle — whether that same ore-break residual tugs loose ferromagnetic/diamagnetic **item drops**. Turn off so mining doesn't scatter or gather your loot. With both ore toggles off, a broken ore has no magnetic effect on armor or items, while emitters and other fields are unaffected.
+
 ## 1.2.1 — Datagen correctness sweep (mineable + loot drift fixes)
 
 ### Fixes
