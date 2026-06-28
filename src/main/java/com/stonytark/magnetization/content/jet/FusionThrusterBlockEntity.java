@@ -203,17 +203,21 @@ public class FusionThrusterBlockEntity extends BlockEntity
 
         // The panel's fuel capacity scales with its interior-block count, so a bigger
         // panel holds proportionally more fuel (config tank size is now per cell).
-        final int cap = MagConfig.fusionThrusterTank() * count;
+        // Compute in long + clamp to Integer.MAX_VALUE: at the config extremes
+        // (tank 1,000,000 × up to 62² interior cells) a plain int*int would overflow
+        // NEGATIVE, making setCapacity shed the whole tank every tick.
+        final int cap = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterTank() * count);
         if (tank.getCapacity() != cap) {
             tank.setCapacity(cap);
             final int over = tank.getFluidAmount() - cap;   // panel shrank → shed the excess
             if (over > 0) tank.drain(over, IFluidHandler.FluidAction.EXECUTE);
         }
 
-        final int feCost = MagConfig.fusionThrusterFeCostBase()
-                + MagConfig.fusionThrusterFeCostPerInterior() * count;
-        final int fluidCost = MagConfig.fusionThrusterFluidPerTickBase()
-                + MagConfig.fusionThrusterFluidPerTickPerInterior() * count;
+        final int feCost = (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterFeCostBase()
+                + (long) MagConfig.fusionThrusterFeCostPerInterior() * count);
+        final int fluidCost = (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterFluidPerTickBase()
+                + (long) MagConfig.fusionThrusterFluidPerTickPerInterior() * count);
 
         final FluidStack fuel = tank.getFluid();
         final boolean canFire = host != null && cachedValid && !fuel.isEmpty()

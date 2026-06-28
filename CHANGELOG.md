@@ -39,6 +39,14 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 ### Fixed
 - **Pyrrhotite now actually responds to heat.** The heat-activated iron sulfide (Pyrrhotite Block / catalyst) had a timing bug that stopped its heat scan from ever running, so it never woke up next to a Blaze Burner, lava, fire, magma, or campfire and silently emitted no field. It now magnetizes from adjacent heat as intended, with strength still scaling to the heat level.
 - **Cooperative multi-anchor stabilization now engages.** Two or more Magnetic Anchors bound to the same airship are meant to damp its spin together so a multi-anchor dock holds the ship level; the same class of timing bug meant that shared damping never kicked in. Multiple anchors on one ship now stabilize it as designed.
+- **Machine energy/fuel bars now read correctly.** Every machine and emitter GUI sent its FE buffer (and large fluid amounts) over a 16-bit channel, so any value above 32,767 — i.e. *every* machine's energy capacity — wrapped to a bogus number and drew a wrong or empty bar. These values are now transmitted in full, so power and fuel bars fill accurately.
+- **Induction Pad keeps its charge across reloads.** A charged pad reloaded only up to its per-tick transfer rate (4,000 FE) of whatever it had stored, dumping the rest on every chunk/world reload. It now restores its full buffered energy.
+- **Railgun three-rail dissipation is reliable.** Three parallel rails spaced toward the far end of the gap range could slip past the "more than two rails cancels the arc" safety and drive overlapping channels. Dissipation is now evaluated from both rails, so any 3+-rail arrangement cancels as intended.
+- **Ore/Field compass no longer freezes on a stale target after switching worlds.** The needle's scan throttle could lock onto a previous world's reading when joining a world with a lower game-time; it now forces a fresh scan when time runs backward.
+- **Fusion Thruster handles extreme panel sizes.** At very large panels combined with a high per-cell tank/cost config, the capacity/cost math could overflow and shed the tank; it's now computed safely.
+
+### New config
+- **Machine Tuning → Structural Inducer …** tunables now expose the inducer's pull physics and scan behavior (Pull Acceleration, Max Pull Speed, Arrival Distance, Pull Timeout, Scan Interval, Max Structures, Tunnel Budget), bringing it in line with the rest of the mod's fully-configurable machines.
 
 ## 1.2.2 — Finer power & ore-magnetism control
 

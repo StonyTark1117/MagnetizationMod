@@ -242,6 +242,8 @@ public final class MagGameTests {
                 final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle hB =
                         dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(shipB);
                 if (hA == null || hB == null) {
+                    removeShip(level, shipA);   // don't leak the assembled ships on the null path
+                    removeShip(level, shipB);
                     helper.fail("Could not obtain physics handles for the assembled ships");
                     return;
                 }
@@ -575,12 +577,12 @@ public final class MagGameTests {
             helper.runAfterDelay(2L, () -> {
                 final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle h =
                         dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
-                if (h == null) { helper.fail("no ship handle"); return; }
+                if (h == null) { removeShip(level, ship); helper.fail("no ship handle"); return; }
                 h.addLinearAndAngularVelocity(new org.joml.Vector3d(0, 0, 0.15), new org.joml.Vector3d()); // drift past, > MIN_SPEED
                 helper.runAfterDelay(12L, () -> {
                     final net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(coil);
                     if (!(be instanceof com.stonytark.magnetization.content.induction.KineticCoilBlockEntity kc)) {
-                        helper.fail("no coil BE"); return;
+                        removeShip(level, ship); helper.fail("no coil BE"); return;
                     }
                     final int fe = kc.energyBuffer().getEnergyStored();
                     removeShip(level, ship);
@@ -979,7 +981,10 @@ public final class MagGameTests {
      * ship. Two ships at the same offset from a powered electromagnet end up moving
      * in opposite directions along the emitter axis.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
+    // Own batch: this test ticks a powered ELECTROMAGNET at y=240 whose field
+    // (range ~8) would otherwise reach a sibling ship test's hull in the shared
+    // default batch (gametest arenas sit only a few blocks apart).
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160, batch = "ship_diamag")
     public static void diamagneticShipRepelledWhileFerrousAttracted(final GameTestHelper helper) {
         forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
@@ -998,17 +1003,23 @@ public final class MagGameTests {
             teleportShip(level, iron, em.offset(4, 0, 6));      // +X too, different Z
 
             helper.runAfterDelay(24L, () -> {
-                final org.joml.Vector3d vDia = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(dia)
-                        .getLinearVelocity(new org.joml.Vector3d());
-                final org.joml.Vector3d vIron = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(iron)
-                        .getLinearVelocity(new org.joml.Vector3d());
-                final boolean ok = vDia.x > 0.0 && vIron.x < 0.0;
-                removeShip(level, dia);
-                removeShip(level, iron);
-                helper.assertTrue(ok,
-                        "Diamagnetic ship should be pushed away (+X) while ferrous is pulled in (-X): "
-                                + "dia.x=" + vDia.x + " iron.x=" + vIron.x);
-                helper.succeed();
+                // removeShip in finally: a transient null handle (of() can return null)
+                // would otherwise throw before cleanup and leak both sub-levels, which
+                // pauses Sable physics and throttles the rest of the suite.
+                final var hDia = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(dia);
+                final var hIron = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(iron);
+                try {
+                    if (hDia == null || hIron == null) { helper.fail("no ship handle"); return; }
+                    final org.joml.Vector3d vDia = hDia.getLinearVelocity(new org.joml.Vector3d());
+                    final org.joml.Vector3d vIron = hIron.getLinearVelocity(new org.joml.Vector3d());
+                    helper.assertTrue(vDia.x > 0.0 && vIron.x < 0.0,
+                            "Diamagnetic ship should be pushed away (+X) while ferrous is pulled in (-X): "
+                                    + "dia.x=" + vDia.x + " iron.x=" + vIron.x);
+                    helper.succeed();
+                } finally {
+                    removeShip(level, dia);
+                    removeShip(level, iron);
+                }
             });
         });
     }
@@ -1020,7 +1031,9 @@ public final class MagGameTests {
      * that cone above the coil should gain velocity in the default thrust
      * direction (perpendicular to UP, index 0 = NORTH = −Z).
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
+    // Own batch: ticks a powered REPULSOR_COIL at y=240 whose cone/field would
+    // otherwise reach a sibling ship test's hull in the shared default batch.
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160, batch = "ship_repulsor")
     public static void directionalRepulsorDragsConeShipInSelectedDir(final GameTestHelper helper) {
         forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
@@ -1042,13 +1055,16 @@ public final class MagGameTests {
                     assembleSingleBlockShip(level, a, Blocks.IRON_BLOCK);
             teleportShip(level, ship, coil.offset(0, 2, 0)); // directly above → inside the upward cone
             helper.runAfterDelay(24L, () -> {
-                final org.joml.Vector3d v = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship)
-                        .getLinearVelocity(new org.joml.Vector3d());
-                final boolean draggedNorth = v.z < -0.1;
-                removeShip(level, ship);
-                helper.assertTrue(draggedNorth,
-                        "Vector-core repulsor should drag a ship in its cone toward NORTH (−Z); v.z=" + v.z);
-                helper.succeed();
+                final var h = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
+                try {
+                    if (h == null) { helper.fail("no ship handle"); return; }
+                    final org.joml.Vector3d v = h.getLinearVelocity(new org.joml.Vector3d());
+                    helper.assertTrue(v.z < -0.1,
+                            "Vector-core repulsor should drag a ship in its cone toward NORTH (−Z); v.z=" + v.z);
+                    helper.succeed();
+                } finally {
+                    removeShip(level, ship);   // always clean up, even on null handle / assert fail
+                }
             });
         });
     }

@@ -92,6 +92,12 @@ public class InductionPadBlockEntity extends BlockEntity {
         void drainInternal(final int amount) {
             this.energy = Math.max(0, this.energy - amount);
         }
+        /** Restore a persisted amount directly (clamped only to capacity). Loading
+         *  via receiveEnergy would cap at maxReceive (the per-tick transfer rate),
+         *  silently discarding any stored FE above that on every reload. */
+        void setStored(final int value) {
+            this.energy = Math.max(0, Math.min(this.capacity, value));
+        }
     }
 
     @Override
@@ -103,6 +109,6 @@ public class InductionPadBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        energy.receiveEnergy(tag.getInt("Energy"), false);
+        energy.setStored(tag.getInt("Energy"));
     }
 }

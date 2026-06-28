@@ -217,6 +217,13 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_TANK;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_WATER_PER_TICK;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_PER_TICK;
+    public static final ModConfigSpec.DoubleValue INDUCER_PULL_ACCEL;
+    public static final ModConfigSpec.DoubleValue INDUCER_MAX_PULL_SPEED;
+    public static final ModConfigSpec.DoubleValue INDUCER_ARRIVAL_DISTANCE;
+    public static final ModConfigSpec.IntValue    INDUCER_PULL_TIMEOUT_TICKS;
+    public static final ModConfigSpec.IntValue    INDUCER_SCAN_INTERVAL;
+    public static final ModConfigSpec.IntValue    INDUCER_MAX_STRUCTURES;
+    public static final ModConfigSpec.IntValue    INDUCER_TUNNEL_BUDGET;
     /** Master on/off for the induction charging pad. Off by default — the pad
      *  charges FE-storing items the mod doesn't itself ship, so it's opt-in. When
      *  off the pad charges nothing and is hidden from the creative tab. */
@@ -1095,6 +1102,20 @@ public final class MagConfig {
                 .defineInRange("electrolyzerWaterPerTick", 10, 0, 10_000);
         ELECTROLYZER_HYDROGEN_PER_TICK = b.translation("magnetization.configuration.machines.electrolyzerHydrogenPerTick")
                 .defineInRange("electrolyzerHydrogenPerTick", 10, 0, 10_000);
+        INDUCER_PULL_ACCEL = b.translation("magnetization.configuration.machines.inducerPullAccel")
+                .defineInRange("inducerPullAccel", 16.0d, 0.0d, 1000.0d);
+        INDUCER_MAX_PULL_SPEED = b.translation("magnetization.configuration.machines.inducerMaxPullSpeed")
+                .defineInRange("inducerMaxPullSpeed", 6.0d, 0.0d, 100.0d);
+        INDUCER_ARRIVAL_DISTANCE = b.translation("magnetization.configuration.machines.inducerArrivalDistance")
+                .defineInRange("inducerArrivalDistance", 2.5d, 0.0d, 64.0d);
+        INDUCER_PULL_TIMEOUT_TICKS = b.translation("magnetization.configuration.machines.inducerPullTimeoutTicks")
+                .defineInRange("inducerPullTimeoutTicks", 600, 1, 1_000_000_000);
+        INDUCER_SCAN_INTERVAL = b.translation("magnetization.configuration.machines.inducerScanInterval")
+                .defineInRange("inducerScanInterval", 10, 1, 1200);
+        INDUCER_MAX_STRUCTURES = b.translation("magnetization.configuration.machines.inducerMaxStructures")
+                .defineInRange("inducerMaxStructures", 8, 1, 256);
+        INDUCER_TUNNEL_BUDGET = b.translation("magnetization.configuration.machines.inducerTunnelBudget")
+                .defineInRange("inducerTunnelBudget", 96, 0, 4096);
         INDUCTION_PAD_ENABLED = b
                 .comment("Master switch for the induction charging pad. Off by default: it charges",
                          "FE-storing items this mod doesn't itself ship, so it's opt-in. When off the",
@@ -1924,6 +1945,13 @@ public final class MagConfig {
     public static int    electrolyzerHydrogenTank()    { return intOr(ELECTROLYZER_HYDROGEN_TANK, 8_000); }
     public static int    electrolyzerWaterPerTick()    { return intOr(ELECTROLYZER_WATER_PER_TICK, 10); }
     public static int    electrolyzerHydrogenPerTick() { return intOr(ELECTROLYZER_HYDROGEN_PER_TICK, 10); }
+    public static double inducerPullAccel()         { return doubleOr(INDUCER_PULL_ACCEL, 16.0d); }
+    public static double inducerMaxPullSpeed()      { return doubleOr(INDUCER_MAX_PULL_SPEED, 6.0d); }
+    public static double inducerArrivalDistance()   { return doubleOr(INDUCER_ARRIVAL_DISTANCE, 2.5d); }
+    public static int    inducerPullTimeoutTicks()  { return intOr(INDUCER_PULL_TIMEOUT_TICKS, 600); }
+    public static int    inducerScanInterval()      { return intOr(INDUCER_SCAN_INTERVAL, 10); }
+    public static int    inducerMaxStructures()     { return intOr(INDUCER_MAX_STRUCTURES, 8); }
+    public static int    inducerTunnelBudget()      { return intOr(INDUCER_TUNNEL_BUDGET, 96); }
     public static boolean inductionPadEnabled()     { try { return INDUCTION_PAD_ENABLED.get(); } catch (final Throwable t) { return false; } }
     public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
     public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }

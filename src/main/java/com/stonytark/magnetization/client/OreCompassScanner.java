@@ -41,7 +41,11 @@ public final class OreCompassScanner {
     public static @Nullable BlockPos nearest(final Level level, final BlockPos origin,
                                               final String key, final Predicate<BlockState> match) {
         final long now = level.getGameTime();
-        if (key.equals(lastKey) && now - lastScanTick < SCAN_INTERVAL) {
+        // `now >= lastScanTick` rejects the cache when game time runs BACKWARD —
+        // i.e. after switching to a different/lower-time world — so a stale cross-
+        // world position (and a negative delta that would otherwise read < interval)
+        // forces a fresh scan instead of freezing the needle.
+        if (key.equals(lastKey) && now >= lastScanTick && now - lastScanTick < SCAN_INTERVAL) {
             return cached;
         }
         lastScanTick = now;

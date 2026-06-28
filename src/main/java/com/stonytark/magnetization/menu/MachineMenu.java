@@ -35,11 +35,22 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final BlockPos pos;
     private final Kind kind;
     private final Container input;
-    private final DataSlot energyStored = DataSlot.standalone();
-    private final DataSlot energyMax = DataSlot.standalone();
-    private final DataSlot stat1 = DataSlot.standalone();
-    private final DataSlot stat2 = DataSlot.standalone();
-    private final DataSlot stat3 = DataSlot.standalone();
+    private final WideData energyStored = new WideData();
+    private final WideData energyMax = new WideData();
+    private final WideData stat1 = new WideData();
+    private final WideData stat2 = new WideData();
+    private final WideData stat3 = new WideData();
+
+    /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
+     *  vanilla DataSlot is sent as a signed 16-bit short, so a single slot wraps to
+     *  garbage for the FE buffers (200k..4M) and large fluid amounts these machines
+     *  report. Splitting preserves the exact value (negatives included) over the wire. */
+    private static final class WideData {
+        private final DataSlot lo = DataSlot.standalone();
+        private final DataSlot hi = DataSlot.standalone();
+        void set(final int v) { lo.set(v & 0xFFFF); hi.set(v >>> 16); }
+        int get() { return (hi.get() << 16) | (lo.get() & 0xFFFF); }
+    }
 
     public MachineMenu(final int id, final Inventory inv, final ContainerLevelAccess access,
                        final BlockPos pos, final Kind kind, final Container input) {
@@ -72,11 +83,16 @@ public final class MachineMenu extends AbstractContainerMenu {
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(inv, col, 8 + col * 18, 142));
         }
-        addDataSlot(energyStored);
-        addDataSlot(energyMax);
-        addDataSlot(stat1);
-        addDataSlot(stat2);
-        addDataSlot(stat3);
+        addDataSlot(energyStored.lo);
+        addDataSlot(energyStored.hi);
+        addDataSlot(energyMax.lo);
+        addDataSlot(energyMax.hi);
+        addDataSlot(stat1.lo);
+        addDataSlot(stat1.hi);
+        addDataSlot(stat2.lo);
+        addDataSlot(stat2.hi);
+        addDataSlot(stat3.lo);
+        addDataSlot(stat3.hi);
         refresh();
     }
 

@@ -150,10 +150,21 @@ public final class EmitterMenu extends AbstractContainerMenu {
     /** Current FE buffer level on the BE — synced each tick from
      *  {@link AbstractEmitterBlockEntity#getEnergyBuffer()} so the GUI bar
      *  can show live drain/fill. */
-    private final DataSlot energyStored = DataSlot.standalone();
+    private final WideData energyStored = new WideData();
     /** Max FE the buffer holds (config-driven). Almost-static — sent so the GUI
      *  can compute the fill fraction without hard-coding the config value. */
-    private final DataSlot energyCapacity = DataSlot.standalone();
+    private final WideData energyCapacity = new WideData();
+
+    /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
+     *  vanilla DataSlot is sent as a signed 16-bit short, so a single slot wraps a
+     *  50,000 FE capacity to a negative value — which EmitterScreen's {@code <= 0}
+     *  guard then hides entirely. Splitting preserves the exact value over the wire. */
+    private static final class WideData {
+        private final DataSlot lo = DataSlot.standalone();
+        private final DataSlot hi = DataSlot.standalone();
+        void set(final int v) { lo.set(v & 0xFFFF); hi.set(v >>> 16); }
+        int get() { return (hi.get() << 16) | (lo.get() & 0xFFFF); }
+    }
     /** 0 = idle, 1 = redstone-driven, 2 = energy-driven. Drives the
      *  "Source: …" label and the bar's tint colour. */
     private final DataSlot powerSource = DataSlot.standalone();
@@ -238,8 +249,10 @@ public final class EmitterMenu extends AbstractContainerMenu {
         addDataSlot(pullProgress);
         addDataSlot(inflightCap);
         addDataSlot(defaultRange);
-        addDataSlot(energyStored);
-        addDataSlot(energyCapacity);
+        addDataSlot(energyStored.lo);
+        addDataSlot(energyStored.hi);
+        addDataSlot(energyCapacity.lo);
+        addDataSlot(energyCapacity.hi);
         addDataSlot(powerSource);
         addDataSlot(thrustDir);
         // Initial sync from BE (server-side path only — client passes NULL access).

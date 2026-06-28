@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.stonytark.magnetization.config.MagConfig;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -64,30 +65,16 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     private static final int MAX_REACH = 24;
     /** Cap on cells the flood may visit (air counts), so an open-air fill ends. */
     private static final int VISIT_CAP = 65_536;
-    /** Once the pulled structure's centre is within this many blocks of the
-     *  inducer, release it as a free-floating craft (it's been reeled in). */
-    private static final double ARRIVAL_DISTANCE = 2.5d;
-    /** Base acceleration per tick toward the inducer (m/s²) at the MEDIUM tier;
-     *  scaled by the strength buttons via {@link #pullMultiplier()}. Must beat
-     *  Sable gravity. */
-    private static final double PULL_ACCEL = 16.0d;
-    /** Base cap on the structure's pull speed (MEDIUM tier) so it reads as a
-     *  smooth tractor beam; scaled by {@link #pullMultiplier()}. */
-    private static final double MAX_PULL_SPEED = 6.0d;
     /** Grace ticks after assembly during which an "invalid mass" reading is
      *  treated as the body still initializing, not a cull — so we don't tear a
      *  fresh craft down (and leave a ghost) before Sable finishes setting it up. */
     private static final long INIT_GRACE_TICKS = 10L;
-    /** Absolute age cap on a pull before we give up and release it. */
-    private static final long PULL_TIMEOUT_TICKS = 600L;
-    /** Max world blocks the structure punches through (on its leading faces) per tick. */
-    private static final int TUNNEL_BUDGET = 96;
 
-    /** Rescan the cone for new structures this often while powered. */
-    private static final long SCAN_INTERVAL = 10L;
-    /** Cap on concurrently-reeled structures, so one activation can't spawn a
-     *  runaway number of Sable sub-levels. */
-    private static final int MAX_STRUCTURES = 8;
+    // Pull physics + scan tuning — arrival distance, pull accel/speed (MEDIUM tier,
+    // scaled by the strength buttons via pullMultiplier()), pull timeout, rescan
+    // interval, concurrent-structure cap, and per-tick tunnel budget — are
+    // COMMON-configurable. They are read live each tick from MagConfig.inducer*
+    // (see the "machines" section) so retuning takes effect without a restart.
 
     /** External redstone signal, mirrored into block-state POWERED. */
     private boolean externalSignal = false;
@@ -209,7 +196,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         // Periodically rescan the cone and capture any NEW structures (already-
         // assembled ones are no longer world blocks, so they aren't re-found).
         final long now = server.getGameTime();
-        if (lastScanTick == Long.MIN_VALUE || now - lastScanTick >= SCAN_INTERVAL) {
+        if (lastScanTick == Long.MIN_VALUE || now - lastScanTick >= MagConfig.inducerScanInterval()) {
             lastScanTick = now;
             captureNewStructures(server);
         }
@@ -246,13 +233,13 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
      *  not just one. Already-assembled structures aren't world blocks, so they're
      *  not re-captured. */
     private void captureNewStructures(final ServerLevel server) {
-        if (lifted.size() >= MAX_STRUCTURES) return;
+        if (lifted.size() >= MagConfig.inducerMaxStructures()) return;
         final Direction grabDir = facing().getOpposite();
         final List<List<BlockPos>> structures = collectAllStructures(server, grabDir);
         if (structures.isEmpty()) return;
         int captured = 0;
         for (final List<BlockPos> positions : structures) {
-            if (lifted.size() >= MAX_STRUCTURES) break;
+            if (lifted.size() >= MagConfig.inducerMaxStructures()) break;
             if (assembleAndTrack(server, positions)) captured++;
         }
         if (captured > 0) {
@@ -381,14 +368,14 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         final var shipPos = ship.logicalPose().position();
         final double dx = target.x - shipPos.x(), dy = target.y - shipPos.y(), dz = target.z - shipPos.z();
         final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist <= ARRIVAL_DISTANCE || server.getGameTime() - lift.startTick > PULL_TIMEOUT_TICKS) {
+        if (dist <= MagConfig.inducerArrivalDistance() || server.getGameTime() - lift.startTick > MagConfig.inducerPullTimeoutTicks()) {
             return true; // reeled in (or timed out) — release as a free-floating craft
         }
         final double inv = 1.0 / Math.max(dist, 0.0001);
         final double ux = dx * inv, uy = dy * inv, uz = dz * inv; // unit vector toward inducer
         final double mult = pullMultiplier();
-        final double maxSpeed = MAX_PULL_SPEED * mult;
-        final double accel = PULL_ACCEL * mult;
+        final double maxSpeed = MagConfig.inducerMaxPullSpeed() * mult;
+        final double accel = MagConfig.inducerPullAccel() * mult;
         final var v = ship.latestLinearVelocity;
         final double toward = v.x * ux + v.y * uy + v.z * uz;
         if (toward < maxSpeed) {
@@ -430,7 +417,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
 
         final BlockPos inducer = getBlockPos();
         final Direction grabDir = facing().getOpposite();
-        int budget = TUNNEL_BUDGET;
+        int budget = MagConfig.inducerTunnelBudget();
         for (final BlockPos cell : cells) {
             if (budget <= 0) break;
             if (sx != 0) budget = breakAhead(server, cell.offset(sx, 0, 0), cells, inducer, grabDir, budget);
@@ -476,7 +463,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         return cursor;
     }
 
-    /** Find EVERY distinct structure in the aimed cone (up to {@link #MAX_STRUCTURES}).
+    /** Find EVERY distinct structure in the aimed cone (up to the configured cap).
      *
      * <p>Walks the cone for grabbable seeds; each unclaimed seed flood-fills its
      * own connected structure (through built blocks AND air, terrain/fluid/immune
@@ -490,7 +477,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         final java.util.Set<BlockPos> claimed = new java.util.HashSet<>();
         final List<List<BlockPos>> structures = new ArrayList<>();
 
-        for (int d = 1; d <= depth && structures.size() < MAX_STRUCTURES; d++) {
+        for (int d = 1; d <= depth && structures.size() < MagConfig.inducerMaxStructures(); d++) {
             // Cone widens with depth so structures off the centre line are still
             // seen + seeded (a fixed cross-section only caught one structure).
             final int r = Math.min(MAX_CONE_RADIUS, SCAN_RADIUS + d / 3);
@@ -502,7 +489,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                     if (claimed.contains(seed)) continue; // already part of a found structure
                     final List<BlockPos> comp = floodComponent(server, seed, grabDir, depth, claimed);
                     if (!comp.isEmpty()) structures.add(comp);
-                    if (structures.size() >= MAX_STRUCTURES) return structures;
+                    if (structures.size() >= MagConfig.inducerMaxStructures()) return structures;
                 }
             }
         }

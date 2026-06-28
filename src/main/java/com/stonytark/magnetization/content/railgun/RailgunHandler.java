@@ -84,6 +84,7 @@ public final class RailgunHandler {
         final SiblingResult sib = findSibling(server, pos, facing, snapshot);
         if (sib.dissipated) { processed.add(pos); be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE); return; }
         if (sib.pos == null) return;     // no pair yet — wait
+        if (processed.contains(sib.pos)) return;     // partner already claimed by another arc this tick
         if (!(server.getBlockEntity(sib.pos) instanceof RailgunEmitterBlockEntity sibBe)) return;
 
         processed.add(pos);
@@ -168,9 +169,31 @@ public final class RailgunHandler {
     private record SiblingResult(@Nullable BlockPos pos, boolean dissipated) {}
 
     /** Find the unique parallel sibling emitter (same FACING, offset by 1..maxGap on
-     *  ONE perpendicular axis, same along-FACING start). >1 qualifying → dissipated. */
+     *  ONE perpendicular axis, same along-FACING start). >1 qualifying → dissipated.
+     *  Dissipation is GLOBAL, not per-emitter: with three collinear rails spaced
+     *  6<g<=maxGap apart, an OUTER rail only sees the middle (count 1) while the
+     *  middle sees both (count 2). Counting from one side alone would let the two
+     *  outer rails each pair with the middle and drive overlapping channels. So we
+     *  ALSO re-count from the chosen partner's perspective and dissipate if EITHER
+     *  side sees more than one qualifying rail. */
     private static SiblingResult findSibling(final ServerLevel level, final BlockPos pos,
                                              final Direction facing, final Set<BlockPos> snapshot) {
+        final int[] count = {0};
+        final BlockPos found = scanSiblings(level, pos, facing, snapshot, count);
+        if (count[0] > 1) return new SiblingResult(null, true);   // 3+ rails → dissipate
+        if (found != null) {
+            final int[] partnerCount = {0};
+            scanSiblings(level, found, facing, snapshot, partnerCount);
+            if (partnerCount[0] > 1) return new SiblingResult(null, true);   // partner is the middle of 3+
+        }
+        return new SiblingResult(found, false);
+    }
+
+    /** Count qualifying parallel siblings of {@code pos}; returns the last one found
+     *  and writes the total into {@code countOut[0]}. */
+    private static @Nullable BlockPos scanSiblings(final ServerLevel level, final BlockPos pos,
+                                                   final Direction facing, final Set<BlockPos> snapshot,
+                                                   final int[] countOut) {
         BlockPos found = null;
         int count = 0;
         final int maxGap = MagConfig.railgunMaxGap();
@@ -193,8 +216,8 @@ public final class RailgunHandler {
             count++;
             found = other;
         }
-        if (count > 1) return new SiblingResult(null, true);   // 3+ rails → dissipate
-        return new SiblingResult(found, false);
+        countOut[0] = count;
+        return found;
     }
 
     /** World AABB of the channel: effL blocks along FACING from the emitter line,
