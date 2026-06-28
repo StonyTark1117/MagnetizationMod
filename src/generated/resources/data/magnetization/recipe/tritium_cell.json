@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:deuterium_cell"
+    },
+    {
+      "item": "magnetization:lithium"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:tritium_cell"
+  }
+}

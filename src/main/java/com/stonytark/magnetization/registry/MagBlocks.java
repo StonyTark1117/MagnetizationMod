@@ -229,6 +229,22 @@ public final class MagBlocks {
             REGISTER.register("raw_titanomagnetite_block", () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(6.0f, 7.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
 
+    // ---- Lithium ore (1.3 fusion-fuel chain: tritium-breeding feedstock) ----
+    public static final DeferredBlock<Block> LITHIUM_ORE =
+            REGISTER.register("lithium_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(3.0f, 3.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> DEEPSLATE_LITHIUM_ORE =
+            REGISTER.register("deepslate_lithium_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE).strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+
+    /** Helium-3 crystal — lines the rare deepslate/End geode; mined for Helium-3 gas. */
+    public static final DeferredBlock<Block> HELIUM_3_CRYSTAL_BLOCK =
+            REGISTER.register("helium_3_crystal_block", () -> new Block(BlockBehaviour.Properties.ofFullCopy(
+                    net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .lightLevel(s -> 8)
+                    .requiresCorrectToolForDrops()));
+
     /** Pyrrhotite Catalyst — passive heat-bridge. Pyrrhotite reactors within
      *  the Catalyst's transmit radius pull heat through it from any heat
      *  source touching the Catalyst. Three tiers: basic 3 / enhanced 5 /
@@ -330,6 +346,15 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.jet.MhdJetBlock> MHD_JET =
             REGISTER.register("mhd_jet", () -> new com.stonytark.magnetization.content.jet.MhdJetBlock(poweredMetal()));
 
+    /** Fusion Thruster interior — tiled inside a Tokamak-Coil ring to form an
+     *  expandable flat-panel thruster; burns the fusion fluids + FE. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.jet.FusionThrusterBlock> FUSION_THRUSTER =
+            REGISTER.register("fusion_thruster", () -> new com.stonytark.magnetization.content.jet.FusionThrusterBlock(poweredMetal()));
+
+    /** Railgun emitter — breech control block for a paired-rail accelerator. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.railgun.RailgunEmitterBlock> RAILGUN_EMITTER =
+            REGISTER.register("railgun_emitter", () -> new com.stonytark.magnetization.content.railgun.RailgunEmitterBlock(poweredMetal()));
+
     /** Homopolar Motor / Magnetic Flywheel — Create kinetic generator driven by a magnet. */
     public static final DeferredBlock<com.stonytark.magnetization.content.motor.HomopolarMotorBlock> HOMOPOLAR_MOTOR =
             REGISTER.register("homopolar_motor", () -> new com.stonytark.magnetization.content.motor.HomopolarMotorBlock(metal()));
@@ -403,6 +428,42 @@ public final class MagBlocks {
                     com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM.get(),
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_GRAY)));
+
+    /** Hydrogen liquid block — light, water-like, the isotope chain's first fluid. */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> HYDROGEN_BLOCK =
+            REGISTER.register("hydrogen", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.HYDROGEN.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.SNOW)));
+
+    /** Tritium liquid block — D-T fusion fuel, faintly glowing. */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> TRITIUM_BLOCK =
+            REGISTER.register("tritium", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.TRITIUM.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_CYAN)
+                            .lightLevel(s -> 6)));
+
+    /** Helium-3 liquid block — premium aneutronic fuel, pale. */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> HELIUM_3_BLOCK =
+            REGISTER.register("helium_3", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                            .lightLevel(s -> 4)));
+
+    /** Liquid lithium — conductive working fluid for the MHD jet; light silvery metal. */
+    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> LIQUID_LITHIUM_BLOCK =
+            REGISTER.register("liquid_lithium", () -> new net.minecraft.world.level.block.LiquidBlock(
+                    com.stonytark.magnetization.registry.MagFluids.LIQUID_LITHIUM.get(),
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                            .mapColor(MapColor.METAL)));
+
+    /** Electrolyzer — cauldron that splits water into hydrogen with FE (isotope chain entry). */
+    public static final DeferredBlock<com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlock> ELECTROLYZER =
+            REGISTER.register("electrolyzer", () -> new com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAULDRON)
+                            .mapColor(MapColor.METAL).noOcclusion()));
 
     /** Solid gallium — frozen form (+ storage block / gear material). Soft; melts
      *  back to a fluid source unless a cooling source is adjacent. */

@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.3.0 — Fusion Thruster, Railgun & the fuel overhaul
+
+A big content release: two new ship multiblocks, a real fusion-fuel chain with new fluids/items/worldgen, a powered Electrolyzer, machine rebalances, and a live status readout (WTHIT/Jade/The One Probe) on **every** Magnetization machine.
+
+### New propulsion — Fusion Thruster (flat-panel multiblock)
+- A vertical **flat panel** you build on a Create: Aeronautics airship: an inner fill of **Fusion Thruster** blocks ringed by **Tokamak Coil** (the same frame the tokamak reuses). Minimum 3×3×1; a bigger panel pushes **exponentially harder**. Thrust comes straight out of the panel face.
+- Burns the new **fusion fluids** — Hydrogen, Deuterium Oxide, Tritium, **Helium-3 (the best)** — fed by bucket or piped in. Premium fluids both hit harder *and* run longer per tank: one tank of Helium-3 outlasts a titanomagnetite storage block in a magnet machine.
+- **The panel's fuel tank scales with its size** — capacity is *per interior cell* (default 32,000 mB each), so a bigger panel holds proportionally more fuel in one shared tank. Pipe or bucket fuel into **any** interior block and it feeds the whole panel.
+- Right-click any panel block to open its shared GUI (fluid + FE + panel size); interiors light up while firing. Draws an FE bar and full status in WTHIT/Jade/TOP.
+- Tunables under **Propulsion**: *Fusion Thruster Max Edge*, *Base Thrust*, *Size Exponent*, *Max Speed (b/s)*, *FE Capacity / Receive Rate*, *FE Cost (base / per cell)*, *Fluid Tank (mB)*, *Fluid Cost (base / per cell)*, and per-fluid *Fusion Fluid Strength ·* and *Fusion Fluid Density ·* (Hydrogen / Deuterium Oxide / Tritium / Helium-3).
+
+### New propulsion — Railgun (paired-rail accelerator)
+- The inverse of Lenz braking, "with insane force." Place two **parallel powered rails** (a new `#magnetization:railgun_rails` material tag mirroring the Lenz eddy-conductors — copper/aluminium/brass/bronze/tin/silver/lead storage blocks) capped by **Railgun Emitter** control blocks. A ship or magnetic entity in the channel is **trapped on-rail** and launched down it; force grows exponentially with rail length, smashing obstructing blocks like the excavator (rails and emitters are immune). More than two parallel rails dissipates the arc.
+- Powered by redstone **or** FE. Fires in discrete pulses: **Auto mode** launches anything that enters; **Manual mode** (pair the new **Railgun Remote** in the emitter's GUI slot) *holds* a target on the pad for boarding, then fires when you use the remote in hand. One pairing covers both sibling rails.
+- Tunables under **Propulsion**: *Railgun Enabled*, *Auto-Fire*, *Cooldown / Max Launch / Update Interval (ticks)*, *Hold FE Cost*, *Min / Max Rail Length*, *Max Rail Gap*, *Channel Half-Thickness*, *Lateral Damp*, *Base Force*, *Length Exponent*, *Max Speed (b/s)*, *Entity Force Scale*, *FE Cost (base / per length)*, *FE Capacity / Receive Rate*, *Breaks Blocks*, *Destroy Budget/Tick*.
+
+### New machine — Electrolyzer
+- A powered, cauldron-shaped machine that **shows its water inside** and fills/empties like a cauldron. Feed it **water + FE** and it produces **Hydrogen** — the entry point of the fusion-fuel chain. Exposes fluid + energy capabilities so it pipes into Create/cable setups, and reports status in all three HUDs.
+
+### New fuels, items & worldgen (the fusion-fuel ladder)
+- New fluids (each with a bucket): **Hydrogen, Tritium, Helium-3, Liquid Lithium**. New items: **Tritium Fuel Cell, Helium-3 Fuel Cell, Lithium, Raw Lithium, Helium-3 Gas**.
+- The isotope chain: **Water → Hydrogen** (Electrolyzer) → **Deuterium Oxide** → (+ Lithium) **Tritium** → **Helium-3**, each a deterministic craft. Tokamak fuel cells are now uniformly *fluid bucket + frame*.
+- New worldgen: **Lithium Ore** (overworld + **Deepslate Lithium Ore**) for tritium breeding, and a rare **Helium-3 geode** (deepslate depths + the End) whose **Helium-3 Crystal** clusters drop Helium-3 Gas. He-3 is sourced by both crafting/enrichment and rare world finds.
+
+### Machine rebalances
+- **Tokamak** now burns three fuel tiers with distinct output: **Deuterium (D-D)** baseline, **Tritium (D-T)** = raw power (most FE/tick), **Helium-3 (D-He³)** = efficiency (longest burn + highest output rate, the endgame). Tunables under **Machine Tuning**: *Tokamak FE/Tick ·*, *Output Rate ·*, *Burn Ticks ·* for Tritium and Helium-3.
+- **MHD Jet** now needs a **conductive working fluid** to fire — Gallium, Mixed Gallium, or **Liquid Lithium (best)** — finally giving gallium a home. Tunables under **Propulsion**: *MHD Jet Working-Fluid Tank (mB)*, *MHD Jet Fluid Consumption*, *MHD Conductivity · Gallium / Mixed Gallium / Liquid Lithium*.
+- **Micro-Thruster** now also accepts **Magnetized Ferrofluid** for a thrust bonus (**Propulsion → Micro-Thruster Magnetized Bonus**).
+- **Magnet-slot machines now burn their magnet.** The Homopolar Motor and MHD Jet consume the installed magnet over a strength- and quantity-scaled duration (storage blocks last by far the longest; a bare weak ore is the floor). Controlled by **Propulsion → Magnet-Slot Machines Burn Magnets** (default **on** — set off to restore the old infinite-magnet behavior), with *Magnet Burn Time (base)*, *(per strength)*, and *Block-Form Multiplier*. The Repulsor's Vector Core stays a non-consumed catalyst.
+
+### HUD — every machine now shows live status
+- Right-clicking or looking at any Magnetization machine with **WTHIT, Jade, or The One Probe** now shows its live readout. New coverage for the **Kinetic Coil** (induced FE/tick + generating/idle) and **Solar Sail** (panel count + day/night + sailing/idle), plus the new Fusion Thruster, Railgun, and Electrolyzer. The Tokamak now shows its current fuel tier; the Motor and MHD Jet show the installed magnet's remaining burn time.
+
+### Docs
+- Patchouli field-manual entries added for all the above.
+
 ## 1.2.2 — Finer power & ore-magnetism control
 
 ### New config

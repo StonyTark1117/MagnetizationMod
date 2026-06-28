@@ -41,6 +41,14 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> SOLAR_SAIL           = REGISTER.registerSimpleBlockItem(MagBlocks.SOLAR_SAIL);
     public static final DeferredItem<BlockItem> MICRO_THRUSTER       = REGISTER.registerSimpleBlockItem(MagBlocks.MICRO_THRUSTER);
     public static final DeferredItem<BlockItem> MHD_JET              = REGISTER.registerSimpleBlockItem(MagBlocks.MHD_JET);
+    public static final DeferredItem<BlockItem> FUSION_THRUSTER      = REGISTER.registerSimpleBlockItem(MagBlocks.FUSION_THRUSTER);
+    public static final DeferredItem<BlockItem> RAILGUN_EMITTER      = REGISTER.registerSimpleBlockItem(MagBlocks.RAILGUN_EMITTER);
+    /** Railgun remote trigger — pair in a rail's GUI slot, fire a held arc in-hand. */
+    public static final DeferredItem<com.stonytark.magnetization.content.railgun.RailgunRemoteItem> RAILGUN_REMOTE =
+            REGISTER.registerItem("railgun_remote",
+                    com.stonytark.magnetization.content.railgun.RailgunRemoteItem::new,
+                    new Item.Properties().stacksTo(1));
+    public static final DeferredItem<BlockItem> ELECTROLYZER         = REGISTER.registerSimpleBlockItem(MagBlocks.ELECTROLYZER);
     public static final DeferredItem<BlockItem> HOMOPOLAR_MOTOR      = REGISTER.registerSimpleBlockItem(MagBlocks.HOMOPOLAR_MOTOR);
     public static final DeferredItem<BlockItem> STRUCTURAL_INDUCER   = REGISTER.registerSimpleBlockItem(MagBlocks.STRUCTURAL_INDUCER);
     public static final DeferredItem<BlockItem> TOKAMAK_COIL         = REGISTER.registerSimpleBlockItem(MagBlocks.TOKAMAK_COIL);
@@ -106,6 +114,43 @@ public final class MagItems {
             REGISTER.registerItem("mixed_gallium_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.MIXED_GALLIUM.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+
+    // ---------------- Fusion-fuel isotope chain (1.3) ----------------
+    /** Bucket of hydrogen — cheap starter propellant + parent of deuterium. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> HYDROGEN_BUCKET =
+            REGISTER.registerItem("hydrogen_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.HYDROGEN.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of tritium — D-T fusion fuel, bred from lithium. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> TRITIUM_BUCKET =
+            REGISTER.registerItem("tritium_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.TRITIUM.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of helium-3 — premium aneutronic fusion fuel. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> HELIUM_3_BUCKET =
+            REGISTER.registerItem("helium_3_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.HELIUM_3.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Bucket of liquid lithium — conductive working fluid for the MHD jet. */
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> LIQUID_LITHIUM_BUCKET =
+            REGISTER.registerItem("liquid_lithium_bucket",
+                    p -> new net.minecraft.world.item.BucketItem(MagFluids.LIQUID_LITHIUM.get(), p),
+                    new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    /** Tritium Cell — D-T fusion fuel for the tokamak (higher raw output than deuterium). */
+    public static final DeferredItem<Item> TRITIUM_CELL =
+            REGISTER.registerSimpleItem("tritium_cell", new Item.Properties());
+    /** Helium-3 Cell — premium aneutronic tokamak fuel (cleanest, most total energy). */
+    public static final DeferredItem<Item> HELIUM_3_CELL =
+            REGISTER.registerSimpleItem("helium_3_cell", new Item.Properties());
+    /** Lithium — tritium-breeding feedstock; melts to liquid lithium. */
+    public static final DeferredItem<Item> LITHIUM =
+            REGISTER.registerSimpleItem("lithium", new Item.Properties());
+    /** Raw lithium — mined from lithium ore, smelts to the Lithium item. */
+    public static final DeferredItem<Item> RAW_LITHIUM =
+            REGISTER.registerSimpleItem("raw_lithium", new Item.Properties());
+    /** Helium-3 gas — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
+    public static final DeferredItem<Item> HELIUM_3_GAS =
+            REGISTER.registerSimpleItem("helium_3_gas", new Item.Properties());
     /** Raw gallium — rare byproduct of mining zinc/aluminium-bearing ores; smelts to an ingot. */
     public static final DeferredItem<Item> RAW_GALLIUM =
             REGISTER.registerSimpleItem("raw_gallium", new Item.Properties());
@@ -279,6 +324,9 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> DEEPSLATE_TITANOMAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_TITANOMAGNETITE_ORE);
     public static final DeferredItem<BlockItem> TITANOMAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.TITANOMAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> RAW_TITANOMAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_TITANOMAGNETITE_BLOCK);
+    public static final DeferredItem<BlockItem> LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.LITHIUM_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_LITHIUM_ORE);
+    public static final DeferredItem<BlockItem> HELIUM_3_CRYSTAL_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.HELIUM_3_CRYSTAL_BLOCK);
     public static final DeferredItem<Item> RAW_TITANOMAGNETITE = REGISTER.registerSimpleItem("raw_titanomagnetite", new Item.Properties());
     public static final DeferredItem<Item> TITANOMAGNETITE_INGOT = REGISTER.registerSimpleItem("titanomagnetite_ingot", new Item.Properties());
 

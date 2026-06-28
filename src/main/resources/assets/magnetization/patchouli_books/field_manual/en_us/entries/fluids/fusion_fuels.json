@@ -1,0 +1,28 @@
+{
+  "name": "book.magnetization.entry.fusion_fuels.name",
+  "icon": "magnetization:helium_3_bucket",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.fusion_fuels.intro"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:hydrogen_bucket",
+      "text": "book.magnetization.entry.fusion_fuels.hydrogen"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:tritium_bucket",
+      "text": "book.magnetization.entry.fusion_fuels.tritium",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:helium_3_bucket",
+      "text": "book.magnetization.entry.fusion_fuels.helium3",
+      "link_recipe": true
+    }
+  ]
+}

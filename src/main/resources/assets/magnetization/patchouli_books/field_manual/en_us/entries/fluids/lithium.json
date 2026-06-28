@@ -1,0 +1,17 @@
+{
+  "name": "book.magnetization.entry.lithium.name",
+  "icon": "magnetization:lithium",
+  "category": "magnetization:fluids",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:raw_lithium",
+      "text": "book.magnetization.entry.lithium.ore"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:liquid_lithium_bucket",
+      "text": "book.magnetization.entry.lithium.liquid"
+    }
+  ]
+}

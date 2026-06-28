@@ -42,6 +42,10 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
         }
     };
 
+    /** Active ticks left before the installed magnet is consumed (when fuel
+     *  consumption is enabled). 0 = not yet started / no magnet. */
+    private int burnRemaining = 0;
+
     public HomopolarMotorBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
@@ -50,12 +54,41 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
         return magnetSlot;
     }
 
+    public int burnRemaining() { return burnRemaining; }
+
+    /**
+     * Burn the installed magnet over its potency-scaled duration while the motor is
+     * producing rotation. At 0 it consumes one magnet from the slot and reloads the
+     * next; an empty slot idles the motor. The legacy infinite-magnet behaviour is
+     * restored by setting {@code magnetSlotConsumesFuel = false}.
+     */
+    @Override
+    public void tick() {
+        super.tick();
+        if (level == null || level.isClientSide) return;
+        if (!com.stonytark.magnetization.config.MagConfig.magnetSlotConsumesFuel()) return;
+        final ItemStack magnet = getMagnet();
+        if (magnet.isEmpty()) { if (burnRemaining != 0) burnRemaining = 0; return; }
+        if (getGeneratedSpeed() == 0f) return;   // only burn while actually producing
+        if (burnRemaining <= 0) burnRemaining = com.stonytark.magnetization.content.MagneticMaterials.magnetBurnTicks(magnet);
+        burnRemaining--;
+        if (burnRemaining <= 0) {
+            magnet.shrink(1);
+            magnetSlot.setItem(0, magnet);          // triggers onMagnetChanged → recompute speed/stress
+            final ItemStack next = getMagnet();
+            burnRemaining = next.isEmpty() ? 0
+                    : com.stonytark.magnetization.content.MagneticMaterials.magnetBurnTicks(next);
+            setChanged();
+        }
+    }
+
     // ── MachineGuiData (shared GUI) ──
     @Override public Container guiInput() { return magnetSlot; }
     @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
         return com.stonytark.magnetization.menu.MachineMenu.Kind.MOTOR;
     }
     @Override public int guiStat1() { return Math.round(Math.abs(getGeneratedSpeed())); } // RPM
+    @Override public int guiStat2() { return burnRemaining; }                              // magnet burn ticks left
     // No energy bar (it's a generator).
 
     public ItemStack getMagnet() {
@@ -133,12 +166,14 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
     protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         tag.put("Magnet", magnetSlot.createTag(registries));
+        tag.putInt("BurnRemaining", burnRemaining);
     }
 
     @Override
     protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(tag, registries, clientPacket);
         magnetSlot.fromTag(tag.getList("Magnet", Tag.TAG_COMPOUND), registries);
+        burnRemaining = tag.getInt("BurnRemaining");
     }
 
     @Override

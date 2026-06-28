@@ -33,7 +33,9 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
         registrar.body(InductionPadBodyProvider.INSTANCE, Block.class);
         registrar.body(SensorBodyProvider.INSTANCE, Block.class);
         registrar.body(BarkhausenBodyProvider.INSTANCE, Block.class);
-        registrar.body(KineticCoilBodyProvider.INSTANCE, Block.class);
+        // Kinetic Coil now surfaces via the generic MachineGuiData path
+        // (MachineBodyProvider + MachineEnergyBarProvider + Jade/TOP), so the
+        // dedicated provider was retired to avoid a duplicate WTHIT body line.
         registrar.body(AnvilBodyProvider.INSTANCE, Block.class);
         registrar.body(GalliumStatusBodyProvider.INSTANCE, Block.class);
         registrar.body(GalliumGolemBodyProvider.INSTANCE,

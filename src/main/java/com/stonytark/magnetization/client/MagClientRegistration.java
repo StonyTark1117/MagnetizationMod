@@ -108,6 +108,70 @@ public final class MagClientRegistration {
                 return 0xFF4A5570; // dark steel blue
             }
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
+
+        // Hydrogen: water textures tinted pale near-white.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFFE6F0FF; // pale near-white
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
+
+        // Tritium: water textures tinted glowing cyan.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFF3FE0D0; // glowing cyan
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
+
+        // Helium-3: water textures tinted pale icy blue.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFFAFE0FF; // pale icy blue
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
+
+        // Liquid lithium: water textures tinted warm silvery metal.
+        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override
+            public int getTintColor() {
+                return 0xFFD8D2C0; // warm silver
+            }
+        }, com.stonytark.magnetization.registry.MagFluids.LIQUID_LITHIUM_TYPE.get());
     }
 
     @SubscribeEvent
@@ -116,6 +180,8 @@ public final class MagClientRegistration {
         event.registerBlockEntityRenderer(MagBlockEntities.KINETIC_ELECTROMAGNET.get(), KineticElectromagnetRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_EXCAVATOR.get(), ExcavatorPreviewRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), MagneticItemFrameRenderer::new);
+        event.registerBlockEntityRenderer(MagBlockEntities.ELECTROLYZER.get(),
+                com.stonytark.magnetization.client.render.ElectrolyzerRenderer::new);
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM.get(),
                 MrFluidGolemRenderer::new);
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.GALLIUM_GOLEM.get(),

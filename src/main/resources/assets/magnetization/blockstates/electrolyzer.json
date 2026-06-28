@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "magnetization:block/electrolyzer" },
+    "lit=true": { "model": "magnetization:block/electrolyzer" }
+  }
+}

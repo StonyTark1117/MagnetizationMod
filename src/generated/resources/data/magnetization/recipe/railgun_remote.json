@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "m": {
+      "item": "magnetization:magnetite_ingot"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    " e ",
+    "rmr",
+    " r "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:railgun_remote"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:tritium_bucket_from_cell"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tritium_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:tritium_cell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tritium_cell"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:tritium_bucket_from_cell"
+    ]
+  }
+}

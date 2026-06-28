@@ -1,0 +1,23 @@
+{
+  "name": "book.magnetization.entry.railgun.name",
+  "icon": "magnetization:railgun_emitter",
+  "category": "magnetization:propulsion",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:railgun_emitter",
+      "text": "book.magnetization.entry.railgun.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.railgun.build"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:railgun_remote",
+      "text": "book.magnetization.entry.railgun.remote",
+      "link_recipe": true
+    }
+  ]
+}

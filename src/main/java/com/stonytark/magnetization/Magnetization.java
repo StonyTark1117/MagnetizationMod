@@ -164,10 +164,19 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.TOKAMAK_CONTROLLER.get(),  (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MHD_JET.get(),             (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MICRO_THRUSTER.get(),      (be, side) -> be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.FUSION_THRUSTER.get(),     (be, side) -> be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.RAILGUN_EMITTER.get(),     (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), (be, side) -> be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.GYROSTABILIZER.get(),      (be, side) -> be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.ELECTROLYZER.get(),        (be, side) -> be.energyBuffer());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.MICRO_THRUSTER.get(), (be, side) -> be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.FUSION_THRUSTER.get(), (be, side) -> be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.MHD_JET.get(), (be, side) -> be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.ELECTROLYZER.get(), (be, side) -> be.fluidHandler());
     }
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from

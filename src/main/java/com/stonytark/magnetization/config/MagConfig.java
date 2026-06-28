@@ -126,6 +126,50 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FLUID_PER_TICK;
     public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_MAX_SPEED;
     public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_THRUST;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_MAX_EDGE;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_THRUST_BASE;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_THRUST_EXPONENT;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_MAX_SPEED;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FE_RECEIVE;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FE_COST_BASE;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FE_COST_PER_INTERIOR;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_TANK;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FLUID_PER_TICK_BASE;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_FLUID_PER_TICK_PER_INTERIOR;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_MULT_HYDROGEN;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_MULT_DEUTERIUM_OXIDE;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_MULT_TRITIUM;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_MULT_HELIUM3;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_HYDROGEN;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_TRITIUM;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_HELIUM3;
+    public static final ModConfigSpec.BooleanValue RAILGUN_ENABLED;
+    public static final ModConfigSpec.BooleanValue RAILGUN_AUTO_FIRE;
+    public static final ModConfigSpec.IntValue    RAILGUN_COOLDOWN_TICKS;
+    public static final ModConfigSpec.IntValue    RAILGUN_MAX_LAUNCH_TICKS;
+    public static final ModConfigSpec.IntValue    RAILGUN_HOLD_FE_COST;
+    public static final ModConfigSpec.IntValue    RAILGUN_TICKS;
+    public static final ModConfigSpec.IntValue    RAILGUN_MIN_LENGTH;
+    public static final ModConfigSpec.IntValue    RAILGUN_MAX_LENGTH;
+    public static final ModConfigSpec.IntValue    RAILGUN_MAX_GAP;
+    public static final ModConfigSpec.IntValue    RAILGUN_CHANNEL_HALF_THICKNESS;
+    public static final ModConfigSpec.DoubleValue RAILGUN_LATERAL_DAMP;
+    public static final ModConfigSpec.DoubleValue RAILGUN_FORCE_BASE;
+    public static final ModConfigSpec.DoubleValue RAILGUN_FORCE_EXPONENT;
+    public static final ModConfigSpec.DoubleValue RAILGUN_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue RAILGUN_ENTITY_SCALE;
+    public static final ModConfigSpec.IntValue    RAILGUN_FE_COST_BASE;
+    public static final ModConfigSpec.IntValue    RAILGUN_FE_COST_PER_LENGTH;
+    public static final ModConfigSpec.IntValue    RAILGUN_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    RAILGUN_FE_RECEIVE;
+    public static final ModConfigSpec.BooleanValue RAILGUN_BREAKS_BLOCKS;
+    public static final ModConfigSpec.IntValue    RAILGUN_DESTROY_BUDGET_PER_TICK;
+    public static final ModConfigSpec.BooleanValue MAGNET_SLOT_CONSUMES_FUEL;
+    public static final ModConfigSpec.IntValue    MAGNET_BURN_TICKS_BASE;
+    public static final ModConfigSpec.IntValue    MAGNET_BURN_TICKS_PER_POTENCY;
+    public static final ModConfigSpec.IntValue    MAGNET_BURN_BLOCK_FORM_MULTIPLIER;
     public static final ModConfigSpec.IntValue    MHD_JET_FE_CAPACITY;
     public static final ModConfigSpec.IntValue    MHD_JET_FE_RECEIVE;
     public static final ModConfigSpec.DoubleValue MHD_JET_MAX_SPEED_BASE;
@@ -134,6 +178,12 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue MHD_JET_THRUST_PER_POTENCY;
     public static final ModConfigSpec.DoubleValue MHD_JET_FE_COST_BASE;
     public static final ModConfigSpec.DoubleValue MHD_JET_FE_COST_PER_POTENCY;
+    public static final ModConfigSpec.IntValue    MHD_JET_TANK;
+    public static final ModConfigSpec.IntValue    MHD_JET_FLUID_PER_TICK;
+    public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_GALLIUM;
+    public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_MIXED_GALLIUM;
+    public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_LIQUID_LITHIUM;
+    public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_MAGNETIZED_MULT;
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_FORCE;
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_BASE;
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_PER_PANEL;
@@ -154,6 +204,19 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK;
     public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE;
     public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_PER_CELL;
+    public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK_TRITIUM;
+    public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE_TRITIUM;
+    public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_TRITIUM;
+    public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK_HELIUM3;
+    public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE_HELIUM3;
+    public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_HELIUM3;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_RECEIVE;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_PER_TICK;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_WATER_TANK;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_TANK;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_WATER_PER_TICK;
+    public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_PER_TICK;
     /** Master on/off for the induction charging pad. Off by default — the pad
      *  charges FE-storing items the mod doesn't itself ship, so it's opt-in. When
      *  off the pad charges nothing and is hidden from the creative tab. */
@@ -849,6 +912,94 @@ public final class MagConfig {
                 .defineInRange("microThrusterMaxSpeed", 14.0d, 0.0d, 100.0d);
         MICRO_THRUSTER_THRUST = b.translation("magnetization.configuration.propulsion.microThrusterThrust")
                 .defineInRange("microThrusterThrust", 2.5d, 0.0d, 100.0d);
+        FUSION_THRUSTER_MAX_EDGE = b.translation("magnetization.configuration.propulsion.fusionThrusterMaxEdge")
+                .defineInRange("fusionThrusterMaxEdge", 10, 3, 64);
+        FUSION_THRUSTER_THRUST_BASE = b.translation("magnetization.configuration.propulsion.fusionThrusterThrustBase")
+                .defineInRange("fusionThrusterThrustBase", 0.5d, 0.0d, 1000.0d);
+        FUSION_THRUSTER_THRUST_EXPONENT = b.translation("magnetization.configuration.propulsion.fusionThrusterThrustExponent")
+                .defineInRange("fusionThrusterThrustExponent", 1.3d, 0.0d, 4.0d);
+        FUSION_THRUSTER_MAX_SPEED = b.translation("magnetization.configuration.propulsion.fusionThrusterMaxSpeed")
+                .defineInRange("fusionThrusterMaxSpeed", 18.0d, 0.0d, 100.0d);
+        FUSION_THRUSTER_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.fusionThrusterFeCapacity")
+                .defineInRange("fusionThrusterFeCapacity", 2_000_000, 0, 1_000_000_000);
+        FUSION_THRUSTER_FE_RECEIVE = b.translation("magnetization.configuration.propulsion.fusionThrusterFeReceive")
+                .defineInRange("fusionThrusterFeReceive", 64_000, 0, 1_000_000_000);
+        FUSION_THRUSTER_FE_COST_BASE = b.translation("magnetization.configuration.propulsion.fusionThrusterFeCostBase")
+                .defineInRange("fusionThrusterFeCostBase", 64, 0, 1_000_000);
+        FUSION_THRUSTER_FE_COST_PER_INTERIOR = b.translation("magnetization.configuration.propulsion.fusionThrusterFeCostPerInterior")
+                .defineInRange("fusionThrusterFeCostPerInterior", 16, 0, 1_000_000);
+        FUSION_THRUSTER_TANK = b.translation("magnetization.configuration.propulsion.fusionThrusterTank")
+                .defineInRange("fusionThrusterTank", 32_000, 1, 1_000_000);
+        FUSION_THRUSTER_FLUID_PER_TICK_BASE = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidPerTickBase")
+                .defineInRange("fusionThrusterFluidPerTickBase", 2, 0, 10_000);
+        FUSION_THRUSTER_FLUID_PER_TICK_PER_INTERIOR = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidPerTickPerInterior")
+                .defineInRange("fusionThrusterFluidPerTickPerInterior", 1, 0, 10_000);
+        FUSION_THRUSTER_FLUID_MULT_HYDROGEN = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidMultHydrogen")
+                .defineInRange("fusionThrusterFluidMultHydrogen", 0.7d, 0.0d, 100.0d);
+        FUSION_THRUSTER_FLUID_MULT_DEUTERIUM_OXIDE = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidMultDeuteriumOxide")
+                .defineInRange("fusionThrusterFluidMultDeuteriumOxide", 1.0d, 0.0d, 100.0d);
+        FUSION_THRUSTER_FLUID_MULT_TRITIUM = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidMultTritium")
+                .defineInRange("fusionThrusterFluidMultTritium", 1.6d, 0.0d, 100.0d);
+        FUSION_THRUSTER_FLUID_MULT_HELIUM3 = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidMultHelium3")
+                .defineInRange("fusionThrusterFluidMultHelium3", 2.2d, 0.0d, 100.0d);
+        FUSION_THRUSTER_FLUID_DENSITY_HYDROGEN = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidDensityHydrogen")
+                .defineInRange("fusionThrusterFluidDensityHydrogen", 0.22d, 0.1d, 1000.0d);
+        FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidDensityDeuteriumOxide")
+                .defineInRange("fusionThrusterFluidDensityDeuteriumOxide", 0.35d, 0.1d, 1000.0d);
+        FUSION_THRUSTER_FLUID_DENSITY_TRITIUM = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidDensityTritium")
+                .defineInRange("fusionThrusterFluidDensityTritium", 4.5d, 0.1d, 1000.0d);
+        FUSION_THRUSTER_FLUID_DENSITY_HELIUM3 = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidDensityHelium3")
+                .defineInRange("fusionThrusterFluidDensityHelium3", 12.5d, 0.1d, 1000.0d);
+        RAILGUN_ENABLED = b.translation("magnetization.configuration.propulsion.railgunEnabled")
+                .define("railgunEnabled", true);
+        RAILGUN_AUTO_FIRE = b.translation("magnetization.configuration.propulsion.railgunAutoFire")
+                .define("railgunAutoFire", true);
+        RAILGUN_COOLDOWN_TICKS = b.translation("magnetization.configuration.propulsion.railgunCooldownTicks")
+                .defineInRange("railgunCooldownTicks", 40, 0, 2000);
+        RAILGUN_MAX_LAUNCH_TICKS = b.translation("magnetization.configuration.propulsion.railgunMaxLaunchTicks")
+                .defineInRange("railgunMaxLaunchTicks", 100, 1, 2000);
+        RAILGUN_HOLD_FE_COST = b.translation("magnetization.configuration.propulsion.railgunHoldFeCost")
+                .defineInRange("railgunHoldFeCost", 8, 0, 1_000_000);
+        RAILGUN_TICKS = b.translation("magnetization.configuration.propulsion.railgunTicks")
+                .defineInRange("railgunTicks", 1, 1, 40);
+        RAILGUN_MIN_LENGTH = b.translation("magnetization.configuration.propulsion.railgunMinLength")
+                .defineInRange("railgunMinLength", 3, 1, 512);
+        RAILGUN_MAX_LENGTH = b.translation("magnetization.configuration.propulsion.railgunMaxLength")
+                .defineInRange("railgunMaxLength", 64, 1, 512);
+        RAILGUN_MAX_GAP = b.translation("magnetization.configuration.propulsion.railgunMaxGap")
+                .defineInRange("railgunMaxGap", 12, 1, 32);
+        RAILGUN_CHANNEL_HALF_THICKNESS = b.translation("magnetization.configuration.propulsion.railgunChannelHalfThickness")
+                .defineInRange("railgunChannelHalfThickness", 1, 0, 8);
+        RAILGUN_LATERAL_DAMP = b.translation("magnetization.configuration.propulsion.railgunLateralDamp")
+                .defineInRange("railgunLateralDamp", 0.85d, 0.0d, 1.0d);
+        RAILGUN_FORCE_BASE = b.translation("magnetization.configuration.propulsion.railgunForceBase")
+                .defineInRange("railgunForceBase", 0.6d, 0.0d, 1000.0d);
+        RAILGUN_FORCE_EXPONENT = b.translation("magnetization.configuration.propulsion.railgunForceExponent")
+                .defineInRange("railgunForceExponent", 1.4d, 0.0d, 4.0d);
+        RAILGUN_MAX_SPEED = b.translation("magnetization.configuration.propulsion.railgunMaxSpeed")
+                .defineInRange("railgunMaxSpeed", 40.0d, 0.0d, 200.0d);
+        RAILGUN_ENTITY_SCALE = b.translation("magnetization.configuration.propulsion.railgunEntityScale")
+                .defineInRange("railgunEntityScale", 0.08d, 0.0d, 10.0d);
+        RAILGUN_FE_COST_BASE = b.translation("magnetization.configuration.propulsion.railgunFeCostBase")
+                .defineInRange("railgunFeCostBase", 32, 0, 1_000_000);
+        RAILGUN_FE_COST_PER_LENGTH = b.translation("magnetization.configuration.propulsion.railgunFeCostPerLength")
+                .defineInRange("railgunFeCostPerLength", 8, 0, 1_000_000);
+        RAILGUN_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.railgunFeCapacity")
+                .defineInRange("railgunFeCapacity", 1_000_000, 0, 1_000_000_000);
+        RAILGUN_FE_RECEIVE = b.translation("magnetization.configuration.propulsion.railgunFeReceive")
+                .defineInRange("railgunFeReceive", 64_000, 0, 1_000_000_000);
+        RAILGUN_BREAKS_BLOCKS = b.translation("magnetization.configuration.propulsion.railgunBreaksBlocks")
+                .define("railgunBreaksBlocks", true);
+        RAILGUN_DESTROY_BUDGET_PER_TICK = b.translation("magnetization.configuration.propulsion.railgunDestroyBudgetPerTick")
+                .defineInRange("railgunDestroyBudgetPerTick", 16, 0, 256);
+        MAGNET_SLOT_CONSUMES_FUEL = b.translation("magnetization.configuration.propulsion.magnetSlotConsumesFuel")
+                .define("magnetSlotConsumesFuel", true);
+        MAGNET_BURN_TICKS_BASE = b.translation("magnetization.configuration.propulsion.magnetBurnTicksBase")
+                .defineInRange("magnetBurnTicksBase", 1200, 0, 10_000_000);
+        MAGNET_BURN_TICKS_PER_POTENCY = b.translation("magnetization.configuration.propulsion.magnetBurnTicksPerPotency")
+                .defineInRange("magnetBurnTicksPerPotency", 400, 0, 1_000_000);
+        MAGNET_BURN_BLOCK_FORM_MULTIPLIER = b.translation("magnetization.configuration.propulsion.magnetBurnBlockFormMultiplier")
+                .defineInRange("magnetBurnBlockFormMultiplier", 9, 1, 64);
         MHD_JET_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.mhdJetFeCapacity")
                 .defineInRange("mhdJetFeCapacity", 400_000, 0, 1_000_000_000);
         MHD_JET_FE_RECEIVE = b.translation("magnetization.configuration.propulsion.mhdJetFeReceive")
@@ -865,6 +1016,18 @@ public final class MagConfig {
                 .defineInRange("mhdJetFeCostBase", 8.0d, 0.0d, 1_000_000.0d);
         MHD_JET_FE_COST_PER_POTENCY = b.translation("magnetization.configuration.propulsion.mhdJetFeCostPerPotency")
                 .defineInRange("mhdJetFeCostPerPotency", 8.0d, 0.0d, 1_000_000.0d);
+        MHD_JET_TANK = b.translation("magnetization.configuration.propulsion.mhdJetTank")
+                .defineInRange("mhdJetTank", 8000, 1, 1_000_000);
+        MHD_JET_FLUID_PER_TICK = b.translation("magnetization.configuration.propulsion.mhdJetFluidPerTick")
+                .defineInRange("mhdJetFluidPerTick", 2, 0, 10_000);
+        MHD_CONDUCTIVITY_GALLIUM = b.translation("magnetization.configuration.propulsion.mhdConductivityGallium")
+                .defineInRange("mhdConductivityGallium", 1.0d, 0.0d, 100.0d);
+        MHD_CONDUCTIVITY_MIXED_GALLIUM = b.translation("magnetization.configuration.propulsion.mhdConductivityMixedGallium")
+                .defineInRange("mhdConductivityMixedGallium", 1.2d, 0.0d, 100.0d);
+        MHD_CONDUCTIVITY_LIQUID_LITHIUM = b.translation("magnetization.configuration.propulsion.mhdConductivityLiquidLithium")
+                .defineInRange("mhdConductivityLiquidLithium", 1.6d, 0.0d, 100.0d);
+        MICRO_THRUSTER_MAGNETIZED_MULT = b.translation("magnetization.configuration.propulsion.microThrusterMagnetizedMult")
+                .defineInRange("microThrusterMagnetizedMult", 1.3d, 0.0d, 100.0d);
         SOLAR_SAIL_FORCE = b.translation("magnetization.configuration.propulsion.solarSailForce")
                 .defineInRange("solarSailForce", 60.0d, 0.0d, 100_000.0d);
         SOLAR_SAIL_SPEED_BASE = b.translation("magnetization.configuration.propulsion.solarSailSpeedBase")
@@ -906,6 +1069,32 @@ public final class MagConfig {
                 .defineInRange("tokamakOutputRate", 16000, 0, 1_000_000_000);
         TOKAMAK_BURN_TICKS_PER_CELL = b.translation("magnetization.configuration.machines.tokamakBurnTicksPerCell")
                 .defineInRange("tokamakBurnTicksPerCell", 4800, 1, 1_000_000_000);
+        TOKAMAK_GEN_PER_TICK_TRITIUM = b.translation("magnetization.configuration.machines.tokamakGenPerTickTritium")
+                .defineInRange("tokamakGenPerTickTritium", 3500, 0, 1_000_000);
+        TOKAMAK_OUTPUT_RATE_TRITIUM = b.translation("magnetization.configuration.machines.tokamakOutputRateTritium")
+                .defineInRange("tokamakOutputRateTritium", 16000, 0, 1_000_000_000);
+        TOKAMAK_BURN_TICKS_TRITIUM = b.translation("magnetization.configuration.machines.tokamakBurnTicksTritium")
+                .defineInRange("tokamakBurnTicksTritium", 4800, 1, 1_000_000_000);
+        TOKAMAK_GEN_PER_TICK_HELIUM3 = b.translation("magnetization.configuration.machines.tokamakGenPerTickHelium3")
+                .defineInRange("tokamakGenPerTickHelium3", 3000, 0, 1_000_000);
+        TOKAMAK_OUTPUT_RATE_HELIUM3 = b.translation("magnetization.configuration.machines.tokamakOutputRateHelium3")
+                .defineInRange("tokamakOutputRateHelium3", 24000, 0, 1_000_000_000);
+        TOKAMAK_BURN_TICKS_HELIUM3 = b.translation("magnetization.configuration.machines.tokamakBurnTicksHelium3")
+                .defineInRange("tokamakBurnTicksHelium3", 7200, 1, 1_000_000_000);
+        ELECTROLYZER_FE_CAPACITY = b.translation("magnetization.configuration.machines.electrolyzerFeCapacity")
+                .defineInRange("electrolyzerFeCapacity", 200_000, 0, 1_000_000_000);
+        ELECTROLYZER_FE_RECEIVE = b.translation("magnetization.configuration.machines.electrolyzerFeReceive")
+                .defineInRange("electrolyzerFeReceive", 8_000, 0, 1_000_000_000);
+        ELECTROLYZER_FE_PER_TICK = b.translation("magnetization.configuration.machines.electrolyzerFePerTick")
+                .defineInRange("electrolyzerFePerTick", 256, 0, 1_000_000);
+        ELECTROLYZER_WATER_TANK = b.translation("magnetization.configuration.machines.electrolyzerWaterTank")
+                .defineInRange("electrolyzerWaterTank", 8_000, 1, 1_000_000);
+        ELECTROLYZER_HYDROGEN_TANK = b.translation("magnetization.configuration.machines.electrolyzerHydrogenTank")
+                .defineInRange("electrolyzerHydrogenTank", 8_000, 1, 1_000_000);
+        ELECTROLYZER_WATER_PER_TICK = b.translation("magnetization.configuration.machines.electrolyzerWaterPerTick")
+                .defineInRange("electrolyzerWaterPerTick", 10, 0, 10_000);
+        ELECTROLYZER_HYDROGEN_PER_TICK = b.translation("magnetization.configuration.machines.electrolyzerHydrogenPerTick")
+                .defineInRange("electrolyzerHydrogenPerTick", 10, 0, 10_000);
         INDUCTION_PAD_ENABLED = b
                 .comment("Master switch for the induction charging pad. Off by default: it charges",
                          "FE-storing items this mod doesn't itself ship, so it's opt-in. When off the",
@@ -1644,6 +1833,52 @@ public final class MagConfig {
     public static int    microThrusterFluidPerTick(){ return intOr(MICRO_THRUSTER_FLUID_PER_TICK, 2); }
     public static double microThrusterMaxSpeed()    { return doubleOr(MICRO_THRUSTER_MAX_SPEED, 14.0d); }
     public static double microThrusterThrust()      { return doubleOr(MICRO_THRUSTER_THRUST, 2.5d); }
+    public static int    fusionThrusterMaxEdge()                  { return intOr(FUSION_THRUSTER_MAX_EDGE, 10); }
+    public static double fusionThrusterThrustBase()               { return doubleOr(FUSION_THRUSTER_THRUST_BASE, 0.5d); }
+    public static double fusionThrusterThrustExponent()           { return doubleOr(FUSION_THRUSTER_THRUST_EXPONENT, 1.3d); }
+    public static double fusionThrusterMaxSpeed()                 { return doubleOr(FUSION_THRUSTER_MAX_SPEED, 18.0d); }
+    public static int    fusionThrusterFeCapacity()               { return intOr(FUSION_THRUSTER_FE_CAPACITY, 2_000_000); }
+    public static int    fusionThrusterFeReceive()                { return intOr(FUSION_THRUSTER_FE_RECEIVE, 64_000); }
+    public static int    fusionThrusterFeCostBase()               { return intOr(FUSION_THRUSTER_FE_COST_BASE, 64); }
+    public static int    fusionThrusterFeCostPerInterior()        { return intOr(FUSION_THRUSTER_FE_COST_PER_INTERIOR, 16); }
+    public static int    fusionThrusterTank()                     { return intOr(FUSION_THRUSTER_TANK, 32_000); }
+    public static int    fusionThrusterFluidPerTickBase()         { return intOr(FUSION_THRUSTER_FLUID_PER_TICK_BASE, 2); }
+    public static int    fusionThrusterFluidPerTickPerInterior()  { return intOr(FUSION_THRUSTER_FLUID_PER_TICK_PER_INTERIOR, 1); }
+    public static double fusionThrusterFluidMultHydrogen()        { return doubleOr(FUSION_THRUSTER_FLUID_MULT_HYDROGEN, 0.7d); }
+    public static double fusionThrusterFluidMultDeuteriumOxide()  { return doubleOr(FUSION_THRUSTER_FLUID_MULT_DEUTERIUM_OXIDE, 1.0d); }
+    public static double fusionThrusterFluidMultTritium()         { return doubleOr(FUSION_THRUSTER_FLUID_MULT_TRITIUM, 1.6d); }
+    public static double fusionThrusterFluidMultHelium3()         { return doubleOr(FUSION_THRUSTER_FLUID_MULT_HELIUM3, 2.2d); }
+    public static double fusionThrusterFluidDensityHydrogen()       { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HYDROGEN, 0.22d); }
+    public static double fusionThrusterFluidDensityDeuteriumOxide() { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE, 0.35d); }
+    public static double fusionThrusterFluidDensityTritium()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_TRITIUM, 4.5d); }
+    public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
+    public static boolean allowRedstonePower() { try { return ALLOW_REDSTONE_POWER.get(); } catch (final Throwable t) { return true; } }
+    public static boolean allowEnergyPower()   { try { return ALLOW_ENERGY_POWER.get(); }   catch (final Throwable t) { return true; } }
+    public static boolean railgunEnabled()              { try { return RAILGUN_ENABLED.get(); }   catch (final Throwable t) { return true; } }
+    public static boolean railgunAutoFire()             { try { return RAILGUN_AUTO_FIRE.get(); }  catch (final Throwable t) { return true; } }
+    public static int    railgunCooldownTicks()         { return intOr(RAILGUN_COOLDOWN_TICKS, 40); }
+    public static int    railgunMaxLaunchTicks()        { return intOr(RAILGUN_MAX_LAUNCH_TICKS, 100); }
+    public static int    railgunHoldFeCost()            { return intOr(RAILGUN_HOLD_FE_COST, 8); }
+    public static int    railgunTicks()                 { return intOr(RAILGUN_TICKS, 1); }
+    public static int    railgunMinLength()             { return intOr(RAILGUN_MIN_LENGTH, 3); }
+    public static int    railgunMaxLength()             { return intOr(RAILGUN_MAX_LENGTH, 64); }
+    public static int    railgunMaxGap()                { return intOr(RAILGUN_MAX_GAP, 12); }
+    public static int    railgunChannelHalfThickness()  { return intOr(RAILGUN_CHANNEL_HALF_THICKNESS, 1); }
+    public static double railgunLateralDamp()           { return doubleOr(RAILGUN_LATERAL_DAMP, 0.85d); }
+    public static double railgunForceBase()             { return doubleOr(RAILGUN_FORCE_BASE, 0.6d); }
+    public static double railgunForceExponent()         { return doubleOr(RAILGUN_FORCE_EXPONENT, 1.4d); }
+    public static double railgunMaxSpeed()              { return doubleOr(RAILGUN_MAX_SPEED, 40.0d); }
+    public static double railgunEntityScale()           { return doubleOr(RAILGUN_ENTITY_SCALE, 0.08d); }
+    public static int    railgunFeCostBase()            { return intOr(RAILGUN_FE_COST_BASE, 32); }
+    public static int    railgunFeCostPerLength()       { return intOr(RAILGUN_FE_COST_PER_LENGTH, 8); }
+    public static int    railgunFeCapacity()            { return intOr(RAILGUN_FE_CAPACITY, 1_000_000); }
+    public static int    railgunFeReceive()             { return intOr(RAILGUN_FE_RECEIVE, 64_000); }
+    public static boolean railgunBreaksBlocks()         { try { return RAILGUN_BREAKS_BLOCKS.get(); } catch (final Throwable t) { return true; } }
+    public static int    railgunDestroyBudgetPerTick()  { return intOr(RAILGUN_DESTROY_BUDGET_PER_TICK, 16); }
+    public static boolean magnetSlotConsumesFuel()       { try { return MAGNET_SLOT_CONSUMES_FUEL.get(); } catch (final Throwable t) { return true; } }
+    public static int    magnetBurnTicksBase()           { return intOr(MAGNET_BURN_TICKS_BASE, 1200); }
+    public static int    magnetBurnTicksPerPotency()     { return intOr(MAGNET_BURN_TICKS_PER_POTENCY, 400); }
+    public static int    magnetBurnBlockFormMultiplier() { return intOr(MAGNET_BURN_BLOCK_FORM_MULTIPLIER, 9); }
     public static int    mhdJetFeCapacity()         { return intOr(MHD_JET_FE_CAPACITY, 400_000); }
     public static int    mhdJetFeReceive()          { return intOr(MHD_JET_FE_RECEIVE, 8_000); }
     public static double mhdJetMaxSpeedBase()       { return doubleOr(MHD_JET_MAX_SPEED_BASE, 4.0d); }
@@ -1652,6 +1887,12 @@ public final class MagConfig {
     public static double mhdJetThrustPerPotency()   { return doubleOr(MHD_JET_THRUST_PER_POTENCY, 0.06d); }
     public static double mhdJetFeCostBase()         { return doubleOr(MHD_JET_FE_COST_BASE, 8.0d); }
     public static double mhdJetFeCostPerPotency()   { return doubleOr(MHD_JET_FE_COST_PER_POTENCY, 8.0d); }
+    public static int    mhdJetTank()               { return intOr(MHD_JET_TANK, 8000); }
+    public static int    mhdJetFluidPerTick()       { return intOr(MHD_JET_FLUID_PER_TICK, 2); }
+    public static double mhdConductivityGallium()       { return doubleOr(MHD_CONDUCTIVITY_GALLIUM, 1.0d); }
+    public static double mhdConductivityMixedGallium()  { return doubleOr(MHD_CONDUCTIVITY_MIXED_GALLIUM, 1.2d); }
+    public static double mhdConductivityLiquidLithium() { return doubleOr(MHD_CONDUCTIVITY_LIQUID_LITHIUM, 1.6d); }
+    public static double microThrusterMagnetizedMult()  { return doubleOr(MICRO_THRUSTER_MAGNETIZED_MULT, 1.3d); }
     public static double solarSailForce()           { return doubleOr(SOLAR_SAIL_FORCE, 60.0d); }
     public static double solarSailSpeedBase()       { return doubleOr(SOLAR_SAIL_SPEED_BASE, 0.7d); }
     public static double solarSailSpeedPerPanel()   { return doubleOr(SOLAR_SAIL_SPEED_PER_PANEL, 0.05d); }
@@ -1670,6 +1911,19 @@ public final class MagConfig {
     public static int    tokamakGenPerTick()        { return intOr(TOKAMAK_GEN_PER_TICK, 2000); }
     public static int    tokamakOutputRate()        { return intOr(TOKAMAK_OUTPUT_RATE, 16000); }
     public static int    tokamakBurnTicksPerCell()  { return intOr(TOKAMAK_BURN_TICKS_PER_CELL, 4800); }
+    public static int    tokamakGenPerTickTritium()   { return intOr(TOKAMAK_GEN_PER_TICK_TRITIUM, 3500); }
+    public static int    tokamakOutputRateTritium()   { return intOr(TOKAMAK_OUTPUT_RATE_TRITIUM, 16000); }
+    public static int    tokamakBurnTicksTritium()     { return intOr(TOKAMAK_BURN_TICKS_TRITIUM, 4800); }
+    public static int    tokamakGenPerTickHelium3()    { return intOr(TOKAMAK_GEN_PER_TICK_HELIUM3, 3000); }
+    public static int    tokamakOutputRateHelium3()    { return intOr(TOKAMAK_OUTPUT_RATE_HELIUM3, 24000); }
+    public static int    tokamakBurnTicksHelium3()     { return intOr(TOKAMAK_BURN_TICKS_HELIUM3, 7200); }
+    public static int    electrolyzerFeCapacity()      { return intOr(ELECTROLYZER_FE_CAPACITY, 200_000); }
+    public static int    electrolyzerFeReceive()       { return intOr(ELECTROLYZER_FE_RECEIVE, 8_000); }
+    public static int    electrolyzerFePerTick()       { return intOr(ELECTROLYZER_FE_PER_TICK, 256); }
+    public static int    electrolyzerWaterTank()       { return intOr(ELECTROLYZER_WATER_TANK, 8_000); }
+    public static int    electrolyzerHydrogenTank()    { return intOr(ELECTROLYZER_HYDROGEN_TANK, 8_000); }
+    public static int    electrolyzerWaterPerTick()    { return intOr(ELECTROLYZER_WATER_PER_TICK, 10); }
+    public static int    electrolyzerHydrogenPerTick() { return intOr(ELECTROLYZER_HYDROGEN_PER_TICK, 10); }
     public static boolean inductionPadEnabled()     { try { return INDUCTION_PAD_ENABLED.get(); } catch (final Throwable t) { return false; } }
     public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
     public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }

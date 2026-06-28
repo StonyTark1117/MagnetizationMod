@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.client.screen;
 
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.menu.MachineGuiData;
 import com.stonytark.magnetization.menu.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,9 +23,30 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     // Vertical bars on the right edge of the pane.
     private static final int ENERGY_X = 156, BAR_Y = 18, BAR_W = 12, BAR_H = 54;
     private static final int FLUID_X = 138;
-    // Max values for the secondary bar (mirror the BEs).
-    private static final int TOKAMAK_MAX_BURN = 19_200; // 4 cells × 4800
-    private static final int THRUSTER_TANK = 8_000;
+
+    /** Denominator for the secondary fuel/fluid bar, read live from config (and,
+     *  for the tokamak, the synced current fuel tier) so the bar fill stays
+     *  accurate when an admin retunes a tank size or fuel burn time. */
+    private int fluidBarMax() {
+        return switch (menu.kind()) {
+            case TOKAMAK -> tokamakTierBurn(menu.stat3());
+            case THRUSTER -> MagConfig.microThrusterTank();
+            // Fusion tank is per-cell × interior count (stat2) — bars scale with the panel.
+            case FUSION_THRUSTER -> MagConfig.fusionThrusterTank() * Math.max(1, menu.stat2());
+            case JET -> MagConfig.mhdJetTank();
+            case ELECTROLYZER -> MagConfig.electrolyzerHydrogenTank();
+            default -> 1;
+        };
+    }
+
+    /** Full burn ticks of the tokamak's currently-loaded cell tier (0=D-D/1=D-T/2=He³). */
+    private static int tokamakTierBurn(final int tier) {
+        return switch (tier) {
+            case 1 -> MagConfig.tokamakBurnTicksTritium();
+            case 2 -> MagConfig.tokamakBurnTicksHelium3();
+            default -> MagConfig.tokamakBurnTicksPerCell();
+        };
+    }
 
     public MachineScreen(final MachineMenu menu, final Inventory inv, final Component title) {
         super(menu, inv, title);
@@ -42,7 +64,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // Input slot recess (tinted per kind so it reads as magnet / fuel / bucket).
         final int tint = switch (menu.kind()) {
             case TOKAMAK -> 0xFF2B2416;
-            case THRUSTER -> 0xFF16242B;
+            case THRUSTER, FUSION_THRUSTER, JET -> 0xFF16242B;
             default -> 0xFF1B1B1B;
         };
         drawSlotRecess(g, leftPos + MachineMenu.INPUT_X, topPos + MachineMenu.INPUT_Y, tint);
@@ -61,12 +83,19 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if (menu.energyStored() >= 0) {
             drawBar(g, leftPos + ENERGY_X, topPos + BAR_Y, menu.energyStored() / (float) menu.energyMax(), 0xFFE0AC4A);
         }
-        // Secondary fuel/fluid bar.
+        // Secondary fuel/fluid bar (denominator from config / synced tier).
+        final float barMax = Math.max(1f, fluidBarMax());
         switch (menu.kind()) {
             case TOKAMAK -> { if (menu.stat1() >= 0)
-                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / (float) TOKAMAK_MAX_BURN, 0xFFE05A2A); }
+                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / barMax, 0xFFE05A2A); }
             case THRUSTER -> { if (menu.stat1() >= 0)
-                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / (float) THRUSTER_TANK, 0xFF3AC0E0); }
+                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / barMax, 0xFF3AC0E0); }
+            case FUSION_THRUSTER -> { if (menu.stat1() >= 0)
+                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / barMax, 0xFF7ADCE0); }
+            case JET -> { if (menu.stat1() >= 0)
+                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat1() / barMax, 0xFFB0C0FF); }
+            case ELECTROLYZER -> { if (menu.stat2() >= 0)
+                drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.stat2() / barMax, 0xFFDDE6FF); }
             default -> { }
         }
     }
@@ -95,15 +124,41 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         final List<Component> lines = new ArrayList<>();
         switch (menu.kind()) {
             case TOKAMAK -> {
+                final String[] tiers = {"dd", "dt", "he3"};
+                lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
+                        + tiers[Math.min(2, Math.max(0, menu.stat3()))]));
                 lines.add(Component.translatable("tooltip.magnetization.gui_fuel", menu.stat1() / 20));
                 lines.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, menu.stat2())));
             }
             case THRUSTER -> lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.stat1())));
+            case FUSION_THRUSTER -> {
+                lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.stat1())));
+                lines.add(Component.translatable("tooltip.magnetization.gui_fusion_size", Math.max(0, menu.stat2())));
+            }
             case MOTOR -> {
                 lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
                 lines.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, menu.stat1())));
+                if (menu.stat2() > 0) lines.add(Component.translatable("tooltip.magnetization.gui_magnet_burn", menu.stat2() / 20));
             }
-            case JET -> lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
+            case JET -> {
+                lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
+                lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.stat1())));
+                if (menu.stat2() > 0) lines.add(Component.translatable("tooltip.magnetization.gui_magnet_burn", menu.stat2() / 20));
+            }
+            case ELECTROLYZER -> {
+                lines.add(Component.translatable("tooltip.magnetization.gui_water", Math.max(0, menu.stat1())));
+                lines.add(Component.translatable("tooltip.magnetization.gui_hydrogen", Math.max(0, menu.stat2())));
+            }
+            case RAILGUN -> {
+                lines.add(Component.translatable("tooltip.magnetization.gui_rail_length", Math.max(0, menu.stat1())));
+                final int packed = Math.max(0, menu.stat2());
+                final boolean manual = (packed & 16) != 0;
+                final String[] states = {"idle", "holding", "launching", "cooldown"};
+                lines.add(Component.translatable(manual
+                        ? "tooltip.magnetization.gui_railgun_manual" : "tooltip.magnetization.gui_railgun_auto"));
+                lines.add(Component.translatable("tooltip.magnetization.gui_railgun_state_"
+                        + states[Math.min(states.length - 1, packed & 15)]));
+            }
         }
         int ly = 22;
         for (final Component c : lines) {
@@ -121,7 +176,8 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             g.renderTooltip(font, Component.translatable("tooltip.magnetization.gui_energy",
                     menu.energyStored(), menu.energyMax()), mx, my);
         }
-        if ((menu.kind() == MachineMenu.Kind.TOKAMAK || menu.kind() == MachineMenu.Kind.THRUSTER)
+        if ((menu.kind() == MachineMenu.Kind.TOKAMAK || menu.kind() == MachineMenu.Kind.THRUSTER
+                || menu.kind() == MachineMenu.Kind.FUSION_THRUSTER || menu.kind() == MachineMenu.Kind.JET)
                 && menu.stat1() >= 0 && inBar(mx, my, FLUID_X)) {
             final Component t = menu.kind() == MachineMenu.Kind.TOKAMAK
                     ? Component.translatable("tooltip.magnetization.gui_fuel", menu.stat1() / 20)

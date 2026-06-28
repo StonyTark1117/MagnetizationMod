@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_helium_3_gas": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:helium_3_gas"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:helium_3_bucket_from_gas"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_helium_3_gas"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:helium_3_bucket_from_gas"
+    ]
+  }
+}

@@ -27,7 +27,8 @@ import org.joml.Vector3dc;
  * (pushed to adjacent machines/cables) and emits an analog redstone pulse while
  * the magnet passes. No fuel — pure kinetic-to-electric.
  */
-public class KineticCoilBlockEntity extends BlockEntity {
+public class KineticCoilBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData {
 
     private static final int CAPACITY = 100_000;
     private static final int OUTPUT_RATE = 4_000;     // FE/tick pushed out
@@ -38,6 +39,10 @@ public class KineticCoilBlockEntity extends BlockEntity {
     private final GenBuffer energy = new GenBuffer(CAPACITY, OUTPUT_RATE);
     private int signal = 0;
     private int lastSyncedEnergy = -1;
+    private int lastGenerated = 0;     // FE generated last tick (HUD readout)
+    /** Empty placeholder slot — the coil has no input, but {@link com.stonytark.magnetization.menu.MachineGuiData}
+     *  requires a container. Never filled. */
+    private final net.minecraft.world.SimpleContainer noInput = new net.minecraft.world.SimpleContainer(1);
 
     public KineticCoilBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.KINETIC_COIL.get(), pos, state);
@@ -61,13 +66,38 @@ public class KineticCoilBlockEntity extends BlockEntity {
         return CAPACITY;
     }
 
+    // ── MachineGuiData (HUD-only: no menu, surfaces in WTHIT/Jade/TOP) ──
+    @Override public net.minecraft.world.Container guiInput() { return noInput; }
+    @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
+        return com.stonytark.magnetization.menu.MachineMenu.Kind.COIL;
+    }
+    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyMax() { return CAPACITY; }
+    @Override public int guiStat1() { return lastGenerated; }   // FE/tick induced
+
+    /** Coil status: induced FE/tick + generating/idle. The FE bar is drawn
+     *  separately by the energy-bar provider from {@link #guiEnergyStored()}. */
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        final java.util.List<net.minecraft.network.chat.Component> out = new java.util.ArrayList<>();
+        final boolean generating = lastGenerated > 0;
+        out.add(net.minecraft.network.chat.Component.translatable(
+                "tooltip.magnetization.gui_coil_emf", Math.max(0, lastGenerated))
+                .withStyle(net.minecraft.ChatFormatting.GRAY));
+        out.add(net.minecraft.network.chat.Component.translatable(generating
+                ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
+                .withStyle(generating ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.YELLOW));
+        return out;
+    }
+
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final KineticCoilBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
 
         final double emf = inducedEmf(server, pos);
-        if (emf > 0.0) {
-            be.energy.generate((int) (emf * FE_PER_EMF));
+        be.lastGenerated = emf > 0.0 ? (int) (emf * FE_PER_EMF) : 0;
+        if (be.lastGenerated > 0) {
+            be.energy.generate(be.lastGenerated);
         }
         // Redstone tracks the live EMF (instant pulse while a magnet passes).
         final int sig = (int) Math.ceil(Math.min(1.0, emf * 1.5) * 15.0);
@@ -150,6 +180,7 @@ public class KineticCoilBlockEntity extends BlockEntity {
         final CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.putInt("Signal", signal);
+        tag.putInt("Generated", lastGenerated);
         return tag;
     }
 
@@ -170,5 +201,6 @@ public class KineticCoilBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         energy.set(tag.getInt("Energy")); // set, not accumulate — handles repeated client update tags
         this.signal = tag.getInt("Signal");
+        if (tag.contains("Generated")) this.lastGenerated = tag.getInt("Generated");
     }
 }

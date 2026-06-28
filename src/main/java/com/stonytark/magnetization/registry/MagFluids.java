@@ -177,5 +177,109 @@ public final class MagFluids {
                 .bucket(MagItems.MIXED_GALLIUM_BUCKET);
     }
 
+    // ---------------- Hydrogen (fusion-fuel isotope chain entry point) ----------------
+    // Light gas-as-liquid; the cheap starter propellant + the parent of deuterium.
+    // Produced by electrolysing water in the Electrolyzer.
+
+    public static final Supplier<FluidType> HYDROGEN_TYPE = FLUID_TYPES.register("hydrogen",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(70)            // liquid hydrogen is very light
+                    .viscosity(150)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN =
+            FLUIDS.register("hydrogen", () -> new BaseFlowingFluid.Source(hydrogenProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> HYDROGEN_FLOWING =
+            FLUIDS.register("flowing_hydrogen", () -> new BaseFlowingFluid.Flowing(hydrogenProperties()));
+
+    private static BaseFlowingFluid.Properties hydrogenProperties() {
+        return new BaseFlowingFluid.Properties(HYDROGEN_TYPE, HYDROGEN, HYDROGEN_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.HYDROGEN_BLOCK)
+                .bucket(MagItems.HYDROGEN_BUCKET);
+    }
+
+    // ---------------- Tritium (D-T fusion fuel; bred from lithium) ----------------
+
+    public static final Supplier<FluidType> TRITIUM_TYPE = FLUID_TYPES.register("tritium",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(250)
+                    .viscosity(200)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRITIUM =
+            FLUIDS.register("tritium", () -> new BaseFlowingFluid.Source(tritiumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> TRITIUM_FLOWING =
+            FLUIDS.register("flowing_tritium", () -> new BaseFlowingFluid.Flowing(tritiumProperties()));
+
+    private static BaseFlowingFluid.Properties tritiumProperties() {
+        return new BaseFlowingFluid.Properties(TRITIUM_TYPE, TRITIUM, TRITIUM_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.TRITIUM_BLOCK)
+                .bucket(MagItems.TRITIUM_BUCKET);
+    }
+
+    // ---------------- Helium-3 (premium aneutronic D-He3 fuel; rare) ----------------
+
+    public static final Supplier<FluidType> HELIUM_3_TYPE = FLUID_TYPES.register("helium_3",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(60)            // even lighter than hydrogen
+                    .viscosity(120)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HELIUM_3 =
+            FLUIDS.register("helium_3", () -> new BaseFlowingFluid.Source(helium3Properties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> HELIUM_3_FLOWING =
+            FLUIDS.register("flowing_helium_3", () -> new BaseFlowingFluid.Flowing(helium3Properties()));
+
+    private static BaseFlowingFluid.Properties helium3Properties() {
+        return new BaseFlowingFluid.Properties(HELIUM_3_TYPE, HELIUM_3, HELIUM_3_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.HELIUM_3_BLOCK)
+                .bucket(MagItems.HELIUM_3_BUCKET);
+    }
+
+    // ---------------- Liquid lithium (conductive working fluid for the MHD jet) ----------------
+    // The best real MPD propellant; also the tritium-breeding feedstock. Melted from
+    // the Lithium item. Lithium is lighter than water (~0.53 g/cc).
+
+    public static final Supplier<FluidType> LIQUID_LITHIUM_TYPE = FLUID_TYPES.register("liquid_lithium",
+            () -> new FluidType(FluidType.Properties.create()
+                    .density(530)
+                    .viscosity(1100)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .supportsBoating(true)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
+
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_LITHIUM =
+            FLUIDS.register("liquid_lithium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Source(liquidLithiumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> LIQUID_LITHIUM_FLOWING =
+            FLUIDS.register("flowing_liquid_lithium", () -> new com.stonytark.magnetization.content.fluid.RedstoneSafeFluid.Flowing(liquidLithiumProperties()));
+
+    private static BaseFlowingFluid.Properties liquidLithiumProperties() {
+        return new BaseFlowingFluid.Properties(LIQUID_LITHIUM_TYPE, LIQUID_LITHIUM, LIQUID_LITHIUM_FLOWING)
+                .slopeFindDistance(2)
+                .levelDecreasePerBlock(2)
+                .block(MagBlocks.LIQUID_LITHIUM_BLOCK)
+                .bucket(MagItems.LIQUID_LITHIUM_BUCKET);
+    }
+
     private MagFluids() {}
 }

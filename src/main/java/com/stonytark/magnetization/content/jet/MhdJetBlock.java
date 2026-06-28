@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -73,9 +74,25 @@ public final class MhdJetBlock extends DirectionalBlock implements EntityBlock, 
     protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
                                               final BlockPos pos, final Player player, final InteractionHand hand,
                                               final BlockHitResult hit) {
-        if (!MhdJetBlockEntity.isMagnet(stack)
-                || !(level.getBlockEntity(pos) instanceof MhdJetBlockEntity jet)
-                || !jet.getMagnet().isEmpty()) {
+        if (!(level.getBlockEntity(pos) instanceof MhdJetBlockEntity jet)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        // Conductive-fluid buckets fill the working-fluid tank.
+        final net.minecraft.world.level.material.Fluid bucketFluid = conductiveBucketFluid(stack);
+        if (bucketFluid != null) {
+            if (!jet.fillFromBucket(bucketFluid)) return ItemInteractionResult.CONSUME;   // tank full / mismatch
+            if (!level.isClientSide) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                    if (!player.addItem(new ItemStack(Items.BUCKET))) player.drop(new ItemStack(Items.BUCKET), false);
+                }
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY,
+                        net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 0.9f);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+        // Otherwise, a magnet fills the empty magnet slot.
+        if (!MhdJetBlockEntity.isMagnet(stack) || !jet.getMagnet().isEmpty()) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide) {
@@ -83,6 +100,17 @@ public final class MhdJetBlock extends DirectionalBlock implements EntityBlock, 
             if (!player.getAbilities().instabuild) stack.shrink(1);
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** The fluid a conductive-working-fluid bucket holds, or null if not one. */
+    private static net.minecraft.world.level.material.Fluid conductiveBucketFluid(final ItemStack st) {
+        if (st.is(com.stonytark.magnetization.registry.MagItems.GALLIUM_BUCKET.get()))
+            return com.stonytark.magnetization.registry.MagFluids.GALLIUM.get();
+        if (st.is(com.stonytark.magnetization.registry.MagItems.MIXED_GALLIUM_BUCKET.get()))
+            return com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM.get();
+        if (st.is(com.stonytark.magnetization.registry.MagItems.LIQUID_LITHIUM_BUCKET.get()))
+            return com.stonytark.magnetization.registry.MagFluids.LIQUID_LITHIUM.get();
+        return null;
     }
 
     @Override

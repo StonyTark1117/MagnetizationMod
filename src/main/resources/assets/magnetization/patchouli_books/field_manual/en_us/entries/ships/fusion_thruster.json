@@ -1,0 +1,21 @@
+{
+  "name": "book.magnetization.entry.fusion_thruster.name",
+  "icon": "magnetization:fusion_thruster",
+  "category": "magnetization:propulsion",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:fusion_thruster",
+      "text": "book.magnetization.entry.fusion_thruster.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.fusion_thruster.build"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.fusion_thruster.fuel"
+    }
+  ]
+}

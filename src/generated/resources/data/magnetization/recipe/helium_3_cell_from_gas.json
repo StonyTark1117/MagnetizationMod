@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:helium_3_gas"
+    },
+    {
+      "item": "magnetization:helium_3_gas"
+    },
+    {
+      "item": "magnetization:helium_3_gas"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:helium_3_cell"
+  }
+}

@@ -106,6 +106,11 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.induction.KineticCoilBlockEntity::new, MagBlocks.KINETIC_COIL.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity>> ELECTROLYZER =
+            REGISTER.register("electrolyzer", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity::new, MagBlocks.ELECTROLYZER.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.induction.InductionPadBlockEntity>> INDUCTION_PAD =
             REGISTER.register("induction_pad", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.induction.InductionPadBlockEntity::new, MagBlocks.INDUCTION_PAD.get())
@@ -129,6 +134,16 @@ public final class MagBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.MhdJetBlockEntity>> MHD_JET =
             REGISTER.register("mhd_jet", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.jet.MhdJetBlockEntity::new, MagBlocks.MHD_JET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity>> FUSION_THRUSTER =
+            REGISTER.register("fusion_thruster", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity::new, MagBlocks.FUSION_THRUSTER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity>> RAILGUN_EMITTER =
+            REGISTER.register("railgun_emitter", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity::new, MagBlocks.RAILGUN_EMITTER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity>> HOMOPOLAR_MOTOR =

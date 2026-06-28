@@ -71,6 +71,33 @@ public final class MagneticMaterials {
         return potency(stack) > 0;
     }
 
+    /** True if the stack is a BLOCK form (storage block or raw block) — it holds ~9
+     *  units of material, so it burns far longer in a magnet-slot machine. */
+    public static boolean isBlockForm(final ItemStack stack) {
+        final ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return id != null && id.getNamespace().equals(Magnetization.MOD_ID) && id.getPath().endsWith("_block");
+    }
+
+    /**
+     * How many ACTIVE ticks one of this magnet lasts in a magnet-slot machine
+     * (motor / MHD jet) when fuel consumption is enabled. Strength and longevity
+     * compound: a stronger magnet burns longer (scales with potency), and block
+     * forms burn ~9× longer (quantity). 0 if not a magnet.
+     *
+     * <p>{@code base + potency × perPotency × formFactor}, where formFactor is the
+     * block-form multiplier for storage/raw blocks and 1 otherwise. Defaults
+     * (1200 / 400 / 9) put a titanomagnetite storage block at ~88 min and a bare
+     * ore at ~80 s — see the {@code progress_1_3_build} balance ladder.
+     */
+    public static int magnetBurnTicks(final ItemStack stack) {
+        final int potency = potency(stack);
+        if (potency <= 0) return 0;
+        final int formFactor = isBlockForm(stack)
+                ? com.stonytark.magnetization.config.MagConfig.magnetBurnBlockFormMultiplier() : 1;
+        return com.stonytark.magnetization.config.MagConfig.magnetBurnTicksBase()
+                + potency * com.stonytark.magnetization.config.MagConfig.magnetBurnTicksPerPotency() * formFactor;
+    }
+
     /** ore = 0, raw item = 1, raw block = 2, ingot = 3, storage block = 4;
      *  -1 for any other form of the material (tools, armour, anvils, …). */
     private static int formBonus(final String path, final String m) {

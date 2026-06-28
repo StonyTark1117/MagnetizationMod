@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hydrogen": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:hydrogen_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:deuterium_cell_from_hydrogen"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hydrogen"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:deuterium_cell_from_hydrogen"
+    ]
+  }
+}

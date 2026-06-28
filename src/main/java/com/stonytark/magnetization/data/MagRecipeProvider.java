@@ -696,6 +696,72 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('r', Items.REDSTONE).define('i', Items.IRON_INGOT).define('g', Items.GLOWSTONE_DUST)
                 .define('w', MagItems.DEUTERIUM_OXIDE_BUCKET.get())
                 .unlockedBy("has_deuterium", has(MagItems.DEUTERIUM_OXIDE_BUCKET.get())).save(out, id("deuterium_cell"));
+
+        // ---- Fusion-fuel isotope chain (1.3) ----
+        // Fluid transmutation is routed through cell/gas ITEMS (never bucket->bucket) so the
+        // bucket craftRemainder never duplicates an empty bucket.
+        // raw lithium -> lithium ingot (smelt + blast)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(MagItems.RAW_LITHIUM.get()), RecipeCategory.MISC,
+                        MagItems.LITHIUM.get(), 0.5f, 200)
+                .unlockedBy("has_raw_lithium", has(MagItems.RAW_LITHIUM.get())).save(out, id("lithium_from_smelting"));
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(MagItems.RAW_LITHIUM.get()), RecipeCategory.MISC,
+                        MagItems.LITHIUM.get(), 0.5f, 100)
+                .unlockedBy("has_raw_lithium", has(MagItems.RAW_LITHIUM.get())).save(out, id("lithium_from_blasting"));
+        // lithium + empty bucket -> liquid lithium bucket (melt). No dupe: bucket consumed into fill.
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.LIQUID_LITHIUM_BUCKET.get())
+                .requires(MagItems.LITHIUM.get()).requires(Items.BUCKET)
+                .unlockedBy("has_lithium", has(MagItems.LITHIUM.get())).save(out, id("liquid_lithium_from_lithium"));
+        // 2 hydrogen + frame -> deuterium cell (hydrogen->deuterium enrichment; CELL output, buckets conserved).
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.DEUTERIUM_CELL.get())
+                .pattern("rhr").pattern("gig").pattern("rhr")
+                .define('r', Items.REDSTONE).define('i', Items.IRON_INGOT).define('g', Items.GLOWSTONE_DUST)
+                .define('h', MagItems.HYDROGEN_BUCKET.get())
+                .unlockedBy("has_hydrogen", has(MagItems.HYDROGEN_BUCKET.get())).save(out, id("deuterium_cell_from_hydrogen"));
+        // deuterium cell + lithium -> tritium cell (lithium-6 breeding).
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.TRITIUM_CELL.get())
+                .requires(MagItems.DEUTERIUM_CELL.get()).requires(MagItems.LITHIUM.get())
+                .unlockedBy("has_deuterium_cell", has(MagItems.DEUTERIUM_CELL.get())).save(out, id("tritium_cell"));
+        // tritium cell + glowstone -> helium-3 cell (enrichment / processing).
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CELL.get())
+                .requires(MagItems.TRITIUM_CELL.get()).requires(Items.GLOWSTONE).requires(Items.GLOWSTONE)
+                .unlockedBy("has_tritium_cell", has(MagItems.TRITIUM_CELL.get())).save(out, id("helium_3_cell_from_tritium"));
+        // helium-3 gas (geode) + iron -> helium-3 cell (the natural-source path).
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CELL.get())
+                .requires(MagItems.HELIUM_3_GAS.get(), 3).requires(Items.IRON_INGOT)
+                .unlockedBy("has_helium_3_gas", has(MagItems.HELIUM_3_GAS.get())).save(out, id("helium_3_cell_from_gas"));
+        // Cell -> filled bucket fills for the fusion thruster (cell consumed, bucket conserved).
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.TRITIUM_BUCKET.get())
+                .requires(MagItems.TRITIUM_CELL.get()).requires(Items.BUCKET)
+                .unlockedBy("has_tritium_cell", has(MagItems.TRITIUM_CELL.get())).save(out, id("tritium_bucket_from_cell"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_BUCKET.get())
+                .requires(MagItems.HELIUM_3_CELL.get()).requires(Items.BUCKET)
+                .unlockedBy("has_helium_3_cell", has(MagItems.HELIUM_3_CELL.get())).save(out, id("helium_3_bucket_from_cell"));
+        // helium-3 gas -> filled bucket directly (geode shortcut for the thruster).
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_BUCKET.get())
+                .requires(MagItems.HELIUM_3_GAS.get(), 4).requires(Items.BUCKET)
+                .unlockedBy("has_helium_3_gas", has(MagItems.HELIUM_3_GAS.get())).save(out, id("helium_3_bucket_from_gas"));
+        // Electrolyzer: a powered cauldron that splits water + FE -> hydrogen (isotope-chain entry point).
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.ELECTROLYZER.get())
+                .pattern("rcr").pattern("cwc").pattern("rcr")
+                .define('r', Items.REDSTONE).define('c', MagItems.TOKAMAK_COIL.get()).define('w', Items.CAULDRON)
+                .unlockedBy("has_cauldron", has(Items.CAULDRON)).save(out, id("electrolyzer"));
+        // Fusion Thruster interior — a micro-thruster core wrapped in coils + titanomagnetite.
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.FUSION_THRUSTER.get(), 2)
+                .pattern("ctc").pattern("tmt").pattern("ctc")
+                .define('c', MagItems.TOKAMAK_COIL.get()).define('t', MagItems.TITANOMAGNETITE_INGOT.get())
+                .define('m', MagItems.MICRO_THRUSTER.get())
+                .unlockedBy("has_micro_thruster", has(MagItems.MICRO_THRUSTER.get())).save(out, id("fusion_thruster"));
+        // Railgun emitter — Lorentz accelerator control block.
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.RAILGUN_EMITTER.get())
+                .pattern("tct").pattern("crc").pattern("tct")
+                .define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('c', MagItems.TOKAMAK_COIL.get())
+                .define('r', Items.REDSTONE)
+                .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("railgun_emitter"));
+        // Railgun remote — pairable trigger.
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.RAILGUN_REMOTE.get())
+                .pattern(" e ").pattern("rmr").pattern(" r ")
+                .define('e', Items.ENDER_PEARL).define('r', Items.REDSTONE).define('m', MagItems.MAGNETITE_INGOT.get())
+                .unlockedBy("has_emitter", has(MagItems.RAILGUN_EMITTER.get())).save(out, id("railgun_remote"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get())
                 .pattern(" b ").pattern("bpb").pattern(" b ")
                 .define('b', MagItems.MR_FLUID_BUCKET.get()).define('p', Items.CARVED_PUMPKIN)

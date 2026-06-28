@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/railgun_emitter_side",
+    "down": "magnetization:block/railgun_emitter_side",
+    "up": "magnetization:block/railgun_emitter_side",
+    "east": "magnetization:block/railgun_emitter_side",
+    "west": "magnetization:block/railgun_emitter_side",
+    "south": "magnetization:block/railgun_emitter_side",
+    "north": "magnetization:block/railgun_emitter_muzzle"
+  }
+}

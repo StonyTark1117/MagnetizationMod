@@ -29,17 +29,54 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
     private final GenBuffer energy = new GenBuffer(
             com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
-            com.stonytark.magnetization.config.MagConfig.tokamakOutputRate());
+            // Extract cap = the most any tier can output (He-3) so per-tier limiting
+            // in pushEnergy isn't clamped by the buffer's own maxExtract.
+            com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3());
     private int burnTime = 0;
+    private int currentTier = 0;   // 0 = D-D, 1 = D-T, 2 = D-He³ — set when a cell is consumed
     private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
 
-    /** Fuel slot — holds spare Deuterium Cells, auto-fed into the burn buffer. */
+    /** Fuel slot — holds spare fusion cells (D-D / D-T / D-He³), auto-fed into the burn. */
     private final net.minecraft.world.SimpleContainer fuelSlot = new net.minecraft.world.SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final ItemStack st) {
-            return st.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get());
+            return cellTier(st) >= 0;
         }
         @Override public void setChanged() { super.setChanged(); TokamakControllerBlockEntity.this.setChanged(); }
     };
+
+    /** Fusion-cell tier: 0 = Deuterium, 1 = Tritium, 2 = Helium-3, -1 = not a cell. */
+    private static int cellTier(final ItemStack st) {
+        if (st.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get())) return 0;
+        if (st.is(com.stonytark.magnetization.registry.MagItems.TRITIUM_CELL.get())) return 1;
+        if (st.is(com.stonytark.magnetization.registry.MagItems.HELIUM_3_CELL.get())) return 2;
+        return -1;
+    }
+
+    private static int tierGenPerTick(final int tier) {
+        return switch (tier) {
+            case 1 -> com.stonytark.magnetization.config.MagConfig.tokamakGenPerTickTritium();
+            case 2 -> com.stonytark.magnetization.config.MagConfig.tokamakGenPerTickHelium3();
+            default -> com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick();
+        };
+    }
+
+    private static int tierBurnTicks(final int tier) {
+        return switch (tier) {
+            case 1 -> com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksTritium();
+            case 2 -> com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksHelium3();
+            default -> com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksPerCell();
+        };
+    }
+
+    private static int tierOutputRate(final int tier) {
+        return switch (tier) {
+            case 1 -> com.stonytark.magnetization.config.MagConfig.tokamakOutputRateTritium();
+            case 2 -> com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3();
+            default -> com.stonytark.magnetization.config.MagConfig.tokamakOutputRate();
+        };
+    }
+
+    public int currentTier() { return currentTier; }
 
     public TokamakControllerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.TOKAMAK_CONTROLLER.get(), pos, state);
@@ -62,31 +99,47 @@ public class TokamakControllerBlockEntity extends BlockEntity
     @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(); }
     @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
     @Override public int guiStat2() { return lastOutput; }        // FE/tick out
+    @Override public int guiStat3() { return currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
+
+    /** Prepend the active fuel tier (D-D / D-T / D-He³) to the shared tokamak HUD
+     *  lines so WTHIT/Jade/TOP show which cell is burning + its runtime + output. */
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        final java.util.List<net.minecraft.network.chat.Component> out = new java.util.ArrayList<>();
+        final String[] tiers = {"dd", "dt", "he3"};
+        out.add(net.minecraft.network.chat.Component.translatable(
+                "tooltip.magnetization.gui_tokamak_tier_" + tiers[Math.min(2, Math.max(0, currentTier))])
+                .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
+        out.addAll(com.stonytark.magnetization.menu.MachineGuiData.super.hudLines());
+        return out;
+    }
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final TokamakControllerBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
-        // Auto-feed: pull a spare cell from the slot when the burn buffer has room.
-        final int burnPerCell = com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksPerCell();
-        if (be.burnTime <= (burnPerCell * 4) - burnPerCell) {
+        // Auto-feed: load one cell when the burn is empty, recording its tier so
+        // gen/output use that tier's rates (mixing tiers cleanly, one cell at a time).
+        if (be.burnTime <= 0) {
             final ItemStack cell = be.fuelSlot.getItem(0);
-            if (cell.is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get())) {
+            final int tier = cellTier(cell);
+            if (tier >= 0) {
                 cell.shrink(1);
                 be.fuelSlot.setItem(0, cell);
-                be.burnTime += burnPerCell;
+                be.currentTier = tier;
+                be.burnTime += tierBurnTicks(tier);
                 be.setChanged();
             }
         }
         final boolean fusing = be.burnTime > 0 && isRingFormed(level, pos);
         if (fusing) {
-            be.energy.generate(com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick());
+            be.energy.generate(tierGenPerTick(be.currentTier));
             be.burnTime--;
             be.setChanged();
         }
         if (state.getValue(BlockStateProperties.LIT) != fusing) {
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
         }
-        be.lastOutput = pushEnergy(server, pos, be.energy);
+        be.lastOutput = pushEnergy(server, pos, be.energy, tierOutputRate(be.currentTier));
         if (server.getGameTime() % 10L == 0L) {
             server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
@@ -106,7 +159,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
     }
 
     /** Push to neighbours; returns total FE moved this tick (the GUI's output readout). */
-    private static int pushEnergy(final ServerLevel level, final BlockPos pos, final GenBuffer energy) {
+    private static int pushEnergy(final ServerLevel level, final BlockPos pos, final GenBuffer energy, final int outputRate) {
         if (energy.getEnergyStored() <= 0) return 0;
         int pushed = 0;
         for (final Direction dir : Direction.values()) {
@@ -114,7 +167,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
             final IEnergyStorage target = level.getCapability(
                     Capabilities.EnergyStorage.BLOCK, pos.relative(dir), dir.getOpposite());
             if (target == null || !target.canReceive()) continue;
-            final int offered = Math.min(com.stonytark.magnetization.config.MagConfig.tokamakOutputRate() - pushed, energy.getEnergyStored());
+            final int offered = Math.min(outputRate - pushed, energy.getEnergyStored());
             final int accepted = target.receiveEnergy(offered, false);
             if (accepted > 0) { energy.extractEnergy(accepted, false); pushed += accepted; }
         }
@@ -135,6 +188,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.putInt("Burn", burnTime);
+        tag.putInt("Tier", currentTier);
         tag.putInt("LastOutput", lastOutput); // synced via getUpdateTag → WTHIT/GUI output readout
         tag.put("Fuel", fuelSlot.createTag(registries));
     }
@@ -144,6 +198,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         energy.generate(tag.getInt("Energy"));
         burnTime = tag.getInt("Burn");
+        currentTier = tag.getInt("Tier");
         lastOutput = tag.getInt("LastOutput");
         fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }

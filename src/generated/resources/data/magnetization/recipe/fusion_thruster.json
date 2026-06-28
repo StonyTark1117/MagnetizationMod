@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "c": {
+      "item": "magnetization:tokamak_coil"
+    },
+    "m": {
+      "item": "magnetization:micro_thruster"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "ctc",
+    "tmt",
+    "ctc"
+  ],
+  "result": {
+    "count": 2,
+    "id": "magnetization:fusion_thruster"
+  }
+}

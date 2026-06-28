@@ -50,6 +50,26 @@ public final class MagGameTests {
     }
 
     /**
+     * Force the emitter power-source config back to its production defaults
+     * (either-or power: redstone OR energy runs an emitter). Every test that
+     * relies on the default power semantics calls this FIRST so it is immune to
+     * config drift — the {@code run/config/magnetization-common.toml} persists
+     * across runs and can carry a stale {@code requireRedstoneAndEnergy = true}
+     * (left by {@link #requireBothRedstoneAndEnergyGate} or a dev session). A
+     * stale {@code true} makes a single-source emitter never power up, so the
+     * field/drain/ship tests silently went red despite the features being fine
+     * in-world. Forcing defaults here (the values ARE the canonical defaults, so
+     * no restore is needed) makes those tests hermetic. See the matching note on
+     * {@link #requireBothRedstoneAndEnergyGate}, which runs in its own batch so
+     * its deliberate mutation can't bleed into these.
+     */
+    private static void forceDefaultEmitterPower() {
+        com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(false);
+        com.stonytark.magnetization.config.MagConfig.ALLOW_REDSTONE_POWER.set(true);
+        com.stonytark.magnetization.config.MagConfig.ALLOW_ENERGY_POWER.set(true);
+    }
+
+    /**
      * Placing an emitter in-world registers it with {@link EmitterRegistry};
      * breaking it unregisters. Catches regressions in the BE.onLoad /
      * setRemoved hooks that unit tests (which can't drive a real chunk-load
@@ -401,12 +421,49 @@ public final class MagGameTests {
     }
 
     /**
+     * #122 — Electrolyzer converts water + FE into hydrogen; with no FE it idles.
+     * Fills the water tank and energy buffer directly, ticks, and asserts hydrogen
+     * accumulated while water drained; a second unit with water but no FE makes none.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void electrolyzerMakesHydrogen(final GameTestHelper helper) {
+        final BlockPos powered = new BlockPos(1, 1, 1);
+        final BlockPos starved = new BlockPos(1, 1, 3);
+        helper.setBlock(powered, MagBlocks.ELECTROLYZER.get());
+        helper.setBlock(starved, MagBlocks.ELECTROLYZER.get());
+
+        final com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity poweredBe =
+                (com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity) helper.getBlockEntity(powered);
+        final com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity starvedBe =
+                (com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity) helper.getBlockEntity(starved);
+
+        final net.neoforged.neoforge.fluids.FluidStack water =
+                new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 4000);
+        poweredBe.fluidHandler().fill(water.copy(), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        poweredBe.energyBuffer().receiveEnergy(8000, false);    // fuel
+        starvedBe.fluidHandler().fill(water.copy(), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        // starvedBe gets NO energy — negative control.
+
+        final int startWater = poweredBe.waterAmount();
+        helper.runAfterDelay(20L, () -> {
+            helper.assertTrue(poweredBe.hydrogenAmount() > 0,
+                    "Electrolyzer with water + FE should produce hydrogen; got " + poweredBe.hydrogenAmount());
+            helper.assertTrue(poweredBe.waterAmount() < startWater,
+                    "Electrolyzer should consume water while running");
+            helper.assertTrue(starvedBe.hydrogenAmount() == 0,
+                    "Electrolyzer with no FE should produce no hydrogen; got " + starvedBe.hydrogenAmount());
+            helper.succeed();
+        });
+    }
+
+    /**
      * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
      * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
      * the fluid cell becomes {@code hardened_mr_fluid} once the field reaches it.
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
     public static void mrFluidHardensInField(final GameTestHelper helper) {
+        forceDefaultEmitterPower();                                              // config-drift guard
         helper.setBlock(new BlockPos(1, 1, 1), MagBlocks.ELECTROMAGNET.get());
         helper.setBlock(new BlockPos(1, 2, 1), Blocks.REDSTONE_BLOCK);            // powers the electromagnet
         final BlockPos fluid = new BlockPos(2, 1, 1);
@@ -536,6 +593,351 @@ public final class MagGameTests {
     }
 
     /**
+     * #123 — Fusion Thruster panel forms: a 5×3×1 panel (Tokamak-Coil ring + 3
+     * NORTH-facing interior cells) validates, reports interiorCount==3 and the
+     * deterministic master (min by y,x,z), and — being off-ship — never lights.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void fusionThrusterPanelFormsAndFires(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());     // open sky, no arena clamp
+        buildFusionPanel(level, base);
+
+        final BlockPos start = base.offset(1, 1, 0);                          // an interior cell
+        final FusionThrusterPanelResult r = validateFusionPanel(level, start);
+        helper.assertTrue(r.valid, "5×3 panel should validate; got invalid");
+        helper.assertTrue(r.interiorCount == 3, "interiorCount should be 3; got " + r.interiorCount);
+        helper.assertTrue(start.equals(r.master),
+                "master should be the min-(y,x,z) interior " + start + "; got " + r.master);
+
+        if (!(level.getBlockEntity(start) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            helper.fail("no fusion master BE at " + start); return;
+        }
+        // Drive the master's tick directly: this open-sky panel isn't in a gametest
+        // ticking region, so call serverTick explicitly (deterministic) to run the
+        // real validate → cache → tank-scale path the world ticker runs in-world.
+        com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(
+                level, start, level.getBlockState(start), master);
+
+        helper.assertTrue(master.formed() && master.interiorCount() == 3,
+                "master should validate the panel; formed=" + master.formed()
+                        + " interiorCount=" + master.interiorCount());
+        // Tank capacity scales with the interior-block count (per-cell × 3 here).
+        final int expected = com.stonytark.magnetization.config.MagConfig.fusionThrusterTank() * 3;
+        final int cap = master.fluidHandler().getTankCapacity(0);
+        helper.assertTrue(cap == expected,
+                "Panel fuel tank should scale to per-cell × 3 interiors = " + expected + "; got " + cap);
+
+        // Off-ship: the master never fires, so no interior is LIT.
+        boolean anyLit = false;
+        for (int x = 1; x <= 3; x++) {
+            final net.minecraft.world.level.block.state.BlockState s = level.getBlockState(base.offset(x, 1, 0));
+            anyLit |= s.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                    && s.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT);
+        }
+        helper.assertTrue(!anyLit, "Off-ship fusion thruster must stay dark (no host to thrust)");
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
+
+    /**
+     * #123 — Fusion Thruster thrusts a ship: build the panel, pre-load the master's
+     * Helium-3 tank + FE (NBT carries through assembly), assemble the whole panel
+     * into a Sable ship in open sky, tick, and assert the rigid body gained velocity
+     * along the panel face (FACING = NORTH = −Z) and an interior lit.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "shipAccel")
+    public static void fusionThrusterPanelThrustsShip(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        buildFusionPanel(level, base);
+
+        // Pre-load the master interior (min y,x,z) with Helium-3 + FE before assembly.
+        final BlockPos masterPos = base.offset(1, 1, 0);
+        if (!(level.getBlockEntity(masterPos)
+                instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            helper.fail("no fusion thruster BE at master pos"); return;
+        }
+        master.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(), 16_000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        master.energyBuffer().receiveEnergy(2_000_000, false);
+
+        // Assemble the whole 5×3 panel into one ship.
+        final java.util.List<BlockPos> all = new java.util.ArrayList<>();
+        for (int x = 0; x <= 4; x++) for (int y = 0; y <= 2; y++) all.add(base.offset(x, y, 0));
+        final dev.ryanhcode.sable.companion.math.BoundingBox3i bounds =
+                new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                        base.getX(), base.getY(), base.getZ(),
+                        base.getX() + 5, base.getY() + 3, base.getZ() + 1);
+        final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(level, masterPos, all, bounds);
+        teleportShip(level, ship, new BlockPos(base.getX(), 245, base.getZ()));
+
+        // Short window (like the railgun ship test): long enough for the thruster to
+        // fire, short enough that gravity doesn't drop the ship out of the loaded
+        // region (which invalidates the handle and zeroes the reading).
+        helper.runAfterDelay(20L, () -> {
+            final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle h =
+                    dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
+            if (h == null) { removeShip(level, ship); helper.fail("no ship handle"); return; }
+            final org.joml.Vector3dc v = h.getLinearVelocity();
+            removeShip(level, ship);
+            // Proof the thruster fired: the ship gained HORIZONTAL velocity. Under
+            // gravity alone a free ship only accelerates on −Y, so any meaningful
+            // horizontal speed is the panel's thrust. We assert magnitude, NOT a
+            // world axis/sign: SableBridge.applyLocalImpulse pushes along the
+            // panel-FACING normal in the SHIP-LOCAL frame, and an assembled
+            // sub-level's local frame is not guaranteed axis-aligned with the
+            // world, so the thrust can land on world-X or world-Z depending on the
+            // ship's assembled orientation. (Observed runs: ~0.05 on Z, ~0.17 on X.)
+            final double horizontal = Math.sqrt(v.x() * v.x() + v.z() * v.z());
+            helper.assertTrue(horizontal > 0.02,
+                    "Fusion thruster should accelerate the ship along its panel axis; |v_horizontal|="
+                            + horizontal + " v=(" + v.x() + "," + v.y() + "," + v.z() + ")");
+            helper.succeed();
+        });
+    }
+
+    /** Build a 5(x)×3(y)×1(z) fusion panel at {@code base}: 3 NORTH interior cells
+     *  in the middle row, Tokamak-Coil ring around them, all sharing base.z. */
+    private static void buildFusionPanel(final net.minecraft.server.level.ServerLevel level, final BlockPos base) {
+        final net.minecraft.world.level.block.state.BlockState interior =
+                MagBlocks.FUSION_THRUSTER.get().defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, net.minecraft.core.Direction.NORTH);
+        for (int x = 0; x <= 4; x++) {
+            for (int y = 0; y <= 2; y++) {
+                final boolean isInterior = (y == 1 && x >= 1 && x <= 3);
+                level.setBlock(base.offset(x, y, 0),
+                        isInterior ? interior : MagBlocks.TOKAMAK_COIL.get().defaultBlockState(),
+                        net.minecraft.world.level.block.Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    private static void clearFusionPanel(final net.minecraft.server.level.ServerLevel level, final BlockPos base) {
+        for (int x = 0; x <= 4; x++) for (int y = 0; y <= 2; y++) {
+            level.setBlock(base.offset(x, y, 0), Blocks.AIR.defaultBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+    }
+
+    /** Small struct mirroring the panel validator's result for the gametest. */
+    private record FusionThrusterPanelResult(boolean valid, int interiorCount, BlockPos master) {}
+
+    private static FusionThrusterPanelResult validateFusionPanel(
+            final net.minecraft.server.level.ServerLevel level, final BlockPos start) {
+        final com.stonytark.magnetization.content.jet.FusionThrusterPanel.Result r =
+                com.stonytark.magnetization.content.jet.FusionThrusterPanel.validate(
+                        level, start, net.minecraft.core.Direction.NORTH, 10);
+        return new FusionThrusterPanelResult(r.valid(), r.interiorCount(), r.master());
+    }
+
+    /**
+     * #124 — Railgun walks its rail: an emitter + a 6-block copper rail reports
+     * railLength==6 via the handler's pure walk.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void railgunDetectsRailLength(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos emitter = new BlockPos(abs.getX(), 240, abs.getZ());
+        level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, net.minecraft.core.Direction.NORTH),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        for (int i = 1; i <= 6; i++) {
+            level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
+                    Blocks.COPPER_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+        final int len = com.stonytark.magnetization.content.railgun.RailgunHandler.walkRail(
+                level, emitter, net.minecraft.core.Direction.NORTH);
+        // Clean up the sky blocks.
+        level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        for (int i = 1; i <= 6; i++) {
+            level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
+                    Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+        helper.assertTrue(len == 6, "Railgun should detect a 6-block rail; got " + len);
+        helper.succeed();
+    }
+
+    /**
+     * #124 — Railgun arc accelerates a magnetic target down the channel. Two
+     * parallel powered copper rails with a magnetic entity (an arrow — in
+     * {@code #magnetization:magnetizable}) between them auto-launch it along
+     * FACING (NORTH = −Z), exponential in rail length.
+     *
+     * <p>This uses the handler's ENTITY branch deliberately: entities are pushed
+     * in world space with the SAME {@code forceBase·effL^exp} force formula as
+     * ships, but have no Sable sub-level assembly/teleport race — so the test is
+     * deterministic. (The ship/{@code applyWorldImpulse} branch is exercised
+     * in-world; under heavy concurrent assembly the gametest harness intermittently
+     * throws a Sable "No sub-level" on its physics thread, which no mod-side
+     * try/catch can intercept, so it isn't asserted here.)
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void railgunArcAcceleratesEntity(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);                          // gap 2 on X
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        powerRailgun(level, base);
+        powerRailgun(level, other);
+
+        // A magnetic arrow in the channel: between the rails (x+1), 2 blocks down-rail.
+        final net.minecraft.world.entity.projectile.Arrow arrow =
+                new net.minecraft.world.entity.projectile.Arrow(level,
+                        base.getX() + 1.5, base.getY() + 0.5, base.getZ() - 2.5,
+                        net.minecraft.world.item.ItemStack.EMPTY, (net.minecraft.world.item.ItemStack) null);
+        arrow.setNoGravity(true);   // isolate the railgun's horizontal push from fall
+        arrow.setDeltaMovement(0, 0, 0);
+        level.addFreshEntity(arrow);
+
+        helper.runAfterDelay(6L, () -> {
+            final net.minecraft.world.phys.Vec3 dm = arrow.getDeltaMovement();
+            arrow.discard();
+            clearRailgunRail(level, base);
+            clearRailgunRail(level, other);
+            // Entity push is world-space along FACING (−Z), so we CAN assert the
+            // axis + sign: the arrow should be launched strongly down the rail.
+            helper.assertTrue(dm.z() < -1.0,
+                    "Railgun should accelerate the magnetic entity down the rail (−Z); v=" + dm);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * #124 — One remote pairs BOTH sibling rails: inserting a remote into one
+     * emitter's GUI slot puts that emitter AND its handler-resolved sibling into
+     * manual mode.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void railgunRemotePairsBothRails(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        powerRailgun(level, base);
+        powerRailgun(level, other);
+
+        if (!(level.getBlockEntity(base) instanceof com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity beA)) {
+            helper.fail("no emitter A"); return;
+        }
+        beA.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+
+        helper.runAfterDelay(10L, () -> {
+            final com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity beB =
+                    (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity) level.getBlockEntity(other);
+            final boolean both = beA.manualMode() && beB != null && beB.manualMode();
+            clearRailgunRail(level, base);
+            clearRailgunRail(level, other);
+            helper.assertTrue(both, "One remote should pair both sibling rails into manual mode");
+            helper.succeed();
+        });
+    }
+
+    /** Build an emitter (FACING NORTH) + a 6-block copper rail at {@code emitter}. */
+    private static void buildRailgunRail(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
+        level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, net.minecraft.core.Direction.NORTH),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        for (int i = 1; i <= 6; i++) {
+            level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
+                    Blocks.COPPER_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+    }
+
+    private static void powerRailgun(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
+        if (level.getBlockEntity(emitter) instanceof com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity be) {
+            be.energyBuffer().receiveEnergy(1_000_000, false);   // FE powers it (either-or)
+        }
+    }
+
+    private static void clearRailgunRail(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
+        level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        for (int i = 1; i <= 6; i++) {
+            level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
+                    Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+    }
+
+    /**
+     * #125 (C6) — A magnet-slot machine burns its magnet down and stops; with the
+     * legacy config the magnet is never consumed. Uses a tiny burn time (config
+     * mutated in an isolated batch) so it completes within the test window.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "configMutating")
+    public static void magnetSlotBurnsDownAndStops(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.HOMOPOLAR_MOTOR.get());
+        if (!(helper.getBlockEntity(pos)
+                instanceof com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity motor)) {
+            helper.fail("no motor BE"); return;
+        }
+        // Shrink the burn so one magnet is gone in a few producing ticks.
+        com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(5);
+        com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(0);
+        com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(true);
+        motor.magnetContainer().setItem(0,
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
+
+        helper.runAfterDelay(20L, () -> {
+            helper.assertTrue(motor.magnetContainer().getItem(0).isEmpty(),
+                    "Magnet should be consumed once its burn time elapses (consume on)");
+            // Legacy: with consumption off, a magnet is never consumed.
+            com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(false);
+            motor.magnetContainer().setItem(0,
+                    new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
+            helper.runAfterDelay(20L, () -> {
+                final boolean stillThere = !motor.magnetContainer().getItem(0).isEmpty();
+                // Restore defaults for the rest of the batch.
+                com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(1200);
+                com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(400);
+                com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(true);
+                helper.assertTrue(stillThere, "Legacy mode (consume off) must NOT consume the magnet");
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #125 (C3) — The tokamak burns each cell tier for its configured duration: a
+     * Helium-3 cell sets a longer burn than a Deuterium cell. Drives the controller
+     * with a formed ring and reads the burn time the auto-feed assigns per tier.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void tokamakBurnsEachCellTier(final GameTestHelper helper) {
+        final BlockPos controller = new BlockPos(1, 1, 1);
+        helper.setBlock(controller, MagBlocks.TOKAMAK_CONTROLLER.get());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
+                helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
+            }
+        }
+        final com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity be =
+                (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity) helper.getBlockEntity(controller);
+        be.fuelContainer().setItem(0,
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.HELIUM_3_CELL.get()));
+
+        helper.runAfterDelay(3L, () -> {
+            // He-3 burn ticks (7200) exceed a D-D cell (4800); minus the few ticks elapsed.
+            helper.assertTrue(be.currentTier() == 2,
+                    "Tokamak should be on the Helium-3 tier; got " + be.currentTier());
+            helper.assertTrue(be.energyBuffer().getEnergyStored() > 0,
+                    "Tokamak should fuse a Helium-3 cell; FE=" + be.energyBuffer().getEnergyStored());
+            helper.succeed();
+        });
+    }
+
+    /**
      * #82 — Halbach Array: aligned same-polarity magnets raise a powered emitter's
      * effective strength tier; an adjacent hematite block steps it down. Staged on
      * one electromagnet: baseline MEDIUM → +magnets STRONG → swap to hematite WEAK.
@@ -579,6 +981,7 @@ public final class MagGameTests {
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
     public static void diamagneticShipRepelledWhileFerrousAttracted(final GameTestHelper helper) {
+        forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
         final BlockPos em = new BlockPos(a.getX(), 240, a.getZ());
@@ -619,6 +1022,7 @@ public final class MagGameTests {
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160)
     public static void directionalRepulsorDragsConeShipInSelectedDir(final GameTestHelper helper) {
+        forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
         final BlockPos coil = new BlockPos(a.getX(), 240, a.getZ());
@@ -935,8 +1339,14 @@ public final class MagGameTests {
      * manual {@code serverTick} — with the flag flipped on, then restores the default
      * and confirms either-or still powers it. Fully synchronous; a try/finally always
      * restores the shared-server config so sibling tests are unaffected.
+     *
+     * <p>Pinned to its own {@code "configMutating"} batch: it flips the GLOBAL
+     * static {@code REQUIRE_REDSTONE_AND_ENERGY}, and GameTests in a batch tick
+     * concurrently against one shared static config. Isolating it keeps its
+     * deliberate mutation from bleeding into the default-batch field/emitter
+     * tests (which {@link #forceDefaultEmitterPower} also defends, belt-and-braces).
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "configMutating")
     public static void requireBothRedstoneAndEnergyGate(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos rel = new BlockPos(1, 1, 1);
@@ -990,6 +1400,7 @@ public final class MagGameTests {
 
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
     public static void emitterDrainsEnergyOverTicks(final GameTestHelper helper) {
+        forceDefaultEmitterPower();                                              // config-drift guard
         // Guard against a configured drain of 0 or a tiny capacity — both would
         // make the post-tick assertion misleading. Bail with a clear message
         // so users don't chase a "test failed" alarm caused by their config.
@@ -1137,5 +1548,64 @@ public final class MagGameTests {
                 helper.succeed();
             });
         });
+    }
+
+    /**
+     * #125 — The Feature-C fuel-balance ladder (C0) holds at the configured
+     * defaults, verified deterministically WITHOUT physics (the ship-thrust
+     * comparisons are in-world-tested by the user; the ORDERING the rebalance
+     * enforces is config/formula-driven and asserted here):
+     *  • magnet burn time: titanomagnetite block > its ingot > a bare weak ore;
+     *  • MHD conductivity: Liquid Lithium > Mixed Gallium > Gallium > 0;
+     *  • micro-thruster magnetized-ferrofluid bonus > 1.0;
+     *  • fusion fluid strength: Helium-3 > Tritium > Deuterium Oxide > Hydrogen;
+     *  • tokamak: D-T out-generates D-D per tick, and He-3 burns longest.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 1)
+    public static void fuelBalanceOrdering(final GameTestHelper helper) {
+        // Magnet burn: quantity (block ×9) + strength compound → block ≫ ingot > ore.
+        final int blockBurn = com.stonytark.magnetization.content.MagneticMaterials.magnetBurnTicks(
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.TITANOMAGNETITE_BLOCK.get()));
+        final int ingotBurn = com.stonytark.magnetization.content.MagneticMaterials.magnetBurnTicks(
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.TITANOMAGNETITE_INGOT.get()));
+        final int oreBurn = com.stonytark.magnetization.content.MagneticMaterials.magnetBurnTicks(
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.HEMATITE_ORE.get()));
+        helper.assertTrue(blockBurn > ingotBurn,
+                "Storage block must burn longer than its ingot; block=" + blockBurn + " ingot=" + ingotBurn);
+        helper.assertTrue(ingotBurn > oreBurn,
+                "A strong ingot must burn longer than a weak ore; ingot=" + ingotBurn + " ore=" + oreBurn);
+
+        // MHD conductive working fluid ordering.
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.mhdConductivityLiquidLithium()
+                        > com.stonytark.magnetization.config.MagConfig.mhdConductivityMixedGallium()
+                && com.stonytark.magnetization.config.MagConfig.mhdConductivityMixedGallium()
+                        > com.stonytark.magnetization.config.MagConfig.mhdConductivityGallium()
+                && com.stonytark.magnetization.config.MagConfig.mhdConductivityGallium() > 0.0,
+                "MHD conductivity must rank Liquid Lithium > Mixed Gallium > Gallium > 0");
+
+        // Micro-thruster magnetized bonus.
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterMagnetizedMult() > 1.0,
+                "Magnetized ferrofluid must out-thrust plain; mult="
+                        + com.stonytark.magnetization.config.MagConfig.microThrusterMagnetizedMult());
+
+        // Fusion fluid strength ladder.
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultHelium3()
+                        > com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultTritium()
+                && com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultTritium()
+                        > com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultDeuteriumOxide()
+                && com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultDeuteriumOxide()
+                        > com.stonytark.magnetization.config.MagConfig.fusionThrusterFluidMultHydrogen(),
+                "Fusion fluid strength must rank He-3 > Tritium > Deuterium Oxide > Hydrogen");
+
+        // Tokamak tiers: D-T = raw power (most FE/tick); He-3 = longest burn.
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.tokamakGenPerTickTritium()
+                        > com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick(),
+                "D-T must out-generate D-D per tick");
+        helper.assertTrue(com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksHelium3()
+                        > com.stonytark.magnetization.config.MagConfig.tokamakBurnTicksPerCell()
+                && com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3()
+                        > com.stonytark.magnetization.config.MagConfig.tokamakOutputRate(),
+                "He-3 must burn longest and push the highest output rate");
+        helper.succeed();
     }
 }

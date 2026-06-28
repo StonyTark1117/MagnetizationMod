@@ -34,6 +34,9 @@ public final class MagCreativeTab {
                         accept(output, MagItems.DEEPSLATE_HEMATITE_ORE);
                         accept(output, MagItems.TITANOMAGNETITE_ORE);
                         accept(output, MagItems.DEEPSLATE_TITANOMAGNETITE_ORE);
+                        accept(output, MagItems.LITHIUM_ORE);
+                        accept(output, MagItems.DEEPSLATE_LITHIUM_ORE);
+                        accept(output, MagItems.HELIUM_3_CRYSTAL_BLOCK);
                         // ── Raw drops ──
                         accept(output, MagItems.RAW_MAGNETITE);
                         accept(output, MagItems.RAW_MAGHEMITE);
@@ -140,6 +143,11 @@ public final class MagCreativeTab {
                         accept(output, MagItems.HEMATITE_LENS);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.DEUTERIUM_CELL);
+                        accept(output, MagItems.TRITIUM_CELL);
+                        accept(output, MagItems.HELIUM_3_CELL);
+                        accept(output, MagItems.LITHIUM);
+                        accept(output, MagItems.RAW_LITHIUM);
+                        accept(output, MagItems.HELIUM_3_GAS);
                         accept(output, MagItems.PYRRHOTITE_CATALYST);
                         accept(output, MagItems.ENHANCED_PYRRHOTITE_CATALYST);
                         accept(output, MagItems.COSMIC_PYRRHOTITE_CATALYST);
@@ -153,6 +161,10 @@ public final class MagCreativeTab {
                         accept(output, MagItems.DEUTERIUM_OXIDE_BUCKET);
                         accept(output, MagItems.GALLIUM_BUCKET);
                         accept(output, MagItems.MIXED_GALLIUM_BUCKET);
+                        accept(output, MagItems.HYDROGEN_BUCKET);
+                        accept(output, MagItems.TRITIUM_BUCKET);
+                        accept(output, MagItems.HELIUM_3_BUCKET);
+                        accept(output, MagItems.LIQUID_LITHIUM_BUCKET);
                         accept(output, MagItems.MR_FLUID_GOLEM_SPAWN_EGG);
 
                         // ── Compasses & handheld tools ──
@@ -186,12 +198,16 @@ public final class MagCreativeTab {
                         accept(output, MagItems.HOMOPOLAR_MOTOR);
                         accept(output, MagItems.TOKAMAK_CONTROLLER);
                         accept(output, MagItems.TOKAMAK_COIL);
+                        accept(output, MagItems.ELECTROLYZER);
                         accept(output, MagItems.G_FORCE_CUSHION);
 
                         // ── Propulsion ──
                         accept(output, MagItems.SOLAR_SAIL);
                         accept(output, MagItems.MHD_JET);
                         accept(output, MagItems.MICRO_THRUSTER);
+                        accept(output, MagItems.FUSION_THRUSTER);
+                        accept(output, MagItems.RAILGUN_EMITTER);
+                        accept(output, MagItems.RAILGUN_REMOTE);
 
                         // ── Magnetic-metal anvils ──
                         accept(output, MagItems.MAGNETITE_ANVIL);

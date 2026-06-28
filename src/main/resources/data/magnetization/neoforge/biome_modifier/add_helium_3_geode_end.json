@@ -1,0 +1,1 @@
+{ "type": "neoforge:add_features", "biomes": "#minecraft:is_end", "features": "magnetization:helium_3_geode_end", "step": "local_modifications" }

@@ -22,6 +22,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.minecraft.world.level.material.Fluid;
+import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.content.MagneticMaterials;
+import com.stonytark.magnetization.registry.MagFluids;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -48,14 +55,38 @@ public class MhdJetBlockEntity extends BlockEntity
         @Override public int getMaxStackSize() { return 1; }
         @Override public void setChanged() { super.setChanged(); MhdJetBlockEntity.this.setChanged(); }
     };
+    /** Conductive working fluid — the magnetohydrodynamic propellant. */
+    private final FluidTank fluidTank = new FluidTank(MagConfig.mhdJetTank(), fs -> conductivityMult(fs.getFluid()) > 0);
+    /** Active ticks left before the installed magnet is consumed (when enabled). */
+    private int burnRemaining = 0;
 
     public MhdJetBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MHD_JET.get(), pos, state);
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    public IFluidHandler fluidHandler() { return fluidTank; }
     public ItemStack getMagnet() { return magnetSlot.getItem(0); }
     public net.minecraft.world.Container magnetContainer() { return magnetSlot; }
+    public int burnRemaining() { return burnRemaining; }
+
+    /** Conductivity multiplier of the working fluid (0 = not a conductive fluid). */
+    private static double conductivityMult(final Fluid fluid) {
+        if (fluid == MagFluids.GALLIUM.get()) return MagConfig.mhdConductivityGallium();
+        if (fluid == MagFluids.MIXED_GALLIUM.get()) return MagConfig.mhdConductivityMixedGallium();
+        if (fluid == MagFluids.LIQUID_LITHIUM.get()) return MagConfig.mhdConductivityLiquidLithium();
+        return 0.0;
+    }
+
+    /** Pour one conductive-fluid bucket (1000 mB) into the tank if it matches/empty. */
+    public boolean fillFromBucket(final Fluid fluid) {
+        if (conductivityMult(fluid) <= 0) return false;
+        final FluidStack stack = new FluidStack(fluid, 1000);
+        if (fluidTank.fill(stack, IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
+        fluidTank.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+        setChanged();
+        return true;
+    }
 
     public ItemStack setMagnet(final ItemStack stack) {
         final ItemStack prev = magnetSlot.getItem(0);
@@ -70,6 +101,8 @@ public class MhdJetBlockEntity extends BlockEntity
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.mhdJetFeCapacity(); }
+    @Override public int guiStat1() { return fluidTank.getFluidAmount(); }   // conductive fluid mB
+    @Override public int guiStat2() { return burnRemaining; }                // magnet burn ticks left
 
     /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnetic material —
      *  STRONG by design, and scaling with the material's potency. A stronger
@@ -87,6 +120,22 @@ public class MhdJetBlockEntity extends BlockEntity
     }
 
     public static boolean isMagnet(final ItemStack stack) { return tier(stack) != null; }
+
+    /** Burn down the installed magnet while the jet is firing; consume + reload at 0. */
+    private void burnMagnetTick() {
+        if (!MagConfig.magnetSlotConsumesFuel()) return;
+        final ItemStack magnet = getMagnet();
+        if (magnet.isEmpty()) { if (burnRemaining != 0) burnRemaining = 0; return; }
+        if (burnRemaining <= 0) burnRemaining = MagneticMaterials.magnetBurnTicks(magnet);
+        burnRemaining--;
+        if (burnRemaining <= 0) {
+            magnet.shrink(1);
+            magnetSlot.setItem(0, magnet);
+            final ItemStack next = getMagnet();
+            burnRemaining = next.isEmpty() ? 0 : MagneticMaterials.magnetBurnTicks(next);
+            setChanged();
+        }
+    }
 
     /** Vanilla ticker: the jet is in the open world (or, defensively, a
      *  contraption still driven by the world ticker) — resolve its host ship. */
@@ -106,10 +155,16 @@ public class MhdJetBlockEntity extends BlockEntity
      *  sits on a ship (its {@code host}); off-ship it's inert. */
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
         final double[] t = tier(getMagnet());
-        final boolean firing = t != null && host != null && energy.getEnergyStored() >= (int) t[2];
+        final int fluidCost = MagConfig.mhdJetFluidPerTick();
+        final double mult = conductivityMult(fluidTank.getFluid().getFluid());
+        final boolean hasFluid = mult > 0 && fluidTank.getFluidAmount() >= fluidCost;
+        final boolean firing = t != null && host != null
+                && energy.getEnergyStored() >= (int) t[2] && hasFluid;
         if (firing) {
             energy.drainInternal((int) t[2]);
-            thrustHost(host, t[0], t[1]);
+            if (fluidCost > 0) fluidTank.drain(fluidCost, IFluidHandler.FluidAction.EXECUTE);
+            thrustHost(host, t[0], t[1] * mult);   // conductivity scales thrust
+            burnMagnetTick();
         }
         final BlockState state = getBlockState();
         if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != firing) {
@@ -154,6 +209,8 @@ public class MhdJetBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.put("Magnet", magnetSlot.createTag(registries));
+        tag.put("Fluid", fluidTank.writeToNBT(registries, new CompoundTag()));
+        tag.putInt("BurnRemaining", burnRemaining);
     }
 
     @Override
@@ -161,6 +218,8 @@ public class MhdJetBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         energy.setStored(tag.getInt("Energy"));
         magnetSlot.fromTag(tag.getList("Magnet", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+        fluidTank.readFromNBT(registries, tag.getCompound("Fluid"));
+        burnRemaining = tag.getInt("BurnRemaining");
     }
 
     @Override

@@ -51,7 +51,14 @@ public class MicroThrusterBlockEntity extends BlockEntity
     private static final double THRUST_DV = 2.5;          // 50 b/s^2 acceleration
 
     private final FluidTank tank = new FluidTank(com.stonytark.magnetization.config.MagConfig.microThrusterTank(),
-            fs -> fs.getFluid() == MagFluids.FERROFLUID.get());
+            fs -> fs.getFluid() == MagFluids.FERROFLUID.get() || fs.getFluid() == MagFluids.MAGNETIZED_FERROFLUID.get());
+
+    /** Thrust multiplier of the tank's current fluid — magnetized ferrofluid spikes
+     *  harder. Plain ferrofluid (or empty) = 1.0; magnetized = configured mult. */
+    private double fluidMult() {
+        return tank.getFluid().getFluid() == MagFluids.MAGNETIZED_FERROFLUID.get()
+                ? com.stonytark.magnetization.config.MagConfig.microThrusterMagnetizedMult() : 1.0;
+    }
     private final ReceiveBuffer energy = new ReceiveBuffer(com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(), com.stonytark.magnetization.config.MagConfig.microThrusterFeReceive());
     /** Bucket-input slot — ferrofluid buckets are auto-drained into the tank. */
     private final net.minecraft.world.SimpleContainer bucketSlot = new net.minecraft.world.SimpleContainer(1) {
@@ -111,9 +118,10 @@ public class MicroThrusterBlockEntity extends BlockEntity
                 && tank.getFluidAmount() >= com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick()
                 && energy.getEnergyStored() >= com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick();
         if (firing) {
+            final double mult = fluidMult();
             tank.drain(com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick(), IFluidHandler.FluidAction.EXECUTE);
             energy.drainInternal(com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick());
-            thrustHost(host);
+            thrustHost(host, mult);
             setChanged();
         }
         final BlockState state = getBlockState();
@@ -128,7 +136,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
     /** Push the host ship along the thruster's facing (world-space), capped at
      *  MAX_SPEED, applied at the centre of mass (pure forward thrust, no spin).
      *  Force is mass-scaled so acceleration is consistent across ship sizes. */
-    private void thrustHost(final ServerSubLevel host) {
+    private void thrustHost(final ServerSubLevel host, final double fluidMult) {
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
         final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
                 ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.UP;
@@ -144,7 +152,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
         if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= com.stonytark.magnetization.config.MagConfig.microThrusterMaxSpeed()) return;
 
         final double mass = host.getMassTracker().getMass();
-        final double force = com.stonytark.magnetization.config.MagConfig.microThrusterThrust() * 20.0 * mass;
+        final double force = com.stonytark.magnetization.config.MagConfig.microThrusterThrust() * fluidMult * 20.0 * mass;
         final Vector3dc com = host.getMassTracker().getCenterOfMass();
         SableBridge.applyLocalImpulse(host,
                 new Vector3d(com.x(), com.y(), com.z()),

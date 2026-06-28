@@ -77,7 +77,8 @@ public final class MagBlockTagsProvider extends BlockTagsProvider {
                 .add(MagBlocks.RAW_MAGNETITE_BLOCK.get())
                 .add(MagBlocks.MAGHEMITE_ORE.get()).add(MagBlocks.DEEPSLATE_MAGHEMITE_ORE.get()).add(MagBlocks.RAW_MAGHEMITE_BLOCK.get())
                 .add(MagBlocks.PYRRHOTITE_ORE.get()).add(MagBlocks.DEEPSLATE_PYRRHOTITE_ORE.get()).add(MagBlocks.RAW_PYRRHOTITE_BLOCK.get())
-                .add(MagBlocks.HEMATITE_ORE.get()).add(MagBlocks.DEEPSLATE_HEMATITE_ORE.get()).add(MagBlocks.RAW_HEMATITE_BLOCK.get());
+                .add(MagBlocks.HEMATITE_ORE.get()).add(MagBlocks.DEEPSLATE_HEMATITE_ORE.get()).add(MagBlocks.RAW_HEMATITE_BLOCK.get())
+                .add(MagBlocks.LITHIUM_ORE.get()).add(MagBlocks.DEEPSLATE_LITHIUM_ORE.get());
 
         // Iron tier mirrors vanilla iron_block. Titanomagnetite is rare-and-deep so
         // it sits at iron-tier; the storage blocks for the other oxides match.

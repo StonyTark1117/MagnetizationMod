@@ -1,0 +1,193 @@
+package com.stonytark.magnetization.content.railgun;
+
+import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.menu.MachineMenu;
+import com.stonytark.magnetization.registry.MagBlockEntities;
+import com.stonytark.magnetization.registry.MagItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+
+/**
+ * Railgun emitter (control block at the breech of a rail). Holds the arc state
+ * machine for a two-rail accelerator: {@link RailgunHandler} walks its rail,
+ * pairs it with a parallel sibling, and — when a ship/entity is in the channel —
+ * launches it down the rail with exponential force (the inverse of Lenz braking).
+ *
+ * <p>Power: redstone OR buffered FE (either-or). A {@link RailgunRemoteItem} in
+ * the GUI slot switches the arc to manual mode (hold a target on the rail, then
+ * fire it with the bound remote in hand). One pairing covers both sibling rails.
+ */
+public class RailgunEmitterBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineGuiData {
+
+    /** Arc lifecycle. The lower-BlockPos emitter of a pair owns the live state. */
+    public enum ArcState { IDLE, HOLDING, LAUNCHING, COOLDOWN }
+
+    private final ReceiveBuffer energy = new ReceiveBuffer(
+            MagConfig.railgunFeCapacity(), MagConfig.railgunFeReceive());
+    private boolean redstonePowered;
+    private boolean energyActiveThisTick;
+
+    private ArcState state = ArcState.IDLE;
+    private int launchTicks;
+    private int cooldownTicks;
+    private boolean manualMode;     // a remote is paired on this arc
+    private boolean fireRequested;  // set by the bound remote; consumed by the handler
+
+    private int railLength;         // cached by the handler each scan
+
+    /** Remote-trigger slot. Inserting a remote binds it (manual mode); empty = auto. */
+    private final SimpleContainer remoteSlot = new SimpleContainer(1) {
+        @Override public boolean canPlaceItem(final int s, final ItemStack st) {
+            return st.is(MagItems.RAILGUN_REMOTE.get());
+        }
+        @Override public void setChanged() {
+            super.setChanged();
+            RailgunEmitterBlockEntity.this.onRemoteSlotChanged();
+            RailgunEmitterBlockEntity.this.setChanged();
+        }
+    };
+
+    public RailgunEmitterBlockEntity(final BlockPos pos, final BlockState state) {
+        super(MagBlockEntities.RAILGUN_EMITTER.get(), pos, state);
+    }
+
+    public IEnergyStorage energyBuffer() { return energy; }
+    public Container remoteContainer() { return remoteSlot; }
+
+    public ArcState arcState() { return state; }
+    public void setArcState(final ArcState s) { if (state != s) { state = s; setChanged(); } }
+    public int launchTicks() { return launchTicks; }
+    public void setLaunchTicks(final int t) { launchTicks = t; }
+    public int cooldownTicks() { return cooldownTicks; }
+    public void setCooldownTicks(final int t) { cooldownTicks = t; }
+    public boolean manualMode() { return manualMode; }
+    public void setManualMode(final boolean m) { if (manualMode != m) { manualMode = m; setChanged(); } }
+    public int railLength() { return railLength; }
+    public void setRailLength(final int l) { if (railLength != l) { railLength = l; setChanged(); } }
+
+    /** Consume the one-shot fire request (set by the bound remote). */
+    public boolean consumeFireRequest() {
+        if (!fireRequested) return false;
+        fireRequested = false;
+        return true;
+    }
+    public void requestFire() { fireRequested = true; setChanged(); }
+
+    public void setRedstonePowered(final boolean p) { if (redstonePowered != p) { redstonePowered = p; setChanged(); } }
+
+    /** Both a redstone signal OR buffered FE arm the emitter (either-or). */
+    public boolean isPowered() {
+        final boolean redstone = MagConfig.allowRedstonePower() && redstonePowered;
+        final boolean fe = MagConfig.allowEnergyPower() && energy.getEnergyStored() > 0;
+        return redstone || fe;
+    }
+
+    /** Drain FE for one tick of arc work; returns true if it could be paid (or if
+     *  redstone covers it for free). */
+    public boolean drawPower(final int cost) {
+        if (cost <= 0) return true;
+        if (energy.getEnergyStored() >= cost) { energy.drainInternal(cost); energyActiveThisTick = true; return true; }
+        // Redstone keeps the arc live even with an empty buffer (free power).
+        return MagConfig.allowRedstonePower() && redstonePowered;
+    }
+
+    private void onRemoteSlotChanged() {
+        final ItemStack remote = remoteSlot.getItem(0);
+        final boolean bound = remote.is(MagItems.RAILGUN_REMOTE.get());
+        // Manual mode follows the presence of a remote; the handler mirrors it to the sibling.
+        setManualMode(bound);
+        if (bound && level != null && !level.isClientSide) {
+            // Bind the remote to THIS emitter so the in-hand fire targets this arc.
+            RailgunRemoteItem.bind(remote, getBlockPos(), level.dimension());
+        } else if (!bound && state == ArcState.HOLDING) {
+            setArcState(ArcState.IDLE);   // unpairing returns the arc to auto
+        }
+    }
+
+    // ── MachineGuiData (Kind.RAILGUN: rail length + mode/state, FE bar) ──
+    @Override public Container guiInput() { return remoteSlot; }
+    @Override public MachineMenu.Kind guiKind() { return MachineMenu.Kind.RAILGUN; }
+    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyMax() { return MagConfig.railgunFeCapacity(); }
+    @Override public int guiStat1() { return railLength; }
+    /** Pack mode (bit 4) + arc state ordinal (bits 0-3) into one synced int. */
+    @Override public int guiStat2() { return (manualMode ? 16 : 0) | state.ordinal(); }
+
+    public static void serverTick(final net.minecraft.world.level.Level level, final BlockPos pos,
+                                  final BlockState st, final RailgunEmitterBlockEntity be) {
+        be.energyActiveThisTick = false;
+        // The heavy lifting (rail walk / pairing / acceleration) lives in the
+        // RailgunHandler so a single pass covers a whole arc; per-BE tick just
+        // decays the cooldown so an unpaired/idle emitter still re-arms.
+        if (be.state == ArcState.COOLDOWN && be.cooldownTicks > 0) {
+            be.cooldownTicks--;
+            if (be.cooldownTicks <= 0) be.setArcState(ArcState.IDLE);
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide) RailgunRegistry.register(level, getBlockPos());
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level != null && !level.isClientSide) RailgunRegistry.unregister(level, getBlockPos());
+    }
+
+    @Override
+    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("Energy", energy.getEnergyStored());
+        tag.putByte("State", (byte) state.ordinal());
+        tag.putInt("Launch", launchTicks);
+        tag.putInt("Cooldown", cooldownTicks);
+        tag.putBoolean("Manual", manualMode);
+        tag.putBoolean("RedstonePowered", redstonePowered);
+        tag.putInt("RailLength", railLength);
+        tag.put("Remote", remoteSlot.createTag(registries));
+    }
+
+    @Override
+    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        energy.setStored(tag.getInt("Energy"));
+        state = ArcState.values()[Math.min(ArcState.values().length - 1, tag.getByte("State") & 0xFF)];
+        launchTicks = tag.getInt("Launch");
+        cooldownTicks = tag.getInt("Cooldown");
+        manualMode = tag.getBoolean("Manual");
+        redstonePowered = tag.getBoolean("RedstonePowered");
+        railLength = tag.getInt("RailLength");
+        remoteSlot.fromTag(tag.getList("Remote", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
+        final CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    private static final class ReceiveBuffer extends EnergyStorage {
+        ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
+        void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
+        void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+    }
+}

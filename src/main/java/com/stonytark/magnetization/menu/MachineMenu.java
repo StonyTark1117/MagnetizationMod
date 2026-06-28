@@ -24,7 +24,9 @@ import net.minecraft.world.item.ItemStack;
 public final class MachineMenu extends AbstractContainerMenu {
 
     /** Display flavour — drives slot tooltip + stat labels on the screen. */
-    public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER }
+    public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
+        /** HUD-only kinds — no GUI menu, surface live status in WTHIT/Jade/TOP. */
+        COIL, SAIL }
 
     public static final int INPUT_X = 80;
     public static final int INPUT_Y = 33;
@@ -37,6 +39,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final DataSlot energyMax = DataSlot.standalone();
     private final DataSlot stat1 = DataSlot.standalone();
     private final DataSlot stat2 = DataSlot.standalone();
+    private final DataSlot stat3 = DataSlot.standalone();
 
     public MachineMenu(final int id, final Inventory inv, final ContainerLevelAccess access,
                        final BlockPos pos, final Kind kind, final Container input) {
@@ -73,6 +76,7 @@ public final class MachineMenu extends AbstractContainerMenu {
         addDataSlot(energyMax);
         addDataSlot(stat1);
         addDataSlot(stat2);
+        addDataSlot(stat3);
         refresh();
     }
 
@@ -93,6 +97,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int energyMax() { return Math.max(1, energyMax.get()); }
     public int stat1() { return stat1.get(); }
     public int stat2() { return stat2.get(); }
+    public int stat3() { return stat3.get(); }
 
     private void refresh() {
         access.execute((level, p) -> {
@@ -101,6 +106,7 @@ public final class MachineMenu extends AbstractContainerMenu {
                 energyMax.set(d.guiEnergyMax());
                 stat1.set(d.guiStat1());
                 stat2.set(d.guiStat2());
+                stat3.set(d.guiStat3());
             }
         });
     }
@@ -117,8 +123,13 @@ public final class MachineMenu extends AbstractContainerMenu {
         if (stack.isEmpty()) return false;
         return switch (kind) {
             case MOTOR, JET -> MagneticMaterials.isMagnet(stack);
-            case TOKAMAK -> stack.is(MagItems.DEUTERIUM_CELL.get());
+            case TOKAMAK -> stack.is(MagItems.DEUTERIUM_CELL.get())
+                    || stack.is(MagItems.TRITIUM_CELL.get()) || stack.is(MagItems.HELIUM_3_CELL.get());
             case THRUSTER -> stack.is(MagItems.FERROFLUID_BUCKET.get());
+            case FUSION_THRUSTER -> com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.isFusionFluidBucket(stack);
+            case RAILGUN -> stack.is(MagItems.RAILGUN_REMOTE.get());
+            case ELECTROLYZER -> stack.is(net.minecraft.world.item.Items.WATER_BUCKET);
+            case COIL, SAIL -> false;   // HUD-only kinds: no menu, no input slot
         };
     }
 

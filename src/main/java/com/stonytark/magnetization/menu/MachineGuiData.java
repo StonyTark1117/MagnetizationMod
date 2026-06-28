@@ -35,6 +35,10 @@ public interface MachineGuiData {
     /** Second stat readout (current FE/tick output), or -1 to hide. */
     default int guiStat2() { return -1; }
 
+    /** Third synced value — a small enum-like code the screen interprets per kind
+     *  (e.g. the tokamak's current fuel tier 0/1/2). -1 = unused. */
+    default int guiStat3() { return -1; }
+
     /** Lines for the WTHIT / Jade / TOP tooltip — the block's own live status.
      *  Note: no stored-FE line here. WTHIT/Jade already draw a built-in energy
      *  bar from the {@code EnergyStorage} capability, so emitting one would
@@ -48,13 +52,40 @@ public interface MachineGuiData {
                 out.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, guiStat2())).withStyle(ChatFormatting.GRAY));
             }
             case THRUSTER -> out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, guiStat1())).withStyle(ChatFormatting.AQUA));
+            case FUSION_THRUSTER -> {
+                out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, guiStat1())).withStyle(ChatFormatting.AQUA));
+                final int interiors = Math.max(0, guiStat2());
+                out.add(Component.translatable("tooltip.magnetization.gui_fusion_size", interiors).withStyle(ChatFormatting.GRAY));
+                out.add(Component.translatable(interiors > 0
+                        ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
+                        .withStyle(interiors > 0 ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
+            }
+            case ELECTROLYZER -> {
+                out.add(Component.translatable("tooltip.magnetization.gui_water", Math.max(0, guiStat1())).withStyle(ChatFormatting.BLUE));
+                out.add(Component.translatable("tooltip.magnetization.gui_hydrogen", Math.max(0, guiStat2())).withStyle(ChatFormatting.WHITE));
+            }
+            case RAILGUN -> {
+                out.add(Component.translatable("tooltip.magnetization.gui_rail_length", Math.max(0, guiStat1())).withStyle(ChatFormatting.GRAY));
+                final int packed = Math.max(0, guiStat2());
+                final boolean manual = (packed & 16) != 0;
+                final String[] states = {"idle", "holding", "launching", "cooldown"};
+                final String stateKey = states[Math.min(states.length - 1, packed & 15)];
+                out.add(Component.translatable(manual
+                        ? "tooltip.magnetization.gui_railgun_manual" : "tooltip.magnetization.gui_railgun_auto")
+                        .withStyle(manual ? ChatFormatting.GOLD : ChatFormatting.GREEN));
+                out.add(Component.translatable("tooltip.magnetization.gui_railgun_state_" + stateKey)
+                        .withStyle(ChatFormatting.AQUA));
+            }
             case MOTOR -> {
                 out.add(magnetStatusLine(magnet));
+                magnetBurnLine(guiStat2()).ifPresent(out::add);
                 out.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, guiStat1())).withStyle(ChatFormatting.GRAY));
             }
             case JET -> {
                 out.add(magnetStatusLine(magnet));
-                final boolean running = magnetStrengthLevel(magnet) > 0 && guiEnergyStored() > 0;
+                magnetBurnLine(guiStat2()).ifPresent(out::add);
+                out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, guiStat1())).withStyle(ChatFormatting.AQUA));
+                final boolean running = magnetStrengthLevel(magnet) > 0 && guiEnergyStored() > 0 && guiStat1() > 0;
                 out.add(Component.translatable(running
                         ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
                         .withStyle(running ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
@@ -81,5 +112,14 @@ public interface MachineGuiData {
                 : potency >= 7 ? ChatFormatting.GREEN : ChatFormatting.GRAY;
         return Component.translatable("tooltip.magnetization.gui_magnet", magnet.getHoverName(), potency)
                 .withStyle(colour);
+    }
+
+    /** "Magnet burn: 88s" — the magnet-slot machines' remaining burn time, shown
+     *  only while a magnet is actively burning down ({@code magnetSlotConsumesFuel}
+     *  on; hidden entirely in legacy infinite-magnet mode where it stays 0). */
+    static java.util.Optional<Component> magnetBurnLine(final int burnTicks) {
+        if (burnTicks <= 0) return java.util.Optional.empty();
+        return java.util.Optional.of(Component.translatable(
+                "tooltip.magnetization.gui_magnet_burn", burnTicks / 20).withStyle(ChatFormatting.GOLD));
     }
 }

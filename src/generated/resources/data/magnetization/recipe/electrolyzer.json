@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "magnetization:tokamak_coil"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "w": {
+      "item": "minecraft:cauldron"
+    }
+  },
+  "pattern": [
+    "rcr",
+    "cwc",
+    "rcr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:electrolyzer"
+  }
+}

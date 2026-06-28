@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/fusion_thruster_side",
+    "down": "magnetization:block/fusion_thruster_side",
+    "up": "magnetization:block/fusion_thruster_side",
+    "east": "magnetization:block/fusion_thruster_side",
+    "west": "magnetization:block/fusion_thruster_side",
+    "south": "magnetization:block/fusion_thruster_side",
+    "north": "magnetization:block/fusion_thruster_core_active"
+  }
+}

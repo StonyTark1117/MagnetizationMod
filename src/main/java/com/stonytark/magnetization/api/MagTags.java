@@ -103,6 +103,12 @@ public final class MagTags {
     public static final TagKey<Block> EDDY_CONDUCTORS =
             TagKey.create(Registries.BLOCK, Magnetization.id("eddy_conductors"));
 
+    /** Conductive metal blocks that work as Railgun rails (Lorentz-force track).
+     *  Mirrors {@link #EDDY_CONDUCTORS} but kept separate so rail material is
+     *  tunable independently of Lenz braking. Rails are destruction-immune. */
+    public static final TagKey<Block> RAILGUN_RAILS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("railgun_rails"));
+
     /** Our magnetic-metal anvils — self-dampened (quiet use-clang) and given a
      *  per-metal break chance by {@code AnvilDampenerHandler}. */
     public static final TagKey<Block> DAMPENED_ANVILS =

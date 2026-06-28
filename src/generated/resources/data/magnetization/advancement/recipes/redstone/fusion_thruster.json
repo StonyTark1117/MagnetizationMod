@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_micro_thruster": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:micro_thruster"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:fusion_thruster"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_micro_thruster"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:fusion_thruster"
+    ]
+  }
+}

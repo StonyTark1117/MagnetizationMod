@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.electrolyzer.name",
+  "icon": "magnetization:electrolyzer",
+  "category": "magnetization:machines",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:electrolyzer",
+      "text": "book.magnetization.entry.electrolyzer.spotlight",
+      "link_recipe": true
+    }
+  ]
+}
