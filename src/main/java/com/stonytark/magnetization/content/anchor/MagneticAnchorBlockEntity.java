@@ -130,7 +130,7 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         // letting it spin from accumulated torques. Throttled — every-tick
         // damping would over-stiffen.
         if (target instanceof ServerSubLevel boundShip
-                && server.getGameTime() - lastCoopTick >= COOP_TICK_INTERVAL
+                && (lastCoopTick == Long.MIN_VALUE || server.getGameTime() - lastCoopTick >= COOP_TICK_INTERVAL)
                 && hasCoopPeer(server)) {
             lastCoopTick = server.getGameTime();
             SableBridge.dampAngularVelocity(boundShip, COOP_ANGULAR_DAMP_FACTOR);

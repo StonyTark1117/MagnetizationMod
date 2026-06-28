@@ -66,7 +66,10 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
                 ? com.stonytark.magnetization.config.MagConfig.pyrrhotiteScanTicks()
                 : com.stonytark.magnetization.config.MagConfig.pyrrhotiteResidualScanTicks();
         final long gameTime = level.getGameTime();
-        if (gameTime - lastScanTick >= interval) {
+        // `lastScanTick == MIN_VALUE` forces the first scan: subtracting MIN_VALUE
+        // would overflow to a negative delta, so the throttle would never fire and
+        // the ore would never observe heat (never become magnetic).
+        if (lastScanTick == Long.MIN_VALUE || gameTime - lastScanTick >= interval) {
             lastScanTick = gameTime;
             recomputeHeat(level);
         }
@@ -182,6 +185,10 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
      *  surfaces the correct value — without that round-trip the WTHIT hover
      *  always reads NONE because the field is transient on the server BE. */
     private BlazeBurnerBlock.HeatLevel lastObservedHeat = BlazeBurnerBlock.HeatLevel.NONE;
+
+    /** The heat level observed at the last scan (NONE = no adjacent source). Exposed
+     *  for gametests + HUD; reflects whether the ore is heat-activated right now. */
+    public BlazeBurnerBlock.HeatLevel observedHeat() { return lastObservedHeat; }
 
     @Override
     protected void saveAdditional(final net.minecraft.nbt.CompoundTag tag,

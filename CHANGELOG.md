@@ -36,6 +36,10 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 ### Docs
 - Patchouli field-manual entries added for all the above.
 
+### Fixed
+- **Pyrrhotite now actually responds to heat.** The heat-activated iron sulfide (Pyrrhotite Block / catalyst) had a timing bug that stopped its heat scan from ever running, so it never woke up next to a Blaze Burner, lava, fire, magma, or campfire and silently emitted no field. It now magnetizes from adjacent heat as intended, with strength still scaling to the heat level.
+- **Cooperative multi-anchor stabilization now engages.** Two or more Magnetic Anchors bound to the same airship are meant to damp its spin together so a multi-anchor dock holds the ship level; the same class of timing bug meant that shared damping never kicked in. Multiple anchors on one ship now stabilize it as designed.
+
 ## 1.2.2 — Finer power & ore-magnetism control
 
 ### New config

@@ -1608,4 +1608,70 @@ public final class MagGameTests {
                 "He-3 must burn longest and push the highest output rate");
         helper.succeed();
     }
+
+    /**
+     * Pyrrhotite becomes heat-activated next to a heat source (a magma block →
+     * KINDLED) and stays cold with no source. This is the regression guard for the
+     * {@code gameTime - Long.MIN_VALUE} rescan-overflow bug: before the fix the
+     * scan never ran and the ore never observed heat (never magnetic).
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void pyrrhotiteMagnetizesNearHeat(final GameTestHelper helper) {
+        final BlockPos hot = new BlockPos(1, 1, 1);
+        final BlockPos cold = new BlockPos(1, 1, 4);
+        helper.setBlock(hot, MagBlocks.PYRRHOTITE_BLOCK.get());
+        helper.setBlock(new BlockPos(1, 1, 0), Blocks.MAGMA_BLOCK);   // adjacent heat
+        helper.setBlock(cold, MagBlocks.PYRRHOTITE_BLOCK.get());      // no heat anywhere near
+
+        final com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity hotBe =
+                (com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity) helper.getBlockEntity(hot);
+        final com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity coldBe =
+                (com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteBlockEntity) helper.getBlockEntity(cold);
+
+        helper.runAfterDelay(20L, () -> {
+            helper.assertTrue(hotBe.observedHeat() != com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.NONE,
+                    "Pyrrhotite beside a magma block should observe heat; got " + hotBe.observedHeat());
+            helper.assertTrue(coldBe.observedHeat() == com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.NONE,
+                    "Pyrrhotite with no heat source must stay cold; got " + coldBe.observedHeat());
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Fusion Thruster panel fuel is a single SHARED tank: filling a non-master
+     * interior's fluid handler pools into the master's tank (so a pipe on any cell
+     * feeds the whole panel). Drives serverTick directly (the open-sky panel isn't
+     * in a gametest ticking region) so each interior caches the master first.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void fusionThrusterSharesOneTankAcrossInteriors(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        buildFusionPanel(level, base);
+
+        // Tick each interior so they all resolve + cache the same master.
+        for (int x = 1; x <= 3; x++) {
+            final BlockPos p = base.offset(x, 1, 0);
+            if (level.getBlockEntity(p) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity be) {
+                com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(level, p, level.getBlockState(p), be);
+            }
+        }
+        final BlockPos cornerPos = base.offset(3, 1, 0);   // a NON-master interior
+        final BlockPos masterPos = base.offset(1, 1, 0);   // the deterministic master
+        if (!(level.getBlockEntity(cornerPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity corner)
+                || !(level.getBlockEntity(masterPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            helper.fail("missing fusion BEs"); return;
+        }
+        // Fill the CORNER's handler — it must pool into the MASTER's shared tank.
+        corner.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                        com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(), 1000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+
+        final int masterMb = master.fluidHandler().getFluidInTank(0).getAmount();
+        helper.assertTrue(masterMb == 1000,
+                "Fuel piped into a non-master interior should pool in the master tank; master mB=" + masterMb);
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
 }
