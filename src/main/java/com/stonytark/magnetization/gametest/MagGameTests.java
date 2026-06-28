@@ -1690,4 +1690,37 @@ public final class MagGameTests {
         clearFusionPanel(level, base);
         helper.succeed();
     }
+
+    /**
+     * Companion to the shared-tank test: FE cabled to a non-master interior must
+     * pool in the master's buffer (only the master drains FE to fire). Without the
+     * energy forwarding, that FE would be stranded and the engine never powers
+     * unless the player happens to cable the invisible min-corner master block.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void fusionThrusterSharesOneEnergyBufferAcrossInteriors(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        buildFusionPanel(level, base);
+        for (int x = 1; x <= 3; x++) {
+            final BlockPos p = base.offset(x, 1, 0);
+            if (level.getBlockEntity(p) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity be) {
+                com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(level, p, level.getBlockState(p), be);
+            }
+        }
+        final BlockPos cornerPos = base.offset(3, 1, 0);   // a NON-master interior
+        final BlockPos masterPos = base.offset(1, 1, 0);   // the deterministic master
+        if (!(level.getBlockEntity(cornerPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity corner)
+                || !(level.getBlockEntity(masterPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            helper.fail("missing fusion BEs"); return;
+        }
+        // Cable FE into the CORNER's buffer — it must pool into the MASTER's buffer.
+        corner.energyBuffer().receiveEnergy(5000, false);
+        final int masterFe = master.energyBuffer().getEnergyStored();
+        helper.assertTrue(masterFe == 5000,
+                "FE cabled into a non-master interior should pool in the master buffer; master FE=" + masterFe);
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
 }

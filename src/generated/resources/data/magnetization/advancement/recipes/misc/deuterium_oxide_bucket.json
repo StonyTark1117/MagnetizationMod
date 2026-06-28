@@ -7,11 +7,11 @@
       },
       "trigger": "minecraft:recipe_unlocked"
     },
-    "has_water_bucket": {
+    "has_glowstone": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:water_bucket"
+            "items": "minecraft:glowstone_dust"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_water_bucket"
+      "has_glowstone"
     ]
   ],
   "rewards": {

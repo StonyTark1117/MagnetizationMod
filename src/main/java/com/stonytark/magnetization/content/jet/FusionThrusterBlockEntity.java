@@ -78,7 +78,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
         super(MagBlockEntities.FUSION_THRUSTER.get(), pos, state);
     }
 
-    public IEnergyStorage energyBuffer() { return energy; }
+    public IEnergyStorage energyBuffer() { return panelEnergy(); }
     public IFluidHandler fluidHandler() { return panelTank(); }
     public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
 
@@ -86,11 +86,27 @@ public class FusionThrusterBlockEntity extends BlockEntity
      *  ANY interior fills the one growing tank. Falls back to this block's own tank
      *  when the panel isn't formed, so a lone block still works. */
     private FluidTank panelTank() {
+        final FusionThrusterBlockEntity m = panelMaster();
+        return m != null ? m.tank : tank;
+    }
+
+    /** The panel's shared FE buffer: the master's buffer, so a cable on ANY interior
+     *  feeds the one engine that actually fires (only the master drains FE). Without
+     *  this, FE piped to a non-master cell is stranded and the engine never powers
+     *  unless the player happens to cable the invisible min-corner master block. */
+    private ReceiveBuffer panelEnergy() {
+        final FusionThrusterBlockEntity m = panelMaster();
+        return m != null ? m.energy : energy;
+    }
+
+    /** The resolved master BE when this is a formed non-master interior, else null
+     *  (so callers fall back to this block's own tank/buffer). */
+    private @Nullable FusionThrusterBlockEntity panelMaster() {
         if (cachedValid && cachedMaster != null && level != null && !getBlockPos().equals(cachedMaster)
                 && level.getBlockEntity(cachedMaster) instanceof FusionThrusterBlockEntity m) {
-            return m.tank;
+            return m;
         }
-        return tank;
+        return null;
     }
 
     public boolean isFiring() { return firing; }
@@ -185,8 +201,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
             cachedMaster = r.master();
             cachedInteriorList = r.interior();
             lastScanTick = server.getGameTime();
-            // Our forwarded fluid handler points at the master's tank; if the master
-            // moved, re-resolve so pipes re-bind to the new shared tank.
+            // Our forwarded fluid + energy handlers point at the master's tank/buffer;
+            // if the master moved, re-resolve so pipes AND cables re-bind to the new
+            // shared handlers (invalidateCapabilities clears every cap at this pos).
             if (!java.util.Objects.equals(prevMaster, cachedMaster)) {
                 level.invalidateCapabilities(getBlockPos());
             }

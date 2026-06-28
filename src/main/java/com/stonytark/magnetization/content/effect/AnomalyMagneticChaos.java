@@ -97,11 +97,18 @@ public final class AnomalyMagneticChaos {
         if (container == null) return;
         for (final SubLevel sub : container.getAllSubLevels()) {
             if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            final org.joml.Vector3dc poseVec = ship.logicalPose().position();
-            final Vec3 shipPos = new Vec3(poseVec.x(), poseVec.y(), poseVec.z());
-            if (!AnomalyBiome.isAtAssumeEnabled(server, BlockPos.containing(shipPos))) continue;
-            applyChaosToShip(ship, shipPos, now, strength);
+            // Isolate each ship: Sable steps physics off-thread, so a ship removed
+            // mid-tick can make logicalPose()/the handle throw — one failure must not
+            // abort the whole LevelTick (mirrors LenzBrakingHandler/RailgunHandler).
+            try {
+                if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
+                final org.joml.Vector3dc poseVec = ship.logicalPose().position();
+                final Vec3 shipPos = new Vec3(poseVec.x(), poseVec.y(), poseVec.z());
+                if (!AnomalyBiome.isAtAssumeEnabled(server, BlockPos.containing(shipPos))) continue;
+                applyChaosToShip(ship, shipPos, now, strength);
+            } catch (final RuntimeException ignored) {
+                // transient Sable/Rapier failure for this ship — skip it this tick
+            }
         }
     }
 

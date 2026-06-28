@@ -598,15 +598,21 @@ public final class MagRecipeProvider extends RecipeProvider {
         // -------- Machines / gadgets (migrated from hand-written JSON) --------
         final Ingredient shaft = ingr("create:shaft");
 
+        // Take an EMPTY bucket, not a water bucket: a water_bucket leaves an empty
+        // bucket as its crafting remainder, so crafting one filled bucket out of a
+        // water_bucket nets +1 bucket (an infinite-iron dupe). An empty bucket has no
+        // remainder, so 1 bucket in → 1 filled bucket out conserves the bucket.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.FERROFLUID_BUCKET.get())
-                .requires(Items.WATER_BUCKET).requires(MagItems.RAW_MAGNETITE.get()).requires(MagItems.RAW_MAGNETITE.get())
+                .requires(Items.BUCKET).requires(MagItems.RAW_MAGNETITE.get()).requires(MagItems.RAW_MAGNETITE.get())
                 .unlockedBy("has_raw", has(MagItems.RAW_MAGNETITE.get())).save(out, id("ferrofluid_bucket"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MR_FLUID_BUCKET.get())
-                .requires(Items.WATER_BUCKET).requires(Items.IRON_INGOT).requires(MagItems.RAW_MAGNETITE.get())
+                .requires(Items.BUCKET).requires(Items.IRON_INGOT).requires(MagItems.RAW_MAGNETITE.get())
                 .unlockedBy("has_raw", has(MagItems.RAW_MAGNETITE.get())).save(out, id("mr_fluid_bucket"));
+        // D2O also has dupe-safe smelting/blasting (the furnace consumes the water
+        // bucket without refunding it); this crafting path uses an empty bucket.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.DEUTERIUM_OXIDE_BUCKET.get())
-                .requires(Items.WATER_BUCKET).requires(Items.GLOWSTONE_DUST)
-                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET)).save(out, id("deuterium_oxide_bucket"));
+                .requires(Items.BUCKET).requires(Items.GLOWSTONE_DUST)
+                .unlockedBy("has_glowstone", has(Items.GLOWSTONE_DUST)).save(out, id("deuterium_oxide_bucket"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, MagItems.ORE_COMPASS.get())
                 .requires(Items.COMPASS).requires(MagItems.RAW_MAGNETITE.get()).requires(MagItems.RAW_MAGNETITE.get())
                 .unlockedBy("has_compass", has(Items.COMPASS)).save(out, id("ore_compass"));

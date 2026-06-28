@@ -47,27 +47,35 @@ public final class LenzBrakingHandler {
 
         for (final SubLevel sub : container.getAllSubLevels()) {
             if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            // Only magnetic ships are braked — a plain stone ship induces nothing.
-            if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
+            // Sable steps physics OFF-THREAD: a ship can be removed/teleported between
+            // our isValid() check and the velocity mutation, and Rapier then throws
+            // ("No rigid body for id"). Isolate each ship so one transient failure
+            // can't abort the whole LevelTick for everyone (mirrors RailgunHandler).
+            try {
+                if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
+                // Only magnetic ships are braked — a plain stone ship induces nothing.
+                if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
 
-            final RigidBodyHandle handle = RigidBodyHandle.of(ship);
-            if (handle == null || !handle.isValid()) continue;
-            final Vector3dc vel = handle.getLinearVelocity();
-            final double speed = Math.sqrt(vel.x() * vel.x() + vel.y() * vel.y() + vel.z() * vel.z());
-            if (speed < MagConfig.lenzMinSpeed()) continue;
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) continue;
+                final Vector3dc vel = handle.getLinearVelocity();
+                final double speed = Math.sqrt(vel.x() * vel.x() + vel.y() * vel.y() + vel.z() * vel.z());
+                if (speed < MagConfig.lenzMinSpeed()) continue;
 
-            final int conductors = countOverlappingConductors(server, ship.boundingBox());
-            if (conductors <= 0) continue;
+                final int conductors = countOverlappingConductors(server, ship.boundingBox());
+                if (conductors <= 0) continue;
 
-            final int conductorCap = MagConfig.lenzConductorCap();
-            final double factor = (double) Math.min(conductors, conductorCap) / conductorCap;
-            final double drag = Math.min(MagConfig.lenzMaxDrag(), MagConfig.lenzBaseDrag() * factor * strength);
-            // Subtract a fraction of the current velocity — opposes motion in every axis,
-            // so a descending ship floats down slowly and a sliding one coasts to rest.
-            handle.addLinearAndAngularVelocity(
-                    new Vector3d(-vel.x() * drag, -vel.y() * drag, -vel.z() * drag),
-                    new Vector3d(0, 0, 0));
+                final int conductorCap = MagConfig.lenzConductorCap();
+                final double factor = (double) Math.min(conductors, conductorCap) / conductorCap;
+                final double drag = Math.min(MagConfig.lenzMaxDrag(), MagConfig.lenzBaseDrag() * factor * strength);
+                // Subtract a fraction of the current velocity — opposes motion in every axis,
+                // so a descending ship floats down slowly and a sliding one coasts to rest.
+                handle.addLinearAndAngularVelocity(
+                        new Vector3d(-vel.x() * drag, -vel.y() * drag, -vel.z() * drag),
+                        new Vector3d(0, 0, 0));
+            } catch (final RuntimeException ignored) {
+                // transient Sable/Rapier failure for this ship — skip it this tick
+            }
         }
     }
 

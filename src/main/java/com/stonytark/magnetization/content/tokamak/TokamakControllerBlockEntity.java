@@ -181,6 +181,12 @@ public class TokamakControllerBlockEntity extends BlockEntity
         void generate(final int amount) {
             this.energy = Math.min(this.capacity, this.energy + amount);
         }
+        /** Set the stored amount directly (clamped). Used on load/sync — `generate`
+         *  ADDS, so using it for the client update tag would re-add the synced value
+         *  every packet and peg the client buffer at full (wrong HUD FE bar). */
+        void set(final int amount) {
+            this.energy = Math.max(0, Math.min(this.capacity, amount));
+        }
     }
 
     @Override
@@ -196,7 +202,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        energy.generate(tag.getInt("Energy"));
+        energy.set(tag.getInt("Energy"));
         burnTime = tag.getInt("Burn");
         currentTier = tag.getInt("Tier");
         lastOutput = tag.getInt("LastOutput");

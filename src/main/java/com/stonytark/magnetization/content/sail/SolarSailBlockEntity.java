@@ -68,8 +68,6 @@ public class SolarSailBlockEntity extends BlockEntity
         // Bigger sail → higher cruising-speed ceiling (more total panels).
         final int panels = SailPanelCounter.count(server, host);
         final double maxSpeed = Math.min(com.stonytark.magnetization.config.MagConfig.solarSailSpeedCap(), com.stonytark.magnetization.config.MagConfig.solarSailSpeedBase() + com.stonytark.magnetization.config.MagConfig.solarSailSpeedPerPanel() * panels);
-        final Vector3dc v = handle.getLinearVelocity();
-        if (Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z()) >= maxSpeed) { recordHud(server, panels, day, false); return; }
 
         final Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING)
                 ? getBlockState().getValue(DirectionalBlock.FACING) : Direction.NORTH;
@@ -77,6 +75,15 @@ public class SolarSailBlockEntity extends BlockEntity
         // points, which is opposite the FACING normal (FACING points into the
         // surface the panel was placed against). FACING is in the ship-local frame.
         final Vec3i n = facing.getNormal();
+        // Speed ceiling gates the FORWARD component only: project the host's world
+        // velocity onto the world-space forward axis, so vertical drift or a lateral
+        // knock can't wrongly stall the sail (|v| would always exceed the forward
+        // speed). Mirrors the MHD/micro/fusion thrusters.
+        final var pose = host.logicalPose();
+        final net.minecraft.world.phys.Vec3 dirWorld = pose.transformNormal(
+                new net.minecraft.world.phys.Vec3(-n.getX(), -n.getY(), -n.getZ())).normalize();
+        final Vector3dc v = handle.getLinearVelocity();
+        if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z >= maxSpeed) { recordHud(server, panels, day, false); return; }
         final double f = com.stonytark.magnetization.config.MagConfig.solarSailForce() * dayFactor * altFactor;
         final Vector3dc com = host.getMassTracker().getCenterOfMass();
         SableBridge.applyLocalImpulse(host,
