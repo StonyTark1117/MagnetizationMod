@@ -116,6 +116,40 @@ def unwrapSodium = tasks.register('unwrapSodium') {
 tasks.matching { it.name == 'runClient' || it.name == 'runServer' || it.name == 'runGameTestServer' }
         .configureEach { dependsOn unwrapSodium }
 
+// GameTest hygiene: a previous gameTestServer JVM can LINGER (Sable's physics
+// thread drags out shutdown) and then starve the next run's CPU and/or hold
+// `run/world/session.lock`, which makes the new server crash on boot and/or
+// false-fail timing-sensitive tests. Before launching a fresh gametest server,
+// kill any leftover gametest JVM and clear a stale world lock. The match is
+// SAFE — `-Dneoforge.gameTestServer=true` is a VM flag unique to the
+// gameTestServer run type, so this never touches a runClient/runServer (or the
+// Gradle daemon). doFirst runs before the JVM forks, so only PRIOR runs match.
+// The `Dneoforge[.]gameTestServer=true` char-class regex matches that literal
+// flag but NOT this command's own text (which carries the bracketed form), so
+// pgrep can't self-match and kill its own shell.
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    doFirst {
+        if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            try {
+                def killed = ['bash', '-c',
+                    "pids=\$(pgrep -f 'Dneoforge[.]gameTestServer=true' || true); " +
+                    "if [ -n \"\$pids\" ]; then echo \"\$pids\" | xargs -r kill -9; sleep 0.5; echo \"\$pids\"; fi"
+                ].execute()
+                killed.waitFor()
+                def out = killed.text.trim()
+                if (out) { logger.lifecycle("runGameTestServer: killed lingering gametest JVM(s): ${out.replaceAll('\\s+', ' ')}") }
+            } catch (Exception e) {
+                logger.warn("runGameTestServer: zombie-kill step failed (continuing): ${e.message}")
+            }
+        }
+        def lock = file('run/world/session.lock')
+        if (lock.exists()) {
+            logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
+            lock.delete()
+        }
+    }
+}
+
 // Substitute ${...} placeholders in neoforge.mods.toml at processResources time.
 // Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
 // because the toml is loaded literally from build/resources/main with no expansion.
