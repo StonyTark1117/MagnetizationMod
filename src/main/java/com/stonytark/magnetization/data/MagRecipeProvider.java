@@ -571,14 +571,19 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_block", has(MagBlocks.SOLID_GALLIUM.get()))
                 .save(out, id("gallium_ingot_from_block"));
 
-        // -------- Mixed gallium = gallium bucket + magnetite or iron --------
+        // -------- Mixed gallium = gallium ingot + magnetite/iron + an EMPTY bucket --------
+        // Use a gallium INGOT (not a gallium_bucket) as the fluid source: a filled
+        // gallium_bucket leaves an empty bucket as its crafting remainder, so a
+        // bucket-in/filled-bucket-out craft would net +1 empty bucket (a dupe). An
+        // empty bucket has no remainder, so 1 empty bucket → 1 filled mixed bucket
+        // conserves the container. (Same fix the ferrofluid bucket recipe uses.)
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MIXED_GALLIUM_BUCKET.get())
-                .requires(MagItems.GALLIUM_BUCKET.get()).requires(MagItems.MAGNETITE_INGOT.get())
-                .unlockedBy("has_gallium_bucket", has(MagItems.GALLIUM_BUCKET.get()))
+                .requires(gIngot).requires(MagItems.MAGNETITE_INGOT.get()).requires(Items.BUCKET)
+                .unlockedBy("has_gallium_ingot", has(gIngot))
                 .save(out, id("mixed_gallium_bucket_from_magnetite"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.MIXED_GALLIUM_BUCKET.get())
-                .requires(MagItems.GALLIUM_BUCKET.get()).requires(Items.IRON_INGOT)
-                .unlockedBy("has_gallium_bucket", has(MagItems.GALLIUM_BUCKET.get()))
+                .requires(gIngot).requires(Items.IRON_INGOT).requires(Items.BUCKET)
+                .unlockedBy("has_gallium_ingot", has(gIngot))
                 .save(out, id("mixed_gallium_bucket_from_iron"));
 
         // -------- Conductive-fluid buckets as dyes --------

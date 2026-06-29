@@ -74,7 +74,9 @@ public class MicroThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
-    public IFluidHandler fluidHandler() { return tank; }
+    // Insert-only: pipes can fuel the thruster but can't siphon unburnt fuel back out.
+    private final IFluidHandler insertOnly = new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(tank);
+    public IFluidHandler fluidHandler() { return insertOnly; }
     public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
 
     // ── MachineGuiData (shared GUI: ferrofluid mB + FE bar) ──

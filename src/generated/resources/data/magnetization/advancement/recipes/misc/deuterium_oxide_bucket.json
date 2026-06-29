@@ -1,12 +1,6 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "magnetization:deuterium_oxide_bucket"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
     "has_glowstone": {
       "conditions": {
         "items": [
@@ -16,6 +10,12 @@
         ]
       },
       "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:deuterium_oxide_bucket"
+      },
+      "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [

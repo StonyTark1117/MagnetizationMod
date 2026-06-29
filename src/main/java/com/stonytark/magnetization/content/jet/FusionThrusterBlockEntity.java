@@ -80,7 +80,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return panelEnergy(); }
-    public IFluidHandler fluidHandler() { return panelTank(); }
+    // Insert-only: pipes can fuel the panel but can't siphon unburnt fusion fuel back
+    // out. panelTank() resolves the (possibly remote master's) tank, so wrap per call.
+    public IFluidHandler fluidHandler() {
+        return new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(panelTank());
+    }
     public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
 
     /** The panel's shared fuel tank: the master's tank, so a pipe (or bucket) on
@@ -195,6 +199,8 @@ public class FusionThrusterBlockEntity extends BlockEntity
         if (lastScanTick == Long.MIN_VALUE || server.getGameTime() - lastScanTick >= RESCAN_INTERVAL) {
             final Direction facing = facing();
             final BlockPos prevMaster = cachedMaster;
+            final boolean prevValid = cachedValid;
+            final java.util.List<BlockPos> prevInterior = cachedInteriorList;
             final FusionThrusterPanel.Result r = FusionThrusterPanel.validate(
                     level, getBlockPos(), facing, MagConfig.fusionThrusterMaxEdge());
             cachedValid = r.valid();
@@ -202,6 +208,17 @@ public class FusionThrusterBlockEntity extends BlockEntity
             cachedMaster = r.master();
             cachedInteriorList = r.interior();
             lastScanTick = server.getGameTime();
+            // Panel just broke (frame/interior mined): the master's LIT-sweep below no
+            // longer runs (it returns early once invalid), so any interior left glowing
+            // would be a stranded ghost. Clear LIT on the prior interior set now.
+            if (prevValid && !cachedValid && prevInterior != null) {
+                for (final BlockPos p : prevInterior) {
+                    final BlockState s = level.getBlockState(p);
+                    if (s.hasProperty(BlockStateProperties.LIT) && s.getValue(BlockStateProperties.LIT)) {
+                        server.setBlock(p, s.setValue(BlockStateProperties.LIT, false), Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
             // Our forwarded fluid + energy handlers point at the master's tank/buffer;
             // if the master moved, re-resolve so pipes AND cables re-bind to the new
             // shared handlers (invalidateCapabilities clears every cap at this pos).

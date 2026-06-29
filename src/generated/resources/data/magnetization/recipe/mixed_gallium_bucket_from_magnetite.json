@@ -3,10 +3,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "magnetization:gallium_bucket"
+      "item": "magnetization:gallium_ingot"
     },
     {
       "item": "magnetization:magnetite_ingot"
+    },
+    {
+      "item": "minecraft:bucket"
     }
   ],
   "result": {

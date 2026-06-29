@@ -32,7 +32,10 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case TOKAMAK -> tokamakTierBurn(menu.stat3());
             case THRUSTER -> MagConfig.microThrusterTank();
             // Fusion tank is per-cell × interior count (stat2) — bars scale with the panel.
-            case FUSION_THRUSTER -> MagConfig.fusionThrusterTank() * Math.max(1, menu.stat2());
+            // Clamp with a long like the server: a large tank × big panel overflows int
+            // and would wrap negative, collapsing the bar denominator.
+            case FUSION_THRUSTER -> (int) Math.min(Integer.MAX_VALUE,
+                    (long) MagConfig.fusionThrusterTank() * Math.max(1, menu.stat2()));
             case JET -> MagConfig.mhdJetTank();
             case ELECTROLYZER -> MagConfig.electrolyzerHydrogenTank();
             default -> 1;

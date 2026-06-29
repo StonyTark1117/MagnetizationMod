@@ -66,7 +66,9 @@ public class MhdJetBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
-    public IFluidHandler fluidHandler() { return fluidTank; }
+    // Insert-only: pipes can fuel the jet but can't siphon the conductive fluid back out.
+    private final IFluidHandler insertOnly = new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(fluidTank);
+    public IFluidHandler fluidHandler() { return insertOnly; }
     public ItemStack getMagnet() { return magnetSlot.getItem(0); }
     public net.minecraft.world.Container magnetContainer() { return magnetSlot; }
     public int burnRemaining() { return burnRemaining; }
