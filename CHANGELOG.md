@@ -54,6 +54,9 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 - **Magnetoresistive fall-hover is consistent in single-player.** The hover-to-a-stop fall save ran on both the client and integrated server, which could corrupt its per-fall state; it now runs server-side only.
 - **Hardened the curio-use network packet** against malformed input from a modified client (rejects an out-of-range value cleanly instead of erroring on the network thread).
 
+### Performance
+- **Large magnetized-ferrofluid pools are much cheaper to tick.** The reactive-creep pass scaled quadratically with pool size (every cell tested against every other), and the field-emission pass ran a full pull/push sweep for *each* source cell even with nothing nearby. The creep pass now spatially indexes the fluid so each cell only checks its neighborhood, and the field pass skips the whole sweep when no ship or entity is within range — so big pools no longer cost frames. Behavior is unchanged.
+
 ### New config
 - **Machine Tuning → Structural Inducer …** tunables now expose the inducer's pull physics and scan behavior (Pull Acceleration, Max Pull Speed, Arrival Distance, Pull Timeout, Scan Interval, Max Structures, Tunnel Budget), bringing it in line with the rest of the mod's fully-configurable machines.
 

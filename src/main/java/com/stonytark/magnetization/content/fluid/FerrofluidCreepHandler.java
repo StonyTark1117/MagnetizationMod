@@ -70,7 +70,51 @@ public final class FerrofluidCreepHandler {
 
         final List<BlockPos> anchors = gatherAnchors(server); // fluid SOURCE cells
         if (anchors.isEmpty()) return;
-        for (final Magnet m : magnets) grow(server, m, anchors, growPlain, growMag);
+        // Spatially index the anchors so each magnet iterates only nearby cells instead
+        // of the whole list. A magnetized-ferrofluid pool registers one WEAK-range magnet
+        // per source cell, so the naive magnets×anchors loop is O(N²) over the pool size;
+        // the grid bounds each small-range magnet to its locale. (Result is identical —
+        // grow()'s covers() check already rejected the far anchors this skips.)
+        final Map<Long, List<BlockPos>> grid = buildAnchorGrid(anchors);
+        for (final Magnet m : magnets) grow(server, m, anchorsNear(m, anchors, grid), growPlain, growMag);
+    }
+
+    /** 2-D (X,Z) grid cell size for the anchor index. Ferrofluid pools are near-planar,
+     *  so X/Z bucketing captures the locality; the per-anchor 3-D covers() check still
+     *  filters by true distance, so dropping Y from the key only over-includes a few
+     *  harmless candidates. */
+    private static final int ANCHOR_CELL = 16;
+
+    private static long cellKey(final int cx, final int cz) {
+        return (((long) cx) << 32) | (cz & 0xFFFFFFFFL);
+    }
+
+    private static Map<Long, List<BlockPos>> buildAnchorGrid(final List<BlockPos> anchors) {
+        final Map<Long, List<BlockPos>> grid = new java.util.HashMap<>();
+        for (final BlockPos a : anchors) {
+            grid.computeIfAbsent(cellKey(Math.floorDiv(a.getX(), ANCHOR_CELL), Math.floorDiv(a.getZ(), ANCHOR_CELL)),
+                    k -> new ArrayList<>()).add(a);
+        }
+        return grid;
+    }
+
+    /** Anchors whose grid cell is within the magnet's reach. Wide-reach magnets (the few
+     *  real emitters, up to 128 blocks) span so many cells that probing the grid costs
+     *  more than a full scan, so they fall back to the whole anchor list. */
+    private static List<BlockPos> anchorsNear(final Magnet m, final List<BlockPos> all,
+                                              final Map<Long, List<BlockPos>> grid) {
+        final int rCells = (int) Math.ceil(m.range / ANCHOR_CELL);
+        if (rCells > 3) return all;
+        final int cx = Math.floorDiv(net.minecraft.util.Mth.floor(m.origin.x), ANCHOR_CELL);
+        final int cz = Math.floorDiv(net.minecraft.util.Mth.floor(m.origin.z), ANCHOR_CELL);
+        final List<BlockPos> near = new ArrayList<>();
+        for (int dx = -rCells; dx <= rCells; dx++) {
+            for (int dz = -rCells; dz <= rCells; dz++) {
+                final List<BlockPos> bucket = grid.get(cellKey(cx + dx, cz + dz));
+                if (bucket != null) near.addAll(bucket);
+            }
+        }
+        return near;
     }
 
     /** Real emitters (live field) + magnetized-ferrofluid pools, EXCLUDING creep
