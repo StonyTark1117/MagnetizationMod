@@ -768,7 +768,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
             if (tryAssemblePulled(level, pos, bs, now)) newPulls++;
         }
         if (newPulls > 0) {
-            damageToolSlot();
+            damageToolSlot(level);
             level.playSound(null, getBlockPos(), SoundEvents.LODESTONE_PLACE,
                     SoundSource.BLOCKS, 0.4f, 1.6f);
             if (MagConfig.debugLogging()) {
@@ -858,16 +858,14 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
     }
 
     /** Hurt the installed tool by 1 durability, clearing the slot if the tool
-     *  breaks. No-op for items that aren't damageable (enchanted books). */
-    private void damageToolSlot() {
+     *  breaks. No-op for items that aren't damageable (enchanted books). Uses
+     *  {@link ItemStack#hurtAndBreak} so the Unbreaking enchantment + the
+     *  durability-change hooks are honored (a raw setDamageValue would wear an
+     *  Unbreaking tool at the full 1-per-op rate). */
+    private void damageToolSlot(final ServerLevel server) {
         final ItemStack tool = toolSlot.getItem(0);
         if (tool.isEmpty() || !tool.isDamageableItem()) return;
-        final int newDamage = tool.getDamageValue() + 1;
-        if (newDamage >= tool.getMaxDamage()) {
-            toolSlot.setItem(0, ItemStack.EMPTY);
-        } else {
-            tool.setDamageValue(newDamage);
-        }
+        tool.hurtAndBreak(1, server, null, item -> toolSlot.setItem(0, ItemStack.EMPTY));
     }
 
     /** Scan-stopper: refuse to pull through a block entity (chests, beacons,

@@ -115,7 +115,8 @@ public final class FieldCompassHud {
                 : (pol == MagneticPolarity.SOUTH ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
         final Component bottom = Component.translatable("hud.magnetization.compass.target",
                         Component.literal(pol.getSerializedName().toUpperCase()).withStyle(polColor),
-                        field.strength().name())
+                        Component.translatable("tooltip.magnetization.strength."
+                                + field.strength().name().toLowerCase(java.util.Locale.ROOT)))
                 .withStyle(ChatFormatting.GRAY);
 
         drawCentered(g, mc.font, top, bottom);

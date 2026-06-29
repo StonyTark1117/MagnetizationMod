@@ -271,9 +271,11 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
             // No override → use the BE's effective default (STRONG). Show that
             // explicitly rather than "—" so the player sees what the emitter
             // is actually doing before they ever click a tier button.
-            final String label = ord < 0
-                    ? MagneticStrength.STRONG.name()
-                    : MagneticStrength.values()[ord].name();
+            final MagneticStrength strength = ord < 0
+                    ? MagneticStrength.STRONG
+                    : MagneticStrength.values()[ord];
+            final Component label = Component.translatable(
+                    "tooltip.magnetization.strength." + strength.name().toLowerCase(java.util.Locale.ROOT));
             g.drawString(font, Component.translatable("gui.magnetization.strength", label), 8, 40, 0xC0C0C0, false);
         }
         if (menu.hasCap(EmitterMenu.CAP_RANGE)) {

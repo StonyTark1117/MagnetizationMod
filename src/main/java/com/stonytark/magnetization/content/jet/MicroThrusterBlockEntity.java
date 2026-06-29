@@ -85,11 +85,16 @@ public class MicroThrusterBlockEntity extends BlockEntity
     @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(); }
     @Override public int guiStat1() { return tank.getFluidAmount(); }
 
-    /** Try to pour one ferrofluid bucket (1000 mB) into the tank. */
-    public boolean fillFromBucket() {
-        final FluidStack ferro = new FluidStack(MagFluids.FERROFLUID.get(), 1000);
-        if (tank.fill(ferro, IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
-        tank.fill(ferro, IFluidHandler.FluidAction.EXECUTE);
+    /** Try to pour one ferrofluid bucket (1000 mB) into the tank. A magnetized
+     *  bucket inserts MAGNETIZED_FERROFLUID so the player actually gets the
+     *  magnetized thrust boost (and doesn't silently lose the polarity stamp). */
+    public boolean fillFromBucket(final net.minecraft.world.item.ItemStack bucket) {
+        final net.minecraft.world.level.material.Fluid fluid =
+                com.stonytark.magnetization.content.fluid.FerrofluidBucketItem.isMagnetized(bucket)
+                        ? MagFluids.MAGNETIZED_FERROFLUID.get() : MagFluids.FERROFLUID.get();
+        final FluidStack fs = new FluidStack(fluid, 1000);
+        if (tank.fill(fs, IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
+        tank.fill(fs, IFluidHandler.FluidAction.EXECUTE);
         setChanged();
         return true;
     }
@@ -111,7 +116,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
         // Auto-drain a ferrofluid bucket into the tank (works anywhere).
         final net.minecraft.world.item.ItemStack in = bucketSlot.getItem(0);
-        if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && fillFromBucket()) {
+        if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && fillFromBucket(in)) {
             bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
         }
         final boolean firing = host != null

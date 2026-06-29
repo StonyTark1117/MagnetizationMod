@@ -170,7 +170,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     public void render(final GuiGraphics g, final int mx, final int my, final float partial) {
         super.render(g, mx, my, partial);
-        renderTooltip(g, mx, my);
+        // super.render already draws the hovered-slot item tooltip; don't call
+        // renderTooltip again here or it double-draws (the translucent background
+        // alpha-blends twice and darkens).
         // Bar hover tooltips.
         if (menu.energyStored() >= 0 && inBar(mx, my, ENERGY_X)) {
             g.renderTooltip(font, Component.translatable("tooltip.magnetization.gui_energy",

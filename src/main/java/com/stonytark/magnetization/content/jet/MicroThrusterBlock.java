@@ -79,7 +79,7 @@ public final class MicroThrusterBlock extends DirectionalBlock implements Entity
                 || !(level.getBlockEntity(pos) instanceof MicroThrusterBlockEntity be)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        if (!be.fillFromBucket()) return ItemInteractionResult.CONSUME; // tank full
+        if (!be.fillFromBucket(stack)) return ItemInteractionResult.CONSUME; // tank full
         if (!level.isClientSide) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
