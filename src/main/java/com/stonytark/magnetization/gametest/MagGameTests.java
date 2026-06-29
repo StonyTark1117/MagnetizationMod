@@ -845,6 +845,156 @@ public final class MagGameTests {
         });
     }
 
+    /**
+     * #124 (R7 coverage) — Three collinear parallel rails DISSIPATE the arc. With
+     * gaps of 8 (≤ maxGap 12), each OUTER rail sees only the middle (count 1) while
+     * the middle sees both — the asymmetric case the findSibling partner re-scan
+     * guards. All three must go IDLE and no target is accelerated. Own batch: the
+     * RailgunHandler is a global level scanner, so a concurrent test's emitter could
+     * otherwise pair across the shared level.
+     */
+    // NOTE: a 3-collinear-rail DISSIPATION gametest was attempted (R7) but removed.
+    // RailgunHandler is a global LevelTickEvent scanner and gametests share one
+    // ServerLevel, so a NEGATIVE "the arc must NOT fire" assertion is inherently
+    // flaky here (registration/snapshot timing + cross-arc bleed) — the same trap
+    // documented for `railgunSingleRailDoesNotLaunch`. The >2-rail dissipation logic
+    // (RailgunHandler.findSibling double-scan) stays covered by adversarial code
+    // review; if it ever needs an automated guard, unit-test scanSiblings/findSibling
+    // directly against a mocked snapshot rather than via the live tick handler.
+
+    /**
+     * #124 (R7 coverage) — Auto-fire pulse cycle: an entering target drives
+     * IDLE→LAUNCHING (acceleration), then on leaving the channel the arc enters
+     * COOLDOWN and the BE tick decays it back to IDLE (re-armed). Guards both the
+     * COOLDOWN entry and the cooldown re-arm.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "railgunCooldown")
+    public static void railgunCyclesThroughCooldownToIdle(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        powerRailgun(level, base);
+        powerRailgun(level, other);
+
+        final net.minecraft.world.entity.projectile.Arrow arrow =
+                new net.minecraft.world.entity.projectile.Arrow(level,
+                        base.getX() + 1.5, base.getY() + 0.5, base.getZ() - 2.5,
+                        net.minecraft.world.item.ItemStack.EMPTY, (net.minecraft.world.item.ItemStack) null);
+        arrow.setNoGravity(true);
+        arrow.setDeltaMovement(0, 0, 0);
+        level.addFreshEntity(arrow);
+
+        final var master = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity) level.getBlockEntity(base);
+        helper.runAfterDelay(14L, () -> {
+            // By now the arrow has launched out of the channel and the arc has cooled.
+            final boolean launched = arrow.getDeltaMovement().z() < -0.5;
+            final boolean engaged = master != null
+                    && master.arcState() != com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.IDLE;
+            helper.assertTrue(launched, "Auto arc should have launched the target; v=" + arrow.getDeltaMovement());
+            helper.assertTrue(engaged, "Arc should have left IDLE (LAUNCHING/COOLDOWN) after firing");
+            arrow.discard();
+            helper.runAfterDelay(80L, () -> {
+                final boolean rearmed = master != null
+                        && master.arcState() == com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.IDLE
+                        && master.cooldownTicks() == 0;
+                clearRailgunRail(level, base);
+                clearRailgunRail(level, other);
+                helper.assertTrue(rearmed, "Arc should cool down and re-arm to IDLE");
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #124 (R7 coverage) — Manual workflow: a paired remote puts the arc in manual
+     * mode, an entering target is HELD (not launched), and firing the bound remote
+     * transitions HOLDING→LAUNCHING so the target then accelerates.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100, batch = "railgunHold")
+    public static void railgunManualHoldThenRemoteFire(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        powerRailgun(level, base);
+        powerRailgun(level, other);
+
+        final var master = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity) level.getBlockEntity(base);
+        if (master == null) { helper.fail("no master emitter"); return; }
+        master.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+
+        final net.minecraft.world.entity.projectile.Arrow arrow =
+                new net.minecraft.world.entity.projectile.Arrow(level,
+                        base.getX() + 1.5, base.getY() + 0.5, base.getZ() - 2.5,
+                        net.minecraft.world.item.ItemStack.EMPTY, (net.minecraft.world.item.ItemStack) null);
+        arrow.setNoGravity(true);
+        arrow.setDeltaMovement(0, 0, 0);
+        level.addFreshEntity(arrow);
+
+        helper.runAfterDelay(12L, () -> {
+            final boolean holding = master.arcState() == com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.HOLDING;
+            final boolean notLaunchedYet = arrow.getDeltaMovement().z() > -0.4;
+            helper.assertTrue(holding, "Manual arc should HOLD a target, not auto-launch; state=" + master.arcState());
+            helper.assertTrue(notLaunchedYet, "Held target must not be launched before firing; v=" + arrow.getDeltaMovement());
+            master.requestFire();   // the bound remote's fire signal
+            helper.runAfterDelay(26L, () -> {
+                final boolean launched = arrow.getDeltaMovement().z() < -0.4;
+                arrow.discard();
+                clearRailgunRail(level, base);
+                clearRailgunRail(level, other);
+                helper.assertTrue(launched, "Firing the remote should launch the held target; v=" + arrow.getDeltaMovement());
+                helper.succeed();
+            });
+        });
+    }
+
+    /**
+     * #124 (R7 coverage) — Block-breaking safety carve-outs: the railgun smashes a
+     * plain obstructing block but spares its own rails, the emitter controls, and
+     * bedrock. Calls breakIfObstructing directly for a deterministic check.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "railgunBreak")
+    public static void railgunSparesRailsAndBedrockWhenBreaking(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos b = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos stone = b;
+        final BlockPos rail = b.offset(2, 0, 0);
+        final BlockPos bedrock = b.offset(4, 0, 0);
+        final BlockPos emitter = b.offset(6, 0, 0);
+        level.setBlock(stone, Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(rail, Blocks.COPPER_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL); // #railgun_rails
+        level.setBlock(bedrock, Blocks.BEDROCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final boolean stoneBroke = com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, stone);
+        final boolean railSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, rail);
+        final boolean bedrockSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, bedrock);
+        final boolean emitterSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, emitter);
+
+        final boolean stoneGone = level.getBlockState(stone).isAir();
+        final boolean railStays = level.getBlockState(rail).is(Blocks.COPPER_BLOCK);
+        final boolean bedrockStays = level.getBlockState(bedrock).is(Blocks.BEDROCK);
+        final boolean emitterStays = level.getBlockState(emitter).is(MagBlocks.RAILGUN_EMITTER.get());
+
+        level.setBlock(stone, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(rail, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(bedrock, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.assertTrue(stoneBroke && stoneGone, "Railgun should break a plain obstructing block");
+        helper.assertTrue(railSpared && railStays, "Railgun must never break its own rails");
+        helper.assertTrue(bedrockSpared && bedrockStays, "Railgun must not break bedrock");
+        helper.assertTrue(emitterSpared && emitterStays, "Railgun must not break its emitter controls");
+        helper.succeed();
+    }
+
     /** Build an emitter (FACING NORTH) + a 6-block copper rail at {@code emitter}. */
     private static void buildRailgunRail(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
         level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState()

@@ -44,6 +44,11 @@ public final class MagneticToolPullHandler {
     private static double maxPerTick() {
         try { return MagConfig.TOOL_PULL_MAX_PER_TICK.get(); } catch (Throwable t) { return 0.6d; }
     }
+    /** Scan interval (ticks). 1 = every tick. Higher spreads the cost; the impulse
+     *  scales up by the same factor so average pull strength is preserved. */
+    private static int pullTicks() {
+        try { return Math.max(1, MagConfig.TOOL_PULL_TICKS.get()); } catch (Throwable t) { return 1; }
+    }
 
     private MagneticToolPullHandler() {}
 
@@ -51,6 +56,12 @@ public final class MagneticToolPullHandler {
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!(player.level() instanceof ServerLevel level)) return;
+
+        // Throttle the per-tick entity scan for tool-carrying players (the impulse
+        // below scales by the interval so average pull is unchanged). Default 1 = no
+        // change. The cheap magnetCount==0 early-out still runs every tick.
+        final int interval = pullTicks();
+        if (interval > 1 && level.getGameTime() % interval != 0L) return;
 
         // Sum the polarity contributions of every magnetized metal tool the
         // player currently carries — main hand, off-hand, every armor slot
@@ -84,8 +95,10 @@ public final class MagneticToolPullHandler {
             final Vec3 toward = playerPos.subtract(item.position()).normalize();
             final double distance = item.distanceTo(player);
             // Inverse-distance falloff with a soft floor so close items don't NaN.
-            final double scale = Math.min(maxPerTick(),
-                    pullVelocity() * Math.max(1.0d, distance) / Math.max(1.0d, distance * distance));
+            // Both the velocity and the anti-tunnel cap scale by the scan interval so
+            // a throttled scan delivers the same average pull as ticking every tick.
+            final double scale = Math.min(maxPerTick() * interval,
+                    pullVelocity() * interval * Math.max(1.0d, distance) / Math.max(1.0d, distance * distance));
             item.setDeltaMovement(item.getDeltaMovement().add(toward.scale(sign * scale)));
             item.hasImpulse = true;
         }

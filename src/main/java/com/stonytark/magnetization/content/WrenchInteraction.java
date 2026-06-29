@@ -34,19 +34,23 @@ public final class WrenchInteraction {
 
     @SubscribeEvent
     public static void onSneakWrench(final PlayerInteractEvent.RightClickBlock event) {
-        if (event.getLevel().isClientSide) return;
         if (!event.getEntity().isShiftKeyDown()) return;
         final ItemStack held = event.getItemStack();
         if (held.isEmpty() || !held.is(WRENCH_TAG)) return;
         final BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
         if (!(be instanceof AbstractEmitterBlockEntity emitter)) return;
 
+        // Cancel on BOTH sides (mirroring the sibling tool handlers) so the client
+        // doesn't mispredict the wrench's normal use and desync; the actual reset
+        // happens server-side only.
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
+        if (event.getLevel().isClientSide) return;
+
         emitter.resetOverrides();
         if (event.getEntity() instanceof ServerPlayer sp) {
             sp.displayClientMessage(
                     Component.translatable("message.magnetization.wrench_reset"), true);
         }
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.CONSUME);
     }
 }

@@ -374,7 +374,9 @@ public final class RailgunHandler {
         }
     }
 
-    private static boolean breakIfObstructing(final ServerLevel server, final BlockPos p) {
+    // Visible so a gametest can assert the safety carve-outs directly
+    // (rails / emitters / excavator-immune / bedrock / other BEs are spared).
+    public static boolean breakIfObstructing(final ServerLevel server, final BlockPos p) {
         final BlockState s = server.getBlockState(p);
         if (s.isAir()) return false;
         if (s.is(MagTags.RAILGUN_RAILS)) return false;            // never eat the track

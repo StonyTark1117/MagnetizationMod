@@ -372,6 +372,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue  TOOL_PULL_RADIUS_PER_TOOL;
     public static final ModConfigSpec.DoubleValue  TOOL_PULL_VELOCITY;
     public static final ModConfigSpec.DoubleValue  TOOL_PULL_MAX_PER_TICK;
+    public static final ModConfigSpec.IntValue     TOOL_PULL_TICKS;
     public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_RADIUS;
     public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_STRENGTH;
     public static final ModConfigSpec.DoubleValue  TOOL_AXE_PULSE_MAX_DELTA;
@@ -1485,6 +1486,13 @@ public final class MagConfig {
                          "to any one item, so nearby drops don't snap instantly.")
                 .translation("magnetization.configuration.tools.pullMaxPerTick")
                 .defineInRange("pullMaxPerTick", 0.6d, 0.0d, 10.0d);
+        TOOL_PULL_TICKS = b
+                .comment("How often (ticks) the tool-pull handler scans for nearby items. 1 = every",
+                         "tick (smoothest). Raise it to cut the per-tick entity scan for players",
+                         "carrying magnetized tools; the per-pull velocity scales up to keep the",
+                         "average pull strength the same.")
+                .translation("magnetization.configuration.tools.pullTicks")
+                .defineInRange("pullTicks", 1, 1, 40);
 
         TOOL_AXE_PULSE_RADIUS = b
                 .comment("Radius (blocks) of the radial pull emitted when a magnetized axe chops a log.")

@@ -58,6 +58,16 @@ public final class MagneticExcavatorBlock extends DirectionalBlock implements En
     }
 
     @Override
+    protected BlockState rotate(final BlockState state, final net.minecraft.world.level.block.Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(final BlockState state, final net.minecraft.world.level.block.Mirror mir) {
+        return state.rotate(mir.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         // Pointing the active face away from the surface the player clicks against.
         // Clicking the ceiling of a tunnel → face = DOWN (default); clicking a wall

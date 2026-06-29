@@ -62,12 +62,15 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 - **Emitter GUI and Field Compass HUD show readable strength labels.** Both displayed the raw internal name (e.g. "STRONG") instead of the localized word ("Strong"); they now use the translated label like every other tooltip.
 - **Two config tooltips now actually appear.** The hover tooltips for *Content → Magnetic Switch — Detection Range* and *Cross-Mod Compatibility → AE2 Meteorite Hook* were stored under the wrong config section and never displayed; their descriptions now show in the config screen.
 - **Removed a doubled tooltip draw in machine GUIs.** Machine screens drew the hovered item's tooltip twice, slightly darkening it; now drawn once.
+- **Directional machines now keep their facing when rotated.** Thrusters (MHD/Micro/Fusion), Repulsor, Tractor Beam, Excavator, Railgun Emitter, Structural Inducer, Solar Sail, Magnetic Item Frame, and the Kinetic Electromagnet didn't transform their orientation under rotation, so a rotated `/clone`, a structure/jigsaw placement, or a deployed schematic dropped them facing the wrong way. They now rotate and mirror correctly.
+- **Sneak-wrenching an emitter no longer flickers.** Resetting an emitter's overrides with a wrench cancelled the interaction only on the server, so the client briefly mispredicted the wrench's normal action. It's now cancelled on both sides.
 
 ### Performance
 - **Large magnetized-ferrofluid pools are much cheaper to tick.** The reactive-creep pass scaled quadratically with pool size (every cell tested against every other), and the field-emission pass ran a full pull/push sweep for *each* source cell even with nothing nearby. The creep pass now spatially indexes the fluid so each cell only checks its neighborhood, and the field pass skips the whole sweep when no ship or entity is within range — so big pools no longer cost frames. Behavior is unchanged.
 
 ### New config
 - **Machine Tuning → Structural Inducer …** tunables now expose the inducer's pull physics and scan behavior (Pull Acceleration, Max Pull Speed, Arrival Distance, Pull Timeout, Scan Interval, Max Structures, Tunnel Budget), bringing it in line with the rest of the mod's fully-configurable machines.
+- **Tools → Tool Pull — Scan Interval (ticks)** (default 1): how often the held-tool item magnet scans for nearby drops. Leave at 1 for the smoothest pull; raise it to cut the per-tick scan for players carrying magnetized tools (the per-pull strength scales up so the average pull is unchanged).
 
 ## 1.2.2 — Finer power & ore-magnetism control
 

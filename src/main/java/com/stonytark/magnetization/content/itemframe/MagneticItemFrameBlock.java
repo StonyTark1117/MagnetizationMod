@@ -66,6 +66,16 @@ public final class MagneticItemFrameBlock extends DirectionalBlock implements En
     }
 
     @Override
+    protected BlockState rotate(final BlockState state, final net.minecraft.world.level.block.Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(final BlockState state, final net.minecraft.world.level.block.Mirror mir) {
+        return state.rotate(mir.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         // FACING points out of the surface the frame is stuck to.
         return defaultBlockState().setValue(FACING, context.getClickedFace());

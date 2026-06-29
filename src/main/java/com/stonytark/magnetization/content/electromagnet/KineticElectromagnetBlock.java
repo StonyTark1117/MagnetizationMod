@@ -52,6 +52,13 @@ public final class KineticElectromagnetBlock extends KineticBlock implements IBE
         builder.add(AXIS);
     }
 
+    // Transform the rotation AXIS on /clone, structure-template, and schematic
+    // placement (KineticBlock doesn't rotate AXIS for us; mirror is a no-op for an axis).
+    @Override
+    protected BlockState rotate(final BlockState state, final net.minecraft.world.level.block.Rotation rot) {
+        return net.minecraft.world.level.block.RotatedPillarBlock.rotatePillar(state, rot);
+    }
+
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         // Like Create's own axis-based kinetic blocks: snap to an adjacent shaft's

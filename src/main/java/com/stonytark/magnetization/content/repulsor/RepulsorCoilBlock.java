@@ -53,6 +53,16 @@ public final class RepulsorCoilBlock extends DirectionalBlock implements EntityB
     }
 
     @Override
+    protected BlockState rotate(final BlockState state, final net.minecraft.world.level.block.Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(final BlockState state, final net.minecraft.world.level.block.Mirror mir) {
+        return state.rotate(mir.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         // Place with cone pointing OPPOSITE the player's looking direction —
         // matches "place against this surface, push outward from it" expectation.

@@ -52,6 +52,16 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
     }
 
     @Override
+    protected BlockState rotate(final BlockState state, final net.minecraft.world.level.block.Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(final BlockState state, final net.minecraft.world.level.block.Mirror mir) {
+        return state.rotate(mir.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(FACING, context.getNearestLookingDirection().getOpposite())
