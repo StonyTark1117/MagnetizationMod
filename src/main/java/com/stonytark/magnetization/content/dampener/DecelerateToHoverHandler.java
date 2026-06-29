@@ -65,6 +65,11 @@ public final class DecelerateToHoverHandler {
     @SubscribeEvent
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         final Player player = event.getEntity();
+        // Server-side only: the static HOVER map is keyed by UUID, and in single
+        // player the client + integrated-server players share that UUID on two
+        // threads — running both would interleave the per-descent state machine and
+        // race the non-concurrent map. (Mirrors GrappleTickHandler.)
+        if (player.level().isClientSide) return;
         final UUID id = player.getUUID();
         if (player.getAbilities().flying || player.isFallFlying() || player.onGround()) {
             HOVER.remove(id); // reset for the next fall

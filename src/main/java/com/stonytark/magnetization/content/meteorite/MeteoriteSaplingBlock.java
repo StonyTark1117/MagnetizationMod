@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.meteorite;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -10,6 +11,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,8 +28,23 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class MeteoriteSaplingBlock extends Block implements EntityBlock {
 
+    // Small centred outline matching the flat cross sprite — without this the
+    // default full-cube shape gives an invisible solid block (you can't walk
+    // through it and the highlight is a 1×1×1 box around a thin sprite).
+    private static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 13.0, 14.0);
+
     public MeteoriteSaplingBlock(final Properties props) {
         super(props);
+    }
+
+    @Override
+    public VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext ctx) {
+        return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext ctx) {
+        return Shapes.empty();   // walk-through, like a vanilla sapling
     }
 
     @Override

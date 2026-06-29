@@ -100,7 +100,13 @@ public final class MaghemiteDecayHandler {
 
             final Long stampedAt = stack.get(MagDataComponents.MAGNETITE_OXIDATION_AGE.get());
             if (stampedAt == null) {
-                stack.set(MagDataComponents.MAGNETITE_OXIDATION_AGE.get(), now);
+                // Stamp a coarse world-time BUCKET, not the exact tick: the oxidation
+                // age is part of the stack's component identity, so a per-tick value
+                // would fragment magnetite into un-mergeable stacks (a freshly-mined
+                // stack could never top up an already-stamped one). Bucketing lets
+                // magnetite aged within the same window keep stacking.
+                final long bucket = Math.max(1L, decay / 8L);
+                stack.set(MagDataComponents.MAGNETITE_OXIDATION_AGE.get(), (now / bucket) * bucket);
                 continue;
             }
             if ((now - stampedAt) < decay) continue;

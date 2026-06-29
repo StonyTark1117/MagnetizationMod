@@ -36,7 +36,20 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, UseCurioPayload> CODEC =
             StreamCodec.of(
                     (buf, p) -> buf.writeByte(p.kind.ordinal()),
-                    buf -> new UseCurioPayload(Kind.values()[buf.readByte()]));
+                    UseCurioPayload::decode);
+
+    /** Bounds-check the wire ordinal: this is a serverbound payload, so a forged
+     *  client could send any byte. Indexing {@code Kind.values()} directly would
+     *  throw {@link ArrayIndexOutOfBoundsException} on the netty thread; reject the
+     *  malformed value with a clear decode error instead. */
+    private static UseCurioPayload decode(final RegistryFriendlyByteBuf buf) {
+        final int ordinal = buf.readByte();
+        final Kind[] kinds = Kind.values();
+        if (ordinal < 0 || ordinal >= kinds.length) {
+            throw new io.netty.handler.codec.DecoderException("Invalid UseCurioPayload kind ordinal: " + ordinal);
+        }
+        return new UseCurioPayload(kinds[ordinal]);
+    }
 
     @Override
     public Type<UseCurioPayload> type() { return TYPE; }
