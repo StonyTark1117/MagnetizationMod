@@ -51,6 +51,17 @@ public final class EmitterPlacementHandler {
         final BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
         if (!(be instanceof AbstractEmitterBlockEntity)) return; // only our interactible emitters
 
+        // Exception: a Meteorite Core is refuelled by right-clicking it with a
+        // ferromagnetic item — and that fuel can be a BLOCK form (e.g. a block of
+        // magnetite). Forcing block-placement here would eat the refuel click, so
+        // when the held block is valid fuel and the core isn't full, let the
+        // block's own useItemOn run. Non-fuel blocks still place against it.
+        if (be instanceof com.stonytark.magnetization.content.meteorite.MeteoriteCoreBlockEntity core
+                && held.is(com.stonytark.magnetization.api.MagTags.FERROMAGNETIC_ITEMS)
+                && !core.isAtFullCharge()) {
+            return;
+        }
+
         final Player player = event.getEntity();
         if (player.isShiftKeyDown()) {
             // Shift + block → interact (open GUI / flip polarity), don't place.

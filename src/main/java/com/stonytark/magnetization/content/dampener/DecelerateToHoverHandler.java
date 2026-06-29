@@ -62,6 +62,17 @@ public final class DecelerateToHoverHandler {
 
     private DecelerateToHoverHandler() {}
 
+    /** Drop one player's hover state (logout / respawn / dimension change) so the
+     *  UUID-keyed map doesn't retain entries for absent players. */
+    public static void clear(final UUID id) {
+        HOVER.remove(id);
+    }
+
+    /** Drop all hover state on server stop. */
+    public static void clearAll() {
+        HOVER.clear();
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         final Player player = event.getEntity();

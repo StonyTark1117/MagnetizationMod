@@ -36,6 +36,7 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
     private final FluidTank waterTank = new FluidTank(MagConfig.electrolyzerWaterTank(), fs -> fs.getFluid() == Fluids.WATER);
     private final FluidTank hydrogenTank = new FluidTank(MagConfig.electrolyzerHydrogenTank(), fs -> fs.getFluid() == MagFluids.HYDROGEN.get());
     private final ReceiveBuffer energy = new ReceiveBuffer(MagConfig.electrolyzerFeCapacity(), MagConfig.electrolyzerFeReceive());
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
 
     /** Bucket-input slot — water buckets auto-drained into the water tank. */
     private final SimpleContainer bucketSlot = new SimpleContainer(1) {
@@ -134,7 +135,7 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
         if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != running) {
             server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.LIT, running), Block.UPDATE_CLIENTS);
         }
-        if (server.getGameTime() % 10L == 0L) {
+        if (server.getGameTime() % 10L == 0L && syncGate.changed(this, server.registryAccess())) {
             server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }

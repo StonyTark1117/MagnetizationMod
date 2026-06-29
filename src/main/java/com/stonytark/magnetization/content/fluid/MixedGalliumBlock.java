@@ -58,6 +58,18 @@ public final class MixedGalliumBlock extends LiquidBlock implements FluidRedston
     }
 
     @Override
+    public net.minecraft.world.item.ItemStack pickupBlock(final @Nullable net.minecraft.world.entity.player.Player player,
+                                                          final net.minecraft.world.level.LevelAccessor level,
+                                                          final BlockPos pos, final BlockState state) {
+        // Creep-grown tendril cells aren't bucketable (they'd be free fluid); only
+        // the untracked original pour is. Mirrors FerrofluidBlock.
+        if (level instanceof Level lvl && FerrofluidCreepRegistry.contains(lvl, pos)) {
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        }
+        return super.pickupBlock(player, level, pos, state);
+    }
+
+    @Override
     protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos,
                                    final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);

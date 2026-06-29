@@ -44,6 +44,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     private boolean fireRequested;  // set by the bound remote; consumed by the handler
 
     private int railLength;         // cached by the handler each scan
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
 
     /** Remote-trigger slot. Inserting a remote binds it (manual mode); empty = auto. */
     private final SimpleContainer remoteSlot = new SimpleContainer(1) {
@@ -137,7 +138,8 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         // so the at-a-glance HUD (WTHIT/Jade/TOP) reads current values — the mutators
         // above only setChanged() (chunk-dirty), which never transmits to clients.
         // Mirrors every sibling machine's serverTick sync.
-        if (level instanceof net.minecraft.server.level.ServerLevel server && server.getGameTime() % 10L == 0L) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server && server.getGameTime() % 10L == 0L
+                && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, st, st, net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         }
     }

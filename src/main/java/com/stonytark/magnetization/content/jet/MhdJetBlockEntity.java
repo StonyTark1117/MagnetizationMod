@@ -57,6 +57,7 @@ public class MhdJetBlockEntity extends BlockEntity
     };
     /** Conductive working fluid — the magnetohydrodynamic propellant. */
     private final FluidTank fluidTank = new FluidTank(MagConfig.mhdJetTank(), fs -> conductivityMult(fs.getFluid()) > 0);
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
     /** Active ticks left before the installed magnet is consumed (when enabled). */
     private int burnRemaining = 0;
 
@@ -170,7 +171,7 @@ public class MhdJetBlockEntity extends BlockEntity
         if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != firing) {
             server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.LIT, firing), Block.UPDATE_CLIENTS);
         }
-        if (server.getGameTime() % 10L == 0L) {
+        if (server.getGameTime() % 10L == 0L && syncGate.changed(this, server.registryAccess())) {
             server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }

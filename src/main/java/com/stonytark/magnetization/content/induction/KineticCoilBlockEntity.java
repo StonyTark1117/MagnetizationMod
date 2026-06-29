@@ -132,18 +132,25 @@ public class KineticCoilBlockEntity extends BlockEntity
         double best = 0.0;
         for (final SubLevel sub : container.getAllSubLevels()) {
             if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            final double susc = ShipMagneticRegistry.get(server, ship).susceptibility();
-            if (susc <= 0.0) continue;
-            final Vector3dc p = ship.logicalPose().position();
-            final double dx = p.x() - cx, dy = p.y() - cy, dz = p.z() - cz;
-            if (dx * dx + dy * dy + dz * dz > RANGE * RANGE) continue;
-            final RigidBodyHandle handle = RigidBodyHandle.of(ship);
-            if (handle == null || !handle.isValid()) continue;
-            final Vector3dc v = handle.getLinearVelocity();
-            final double speed = Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
-            if (speed < MIN_SPEED) continue;
-            best = Math.max(best, speed * susc);
+            // Sable steps physics off-thread; a ship removed mid-tick can make
+            // logicalPose()/the rigid-body handle throw. Isolate each ship so one
+            // transient failure doesn't crash the BE ticker (mirrors LenzBrakingHandler).
+            try {
+                if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
+                final double susc = ShipMagneticRegistry.get(server, ship).susceptibility();
+                if (susc <= 0.0) continue;
+                final Vector3dc p = ship.logicalPose().position();
+                final double dx = p.x() - cx, dy = p.y() - cy, dz = p.z() - cz;
+                if (dx * dx + dy * dy + dz * dz > RANGE * RANGE) continue;
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) continue;
+                final Vector3dc v = handle.getLinearVelocity();
+                final double speed = Math.sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
+                if (speed < MIN_SPEED) continue;
+                best = Math.max(best, speed * susc);
+            } catch (final RuntimeException ignored) {
+                // ship torn down mid-tick — skip it this pass
+            }
         }
         return best;
     }

@@ -60,6 +60,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
                 ? com.stonytark.magnetization.config.MagConfig.microThrusterMagnetizedMult() : 1.0;
     }
     private final ReceiveBuffer energy = new ReceiveBuffer(com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(), com.stonytark.magnetization.config.MagConfig.microThrusterFeReceive());
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
     /** Bucket-input slot — ferrofluid buckets are auto-drained into the tank. */
     private final net.minecraft.world.SimpleContainer bucketSlot = new net.minecraft.world.SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final net.minecraft.world.item.ItemStack st) {
@@ -133,7 +134,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
         if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != firing) {
             server.setBlock(getBlockPos(), state.setValue(BlockStateProperties.LIT, firing), Block.UPDATE_CLIENTS);
         }
-        if (server.getGameTime() % 10L == 0L) {
+        if (server.getGameTime() % 10L == 0L && syncGate.changed(this, server.registryAccess())) {
             server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }

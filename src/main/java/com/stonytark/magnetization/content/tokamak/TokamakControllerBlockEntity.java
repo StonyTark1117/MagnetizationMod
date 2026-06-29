@@ -35,6 +35,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
     private int burnTime = 0;
     private int currentTier = 0;   // 0 = D-D, 1 = D-T, 2 = D-He³ — set when a cell is consumed
     private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
 
     /** Fuel slot — holds spare fusion cells (D-D / D-T / D-He³), auto-fed into the burn. */
     private final net.minecraft.world.SimpleContainer fuelSlot = new net.minecraft.world.SimpleContainer(1) {
@@ -140,7 +141,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
         }
         be.lastOutput = pushEnergy(server, pos, be.energy, tierOutputRate(be.currentTier));
-        if (server.getGameTime() % 10L == 0L) {
+        if (server.getGameTime() % 10L == 0L && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }

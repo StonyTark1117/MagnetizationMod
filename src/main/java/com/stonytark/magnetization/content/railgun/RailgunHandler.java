@@ -384,7 +384,9 @@ public final class RailgunHandler {
         if (s.is(MagTags.EXCAVATOR_IMMUNE)) return false;
         if (server.getBlockEntity(p) != null) return false;       // skip other BEs
         if (s.getDestroySpeed(server, p) < 0) return false;       // bedrock
-        Block.dropResources(s, server, p);
+        // Give claim/protection mods a veto, like a real break would.
+        if (com.stonytark.magnetization.content.MagBlockBreaker.isBreakVetoed(server, p, s)) return false;
+        if (com.stonytark.magnetization.content.MagBlockBreaker.dropsEnabled(server)) Block.dropResources(s, server, p);
         server.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
         if ((server.getGameTime() & 7L) == 0L) {
             server.playSound(null, p, s.getSoundType().getBreakSound(),

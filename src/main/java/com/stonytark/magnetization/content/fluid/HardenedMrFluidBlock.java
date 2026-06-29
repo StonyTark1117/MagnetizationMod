@@ -87,10 +87,14 @@ public final class HardenedMrFluidBlock extends Block implements FluidRedstone.C
         // Drop our registry tracking whenever we leave this position.
         if (!level.isClientSide) HardenedMrFluidRegistry.remove(level, pos);
         super.onRemove(state, level, pos, newState, isMoving);
-        // Broken by a player (replaced with air) → turn into MR fluid, not nothing.
-        // BUT the field-revert path also clears flowing cells to air; it sets a
-        // guard so we DON'T recreate those as sources (that duplicated the fluid).
-        if (!level.isClientSide && newState.isAir() && !MrFluidHardenHandler.isFieldReverting()) {
+        // Broken by a player (replaced with air) → turn back into MR fluid, not
+        // nothing. Only restore a SOURCE when this cell hardened from a real source:
+        // a hardened pool is mostly SOURCE=false (flowing) cells, and recreating
+        // those as sources mints new fluid (an unbounded dupe via mining). Flowing
+        // cells are left as air and refill from the pool's true source. (The
+        // field-revert path is also guarded so it doesn't recreate flowing sources.)
+        if (!level.isClientSide && newState.isAir() && state.getValue(SOURCE)
+                && !MrFluidHardenHandler.isFieldReverting()) {
             level.setBlock(pos, MagBlocks.MR_FLUID_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }

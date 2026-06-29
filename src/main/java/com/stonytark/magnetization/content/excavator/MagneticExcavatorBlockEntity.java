@@ -625,8 +625,12 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
         if (bs.isAir()) return;
         if (bs.is(MagTags.FERROMAGNETIC_BLOCKS)) return;
         if (isBarrier(server, at, bs)) return;
-        for (final ItemStack stack : enchantedDropsFor(bs, server, at, tool)) {
-            Block.popResource(server, at, stack);
+        // Give claim/protection mods a veto, like a real break would.
+        if (com.stonytark.magnetization.content.MagBlockBreaker.isBreakVetoed(server, at, bs)) return;
+        if (com.stonytark.magnetization.content.MagBlockBreaker.dropsEnabled(server)) {
+            for (final ItemStack stack : enchantedDropsFor(bs, server, at, tool)) {
+                Block.popResource(server, at, stack);
+            }
         }
         server.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
                 Block.UPDATE_CLIENTS);

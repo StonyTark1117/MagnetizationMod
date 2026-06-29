@@ -56,6 +56,19 @@ public final class FerrofluidBlock extends LiquidBlock implements FluidRedstone.
     }
 
     @Override
+    public net.minecraft.world.item.ItemStack pickupBlock(final @Nullable net.minecraft.world.entity.player.Player player,
+                                                          final net.minecraft.world.level.LevelAccessor level,
+                                                          final BlockPos pos, final BlockState state) {
+        // Don't let a player bucket a creep-grown tendril cell (transient sources
+        // marching toward a magnet) — that would be free fluid. Only the original
+        // pour, which the creep registry never tracks, stays bucketable.
+        if (level instanceof Level lvl && FerrofluidCreepRegistry.contains(lvl, pos)) {
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        }
+        return super.pickupBlock(player, level, pos, state);
+    }
+
+    @Override
     protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos,
                                    final Block neighborBlock, final BlockPos neighborPos, final boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);

@@ -152,31 +152,37 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
 
         for (final SubLevel sub : container.getAllSubLevels()) {
             if (!(sub instanceof ServerSubLevel ship)) continue;
-            if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
-            if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
-            final Vector3dc p = ship.logicalPose().position();
-            final double dx = p.x() - cx, dy = p.y() - cy, dz = p.z() - cz;
-            final double distSqr = dx * dx + dy * dy + dz * dz;
-            if (distSqr > rangeSqr) continue;
-            // Must be inside the cone: angle between (coil→ship) and the facing axis.
-            final double dist = Math.sqrt(distSqr);
-            if (dist > 1.0e-4) {
-                final double cos = (dx * coneAxis.x + dy * coneAxis.y + dz * coneAxis.z) / dist;
-                if (cos < coneCos) continue; // outside the repulsion cone → not dragged
+            // Off-thread physics: isolate each ship so one removed mid-tick can't
+            // throw out of the BE ticker (mirrors LenzBrakingHandler/AnomalyMagneticChaos).
+            try {
+                if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) continue;
+                if (ShipMagneticRegistry.get(server, ship).susceptibility() <= 0.0) continue;
+                final Vector3dc p = ship.logicalPose().position();
+                final double dx = p.x() - cx, dy = p.y() - cy, dz = p.z() - cz;
+                final double distSqr = dx * dx + dy * dy + dz * dz;
+                if (distSqr > rangeSqr) continue;
+                // Must be inside the cone: angle between (coil→ship) and the facing axis.
+                final double dist = Math.sqrt(distSqr);
+                if (dist > 1.0e-4) {
+                    final double cos = (dx * coneAxis.x + dy * coneAxis.y + dz * coneAxis.z) / dist;
+                    if (cos < coneCos) continue; // outside the repulsion cone → not dragged
+                }
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) continue;
+                final Vector3dc v = handle.getLinearVelocity();
+                final double along = v.x() * dir.x + v.y() * dir.y + v.z() * dir.z;
+                if (along >= maxSpeed) continue; // already at terminal speed in the push direction
+                // Push linearly toward the chosen direction AND bleed off spin, so the
+                // ship tracks the direction (a guided conveyor) instead of just
+                // tumbling from the off-centre cone repulsion.
+                final Vector3dc av = handle.getAngularVelocity();
+                final double spinDamp = com.stonytark.magnetization.config.MagConfig.repulsorSpinDamp();
+                handle.addLinearAndAngularVelocity(
+                        new Vector3d(dir.x * thrust, dir.y * thrust, dir.z * thrust),
+                        new Vector3d(-av.x() * spinDamp, -av.y() * spinDamp, -av.z() * spinDamp));
+            } catch (final RuntimeException ignored) {
+                // ship torn down mid-tick — skip it this pass
             }
-            final RigidBodyHandle handle = RigidBodyHandle.of(ship);
-            if (handle == null || !handle.isValid()) continue;
-            final Vector3dc v = handle.getLinearVelocity();
-            final double along = v.x() * dir.x + v.y() * dir.y + v.z() * dir.z;
-            if (along >= maxSpeed) continue; // already at terminal speed in the push direction
-            // Push linearly toward the chosen direction AND bleed off spin, so the
-            // ship tracks the direction (a guided conveyor) instead of just
-            // tumbling from the off-centre cone repulsion.
-            final Vector3dc av = handle.getAngularVelocity();
-            final double spinDamp = com.stonytark.magnetization.config.MagConfig.repulsorSpinDamp();
-            handle.addLinearAndAngularVelocity(
-                    new Vector3d(dir.x * thrust, dir.y * thrust, dir.z * thrust),
-                    new Vector3d(-av.x() * spinDamp, -av.y() * spinDamp, -av.z() * spinDamp));
         }
     }
 

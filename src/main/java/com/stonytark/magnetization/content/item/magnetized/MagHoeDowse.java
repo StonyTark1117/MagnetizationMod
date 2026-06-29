@@ -46,6 +46,16 @@ public final class MagHoeDowse {
 
     private MagHoeDowse() {}
 
+    /** Drop one player's dowse-throttle entry (logout / respawn / dimension change). */
+    public static void clear(final UUID id) {
+        LAST_FIRE.remove(id);
+    }
+
+    /** Drop all dowse-throttle entries on server stop. */
+    public static void clearAll() {
+        LAST_FIRE.clear();
+    }
+
     @SubscribeEvent
     public static void onRightClickBlock(final PlayerInteractEvent.RightClickBlock event) {
         if (tryDowse(event.getEntity(), event.getItemStack())) {

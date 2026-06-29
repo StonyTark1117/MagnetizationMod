@@ -142,6 +142,10 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock implements Flui
     @Override
     public ItemStack pickupBlock(final @Nullable Player player, final LevelAccessor level,
                                  final BlockPos pos, final BlockState state) {
+        // Refuse to bucket a creep-grown tendril cell: creep mints transient source
+        // cells marching toward a magnet, so scooping them would be free fluid (a
+        // dupe). Only the player's original pour (untracked) stays bucketable.
+        if (level instanceof Level lvl && FerrofluidCreepRegistry.contains(lvl, pos)) return ItemStack.EMPTY;
         final MagneticPolarity pole = state.getValue(POLARITY);
         final ItemStack bucket = super.pickupBlock(player, level, pos, state);
         // The fluid's bucket is the plain ferrofluid bucket; re-stamp the pole so

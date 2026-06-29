@@ -279,7 +279,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                     m.set(x, y, z);
                     if (grabbed.contains(m)) continue;
                     final BlockState bs = server.getBlockState(m);
-                    if (isSoilTerrain(bs)) {
+                    // Honor a protection-mod veto before voiding claimed soil.
+                    if (isSoilTerrain(bs)
+                            && !com.stonytark.magnetization.content.MagBlockBreaker.isBreakVetoed(server, m.immutable(), bs)) {
                         server.setBlock(m.immutable(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
                                 Block.UPDATE_CLIENTS);
                     }
@@ -343,21 +345,28 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 it.remove();
                 continue;
             }
-            if (ship.getMassTracker().isInvalid()) {
-                // A fresh body may read invalid for a tick or two while Sable
-                // initializes it — wait out the grace window before deciding.
-                if (server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
-                // Genuine assembly failure (bad mass past grace): tear down the
-                // dead sub-level and put the structure's blocks back so they
-                // aren't lost. (A shattered/gone ship hits the branch above.)
-                container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
-                restoreCaptured(server, lift.captured);
-                it.remove();
-                continue;
-            }
-            if (driveOne(server, ship, lift)) {
-                it.remove(); // arrived / timed out — released as a free craft
-            } else {
+            try {
+                if (ship.getMassTracker().isInvalid()) {
+                    // A fresh body may read invalid for a tick or two while Sable
+                    // initializes it — wait out the grace window before deciding.
+                    if (server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
+                    // Genuine assembly failure (bad mass past grace): tear down the
+                    // dead sub-level and put the structure's blocks back so they
+                    // aren't lost. (A shattered/gone ship hits the branch above.)
+                    container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
+                    restoreCaptured(server, lift.captured);
+                    it.remove();
+                    continue;
+                }
+                if (driveOne(server, ship, lift)) {
+                    it.remove(); // arrived / timed out — released as a free craft
+                } else {
+                    reeling++;
+                }
+            } catch (final RuntimeException ignored) {
+                // Off-thread physics: the ship can be torn down mid-tick, making
+                // logicalPose()/the handle throw. Skip it this tick (keep reeling);
+                // it resolves to the gone/invalid branches next pass.
                 reeling++;
             }
         }
@@ -446,7 +455,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         if (bs.is(MagTags.EXCAVATOR_IMMUNE)) return budget;
         if (server.getBlockEntity(at) != null) return budget; // don't pulverize chests etc.
         if (bs.getDestroySpeed(server, at) < 0) return budget; // bedrock / unbreakable
-        Block.dropResources(bs, server, at);
+        // Give claim/protection mods a veto, like a real break would.
+        if (com.stonytark.magnetization.content.MagBlockBreaker.isBreakVetoed(server, at, bs)) return budget;
+        if (com.stonytark.magnetization.content.MagBlockBreaker.dropsEnabled(server)) Block.dropResources(bs, server, at);
         server.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
                 Block.UPDATE_CLIENTS);
         return budget - 1;

@@ -70,6 +70,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     private @Nullable BlockPos cachedMaster;
     private java.util.List<BlockPos> cachedInteriorList = java.util.List.of();
     private long lastScanTick = Long.MIN_VALUE;
+    private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
     /** Fractional fuel-consumption accumulator (denser fluids drain < 1 mB/tick). */
     private double fluidAccum;
     private boolean firing;
@@ -258,7 +259,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
                 server.setBlock(p, s.setValue(BlockStateProperties.LIT, canFire), Block.UPDATE_CLIENTS);
             }
         }
-        if (server.getGameTime() % 10L == 0L) {
+        if (server.getGameTime() % 10L == 0L && syncGate.changed(this, server.registryAccess())) {
             server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
