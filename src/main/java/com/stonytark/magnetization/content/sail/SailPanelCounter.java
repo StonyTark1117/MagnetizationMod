@@ -9,6 +9,10 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link com.stonytark.magnetization.physics.ShipMagneticRegistry}; a 2 s
  * staleness is harmless for a slowly-built sail.
  */
+@EventBusSubscriber(modid = com.stonytark.magnetization.Magnetization.MOD_ID)
 public final class SailPanelCounter {
 
     private static final long TTL_TICKS = 40L;
@@ -28,6 +33,15 @@ public final class SailPanelCounter {
     private record Entry(int count, long tick) {}
 
     private SailPanelCounter() {}
+
+    /** Drop the per-ship cache when the server stops. The cache is keyed by ship
+     *  UUID (not by level), so without this it would retain one entry per ship ever
+     *  built for the whole game session — a slow leak across world reloads. Ships
+     *  re-fill lazily on the next {@link #count}. */
+    @SubscribeEvent
+    public static void onServerStopped(final ServerStoppedEvent event) {
+        CACHE.clear();
+    }
 
     /** Total Solar Sail panels on {@code ship} (≥ 1 while at least this one exists). */
     public static int count(final ServerLevel level, final ServerSubLevel ship) {

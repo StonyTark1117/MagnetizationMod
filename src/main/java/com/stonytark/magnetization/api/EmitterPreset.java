@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.api;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -31,8 +32,19 @@ public record EmitterPreset(MagneticStrength strength,
                             int range,
                             ResourceLocation sourceBlockId) {
 
+    /** Parse a strength name into a DataResult so a corrupt/legacy 'strength' string
+     *  degrades to a codec error instead of throwing IllegalArgumentException out of
+     *  the data-component decode (which would drop the whole stack). */
+    private static DataResult<MagneticStrength> parseStrength(final String s) {
+        try {
+            return DataResult.success(MagneticStrength.valueOf(s));
+        } catch (final IllegalArgumentException e) {
+            return DataResult.error(() -> "Unknown MagneticStrength: " + s);
+        }
+    }
+
     public static final Codec<EmitterPreset> CODEC = RecordCodecBuilder.create(b -> b.group(
-            Codec.STRING.xmap(MagneticStrength::valueOf, MagneticStrength::name)
+            Codec.STRING.comapFlatMap(EmitterPreset::parseStrength, MagneticStrength::name)
                     .fieldOf("strength").forGetter(EmitterPreset::strength),
             MagneticPolarity.CODEC.fieldOf("polarity").forGetter(EmitterPreset::polarity),
             Codec.INT.fieldOf("range").forGetter(EmitterPreset::range),

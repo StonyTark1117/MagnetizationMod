@@ -53,12 +53,18 @@ public final class ChunkSurfaceRepaintHandler {
      *  on the next pass 1s later. */
     private static final int MAX_CHUNKS_PER_TICK = 8;
 
-    /** Per-(dim, chunk) seen-set: paint-once gate. Lives for the JVM session;
-     *  surface paint is idempotent against the vanilla-replaceable predicate
-     *  so re-applying on session restart is fine. */
+    /** Per-(dim, chunk) seen-set: paint-once gate. The key is dimension+chunk,
+     *  both world-independent, so it MUST be cleared when the server stops — else
+     *  loading a second singleplayer world in the same game session would skip the
+     *  new world's chunks (and the set would grow unbounded). */
     private static final Set<Long> SEEN = ConcurrentHashMap.newKeySet();
 
     private ChunkSurfaceRepaintHandler() {}
+
+    @SubscribeEvent
+    public static void onServerStopped(final net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        SEEN.clear();
+    }
 
     @SubscribeEvent
     public static void onServerTick(final ServerTickEvent.Post event) {
