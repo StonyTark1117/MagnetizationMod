@@ -76,6 +76,7 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 - **Thrusters can be fuelled by pipes but no longer drained by them.** A Create pump placed against a fuelled Micro/MHD/Fusion thruster could pull the unburnt fuel back out. Their fuel tanks are now insert-only, matching the Electrolyzer's water input — pipes can fill them but not siphon them.
 - **A broken Fusion Thruster no longer leaves glowing ghost blocks.** Mining part of a firing panel left the interior blocks stuck lit because the master stopped driving them the moment the panel became invalid. The lights are now cleared when the panel breaks.
 - **Fixed the Fusion Thruster fuel bar at extreme tank sizes.** With a very large configured tank and a big panel, the GUI fuel-bar's scale could overflow and render empty; it's now clamped like the server side.
+- **Emitter hum sounds stop cleanly when you leave a world.** The looping emitter hum could linger or be suppressed on the next world after a save-and-quit; it now stops and resets when you disconnect or return to the title screen.
 
 ### Performance
 - **Idle machines stop spamming the network.** Fusion Thruster, MHD Jet, Micro Thruster, Electrolyzer, Tokamak, and Railgun Emitter re-sent their full state (fluid tank + inventory) to nearby clients twice a second even when nothing changed. They now only send when something a client can see actually changes.

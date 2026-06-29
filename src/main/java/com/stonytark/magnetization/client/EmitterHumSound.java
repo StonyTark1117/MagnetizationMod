@@ -83,6 +83,15 @@ public final class EmitterHumSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
+        // World gone (quit to title / disconnect): the scanner stops firing, so the
+        // normal fade-out path never runs. Stop the loop ourselves so it can't outlive
+        // the level — and clear the static state so a reload re-plays the hum instead
+        // of the containsKey guard suppressing it.
+        if (Minecraft.getInstance().level == null) {
+            stop();
+            clearAll();
+            return;
+        }
         if (shouldFade) {
             this.volume = Math.max(0.0f, this.volume - 0.05f);
             if (this.volume <= 0.0f) stop();
@@ -93,5 +102,13 @@ public final class EmitterHumSound extends AbstractTickableSoundInstance {
 
     private void requestStop() {
         this.shouldFade = true;
+    }
+
+    /** Stop every active hum and drop the static state. Called on world unload /
+     *  disconnect so looping instances don't leak and a same-world reload re-plays. */
+    public static void clearAll() {
+        for (final EmitterHumSound sound : active.values()) sound.stop();
+        active.clear();
+        seenThisScan.clear();
     }
 }

@@ -330,4 +330,11 @@ public final class MagClientRegistration {
     public static void onClientLogin(final ClientPlayerNetworkEvent.LoggingIn event) {
         CompassPropertyHooks.installModCompasses();
     }
+
+    @SubscribeEvent
+    public static void onClientLogout(final ClientPlayerNetworkEvent.LoggingOut event) {
+        // Stop any looping emitter hums and clear their static state when leaving a
+        // world, so the loops don't outlive the level and a reload re-plays them.
+        EmitterHumSound.clearAll();
+    }
 }
