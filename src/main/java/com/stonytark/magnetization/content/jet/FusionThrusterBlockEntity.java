@@ -120,7 +120,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return MagConfig.fusionThrusterFeCapacity(); }
-    @Override public int guiStat1() { return tank.getFluidAmount(); }   // fluid mB
+    @Override public int guiStat1() { return panelTank().getFluidAmount(); }   // shared panel fluid mB
     @Override public int guiStat2() { return cachedInterior; }          // interior count
 
     static boolean isFusionFluid(final Fluid fluid) {
@@ -298,6 +298,12 @@ public class FusionThrusterBlockEntity extends BlockEntity
         tag.putInt("Energy", energy.getEnergyStored());
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         tag.put("Bucket", bucketSlot.createTag(registries));
+        // Sync the resolved panel state so the client BE (and thus the WTHIT/Jade/TOP
+        // HUD) reports the real interior count, formed flag, and master — which the
+        // panel-fluid forwarding (panelTank) also needs to resolve on the client.
+        tag.putBoolean("Formed", cachedValid);
+        tag.putInt("Interior", cachedInterior);
+        if (cachedMaster != null) tag.putLong("Master", cachedMaster.asLong());
     }
 
     @Override
@@ -306,6 +312,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
         energy.setStored(tag.getInt("Energy"));
         tank.readFromNBT(registries, tag.getCompound("Tank"));
         bucketSlot.fromTag(tag.getList("Bucket", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+        // Restores the synced HUD state on the client; on the server these are
+        // recomputed by the next validation pass, so a stale value is harmless.
+        cachedValid = tag.getBoolean("Formed");
+        cachedInterior = tag.getInt("Interior");
+        cachedMaster = tag.contains("Master") ? BlockPos.of(tag.getLong("Master")) : null;
     }
 
     @Override

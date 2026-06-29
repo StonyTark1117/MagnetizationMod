@@ -133,6 +133,13 @@ public class RailgunEmitterBlockEntity extends BlockEntity
             be.cooldownTicks--;
             if (be.cooldownTicks <= 0) be.setArcState(ArcState.IDLE);
         }
+        // Push the live arc state (rail length, mode, arc state, FE) to the client BE
+        // so the at-a-glance HUD (WTHIT/Jade/TOP) reads current values — the mutators
+        // above only setChanged() (chunk-dirty), which never transmits to clients.
+        // Mirrors every sibling machine's serverTick sync.
+        if (level instanceof net.minecraft.server.level.ServerLevel server && server.getGameTime() % 10L == 0L) {
+            server.sendBlockUpdated(pos, st, st, net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override
