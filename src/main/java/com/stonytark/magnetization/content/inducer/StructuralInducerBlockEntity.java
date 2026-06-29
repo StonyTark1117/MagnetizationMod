@@ -117,8 +117,11 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** Last tick the cone was rescanned for new structures. */
     private long lastScanTick = Long.MIN_VALUE;
 
-    /** Diagnostic state surfaced in goggles when debug.goggleDiagnostics is on. */
-    private String lastResult = "idle";
+    /** Operational status surfaced in goggles/WTHIT. A localizable key suffix
+     *  (idle/reeling/invalid/failed) plus a count arg, instead of a raw English
+     *  sentence, so the readout translates. */
+    private String lastStatus = "idle";
+    private int lastStatusCount = 0;
 
     public StructuralInducerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.STRUCTURAL_INDUCER.get(), pos, state);
@@ -290,7 +293,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 final SubLevelContainer container = SubLevelContainer.getContainer(server);
                 if (container != null) container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
                 restoreCaptured(server, cap);
-                setResult(server, "assembly mass invalid (" + positions.size() + " blocks) — reverted");
+                setStatus(server, "invalid", positions.size());
                 return false;
             }
             final var pose0 = ship.logicalPose();
@@ -299,10 +302,10 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 localCenters.add(pose0.transformPositionInverse(Vec3.atCenterOf(op)));
             }
             lifted.put(ship.getUniqueId(), new Lift(server.getGameTime(), localCenters, cap));
-            setResult(server, "reeling in " + lifted.size() + " structure(s)");
+            setStatus(server, "reeling", lifted.size());
             return true;
         } catch (final Throwable t) {
-            setResult(server, "assembly threw: " + t.getClass().getSimpleName());
+            setStatus(server, "failed", 0);
             LOG.error("Structural Inducer assembly failed at {}", getBlockPos().toShortString(), t);
             return false;
         }
@@ -314,8 +317,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     public java.util.List<net.minecraft.network.chat.Component> extraTooltipLines(final boolean verbose) {
         final java.util.List<net.minecraft.network.chat.Component> lines =
                 new java.util.ArrayList<>(super.extraTooltipLines(verbose));
-        lines.add(net.minecraft.network.chat.Component.translatable(
-                        "tooltip.magnetization.inducer_status", lastResult)
+        lines.add(net.minecraft.network.chat.Component.translatable("tooltip.magnetization.inducer_status",
+                        net.minecraft.network.chat.Component.translatable(
+                                "tooltip.magnetization.inducer_status." + lastStatus, lastStatusCount))
                 .withStyle(net.minecraft.ChatFormatting.GRAY));
         return lines;
     }
@@ -357,8 +361,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 reeling++;
             }
         }
-        if (reeling > 0) setResult(server, "reeling in " + reeling + " structure(s)");
-        else if (lifted.isEmpty()) setResult(server, "idle");
+        if (reeling > 0) setStatus(server, "reeling", reeling);
+        else if (lifted.isEmpty()) setStatus(server, "idle", 0);
     }
 
     /** Reel one ship toward the inducer. Returns true once it should be released
@@ -589,10 +593,12 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 || bs.is(net.minecraft.world.level.block.Blocks.PODZOL);
     }
 
-    /** Set the operational status and push it to clients (goggle/WTHIT readout). */
-    private void setResult(final ServerLevel server, final String result) {
-        if (this.lastResult.equals(result)) return;
-        this.lastResult = result;
+    /** Set the operational status (a lang-key suffix + count) and push it to
+     *  clients (goggle/WTHIT readout). */
+    private void setStatus(final ServerLevel server, final String statusKey, final int count) {
+        if (this.lastStatus.equals(statusKey) && this.lastStatusCount == count) return;
+        this.lastStatus = statusKey;
+        this.lastStatusCount = count;
         setChanged();
         markForClientSync(server);
     }
@@ -601,7 +607,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     protected void saveAdditional(final net.minecraft.nbt.CompoundTag tag,
                                   final net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putString("LastResult", lastResult);
+        tag.putString("Status", lastStatus);
+        tag.putInt("StatusCount", lastStatusCount);
         tag.put("RedstoneFuel", redstoneFuelSlot.createTag(registries));
     }
 
@@ -609,7 +616,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     protected void loadAdditional(final net.minecraft.nbt.CompoundTag tag,
                                   final net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("LastResult")) lastResult = tag.getString("LastResult");
+        if (tag.contains("Status")) lastStatus = tag.getString("Status");
+        lastStatusCount = tag.getInt("StatusCount");
         redstoneFuelSlot.fromTag(tag.getList("RedstoneFuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 

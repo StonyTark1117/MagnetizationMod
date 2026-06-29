@@ -177,7 +177,8 @@ public final class TitanomagnetiteBlockEntity extends AbstractEmitterBlockEntity
                     ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.AQUA;
             lines.add(net.minecraft.network.chat.Component.translatable(
                             "tooltip.magnetization.titanomagnetite.recorded",
-                            recordedField.strength().name(), recordedField.polarity().name())
+                            net.minecraft.network.chat.Component.translatable("tooltip.magnetization.strength." + recordedField.strength().name().toLowerCase(java.util.Locale.ROOT)),
+                            net.minecraft.network.chat.Component.translatable("tooltip.magnetization.polarity." + recordedField.polarity().getSerializedName()))
                     .withStyle(polColor));
         }
         return lines;

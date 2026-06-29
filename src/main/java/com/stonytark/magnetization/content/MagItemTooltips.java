@@ -216,7 +216,8 @@ public final class MagItemTooltips {
                 final ChatFormatting fieldColour = field.polarity() == MagneticPolarity.NORTH
                         ? ChatFormatting.RED : ChatFormatting.AQUA;
                 lines.add(Component.translatable("tooltip.magnetization.titanomagnetite.item_recorded",
-                                field.strength().name(), field.polarity().name())
+                                Component.translatable("tooltip.magnetization.strength." + field.strength().name().toLowerCase(java.util.Locale.ROOT)),
+                                Component.translatable("tooltip.magnetization.polarity." + field.polarity().getSerializedName()))
                         .withStyle(fieldColour));
             }
         }

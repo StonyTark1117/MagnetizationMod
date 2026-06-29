@@ -619,16 +619,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             case SOUTH -> ChatFormatting.AQUA;
             case NONE  -> ChatFormatting.GRAY;
         };
-        final String summary = String.format("%s ×%.2f",
-                state.polarity().getSerializedName().toUpperCase(java.util.Locale.ROOT),
-                state.susceptibility());
-        final Component head = Component.translatable("tooltip.magnetization.ship_state",
-                        Component.literal(summary).withStyle(polColor))
+        // Localized polarity word + susceptibility, e.g. "North ×1.50".
+        final Component summary = Component.empty()
+                .append(Component.translatable("tooltip.magnetization.polarity." + state.polarity().getSerializedName()))
+                .append(String.format(" ×%.2f", state.susceptibility()))
+                .withStyle(polColor);
+        final Component head = Component.translatable("tooltip.magnetization.ship_state", summary)
                 .withStyle(ChatFormatting.GRAY);
         if (!verbose) return List.of(head);
-        final Component detail = Component.literal(String.format(
-                "  %d ferrous, %d magnets, %d inverters",
-                state.ferrousBlockCount(), state.magnetBlockCount(), state.inverterBlockCount()))
+        final Component detail = Component.translatable("tooltip.magnetization.ship_state.detail",
+                        state.ferrousBlockCount(), state.magnetBlockCount(), state.inverterBlockCount())
                 .withStyle(ChatFormatting.DARK_GRAY);
         return List.of(head, detail);
     }

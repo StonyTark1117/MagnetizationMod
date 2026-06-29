@@ -217,7 +217,9 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
             case SEETHING -> net.minecraft.ChatFormatting.RED;
         };
         lines.add(net.minecraft.network.chat.Component.translatable(
-                        "tooltip.magnetization.pyrrhotite.heat", lastObservedHeat.name())
+                        "tooltip.magnetization.pyrrhotite.heat",
+                        net.minecraft.network.chat.Component.translatable(
+                                "tooltip.magnetization.heat." + lastObservedHeat.name().toLowerCase(java.util.Locale.ROOT)))
                 .withStyle(colour));
         return lines;
     }
