@@ -13,6 +13,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AnvilRepairEvent;
 
+import java.util.Optional;
+
 /**
  * A magnetic block placed next to (or under) an anvil dampens it: the steady
  * field keeps the anvil from degrading. Handles the durability half via
@@ -35,7 +37,7 @@ public final class AnvilDampenerHandler {
             if (metalChance != null) event.setBreakChance(metalChance);
             // An adjacent dampener magnet steadies any anvil — never degrades (wins).
             if (hasAdjacentDampener(level, pos)) event.setBreakChance(0.0f);
-            return null;
+            return Optional.empty();
         });
     }
 
