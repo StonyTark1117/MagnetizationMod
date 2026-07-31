@@ -50,6 +50,10 @@ public final class ShipMagneticRegistry {
      *  cases where the scan throws — e.g. a sub-level removed mid-scan — so the
      *  caller never sees a null. */
     public static ShipMagneticState get(final ServerLevel level, final ServerSubLevel ship) {
+        if (ship.isRemoved()) {
+            invalidate(level, ship);
+            return ShipMagneticState.DEFAULT;
+        }
         final long now = level.getGameTime();
         final long interval = scanIntervalTicks();
         final Map<UUID, CachedEntry> levelMap = BY_LEVEL.computeIfAbsent(level, l -> new ConcurrentHashMap<>());

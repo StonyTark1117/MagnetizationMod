@@ -92,6 +92,23 @@ public final class SableBridge {
             for (final SubLevel sub : dev.ryanhcode.sable.api.SubLevelHelper.getConnectedChain(host)) {
                 if (sub != null) ids.add(sub.getUniqueId());
             }
+
+            // Sable split/nested sublevels carry a parent UUID rather than an
+            // actor dependency. Include both directions so a field hosted by a
+            // parent cannot pull its child (or vice versa) as a second rigid body.
+            final dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer container =
+                    dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(host.getLevel());
+            if (container != null) {
+                boolean changed;
+                do {
+                    changed = false;
+                    for (final ServerSubLevel sub : container.getAllSubLevels()) {
+                        final java.util.UUID parent = sub.getSplitFromSubLevel();
+                        if (ids.contains(sub.getUniqueId()) && parent != null && ids.add(parent)) changed = true;
+                        if (parent != null && ids.contains(parent) && ids.add(sub.getUniqueId())) changed = true;
+                    }
+                } while (changed);
+            }
         } catch (final Throwable t) {
             warnThrottled("connectedChainIds", t, host);
         }
