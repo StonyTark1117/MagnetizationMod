@@ -2333,6 +2333,10 @@ public final class MagGameTests {
                 net.minecraft.server.level.ClientInformation.createDefault());
         final BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
         player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        // Keep this payload test focused on Curios dispatch. Looking straight
+        // up prevents the repulsor's optional magnetic-emitter recoil branch
+        // from depending on a GameTest player's absent network connection.
+        player.setXRot(-90.0F);
         final net.minecraft.world.item.ItemStack gun = new net.minecraft.world.item.ItemStack(
                 com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get());
         helper.assertTrue(placeCurio(player, gun), "The mock server player should have a Curios slot");
