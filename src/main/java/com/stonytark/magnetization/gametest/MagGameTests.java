@@ -2822,7 +2822,10 @@ public final class MagGameTests {
         com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
                 remote, oldEmitter, src.dimension());
         oldEmitter.remoteContainer().setItem(0, remote);
-        final net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // NeoForge's mock connection rejects AeroPortals' custom sync payloads.
+        // A no-client fixture still participates in the real transfer hook.
+        final net.minecraft.server.level.ServerPlayer player =
+                AeroPortalsGameTestSupport.addHeadlessOnlinePlayer(src, "aeroportals-remote");
         final net.minecraft.world.item.ItemStack heldRemote = new net.minecraft.world.item.ItemStack(
                 com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get());
         com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
@@ -2843,6 +2846,7 @@ public final class MagGameTests {
         // before the distant destination chunk can unload and move the rebuilt
         // sublevel into Sable's holding map.
         ((Runnable) () -> {
+            try {
             final var srcContainer = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(src);
             final dev.ryanhcode.sable.sublevel.ServerSubLevel moved =
                     com.stonytark.magnetization.compat.aeroportals.MagAeroPortalsCompat.consumeRecentTransfer(uuid);
@@ -2893,6 +2897,9 @@ public final class MagGameTests {
                             com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedInventoryRemote)),
                     "Inventory remote did not follow the moved railgun");
             helper.succeed();
+            } finally {
+                AeroPortalsGameTestSupport.removeHeadlessOnlinePlayer(src, player);
+            }
         }).run();
     }
 
