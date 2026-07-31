@@ -177,6 +177,8 @@ the canonical complete option list. Player-facing and world-generation options l
 permissions live in `config/magnetization-server.toml`.
 The tables below highlight selected high-impact settings; use the config screen or generated TOML files for the exhaustive list.
 
+For the complete generated reference, see [docs/configuration.md](docs/configuration.md). Regenerate it with python3 scripts/generate-config-reference.py; use --check to verify it is current.
+
 ### compat — power sources
 | Key | Default | Description |
 |-----|---------|-------------|
