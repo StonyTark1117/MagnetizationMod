@@ -2070,6 +2070,136 @@ public final class MagGameTests {
     }
 
     /**
+     * The MHD jet has the same automation boundary as the motor, but its
+     * magnet is consumed by the propulsion path. Exercise the real block
+     * capability rather than the right-click setter so a hopper can actually
+     * supply the jet.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void mhdJetMagnetIntakeAcceptsMagnet(final GameTestHelper helper) {
+        com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(true);
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.MHD_JET.get());
+        final net.neoforged.neoforge.items.IItemHandler handler = helper.getLevel().getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, helper.absolutePos(pos), null);
+        helper.assertTrue(handler != null, "MHD Jet should expose an item handler for hoppers");
+
+        final net.minecraft.world.item.ItemStack magnet =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get());
+        helper.assertTrue(handler.insertItem(0, magnet, false).isEmpty(),
+                "A potency magnet should be accepted into the MHD jet");
+        helper.assertTrue(handler.getStackInSlot(0).is(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()),
+                "The magnet should land in the MHD jet slot");
+        helper.assertTrue(handler.extractItem(0, 64, false).isEmpty(),
+                "A live MHD magnet must not be extractable");
+        helper.succeed();
+    }
+
+    /**
+     * A formed Fusion panel must accept a fuel bucket through the item handler
+     * on a non-master interior. The next real machine tick drains that slot
+     * into the master's shared tank, which is the path hopper automation uses.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void fusionNonMasterItemIntakeForwardsToMaster(final GameTestHelper helper) {
+        com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(true);
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        buildFusionPanel(level, base);
+        for (int x = 1; x <= 3; x++) {
+            final BlockPos p = base.offset(x, 1, 0);
+            if (level.getBlockEntity(p) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity be) {
+                com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(
+                        level, p, level.getBlockState(p), be);
+            }
+        }
+
+        final BlockPos cornerPos = base.offset(3, 1, 0);
+        final BlockPos masterPos = base.offset(1, 1, 0);
+        if (!(level.getBlockEntity(cornerPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity corner)
+                || !(level.getBlockEntity(masterPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            helper.fail("missing fusion BEs"); return;
+        }
+        final net.neoforged.neoforge.items.IItemHandler handler = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, cornerPos, null);
+        helper.assertTrue(handler != null, "Fusion non-master should expose an item handler");
+        final net.minecraft.world.item.ItemStack fuel = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.HELIUM_3_BUCKET.get());
+        helper.assertTrue(handler.insertItem(0, fuel, false).isEmpty(),
+                "A helium-3 bucket should be accepted on a non-master interior");
+
+        com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(
+                level, cornerPos, level.getBlockState(cornerPos), corner);
+        helper.assertTrue(master.fluidHandler().getFluidInTank(0).getAmount() == 1000,
+                "Non-master automation should forward fuel to the master tank");
+        helper.assertTrue(corner.bucketContainer().getItem(0).is(net.minecraft.world.item.Items.BUCKET),
+                "The tick should leave an empty bucket in the non-master slot");
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
+
+    /**
+     * Capability invalidation is observable when a panel's deterministic master
+     * changes: a cached fluid capability must stop writing to the removed
+     * master's tank and resolve the new one after the next validation scan.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void fusionCapabilityFollowsChangedPanelMaster(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        buildFusionPanel(level, base);
+        for (int x = 1; x <= 3; x++) {
+            final BlockPos p = base.offset(x, 1, 0);
+            if (level.getBlockEntity(p) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity be) {
+                com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(
+                        level, p, level.getBlockState(p), be);
+            }
+        }
+        final BlockPos cornerPos = base.offset(3, 1, 0);
+        final BlockPos oldMasterPos = base.offset(1, 1, 0);
+        if (!(level.getBlockEntity(cornerPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity corner)
+                || !(level.getBlockEntity(oldMasterPos) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity oldMaster)) {
+            helper.fail("missing initial fusion BEs"); return;
+        }
+        final net.neoforged.neoforge.fluids.capability.IFluidHandler before = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, cornerPos, null);
+        helper.assertTrue(before != null, "Fusion non-master should expose a fluid capability");
+        before.fill(new net.neoforged.neoforge.fluids.FluidStack(
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(), 1000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        helper.assertTrue(oldMaster.fluidHandler().getFluidInTank(0).getAmount() == 1000,
+                "Initial capability should write to the initial master");
+
+        // Replacing the old master with a coil leaves a valid, smaller panel
+        // whose interior is x=2..3, so x=2 becomes the new deterministic master.
+        level.setBlock(oldMasterPos, MagBlocks.TOKAMAK_COIL.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        helper.runAfterDelay(21L, () -> {
+            com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.serverTick(
+                    level, cornerPos, level.getBlockState(cornerPos), corner);
+            final BlockPos newMasterPos = base.offset(2, 1, 0);
+            if (!(level.getBlockEntity(newMasterPos)
+                    instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity newMaster)) {
+                helper.fail("new fusion master BE missing"); return;
+            }
+            final net.neoforged.neoforge.fluids.capability.IFluidHandler after = level.getCapability(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, cornerPos, null);
+            helper.assertTrue(after != null, "Fusion capability should remain available after master change");
+            after.fill(new net.neoforged.neoforge.fluids.FluidStack(
+                    com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(), 1000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            helper.assertTrue(newMaster.fluidHandler().getFluidInTank(0).getAmount() == 1000,
+                    "Invalidated capability should write to the new master");
+            helper.assertTrue(oldMaster.fluidHandler().getFluidInTank(0).getAmount() == 1000,
+                    "A stale capability must not continue writing to the old master");
+            clearFusionPanel(level, base);
+            helper.succeed();
+        });
+    }
+
+    /**
      * Bucket-fed machines (here the Micro Thruster): a full fuel bucket inserts but
      * can't be siphoned back; once the machine has drained it to a plain empty
      * bucket, a hopper CAN pull that empty for recirculation — and it can't be
@@ -2090,10 +2220,12 @@ public final class MagGameTests {
         helper.assertTrue(handler.extractItem(0, 1, false).isEmpty(),
                 "A full fuel bucket must not be extractable (no theft)");
 
-        // Simulate the machine having drained the bucket: slot now holds an empty one.
         final com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity be =
                 (com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity) helper.getBlockEntity(pos);
-        be.bucketContainer().setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
+        // Drive the actual server tick: the machine consumes the inserted fuel
+        // bucket and replaces it with a plain empty bucket.
+        com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity.serverTick(
+                helper.getLevel(), helper.absolutePos(pos), helper.getLevel().getBlockState(helper.absolutePos(pos)), be);
 
         final net.minecraft.world.item.ItemStack pulled = handler.extractItem(0, 1, false);
         helper.assertTrue(pulled.is(net.minecraft.world.item.Items.BUCKET),
