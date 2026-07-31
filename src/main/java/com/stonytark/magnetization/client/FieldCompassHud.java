@@ -149,9 +149,9 @@ public final class FieldCompassHud {
      *  curios slot. Returns the first ItemStack found, or null if none. */
     private static @Nullable ItemStack findCompass(final LivingEntity entity) {
         final ItemStack main = entity.getMainHandItem();
-        if (main.is(MagItems.FIELD_COMPASS.get())) return main;
+        if (!MagConfig.isItemDisabled(main) && main.is(MagItems.FIELD_COMPASS.get())) return main;
         final ItemStack off = entity.getOffhandItem();
-        if (off.is(MagItems.FIELD_COMPASS.get())) return off;
+        if (!MagConfig.isItemDisabled(off) && off.is(MagItems.FIELD_COMPASS.get())) return off;
         if (!ModList.get().isLoaded("curios")) return null;
         return findCompassInCurios(entity);
     }
@@ -166,7 +166,7 @@ public final class FieldCompassHud {
                 final var stacks = entry.getValue().getStacks();
                 for (int i = 0; i < stacks.getSlots(); i++) {
                     final ItemStack s = stacks.getStackInSlot(i);
-                    if (s.is(MagItems.FIELD_COMPASS.get())) return s;
+                    if (!MagConfig.isItemDisabled(s) && s.is(MagItems.FIELD_COMPASS.get())) return s;
                 }
             }
         } catch (final Throwable t) {

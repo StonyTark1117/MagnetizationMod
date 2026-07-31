@@ -118,6 +118,7 @@ public final class AnomalyMagneticChaos {
         // tossed harder than a bare-handed wanderer.
         double susceptibility = 0.0d;
         for (final ItemStack armor : EquippedArmor.all(player)) {
+            if (MagConfig.isItemDisabled(armor)) continue;
             if (!armor.is(MagTags.METAL_ARMOR)) continue;
             final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;

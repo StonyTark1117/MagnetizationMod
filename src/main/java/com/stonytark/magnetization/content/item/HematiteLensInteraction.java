@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagItems;
@@ -44,6 +45,7 @@ public final class HematiteLensInteraction {
     public static void onLensRightClickEmitter(final PlayerInteractEvent.RightClickBlock event) {
         if (!event.getEntity().isShiftKeyDown()) return;
         final ItemStack held = event.getItemStack();
+        if (MagConfig.isItemDisabled(held)) return;
         if (held.isEmpty() || !held.is(MagItems.HEMATITE_LENS.get())) return;
 
         final Level level = event.getLevel();

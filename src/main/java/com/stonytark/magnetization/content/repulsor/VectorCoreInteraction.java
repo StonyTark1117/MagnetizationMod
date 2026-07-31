@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.repulsor;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -28,6 +29,7 @@ public final class VectorCoreInteraction {
     public static void onRightClick(final PlayerInteractEvent.RightClickBlock event) {
         if (event.getEntity().isShiftKeyDown()) return;
         final ItemStack held = event.getItemStack();
+        if (MagConfig.isItemDisabled(held)) return;
         if (held.isEmpty() || !held.is(MagItems.VECTOR_CORE.get())) return;
         final BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
         if (!(be instanceof RepulsorCoilBlockEntity coil)) return;

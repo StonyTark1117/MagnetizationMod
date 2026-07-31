@@ -101,6 +101,7 @@ public final class CompassPropertyHooks {
     private static void registerOreCompass() {
         ItemProperties.register(MagItems.ORE_COMPASS.get(), ORE_ANGLE,
                 (stack, level, entity, seed) -> {
+                    if (MagConfig.isItemDisabled(stack)) return 0.0f;
                     if (level == null || entity == null) return 0.0f;
                     if (level.getBiome(entity.blockPosition()).is(AnomalyBiome.KEY)) {
                         return scrambledAngle(level, entity);
@@ -213,6 +214,7 @@ public final class CompassPropertyHooks {
     private static void registerFieldCompass() {
         ItemProperties.register(MagItems.FIELD_COMPASS.get(), FIELD_ANGLE,
                 (stack, level, entity, seed) -> {
+                    if (MagConfig.isItemDisabled(stack)) return 0.0f;
                     if (level == null || entity == null) return 0.0f;
                     if (level.getBiome(entity.blockPosition()).is(AnomalyBiome.KEY)) {
                         return scrambledAngle(level, entity);
@@ -224,6 +226,7 @@ public final class CompassPropertyHooks {
     private static void registerCosmicCompass() {
         ItemProperties.register(MagItems.COSMIC_COMPASS.get(), COSMIC_ANGLE,
                 (stack, level, entity, seed) -> {
+                    if (MagConfig.isItemDisabled(stack)) return 0.0f;
                     if (level == null || entity == null) return 0.0f;
                     // Cosmic Compass is NOT scrambled by the anomaly biome —
                     // meteorite cores read clean above the flux noise.

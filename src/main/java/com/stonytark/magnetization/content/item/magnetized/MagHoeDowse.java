@@ -76,6 +76,7 @@ public final class MagHoeDowse {
     private static boolean tryDowse(final Player player, final ItemStack stack) {
         if (!enabled()) return false;
         if (!player.isShiftKeyDown()) return false;
+        if (MagConfig.isItemDisabled(stack)) return false;
         if (stack.isEmpty() || !stack.is(ItemTags.HOES) || !stack.is(MagTags.METAL_TOOLS)) return false;
         final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
         if (pol == null || pol == MagneticPolarity.NONE) return false;

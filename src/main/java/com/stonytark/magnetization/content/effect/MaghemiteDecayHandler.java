@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.effect;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -95,6 +96,7 @@ public final class MaghemiteDecayHandler {
         for (int i = 0; i < slots.size(); i++) {
             final ItemStack stack = slots.get(i);
             if (stack.isEmpty()) continue;
+            if (MagConfig.isItemDisabled(stack)) continue;
             final Item replacement = MAGNETITE_TO_MAGHEMITE.get(stack.getItem());
             if (replacement == null) continue;
 

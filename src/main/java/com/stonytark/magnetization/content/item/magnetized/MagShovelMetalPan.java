@@ -64,6 +64,7 @@ public final class MagShovelMetalPan {
         if (!isShovelTarget(event.getState())) return;
 
         final ItemStack shovel = player.getMainHandItem();
+        if (MagConfig.isItemDisabled(shovel)) return;
         if (!shovel.is(ItemTags.SHOVELS) || !shovel.is(MagTags.METAL_TOOLS)) return;
         final MagneticPolarity pol = shovel.get(MagDataComponents.ARMOR_POLARITY.get());
         if (pol == null || pol == MagneticPolarity.NONE) return;

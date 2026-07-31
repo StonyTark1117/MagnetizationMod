@@ -122,10 +122,12 @@ public final class LightningRemnantMagnetism {
         // Gather all unmagnetized metal armor + held tools as candidates.
         final List<ItemStack> candidates = new ArrayList<>(6);
         for (final ItemStack armor : EquippedArmor.all(target)) {
-            if (armor.is(MagTags.METAL_ARMOR) && !alreadyMagnetized(armor)) candidates.add(armor);
+            if (!MagConfig.isItemDisabled(armor)
+                    && armor.is(MagTags.METAL_ARMOR) && !alreadyMagnetized(armor)) candidates.add(armor);
         }
         for (final ItemStack hand : new ItemStack[]{target.getMainHandItem(), target.getOffhandItem()}) {
-            if (hand.is(MagTags.METAL_TOOLS) && !alreadyMagnetized(hand)) candidates.add(hand);
+            if (!MagConfig.isItemDisabled(hand)
+                    && hand.is(MagTags.METAL_TOOLS) && !alreadyMagnetized(hand)) candidates.add(hand);
         }
         if (candidates.isEmpty()) {
             if (MagConfig.debugLogging())

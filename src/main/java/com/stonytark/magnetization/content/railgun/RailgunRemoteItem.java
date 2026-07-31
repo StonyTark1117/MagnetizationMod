@@ -130,6 +130,9 @@ public class RailgunRemoteItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
+        if (com.stonytark.magnetization.config.MagConfig.isItemDisabled(stack)) {
+            return InteractionResultHolder.fail(stack);
+        }
         if (level.isClientSide) return InteractionResultHolder.success(stack);
         if (!(level instanceof ServerLevel server)) return InteractionResultHolder.pass(stack);
 

@@ -92,6 +92,7 @@ public final class MagAxePulse {
     }
 
     private static boolean isMagnetized(final ItemStack axe) {
+        if (MagConfig.isItemDisabled(axe)) return false;
         if (!axe.is(MagTags.METAL_TOOLS)) return false;
         final MagneticPolarity pol = axe.get(MagDataComponents.ARMOR_POLARITY.get());
         return pol != null && pol != MagneticPolarity.NONE;

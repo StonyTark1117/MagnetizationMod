@@ -61,6 +61,7 @@ public final class MagPickaxeOreRip {
     private static ItemStack findMagnetizedPickaxe(final ServerPlayer player) {
         for (final ItemStack stack : new ItemStack[]{player.getMainHandItem(), player.getOffhandItem()}) {
             if (stack.isEmpty()) continue;
+            if (MagConfig.isItemDisabled(stack)) continue;
             if (!stack.is(ItemTags.PICKAXES)) continue;
             if (!stack.is(MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());

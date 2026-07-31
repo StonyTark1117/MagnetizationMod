@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,7 @@ public final class OreCompassAnvilHandler {
     public static void onAnvil(final AnvilUpdateEvent event) {
         final ItemStack left = event.getLeft();
         final ItemStack right = event.getRight();
+        if (MagConfig.isItemDisabled(left) || MagConfig.isItemDisabled(right)) return;
         if (!left.is(MagItems.ORE_COMPASS.get())) return;
         if (!(right.getItem() instanceof BlockItem blockItem)) return;
 

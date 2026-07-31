@@ -53,6 +53,7 @@ public final class ImprintModuleInteraction {
     public static void onImprintRightClickEmitter(final PlayerInteractEvent.RightClickBlock event) {
         if (!event.getEntity().isShiftKeyDown()) return;
         final ItemStack held = event.getItemStack();
+        if (com.stonytark.magnetization.config.MagConfig.isItemDisabled(held)) return;
         if (held.isEmpty() || !held.is(MagItems.IMPRINT_MODULE.get())) return;
 
         final Level level = event.getLevel();

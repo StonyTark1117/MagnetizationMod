@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.dampener;
 
 import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -29,7 +30,8 @@ public final class GForceCushionBlock extends Block {
     @Override
     public void fallOn(final Level level, final BlockState state, final BlockPos pos,
                        final Entity entity, final float fallDistance) {
-        if (entity instanceof LivingEntity living && hasMetallicArmor(living)) {
+        if (!MagConfig.isBlockDisabled(state)
+                && entity instanceof LivingEntity living && hasMetallicArmor(living)) {
             // Full magnetoresistive arrest — zero fall damage.
             entity.causeFallDamage(fallDistance, 0.0F, level.damageSources().fall());
             if (level instanceof ServerLevel server && fallDistance > 1.0) {
@@ -45,7 +47,7 @@ public final class GForceCushionBlock extends Block {
 
     private static boolean hasMetallicArmor(final LivingEntity living) {
         for (final ItemStack armor : living.getArmorSlots()) {
-            if (armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
         }
         return false;
     }

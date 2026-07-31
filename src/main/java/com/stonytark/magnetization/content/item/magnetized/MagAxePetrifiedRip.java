@@ -56,6 +56,7 @@ public final class MagAxePetrifiedRip {
     private static ItemStack findMagnetizedAxe(final ServerPlayer player) {
         for (final ItemStack stack : new ItemStack[]{player.getMainHandItem(), player.getOffhandItem()}) {
             if (stack.isEmpty()) continue;
+            if (MagConfig.isItemDisabled(stack)) continue;
             if (!stack.is(ItemTags.AXES)) continue;
             if (!stack.is(MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
