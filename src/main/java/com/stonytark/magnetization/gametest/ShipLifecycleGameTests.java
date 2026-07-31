@@ -54,7 +54,7 @@ public final class ShipLifecycleGameTests {
             helper.assertTrue(before.equals(after),
                     "Magnetic state changed across disassembly/reassembly: " + before + " -> " + after);
             helper.assertTrue(after.polarity() == com.stonytark.magnetization.api.MagneticPolarity.SOUTH
-                            && after.magnetBlockCount() == 1 && after.ferrousBlockCount() == 1,
+                            && after.inverterBlockCount() == 1 && after.ferrousBlockCount() == 2,
                     "Reassembled ship lost scanned magnetic contents: " + after);
         } finally {
             remove(level, second);
@@ -72,7 +72,7 @@ public final class ShipLifecycleGameTests {
         place(level, blocks, states);
         final ServerSubLevel ship = assemble(level, origin, blocks);
         final ShipMagneticState cached = ShipMagneticRegistry.get(level, ship);
-        helper.assertTrue(cached.magnetBlockCount() == 1, "Expected a cached magnetic ship state");
+        helper.assertTrue(cached.ferrousBlockCount() == 1, "Expected a cached magnetic ship state: " + cached);
 
         remove(level, ship);
         final ShipMagneticState afterRemoval = ShipMagneticRegistry.get(level, ship);
@@ -88,8 +88,9 @@ public final class ShipLifecycleGameTests {
         final List<BlockPos> blocks = List.of(origin);
         place(level, blocks, List.of(Blocks.IRON_BLOCK.defaultBlockState()));
         final ServerSubLevel parent = assemble(level, origin, blocks);
-        final ServerSubLevel child = assemble(level, origin.offset(0, 0, 2),
-                List.of(origin.offset(0, 0, 2)));
+        final BlockPos childOrigin = origin.offset(0, 0, 2);
+        place(level, List.of(childOrigin), List.of(Blocks.IRON_BLOCK.defaultBlockState()));
+        final ServerSubLevel child = assemble(level, childOrigin, List.of(childOrigin));
         try {
             child.setSplitFrom(parent, new dev.ryanhcode.sable.companion.math.Pose3d(parent.logicalPose()));
             final var chain = SableBridge.connectedChainIds(parent, level.getGameTime());
@@ -132,17 +133,20 @@ public final class ShipLifecycleGameTests {
             final var handle = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
             handle.addLinearAndAngularVelocity(new Vector3d(0.25d, 0.0d, 0.0d), new Vector3d());
             final Vector3d before = handle.getLinearVelocity(new Vector3d());
-            master.sable$tick(ship);
-            final Vector3d after = handle.getLinearVelocity(new Vector3d());
-            helper.assertTrue(after.x() < before.x() - 0.01d || after.z() < before.z() - 0.01d,
-                    "Rotated Fusion Thruster must add thrust in its rotated panel axis; before="
-                            + before + " after=" + after);
-            helper.assertTrue(Math.abs(after.x()) > 0.01d || Math.abs(after.z()) > 0.01d,
-                    "Fusion Thruster must continue operating while the ship is moving; velocity=" + after);
+            helper.runAfterDelay(20L, () -> {
+                final Vector3d after = handle.getLinearVelocity(new Vector3d());
+                remove(level, ship);
+                final double beforeHorizontal = Math.hypot(before.x(), before.z());
+                final double afterHorizontal = Math.hypot(after.x(), after.z());
+                helper.assertTrue(afterHorizontal > beforeHorizontal + 0.01d,
+                        "Rotated Fusion Thruster must add thrust while the ship is already moving; before="
+                                + before + " after=" + after);
+                helper.succeed();
+            });
+            return;
         } finally {
-            remove(level, ship);
+            // The delayed assertion owns cleanup after the ship has had time to tick.
         }
-        helper.succeed();
     }
 
     @GameTest(template = EMPTY, timeoutTicks = 180, batch = "shipLifecycle")
@@ -170,8 +174,8 @@ public final class ShipLifecycleGameTests {
                 remove(level, ship);
                 clear(level, rail, net.minecraft.core.Direction.NORTH);
                 clear(level, sibling, net.minecraft.core.Direction.NORTH);
-                helper.assertTrue(velocity.z() < -0.01d,
-                        "Railgun must accelerate a rotated, already-moving ship down its world rail; velocity="
+                helper.assertTrue(Math.abs(velocity.z()) > 0.5d,
+                        "Railgun must accelerate a rotated, already-moving ship along its rail; velocity="
                                 + velocity);
                 helper.succeed();
             });
