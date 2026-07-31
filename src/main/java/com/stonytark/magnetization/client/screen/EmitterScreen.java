@@ -306,7 +306,8 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
             final MagneticPolarity pol = stack.isEmpty() ? null : stack.get(MagDataComponents.ARMOR_POLARITY.get());
             final Component status = pol == null
                     ? Component.translatable("gui.magnetization.polarity.unmagnetized")
-                    : Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName())
+                    : Component.literal(com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(pol) + " ")
+                            .append(Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName()))
                             .withStyle(pol == MagneticPolarity.NORTH ? ChatFormatting.AQUA : ChatFormatting.RED);
             g.drawString(font, status, 8, 24, 0xC0C0C0, false);
         }

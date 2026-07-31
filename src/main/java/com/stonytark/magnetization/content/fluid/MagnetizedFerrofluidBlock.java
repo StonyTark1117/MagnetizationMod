@@ -41,10 +41,13 @@ public final class MagnetizedFerrofluidBlock extends LiquidBlock implements Flui
         final MagneticPolarity pole = state.getValue(POLARITY);
         final net.minecraft.ChatFormatting colour = pole == MagneticPolarity.NORTH
                 ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.AQUA;
-        return net.minecraft.network.chat.Component.translatable("tooltip.magnetization.ferrofluid_magnetized",
-                        net.minecraft.network.chat.Component.translatable(
-                                        "tooltip.magnetization.polarity." + pole.name().toLowerCase())
-                                .withStyle(colour))
+        // Prefix the hue-independent pole glyph (▲/▼) so it reads without the colour.
+        final net.minecraft.network.chat.Component poleText = net.minecraft.network.chat.Component.literal(
+                        com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(pole) + " ")
+                .append(net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.polarity." + pole.name().toLowerCase()))
+                .withStyle(colour);
+        return net.minecraft.network.chat.Component.translatable("tooltip.magnetization.ferrofluid_magnetized", poleText)
                 .withStyle(net.minecraft.ChatFormatting.GRAY);
     }
 

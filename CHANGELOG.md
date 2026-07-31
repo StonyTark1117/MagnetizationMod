@@ -48,6 +48,9 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 ### Docs
 - Patchouli field-manual entries added for all the above.
 
+### Accessibility
+- **Polarity, strength, fuel tier, and machine status no longer rely on colour alone.** Every field readout (goggles/hover HUD, Jade/WTHIT/The One Probe, the Field Compass, the magnetized-ferrofluid HUD, and the Electromagnet GUI) now marks the pole with a distinct shape glyph — ▲ North / ▼ South / ◇ None — and shows field strength as a filled/hollow pip meter (●●●○) in addition to the red/aqua colour and the spelled-out words. The machine hover HUD now also names the Tokamak's current fuel tier and shows an explicit Active/Idle line for the Tokamak and Homopolar Motor. No textures were changed; these are text/symbol channels layered on top of the existing colours.
+
 ### Fixed
 - **Railgun manual mode is now usable end-to-end.** Pairing a Railgun Remote latched manual mode to the remote physically sitting in the emitter's slot, so taking the remote into your hand to fire it — the whole point of the manual board-then-launch workflow — dropped the arc back to automatic and released the held ship. Pairing now persists once set: remove the remote to fire it from hand and the arc keeps holding the target. Sneak-use the bound remote to un-pair and return to auto.
 - **Surface-biome repaint no longer re-runs after a restart or overwrites your builds.** The compatibility repaint for the Magnetic Anomaly / Petrified Forest biomes tracked processed chunks only in memory, so every server restart re-painted already-generated terrain — overwriting player-placed surface blocks and letting water/dirt be converted into ferrofluid/ores by placing then restarting. Processed chunks are now recorded persistently per-world, so each chunk is painted exactly once, ever.

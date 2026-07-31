@@ -108,15 +108,19 @@ public final class FieldCompassHud {
                         cardinal, String.format("%.0f°", bearingDeg), String.format("%.1fm", dist))
                 .withStyle(ChatFormatting.GRAY);
 
-        // Bottom line: polarity + strength tier — colour-coded so a quick glance
-        // tells the player whether they're walking toward an attract or repel.
+        // Bottom line: polarity + strength tier. Colour-coded for a quick glance, but
+        // also carries a hue-independent SHAPE glyph on the pole (▲/▼) and a filled/
+        // hollow PIP meter on the strength so it reads without relying on red/aqua.
         final MagneticPolarity pol = field.polarity();
         final ChatFormatting polColor = pol == MagneticPolarity.NORTH ? ChatFormatting.AQUA
                 : (pol == MagneticPolarity.SOUTH ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
+        final String poleText = com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(pol)
+                + " " + pol.getSerializedName().toUpperCase();
+        final Component strengthText = Component.translatable("tooltip.magnetization.strength."
+                        + field.strength().name().toLowerCase(java.util.Locale.ROOT))
+                .copy().append(" " + com.stonytark.magnetization.api.FieldTooltipFormatter.strengthPips(field.strength()));
         final Component bottom = Component.translatable("hud.magnetization.compass.target",
-                        Component.literal(pol.getSerializedName().toUpperCase()).withStyle(polColor),
-                        Component.translatable("tooltip.magnetization.strength."
-                                + field.strength().name().toLowerCase(java.util.Locale.ROOT)))
+                        Component.literal(poleText).withStyle(polColor), strengthText)
                 .withStyle(ChatFormatting.GRAY);
 
         drawCentered(g, mc.font, top, bottom);

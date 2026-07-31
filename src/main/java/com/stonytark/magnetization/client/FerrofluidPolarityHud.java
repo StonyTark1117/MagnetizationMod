@@ -62,9 +62,13 @@ public final class FerrofluidPolarityHud {
         }
         final MagneticPolarity pole = state.getValue(MagnetizedFerrofluidBlock.POLARITY);
         final ChatFormatting colour = pole == MagneticPolarity.NORTH ? ChatFormatting.RED : ChatFormatting.AQUA;
-        final Component line = Component.translatable("tooltip.magnetization.ferrofluid_magnetized",
-                Component.translatable("tooltip.magnetization.polarity." + pole.name().toLowerCase())
-                        .withStyle(colour));
+        // Prefix the pole with its hue-independent shape glyph (▲ north / ▼ south) so
+        // it's distinguishable without relying on the red/aqua color.
+        final Component poleText = Component.literal(
+                com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(pole) + " ")
+                .append(Component.translatable("tooltip.magnetization.polarity." + pole.name().toLowerCase()))
+                .withStyle(colour);
+        final Component line = Component.translatable("tooltip.magnetization.ferrofluid_magnetized", poleText);
 
         final Font font = mc.font;
         final int sw = graphics.guiWidth();

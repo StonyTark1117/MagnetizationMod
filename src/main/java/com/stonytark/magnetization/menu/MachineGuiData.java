@@ -56,6 +56,17 @@ public interface MachineGuiData {
             case TOKAMAK -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_fuel", guiStat1() / 20).withStyle(ChatFormatting.GRAY));
                 out.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, guiStat2())).withStyle(ChatFormatting.GRAY));
+                final boolean fusing = guiStat1() > 0;
+                if (fusing) {
+                    // Name the current fuel tier as text (was only implied by the bar in
+                    // the hover HUD). Reuses the same tier keys the GUI screen uses.
+                    final String[] tiers = {"dd", "dt", "he3"};
+                    out.add(Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
+                            + tiers[Math.min(2, Math.max(0, guiStat3()))]).withStyle(ChatFormatting.GRAY));
+                }
+                out.add(Component.translatable(fusing
+                        ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
+                        .withStyle(fusing ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
             }
             case THRUSTER -> out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, guiStat1())).withStyle(ChatFormatting.AQUA));
             case FUSION_THRUSTER -> {
@@ -86,6 +97,10 @@ public interface MachineGuiData {
                 out.add(magnetStatusLine(magnet));
                 magnetBurnLine(guiStat2()).ifPresent(out::add);
                 out.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, guiStat1())).withStyle(ChatFormatting.GRAY));
+                final boolean spinning = guiStat1() > 0;
+                out.add(Component.translatable(spinning
+                        ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
+                        .withStyle(spinning ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
             }
             case JET -> {
                 out.add(magnetStatusLine(magnet));
