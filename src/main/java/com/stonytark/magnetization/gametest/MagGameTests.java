@@ -83,6 +83,47 @@ public final class MagGameTests {
         com.stonytark.magnetization.config.MagConfig.ALLOW_ENERGY_POWER.set(true);
     }
 
+    /** Reset and inspect one criterion without depending on advancement visibility or parent completion. */
+    private static void revokeAdvancement(final net.minecraft.server.level.ServerPlayer player,
+                                          final String path) {
+        final var holder = player.server.getAdvancements().get(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, path));
+        if (holder == null) throw new IllegalStateException("Missing advancement magnetization:" + path);
+        final var progress = player.getAdvancements().getOrStartProgress(holder);
+        for (final String criterion : progress.getCompletedCriteria()) {
+            player.getAdvancements().revoke(holder, criterion);
+        }
+    }
+
+    private static boolean criterionDone(final net.minecraft.server.level.ServerPlayer player,
+                                         final String path, final String criterion) {
+        final var holder = player.server.getAdvancements().get(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, path));
+        return holder != null && player.getAdvancements().getOrStartProgress(holder)
+                .getCriterion(criterion) != null
+                && player.getAdvancements().getOrStartProgress(holder).getCriterion(criterion).isDone();
+    }
+
+    private static net.minecraft.server.level.ServerPlayer headlessAdvancementPlayer(
+            final net.minecraft.server.level.ServerLevel level, final String name) {
+        final var player = new net.minecraft.server.level.ServerPlayer(
+                level.getServer(), level,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), name),
+                net.minecraft.server.level.ClientInformation.createDefault());
+        final var connection = new net.minecraft.network.Connection(
+                net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
+        player.connection = new net.minecraft.server.network.ServerGamePacketListenerImpl(
+                level.getServer(), connection, player,
+                net.minecraft.server.network.CommonListenerCookie.createInitial(player.getGameProfile(), false)) {
+            @Override public void send(final net.minecraft.network.protocol.Packet<?> packet) {
+                // Headless GameTest player: advancement/Curios sync has no client.
+            }
+        };
+        player.getAdvancements().reload(level.getServer().getAdvancements());
+        level.addFreshEntity(player);
+        return player;
+    }
+
     /**
      * Placing an emitter in-world registers it with {@link EmitterRegistry};
      * breaking it unregisters. Catches regressions in the BE.onLoad /
@@ -630,6 +671,9 @@ public final class MagGameTests {
         if (!(level.getBlockEntity(start) instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
             helper.fail("no fusion master BE at " + start); return;
         }
+        final net.minecraft.server.level.ServerPlayer nearby = headlessAdvancementPlayer(level, "fusion-advancement");
+        nearby.teleportTo(start.getX() + 0.5, start.getY() + 0.5, start.getZ() + 0.5);
+        revokeAdvancement(nearby, "formed_fusion_thruster");
         // Drive the master's tick directly: this open-sky panel isn't in a gametest
         // ticking region, so call serverTick explicitly (deterministic) to run the
         // real validate → cache → tank-scale path the world ticker runs in-world.
@@ -639,6 +683,9 @@ public final class MagGameTests {
         helper.assertTrue(master.formed() && master.interiorCount() == 3,
                 "master should validate the panel; formed=" + master.formed()
                         + " interiorCount=" + master.interiorCount());
+        helper.assertTrue(criterionDone(nearby, "formed_fusion_thruster", "formed"),
+                "Forming a real Fusion Thruster panel should award its advancement criterion");
+        nearby.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         // Tank capacity scales with the interior-block count (per-cell × 3 here).
         final int expected = com.stonytark.magnetization.config.MagConfig.fusionThrusterTank() * 3;
         final int cap = master.fluidHandler().getTankCapacity(0);
@@ -851,6 +898,10 @@ public final class MagGameTests {
         buildRailgunRail(level, other);
         powerRailgun(level, base);
         powerRailgun(level, other);
+        final net.minecraft.server.level.ServerPlayer nearby = headlessAdvancementPlayer(level, "railgun-advancement");
+        nearby.teleportTo(base.getX() + 0.5, base.getY() + 0.5, base.getZ() + 0.5);
+        revokeAdvancement(nearby, "completed_railgun");
+        revokeAdvancement(nearby, "fired_railgun");
 
         // A magnetic arrow in the channel: between the rails (x+1), 2 blocks down-rail.
         final net.minecraft.world.entity.projectile.Arrow arrow =
@@ -870,6 +921,11 @@ public final class MagGameTests {
             // axis + sign: the arrow should be launched strongly down the rail.
             helper.assertTrue(dm.z() < -1.0,
                     "Railgun should accelerate the magnetic entity down the rail (−Z); v=" + dm);
+            helper.assertTrue(criterionDone(nearby, "completed_railgun", "completed"),
+                    "Completing a real Railgun should award its advancement criterion");
+            helper.assertTrue(criterionDone(nearby, "fired_railgun", "fired"),
+                    "Firing a real Railgun should award its advancement criterion");
+            nearby.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
             helper.succeed();
         });
     }

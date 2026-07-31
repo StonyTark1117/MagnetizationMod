@@ -1,7 +1,7 @@
 # Magnetization 1.3.0 — Full Release Audit (rerun)
 
 **Audit date:** 2026-07-31
-**Target:** `main` at `9d0ce20`, 42 commits ahead of `origin/main`
+**Target:** current `main` release candidate, 52 commits ahead of `origin/main` before this audit-coverage commit
 **Minecraft / loader:** Minecraft 1.21.1, NeoForge 21.1.247
 **Policy:** full audit rerun followed by remediation and verification of the two remaining release-engineering findings.
 
@@ -19,8 +19,8 @@ The required manual playtest matrix remains a release gate. Automated tests cann
 
 This rerun covered:
 
-- 288 Java source files and 1,626 files under main/generated resources.
-- The full 42-commit 1.3.0 delta from `origin/main`, including all earlier audit fixes, the Dipole Electromagnet, analog-redstone force scaling, multiblock previews, accessibility work, AeroPortals support, and Immersive Aeronautics/Immersive Portals support.
+- 293 Java source files and 1,626 files under main/generated resources.
+- The full 1.3.0 delta from `origin/main`, including all earlier audit fixes, the Dipole Electromagnet, analog-redstone force scaling, multiblock previews, accessibility work, AeroPortals support, and Immersive Aeronautics/Immersive Portals support.
 - Dependency metadata and resolved development versions.
 - Registration/resource/package consistency through a clean Gradle build.
 - All JSON resources, unit tests, the standard GameTest profile, both portal compatibility profiles, and the minimal dedicated-server smoke profile.
@@ -94,6 +94,16 @@ No concrete defect was found in the code/resource pass. Manual validation is sti
 
 No missing registration/resource path was found for these additions.
 
+### Additional pre-playtest GameTest coverage
+
+- Railgun lifecycle NBT now covers `HOLDING`, `LAUNCHING`, and `COOLDOWN`, including counters, manual pairing, rail length, and buffered FE.
+- Active Tokamak and Fusion Thruster persistence now validates queued fuel/container state, burn/fuel amount, generated/stored FE, formed state, interior count, and deterministic master ownership.
+- Dipole persistence now covers strength, range, polarity, redstone level, and facing.
+- Tokamak and Fusion Thruster boundary coverage now exercises the fixed Tokamak ring, minimum/maximum Fusion panels, oversized/incomplete/obstructed structures, break/reform, and stable shared master selection.
+- Machine automation coverage now rejects wrong cells, items, buckets, and fluids; prevents extraction of active fuel; checks one-for-one empty-container handling; and proves a full Electrolyzer output stalls without consuming water or FE.
+- Advancement coverage now performs real isotope inventory changes and real Fusion-panel formation/Railgun completion and firing before checking runtime criterion progress. Synthetic players are removed after each assertion to keep the shared server hermetic.
+- Moving-ship coverage now includes powered Fusion and Railgun behavior on rotated, already-moving Sable ships. The Railgun fixture uses a temporary launcher deck so gravity cannot invalidate the channel assertion before the arc scans.
+
 ## Asset and resource audit
 
 ### Passed checks
@@ -103,7 +113,7 @@ No missing registration/resource path was found for these additions.
 - Every targeted original duplicate now has a different SHA-256: five fluid fills, three fuel cells, Lithium/Raw Lithium/Raw Gallium, Lithium/Helium-3/Hematite ores, deepslate Lithium/Hematite, and Railgun Remote/Repulsor Gun.
 - All PNGs referenced by the newly added models are present and the JAR builds successfully.
 - The built JAR has no duplicate ZIP entries and no unresolved `${...}` token in processed `neoforge.mods.toml`.
-- Current JAR SHA-256 from this rerun: `4cfc65f55b383b3dd3cef3c01d85ba73f2fcb3cd22561eb02b6468159b4ac2f3`.
+- Current JAR SHA-256 from this rerun: `4fbc8eacaf83180aeea9204e50a1694ba69477e609d01c0d3ec3579f8daff150`.
 
 ### Still requires visual playtesting
 
@@ -119,9 +129,9 @@ No missing registration/resource path was found for these additions.
 
 - `./gradlew clean test build --no-daemon` — successful.
 - 140 JUnit tests — 140 passed, 0 failures, 0 errors, 0 skipped.
-- Standard dedicated GameTests — all 64 required tests passed under bounded supervision and the task exited successfully.
+- Standard dedicated GameTests — all 78 required tests passed under bounded supervision and the task exited successfully.
 - AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.
-- Immersive Aeronautics isolated GameTests — 2/2 passed on Immersive Portals core 6.0.7 under bounded supervision.
+- Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
 - `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.
 - `./gradlew releaseGate --no-daemon -PmagSmokeSeconds=20` — completed unattended and successfully exercised the build, unit tests, supervised standard GameTests, and minimal dedicated-server smoke.
 - All main/generated JSON files parsed with `jq`.

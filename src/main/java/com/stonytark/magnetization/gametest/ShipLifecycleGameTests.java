@@ -149,15 +149,18 @@ public final class ShipLifecycleGameTests {
         }
     }
 
-    @GameTest(template = EMPTY, timeoutTicks = 180, batch = "shipLifecycle")
+    // RailgunHandler scans every registered emitter in the shared ServerLevel.
+    // Isolate this arc from the other lifecycle fixtures so it cannot cross-pair.
+    @GameTest(template = EMPTY, timeoutTicks = 180, batch = "shipLifecycleRailgun")
     public static void railgunWorksOnRotatedMovingShip(final GameTestHelper helper) {
         final var level = helper.getLevel();
         final BlockPos rail = skyBase(helper, 240);
-        buildRailgunRail(level, rail, net.minecraft.core.Direction.NORTH);
         final BlockPos sibling = rail.offset(2, 0, 0);
-        buildRailgunRail(level, sibling, net.minecraft.core.Direction.NORTH);
-        powerRailgun(level, rail);
-        powerRailgun(level, sibling);
+        // Keep the fixture inside the horizontal channel while Sable settles its
+        // rotated bounds; ships normally have a deck/launcher beneath them.
+        for (int x = 0; x <= 2; x++) for (int z = 1; z <= 6; z++) {
+            level.setBlock(rail.offset(x, -1, -z), Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
+        }
 
         final BlockPos shipOrigin = rail.offset(1, 0, -2);
         place(level, List.of(shipOrigin), List.of(Blocks.IRON_BLOCK.defaultBlockState()));
@@ -169,19 +172,37 @@ public final class ShipLifecycleGameTests {
                     new Vector3d(shipOrigin.getX() + 0.5d, 240.5d, shipOrigin.getZ() + 0.5d),
                     new Quaterniond().rotateY(Math.PI / 2.0d));
             handle.addLinearAndAngularVelocity(new Vector3d(0.2d, 0.0d, 0.0d), new Vector3d());
-            // The live railgun can accelerate this one-block body out of the loaded
-            // test region almost immediately. Sable retains its last networked
-            // velocity even after removing the physics handle, so sample that
-            // lifecycle-safe value instead of racing a JNI handle lookup.
-            helper.runAfterDelay(6L, () -> {
-                final Vector3d velocity = new Vector3d(ship.latestLinearVelocity);
-                remove(level, ship);
-                clear(level, rail, net.minecraft.core.Direction.NORTH);
-                clear(level, sibling, net.minecraft.core.Direction.NORTH);
-                helper.assertTrue(Math.abs(velocity.z()) > 0.5d,
-                        "Railgun must accelerate a rotated, already-moving ship along its rail; velocity="
-                                + velocity);
-                helper.succeed();
+            // Let Sable publish the teleported body's rotated world bounds before
+            // arming the global rail scanner. Re-seat it afterward because gravity
+            // would otherwise let the one-block fixture fall out of the channel.
+            helper.runAfterDelay(10L, () -> {
+                container.physicsSystem().getPipeline().teleport(ship,
+                        new Vector3d(shipOrigin.getX() + 0.5d, 240.5d, shipOrigin.getZ() + 0.5d),
+                        new Quaterniond().rotateY(Math.PI / 2.0d));
+                handle.addLinearAndAngularVelocity(new Vector3d(0.2d, 0.0d, 0.0d), new Vector3d());
+                helper.runAfterDelay(12L, () -> {
+                    buildRailgunRail(level, rail, net.minecraft.core.Direction.NORTH);
+                    buildRailgunRail(level, sibling, net.minecraft.core.Direction.NORTH);
+                    powerRailgun(level, rail);
+                    powerRailgun(level, sibling);
+                });
+                helper.runAfterDelay(24L, () -> {
+                    // Sample Sable's lifecycle-safe network velocity: the live
+                    // Rapier handle may disappear immediately after this small
+                    // body is launched. On a quarter-turned body, world NORTH is
+                    // represented on the local/network X axis.
+                    final Vector3d velocity = new Vector3d(ship.latestLinearVelocity);
+                    remove(level, ship);
+                    clear(level, rail, net.minecraft.core.Direction.NORTH);
+                    clear(level, sibling, net.minecraft.core.Direction.NORTH);
+                    for (int x = 0; x <= 2; x++) for (int z = 1; z <= 6; z++) {
+                        level.setBlock(rail.offset(x, -1, -z), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                    }
+                    helper.assertTrue(Math.hypot(velocity.x(), velocity.z()) > 0.5d,
+                            "Railgun must accelerate a rotated, already-moving ship horizontally; velocity="
+                                    + velocity);
+                    helper.succeed();
+                });
             });
             return;
         } catch (final Throwable t) {
@@ -242,6 +263,10 @@ public final class ShipLifecycleGameTests {
 
     private static void powerRailgun(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
         level.setBlock(emitter.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
+        if (level.getBlockEntity(emitter) instanceof
+                com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity railgun) {
+            railgun.energyBuffer().receiveEnergy(1_000_000, false);
+        }
     }
 
     private static void clear(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter,
