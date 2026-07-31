@@ -71,6 +71,7 @@ public final class MagneticToolPullHandler {
         int netPolarity = 0;
         int magnetCount = 0;
         for (final ItemStack stack : iterMagnetCarriers(player)) {
+            if (MagConfig.isItemDisabled(stack)) continue;
             if (!stack.is(MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
@@ -84,6 +85,7 @@ public final class MagneticToolPullHandler {
         final AABB box = AABB.ofSize(playerPos, 2 * radius, 2 * radius, 2 * radius);
         final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
                 e -> !e.getItem().isEmpty()
+                        && !MagConfig.isItemDisabled(e.getItem())
                         && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS)
                         && e.distanceToSqr(playerPos) <= radius * radius);
 

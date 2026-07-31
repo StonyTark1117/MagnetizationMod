@@ -96,6 +96,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         void setStored(final int value) {
             this.energy = Math.max(0, Math.min(this.capacity, value));
         }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 
     @Nullable MagneticField cachedField = null;
@@ -484,6 +489,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     protected void tickEmitter(
             final ServerLevel server, final BlockState state, final @Nullable ServerSubLevel host
     ) {
+        energyBuffer.resize(emitterEnergyCapacity(), emitterEnergyTransferRate());
         final MagneticField previous = cachedField;
         // Reset the per-tick energy flag up front so the disabled/EMP early
         // returns below leave it false — otherwise isPowered()/the synced HUD

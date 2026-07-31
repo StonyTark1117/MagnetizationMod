@@ -39,8 +39,11 @@ public class InductionPadBlockEntity extends BlockEntity {
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final InductionPadBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (level.isClientSide) return;
         if (!com.stonytark.magnetization.config.MagConfig.inductionPadEnabled()) return; // master switch — pad inert when off
+        be.energy.resize(com.stonytark.magnetization.config.MagConfig.inductionPadCapacity(),
+                com.stonytark.magnetization.config.MagConfig.inductionPadTransferIn());
         final int interval = com.stonytark.magnetization.config.MagConfig.inductionPadInterval();
         if ((level.getGameTime() % interval) != 0L) return;
         int budget = Math.min(com.stonytark.magnetization.config.MagConfig.inductionPadChargePerTick() * interval, be.energy.getEnergyStored());
@@ -88,6 +91,11 @@ public class InductionPadBlockEntity extends BlockEntity {
     private static final class InternalBuffer extends EnergyStorage {
         InternalBuffer(final int capacity, final int maxReceive) {
             super(capacity, maxReceive, 0);
+        }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
         }
         void drainInternal(final int amount) {
             this.energy = Math.max(0, this.energy - amount);

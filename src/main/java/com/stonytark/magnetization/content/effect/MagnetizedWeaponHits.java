@@ -43,6 +43,7 @@ public final class MagnetizedWeaponHits {
     public static void onIncomingDamage(final LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
         final ItemStack weapon = attacker.getMainHandItem();
+        if (MagConfig.isItemDisabled(weapon)) return;
         if (weapon.isEmpty() || !weapon.is(MagTags.METAL_TOOLS)) return;
         final MagneticPolarity weaponPol = weapon.get(MagDataComponents.ARMOR_POLARITY.get());
         if (weaponPol == null || weaponPol == MagneticPolarity.NONE) return;
@@ -53,6 +54,7 @@ public final class MagnetizedWeaponHits {
         // gets the lighter tag.
         int targetNet = 0;
         for (final ItemStack armor : EquippedArmor.all(target)) {
+            if (MagConfig.isItemDisabled(armor)) continue;
             final MagneticPolarity p = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (p != null) targetNet += p.sign();
         }
@@ -89,7 +91,7 @@ public final class MagnetizedWeaponHits {
 
     private static boolean wearsMetalArmor(final LivingEntity entity) {
         for (final ItemStack armor : EquippedArmor.all(entity)) {
-            if (armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
         }
         return false;
     }

@@ -86,6 +86,7 @@ public class MagneticGrappleItem extends Item {
      * @param sourceStack the grapple that fired, to stamp FIRED_AT on. */
     public boolean tryActivate(final Level level, final Player player, final ItemStack sourceStack) {
         if (level.isClientSide) return false;
+        if (com.stonytark.magnetization.config.MagConfig.isItemDisabled(sourceStack)) return false;
         if (player.getCooldowns().isOnCooldown(this)) return false;
         if (GrappleTickHandler.isPulling(player)) return false;
 

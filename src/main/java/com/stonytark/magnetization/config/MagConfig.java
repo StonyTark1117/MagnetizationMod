@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.config;
 
+import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticStrength;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.minecraft.nbt.CompoundTag;
@@ -936,8 +937,8 @@ public final class MagConfig {
         b.pop();
 
         b.comment("Propulsion machine tuning: micro-thruster, MHD jet, solar sail, Alfvén",
-                  "backpack, repulsor track, and homopolar motor. FE buffer sizes apply to",
-                  "newly-placed machines. Defaults match the previous values.")
+                  "backpack, repulsor track, and homopolar motor. FE and fluid buffer sizes",
+                  "resize on the next server tick; stored contents are clamped if needed.")
          .translation("magnetization.configuration.propulsion")
          .push("propulsion");
 
@@ -2333,12 +2334,26 @@ public final class MagConfig {
         }
     }
 
+    public static boolean isBlockDisabled(final net.minecraft.world.level.block.state.BlockState state) {
+        if (state == null) return false;
+        final net.minecraft.resources.ResourceLocation key =
+                net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        return key != null && Magnetization.MOD_ID.equals(key.getNamespace()) && isBlockDisabled(key.getPath());
+    }
+
     public static boolean isItemDisabled(final String path) {
         try {
             return DISABLED_ITEMS.get().contains(path);
         } catch (final Throwable t) {
             return false;
         }
+    }
+
+    public static boolean isItemDisabled(final net.minecraft.world.item.ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return false;
+        final net.minecraft.resources.ResourceLocation key =
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return key != null && Magnetization.MOD_ID.equals(key.getNamespace()) && isItemDisabled(key.getPath());
     }
 
     public static boolean debugLogging() {

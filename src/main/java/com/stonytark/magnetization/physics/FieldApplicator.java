@@ -454,6 +454,7 @@ public final class FieldApplicator {
         if (e instanceof IMagnetizable) return true;
         if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
         if (e instanceof ItemEntity item) {
+            if (MagConfig.isItemDisabled(item.getItem())) return false;
             // affectsItems == false (ore-break residual with the ore→items toggle off)
             // drops loose item entities from this field entirely — both the ferromagnetic
             // pull and the diamagnetic float handled downstream in applyToEntities.
@@ -474,6 +475,7 @@ public final class FieldApplicator {
         if (affectsArmor && e instanceof LivingEntity living) {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
+                if (MagConfig.isItemDisabled(armor)) continue;
                 // MR (magnetorheological) armor is NEVER pulled by a field — instead
                 // it hardens in one (see MrArmorHandler). Skip it entirely so it
                 // can't contribute pull susceptibility, even if polarity-stamped.
@@ -511,7 +513,8 @@ public final class FieldApplicator {
             // can surf between emitters like riding magnetic rails.
             if (living.isFallFlying()) {
                 final ItemStack chest = living.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
-                if (chest.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem) {
+                if (!MagConfig.isItemDisabled(chest)
+                        && chest.getItem() instanceof com.stonytark.magnetization.content.item.MagneticElytraItem) {
                     base *= com.stonytark.magnetization.content.item.MagneticElytraItem.glideSusceptibilityBonus();
                 }
             }
@@ -527,6 +530,7 @@ public final class FieldApplicator {
     private static double baseSusceptibility(final Entity e, final boolean affectsArmor) {
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
         if (e instanceof ItemEntity item) {
+            if (MagConfig.isItemDisabled(item.getItem())) return 0.0d;
             if (item.getItem().getItem() instanceof IMagnetizable m) return m.magneticSusceptibility();
             // Petrified wood is intrinsically weak — checked before the generic
             // ferromagnetic_items pass so the 1.0 baseline doesn't override it.
@@ -551,6 +555,7 @@ public final class FieldApplicator {
             final long now = living.level().getGameTime();
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
+                if (MagConfig.isItemDisabled(armor)) continue;
                 // MR armor never contributes pull susceptibility (it hardens, not pulls).
                 if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
                 final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
@@ -581,6 +586,7 @@ public final class FieldApplicator {
         if (e instanceof LivingEntity living) {
             int net = 0;
             for (final ItemStack armor : EquippedArmor.all(living)) {
+                if (MagConfig.isItemDisabled(armor)) continue;
                 final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
                 if (pol != null) net += pol.sign();
             }

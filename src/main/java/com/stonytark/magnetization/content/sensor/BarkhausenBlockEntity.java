@@ -32,6 +32,7 @@ public class BarkhausenBlockEntity extends BlockEntity {
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final BarkhausenBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (level.isClientSide || (level.getGameTime() % INTERVAL) != 0L) return;
 
         final int next = hasAdjacentMagnet(level, pos) ? level.random.nextInt(16) : 0;

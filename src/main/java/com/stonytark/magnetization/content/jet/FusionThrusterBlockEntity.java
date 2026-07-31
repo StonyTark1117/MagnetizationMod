@@ -186,6 +186,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     /** Vanilla ticker — thruster in the open world; resolve its host ship (if any). */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final FusionThrusterBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
     }
@@ -193,10 +194,13 @@ public class FusionThrusterBlockEntity extends BlockEntity
     /** Sable sub-level tick — thruster is mounted on this ship. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(getBlockState())) return;
         if (level instanceof ServerLevel server) runEngine(server, subLevel);
     }
 
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        tank.setCapacity(MagConfig.fusionThrusterTank());
+        energy.resize(MagConfig.fusionThrusterFeCapacity(), MagConfig.fusionThrusterFeReceive());
         // Auto-drain a fusion-fluid bucket into the tank (works anywhere).
         final ItemStack in = bucketSlot.getItem(0);
         if (isFusionFluidBucket(in) && fillFromBucket(in)) {
@@ -373,5 +377,10 @@ public class FusionThrusterBlockEntity extends BlockEntity
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

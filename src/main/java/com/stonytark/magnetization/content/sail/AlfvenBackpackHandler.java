@@ -1,8 +1,10 @@
 package com.stonytark.magnetization.content.sail;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,7 +30,9 @@ public final class AlfvenBackpackHandler {
     public static void onPlayerTick(final PlayerTickEvent.Post event) {
         final Player player = event.getEntity();
         if (player.level().isClientSide || !player.isFallFlying()) return;
-        if (!(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof AlfvenBackpackItem)) return;
+        final ItemStack backpack = player.getItemBySlot(EquipmentSlot.CHEST);
+        if (MagConfig.isItemDisabled(backpack)
+                || !(backpack.getItem() instanceof AlfvenBackpackItem)) return;
 
         // The ribbons catch a current in daylight, or anywhere in the End.
         final boolean inEnd = player.level().dimension() == Level.END;

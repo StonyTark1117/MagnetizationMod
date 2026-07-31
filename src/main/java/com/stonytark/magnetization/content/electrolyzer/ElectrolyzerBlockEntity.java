@@ -116,11 +116,15 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final ElectrolyzerBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.run(server);
     }
 
     private void run(final ServerLevel server) {
+        waterTank.setCapacity(MagConfig.electrolyzerWaterTank());
+        hydrogenTank.setCapacity(MagConfig.electrolyzerHydrogenTank());
+        energy.resize(MagConfig.electrolyzerFeCapacity(), MagConfig.electrolyzerFeReceive());
         // Auto-drain a water bucket from the slot into the water tank.
         final ItemStack in = bucketSlot.getItem(0);
         if (in.is(Items.WATER_BUCKET) && fillWaterFromBucket()) {
@@ -181,5 +185,10 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

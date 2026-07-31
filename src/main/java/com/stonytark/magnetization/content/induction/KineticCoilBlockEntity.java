@@ -96,7 +96,9 @@ public class KineticCoilBlockEntity extends BlockEntity
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final KineticCoilBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
+        be.energy.resize(CAPACITY, OUTPUT_RATE);
 
         final double emf = inducedEmf(server, pos);
         be.lastGenerated = emf > 0.0 ? (int) (emf * FE_PER_EMF) : 0;
@@ -177,6 +179,11 @@ public class KineticCoilBlockEntity extends BlockEntity
     private static final class GenBuffer extends EnergyStorage {
         GenBuffer(final int capacity, final int maxExtract) {
             super(capacity, 0, maxExtract);
+        }
+        void resize(final int capacity, final int maxExtract) {
+            this.capacity = Math.max(0, capacity);
+            this.maxExtract = Math.max(0, maxExtract);
+            this.energy = Math.min(this.energy, this.capacity);
         }
         void generate(final int amount) {
             this.energy = Math.min(this.capacity, this.energy + amount);

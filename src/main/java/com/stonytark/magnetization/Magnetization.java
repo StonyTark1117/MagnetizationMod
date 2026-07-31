@@ -166,31 +166,31 @@ public final class Magnetization {
     private static void onRegisterCapabilities(final net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
         final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.energy.IEnergyStorage, net.minecraft.core.Direction> cap
                 = net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK;
-        event.registerBlockEntity(cap, MagBlockEntities.ELECTROMAGNET.get(),       (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.DIPOLE_ELECTROMAGNET.get(), (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ANCHOR.get(),     (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.REPULSOR_COIL.get(),       (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.TRACTOR_BEAM.get(),        (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_EXCAVATOR.get(),  (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.STRUCTURAL_INDUCER.get(),  (be, side) -> be.getEnergyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.INDUCTION_PAD.get(),       (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.KINETIC_COIL.get(),        (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.TOKAMAK_CONTROLLER.get(),  (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.MHD_JET.get(),             (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.MICRO_THRUSTER.get(),      (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.FUSION_THRUSTER.get(),     (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.RAILGUN_EMITTER.get(),     (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.GYROSTABILIZER.get(),      (be, side) -> be.energyBuffer());
-        event.registerBlockEntity(cap, MagBlockEntities.ELECTROLYZER.get(),        (be, side) -> be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.ELECTROMAGNET.get(),       (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.DIPOLE_ELECTROMAGNET.get(), (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ANCHOR.get(),     (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.REPULSOR_COIL.get(),       (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.TRACTOR_BEAM.get(),        (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_EXCAVATOR.get(),  (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.STRUCTURAL_INDUCER.get(),  (be, side) -> disabled(be) ? null : be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.INDUCTION_PAD.get(),       (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.KINETIC_COIL.get(),        (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.TOKAMAK_CONTROLLER.get(),  (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MHD_JET.get(),             (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MICRO_THRUSTER.get(),      (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.FUSION_THRUSTER.get(),     (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.RAILGUN_EMITTER.get(),     (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.GYROSTABILIZER.get(),      (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.ELECTROLYZER.get(),        (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                MagBlockEntities.MICRO_THRUSTER.get(), (be, side) -> be.fluidHandler());
+                MagBlockEntities.MICRO_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                MagBlockEntities.FUSION_THRUSTER.get(), (be, side) -> be.fluidHandler());
+                MagBlockEntities.FUSION_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                MagBlockEntities.MHD_JET.get(), (be, side) -> be.fluidHandler());
+                MagBlockEntities.MHD_JET.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                MagBlockEntities.ELECTROLYZER.get(), (be, side) -> be.fluidHandler());
+                MagBlockEntities.ELECTROLYZER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
 
         // Item-handler caps so hoppers / Create automation can feed every item-fuel
         // machine (insert gated by each slot's canPlaceItem; only spent buckets extract
@@ -202,20 +202,24 @@ public final class Magnetization {
         final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.items.IItemHandler, net.minecraft.core.Direction> items
                 = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
         event.registerBlockEntity(items, MagBlockEntities.TOKAMAK_CONTROLLER.get(),
-                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                         ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.fuelContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.HOMOPOLAR_MOTOR.get(),
-                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                         ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.MHD_JET.get(),
-                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                         ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.MICRO_THRUSTER.get(),
-                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                         ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.FUSION_THRUSTER.get(),
-                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
-                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
+    }
+
+    private static boolean disabled(final net.minecraft.world.level.block.entity.BlockEntity be) {
+        return com.stonytark.magnetization.config.MagConfig.isBlockDisabled(be.getBlockState());
     }
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from

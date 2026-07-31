@@ -147,6 +147,8 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     public static void serverTick(final net.minecraft.world.level.Level level, final BlockPos pos,
                                   final BlockState st, final RailgunEmitterBlockEntity be) {
         be.energyActiveThisTick = false;
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(st)) return;
+        be.energy.resize(MagConfig.railgunFeCapacity(), MagConfig.railgunFeReceive());
         // The heavy lifting (rail walk / pairing / acceleration) lives in the
         // RailgunHandler so a single pass covers a whole arc; per-BE tick just
         // decays the cooldown so an unpaired/idle emitter still re-arms.
@@ -218,5 +220,10 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

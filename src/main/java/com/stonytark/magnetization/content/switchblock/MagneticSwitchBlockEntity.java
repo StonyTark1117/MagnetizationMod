@@ -58,6 +58,7 @@ public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntit
     /** Vanilla ticker (open world / off-ship). {@code subLevelAt} resolves a host
      *  if this somehow runs on a contraption; normally it returns null here. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state, final MagneticSwitchBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.run(server, SableBridge.subLevelAt(server, pos));
     }

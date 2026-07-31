@@ -53,12 +53,15 @@ public class GyrostabilizerBlockEntity extends BlockEntity implements BlockEntit
      *  possible host and keep the powered visual + status honest. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final GyrostabilizerBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
+        be.energy.resize(CAPACITY, MAX_RECEIVE);
         if (level instanceof ServerLevel server) be.run(server, SableBridge.subLevelAt(server, pos));
     }
 
     /** Sable sub-level tick: we're mounted on this ship — stabilize it. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(getBlockState())) return;
         if (level instanceof ServerLevel server) run(server, subLevel);
     }
 
@@ -126,5 +129,10 @@ public class GyrostabilizerBlockEntity extends BlockEntity implements BlockEntit
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

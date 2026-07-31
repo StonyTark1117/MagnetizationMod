@@ -66,7 +66,9 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MagneticItemFrameBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel)) return;
+        be.energy.resize(com.stonytark.magnetization.config.MagConfig.itemFrameFeCapacity(), 200);
         boolean powered = level.hasNeighborSignal(pos);
         final int fePerTick = com.stonytark.magnetization.config.MagConfig.itemFrameFePerTick();
         if (!powered && fePerTick > 0 && be.energy.getEnergyStored() >= fePerTick) {
@@ -130,5 +132,10 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

@@ -77,6 +77,7 @@ public class RepulsorGunItem extends Item {
      *                     Curios stack for the keybind — so FIRED_AT lands on it. */
     public boolean tryActivate(final Level level, final Player player, final ItemStack sourceStack) {
         if (level.isClientSide || !(level instanceof ServerLevel)) return false;
+        if (com.stonytark.magnetization.config.MagConfig.isItemDisabled(sourceStack)) return false;
         if (player.getCooldowns().isOnCooldown(this)) return false;
 
         // Stamp the fire time so the client swaps in the glowing-muzzle model

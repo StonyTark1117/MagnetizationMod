@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.dampener;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -88,8 +89,9 @@ public final class DecelerateToHoverHandler {
         }
 
         final Level level = player.level();
-        final boolean bootsWorn =
-                player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof MagnetoresistiveBootsItem;
+        final ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
+        final boolean bootsWorn = !MagConfig.isItemDisabled(boots)
+                && boots.getItem() instanceof MagnetoresistiveBootsItem;
         final boolean metallicArmor = hasMetallicArmor(player);
 
         // Scan straight down for the first landing surface within reach: a Magnetic
@@ -100,7 +102,7 @@ public final class DecelerateToHoverHandler {
         for (int dy = 0; dy <= ACTIVATION_HEIGHT; dy++) {
             final BlockPos p = feet.below(dy);
             final BlockState state = level.getBlockState(p);
-            if (state.is(MagBlocks.G_FORCE_CUSHION.get()) && metallicArmor) {
+            if (!MagConfig.isBlockDisabled(state) && state.is(MagBlocks.G_FORCE_CUSHION.get()) && metallicArmor) {
                 surfaceTop = p.getY() + 1.0;
                 cushioned = true;
                 break;
@@ -170,7 +172,7 @@ public final class DecelerateToHoverHandler {
 
     private static boolean hasMetallicArmor(final Player player) {
         for (final ItemStack armor : player.getArmorSlots()) {
-            if (armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
         }
         return false;
     }

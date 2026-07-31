@@ -73,6 +73,11 @@ public final class RailgunHandler {
                                        final Set<BlockPos> snapshot, final Set<BlockPos> processed,
                                        final BlockPos pos, final RailgunEmitterBlockEntity be) {
         final BlockState state = be.getBlockState();
+        if (MagConfig.isBlockDisabled(state)) {
+            be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
+            processed.add(pos);
+            return;
+        }
         if (!state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) return;
         final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
 
@@ -220,6 +225,7 @@ public final class RailgunHandler {
             if (other.equals(pos)) continue;
             if (!(level.getBlockEntity(other) instanceof RailgunEmitterBlockEntity)) continue;
             final BlockState s = level.getBlockState(other);
+            if (MagConfig.isBlockDisabled(s)) continue;
             if (!s.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)
                     || s.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING) != facing) continue;
             final int dx = other.getX() - pos.getX();

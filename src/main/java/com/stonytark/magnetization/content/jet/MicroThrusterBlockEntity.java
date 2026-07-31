@@ -107,6 +107,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
      *  still world-ticked) — resolve its host ship. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MicroThrusterBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
     }
@@ -114,10 +115,14 @@ public class MicroThrusterBlockEntity extends BlockEntity
     /** Sable sub-level tick: thruster is mounted on this ship — thrust it. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(getBlockState())) return;
         if (level instanceof ServerLevel server) runEngine(server, subLevel);
     }
 
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        tank.setCapacity(com.stonytark.magnetization.config.MagConfig.microThrusterTank());
+        energy.resize(com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(),
+                com.stonytark.magnetization.config.MagConfig.microThrusterFeReceive());
         // Auto-drain a ferrofluid bucket into the tank (works anywhere).
         final net.minecraft.world.item.ItemStack in = bucketSlot.getItem(0);
         if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && fillFromBucket(in)) {
@@ -201,5 +206,10 @@ public class MicroThrusterBlockEntity extends BlockEntity
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

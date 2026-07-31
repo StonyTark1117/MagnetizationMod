@@ -145,6 +145,7 @@ public class MhdJetBlockEntity extends BlockEntity
      *  contraption still driven by the world ticker) — resolve its host ship. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MhdJetBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
     }
@@ -152,12 +153,15 @@ public class MhdJetBlockEntity extends BlockEntity
     /** Sable sub-level tick: the jet is mounted on this ship — thrust it. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(getBlockState())) return;
         if (level instanceof ServerLevel server) runEngine(server, subLevel);
     }
 
     /** Engine logic shared by both tick paths. An MHD jet only does work when it
      *  sits on a ship (its {@code host}); off-ship it's inert. */
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
+        fluidTank.setCapacity(MagConfig.mhdJetTank());
+        energy.resize(MagConfig.mhdJetFeCapacity(), MagConfig.mhdJetFeReceive());
         final double[] t = tier(getMagnet());
         final int fluidCost = MagConfig.mhdJetFluidPerTick();
         final double mult = conductivityMult(fluidTank.getFluid().getFluid());
@@ -244,5 +248,10 @@ public class MhdJetBlockEntity extends BlockEntity
         ReceiveBuffer(final int capacity, final int maxReceive) { super(capacity, maxReceive, 0); }
         void drainInternal(final int amount) { this.energy = Math.max(0, this.energy - amount); }
         void setStored(final int value) { this.energy = Math.max(0, Math.min(capacity, value)); }
+        void resize(final int capacity, final int maxReceive) {
+            this.capacity = Math.max(0, capacity);
+            this.maxReceive = Math.max(0, maxReceive);
+            this.energy = Math.min(this.energy, this.capacity);
+        }
     }
 }

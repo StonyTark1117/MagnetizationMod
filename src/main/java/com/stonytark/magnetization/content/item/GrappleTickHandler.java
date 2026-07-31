@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.registry.MagParticles;
 import net.minecraft.server.level.ServerLevel;
@@ -59,6 +60,12 @@ public final class GrappleTickHandler {
         if (player.level().isClientSide) return;
         final ActivePull pull = ACTIVE.get(player.getUUID());
         if (pull == null) return;
+
+        if (MagConfig.isItemDisabled(player.getMainHandItem())
+                && MagConfig.isItemDisabled(player.getOffhandItem())) {
+            end(player);
+            return;
+        }
 
         // Sneaking cancels — gives players an "out" mid-flight.
         if (player.isShiftKeyDown()) {

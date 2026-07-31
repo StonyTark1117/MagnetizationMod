@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.mrarmor;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -51,6 +52,7 @@ public final class MrArmorHandler {
 
     /** Stamp the hardened window onto a held MR-fluid tool (no-op for anything else). */
     private static void hardenHeldTool(final ItemStack stack, final long until) {
+        if (MagConfig.isItemDisabled(stack)) return;
         if (stack.getItem() instanceof com.stonytark.magnetization.content.mrtools.MrFluidTools.Marker) {
             stack.set(MagDataComponents.HARDENED_UNTIL.get(), until);
         }
@@ -96,8 +98,9 @@ public final class MrArmorHandler {
 
     /** An MR piece is either a player-worn MR armor item or MR horse barding. */
     private static boolean isMrPiece(final ItemStack stack) {
-        return stack.getItem() instanceof MrLiquidArmorItem
-                || stack.getItem() instanceof MrFluidHorseArmorItem;
+        return !MagConfig.isItemDisabled(stack)
+                && (stack.getItem() instanceof MrLiquidArmorItem
+                || stack.getItem() instanceof MrFluidHorseArmorItem);
     }
 
     private static int pieces(final LivingEntity living) {

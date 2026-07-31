@@ -50,6 +50,7 @@ public final class MeteoriteSaplingBlockEntity extends BlockEntity {
 
     public static void serverTick(final Level level, final BlockPos pos,
                                    final BlockState state, final MeteoriteSaplingBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         final long now = server.getGameTime();
         if (be.plantedAtTick == UNINITIALISED) {

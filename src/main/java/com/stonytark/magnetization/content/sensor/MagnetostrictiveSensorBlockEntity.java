@@ -68,6 +68,7 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final MagnetostrictiveSensorBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (level.isClientSide || (level.getGameTime() % com.stonytark.magnetization.config.MagConfig.sensorInterval()) != 0L) return;
 
         final double range = be.effectiveRange();

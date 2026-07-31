@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.dampener;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +27,7 @@ public final class FallSaveHandler {
         if (event.getDistance() < MIN_SAVE_DISTANCE) return;
         final LivingEntity living = event.getEntity();
         final ItemStack boots = living.getItemBySlot(EquipmentSlot.FEET);
+        if (MagConfig.isItemDisabled(boots)) return;
         if (!(boots.getItem() instanceof MagnetoresistiveBootsItem)) return;
 
         event.setDamageMultiplier(0.0f); // magnetoresistive arrest — no fall damage

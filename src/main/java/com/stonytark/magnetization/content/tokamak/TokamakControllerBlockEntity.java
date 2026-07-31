@@ -124,7 +124,10 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
                                   final TokamakControllerBlockEntity be) {
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
+        be.energy.resize(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
+                com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3());
         // Auto-feed: load one cell when the burn is empty, recording its tier so
         // gen/output use that tier's rates (mixing tiers cleanly, one cell at a time).
         if (be.burnTime <= 0) {
@@ -185,6 +188,11 @@ public class TokamakControllerBlockEntity extends BlockEntity
     private static final class GenBuffer extends EnergyStorage {
         GenBuffer(final int capacity, final int maxExtract) {
             super(capacity, 0, maxExtract);
+        }
+        void resize(final int capacity, final int maxExtract) {
+            this.capacity = Math.max(0, capacity);
+            this.maxExtract = Math.max(0, maxExtract);
+            this.energy = Math.min(this.energy, this.capacity);
         }
         void generate(final int amount) {
             this.energy = Math.min(this.capacity, this.energy + amount);
