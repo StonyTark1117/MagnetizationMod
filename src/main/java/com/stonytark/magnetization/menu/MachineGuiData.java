@@ -39,6 +39,12 @@ public interface MachineGuiData {
      *  (e.g. the tokamak's current fuel tier 0/1/2). -1 = unused. */
     default int guiStat3() { return -1; }
 
+    /** Authoritative denominator for the secondary fuel/fluid bar (tank capacity or
+     *  current-tier burn ticks), computed SERVER-side from the server's config and
+     *  synced so multiplayer clients with a different COMMON config still draw the
+     *  correct fill percentage. -1 = no secondary bar. */
+    default int guiStat4() { return -1; }
+
     /** Lines for the WTHIT / Jade / TOP tooltip — the block's own live status.
      *  Note: no stored-FE line here. WTHIT/Jade already draw a built-in energy
      *  bar from the {@code EnergyStorage} capability, so emitting one would

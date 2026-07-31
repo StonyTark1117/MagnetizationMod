@@ -1,6 +1,5 @@
 package com.stonytark.magnetization.client.screen;
 
-import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.menu.MachineGuiData;
 import com.stonytark.magnetization.menu.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,31 +23,13 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int ENERGY_X = 156, BAR_Y = 18, BAR_W = 12, BAR_H = 54;
     private static final int FLUID_X = 138;
 
-    /** Denominator for the secondary fuel/fluid bar, read live from config (and,
-     *  for the tokamak, the synced current fuel tier) so the bar fill stays
-     *  accurate when an admin retunes a tank size or fuel burn time. */
+    /** Denominator for the secondary fuel/fluid bar. Uses the server-authoritative
+     *  value synced through the menu ({@code stat4}) so a multiplayer client whose
+     *  COMMON config differs from the server (tank size / fuel burn time retuned)
+     *  still draws the correct fill percentage — reading local client config here
+     *  was the bug. Falls back to 1 when the machine reports no secondary bar. */
     private int fluidBarMax() {
-        return switch (menu.kind()) {
-            case TOKAMAK -> tokamakTierBurn(menu.stat3());
-            case THRUSTER -> MagConfig.microThrusterTank();
-            // Fusion tank is per-cell × interior count (stat2) — bars scale with the panel.
-            // Clamp with a long like the server: a large tank × big panel overflows int
-            // and would wrap negative, collapsing the bar denominator.
-            case FUSION_THRUSTER -> (int) Math.min(Integer.MAX_VALUE,
-                    (long) MagConfig.fusionThrusterTank() * Math.max(1, menu.stat2()));
-            case JET -> MagConfig.mhdJetTank();
-            case ELECTROLYZER -> MagConfig.electrolyzerHydrogenTank();
-            default -> 1;
-        };
-    }
-
-    /** Full burn ticks of the tokamak's currently-loaded cell tier (0=D-D/1=D-T/2=He³). */
-    private static int tokamakTierBurn(final int tier) {
-        return switch (tier) {
-            case 1 -> MagConfig.tokamakBurnTicksTritium();
-            case 2 -> MagConfig.tokamakBurnTicksHelium3();
-            default -> MagConfig.tokamakBurnTicksPerCell();
-        };
+        return Math.max(1, menu.stat4());
     }
 
     public MachineScreen(final MachineMenu menu, final Inventory inv, final Component title) {

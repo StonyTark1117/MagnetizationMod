@@ -127,6 +127,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
     @Override public int guiEnergyMax() { return MagConfig.fusionThrusterFeCapacity(); }
     @Override public int guiStat1() { return panelTank().getFluidAmount(); }   // shared panel fluid mB
     @Override public int guiStat2() { return cachedInterior; }          // interior count
+    // Bar denominator = shared tank × interior count, clamped like MachineScreen did
+    // (large tank × big panel overflows int). Computed server-side from server config.
+    @Override public int guiStat4() {
+        return (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterTank() * Math.max(1, cachedInterior));
+    }
 
     static boolean isFusionFluid(final Fluid fluid) {
         return fluid == MagFluids.HYDROGEN.get() || fluid == MagFluids.DEUTERIUM_OXIDE.get()

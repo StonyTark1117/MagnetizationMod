@@ -61,11 +61,27 @@ public class RepulsorGunItem extends Item {
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.success(stack);
-        if (player.getCooldowns().isOnCooldown(this)) return InteractionResultHolder.fail(stack);
+        return tryActivate(level, player, stack)
+                ? InteractionResultHolder.success(stack)
+                : InteractionResultHolder.fail(stack);
+    }
+
+    /** Shared server-side activation for both the in-hand right-click and the
+     *  Curios keybind. Cooldown check, visual stamp on the REAL source stack, the
+     *  shot, cooldown, and sound all happen here so both paths are identical — a
+     *  Curios fire can't bypass the rate limit (was: the keybind handler fired
+     *  first and only added cooldown afterward), and it stamps/sounds the actual
+     *  charm-slot item. Returns false if it couldn't fire (on cooldown / not server).
+     *
+     * @param sourceStack the stack that fired — the held stack for hand use, the
+     *                     Curios stack for the keybind — so FIRED_AT lands on it. */
+    public boolean tryActivate(final Level level, final Player player, final ItemStack sourceStack) {
+        if (level.isClientSide || !(level instanceof ServerLevel)) return false;
+        if (player.getCooldowns().isOnCooldown(this)) return false;
 
         // Stamp the fire time so the client swaps in the glowing-muzzle model
         // for a few ticks (the "tip lights up when fired" effect).
-        stack.set(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get(), level.getGameTime());
+        sourceStack.set(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get(), level.getGameTime());
 
         fire(level, player);
 
@@ -73,11 +89,12 @@ public class RepulsorGunItem extends Item {
         player.getCooldowns().addCooldown(this, cooldownTicks());
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.PLAYERS, 0.6f, 1.8f);
-        return InteractionResultHolder.success(stack);
+        return true;
     }
 
-    /** Public so the curios-keybind handler can invoke a shot when the item
-     *  lives in a charm slot and there's no hand to right-click from. */
+    /** The raw shot (field + impulses), with no cooldown/stamp/sound bookkeeping.
+     *  Prefer {@link #tryActivate} from entry points; this stays public/separate
+     *  only so the field logic is reusable. */
     public void fire(final Level level, final Player player) {
         if (level.isClientSide || !(level instanceof ServerLevel server)) return;
 

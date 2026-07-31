@@ -955,6 +955,114 @@ public final class MagGameTests {
     }
 
     /**
+     * Audit #1 — the FULL manual player workflow end-to-end: pair a remote, TAKE IT
+     * OUT of the slot (into a hand), confirm the arc STAYS in manual mode and HOLDS a
+     * target, then fire it by invoking the real {@link RailgunRemoteItem#use} with the
+     * bound remote in a mock player's hand. Previously manual mode was tied to slot
+     * occupancy, so removing the remote to fire it dropped the arc to auto/IDLE and the
+     * headline boarding-then-launch feature was unreachable without commands.
+     */
+    // Own batch: the RailgunHandler is a GLOBAL level scanner and gametests share one
+    // level, so two paired-rail arcs at the same Y in the same batch can cross-pair.
+    // A unique batch runs this in isolation (batches run sequentially).
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "railgunManualPersist")
+    public static void railgunManualModeSurvivesRemoteRemovalAndFiresFromHand(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        powerRailgun(level, base);
+        powerRailgun(level, other);
+
+        final var master = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity) level.getBlockEntity(base);
+        if (master == null) { helper.fail("no master emitter"); return; }
+
+        // Pair the remote, then capture the now-bound stack and EMPTY the slot — i.e.
+        // the player took the remote out to hold it for firing.
+        master.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+        final net.minecraft.world.item.ItemStack boundRemote = master.remoteContainer().getItem(0).copy();
+        master.remoteContainer().setItem(0, net.minecraft.world.item.ItemStack.EMPTY);
+
+        helper.runAfterDelay(6L, () -> {
+            // The fix: manual mode PERSISTS with an empty slot (the remote is in hand now).
+            helper.assertTrue(master.manualMode(),
+                    "Manual mode must persist after the remote leaves the slot");
+
+            final net.minecraft.world.entity.projectile.Arrow arrow =
+                    new net.minecraft.world.entity.projectile.Arrow(level,
+                            base.getX() + 1.5, base.getY() + 0.5, base.getZ() - 2.5,
+                            net.minecraft.world.item.ItemStack.EMPTY, (net.minecraft.world.item.ItemStack) null);
+            arrow.setNoGravity(true);
+            arrow.setDeltaMovement(0, 0, 0);
+            level.addFreshEntity(arrow);
+
+            helper.runAfterDelay(12L, () -> {
+                helper.assertTrue(master.arcState() == com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.HOLDING,
+                        "Manual arc should HOLD the target after the remote was removed; state=" + master.arcState());
+
+                // Fire via the REAL item use(), remote in a mock player's hand.
+                final net.minecraft.world.entity.player.Player player =
+                        helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, boundRemote);
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()
+                        .use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND);
+
+                helper.runAfterDelay(26L, () -> {
+                    final boolean launched = arrow.getDeltaMovement().z() < -0.4;
+                    arrow.discard();
+                    clearRailgunRail(level, base);
+                    clearRailgunRail(level, other);
+                    helper.assertTrue(launched,
+                            "Firing the bound remote from hand should launch the held target; v=" + arrow.getDeltaMovement());
+                    helper.succeed();
+                });
+            });
+        });
+    }
+
+    /**
+     * Audit #8 — a bound remote can always be un-paired locally, even when the rail it
+     * points at is gone. The old sneak-use path required the emitter block entity to
+     * still exist in the same dimension, so a remote bound to a demolished railgun kept
+     * its binding forever and every use silently passed with no message.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 80, batch = "railgunUnbind")
+    public static void railgunRemoteUnbindsFromAMissingRailgun(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 244, abs.getZ());
+        level.setBlock(base, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final var be = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity) level.getBlockEntity(base);
+        if (be == null) { helper.fail("no emitter"); return; }
+        be.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+        final net.minecraft.world.item.ItemStack bound = be.remoteContainer().getItem(0).copy();
+        helper.assertTrue(com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(bound) != null,
+                "Inserting a remote should bind it");
+        helper.assertTrue(com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(bound) != null,
+                "Binding must record the dimension for the tooltip / cross-dimension check");
+
+        // Demolish the railgun, then sneak-use the orphaned remote.
+        level.setBlock(base, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final net.minecraft.world.entity.player.Player player =
+                helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setShiftKeyDown(true);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, bound);
+        com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()
+                .use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND);
+
+        helper.assertTrue(com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(bound) == null,
+                "Sneak-use must clear the binding even when the bound railgun no longer exists");
+        helper.succeed();
+    }
+
+    /**
      * #124 (R7 coverage) — Block-breaking safety carve-outs: the railgun smashes a
      * plain obstructing block but spares its own rails, the emitter controls, and
      * bedrock. Calls breakIfObstructing directly for a deterministic check.
@@ -2032,6 +2140,23 @@ public final class MagGameTests {
         } finally {
             com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(true);
         }
+        helper.succeed();
+    }
+
+    /**
+     * Audit #8 — machine fuel/fluid bar denominators are SERVER-authoritative: the BE
+     * exposes the tank/burn max via guiStat4 (computed from the server's config), which
+     * the menu syncs so a multiplayer client with a different COMMON config still draws
+     * the right fill. Asserts the exposed max matches the server config value.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    public static void machineBarMaxIsServerAuthoritative(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.MICRO_THRUSTER.get());
+        final com.stonytark.magnetization.menu.MachineGuiData be =
+                (com.stonytark.magnetization.menu.MachineGuiData) helper.getBlockEntity(pos);
+        helper.assertTrue(be.guiStat4() == com.stonytark.magnetization.config.MagConfig.microThrusterTank(),
+                "Micro Thruster bar max should equal the server-config tank; got " + be.guiStat4());
         helper.succeed();
     }
 }

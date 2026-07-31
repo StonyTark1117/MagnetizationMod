@@ -105,6 +105,7 @@ public class MhdJetBlockEntity extends BlockEntity
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.mhdJetFeCapacity(); }
     @Override public int guiStat1() { return fluidTank.getFluidAmount(); }   // conductive fluid mB
+    @Override public int guiStat4() { return MagConfig.mhdJetTank(); }        // bar denominator (server config)
     @Override public int guiStat2() { return burnRemaining; }                // magnet burn ticks left
 
     /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnetic material —

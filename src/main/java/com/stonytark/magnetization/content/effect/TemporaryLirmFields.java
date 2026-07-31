@@ -13,6 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
@@ -161,7 +163,11 @@ public final class TemporaryLirmFields {
             while (it.hasNext()) {
                 final Entry e = it.next();
                 final long age = now - e.bornTick;
-                if (age >= com.stonytark.magnetization.config.MagConfig.tempFieldDurationTicks()) {
+                // Negative age means this entry was born under a *different* world's
+                // clock (a second world opened in the same JVM with a lower game time):
+                // it's stale/leaked, so drop it rather than let 1 - age/duration exceed
+                // 1 and inflate the field's range past its base.
+                if (age < 0L || age >= com.stonytark.magnetization.config.MagConfig.tempFieldDurationTicks()) {
                     it.remove();
                     continue;
                 }
@@ -180,6 +186,22 @@ public final class TemporaryLirmFields {
                 FieldApplicator.apply(server, field, e.affectsArmor(), e.affectsItems());
             }
         }
+    }
+
+    /** Drop a dimension's transient fields when it unloads, so a second world
+     *  opened in the same JVM (same dimension key) can't inherit them. */
+    @SubscribeEvent
+    public static void onLevelUnload(final LevelEvent.Unload event) {
+        if (event.getLevel() instanceof ServerLevel server) {
+            ENTRIES_BY_LEVEL.remove(server.dimension());
+        }
+    }
+
+    /** Clear everything on server stop so no transient field survives into the
+     *  next world loaded in the same client session. */
+    @SubscribeEvent
+    public static void onServerStopped(final ServerStoppedEvent event) {
+        ENTRIES_BY_LEVEL.clear();
     }
 
     /** Test/debug helper — returns the count of active entries in the level,

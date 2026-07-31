@@ -104,15 +104,27 @@ public class RailgunEmitterBlockEntity extends BlockEntity
 
     private void onRemoteSlotChanged() {
         final ItemStack remote = remoteSlot.getItem(0);
-        final boolean bound = remote.is(MagItems.RAILGUN_REMOTE.get());
-        // Manual mode follows the presence of a remote; the handler mirrors it to the sibling.
-        setManualMode(bound);
-        if (bound && level != null && !level.isClientSide) {
-            // Bind the remote to THIS emitter so the in-hand fire targets this arc.
-            RailgunRemoteItem.bind(remote, getBlockPos(), level.dimension());
-        } else if (!bound && state == ArcState.HOLDING) {
-            setArcState(ArcState.IDLE);   // unpairing returns the arc to auto
+        final boolean present = remote.is(MagItems.RAILGUN_REMOTE.get());
+        // Inserting a remote PAIRS the arc: it binds the remote to this emitter and
+        // latches manual mode. Crucially, REMOVING the remote does NOT un-pair — the
+        // whole point of the manual workflow is to take the bound remote into your
+        // hand to fire, so the arc must stay manual (and keep HOLDING a trapped
+        // target) while the slot is empty. Un-pairing is an explicit action:
+        // sneak-use the bound remote (RailgunRemoteItem), which calls unpair().
+        if (present && level != null && !level.isClientSide) {
+            setManualMode(true);   // the handler mirrors this to the sibling rail
+            // Captures pos + dimension + rail facing/length + any anvil label, so the
+            // remote's tooltip can identify the rail without it being loaded.
+            RailgunRemoteItem.bind(remote, this, level.dimension());
         }
+    }
+
+    /** Explicitly return this arc to automatic mode: clears manual latch and drops a
+     *  held target back to IDLE. Invoked by sneak-using the bound remote so a player
+     *  who took the remote out of the slot can still un-pair. */
+    public void unpair() {
+        setManualMode(false);
+        if (state == ArcState.HOLDING) setArcState(ArcState.IDLE);
     }
 
     // ── MachineGuiData (Kind.RAILGUN: rail length + mode/state, FE bar) ──

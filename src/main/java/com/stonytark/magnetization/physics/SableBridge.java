@@ -120,6 +120,14 @@ public final class SableBridge {
         CHAIN_CACHE.entrySet().removeIf(e -> now - e.getValue().tick() >= CHAIN_CACHE_EVICT);
     }
 
+    /** Drop the connected-chain cache and reset the prune clock on server stop, so
+     *  no ship-chain entry (or a stale prune timestamp) carries into the next world
+     *  loaded in the same client session. Called from a server-stop handler. */
+    public static void onServerStopped() {
+        CHAIN_CACHE.clear();
+        lastChainPruneTick = 0L;
+    }
+
     /**
      * Transform a sub-level-local field into world space using a contraption's
      * current pose. Both the origin and the directional axis are rotated and

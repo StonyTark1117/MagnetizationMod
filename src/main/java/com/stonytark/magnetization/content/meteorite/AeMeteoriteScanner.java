@@ -14,6 +14,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 import java.util.Map;
 import java.util.Set;
@@ -97,6 +99,23 @@ public final class AeMeteoriteScanner {
     static boolean isAeMeteorite(final ResourceLocation key) {
         if (!"ae2".equals(key.getNamespace())) return false;
         return key.getPath().toLowerCase(java.util.Locale.ROOT).contains("meteorite");
+    }
+
+    /** Drop a dimension's scanned-chunk gate when it unloads, so a second world
+     *  opened in the same JVM re-scans its chunks (rather than treating a
+     *  coordinate already seen in the first world as done). */
+    @SubscribeEvent
+    public static void onLevelUnload(final LevelEvent.Unload event) {
+        if (event.getLevel() instanceof ServerLevel server) {
+            SCANNED_CHUNKS.remove(server.dimension());
+        }
+    }
+
+    /** Clear all scan gates on server stop so nothing carries into the next world
+     *  loaded in the same client session. */
+    @SubscribeEvent
+    public static void onServerStopped(final ServerStoppedEvent event) {
+        SCANNED_CHUNKS.clear();
     }
 
     private static boolean liveEnabled() {

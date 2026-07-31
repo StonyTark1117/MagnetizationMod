@@ -70,6 +70,7 @@ public final class Magnetization {
         modBus.addListener(Magnetization::onRegisterPayloads);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
+        NeoForge.EVENT_BUS.addListener(Magnetization::onServerStopped);
 
         // Curios — register the Field Compass and Magnetic Grapple as curios
         // so they work from a charm slot. Guarded so the Curios imports don't
@@ -221,6 +222,13 @@ public final class Magnetization {
         if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel server) {
             com.stonytark.magnetization.physics.ShipMagneticRegistry.onLevelUnload(server);
         }
+    }
+
+    /** Drop cross-session static caches on server stop so nothing leaks into the
+     *  next world loaded in the same client session (e.g. the Sable connected-chain
+     *  cache — see SableBridge). */
+    private static void onServerStopped(final net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        com.stonytark.magnetization.physics.SableBridge.onServerStopped();
     }
 
     public static ResourceLocation id(final String path) {

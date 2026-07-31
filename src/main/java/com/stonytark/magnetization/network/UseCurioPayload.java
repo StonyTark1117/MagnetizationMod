@@ -9,7 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
@@ -68,18 +67,19 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
             if (!(ctx.player() instanceof ServerPlayer sp)) return;
             final ItemStack stack = findInCurios(sp, payload.kind());
             if (stack == null || stack.isEmpty()) return;
+            // Route through each item's shared server-side activation, passing the
+            // REAL Curios stack. tryActivate does the cooldown check itself (so a
+            // scripted client can't fire past the rate limit), stamps FIRED_AT on
+            // the charm-slot item, and plays the same sound as the in-hand path.
             switch (payload.kind()) {
                 case GRAPPLE -> {
                     if (stack.getItem() instanceof MagneticGrappleItem grapple) {
-                        grapple.use(sp.level(), sp, InteractionHand.MAIN_HAND);
+                        grapple.tryActivate(sp.level(), sp, stack);
                     }
                 }
                 case REPULSOR_GUN -> {
                     if (stack.getItem() instanceof RepulsorGunItem gun) {
-                        gun.fire(sp.level(), sp);
-                        // Same cooldown the in-hand path applies, so curio fires
-                        // don't bypass the rate limit.
-                        sp.getCooldowns().addCooldown(gun, cooldownTicksFromConfig());
+                        gun.tryActivate(sp.level(), sp, stack);
                     }
                 }
             }
@@ -108,10 +108,5 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
             // Curios API drift — fail soft.
         }
         return null;
-    }
-
-    private static int cooldownTicksFromConfig() {
-        try { return com.stonytark.magnetization.config.MagConfig.REPULSOR_GUN_COOLDOWN_TICKS.get(); }
-        catch (final Throwable t) { return 20; }
     }
 }

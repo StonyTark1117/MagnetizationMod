@@ -40,6 +40,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final WideData stat1 = new WideData();
     private final WideData stat2 = new WideData();
     private final WideData stat3 = new WideData();
+    private final WideData stat4 = new WideData();
 
     /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
      *  vanilla DataSlot is sent as a signed 16-bit short, so a single slot wraps to
@@ -93,6 +94,8 @@ public final class MachineMenu extends AbstractContainerMenu {
         addDataSlot(stat2.hi);
         addDataSlot(stat3.lo);
         addDataSlot(stat3.hi);
+        addDataSlot(stat4.lo);
+        addDataSlot(stat4.hi);
         refresh();
     }
 
@@ -114,6 +117,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int stat1() { return stat1.get(); }
     public int stat2() { return stat2.get(); }
     public int stat3() { return stat3.get(); }
+    /** Authoritative fuel/fluid bar denominator, synced from the server's config. */
+    public int stat4() { return stat4.get(); }
 
     private void refresh() {
         access.execute((level, p) -> {
@@ -123,6 +128,7 @@ public final class MachineMenu extends AbstractContainerMenu {
                 stat1.set(d.guiStat1());
                 stat2.set(d.guiStat2());
                 stat3.set(d.guiStat3());
+                stat4.set(d.guiStat4());
             }
         });
     }

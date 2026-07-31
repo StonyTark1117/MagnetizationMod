@@ -71,15 +71,30 @@ public class MagneticGrappleItem extends Item {
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.success(stack);
-        if (player.getCooldowns().isOnCooldown(this)) return InteractionResultHolder.fail(stack);
-        if (GrappleTickHandler.isPulling(player)) return InteractionResultHolder.fail(stack);
+        return tryActivate(level, player, stack)
+                ? InteractionResultHolder.success(stack)
+                : InteractionResultHolder.fail(stack);
+    }
+
+    /** Shared server-side activation for both the in-hand right-click and the
+     *  Curios keybind. Takes the REAL source stack so the FIRED_AT visual stamp
+     *  lands on the item that actually fired — the held stack for hand use, the
+     *  Curios stack for the keybind (was: the keybind stamped the unrelated
+     *  main-hand stack, so the charm never glowed). Returns false if it couldn't
+     *  fire (on cooldown, already pulling, or no anchor in range).
+     *
+     * @param sourceStack the grapple that fired, to stamp FIRED_AT on. */
+    public boolean tryActivate(final Level level, final Player player, final ItemStack sourceStack) {
+        if (level.isClientSide) return false;
+        if (player.getCooldowns().isOnCooldown(this)) return false;
+        if (GrappleTickHandler.isPulling(player)) return false;
 
         final Supplier<Vec3> anchor = findAnyAnchor(level, player);
         if (anchor == null) {
             player.displayClientMessage(
                     Component.translatable("grapple.magnetization.no_anchor").withStyle(ChatFormatting.GRAY),
                     true);
-            return InteractionResultHolder.fail(stack);
+            return false;
         }
 
         GrappleTickHandler.start(player, anchor);
@@ -88,8 +103,8 @@ public class MagneticGrappleItem extends Item {
 
         // Stamp fire time so the client swaps in the glowing-prong model variant
         // for a few ticks — the nozzle/claw lights up as the hook launches.
-        stack.set(MagDataComponents.FIRED_AT.get(), level.getGameTime());
-        return InteractionResultHolder.success(stack);
+        sourceStack.set(MagDataComponents.FIRED_AT.get(), level.getGameTime());
+        return true;
     }
 
     /** Pick the closest valid target across all three categories. */

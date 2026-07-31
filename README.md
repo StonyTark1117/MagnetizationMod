@@ -5,11 +5,12 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 ## Requirements
 
 - Minecraft **1.21.1**
-- NeoForge **21.1.230+**
-- [Create](https://modrinth.com/mod/create) **6.0.9+**
-- [Sable](https://modrinth.com/mod/sable) **1.2.2+**
-- [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.2.1+**
-- Simulated **1.2.1+**
+- NeoForge **21.1.233+**
+- [Create](https://modrinth.com/mod/create) **6.0.10+**
+- [Sable](https://modrinth.com/mod/sable) **2.0.3+**
+- [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.3.0+**
+- Simulated **1.3.0+**
+- [TerraBlender](https://modrinth.com/mod/terrablender) **4.1.0.8+**
 
 Optional integrations (auto-detected when installed):
 - [Jade](https://modrinth.com/mod/jade), [WTHIT](https://modrinth.com/mod/wthit), or [The One Probe](https://modrinth.com/mod/the-one-probe) for HUD info on emitters.
@@ -31,12 +32,20 @@ Optional integrations (auto-detected when installed):
 - **Cross-mod lightning** — Iron's Spells (Chain Lightning, Lightning Lance, Thunderstorm, Ascension), Cataclysm Scylla (Lightning Spear / Electric Shock), Alex's Caves Tesla + Magnetron arcs, IE Tesla Coil, Twilight Forest lightning all trigger LIRM stamping and log petrification on hit — same effect as a vanilla bolt. Driven by the `#magnetization:lightning_sources` damage-type tag; datapacks can add more sources without code changes.
 - **FE/RF power** — the 5 redstone-powered emitters expose an `IEnergyStorage` capability. Any FE-providing mod (Create: C&A, Mekanism, Thermal, IE generators, AE2, etc.) can drive them. Internal 50 000 FE buffer, 10 FE/tick drain, 200 FE/tick max input. Admin config `compat.allowRedstonePower` / `compat.allowEnergyPower` toggle which sources are valid — set redstone false to force players to use FE/RF as a non-trivial power source.
 
+## New in 1.3.0 — Fusion, Railgun & the fuel overhaul
+
+- **Fusion Thruster** — an expandable flat-panel multiblock thruster for airships: a `TOKAMAK_COIL` perimeter around a fill of fusion cells. A bigger panel means exponentially more thrust; it burns the fusion fluids below (Helium-3 is the strongest and longest-running).
+- **Railgun** — a paired-rail accelerator: two parallel powered rails form an arc that grabs a ship or magnetic entity and launches it down the channel with force that grows exponentially with rail length, smashing obstructing blocks. Runs automatically, or pair the **Railgun Remote** for a manual hold-then-fire workflow (trap a ship on the rail, board it, then fire the remote from hand).
+- **Electrolyzer** — a cauldron-style powered machine that splits water + FE into **Hydrogen**, the entry point of the fusion-fuel ladder: **Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3**. Tritium is bred from Deuterium + Lithium; Helium-3 is enriched or found in rare deepslate/End geodes.
+- **New worldgen** — a minor **Lithium ore** (overworld + deepslate) and a rare **Helium-3 geode**.
+- **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines now consume their magnet over a strength-scaled burn time (toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
+
 ## How it works
 
 Every block in this addon either *emits a magnetic field* or *responds to one*. Fields have a polarity (NORTH or SOUTH), a strength tier (WEAK→EXTREME), and a shape (omnidirectional, directional, conical). Like polarities repel, opposite polarities attract. Forces are applied to:
 
 - **Sable sub-levels** (Create: Aeronautics ships) intersecting the field's range — pushes/pulls the contraption.
-- **Magnetizable entities** within the field — iron golems, undead mobs, ferromagnetic item drops, players in metal armor.
+- **Magnetizable entities** within the field — iron golems, ferromagnetic item drops, and any mob or player wearing metal armor. (Ordinary undead are *not* intrinsically pulled; equip them with metal armor to make them susceptible.)
 
 Onboard-only configurations (every magnet on the same ship) produce zero net thrust — internal forces cancel, just like real physics. To propel a ship, you build *between* the world and the ship.
 
@@ -250,7 +259,35 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 ./gradlew runGameTestServer    # headless in-world integration tests (emitter lifecycle + energy drain)
 ```
 
-`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for the dedicated-server smoke test; `./gradlew runData` to regenerate recipes + loot tables (most other data is hand-authored).
+`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for a hands-on dedicated-server run; `./gradlew runData` to regenerate recipes + loot tables (most other data is hand-authored).
+
+### Release smoke-test profiles
+
+Four separate profiles, so a failure says *which* environment broke rather than "it broke".
+
+```sh
+./gradlew smokeServerMinimal   # RELEASE GATE — minimal dedicated server, hard deps only
+./gradlew smokeGameTest        # RELEASE GATE — headless GameTest suite
+./gradlew smokeClientNormal    # manual — client, hard deps only (no compat pack)
+./gradlew smokeClientCompat    # manual — client + Sodium/Iris/JEI/tag-coverage mods
+./gradlew releaseGate          # build + both automated gates
+```
+
+`smokeServerMinimal` boots a real dedicated server in its own `run-smoke-server/`
+directory with **hard dependencies only**, lets it run (default 210 s, override with
+`-PmagSmokeSeconds=<n>`), types `stop` on its console, and then **fails the build** if
+the log carries a FATAL, a stack trace, a server that never reported `Done`, or any
+unexplained `ERROR` line. A short, individually-justified allowlist (`smokeIgnoredErrors`
+in `build.gradle`) covers environment noise the mod doesn't own — chiefly Mixin
+resolving our hard dependencies' client-only mixin targets on a dedicated server — and
+the count of skipped lines is always printed, so the list can't quietly become "ignore
+everything". `-PmagSmokeAllowErrors` is the escape hatch for a one-off review. The gate
+needs an accepted EULA: it copies the one from `run/eula.txt` rather than writing an
+acceptance for you.
+
+The two client profiles differ only in classpath: `smokeClientCompat` is the historical
+`runClient` (everything on `localRuntime`), `smokeClientNormal` is the same client
+without it, which is how you tell "our bug" from "the compat pack's bug".
 
 ## Known issues
 

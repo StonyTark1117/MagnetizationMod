@@ -7,7 +7,7 @@ NeoForge 1.21.1 addon for Create: Aeronautics. Adds magnets that push and pull S
 Blocks emit a magnetic field with a polarity (NORTH or SOUTH), a strength tier (WEAK to EXTREME), and a shape (omnidirectional, directional, or conical). Like poles repel, opposite poles attract. Forces apply to:
 
 - Sable sub-levels (your Create: Aeronautics ships) inside the field
-- Iron golems, undead mobs, and players wearing metal armor
+- Iron golems, and any mob or player wearing metal armor (ordinary undead are not pulled on their own — armor makes them susceptible)
 - Dropped items tagged as ferromagnetic
 - Immersive Aircraft entities (Biplane, Airship, Quadrocopter, etc.) — velocity injection works directly
 
@@ -29,6 +29,13 @@ Place magnets on the ground to influence sable contraptions (ships) and mobs/pla
 - **Pyrrhotite Block** — heat-activated. Inert on its own; broadcasts a NORTH field whose strength rises with the heat source applied to it. Pair with a **Pyrrhotite Catalyst** (tiered radius upgrades) to extend its heat-source detection range.
 - **Hematite Lens** — multiblock polarity filter. Caps an emitter and only lets one polarity through.
 - **Titanomagnetite Block + Imprint Module** — the block records a nearby emitter's full config (range, strength, shape, polarity); the hand-held Imprint Module captures the recording and projects it onto another emitter elsewhere. No manual re-tuning.
+
+## New in 1.3.0 — Fusion, Railgun & the fuel overhaul
+
+- **Fusion Thruster** — an expandable flat-panel multiblock airship thruster (a Tokamak Coil perimeter around a fusion-cell fill). Bigger panel = exponentially more thrust; burns the new fusion fluids, with Helium-3 the strongest and longest-running.
+- **Railgun** — two parallel powered rails form an arc that grabs a ship or magnetic entity and launches it down the channel with force that grows exponentially with length, smashing obstructions in the way. Fires automatically, or pair the Railgun Remote for a manual trap-board-launch workflow.
+- **Electrolyzer** — a cauldron-style powered machine that shows its fluid inside; splits water + FE into Hydrogen, the start of the fusion-fuel ladder: Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3. New Lithium ore and a rare Helium-3 geode round out sourcing.
+- **Fuel overhaul** — the Tokamak burns three cell tiers; the MHD Jet runs on a conductive working fluid (gallium / mixed gallium / liquid lithium); magnet-slot machines now consume their magnet over a strength-scaled burn; and every fuel-burning machine accepts hopper/pipe intake (toggleable in config).
 
 ## FE/RF as alternative power
 
@@ -96,9 +103,9 @@ Generated config GUI covers physics constants, ship polarity/susceptibility weig
 
 ## Requirements
 
-- NeoForge 21.1.230+
-- Create 6.0.9+
-- Sable 1.2.2+
-- Create: Aeronautics 1.2.1+
-- Simulated 1.2.1+
+- NeoForge 21.1.233+
+- Create 6.0.10+
+- Sable 2.0.3+
+- Create: Aeronautics 1.3.0+
+- Simulated 1.3.0+
 - TerraBlender 4.1.0.8+
