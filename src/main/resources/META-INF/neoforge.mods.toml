@@ -74,6 +74,16 @@ versionRange = "[1.2.3,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Immersive Aeronautics — Immersive Portals fork with native Sable ship
+# traversal. Its published project version is 1.1.0, while its runtime core mod
+# reports 6.0.7. Open upper bound by design.
+[[dependencies.${mod_id}]]
+modId = "immersive_portals_core"
+type = "optional"
+versionRange = "[6.0.7,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"
