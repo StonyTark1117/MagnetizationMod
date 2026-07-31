@@ -34,7 +34,7 @@ During this audit, changes not made by the auditor appeared in:
 - `src/main/java/com/stonytark/magnetization/gametest/MagGameTests.java`
 - new file `src/main/java/com/stonytark/magnetization/content/MachineFuelItemHandler.java`
 
-Those changes add automated item input for several machines and three related GameTests. They were preserved. The final compile/unit-test pass includes them; the initial 44-test GameTest run predates them, so a final current-state GameTest result is recorded in the Validation section after re-running.
+Those changes add automated item input for several machines and related GameTests. They were preserved. The final compile/unit-test and 48-test GameTest passes include them.
 
 ## Confirmed issue list
 
@@ -227,7 +227,7 @@ Bound the supported major lines, for example Sable `<3` and Create `<7`, then wi
 
 **Evidence**
 
-- The GameTest server printed `All 44 required tests passed :)` and completed Minecraft shutdown.
+- Both audited runs printed a successful completion marker (44 tests on the earlier snapshot and 48 tests on the current worktree) and began normal Minecraft shutdown.
 - The JVM remained alive afterward due to the Sable physics thread and the Gradle task stayed at 91% until manually interrupted.
 - `build.gradle` already contains pre-run cleanup for lingering prior GameTest JVMs, confirming this is a known recurring harness condition, but it does not make the current invocation exit cleanly.
 
@@ -375,8 +375,10 @@ Automated checks cannot prove visual feel, balance, or GUI interaction quality. 
 
 - `./gradlew test build` — successful on the pre-concurrent snapshot.
 - 126 JUnit tests — 126 passed, 0 failures, 0 errors, 0 skipped.
-- Dedicated GameTest runtime — all 44 then-current required tests passed in 9.580 seconds.
+- Dedicated GameTest runtime on the earlier snapshot — all 44 then-current required tests passed in 9.580 seconds.
 - Current worktree `./gradlew test compileJava` after the concurrent automation changes — successful.
+- Current worktree `./gradlew test build` after those changes — successful; 126 unit tests passed with no failures, errors, or skips.
+- Current-worktree dedicated GameTest runtime — all 48 required tests passed in 1.252 minutes. After the server began shutdown, the Gradle task again remained alive and required manual interruption, reproducing issue 11.
 - All resource JSON parse and duplicate-key checks — passed.
 - Registration/model/texture/localization/creative-tab/package consistency checks — passed, aside from the confirmed byte-identical visual assets.
 
@@ -388,7 +390,7 @@ The compatibility-heavy GameTest server also logged errors from third-party deve
 - Create: New Age recipes using an unavailable `neoforge:never` condition codec;
 - Supplementaries/Moonlight missing optional Alex's Caves target items.
 
-These did not originate from Magnetization resources and did not stop the 44 tests. They demonstrate why the minimal dedicated-server profile proposed above is needed.
+These did not originate from Magnetization resources and did not stop either GameTest run. They demonstrate why the minimal dedicated-server profile proposed above is needed.
 
 ### Final artifact
 
@@ -403,4 +405,3 @@ The release artifact must be rebuilt after all concurrent/current changes and an
 5. Run the full manual matrix on a disposable copy of a real world plus fresh survival world.
 6. Run clean minimal dedicated-server and compatibility-heavy client smoke tests.
 7. Rebuild the JAR, inspect its contents, record its final SHA-256, and only then publish 1.3.0.
-

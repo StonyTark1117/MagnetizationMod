@@ -2005,4 +2005,33 @@ public final class MagGameTests {
             });
         });
     }
+
+    /**
+     * The "Hopper Fuel Intake" config toggle (Machine Tuning, default on) gates the
+     * item-handler capability: off, a machine exposes no handler so hoppers can't
+     * feed it; on, it does. Runs in the config-mutating batch and restores the
+     * default in a finally.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40, batch = "configMutating")
+    public static void hopperIntakeToggleGatesItemHandler(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.TOKAMAK_CONTROLLER.get());
+        final BlockPos abs = helper.absolutePos(pos);
+        try {
+            com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(false);
+            helper.getLevel().invalidateCapabilities(abs);
+            helper.assertTrue(helper.getLevel().getCapability(
+                            net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, abs, null) == null,
+                    "With Hopper Fuel Intake off, a machine must expose no item handler");
+
+            com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(true);
+            helper.getLevel().invalidateCapabilities(abs);
+            helper.assertTrue(helper.getLevel().getCapability(
+                            net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, abs, null) != null,
+                    "With Hopper Fuel Intake on, a machine must expose an item handler");
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.HOPPER_FUEL_INTAKE.set(true);
+        }
+        helper.succeed();
+    }
 }

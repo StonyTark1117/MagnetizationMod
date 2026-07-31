@@ -375,6 +375,8 @@
   "magnetization.configuration.machines.itemFrameFePerTick.tooltip": "FE drained per tick to spin the frame without a redstone signal (0 = redstone only).",
   "magnetization.configuration.machines.temporaryMagnetLifetime": "Temporary Magnet Lifetime",
   "magnetization.configuration.machines.temporaryMagnetLifetime.tooltip": "Ticks a placed Temporary Magnet lasts before reverting to iron (12000 = 10 minutes).",
+  "magnetization.configuration.machines.hopperFuelIntake": "Hopper Fuel Intake",
+  "magnetization.configuration.machines.hopperFuelIntake.tooltip": "Let hoppers, Create funnels/belts/arms, and other item transport insert fuel into item-burning machines (Tokamak, Homopolar Motor, MHD Jet, Fusion Thruster, Micro-Thruster). On by default. Turn off to require loading fuel by hand; energy and fluid piping are unaffected.",
   "magnetization.configuration.physics": "Physics Tuning",
   "magnetization.configuration.physics.tooltip": "Tunable physics constants for the Sable sub-level query and the entity force application path.",
   "magnetization.configuration.physics.strengthMultiplier": "Global Strength Multiplier",

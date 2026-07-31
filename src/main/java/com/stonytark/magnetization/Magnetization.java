@@ -182,19 +182,26 @@ public final class Magnetization {
         // machine (insert gated by each slot's canPlaceItem; only spent buckets extract
         // — see MachineFuelItemHandler). The Fusion Thruster auto-drains each panel
         // block's own bucket slot into the shared tank, so a per-block wrapper feeds the
-        // whole multiblock via any interior cell.
+        // whole multiblock via any interior cell. Each provider returns null while the
+        // "Hopper Fuel Intake" toggle is off, so the toggle takes effect live (the cap
+        // simply stops resolving) without needing a re-register.
         final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.items.IItemHandler, net.minecraft.core.Direction> items
                 = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
         event.registerBlockEntity(items, MagBlockEntities.TOKAMAK_CONTROLLER.get(),
-                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.fuelContainer()));
+                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.fuelContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.HOMOPOLAR_MOTOR.get(),
-                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()));
+                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.MHD_JET.get(),
-                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()));
+                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.MICRO_THRUSTER.get(),
-                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()));
+                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
         event.registerBlockEntity(items, MagBlockEntities.FUSION_THRUSTER.get(),
-                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()));
+                (be, side) -> com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
     }
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from

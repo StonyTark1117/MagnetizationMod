@@ -217,6 +217,7 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_TANK;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_WATER_PER_TICK;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_HYDROGEN_PER_TICK;
+    public static final ModConfigSpec.BooleanValue HOPPER_FUEL_INTAKE;
     public static final ModConfigSpec.DoubleValue INDUCER_PULL_ACCEL;
     public static final ModConfigSpec.DoubleValue INDUCER_MAX_PULL_SPEED;
     public static final ModConfigSpec.DoubleValue INDUCER_ARRIVAL_DISTANCE;
@@ -1149,6 +1150,13 @@ public final class MagConfig {
                 .defineInRange("itemFrameFePerTick", 2, 0, 1_000_000);
         TEMPORARY_MAGNET_LIFETIME = b.translation("magnetization.configuration.machines.temporaryMagnetLifetime")
                 .defineInRange("temporaryMagnetLifetime", 12000, 1, 1_000_000_000);
+        HOPPER_FUEL_INTAKE = b.comment(
+                        "Whether hoppers, Create funnels/belts/arms, and other item-transport can insert",
+                        "fuel into item-burning machines (Tokamak, Homopolar Motor, MHD Jet, Fusion Thruster,",
+                        "Micro-Thruster). On by default. Turn off to require hand-loading fuel; existing",
+                        "energy/fluid piping is unaffected.")
+                .translation("magnetization.configuration.machines.hopperFuelIntake")
+                .define("hopperFuelIntake", true);
 
         b.pop();
 
@@ -1953,6 +1961,7 @@ public final class MagConfig {
     public static int    electrolyzerHydrogenTank()    { return intOr(ELECTROLYZER_HYDROGEN_TANK, 8_000); }
     public static int    electrolyzerWaterPerTick()    { return intOr(ELECTROLYZER_WATER_PER_TICK, 10); }
     public static int    electrolyzerHydrogenPerTick() { return intOr(ELECTROLYZER_HYDROGEN_PER_TICK, 10); }
+    public static boolean hopperFuelIntake()           { try { return HOPPER_FUEL_INTAKE.get(); } catch (final Throwable t) { return true; } }
     public static double inducerPullAccel()         { return doubleOr(INDUCER_PULL_ACCEL, 16.0d); }
     public static double inducerMaxPullSpeed()      { return doubleOr(INDUCER_MAX_PULL_SPEED, 6.0d); }
     public static double inducerArrivalDistance()   { return doubleOr(INDUCER_ARRIVAL_DISTANCE, 2.5d); }
