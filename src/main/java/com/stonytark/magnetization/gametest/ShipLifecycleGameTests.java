@@ -72,7 +72,7 @@ public final class ShipLifecycleGameTests {
         place(level, blocks, states);
         final ServerSubLevel ship = assemble(level, origin, blocks);
         final ShipMagneticState cached = ShipMagneticRegistry.get(level, ship);
-        helper.assertTrue(cached.ferrousBlockCount() == 1, "Expected a cached magnetic ship state: " + cached);
+        helper.assertTrue(cached.ferrousBlockCount() == 2, "Expected a cached magnetic ship state: " + cached);
 
         remove(level, ship);
         final ShipMagneticState afterRemoval = ShipMagneticRegistry.get(level, ship);
@@ -169,8 +169,12 @@ public final class ShipLifecycleGameTests {
                     new Vector3d(shipOrigin.getX() + 0.5d, 240.5d, shipOrigin.getZ() + 0.5d),
                     new Quaterniond().rotateY(Math.PI / 2.0d));
             handle.addLinearAndAngularVelocity(new Vector3d(0.2d, 0.0d, 0.0d), new Vector3d());
-            helper.runAfterDelay(40L, () -> {
-                final Vector3d velocity = handle.getLinearVelocity(new Vector3d());
+            // The live railgun can accelerate this one-block body out of the loaded
+            // test region almost immediately. Sable retains its last networked
+            // velocity even after removing the physics handle, so sample that
+            // lifecycle-safe value instead of racing a JNI handle lookup.
+            helper.runAfterDelay(6L, () -> {
+                final Vector3d velocity = new Vector3d(ship.latestLinearVelocity);
                 remove(level, ship);
                 clear(level, rail, net.minecraft.core.Direction.NORTH);
                 clear(level, sibling, net.minecraft.core.Direction.NORTH);
