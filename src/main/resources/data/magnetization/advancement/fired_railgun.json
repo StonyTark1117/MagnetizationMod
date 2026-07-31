@@ -1,0 +1,13 @@
+{
+  "parent": "magnetization:completed_railgun",
+  "display": {
+    "icon": { "id": "magnetization:railgun_remote" },
+    "title": { "translate": "advancement.magnetization.fired_railgun.title" },
+    "description": { "translate": "advancement.magnetization.fired_railgun.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": { "fired": { "trigger": "magnetization:railgun_fired" } },
+  "requirements": [["fired"]]
+}

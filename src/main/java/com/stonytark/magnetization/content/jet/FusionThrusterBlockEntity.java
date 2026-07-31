@@ -218,6 +218,16 @@ public class FusionThrusterBlockEntity extends BlockEntity
             cachedMaster = r.master();
             cachedInteriorList = r.interior();
             lastScanTick = server.getGameTime();
+            if (!prevValid && cachedValid && cachedMaster != null
+                    && getBlockPos().equals(cachedMaster)) {
+                for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
+                    if (player.distanceToSqr(cachedMaster.getX() + 0.5, cachedMaster.getY() + 0.5,
+                            cachedMaster.getZ() + 0.5) <= 16.0 * 16.0) {
+                        com.stonytark.magnetization.registry.MagTriggers.FUSION_THRUSTER_FORMED
+                                .get().trigger(player);
+                    }
+                }
+            }
             // Panel just broke (frame/interior mined): the master's LIT-sweep below no
             // longer runs (it returns early once invalid), so any interior left glowing
             // would be a stranded ghost. Clear LIT on the prior interior set now.

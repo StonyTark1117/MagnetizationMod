@@ -1,0 +1,22 @@
+{
+  "parent": "magnetization:first_electrolyzer_hydrogen",
+  "display": {
+    "icon": { "id": "magnetization:tritium_cell" },
+    "title": { "translate": "advancement.magnetization.first_tritium.title" },
+    "description": { "translate": "advancement.magnetization.first_tritium.description" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "tritium_cell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:tritium_cell" }] }
+    },
+    "tritium_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:tritium_bucket" }] }
+    }
+  },
+  "requirements": [["tritium_cell", "tritium_bucket"]]
+}

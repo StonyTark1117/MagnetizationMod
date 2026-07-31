@@ -1,0 +1,30 @@
+{
+  "parent": "magnetization:first_tritium",
+  "display": {
+    "icon": { "id": "magnetization:helium_3_crystal_block" },
+    "title": { "translate": "advancement.magnetization.first_helium_3.title" },
+    "description": { "translate": "advancement.magnetization.first_helium_3.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "helium_cell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:helium_3_cell" }] }
+    },
+    "helium_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:helium_3_bucket" }] }
+    },
+    "helium_gas": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:helium_3_gas" }] }
+    },
+    "crystal": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:helium_3_crystal_block" }] }
+    }
+  },
+  "requirements": [["helium_cell", "helium_bucket", "helium_gas", "crystal"]]
+}

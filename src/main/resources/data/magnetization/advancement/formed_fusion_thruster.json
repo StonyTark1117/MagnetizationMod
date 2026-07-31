@@ -1,0 +1,13 @@
+{
+  "parent": "magnetization:first_helium_3",
+  "display": {
+    "icon": { "id": "magnetization:fusion_thruster" },
+    "title": { "translate": "advancement.magnetization.formed_fusion_thruster.title" },
+    "description": { "translate": "advancement.magnetization.formed_fusion_thruster.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": { "formed": { "trigger": "magnetization:fusion_thruster_formed" } },
+  "requirements": [["formed"]]
+}

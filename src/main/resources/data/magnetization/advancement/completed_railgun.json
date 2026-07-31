@@ -1,0 +1,13 @@
+{
+  "parent": "magnetization:formed_fusion_thruster",
+  "display": {
+    "icon": { "id": "magnetization:railgun_emitter" },
+    "title": { "translate": "advancement.magnetization.completed_railgun.title" },
+    "description": { "translate": "advancement.magnetization.completed_railgun.description" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": { "completed": { "trigger": "magnetization:railgun_completed" } },
+  "requirements": [["completed"]]
+}

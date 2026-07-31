@@ -24,5 +24,17 @@ public final class MagTriggers {
     public static final DeferredHolder<CriterionTrigger<?>, MagSimpleTrigger> RECOIL_LAUNCH =
             REGISTER.register("recoil_launch", MagSimpleTrigger::new);
 
+    /** Fires when a Fusion Thruster panel transitions from invalid to formed. */
+    public static final DeferredHolder<CriterionTrigger<?>, MagSimpleTrigger> FUSION_THRUSTER_FORMED =
+            REGISTER.register("fusion_thruster_formed", MagSimpleTrigger::new);
+
+    /** Fires when a Railgun has two valid emitters and both meet the minimum rail length. */
+    public static final DeferredHolder<CriterionTrigger<?>, MagSimpleTrigger> RAILGUN_COMPLETED =
+            REGISTER.register("railgun_completed", MagSimpleTrigger::new);
+
+    /** Fires when a completed Railgun enters its LAUNCHING arc state. */
+    public static final DeferredHolder<CriterionTrigger<?>, MagSimpleTrigger> RAILGUN_FIRED =
+            REGISTER.register("railgun_fired", MagSimpleTrigger::new);
+
     private MagTriggers() {}
 }

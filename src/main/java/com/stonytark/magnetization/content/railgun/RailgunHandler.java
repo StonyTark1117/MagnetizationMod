@@ -105,6 +105,15 @@ public final class RailgunHandler {
 
         final int l2 = walkRail(server, otherPos, facing);
         final int effL = Math.min(l1, l2);
+        if (effL >= MagConfig.railgunMinLength()) {
+            for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
+                if (player.distanceToSqr(masterPos.getX() + 0.5, masterPos.getY() + 0.5,
+                        masterPos.getZ() + 0.5) <= 16.0 * 16.0) {
+                    com.stonytark.magnetization.registry.MagTriggers.RAILGUN_COMPLETED
+                            .get().trigger(player);
+                }
+            }
+        }
         final boolean manual = master.manualMode() || other.manualMode();
         final AABB channel = channelBox(masterPos, otherPos, facing, effL);
 
@@ -126,6 +135,7 @@ public final class RailgunHandler {
                     else if (MagConfig.railgunAutoFire()) {
                         master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                         master.setLaunchTicks(0);
+                        triggerRailgunFire(server, master.getBlockPos());
                     }
                 }
             }
@@ -136,6 +146,7 @@ public final class RailgunHandler {
                 if (master.consumeFireRequest() || other.consumeFireRequest()) {
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                     master.setLaunchTicks(0);
+                    triggerRailgunFire(server, master.getBlockPos());
                 }
             }
             case LAUNCHING -> {
@@ -149,6 +160,14 @@ public final class RailgunHandler {
                 }
             }
             case COOLDOWN -> { /* decays in the BE tick, then re-arms to IDLE */ }
+        }
+    }
+
+    private static void triggerRailgunFire(final ServerLevel server, final BlockPos pos) {
+        for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
+            if (player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 16.0 * 16.0) {
+                com.stonytark.magnetization.registry.MagTriggers.RAILGUN_FIRED.get().trigger(player);
+            }
         }
     }
 

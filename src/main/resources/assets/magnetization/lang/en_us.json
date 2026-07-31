@@ -1401,5 +1401,17 @@
   "tooltip.magnetization.gui_sail_sailing": "Sailing",
   "tooltip.magnetization.gui_tokamak_tier_dd": "Fuel: Deuterium (D-D)",
   "tooltip.magnetization.gui_tokamak_tier_dt": "Fuel: Tritium (D-T)",
-  "tooltip.magnetization.gui_tokamak_tier_he3": "Fuel: Helium-3 (D-He³)"
+  "tooltip.magnetization.gui_tokamak_tier_he3": "Fuel: Helium-3 (D-He³)",
+  "advancement.magnetization.first_electrolyzer_hydrogen.title": "First Hydrogen",
+  "advancement.magnetization.first_electrolyzer_hydrogen.description": "Collect hydrogen from the Electrolyzer",
+  "advancement.magnetization.first_tritium.title": "A Heavier Isotope",
+  "advancement.magnetization.first_tritium.description": "Craft or collect your first Tritium fuel",
+  "advancement.magnetization.first_helium_3.title": "Helium-3",
+  "advancement.magnetization.first_helium_3.description": "Reach the luminous Helium-3 fuel tier",
+  "advancement.magnetization.formed_fusion_thruster.title": "Containment Achieved",
+  "advancement.magnetization.formed_fusion_thruster.description": "Form a Fusion Thruster panel",
+  "advancement.magnetization.completed_railgun.title": "Build the Accelerator",
+  "advancement.magnetization.completed_railgun.description": "Complete a powered Railgun with paired rails",
+  "advancement.magnetization.fired_railgun.title": "Full Bore",
+  "advancement.magnetization.fired_railgun.description": "Fire a completed Railgun"
 }
