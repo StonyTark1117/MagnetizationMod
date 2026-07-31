@@ -342,6 +342,62 @@ public final class ReleaseCoverageGameTests {
         helper.succeed();
     }
 
+    /**
+     * Proves the release datapack's progression features are attached to the
+     * runtime biome generation graph after NeoForge modifiers and TerraBlender
+     * biomes have loaded. This is deterministic; a terrain scan can miss a valid
+     * rarity-filtered geode simply because of seed luck.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 40)
+    public static void progressionWorldgenFeaturesAreInjected(final GameTestHelper helper) {
+        final var registries = helper.getLevel().registryAccess();
+        final var lithium = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.PLACED_FEATURE, Magnetization.id("ore_lithium"));
+        final var heliumOverworld = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.PLACED_FEATURE, Magnetization.id("helium_3_geode"));
+        final var heliumEnd = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.PLACED_FEATURE, Magnetization.id("helium_3_geode_end"));
+        final var anomalyOre = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.PLACED_FEATURE,
+                Magnetization.id("anomaly_magnetite_dense"));
+        final var petrifiedTrees = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.PLACED_FEATURE,
+                Magnetization.id("petrified_forest_trees"));
+
+        helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.PLAINS, lithium),
+                "Lithium ore was not injected into an Overworld biome");
+        helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.PLAINS,
+                        heliumOverworld),
+                "Helium-3 geodes were not injected into an Overworld biome");
+        helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.END_HIGHLANDS,
+                        heliumEnd),
+                "Helium-3 geodes were not injected into an End biome");
+        helper.assertTrue(biomeHasPlacedFeature(registries,
+                        com.stonytark.magnetization.worldgen.AnomalyBiome.KEY, anomalyOre),
+                "Magnetic Anomaly biome lost its dense ore feature");
+        helper.assertTrue(biomeHasPlacedFeature(registries,
+                        com.stonytark.magnetization.worldgen.PetrifiedForestBiome.KEY, petrifiedTrees),
+                "Petrified Forest biome lost its tree selector feature");
+        helper.succeed();
+    }
+
+    private static boolean biomeHasPlacedFeature(
+            final net.minecraft.core.RegistryAccess registries,
+            final net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> biomeKey,
+            final net.minecraft.resources.ResourceKey<net.minecraft.world.level.levelgen.placement.PlacedFeature>
+                    featureKey
+    ) {
+        final var biomes = registries.registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
+        final var biome = biomes.getHolder(biomeKey).orElseThrow(
+                () -> new IllegalStateException("Missing biome " + biomeKey.location()));
+        for (final var step : biome.value().getGenerationSettings().features()) {
+            for (final var feature : step) {
+                if (feature.unwrapKey().filter(featureKey::equals).isPresent()) return true;
+            }
+        }
+        return false;
+    }
+
     private static void buildTokamakRing(final GameTestHelper helper, final BlockPos controller) {
         for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
             if (dx != 0 || dz != 0) helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
