@@ -36,7 +36,7 @@ public class SolarSailBlockEntity extends BlockEntity
     private static final double SAIL_SPEED_PER_PANEL = 0.05;
     private static final double SAIL_SPEED_CAP = 4.0;
 
-    // ── Client-synced HUD state (WTHIT/Jade/TOP) ──
+    // ── Client-synced HUD state (WTHIT/Jade/TOP/Create goggles) ──
     private int lastPanels = 0;          // panels in the assembled sail
     private boolean lastDay = true;      // day = full thrust, night = reduced/off
     private boolean lastActive = false;  // actually pushing the ship last tick
@@ -105,7 +105,7 @@ public class SolarSailBlockEntity extends BlockEntity
         }
     }
 
-    // ── MachineGuiData (HUD-only: no menu, surfaces in WTHIT/Jade/TOP) ──
+    // ── MachineGuiData (HUD-only: no menu, surfaces in WTHIT/Jade/TOP/Create goggles) ──
     @Override public net.minecraft.world.Container guiInput() { return noInput; }
     @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
         return com.stonytark.magnetization.menu.MachineMenu.Kind.SAIL;

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -55,6 +56,14 @@ public final class ElectrolyzerBlock extends Block implements EntityBlock, IWren
     public ElectrolyzerBlock(final Properties props) {
         super(props);
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.LIT, false));
+    }
+
+    /** The basin has no directional face to rotate. Keep it IWrenchable so
+     * Create's sneak-wrench removal works, but make the plain-wrench contract
+     * explicit instead of implying a silent missing rotation implementation. */
+    @Override
+    public InteractionResult onWrenched(final BlockState state, final UseOnContext ctx) {
+        return InteractionResult.PASS;
     }
 
     @Override

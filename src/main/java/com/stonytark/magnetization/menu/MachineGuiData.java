@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.menu;
 
 import com.stonytark.magnetization.content.MagneticMaterials;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -12,10 +13,10 @@ import java.util.List;
 /**
  * Implemented by machine block entities that open the shared {@link MachineMenu}.
  * Exposes the single input slot plus synced readouts the {@code MachineScreen}
- * renders (energy bar + two stat lines) and the HUD providers (WTHIT/Jade/TOP)
+ * renders (energy bar + two stat lines) and the HUD providers (WTHIT/Jade/TOP/Create goggles)
  * list. A value of {@code -1} hides that readout.
  */
-public interface MachineGuiData {
+public interface MachineGuiData extends IHaveGoggleInformation {
 
     /** The 1-slot input container the menu binds (magnet / fuel cell / bucket). */
     Container guiInput();
@@ -80,7 +81,7 @@ public interface MachineGuiData {
         return Component.translatable(key).withStyle(colour);
     }
 
-    /** Lines for the WTHIT / Jade / TOP tooltip — the block's own live status.
+    /** Lines for the WTHIT / Jade / TOP/Create goggles tooltip — the block's own live status.
      *  Note: no stored-FE line here. WTHIT/Jade already draw a built-in energy
      *  bar from the {@code EnergyStorage} capability, so emitting one would
      *  double up (the well-known "two FE bars" bug). */
@@ -145,6 +146,16 @@ public interface MachineGuiData {
         return out;
     }
 
+    /** Keep Create goggles on the same authoritative status schema as the other
+     * machine readouts. The default is inherited by every machine BE; specialized
+     * kinetic machines may append their own extra lines in an override. */
+    @Override
+    default boolean addToGoggleTooltip(final List<Component> tooltip,
+                                       final boolean isPlayerSneaking) {
+        tooltip.addAll(hudLines());
+        return true;
+    }
+
     /** Magnetic potency of the slotted material (0 = empty / not a magnet).
      *  Scales with ore type + processing form — see {@link MagneticMaterials}. */
     static int magnetStrengthLevel(final ItemStack stack) {
@@ -152,7 +163,7 @@ public interface MachineGuiData {
     }
 
     /** "Magnet: Magnetite Ingot (Strength 10)" or "No magnet installed" — the
-     *  readout the motor + MHD jet surface in their GUI and in WTHIT/Jade/TOP. */
+     *  readout the motor + MHD jet surface in their GUI and in WTHIT/Jade/TOP/Create goggles. */
     static Component magnetStatusLine(final ItemStack magnet) {
         final int potency = MagneticMaterials.potency(magnet);
         if (potency == 0) {

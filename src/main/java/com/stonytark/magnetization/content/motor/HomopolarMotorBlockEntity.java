@@ -179,6 +179,10 @@ public class HomopolarMotorBlockEntity extends GeneratingKineticBlockEntity
     @Override
     public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean isPlayerSneaking) {
         final boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        // MachineGuiData is the shared source for WTHIT/Jade/TOP/Create-goggle
+        // status. This BE already has a Create kinetic tooltip above, so append
+        // the shared machine lines rather than replacing the RPM readout.
+        tooltip.addAll(hudLines());
         tooltip.add(Component.translatable("tooltip.magnetization.motor_magnet",
                         getMagnet().isEmpty() ? Component.translatable("tooltip.magnetization.motor_no_magnet")
                                               : getMagnet().getHoverName())

@@ -66,7 +66,7 @@ public class KineticCoilBlockEntity extends BlockEntity
         return CAPACITY;
     }
 
-    // ── MachineGuiData (HUD-only: no menu, surfaces in WTHIT/Jade/TOP) ──
+    // ── MachineGuiData (HUD-only: no menu, surfaces in WTHIT/Jade/TOP/Create goggles) ──
     @Override public net.minecraft.world.Container guiInput() { return noInput; }
     @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
         return com.stonytark.magnetization.menu.MachineMenu.Kind.COIL;

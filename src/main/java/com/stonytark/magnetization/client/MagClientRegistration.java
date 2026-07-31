@@ -190,6 +190,10 @@ public final class MagClientRegistration {
 
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent event) {
+        // Ponder collects third-party plugins before its load-complete registry
+        // pass. Register ours here so every scene is indexed from the first client
+        // launch, including in dev runs where setup may be replayed.
+        MagPonderPlugin.register();
         event.enqueueWork(() -> {
             // Touch each subscriber class so its static init runs and registers with
             // ActiveEmitterScanner. Without this the wire() blocks never fire.

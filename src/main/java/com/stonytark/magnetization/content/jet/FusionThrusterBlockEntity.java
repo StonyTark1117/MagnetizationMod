@@ -336,7 +336,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
         tag.putInt("Energy", energy.getEnergyStored());
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         tag.put("Bucket", bucketSlot.createTag(registries));
-        // Sync the resolved panel state so the client BE (and thus the WTHIT/Jade/TOP
+        // Sync the resolved panel state so the client BE (and thus the WTHIT/Jade/TOP/Create-goggle
         // HUD) reports the real interior count, formed flag, and master — which the
         // panel-fluid forwarding (panelTank) also needs to resolve on the client.
         tag.putBoolean("Formed", cachedValid);

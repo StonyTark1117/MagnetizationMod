@@ -25,7 +25,7 @@ public final class MachineMenu extends AbstractContainerMenu {
 
     /** Display flavour — drives slot tooltip + stat labels on the screen. */
     public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
-        /** HUD-only kinds — no GUI menu, surface live status in WTHIT/Jade/TOP. */
+        /** HUD-only kinds — no GUI menu, surface live status in WTHIT/Jade/TOP/Create goggles. */
         COIL, SAIL }
 
     public static final int INPUT_X = 80;

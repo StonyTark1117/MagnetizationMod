@@ -36,7 +36,7 @@ import java.util.List;
  * raw ferrofluid (held in an internal tank, topped up with ferrofluid buckets)
  * plus FE electricity to push a magnetic Sable craft along its facing harder and
  * faster than anything else. Its stored ferrofluid + FE show automatically in
- * WTHIT/Jade/TOP via the registered fluid + energy capabilities.
+ * WTHIT/Jade/TOP/Create goggles via the registered fluid + energy capabilities.
  */
 public class MicroThrusterBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {

@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Adds a "How to use" line to each addon item's hover tooltip — a stand-in for
- * Ponder. Strings live in {@code en_us.json} under {@code tooltip.magnetization.<key>}.
+ * Adds a compact "How to use" line to each addon item's hover tooltip, alongside
+ * the full Ponder scenes. Strings live in {@code en_us.json} under
+ * {@code tooltip.magnetization.<key>}.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagItemTooltips {
@@ -33,6 +34,7 @@ public final class MagItemTooltips {
     private static Map<Item, String> build() {
         final Map<Item, String> m = new IdentityHashMap<>();
         m.put(MagItems.ELECTROMAGNET.get(),         "tooltip.magnetization.electromagnet.use");
+        m.put(MagItems.DIPOLE_ELECTROMAGNET.get(),  "tooltip.magnetization.dipole_electromagnet.use");
         m.put(MagItems.KINETIC_ELECTROMAGNET.get(), "tooltip.magnetization.kinetic_electromagnet.use");
         m.put(MagItems.MAGNETIC_ANCHOR.get(),       "tooltip.magnetization.magnetic_anchor.use");
         m.put(MagItems.REPULSOR_COIL.get(),         "tooltip.magnetization.repulsor_coil.use");
@@ -124,6 +126,9 @@ public final class MagItemTooltips {
         m.put(MagItems.SOLAR_SAIL.get(),               "tooltip.magnetization.solar_sail.use");
         m.put(MagItems.MHD_JET.get(),                  "tooltip.magnetization.mhd_jet.use");
         m.put(MagItems.MICRO_THRUSTER.get(),           "tooltip.magnetization.micro_thruster.use");
+        m.put(MagItems.FUSION_THRUSTER.get(),          "tooltip.magnetization.fusion_thruster.use");
+        m.put(MagItems.RAILGUN_EMITTER.get(),          "tooltip.magnetization.railgun_emitter.use");
+        m.put(MagItems.ELECTROLYZER.get(),             "tooltip.magnetization.electrolyzer.use");
         m.put(MagItems.HOMOPOLAR_MOTOR.get(),          "tooltip.magnetization.homopolar_motor.use");
         m.put(MagItems.STRUCTURAL_INDUCER.get(),       "tooltip.magnetization.structural_inducer.use");
         m.put(MagItems.TOKAMAK_CONTROLLER.get(),       "tooltip.magnetization.tokamak_controller.use");

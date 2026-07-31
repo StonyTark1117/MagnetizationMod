@@ -110,7 +110,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
     }
 
     /** Prepend the active fuel tier (D-D / D-T / D-He³) to the shared tokamak HUD
-     *  lines so WTHIT/Jade/TOP show which cell is burning + its runtime + output. */
+     *  lines so WTHIT/Jade/TOP/Create goggles show which cell is burning + its runtime + output. */
     @Override
     public java.util.List<net.minecraft.network.chat.Component> hudLines() {
         final java.util.List<net.minecraft.network.chat.Component> out = new java.util.ArrayList<>();
