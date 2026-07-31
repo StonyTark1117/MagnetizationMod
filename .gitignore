@@ -17,6 +17,7 @@ playtest-results/
 playtest/baselines/
 # Isolated game directories for the GameTest run profiles.
 run-gametest/
+run-aeroportals-gametest/
 run-immersive-aeronautics-gametest/
 # Dev-world snapshots (scripts/test-world.sh). Large binaries; force-add a
 # specific snapshot if you deliberately want to share it.
