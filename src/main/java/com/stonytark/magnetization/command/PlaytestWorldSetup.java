@@ -3,7 +3,12 @@ package com.stonytark.magnetization.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity;
+import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
+import com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity;
+import com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity;
 import com.stonytark.magnetization.registry.MagBlocks;
+import com.stonytark.magnetization.registry.MagFluids;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -28,6 +33,8 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +75,12 @@ public final class PlaytestWorldSetup {
                                         STATIONS.keySet(), builder))
                                 .executes(ctx -> goTo(ctx.getSource(),
                                         StringArgumentType.getString(ctx, "station")))))
+                .then(Commands.literal("scenario")
+                        .then(Commands.literal("persistence")
+                                .then(Commands.literal("seed")
+                                        .executes(ctx -> seedPersistence(ctx.getSource())))
+                                .then(Commands.literal("verify")
+                                        .executes(ctx -> verifyPersistence(ctx.getSource())))))
                 .then(Commands.literal("where").executes(ctx -> where(ctx.getSource())));
     }
 
@@ -196,6 +209,116 @@ public final class PlaytestWorldSetup {
             source.sendFailure(Component.literal("This command must be run by a player."));
             return 0;
         }
+    }
+
+    private static int seedPersistence(final CommandSourceStack source) {
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final BlockPos anchor = currentAnchor(player);
+            seedPersistence(player.serverLevel(), anchor);
+            source.sendSuccess(() -> Component.literal("PLAYTEST_ASSERT SEEDED persistence"), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal("Unable to seed persistence scenario: " + exception.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int verifyPersistence(final CommandSourceStack source) {
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final BlockPos anchor = currentAnchor(player);
+            final boolean valid = persistenceStateValid(player.serverLevel(), anchor);
+            if (!valid) {
+                source.sendFailure(Component.literal("PLAYTEST_ASSERT FAIL persistence "
+                        + persistenceSummary(player.serverLevel(), anchor)));
+                return 0;
+            }
+            source.sendSuccess(() -> Component.literal("PLAYTEST_ASSERT PASS persistence"), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal("PLAYTEST_ASSERT FAIL persistence: " + exception.getMessage()));
+            return 0;
+        }
+    }
+
+    private static BlockPos currentAnchor(final ServerPlayer player) {
+        final CompoundTag tag = state(player);
+        if (tag.getInt("Version") != VERSION || !Preset.LAB.id.equals(tag.getString("Preset"))) {
+            throw new IllegalStateException("The persistence scenario requires a staged lab preset");
+        }
+        return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
+    }
+
+    static void seedPersistence(final ServerLevel level, final BlockPos anchor) {
+        final ElectrolyzerBlockEntity electrolyzer = blockEntity(level, anchor.offset(2, 0, 17),
+                ElectrolyzerBlockEntity.class);
+        electrolyzer.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        electrolyzer.energyBuffer().receiveEnergy(20_000, false);
+
+        final TokamakControllerBlockEntity tokamak = blockEntity(level, anchor.offset(14, 0, 18),
+                TokamakControllerBlockEntity.class);
+        tokamak.fuelContainer().setItem(0, new ItemStack(MagItems.TRITIUM_CELL.get(), 2));
+        tokamak.energyBuffer().receiveEnergy(25_000, false);
+        TokamakControllerBlockEntity.serverTick(level, tokamak.getBlockPos(), tokamak.getBlockState(), tokamak);
+
+        final FusionThrusterBlockEntity fusion = blockEntity(level, anchor.offset(26, 1, 18),
+                FusionThrusterBlockEntity.class);
+        FusionThrusterBlockEntity.serverTick(level, fusion.getBlockPos(), fusion.getBlockState(), fusion);
+        fusion.fluidHandler().fill(new FluidStack(MagFluids.HELIUM_3.get(), 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        fusion.energyBuffer().receiveEnergy(30_000, false);
+
+        final RailgunEmitterBlockEntity railgun = blockEntity(level, anchor.offset(37, 0, 22),
+                RailgunEmitterBlockEntity.class);
+        railgun.energyBuffer().receiveEnergy(35_000, false);
+        railgun.setManualMode(true);
+        railgun.setRailLength(8);
+        railgun.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
+        railgun.setChanged();
+    }
+
+    static boolean persistenceStateValid(final ServerLevel level, final BlockPos anchor) {
+        final ElectrolyzerBlockEntity electrolyzer = blockEntity(level, anchor.offset(2, 0, 17),
+                ElectrolyzerBlockEntity.class);
+        final TokamakControllerBlockEntity tokamak = blockEntity(level, anchor.offset(14, 0, 18),
+                TokamakControllerBlockEntity.class);
+        final FusionThrusterBlockEntity fusion = blockEntity(level, anchor.offset(26, 1, 18),
+                FusionThrusterBlockEntity.class);
+        final RailgunEmitterBlockEntity railgun = blockEntity(level, anchor.offset(37, 0, 22),
+                RailgunEmitterBlockEntity.class);
+        return electrolyzer.waterAmount() > 0 && electrolyzer.energyBuffer().getEnergyStored() > 0
+                && !tokamak.fuelContainer().isEmpty() && tokamak.energyBuffer().getEnergyStored() > 0
+                && fusion.guiStat1() >= 2_000 && fusion.energyBuffer().getEnergyStored() > 0
+                && railgun.energyBuffer().getEnergyStored() > 0 && railgun.manualMode()
+                && railgun.railLength() == 8;
+    }
+
+    private static String persistenceSummary(final ServerLevel level, final BlockPos anchor) {
+        final ElectrolyzerBlockEntity electrolyzer = blockEntity(level, anchor.offset(2, 0, 17),
+                ElectrolyzerBlockEntity.class);
+        final TokamakControllerBlockEntity tokamak = blockEntity(level, anchor.offset(14, 0, 18),
+                TokamakControllerBlockEntity.class);
+        final FusionThrusterBlockEntity fusion = blockEntity(level, anchor.offset(26, 1, 18),
+                FusionThrusterBlockEntity.class);
+        final RailgunEmitterBlockEntity railgun = blockEntity(level, anchor.offset(37, 0, 22),
+                RailgunEmitterBlockEntity.class);
+        return "electrolyzer=" + electrolyzer.waterAmount() + "mB/"
+                + electrolyzer.energyBuffer().getEnergyStored() + "FE tokamak="
+                + tokamak.fuelContainer().getItem(0).getCount() + "fuel/"
+                + tokamak.energyBuffer().getEnergyStored() + "FE fusion=" + fusion.guiStat1() + "mB/"
+                + fusion.energyBuffer().getEnergyStored() + "FE railgun="
+                + railgun.energyBuffer().getEnergyStored() + "FE/manual=" + railgun.manualMode()
+                + "/length=" + railgun.railLength();
+    }
+
+    private static <T> T blockEntity(final ServerLevel level, final BlockPos pos, final Class<T> type) {
+        final Object blockEntity = level.getBlockEntity(pos);
+        if (!type.isInstance(blockEntity)) {
+            throw new IllegalStateException("Expected " + type.getSimpleName() + " at " + pos);
+        }
+        return type.cast(blockEntity);
     }
 
     private static void buildFloor(final ServerLevel level, final BlockPos anchor) {

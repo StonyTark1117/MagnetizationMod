@@ -108,10 +108,42 @@ open_or_create_world() {
   local deadline=$((SECONDS + 180))
   while (( SECONDS < deadline )); do
     [[ -f "$repo_dir/$game_dir/logs/latest.log" ]] &&
-      rg -q 'Magnetization 1\.3\.0 .* staged at|joined the game' "$repo_dir/$game_dir/logs/latest.log" && return 0
+      if rg -q 'Magnetization 1\.3\.0 .* staged at|joined the game' "$repo_dir/$game_dir/logs/latest.log"; then
+        sleep 8
+        return 0
+      fi
     sleep 2
   done
   printf 'World did not stage before timeout.\n' >&2
+  return 1
+}
+
+reload_world() {
+  local log_file="$repo_dir/$game_dir/logs/latest.log" before deadline
+  before=$(wc -l < "$log_file")
+  send_command "/save-all"
+  key 1; sleep 1
+  click_relative 0.50 0.75
+  deadline=$((SECONDS + 120))
+  while (( SECONDS < deadline )); do
+    tail -n "+$((before + 1))" "$log_file" | rg -q 'Stopping singleplayer server|Stopping server' && break
+    sleep 2
+  done
+  sleep 5
+  deadline=$((SECONDS + 180))
+  while (( SECONDS < deadline )); do
+    focus_minecraft
+    click_relative 0.50 0.40; sleep 4
+    click_relative 0.40 0.25; sleep 0.5; click_relative 0.35 0.85
+    sleep 8
+    if tail -n "+$((before + 1))" "$log_file" | rg -q 'joined the game'; then
+      # Recipe-viewer and resource reload callbacks temporarily consume input
+      # immediately after the join marker in compatibility-heavy profiles.
+      sleep 8
+      return 0
+    fi
+  done
+  printf 'World did not reload before timeout.\n' >&2
   return 1
 }
 
@@ -147,6 +179,31 @@ if [[ $mode != attach ]]; then wait_for_main_menu; open_or_create_world; fi
 } > "$report"
 
 send_command "$reset_command"
+if [[ $profile == lab ]]; then
+  send_command "/magnetization playtest scenario persistence seed"
+  capture "persistence-seeded"
+  reload_world
+  send_command "/magnetization playtest scenario persistence verify"
+  capture "persistence-reloaded"
+  assertion_deadline=$((SECONDS + 15))
+  while (( SECONDS < assertion_deadline )); do
+    rg -q 'PLAYTEST_ASSERT (PASS|FAIL) persistence' "$repo_dir/$game_dir/logs/latest.log" && break
+    sleep 1
+  done
+  if rg -q 'PLAYTEST_ASSERT PASS persistence' "$repo_dir/$game_dir/logs/latest.log"; then
+    printf '| persistence-reloaded.png | PASS | actual save, title exit, reopen, and server-side state assertion |\n' >> "$report"
+  else
+    printf '| persistence-reloaded.png | FAIL | persistence assertion marker missing |\n' >> "$report"
+    printf 'Persistence reload assertion failed.\n' >&2
+    exit 1
+  fi
+  send_command "$reset_command"
+  if [[ $mode == persistence ]]; then
+    printf '\n## Diagnostics\n\n- Persistence-only run completed successfully.\n' >> "$report"
+    printf 'Report: %s\n' "$report"
+    exit 0
+  fi
+fi
 while IFS= read -r station; do
   send_command "/magnetization playtest goto $station"
   while IFS= read -r station_action; do

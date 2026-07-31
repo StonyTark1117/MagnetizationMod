@@ -38,6 +38,9 @@ public final class PlaytestSetupGameTests {
         helper.assertTrue(level.getBlockEntity(anchor.offset(2, 0, 10)) instanceof ChestBlockEntity allItems
                         && !allItems.isEmpty(),
                 "Lab must stage its all-items chest bank");
+        PlaytestWorldSetup.seedPersistence(level, anchor);
+        helper.assertTrue(PlaytestWorldSetup.persistenceStateValid(level, anchor),
+                "Lab persistence scenario must seed every release-critical machine");
 
         PlaytestWorldSetup.stageForTest(level, anchor, "survival");
         helper.assertTrue(level.getBlockState(anchor.offset(9, 1, 5)).is(MagBlocks.ELECTROLYZER.get()),

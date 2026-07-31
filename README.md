@@ -343,6 +343,10 @@ the deterministic compatibility GameTests. The matrix also opens the major machi
 GUIs, records their interaction states, and spawns both gallium and MR-fluid golems
 for visual inspection. Fuel-slot acceptance/rejection and setting changes remain
 operator-confirmed steps because their GUI coordinates vary with scale and recipe-viewer layout.
+Before traversing the lab, the runner seeds active Electrolyzer, Tokamak, Fusion
+Thruster, and Railgun state, saves and exits to the title screen, reopens the same
+world, and requires a server-side `PLAYTEST_ASSERT PASS persistence` marker.
+Pass `persistence` as the second argument for a focused save/reopen check.
 Use the `attach` second argument to exercise an already-running matching profile.
 
 ### Release smoke-test profiles
