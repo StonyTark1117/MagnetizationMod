@@ -2333,7 +2333,15 @@ public final class MagGameTests {
         final net.minecraft.server.level.ServerPlayer player = new net.minecraft.server.level.ServerPlayer(
                 level.getServer(), level,
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "curio-repulsor-test"),
-                net.minecraft.server.level.ClientInformation.createDefault());
+                net.minecraft.server.level.ClientInformation.createDefault()) {
+            @Override
+            protected net.minecraft.world.item.ItemCooldowns createItemCooldowns() {
+                // ServerItemCooldowns sends packets through connection; this
+                // headless test player has no client, but still needs the real
+                // cooldown map and timing semantics.
+                return new net.minecraft.world.item.ItemCooldowns();
+            }
+        };
         final BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
         player.setPos(pos.getX() + 0.5, 300.0, pos.getZ() + 0.5);
         // Keep this payload test focused on Curios dispatch. Looking straight
