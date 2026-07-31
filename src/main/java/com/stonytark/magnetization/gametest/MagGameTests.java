@@ -11,6 +11,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -1385,6 +1386,48 @@ public final class MagGameTests {
         final double fS = com.stonytark.magnetization.physics.FieldApplicator.forceAt(south, p).y;
         helper.assertTrue(fN > 0 && fS < 0,
                 "The two poles must push oppositely at a shared point; north.y=" + fN + " south.y=" + fS);
+        helper.succeed();
+    }
+
+    /**
+     * Dipole orientation matrix: every placement direction must move the NORTH
+     * pole to the +FACING side and the SOUTH pole to the -FACING side. The
+     * force sampled outside either pole must rotate with that same axis rather
+     * than remaining fixed in world-up or world-north.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40, batch = "dipoleOrientation")
+    public static void dipoleRotatesBothPoleForcesAcrossAllFacings(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 2, 1);
+        helper.setBlock(pos, MagBlocks.DIPOLE_ELECTROMAGNET.get().defaultBlockState());
+        final var be = (com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity)
+                helper.getBlockEntity(pos);
+        final Vec3 center = Vec3.atCenterOf(helper.absolutePos(pos));
+
+        for (final net.minecraft.core.Direction facing : net.minecraft.core.Direction.values()) {
+            final var state = helper.getBlockState(pos).setValue(
+                    net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, facing);
+            final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
+            final var north = be.northPoleField(state);
+            final var south = be.southPoleField(state);
+
+            helper.assertTrue(north.origin().subtract(center).dot(axis) > 0.0d,
+                    "NORTH pole must be on +" + facing + "; origin=" + north.origin());
+            helper.assertTrue(south.origin().subtract(center).dot(axis) < 0.0d,
+                    "SOUTH pole must be on -" + facing + "; origin=" + south.origin());
+
+            final Vec3 northForce = com.stonytark.magnetization.physics.FieldApplicator.forceAt(
+                    north, center.add(axis.scale(3.0d)));
+            final Vec3 southForce = com.stonytark.magnetization.physics.FieldApplicator.forceAt(
+                    south, center.subtract(axis.scale(3.0d)));
+            helper.assertTrue(northForce.dot(axis) > 0.0d,
+                    "NORTH pole force must point outward along +" + facing + "; force=" + northForce);
+            helper.assertTrue(southForce.dot(axis) > 0.0d,
+                    "SOUTH pole force must point inward along +" + facing + "; force=" + southForce);
+            helper.assertTrue(northForce.cross(axis).lengthSqr() < 1.0e-9
+                            && southForce.cross(axis).lengthSqr() < 1.0e-9,
+                    "Pole forces must stay parallel to the rotated axis for " + facing
+                            + "; north=" + northForce + " south=" + southForce);
+        }
         helper.succeed();
     }
 
