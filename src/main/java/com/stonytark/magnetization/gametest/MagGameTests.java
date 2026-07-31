@@ -1337,11 +1337,14 @@ public final class MagGameTests {
                     helper.assertTrue(vDia.x > 0.0 && vIron.x < 0.0,
                             "Diamagnetic ship should be pushed away (+X) while ferrous is pulled in (-X): "
                                     + "dia.x=" + vDia.x + " iron.x=" + vIron.x);
-                    helper.succeed();
                 } finally {
                     removeShip(level, dia);
                     removeShip(level, iron);
                 }
+                // GameTest success can synchronously tear down the arena. Clean
+                // Sable plots first, otherwise the finally block races teardown
+                // and intermittently throws "No sub-level at ...".
+                helper.succeed();
             });
         });
     }
@@ -1435,11 +1438,11 @@ public final class MagGameTests {
                             "Both ferrous ships should drift +X — NORTH end repels outward, SOUTH end "
                                     + "pulls inward (a monopole would push them opposite ways): n.x="
                                     + vN.x + " s.x=" + vS.x);
-                    helper.succeed();
                 } finally {
                     removeShip(level, shipN);
                     removeShip(level, shipS);
                 }
+                helper.succeed();
             });
         });
     }
@@ -1481,10 +1484,10 @@ public final class MagGameTests {
                     final org.joml.Vector3d v = h.getLinearVelocity(new org.joml.Vector3d());
                     helper.assertTrue(v.z < -0.1,
                             "Vector-core repulsor should drag a ship in its cone toward NORTH (−Z); v.z=" + v.z);
-                    helper.succeed();
                 } finally {
                     removeShip(level, ship);   // always clean up, even on null handle / assert fail
                 }
+                helper.succeed();
             });
         });
     }

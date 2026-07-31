@@ -24,6 +24,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // the optional mod. Use it for soft-dep compats we want to smoke-test in dev.
 configurations {
     localRuntime
+    gameTestRuntime
     aeroportalsRuntime
     immersiveAeronauticsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
@@ -60,6 +61,16 @@ def minimalProfileTasks = [
 def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
 if (!wantsMinimalClasspath) {
     configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+}
+def wantsStandardGameTests = lowered.any {
+    it.endsWith('rungametestserver') && !it.endsWith('runaeroportalsgametestserver')
+            && !it.endsWith('runimmersiveaeronauticsgametestserver')
+}
+if (wantsStandardGameTests) {
+    // Two security-boundary GameTests exercise a real Curios capability. Keep
+    // that optional API explicit in this profile rather than receiving it
+    // accidentally from Aeronautics/Simulated's over-broad POM transitives.
+    configurations.runtimeClasspath { extendsFrom configurations.gameTestRuntime }
 }
 def wantsAeroPortalsTests = lowered.any { it.endsWith('runaeroportalsgametestserver') || it.endsWith('smokeaeroportalsgametest') }
 if (wantsAeroPortalsTests) {
@@ -146,10 +157,9 @@ def unwrapSodium = tasks.register('unwrapSodium') {
     dependsOn mergeSodium, copySodiumShims
 }
 
-// runClient consumes the assembled jars (added to localRuntime below); make the
-// dependency explicit so assembly always runs first.
-tasks.matching { it.name == 'runClient' || it.name == 'runServer' || it.name == 'runGameTestServer' }
-        .configureEach { dependsOn unwrapSodium }
+// Only the compatibility-heavy client consumes the assembled Sodium jars.
+// Server, minimal-client, and GameTest profiles deliberately exclude localRuntime.
+tasks.matching { it.name == 'runClient' }.configureEach { dependsOn unwrapSodium }
 
 // GameTest hygiene: a previous gameTestServer JVM can LINGER (Sable's physics
 // thread drags out shutdown) and then starve the next run's CPU and/or hold
@@ -358,22 +368,13 @@ class DelayedStopInput extends InputStream {
 def smokeServerDir = file('run-smoke-server')
 def smokeServerSeconds = ((findProperty('magSmokeSeconds') ?: '210') as String) as int
 def smokeAllowErrors = findProperty('magSmokeAllowErrors') != null
-
-// Known-benign ERROR lines produced by the environment rather than by this mod. The
-// gate fails on every OTHER error line, and always reports how many it skipped, so
-// this list can't quietly grow into "ignore everything". Keep each entry justified.
-def smokeIgnoredErrors = [
-        // Mixin's class-loading pass resolves the targets of our HARD dependencies'
-        // client mixin configs (Create / Sable / Aeronautics / TerraBlender). On a
-        // dedicated server the dist cleaner refuses the client-only target and Mixin
-        // logs it, then carries on and skips the mixin — the intended behaviour. Our
-        // own client mixins live under the `client` key of magnetization.mixins.json
-        // and are never offered to the server, so these lines are never ours.
-        'for invalid dist DEDICATED_SERVER',
-        // First boot in a fresh smoke directory: vanilla reports the missing
-        // server.properties immediately before generating it.
-        'Failed to load properties from file: server.properties',
-]
+// The remaining hard-dependency mixin configs probe this one client class during
+// dedicated-server discovery. Match the complete logger + class + dist failure,
+// and cap the known count, so a different side violation cannot hide behind a broad
+// "invalid dist" substring. A lower count is accepted when upstream fixes probes.
+def knownClientProbe = '[net.neoforged.fml.common.asm.RuntimeDistCleaner/DISTXFORM]: ' +
+        'Attempted to load class net/minecraft/client/multiplayer/ClientLevel for invalid dist DEDICATED_SERVER'
+def maxKnownClientProbes = 12
 
 // A server refuses to boot without an accepted EULA. We never fabricate one — we copy
 // the acceptance the developer already made for the normal `run/` directory, and fail
@@ -415,13 +416,13 @@ tasks.register('smokeServerMinimal') {
         }
         def fatal = []
         def errors = []
-        def ignored = 0
+        def knownProbes = 0
         log.eachLine('UTF-8') { line ->
             if (line.contains('/FATAL]') || line.contains('Exception in thread')
                     || line.contains('Failed to start the minecraft server')) {
                 fatal << line
             } else if (line.contains('/ERROR]')) {
-                if (smokeIgnoredErrors.any { line.contains(it) }) ignored++
+                if (line.contains(knownClientProbe)) knownProbes++
                 else errors << line
             }
         }
@@ -434,8 +435,13 @@ tasks.register('smokeServerMinimal') {
                     "within ${smokeServerSeconds}s. Raise the window with -PmagSmokeSeconds=<n> if the " +
                     "machine is just slow, otherwise read ${log}.")
         }
-        if (ignored > 0) {
-            logger.lifecycle("smokeServerMinimal: skipped ${ignored} known-benign ERROR line(s) (see smokeIgnoredErrors in build.gradle)")
+        if (knownProbes > maxKnownClientProbes) {
+            throw new GradleException(
+                    "smokeServerMinimal: ${knownProbes} known client-class probes exceeded the audited maximum " +
+                    "of ${maxKnownClientProbes}; inspect dependency/runtime drift in ${log}.")
+        }
+        if (knownProbes > 0) {
+            logger.lifecycle("smokeServerMinimal: recognized ${knownProbes}/${maxKnownClientProbes} exact hard-dependency ClientLevel probe(s).")
         }
         fatal.each { logger.error("  FATAL  ${it}") }
         errors.each { logger.error("  ERROR  ${it}") }
@@ -452,22 +458,24 @@ tasks.register('smokeServerMinimal') {
     }
 }
 
-tasks.register('smokeGameTest') {
+tasks.register('smokeGameTest', Exec) {
     group = 'verification'
-    description = 'RELEASE GATE — runs the headless GameTest suite on a dedicated server.'
-    dependsOn 'runGameTestServer'
+    description = 'RELEASE GATE — supervises the headless GameTest suite and exits after its passing summary.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runGameTestServer', 'run-gametest', '300'
 }
 
-tasks.register('smokeAeroPortalsGameTest') {
+tasks.register('smokeAeroPortalsGameTest', Exec) {
     group = 'verification'
-    description = 'Runs Magnetization GameTests with the optional AeroPortals compatibility runtime.'
-    dependsOn 'runAeroPortalsGameTestServer'
+    description = 'Supervises the optional AeroPortals compatibility GameTest runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAeroPortalsGameTestServer',
+            'run-aeroportals-gametest', '300'
 }
 
-tasks.register('smokeImmersiveAeronauticsGameTest') {
+tasks.register('smokeImmersiveAeronauticsGameTest', Exec) {
     group = 'verification'
-    description = 'Runs Railgun Remote transfer tests with Immersive Aeronautics.'
-    dependsOn 'runImmersiveAeronauticsGameTestServer'
+    description = 'Supervises Railgun/field compatibility tests with Immersive Aeronautics.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runImmersiveAeronauticsGameTestServer',
+            'run-immersive-aeronautics-gametest', '300'
 }
 
 tasks.register('smokeClientNormal') {
@@ -501,8 +509,11 @@ dependencies {
     implementation("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}")
 
     // Create: Aeronautics + Simulated
-    implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}")
-    implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}")
+    // Their POMs incorrectly publish optional integrations (Curios, JEI,
+    // compasses, CC:Tweaked) as runtime transitives. The actual required stack is
+    // already declared explicitly above, so keep these two artifacts isolated.
+    implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}") { transitive = false }
+    implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
 
     // AeroPortals is optional for users. Compile against its public transfer
     // event so bindings can follow a relocated Sable plot, and load it only in
@@ -574,6 +585,7 @@ dependencies {
     // class never resolves when Curios isn't installed.
     compileOnly("maven.modrinth:curios:${curios_version}")
     localRuntime("maven.modrinth:curios:${curios_version}")
+    gameTestRuntime("maven.modrinth:curios:${curios_version}")
 
     // Patchouli — guide-book framework. Soft-dep, pure data-driven (book.json,
     // category JSONs, entry JSONs). No Java code needed — Patchouli auto-
