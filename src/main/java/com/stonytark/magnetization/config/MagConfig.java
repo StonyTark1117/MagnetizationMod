@@ -31,6 +31,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue ENTITY_VELOCITY_SCALE;
     public static final ModConfigSpec.DoubleValue CONICAL_HALF_ANGLE_COS;
     public static final ModConfigSpec.DoubleValue MAX_ACCEL_PER_TICK;
+    public static final ModConfigSpec.DoubleValue DIPOLE_POLE_OFFSET;
     public static final ModConfigSpec.DoubleValue SHIP_LINEAR_DRAG;
     public static final ModConfigSpec.DoubleValue SHIP_ANGULAR_DRAG;
     public static final ModConfigSpec.IntValue    SHIP_SAMPLE_STEPS;
@@ -420,6 +421,18 @@ public final class MagConfig {
      *  (legacy redstone-OR-energy behaviour). For players who want to pre-charge a
      *  magnet and gate its activation with redstone for finer control. */
     public static final ModConfigSpec.BooleanValue REQUIRE_REDSTONE_AND_ENERGY;
+    /** Per-block admin toggles: scale the emitter's field force with the ANALOG redstone
+     *  level (1-15) instead of running at full strength for any signal. All default false
+     *  so existing worlds behave exactly as before; enable per block to turn a comparator
+     *  or analog sensor into a real throttle. Only applies while redstone is the driver —
+     *  an FE/RF-driven emitter always runs at its configured tier. */
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_ELECTROMAGNET;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_DIPOLE;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_ANCHOR;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_REPULSOR;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_TRACTOR_BEAM;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_EXCAVATOR;
+    public static final ModConfigSpec.BooleanValue ANALOG_REDSTONE_INDUCER;
     /** Give the Patchouli field manual to each player on their first login.
      *  Default true. Per-player flag is stored in the player's persistent NBT
      *  so reconnecting doesn't re-give the manual. Set false if your server
@@ -494,6 +507,14 @@ public final class MagConfig {
                          "0 to disable the cap entirely.")
                 .translation("magnetization.configuration.physics.maxAccelPerTick")
                 .defineInRange("maxAccelPerTick", 50.0d, 0.0d, 1000.0d);
+
+        DIPOLE_POLE_OFFSET = b
+                .comment("Distance (blocks) from a Dipole Electromagnet's centre to each of its two",
+                         "pole origins along the facing axis (NORTH at +offset, SOUTH at -offset).",
+                         "Values >= 1.0 keep each pole clear of the r=1 force clamp so the two poles",
+                         "stay distinct; larger values spread the poles further apart.")
+                .translation("magnetization.configuration.physics.dipolePoleOffset")
+                .defineInRange("dipolePoleOffset", 1.5d, 0.25d, 8.0d);
 
         SHIP_LINEAR_DRAG = b
                 .comment("Per-tick linear-velocity damping applied to a ship while it is being",
@@ -1731,6 +1752,64 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.requireRedstoneAndEnergy")
                 .define("requireRedstoneAndEnergy", false);
 
+        // ── Analog redstone strength, one toggle per block ──────────────────────────
+        // Shared preamble for all six (repeated per option so each reads standalone in
+        // the .toml, which is how players actually encounter them).
+        ANALOG_REDSTONE_ELECTROMAGNET = b
+                .comment("Scale the Electromagnet's field force with the ANALOG redstone level (1-15)",
+                         "instead of running at full strength for any signal. Default false.",
+                         "Signal 1 gives 200 N (the Weak tier's force) and signal 15 gives 8000 N (the",
+                         "Extreme tier's force), ramped geometrically in between — so every redstone",
+                         "level is an equal proportional step. Wire a comparator, an analog sensor or a",
+                         "run of redstone dust to get a real throttle.",
+                         "The strength tier picked in the GUI is unchanged and still sets the field's",
+                         "RANGE; only the force is scaled.",
+                         "Only applies while REDSTONE is driving the emitter — on FE/RF it always runs",
+                         "at full configured strength. Redstone keeps priority over energy, so a partial",
+                         "signal still consumes no FE. Adjacent hematite and Halbach arrays scale the",
+                         "throttled force proportionally, so both keep working as usual.")
+                .translation("magnetization.configuration.compat.analogRedstoneElectromagnet")
+                .define("analogRedstoneElectromagnet", false);
+
+        ANALOG_REDSTONE_DIPOLE = b
+                .comment("Scale the Dipole Electromagnet's field force with the analog redstone level",
+                         "(1-15). Default false. Both poles scale together.",
+                         "See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneDipole")
+                .define("analogRedstoneDipole", false);
+
+        ANALOG_REDSTONE_ANCHOR = b
+                .comment("Scale the Magnetic Anchor's field force with the analog redstone level (1-15).",
+                         "Default false. See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneAnchor")
+                .define("analogRedstoneAnchor", false);
+
+        ANALOG_REDSTONE_REPULSOR = b
+                .comment("Scale the Repulsor Coil's field force with the analog redstone level (1-15).",
+                         "Default false. See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneRepulsor")
+                .define("analogRedstoneRepulsor", false);
+
+        ANALOG_REDSTONE_TRACTOR_BEAM = b
+                .comment("Scale the Tractor Beam's field force with the analog redstone level (1-15).",
+                         "Default false. See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneTractorBeam")
+                .define("analogRedstoneTractorBeam", false);
+
+        ANALOG_REDSTONE_EXCAVATOR = b
+                .comment("Scale the Magnetic Excavator's field force with the analog redstone level (1-15).",
+                         "Default false. Its internal redstone-dust fuel counts as a full signal (15);",
+                         "only an external signal throttles it.",
+                         "See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneExcavator")
+                .define("analogRedstoneExcavator", false);
+
+        ANALOG_REDSTONE_INDUCER = b
+                .comment("Scale the Structural Inducer's field force with the analog redstone level (1-15).",
+                         "Default false. See Analog Redstone - Electromagnet for the full description.")
+                .translation("magnetization.configuration.compat.analogRedstoneInducer")
+                .define("analogRedstoneInducer", false);
+
         FIELD_MANUAL_AUTO_GIVE = b
                 .comment("Give the Patchouli field manual to each player on their first login.",
                          "Default true. The per-player flag is stored in persistent NBT so",
@@ -1891,6 +1970,15 @@ public final class MagConfig {
     public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
     public static boolean allowRedstonePower() { try { return ALLOW_REDSTONE_POWER.get(); } catch (final Throwable t) { return true; } }
     public static boolean allowEnergyPower()   { try { return ALLOW_ENERGY_POWER.get(); }   catch (final Throwable t) { return true; } }
+    // Analog redstone strength — all default OFF, so an unloaded config behaves exactly
+    // like the historical on/off emitters.
+    public static boolean analogRedstoneElectromagnet() { try { return ANALOG_REDSTONE_ELECTROMAGNET.get(); } catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneDipole()        { try { return ANALOG_REDSTONE_DIPOLE.get(); }        catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneAnchor()        { try { return ANALOG_REDSTONE_ANCHOR.get(); }        catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneRepulsor()      { try { return ANALOG_REDSTONE_REPULSOR.get(); }      catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneTractorBeam()   { try { return ANALOG_REDSTONE_TRACTOR_BEAM.get(); }   catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneExcavator()     { try { return ANALOG_REDSTONE_EXCAVATOR.get(); }      catch (final Throwable t) { return false; } }
+    public static boolean analogRedstoneInducer()       { try { return ANALOG_REDSTONE_INDUCER.get(); }        catch (final Throwable t) { return false; } }
     public static boolean railgunEnabled()              { try { return RAILGUN_ENABLED.get(); }   catch (final Throwable t) { return true; } }
     public static boolean railgunAutoFire()             { try { return RAILGUN_AUTO_FIRE.get(); }  catch (final Throwable t) { return true; } }
     public static int    railgunCooldownTicks()         { return intOr(RAILGUN_COOLDOWN_TICKS, 40); }
@@ -1936,6 +2024,7 @@ public final class MagConfig {
     public static double solarSailSpeedCap()        { return doubleOr(SOLAR_SAIL_SPEED_CAP, 4.0d); }
     public static double alfvenAccel()              { return doubleOr(ALFVEN_ACCEL, 0.08d); }
     public static double alfvenMaxSpeed()           { return doubleOr(ALFVEN_MAX_SPEED, 1.4d); }
+    public static double dipolePoleOffset()         { return doubleOr(DIPOLE_POLE_OFFSET, 1.5d); }
     public static double repulsorTrackRange()       { return doubleOr(REPULSOR_TRACK_RANGE, 6.0d); }
     public static double repulsorTrackThrust()      { return doubleOr(REPULSOR_TRACK_THRUST, 0.5d); }
     public static double repulsorTrackMaxSpeed()    { return doubleOr(REPULSOR_TRACK_MAX_SPEED, 5.0d); }

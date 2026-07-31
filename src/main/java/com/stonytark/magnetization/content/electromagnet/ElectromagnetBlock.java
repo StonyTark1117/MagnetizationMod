@@ -86,12 +86,18 @@ public final class ElectromagnetBlock extends Block implements EntityBlock {
     }
 
     private static void applyExternalSignal(final BlockState state, final Level level, final BlockPos pos) {
-        final boolean nowPowered = level.hasNeighborSignal(pos);
+        // Read the ANALOG level, not just on/off: `getBestNeighborSignal(pos) > 0` is
+        // exactly equivalent to the old `hasNeighborSignal(pos)`, so behaviour is
+        // unchanged unless the Analog Redstone toggle is on. The POWERED blockstate stays
+        // boolean and the setBlock stays gated on the boolean edge — a 5→7 signal change
+        // must not spam block updates or re-light the model.
+        final int signal = level.getBestNeighborSignal(pos);
+        final boolean nowPowered = signal > 0;
         if (state.getValue(BlockStateProperties.POWERED) != nowPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof ElectromagnetBlockEntity emag) {
-            emag.setPowered(nowPowered);
+            emag.setRedstoneLevel(signal);
         }
     }
 }

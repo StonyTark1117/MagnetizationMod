@@ -206,7 +206,8 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
                 effectivePolarity(MagneticPolarity.NORTH),
                 strength,
                 MagneticField.Shape.CONICAL,
-                range == strength.range() ? 0.0d : range
+                range == strength.range() ? 0.0d : range,
+                analogForceOverride()
         );
     }
 
@@ -242,5 +243,10 @@ public class RepulsorCoilBlockEntity extends AbstractEmitterBlockEntity {
                     com.stonytark.magnetization.registry.MagItems.VECTOR_CORE.get()));
         }
         thrustDirIndex = Math.floorMod(tag.getInt("ThrustDir"), 4);
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneRepulsor();
     }
 }

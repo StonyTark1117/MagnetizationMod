@@ -171,6 +171,13 @@ public final class EmitterMenu extends AbstractContainerMenu {
     /** Repulsor-only: current thrust-direction index (0..3) into the perpendicular
      *  directions of the coil's facing. */
     private final DataSlot thrustDir = DataSlot.standalone();
+    /** Analog redstone level driving the emitter, 0-15. */
+    private final DataSlot redstoneSignal = DataSlot.standalone();
+    /** Force in Newtons an analog redstone throttle is holding the emitter at, or 0 when
+     *  it's running at its full configured tier. Computed SERVER-side and shipped as a
+     *  number: MagConfig's COMMON spec isn't synced to clients, so a client re-deriving
+     *  this could disagree with a server that has the toggle off. */
+    private final DataSlot analogForce = DataSlot.standalone();
 
     /** Network constructor — invoked by IMenuTypeExtension.create on the client. */
     public static EmitterMenu fromNetwork(final int id, final Inventory inv,
@@ -254,6 +261,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
         addDataSlot(energyCapacity.lo);
         addDataSlot(energyCapacity.hi);
         addDataSlot(powerSource);
+        addDataSlot(redstoneSignal);
+        addDataSlot(analogForce);
         addDataSlot(thrustDir);
         // Initial sync from BE (server-side path only — client passes NULL access).
         // Uses `execute` (BiConsumer) rather than `evaluate` because the create-flavor
@@ -266,7 +275,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
                 strengthOrdinal.set(s == null ? -1 : s.ordinal());
                 rangeBlocks.set(emitter.getRangeOverride());
                 defaultRange.set((int) Math.round(
-                        emitter.effectiveRange(emitter.effectiveStrength(MagneticStrength.STRONG))));
+                        emitter.effectiveRange(emitter.configuredStrength())));
             } else if (be instanceof RangeConfigurable rc) {
                 // Non-emitter machines (e.g. the sensor) that only expose a range knob.
                 strengthOrdinal.set(-1);
@@ -332,6 +341,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
                 energyStored.set(emitter.getEnergyBuffer().getEnergyStored());
                 energyCapacity.set(emitter.getEnergyBuffer().getMaxEnergyStored());
                 powerSource.set(emitter.isEnergyPowered() ? 2 : (emitter.isRedstonePowered() ? 1 : 0));
+                redstoneSignal.set(emitter.getRedstoneLevel());
+                analogForce.set((int) Math.round(emitter.analogForce()));
             }
         });
         super.broadcastChanges();
@@ -340,6 +351,9 @@ public final class EmitterMenu extends AbstractContainerMenu {
     public int energyStored()   { return energyStored.get(); }
     public int energyCapacity() { return energyCapacity.get(); }
     public int powerSource()    { return powerSource.get(); }
+    public int redstoneSignal() { return redstoneSignal.get(); }
+    /** Force in N an analog throttle is holding this emitter at; 0 = full configured tier. */
+    public int analogForce()    { return analogForce.get(); }
 
     @Override
     public boolean stillValid(final Player player) {
@@ -424,7 +438,7 @@ public final class EmitterMenu extends AbstractContainerMenu {
             // the player sees on the label.
             int current = em.getRangeOverride();
             if (current <= 0) {
-                current = (int) Math.round(em.effectiveRange(em.effectiveStrength(MagneticStrength.STRONG)));
+                current = (int) Math.round(em.effectiveRange(em.configuredStrength()));
             }
             int next = current + delta;
             if (next < RANGE_MIN) next = RANGE_MIN;
@@ -466,6 +480,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
     public static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
             if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
+            if (be instanceof com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity)
+                                                               return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
             if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_STRENGTH.get();
             if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_STRENGTH.get();
             if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_STRENGTH.get();
@@ -491,6 +507,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
     public static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
             if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
+            if (be instanceof com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity)
+                                                               return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
             if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_RANGE.get();
             if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_RANGE.get();
             if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_RANGE.get();

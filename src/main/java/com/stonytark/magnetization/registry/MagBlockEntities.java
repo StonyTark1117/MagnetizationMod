@@ -25,6 +25,11 @@ public final class MagBlockEntities {
                     .of(ElectromagnetBlockEntity::new, MagBlocks.ELECTROMAGNET.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity>> DIPOLE_ELECTROMAGNET =
+            REGISTER.register("dipole_electromagnet", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity::new, MagBlocks.DIPOLE_ELECTROMAGNET.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticElectromagnetBlockEntity>> KINETIC_ELECTROMAGNET =
             REGISTER.register("kinetic_electromagnet", () -> BlockEntityType.Builder
                     .<KineticElectromagnetBlockEntity>of(

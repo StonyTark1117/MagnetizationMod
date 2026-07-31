@@ -100,6 +100,14 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_core", has(core))
                 .save(out, id("electromagnet"));
 
+        // Dipole = two electromagnets fused end-to-end (the two poles) around a core.
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.DIPOLE_ELECTROMAGNET.get())
+                .pattern("PEP").pattern("RCR").pattern("PEP")
+                .define('P', plate).define('E', MagItems.ELECTROMAGNET.get())
+                .define('R', Ingredient.of(C_DUSTS_REDSTONE)).define('C', core)
+                .unlockedBy("has_electromagnet", has(MagItems.ELECTROMAGNET.get()))
+                .save(out, id("dipole_electromagnet"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_ANCHOR.get())
                 .pattern("OFO").pattern("FCF").pattern("OFO")
                 .define('O', Blocks.OBSIDIAN).define('F', magAlloy).define('C', core)

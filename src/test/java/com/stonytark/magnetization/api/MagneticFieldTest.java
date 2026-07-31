@@ -75,6 +75,79 @@ class MagneticFieldTest {
     }
 
     @Test
+    void forceFallsBackToTheTierWithoutAnOverride() {
+        final MagneticField field = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.STRONG, MagneticField.Shape.OMNIDIRECTIONAL);
+        assertEquals(MagneticStrength.STRONG.force(), field.force(), 1e-9);
+        assertFalse(field.hasForceOverride());
+    }
+
+    @Test
+    void forceOverrideWinsOverTheTier() {
+        final MagneticField field = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.EXTREME, MagneticField.Shape.OMNIDIRECTIONAL, 0.0d, 555.0d);
+        assertEquals(555.0d, field.force(), 1e-9);
+        assertTrue(field.hasForceOverride());
+        // The tier is untouched, so it keeps driving range and the GUI readout.
+        assertEquals(MagneticStrength.EXTREME, field.strength());
+        assertEquals(MagneticStrength.EXTREME.range(), field.range(), 1e-9);
+    }
+
+    @Test
+    void toNbtOmitsForceOverrideWhenZeroAndRoundTripsWhenSet() {
+        final MagneticField plain = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.WEAK, MagneticField.Shape.DIRECTIONAL);
+        assertFalse(plain.toNbt().contains("fo"), "expected 'fo' tag absent when forceOverride == 0");
+
+        final MagneticField throttled = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.SOUTH,
+                MagneticStrength.EXTREME, MagneticField.Shape.CONICAL, 12.5d, 1806.0d);
+        final MagneticField roundtrip = MagneticField.fromNbt(throttled.toNbt());
+        assertNotNull(roundtrip);
+        assertEquals(1806.0d, roundtrip.forceOverride(), 1e-9);
+        assertEquals(12.5d, roundtrip.customRange(), 1e-9);
+    }
+
+    @Test
+    void steppedStrengthScalesTheOverrideProportionally() {
+        // Hematite dampening / Halbach boosting step the TIER; without proportional
+        // scaling they would silently become range-only for a throttled emitter.
+        final MagneticField throttled = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.EXTREME, MagneticField.Shape.OMNIDIRECTIONAL, 0.0d, 4000.0d);
+        // EXTREME (8000) -> STRONG (2400) is x0.3, so 4000 N becomes 1200 N.
+        final MagneticField damped = throttled.withSteppedStrength(MagneticStrength.STRONG);
+        assertEquals(1200.0d, damped.force(), 1e-9);
+        assertEquals(MagneticStrength.STRONG, damped.strength());
+
+        // Damping all the way to NONE must silence it outright.
+        assertEquals(0.0d, throttled.withSteppedStrength(MagneticStrength.NONE).force(), 1e-9);
+
+        // An un-throttled field just changes tier, exactly as before.
+        final MagneticField plain = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.EXTREME, MagneticField.Shape.OMNIDIRECTIONAL);
+        assertEquals(MagneticStrength.STRONG.force(),
+                plain.withSteppedStrength(MagneticStrength.STRONG).force(), 1e-9);
+    }
+
+    @Test
+    void withCopiersPreserveCustomRange() {
+        // Regression: the four in-tick field rebuilds used to go through the 5-arg
+        // constructor and silently dropped customRange, so an emitter with a GUI range
+        // override next to an inverter or hematite block lost its range.
+        final MagneticField field = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.STRONG, MagneticField.Shape.OMNIDIRECTIONAL, 40.0d);
+        assertEquals(40.0d, field.withPolarity(MagneticPolarity.SOUTH).customRange(), 1e-9);
+        assertEquals(40.0d, field.withStrength(MagneticStrength.WEAK).customRange(), 1e-9);
+        assertEquals(40.0d, field.withSteppedStrength(MagneticStrength.WEAK).customRange(), 1e-9);
+    }
+
+    @Test
     void fromNbtReturnsNullForNullTag() {
         assertNull(MagneticField.fromNbt(null));
     }

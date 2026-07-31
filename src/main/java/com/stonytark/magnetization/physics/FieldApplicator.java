@@ -699,7 +699,9 @@ public final class FieldApplicator {
      *  the anomaly. Computed once at the start of each {@code applyTo*} pass and
      *  reused across every sample / entity in that pass. */
     static double computeGlobalScalar(final @Nullable ServerLevel level, final MagneticField field) {
-        double scalar = field.strength().force() * field.polarity().sign() * strengthMultiplier();
+        // field.force() — not strength().force() — so an analog-redstone-driven emitter's
+        // ramped force is what reaches physics. Without an override the two are identical.
+        double scalar = field.force() * field.polarity().sign() * strengthMultiplier();
         if (level != null && AnomalyBiome.isAt(level, BlockPos.containing(field.origin()))) {
             scalar *= com.stonytark.magnetization.config.MagConfig.anomalyStrengthBonus();
         }

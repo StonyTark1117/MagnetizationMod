@@ -1,10 +1,10 @@
-package com.stonytark.magnetization.content.tractor;
+package com.stonytark.magnetization.content.dipole;
 
+import com.mojang.serialization.MapCodec;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.stonytark.magnetization.menu.EmitterMenu;
 import com.stonytark.magnetization.menu.EmitterMenuProvider;
 import com.stonytark.magnetization.registry.MagBlockEntities;
-import com.mojang.serialization.MapCodec;
-import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -27,17 +27,19 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Directional attractive beam — points along the player's facing at placement time.
- * Pulls ships in front of it toward the emitter. Active while powered.
+ * Dipole Electromagnet block — a directional, wrench-rotatable electromagnet with a
+ * NORTH pole on the {@code +FACING} end and a SOUTH pole on the {@code -FACING} end.
+ * Structurally a {@link DirectionalBlock} + {@link IWrenchable} (like the Repulsor
+ * Coil) wired to the omnidirectional/powered/GUI behaviour of the Electromagnet.
  */
-public final class TractorBeamBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
+public final class DipoleElectromagnetBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
-    public static final MapCodec<TractorBeamBlock> CODEC = simpleCodec(TractorBeamBlock::new);
+    public static final MapCodec<DipoleElectromagnetBlock> CODEC = simpleCodec(DipoleElectromagnetBlock::new);
 
-    public TractorBeamBlock(final Properties props) {
+    public DipoleElectromagnetBlock(final Properties props) {
         super(props);
         registerDefaultState(getStateDefinition().any()
-                .setValue(FACING, Direction.NORTH)
+                .setValue(FACING, Direction.UP)
                 .setValue(BlockStateProperties.POWERED, false));
     }
 
@@ -63,6 +65,7 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
 
     @Override
     public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
+        // Facing (the +/NORTH pole end) points OUT from the surface placed against.
         return defaultBlockState()
                 .setValue(FACING, context.getNearestLookingDirection().getOpposite())
                 .setValue(BlockStateProperties.POWERED, false);
@@ -70,7 +73,7 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
 
     @Override
     public @Nullable BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return new TractorBeamBlockEntity(pos, state);
+        return new DipoleElectromagnetBlockEntity(pos, state);
     }
 
     @Override
@@ -78,9 +81,9 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             final Level level, final BlockState state, final BlockEntityType<T> type
     ) {
-        if (level.isClientSide || type != MagBlockEntities.TRACTOR_BEAM.get()) return null;
-        return (BlockEntityTicker<T>) (BlockEntityTicker<TractorBeamBlockEntity>)
-                TractorBeamBlockEntity::serverTick;
+        if (level.isClientSide || type != MagBlockEntities.DIPOLE_ELECTROMAGNET.get()) return null;
+        return (BlockEntityTicker<T>) (BlockEntityTicker<DipoleElectromagnetBlockEntity>)
+                DipoleElectromagnetBlockEntity::serverTick;
     }
 
     @Override
@@ -90,9 +93,10 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
     ) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        // Strength + range only — no polarity control (the two poles are inherent).
         final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
-                Component.translatable("block.magnetization.tractor_beam")).openFor(sp);
+                Component.translatable("block.magnetization.dipole_electromagnet")).openFor(sp);
         return InteractionResult.CONSUME;
     }
 
@@ -120,8 +124,8 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
         if (state.getValue(BlockStateProperties.POWERED) != nowPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
-        if (level.getBlockEntity(pos) instanceof TractorBeamBlockEntity beam) {
-            beam.setRedstoneLevel(signal);
+        if (level.getBlockEntity(pos) instanceof DipoleElectromagnetBlockEntity dipole) {
+            dipole.setRedstoneLevel(signal);
         }
     }
 }

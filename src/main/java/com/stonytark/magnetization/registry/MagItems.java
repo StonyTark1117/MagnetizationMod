@@ -21,6 +21,7 @@ public final class MagItems {
 
     // Block items — wired to MagBlocks entries.
     public static final DeferredItem<BlockItem> ELECTROMAGNET    = REGISTER.registerSimpleBlockItem(MagBlocks.ELECTROMAGNET);
+    public static final DeferredItem<BlockItem> DIPOLE_ELECTROMAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.DIPOLE_ELECTROMAGNET);
     public static final DeferredItem<BlockItem> KINETIC_ELECTROMAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.KINETIC_ELECTROMAGNET);
     public static final DeferredItem<BlockItem> MAGNETIC_ANCHOR  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_ANCHOR);
     public static final DeferredItem<BlockItem> REPULSOR_COIL    = REGISTER.registerSimpleBlockItem(MagBlocks.REPULSOR_COIL);

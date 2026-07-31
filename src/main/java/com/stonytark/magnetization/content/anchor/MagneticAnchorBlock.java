@@ -83,12 +83,14 @@ public final class MagneticAnchorBlock extends Block implements EntityBlock {
     }
 
     private static void applyExternalSignal(final BlockState state, final Level level, final BlockPos pos) {
-        final boolean nowPowered = level.hasNeighborSignal(pos);
+        // Analog read; see ElectromagnetBlock.applyExternalSignal for the rationale.
+        final int signal = level.getBestNeighborSignal(pos);
+        final boolean nowPowered = signal > 0;
         if (state.getValue(BlockStateProperties.POWERED) != nowPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof MagneticAnchorBlockEntity anchor) {
-            anchor.setPowered(nowPowered);
+            anchor.setRedstoneLevel(signal);
         }
     }
 }

@@ -141,7 +141,8 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
                 effectivePolarity(MagneticPolarity.SOUTH),
                 strength,
                 MagneticField.Shape.OMNIDIRECTIONAL,
-                range == strength.range() ? 0.0d : range
+                range == strength.range() ? 0.0d : range,
+                analogForceOverride()
         );
     }
 
@@ -231,5 +232,10 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         super.fillCrashReportCategory(category);
         category.setDetail("Magnetization Anchor Bound Ship",
                 () -> boundShipId == null ? "<unbound>" : boundShipId.toString());
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneAnchor();
     }
 }

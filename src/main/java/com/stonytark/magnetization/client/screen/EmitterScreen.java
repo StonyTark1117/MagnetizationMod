@@ -276,7 +276,18 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
                     : MagneticStrength.values()[ord];
             final Component label = Component.translatable(
                     "tooltip.magnetization.strength." + strength.name().toLowerCase(java.util.Locale.ROOT));
-            g.drawString(font, Component.translatable("gui.magnetization.strength", label), 8, 40, 0xC0C0C0, false);
+            // When an analog redstone signal is throttling this emitter, say so — the tier
+            // buttons still read as configured, so without this the GUI would claim
+            // "Extreme" while the field is actually pushing at a fraction of that.
+            final int analogForce = menu.analogForce();
+            if (analogForce > 0) {
+                g.drawString(font, Component.translatable("gui.magnetization.strength.analog",
+                                label, menu.redstoneSignal(), MagneticStrength.MAX_SIGNAL,
+                                String.format(java.util.Locale.ROOT, "%,d", analogForce)),
+                        8, 40, 0xFF8080, false);
+            } else {
+                g.drawString(font, Component.translatable("gui.magnetization.strength", label), 8, 40, 0xC0C0C0, false);
+            }
         }
         if (menu.hasCap(EmitterMenu.CAP_RANGE)) {
             final int blocks = menu.rangeBlocks();

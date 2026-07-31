@@ -39,13 +39,24 @@ public final class FieldTooltipFormatter {
         // channel alongside the color and the spelled-out words.
         final boolean north = field.polarity().sign() > 0;
         final ChatFormatting polarityColor = north ? ChatFormatting.RED : ChatFormatting.AQUA;
+        // Report the tier the field is ACTUALLY pushing at. An analog redstone throttle
+        // scales force without moving the configured tier, so reading field.strength()
+        // here would show four full pips while the emitter pushes at a fraction of that —
+        // exactly the kind of hue/label mismatch the pip meter exists to prevent.
+        final MagneticStrength shown = field.hasForceOverride()
+                ? MagneticStrength.nearestForForce(field.force())
+                : field.strength();
         out.add(Component.literal(polarityGlyph(field.polarity()) + " "
-                        + field.strength().name() + " " + field.polarity().name()
-                        + "  " + strengthPips(field.strength()))
+                        + shown.name() + " " + field.polarity().name()
+                        + "  " + strengthPips(shown))
                 .withStyle(polarityColor));
         if (verbose) {
             out.add(Component.literal(String.format("Range: %.1f blocks", field.range()))
                     .withStyle(ChatFormatting.GRAY));
+            if (field.hasForceOverride()) {
+                out.add(Component.literal(String.format("Force: %,.0f N (throttled)", field.force()))
+                        .withStyle(ChatFormatting.GRAY));
+            }
             out.add(Component.literal("Shape: " + field.shape().name())
                     .withStyle(ChatFormatting.GRAY));
         }

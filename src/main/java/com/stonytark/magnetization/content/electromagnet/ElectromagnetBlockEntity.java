@@ -38,7 +38,13 @@ public class ElectromagnetBlockEntity extends AbstractEmitterBlockEntity {
                 effectivePolarity(MagneticPolarity.SOUTH), // default attracts north-poled magnetizables
                 strength,
                 MagneticField.Shape.OMNIDIRECTIONAL,
-                effectiveRange(strength) == strength.range() ? 0.0d : effectiveRange(strength)
+                effectiveRange(strength) == strength.range() ? 0.0d : effectiveRange(strength),
+                analogForceOverride()
         );
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneElectromagnet();
     }
 }

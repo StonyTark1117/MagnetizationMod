@@ -40,7 +40,13 @@ public class TractorBeamBlockEntity extends AbstractEmitterBlockEntity {
                 effectivePolarity(MagneticPolarity.SOUTH),
                 strength,
                 MagneticField.Shape.DIRECTIONAL,
-                range == strength.range() ? 0.0d : range
+                range == strength.range() ? 0.0d : range,
+                analogForceOverride()
         );
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneTractorBeam();
     }
 }

@@ -42,6 +42,8 @@ public final class MagBlocks {
 
     public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET =
             REGISTER.register("electromagnet", () -> new ElectromagnetBlock(poweredMetal()));
+    public static final DeferredBlock<com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlock> DIPOLE_ELECTROMAGNET =
+            REGISTER.register("dipole_electromagnet", () -> new com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlock(poweredMetal()));
 
     public static final DeferredBlock<KineticElectromagnetBlock> KINETIC_ELECTROMAGNET =
             REGISTER.register("kinetic_electromagnet", () -> new KineticElectromagnetBlock(metal()));

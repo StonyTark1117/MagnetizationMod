@@ -25,7 +25,7 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1.228,22.0)"
+versionRange = "[21.1.247,22.0)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -41,7 +41,7 @@ modId = "create"
 type = "required"
 # Open upper bound: a future major (7.x) is far more likely to still work than to
 # need us blocked from launching. Loose ranges avoid a hard lock-out on updates.
-versionRange = "[6.0.10,)"
+versionRange = "[6.0.11,)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -50,7 +50,7 @@ modId = "sable"
 type = "required"
 # Open upper bound — a Sable major bump (3.x) shouldn't hard-block us from
 # launching (the 2.x/aero update breakage taught us this). Loose by design.
-versionRange = "[2.0.0,)"
+versionRange = "[2.0.3,)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -91,35 +91,35 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"
-versionRange = "[15.0,)"
+versionRange = "[15.10.5,)"
 ordering = "AFTER"
 side = "CLIENT"
 
 [[dependencies.${mod_id}]]
 modId = "waila"
 type = "optional"
-versionRange = "[12.0,)"
+versionRange = "[12.10.2,)"
 ordering = "AFTER"
 side = "CLIENT"
 
 [[dependencies.${mod_id}]]
 modId = "theoneprobe"
 type = "optional"
-versionRange = "[12.0,)"
+versionRange = "[12.0.8,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "jei"
 type = "optional"
-versionRange = "[19.0,)"
+versionRange = "[19.42.0.388,)"
 ordering = "AFTER"
 side = "CLIENT"
 
 [[dependencies.${mod_id}]]
 modId = "roughlyenoughitems"
 type = "optional"
-versionRange = "[17.0,)"
+versionRange = "[17.0.807,)"
 ordering = "AFTER"
 side = "CLIENT"
 
@@ -129,7 +129,7 @@ side = "CLIENT"
 [[dependencies.${mod_id}]]
 modId = "iris"
 type = "optional"
-versionRange = "*"
+versionRange = "[1.8.14-beta.1,)"
 ordering = "AFTER"
 side = "CLIENT"
 
@@ -139,7 +139,7 @@ side = "CLIENT"
 [[dependencies.${mod_id}]]
 modId = "jeresources"
 type = "optional"
-versionRange = "[1.6,)"
+versionRange = "[1.6.0.17,)"
 ordering = "AFTER"
 side = "CLIENT"
 
@@ -150,7 +150,7 @@ side = "CLIENT"
 [[dependencies.${mod_id}]]
 modId = "terrablender"
 type = "required"
-versionRange = "[4.1,)"
+versionRange = "[4.1.0.8,)"
 ordering = "BEFORE"
 side = "BOTH"
 
@@ -161,6 +161,30 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "tfmg"
 type = "optional"
-versionRange = "[1.1,)"
+versionRange = "[1.2.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# EMI — optional recipe viewer integration discovered through @EmiEntrypoint.
+[[dependencies.${mod_id}]]
+modId = "emi"
+type = "optional"
+versionRange = "[1.1.24,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+# Curios — optional equipment slots and key-driven grapple/repulsor actions.
+[[dependencies.${mod_id}]]
+modId = "curios"
+type = "optional"
+versionRange = "[9.5.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Patchouli — optional data-driven Field Manual.
+[[dependencies.${mod_id}]]
+modId = "patchouli"
+type = "optional"
+versionRange = "[1.21.1-93-neoforge,)"
 ordering = "AFTER"
 side = "BOTH"

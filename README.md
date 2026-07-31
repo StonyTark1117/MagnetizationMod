@@ -31,6 +31,7 @@ Optional integrations (auto-detected when installed):
 - **Quark** — Iron and Copper Oretoises are magnetizable.
 - **Cross-mod lightning** — Iron's Spells (Chain Lightning, Lightning Lance, Thunderstorm, Ascension), Cataclysm Scylla (Lightning Spear / Electric Shock), Alex's Caves Tesla + Magnetron arcs, IE Tesla Coil, Twilight Forest lightning all trigger LIRM stamping and log petrification on hit — same effect as a vanilla bolt. Driven by the `#magnetization:lightning_sources` damage-type tag; datapacks can add more sources without code changes.
 - **FE/RF power** — the 5 redstone-powered emitters expose an `IEnergyStorage` capability. Any FE-providing mod (Create: C&A, Mekanism, Thermal, IE generators, AE2, etc.) can drive them. Internal 50 000 FE buffer, 10 FE/tick drain, 200 FE/tick max input. Admin config `compat.allowRedstonePower` / `compat.allowEnergyPower` toggle which sources are valid — set redstone false to force players to use FE/RF as a non-trivial power source.
+- **Analog redstone throttling** — off by default. Enable `compat.analogRedstone*` for a block and its field force follows the redstone *level* instead of being on/off: signal 1 = 200 N (Weak's force), signal 15 = 8000 N (Extreme's), ramped geometrically. See [Configuration → compat](#compat--power-sources).
 
 ## New in 1.3.0 — Fusion, Railgun & the fuel overhaul
 
@@ -171,6 +172,30 @@ While goggles are worn, additional world overlays appear:
 ## Configuration
 
 `config/magnetization-server.toml`:
+
+### compat — power sources
+| Key | Default | Description |
+|-----|---------|-------------|
+| `compat.allowRedstonePower` | true | Redstone counts as a valid power source for the redstone-driven emitters. |
+| `compat.allowEnergyPower` | true | FE/RF counts as a valid power source. The capability stays exposed either way. |
+| `compat.requireRedstoneAndEnergy` | false | Require BOTH at once instead of either-or. |
+| `compat.emitterEnergyCapacity` | 50000 | Internal FE buffer per emitter. |
+| `compat.emitterEnergyDrainPerTick` | 10 | FE consumed per tick while energy-driven. Flat — not scaled by the analog signal. |
+| `compat.emitterEnergyTransferRate` | 200 | Max FE/tick accepted from external sources. |
+| `compat.analogRedstoneElectromagnet` | false | Scale the Electromagnet's force with the analog redstone level (1–15). |
+| `compat.analogRedstoneDipole` | false | Same, for the Dipole Electromagnet (both poles scale together). |
+| `compat.analogRedstoneAnchor` | false | Same, for the Magnetic Anchor. |
+| `compat.analogRedstoneRepulsor` | false | Same, for the Repulsor Coil. |
+| `compat.analogRedstoneTractorBeam` | false | Same, for the Tractor Beam. |
+| `compat.analogRedstoneExcavator` | false | Same, for the Magnetic Excavator. Its internal redstone-dust fuel counts as a full signal. |
+| `compat.analogRedstoneInducer` | false | Same, for the Structural Inducer (scales its reel-in speed — it emits no field of its own). |
+
+With an analog toggle on, **signal 1 = 200 N** (the Weak tier's force) and **signal 15 = 8000 N**
+(Extreme's), ramped geometrically so every level is an equal proportional step. The GUI strength
+tier is unchanged and still sets the field's **range**; only force is scaled. It applies only while
+redstone is the driver — an FE/RF-powered emitter always runs at full configured strength, and a
+partial signal still burns no FE. Hematite and Halbach arrays scale the throttled force
+proportionally, so both keep working as usual.
 
 ### physics
 | Key | Default | Range | Description |

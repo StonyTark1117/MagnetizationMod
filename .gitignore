@@ -9,6 +9,9 @@ run/
 # smokeServerMinimal / smokeClientNormal).
 run-smoke-server/
 run-smoke-client/
+# Isolated game directories for the GameTest run profiles.
+run-gametest/
+run-immersive-aeronautics-gametest/
 # Dev-world snapshots (scripts/test-world.sh). Large binaries; force-add a
 # specific snapshot if you deliberately want to share it.
 test-worlds/

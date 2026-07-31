@@ -145,13 +145,16 @@ public final class MagneticExcavatorBlock extends DirectionalBlock implements En
     }
 
     private static void applyExternalSignal(final BlockState state, final Level level, final BlockPos pos) {
-        final boolean nowExternal = level.hasNeighborSignal(pos);
+        // Analog level, not just on/off — `> 0` is equivalent to the old
+        // hasNeighborSignal, so nothing changes unless the Analog Redstone toggle is on.
+        final int externalLevel = level.getBestNeighborSignal(pos);
+        final boolean nowExternal = externalLevel > 0;
         final BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof MagneticExcavatorBlockEntity excavator) {
             // BE owns block-state POWERED: it's the OR of external signal +
             // internal redstone fuel, so the BE has to compute the union and
-            // push the result to the world. Just hand it the external bit.
-            excavator.setExternalSignal(nowExternal);
+            // push the result to the world. Just hand it the external level.
+            excavator.setExternalSignal(externalLevel);
             return;
         }
         // No BE yet (placement race): fall back to direct state update so the

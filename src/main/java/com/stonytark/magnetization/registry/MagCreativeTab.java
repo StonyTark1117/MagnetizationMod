@@ -177,6 +177,7 @@ public final class MagCreativeTab {
                         // ── Emitters ──
                         accept(output, MagItems.LODESTONE_CORE);
                         accept(output, MagItems.ELECTROMAGNET);
+                        accept(output, MagItems.DIPOLE_ELECTROMAGNET);
                         accept(output, MagItems.KINETIC_ELECTROMAGNET);
                         accept(output, MagItems.MAGNETIC_ANCHOR);
                         accept(output, MagItems.REPULSOR_COIL);

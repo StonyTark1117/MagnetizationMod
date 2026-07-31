@@ -32,4 +32,47 @@ public enum MagneticStrength {
     public double range() {
         return range;
     }
+
+    /** Highest analog redstone level, and the signal at which {@link #forceForSignal}
+     *  reaches {@link #EXTREME}'s force. */
+    public static final int MAX_SIGNAL = 15;
+
+    /**
+     * Force in Newtons for an analog redstone level, used by emitters running with an
+     * "Analog Redstone" config toggle on. The ramp is anchored to the tier ladder's own
+     * endpoints — signal 1 gives {@link #WEAK}'s force and signal 15 gives
+     * {@link #EXTREME}'s — so it can never drift away from the tiers as they are retuned.
+     *
+     * <p>The interpolation is <b>geometric</b>, not linear, because the ladder itself is
+     * roughly geometric (200 → 800 → 2400 → 8000 is ×4, ×3, ×3.3). A linear ramp would
+     * pass STRONG's force by signal 5 and leave two thirds of the dial bunched in the top
+     * band; geometric makes every redstone level an equal proportional step and spreads
+     * the four named tiers across the whole range.
+     *
+     * @param signal 0-15; anything at or below 0 yields 0 (no field), anything above 15
+     *               is clamped to the maximum.
+     */
+    public static double forceForSignal(final int signal) {
+        if (signal <= 0) return 0.0d;
+        if (signal >= MAX_SIGNAL) return EXTREME.force;
+        final double min = WEAK.force;
+        final double max = EXTREME.force;
+        return min * Math.pow(max / min, (signal - 1) / (double) (MAX_SIGNAL - 1));
+    }
+
+    /**
+     * The strongest tier whose nominal force does not exceed {@code force} (never below
+     * {@link #WEAK} for a positive force). Display-only: the accessibility pip meter and
+     * the HUD word describe a tier, so an emitter throttled to 200 N by a weak redstone
+     * signal must read as WEAK rather than showing its configured EXTREME.
+     */
+    public static MagneticStrength nearestForForce(final double force) {
+        if (force <= 0.0d) return NONE;
+        MagneticStrength best = WEAK;
+        for (final MagneticStrength s : values()) {
+            if (s == NONE) continue;
+            if (s.force <= force) best = s;
+        }
+        return best;
+    }
 }

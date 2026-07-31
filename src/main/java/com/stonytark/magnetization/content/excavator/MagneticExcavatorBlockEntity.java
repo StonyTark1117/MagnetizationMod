@@ -217,7 +217,9 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
     /** Tracks the most recent external redstone signal independently of fuel.
      *  Logical {@link #isPowered()} is the OR of this and {@link #hasRedstoneFuel()}.
      *  Persisted so block-state POWERED stays correct across reloads. */
-    private boolean externalSignal = false;
+    /** External redstone level, 0-15. Internal redstone-dust fuel counts as a full
+     *  signal (see {@link #recomputePower()}), so only external wiring can throttle. */
+    private int externalSignal = 0;
 
     public Container getToolSlot() {
         return toolSlot;
@@ -258,9 +260,11 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
 
     /** External-signal entry point from {@link MagneticExcavatorBlock#neighborChanged}.
      *  Replaces direct {@link #setPowered} calls so the BE owns power state. */
-    public void setExternalSignal(final boolean signal) {
-        if (this.externalSignal == signal) return;
-        this.externalSignal = signal;
+    public void setExternalSignal(final int signal) {
+        final int clamped = Math.max(0, Math.min(
+                com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL, signal));
+        if (this.externalSignal == clamped) return;
+        this.externalSignal = clamped;
         setChanged();
         recomputePower();
     }
@@ -269,10 +273,14 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
      *  block state's {@code POWERED} property so visuals + field logic agree.
      *  Called whenever the external signal or fuel slot changes. */
     private void recomputePower() {
-        final boolean logical = externalSignal || hasRedstoneFuel();
-        // Update the base externally-tracked flag (drives field activation,
-        // sound, cache invalidation). super.isPowered() returns this raw bit.
-        setPowered(logical);
+        // Internal redstone-dust fuel is a full-strength drive — there's no dial on it —
+        // so it wins over a weaker external signal rather than being throttled by one.
+        final int drive = Math.max(externalSignal,
+                hasRedstoneFuel() ? com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL : 0);
+        final boolean logical = drive > 0;
+        // Update the base externally-tracked level (drives field activation, sound,
+        // cache invalidation). super.isPowered() is `level > 0`.
+        setRedstoneLevel(drive);
         if (level == null) return;
         final BlockState bs = level.getBlockState(getBlockPos());
         if (!(bs.getBlock() instanceof MagneticExcavatorBlock)) return;
@@ -417,7 +425,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
                 effectivePolarity(MagneticPolarity.SOUTH),
                 tier,
                 MagneticField.Shape.DIRECTIONAL,
-                range == tier.range() ? 0.0d : range
+                range == tier.range() ? 0.0d : range,
+                analogForceOverride()
         );
     }
 
@@ -470,7 +479,9 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
         final ItemStack tool = toolSlot.getItem(0);
         final MagneticStrength tier = effectiveStrength(MagneticStrength.MEDIUM);
         final double pullRange = effectiveRange(tier);
-        final double pullForce = tier.force();
+        // effectiveForce, not tier.force(), so an analog redstone throttle slows the ship
+        // pull in step with the field rather than leaving it at full tier strength.
+        final double pullForce = effectiveForce(tier);
         final long now = server.getGameTime();
 
         final java.util.Iterator<java.util.Map.Entry<UUID, PulledShip>> it = pulledShips.entrySet().iterator();
@@ -891,7 +902,12 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
         if (!tool.isEmpty()) tag.put("ToolSlot", tool.save(registries));
         final ItemStack fuel = redstoneFuelSlot.getItem(0);
         if (!fuel.isEmpty()) tag.put("RedstoneFuelSlot", fuel.save(registries));
-        if (externalSignal) tag.putBoolean("ExternalSignal", true);
+        // Legacy boolean kept for back-compat; the level is written only when it differs
+        // from a full drive, mirroring AbstractEmitterBlockEntity's Powered/RedstoneLevel.
+        if (externalSignal > 0) tag.putBoolean("ExternalSignal", true);
+        if (externalSignal > 0 && externalSignal < com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL) {
+            tag.putInt("ExternalSignalLevel", externalSignal);
+        }
     }
 
     private static ListTag saveShipList(final java.util.LinkedHashMap<UUID, PulledShip> map) {
@@ -925,7 +941,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
         redstoneFuelSlot.setItem(0, tag.contains("RedstoneFuelSlot", Tag.TAG_COMPOUND)
                 ? ItemStack.parseOptional(registries, tag.getCompound("RedstoneFuelSlot"))
                 : ItemStack.EMPTY);
-        externalSignal = tag.getBoolean("ExternalSignal");
+        externalSignal = tag.contains("ExternalSignalLevel")
+                ? Math.max(0, Math.min(com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL,
+                        tag.getInt("ExternalSignalLevel")))
+                : (tag.getBoolean("ExternalSignal") ? com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL : 0);
     }
 
     private void loadShipList(final CompoundTag tag, final String key,
@@ -960,5 +979,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
                 () -> Integer.toString(activelyPulledShips.size()));
         category.setDetail("Magnetization Excavator Last Scan Tick",
                 () -> Long.toString(lastScanTick));
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneExcavator();
     }
 }

@@ -74,7 +74,10 @@ public final class ImprintModuleInteraction {
 
     private static void capture(final AbstractEmitterBlockEntity emitter,
                                  final ItemStack stack, final Player player) {
-        final MagneticStrength strength = emitter.effectiveStrength(MagneticStrength.STRONG);
+        // configuredStrength, NOT effectiveStrength: a preset copied off an emitter that a
+        // weak redstone signal is currently throttling must record the tier the player
+        // dialed in, not whatever the wiring happens to be driving it at right now.
+        final MagneticStrength strength = emitter.configuredStrength();
         final MagneticPolarity polarity = emitter.effectivePolarity(MagneticPolarity.NORTH);
         // Round to int — sub-block tractor distances serialise cleanly.
         final int range = (int) Math.round(emitter.effectiveRange(strength));

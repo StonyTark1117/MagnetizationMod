@@ -47,7 +47,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         implements MagneticFieldSource, BlockEntitySubLevelActor,
         IHaveGoggleInformation {
 
-    private boolean powered = false;
+    /** Analog redstone level driving this emitter, 0-15. 0 = unpowered; anything above
+     *  is "on". Replaces the historical boolean — {@code setPowered(true)} stores 15 —
+     *  so an emitter with an "Analog Redstone" toggle enabled can scale its force with
+     *  the signal. Persisted alongside the legacy {@code Powered} boolean for back-compat. */
+    private int redstoneLevel = 0;
     /** Game-tick until which an EMP keeps this emitter dark. 0 = not EMP'd. */
     private long empDisabledUntil = 0L;
     /** True for the current tick if energy was successfully consumed this tick
@@ -131,7 +135,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      *  and a successful energy drain coincide. Subclasses' field-builder methods
      *  consult this to decide whether to emit. */
     public boolean isPowered() {
-        final boolean redstoneOn = allowRedstonePower() && powered;
+        final boolean redstoneOn = allowRedstonePower() && redstoneLevel > 0;
         final boolean energyOn = allowEnergyPower() && energyActiveThisTick;
         return requireRedstoneAndEnergy() ? (redstoneOn && energyOn) : (redstoneOn || energyOn);
     }
@@ -149,7 +153,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     /** Direct query: is a redstone signal currently driving this emitter
      *  (ignoring energy)? Used by tooltips/HUD that want to surface "powered
      *  by redstone" vs "powered by energy" separately. */
-    public boolean isRedstonePowered() { return powered; }
+    public boolean isRedstonePowered() { return redstoneLevel > 0; }
 
     /** Direct query: did energy drive this tick? */
     public boolean isEnergyPowered() { return energyActiveThisTick; }
@@ -194,12 +198,26 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         try { return MagConfig.EMITTER_ENERGY_DRAIN_PER_TICK.get(); } catch (Throwable t) { return 10; }
     }
 
+    /**
+     * The tier the player has dialed in (or the built-in default) — never scaled by
+     * anything. This is what the GUI shows, what the range buttons seed from, and what
+     * the Imprint Module captures into a preset; a preset taken from an emitter that a
+     * weak redstone signal is currently throttling must still record the configured tier.
+     */
+    public MagneticStrength configuredStrength() {
+        return strengthOverride != null ? strengthOverride : MagneticStrength.STRONG;
+    }
+
     /** Effective strength tier for {@link #computeField}: override when set,
      *  otherwise the default. Defaults to {@link MagneticStrength#STRONG} for
      *  every menu-bearing emitter — the {@code base} the subclass passes is
-     *  ignored when no override is in play. */
+     *  ignored when no override is in play.
+     *
+     *  <p>Analog redstone does not move the <em>tier</em> — it sets a continuous force
+     *  override on the field instead (see {@link #analogForceOverride()}), so the tier
+     *  keeps driving range and the GUI/HUD readouts. */
     public MagneticStrength effectiveStrength(final MagneticStrength base) {
-        return strengthOverride != null ? strengthOverride : MagneticStrength.STRONG;
+        return configuredStrength();
     }
 
     /** Effective range in blocks: override when set, otherwise
@@ -286,16 +304,77 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         if (level instanceof ServerLevel server) markForClientSync(server);
     }
 
+    /** Legacy on/off entry point: {@code true} means a full-strength drive (signal 15),
+     *  which is exactly what every caller meant before analog levels existed. Kept so
+     *  blocks and tests that only care about on/off don't have to think about levels. */
     public void setPowered(final boolean powered) {
-        if (this.powered == powered) return;
-        this.powered = powered;
+        setRedstoneLevel(powered ? MagneticStrength.MAX_SIGNAL : 0);
+    }
+
+    /**
+     * Set the analog redstone level (0-15) driving this emitter. 0 is unpowered; any
+     * positive value is "on", and the magnitude only matters when the emitter's
+     * "Analog Redstone" config toggle is enabled (see {@link #analogForceOverride()}).
+     */
+    public void setRedstoneLevel(final int newLevel) {
+        final int clamped = Math.max(0, Math.min(MagneticStrength.MAX_SIGNAL, newLevel));
+        if (this.redstoneLevel == clamped) return;
+        final boolean wasOn = this.redstoneLevel > 0;
+        final boolean nowOn = clamped > 0;
+        this.redstoneLevel = clamped;
         this.cachedField = null;
         setChanged();
-        if (level != null && !level.isClientSide) {
+        // Sound only on the on/off EDGE. A comparator or analog sensor re-drives this
+        // setter as often as once per tick, and the old unconditional play would turn a
+        // ramping signal into a machine-gun of lodestone clicks.
+        if (level != null && !level.isClientSide && wasOn != nowOn) {
             level.playSound(null, getBlockPos(),
-                    powered ? SoundEvents.LODESTONE_PLACE : SoundEvents.LODESTONE_BREAK,
-                    SoundSource.BLOCKS, 0.4f, powered ? 1.6f : 1.2f);
+                    nowOn ? SoundEvents.LODESTONE_PLACE : SoundEvents.LODESTONE_BREAK,
+                    SoundSource.BLOCKS, 0.4f, nowOn ? 1.6f : 1.2f);
         }
+        if (level instanceof ServerLevel server) markForClientSync(server);
+    }
+
+    /** Current analog redstone level driving this emitter, 0-15. */
+    public int getRedstoneLevel() { return redstoneLevel; }
+
+    /** Public read of {@link #analogForceOverride()} for the menu/HUD: force in Newtons
+     *  when an analog throttle is active, {@code 0} when the emitter runs at full tier. */
+    public double analogForce() { return analogForceOverride(); }
+
+    /**
+     * Per-block opt-in for analog redstone strength. Subclasses that have a config
+     * toggle override this to return it; everything else stays on the historical
+     * on/off behaviour.
+     */
+    protected boolean analogRedstoneEnabled() { return false; }
+
+    /**
+     * Force in Newtons this emitter should emit right now, or {@code 0} to use the
+     * strength tier's nominal force.
+     *
+     * <p>Returns 0 — i.e. full configured strength — whenever the emitter isn't being
+     * driven by redstone at all. An FE/RF-driven emitter has no signal level to read, so
+     * scaling it would mean "energy always runs you at minimum", which is not the
+     * feature. Note {@code tickEmitter} gives redstone priority over energy, so a
+     * partially-driven emitter also consumes no FE.
+     */
+    protected double analogForceOverride() {
+        if (redstoneLevel <= 0 || !allowRedstonePower()) return 0.0d;
+        if (!analogRedstoneEnabled()) return 0.0d;
+        return MagneticStrength.forceForSignal(redstoneLevel);
+    }
+
+    /**
+     * Force in Newtons this emitter is actually driving with — the analog override when
+     * one is active, otherwise {@code tier}'s nominal force. Emitters that do their own
+     * pull/speed maths off the tier (the Excavator's ship pull, the Structural Inducer's
+     * reel rate) should read this instead of {@code tier.force()}, so they throttle in
+     * step with the field rather than ignoring the signal.
+     */
+    protected double effectiveForce(final MagneticStrength tier) {
+        final double override = analogForceOverride();
+        return override > 0 ? override : tier.force();
     }
 
     /**
@@ -303,6 +382,67 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
      * Called every tick — keep cheap.
      */
     protected abstract @Nullable MagneticField computeField(BlockState state);
+
+    /**
+     * Optional SECOND field emitted by this block on the same tick — enables
+     * multi-pole emitters (e.g. the Dipole Electromagnet's opposite-pole end).
+     * Default {@code null}: single-field emitters are unaffected. When non-null it
+     * runs through the exact same modifier pipeline ({@link #applyFieldModifiers})
+     * and a second {@link FieldApplicator#apply}, so adjacent Inverter/Hematite/
+     * Halbach/Lens blocks act on both fields symmetrically.
+     */
+    protected @Nullable MagneticField computeSecondaryField(final BlockState state) {
+        return null;
+    }
+
+    /**
+     * Run a freshly-computed field through the adjacency modifiers — Polarity
+     * Inverter flip, Hematite dampen, Halbach boost, Hematite Lens lock — returning
+     * the transformed field. Extracted from {@code tickEmitter} so a multi-field
+     * emitter can apply the identical treatment to each of its fields. Sets the
+     * {@code hematiteDampened}/{@code halbachBoosted} display flags as a side effect.
+     */
+    private MagneticField applyFieldModifiers(final ServerLevel server, MagneticField local) {
+        // Adjacent Polarity Inverter blocks flip the field's polarity. Cheap 6-block
+        // scan; only runs while the emitter is active.
+        // NB: all four rebuilds below go through the with* copiers rather than a
+        // constructor. The old 5-arg rebuilds silently dropped customRange, so an emitter
+        // with a GUI range override standing next to an inverter or hematite block lost
+        // its range; they would now drop the analog force override the same way.
+        if (PolarityInverterBlock.shouldInvert(server, getBlockPos())) {
+            local = local.withPolarity(local.polarity().opposite());
+        }
+
+        // Adjacent Hematite blocks dampen the field strength tier (one step per
+        // adjacent block, clamped to WEAK). Antiferromagnetic flavour — hematite
+        // cancels out applied fields.
+        final MagneticStrength preDampen = local.strength();
+        final MagneticStrength dampened = com.stonytark.magnetization.content.hematite.HematiteBlock
+                .dampenedStrength(server, getBlockPos(), preDampen);
+        hematiteDampened = dampened != preDampen;
+        if (hematiteDampened) {
+            local = local.withSteppedStrength(dampened);
+        }
+
+        // Halbach array boost: face-adjacent magnets of the SAME polarity
+        // concentrate the field, stepping the strength tier up (clamped to
+        // EXTREME). The opposite of the hematite dampener above.
+        final MagneticStrength preBoost = local.strength();
+        final MagneticStrength boosted = com.stonytark.magnetization.content.HalbachArray
+                .boostedStrength(server, getBlockPos(), local.polarity(), preBoost);
+        halbachBoosted = boosted != preBoost;
+        if (halbachBoosted) {
+            local = local.withSteppedStrength(boosted);
+        }
+
+        // Hematite Lens polarity lock: takes precedence over any Inverter flip
+        // earlier in this tick. Set via the lens item's right-click; cleared
+        // via shift+right-click.
+        if (lockedPolarity != null && local.polarity() != lockedPolarity) {
+            local = local.withPolarity(lockedPolarity);
+        }
+        return local;
+    }
 
     /**
      * Subclass hook to restrict which ships the field acts on. Return {@code null}
@@ -391,7 +531,10 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
         // Either way the drain is a single extract — if the buffer can't cover it,
         // energyActiveThisTick stays false and the field falls off.
         energyActiveThisTick = false;
-        final boolean redstoneOn = allowRedstonePower() && powered;
+        // Any positive signal counts as "redstone is driving" for the purposes of power
+        // resolution — the level only affects field force, never FE consumption. A
+        // partially-driven emitter therefore still burns no energy, as before.
+        final boolean redstoneOn = allowRedstonePower() && redstoneLevel > 0;
         final boolean tryEnergy = requireRedstoneAndEnergy() ? redstoneOn : !redstoneOn;
         if (tryEnergy && allowEnergyPower()) {
             final int drain = emitterEnergyDrainPerTick();
@@ -429,44 +572,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             return;
         }
 
-        // Adjacent Polarity Inverter blocks flip the field's polarity. Cheap 6-block
-        // scan; only runs while the emitter is active.
-        if (PolarityInverterBlock.shouldInvert(server, getBlockPos())) {
-            local = new MagneticField(local.origin(), local.axis(), local.polarity().opposite(),
-                    local.strength(), local.shape());
-        }
-
-        // Adjacent Hematite blocks dampen the field strength tier (one step per
-        // adjacent block, clamped to WEAK). Antiferromagnetic flavour — hematite
-        // cancels out applied fields.
-        final MagneticStrength preDampen = local.strength();
-        final MagneticStrength dampened = com.stonytark.magnetization.content.hematite.HematiteBlock
-                .dampenedStrength(server, getBlockPos(), preDampen);
-        hematiteDampened = dampened != preDampen;
-        if (hematiteDampened) {
-            local = new MagneticField(local.origin(), local.axis(), local.polarity(),
-                    dampened, local.shape());
-        }
-
-        // Halbach array boost: face-adjacent magnets of the SAME polarity
-        // concentrate the field, stepping the strength tier up (clamped to
-        // EXTREME). The opposite of the hematite dampener above.
-        final MagneticStrength preBoost = local.strength();
-        final MagneticStrength boosted = com.stonytark.magnetization.content.HalbachArray
-                .boostedStrength(server, getBlockPos(), local.polarity(), preBoost);
-        halbachBoosted = boosted != preBoost;
-        if (halbachBoosted) {
-            local = new MagneticField(local.origin(), local.axis(), local.polarity(),
-                    boosted, local.shape());
-        }
-
-        // Hematite Lens polarity lock: takes precedence over any Inverter flip
-        // earlier in this tick. Set via the lens item's right-click; cleared
-        // via shift+right-click.
-        if (lockedPolarity != null && local.polarity() != lockedPolarity) {
-            local = new MagneticField(local.origin(), local.axis(), lockedPolarity,
-                    local.strength(), local.shape());
-        }
+        local = applyFieldModifiers(server, local);
 
         // When the emitter sits on a contraption (host != null), the blockpos-derived
         // origin/axis are sub-level-local; promote them to world space and exclude the
@@ -502,6 +608,20 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             lastSyncedEnergy = currentEnergy;
         }
         FieldApplicator.apply(server, worldField, host, shipFilter());
+
+        // Multi-pole emitters (e.g. the Dipole Electromagnet) contribute a second
+        // field this tick — run it through the SAME modifier pipeline and apply it
+        // too, so both poles react identically to adjacent Inverter/Hematite/Halbach/
+        // Lens blocks. Null for single-field emitters, so their path is unchanged.
+        final MagneticField localSecondary = computeSecondaryField(state);
+        if (localSecondary != null) {
+            final MagneticField modifiedSecondary = applyFieldModifiers(server, localSecondary);
+            final MagneticField worldSecondary = host == null
+                    ? modifiedSecondary
+                    : SableBridge.promoteToWorldSpace(host.logicalPose(), modifiedSecondary);
+            FieldApplicator.apply(server, worldSecondary, host, shipFilter());
+        }
+
         // Only ingest when the emitter sits in the open world — emitters mounted on a
         // contraption can't have a stable adjacent inventory anyway.
         if (host == null) {
@@ -585,15 +705,25 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             // know at a glance. The actual stored-FE amount is rendered as a
             // proper bar by the WTHIT energy-bar provider, so no text line here.
             final int energy = energyBuffer.getEnergyStored();
+            final boolean redstoneOn = redstoneLevel > 0;
             if (energy > 0 || isPowered()) {
                 final String source = energyActiveThisTick ? "energy"
-                        : (powered ? "redstone" : "idle");
+                        : (redstoneOn ? "redstone" : "idle");
                 final ChatFormatting sourceColor = energyActiveThisTick ? ChatFormatting.GOLD
-                        : (powered ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
+                        : (redstoneOn ? ChatFormatting.RED : ChatFormatting.DARK_GRAY);
                 lines.add(Component.translatable("tooltip.magnetization.power_source",
                                 Component.translatable("tooltip.magnetization.power_source." + source)
                                         .withStyle(sourceColor))
                         .withStyle(ChatFormatting.GRAY));
+            }
+            // Analog throttle readout — only when a partial signal is actually holding the
+            // emitter below full strength, so the common full-drive case stays quiet.
+            final double analogForce = analogForceOverride();
+            if (analogForce > 0 && redstoneLevel < MagneticStrength.MAX_SIGNAL) {
+                lines.add(Component.translatable("tooltip.magnetization.signal_level",
+                                redstoneLevel, MagneticStrength.MAX_SIGNAL,
+                                String.format(java.util.Locale.ROOT, "%,.0f", analogForce))
+                        .withStyle(ChatFormatting.RED));
             }
         }
         if (halbachBoosted) {
@@ -665,7 +795,13 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     @Override
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putBoolean("Powered", powered);
+        // Keep writing the legacy boolean so a save stays readable by 1.3.0 and by
+        // anything else that only knows about on/off; add the level only when it carries
+        // information a full drive wouldn't.
+        tag.putBoolean("Powered", redstoneLevel > 0);
+        if (redstoneLevel > 0 && redstoneLevel < MagneticStrength.MAX_SIGNAL) {
+            tag.putInt("RedstoneLevel", redstoneLevel);
+        }
         // Transient, but synced so WTHIT/Jade can distinguish "energy" vs
         // "redstone" vs "idle" on the client (recomputed every server tick).
         if (energyActiveThisTick) tag.putBoolean("EnergyActive", true);
@@ -683,7 +819,11 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        powered = tag.getBoolean("Powered");
+        // A pre-analog save has no RedstoneLevel: Powered=true means full drive, which
+        // reproduces the old behaviour exactly.
+        redstoneLevel = tag.contains("RedstoneLevel")
+                ? Math.max(0, Math.min(MagneticStrength.MAX_SIGNAL, tag.getInt("RedstoneLevel")))
+                : (tag.getBoolean("Powered") ? MagneticStrength.MAX_SIGNAL : 0);
         energyActiveThisTick = tag.getBoolean("EnergyActive");
         halbachBoosted = tag.getBoolean("Halbach");
         hematiteDampened = tag.getBoolean("HematiteDamp");
@@ -727,7 +867,8 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
     @Override
     public void fillCrashReportCategory(final net.minecraft.CrashReportCategory category) {
         super.fillCrashReportCategory(category);
-        category.setDetail("Magnetization Powered (redstone)", () -> Boolean.toString(powered));
+        category.setDetail("Magnetization Powered (redstone)",
+                () -> redstoneLevel + "/" + MagneticStrength.MAX_SIGNAL);
         category.setDetail("Magnetization Energy Active", () -> Boolean.toString(energyActiveThisTick));
         category.setDetail("Magnetization Energy Buffer",
                 () -> energyBuffer.getEnergyStored() + " / " + energyBuffer.getMaxEnergyStored());

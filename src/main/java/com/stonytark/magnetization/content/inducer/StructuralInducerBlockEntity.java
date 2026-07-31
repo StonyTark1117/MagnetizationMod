@@ -76,8 +76,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     // COMMON-configurable. They are read live each tick from MagConfig.inducer*
     // (see the "machines" section) so retuning takes effect without a restart.
 
-    /** External redstone signal, mirrored into block-state POWERED. */
-    private boolean externalSignal = false;
+    /** External redstone level, 0-15, mirrored into block-state POWERED as {@code > 0}. */
+    private int externalSignal = 0;
 
     /** Internal redstone-fuel slot (mirrors the excavator): any redstone item
      *  parked here keeps the inducer powered, like a constant signal. */
@@ -127,17 +127,22 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         super(MagBlockEntities.STRUCTURAL_INDUCER.get(), pos, state);
     }
 
-    /** Block-driven: external redstone changed. Mirrors into POWERED + base flag. */
-    public void setExternalSignal(final boolean signal) {
-        if (this.externalSignal == signal) return;
-        this.externalSignal = signal;
+    /** Block-driven: external redstone changed. Mirrors into POWERED + base level.
+     *  Takes the analog level so the Analog Redstone toggle can throttle the field;
+     *  {@code > 0} is what drives the boolean blockstate, exactly as before. */
+    public void setExternalSignal(final int signal) {
+        final int clamped = Math.max(0, Math.min(
+                com.stonytark.magnetization.api.MagneticStrength.MAX_SIGNAL, signal));
+        if (this.externalSignal == clamped) return;
+        this.externalSignal = clamped;
         setChanged();
-        setPowered(signal);
+        setRedstoneLevel(clamped);
         if (level == null) return;
+        final boolean powered = clamped > 0;
         final BlockState bs = level.getBlockState(getBlockPos());
         if (bs.hasProperty(BlockStateProperties.POWERED)
-                && bs.getValue(BlockStateProperties.POWERED) != signal) {
-            level.setBlock(getBlockPos(), bs.setValue(BlockStateProperties.POWERED, signal), Block.UPDATE_CLIENTS);
+                && bs.getValue(BlockStateProperties.POWERED) != powered) {
+            level.setBlock(getBlockPos(), bs.setValue(BlockStateProperties.POWERED, powered), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -218,17 +223,54 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         return net.minecraft.util.Mth.clamp(r > 0 ? r : DEFAULT_DEPTH, 4, 48);
     }
 
-    /** Reel-in force/speed multiplier from the strength buttons. Mirrors the
-     *  excavator's "tier controls pull force" model: WEAK reels slowly, EXTREME
-     *  hauls a structure in fast. Defaults to the STRONG tier (no override). */
+    /** Reel-in speed multiplier at each strength tier. WEAK reels slowly, EXTREME hauls
+     *  a structure in fast — mirrors the excavator's "tier controls pull force" model. */
+    private static final double PULL_AT_WEAK = 0.5d;
+    private static final double PULL_AT_MEDIUM = 1.0d;
+    private static final double PULL_AT_STRONG = 1.75d;
+    private static final double PULL_AT_EXTREME = 3.0d;
+
+    /**
+     * Reel-in force/speed multiplier. Derived from the emitter's <em>effective force</em>
+     * rather than its tier directly, so an analog redstone throttle interpolates smoothly
+     * between the four tier anchors instead of the inducer ignoring the signal — this
+     * emitter has no magnetic field of its own for the force override to ride on.
+     */
     private double pullMultiplier() {
-        return switch (effectiveStrength(com.stonytark.magnetization.api.MagneticStrength.STRONG)) {
-            case WEAK -> 0.5d;
-            case MEDIUM -> 1.0d;
-            case STRONG -> 1.75d;
-            case EXTREME -> 3.0d;
-            default -> 1.0d;
-        };
+        return interpolatePull(effectiveForce(
+                effectiveStrength(com.stonytark.magnetization.api.MagneticStrength.STRONG)));
+    }
+
+    @Override
+    protected boolean analogRedstoneEnabled() {
+        return com.stonytark.magnetization.config.MagConfig.analogRedstoneInducer();
+    }
+
+    /** Piecewise-linear map from force (N) onto the tier multiplier ladder, anchored at
+     *  each tier's nominal force so an un-throttled emitter reproduces the old values
+     *  exactly. */
+    private static double interpolatePull(final double force) {
+        final var weak = com.stonytark.magnetization.api.MagneticStrength.WEAK;
+        final var medium = com.stonytark.magnetization.api.MagneticStrength.MEDIUM;
+        final var strong = com.stonytark.magnetization.api.MagneticStrength.STRONG;
+        final var extreme = com.stonytark.magnetization.api.MagneticStrength.EXTREME;
+        if (force <= 0.0d) return 0.0d;
+        if (force <= weak.force()) return PULL_AT_WEAK;
+        if (force <= medium.force()) {
+            return lerp(force, weak.force(), medium.force(), PULL_AT_WEAK, PULL_AT_MEDIUM);
+        }
+        if (force <= strong.force()) {
+            return lerp(force, medium.force(), strong.force(), PULL_AT_MEDIUM, PULL_AT_STRONG);
+        }
+        if (force <= extreme.force()) {
+            return lerp(force, strong.force(), extreme.force(), PULL_AT_STRONG, PULL_AT_EXTREME);
+        }
+        return PULL_AT_EXTREME;
+    }
+
+    private static double lerp(final double x, final double x0, final double x1,
+                               final double y0, final double y1) {
+        return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
     }
 
     /** Scan the cone and assemble EVERY distinct structure in it (up to the

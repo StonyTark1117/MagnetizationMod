@@ -1391,7 +1391,12 @@ public final class MagGameTests {
      * the -FACING (SOUTH) end is ATTRACTED inward, so BOTH drift the same world
      * direction (+X for an EAST-facing block). A single (monopole) field would push
      * the two ships in OPPOSITE directions — so "both +X" is the dipole's signature.
-     * Own batch: the field range reaches neighbouring gametest arenas.
+     *
+     * <p>Isolation (regression guard): the block's field range is overridden to a
+     * SMALL 5 blocks (the electromagnet default is 128), and the test runs in its own
+     * batch. Together these stop the powered emitter — parked at y=240 like every
+     * "sky" ship test — from bleeding into a neighbouring arena's test (a 128-range
+     * field at y=240 previously disturbed the railgun manual-hold test).
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160, batch = "ship_dipole")
     public static void dipolePushesFerrousShipsWithDipoleSignature(final GameTestHelper helper) {
@@ -1403,6 +1408,11 @@ public final class MagGameTests {
                         .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
                                 net.minecraft.core.Direction.EAST),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
+        // Clamp the reach so the field covers the two nearby ships (±4) but can't
+        // touch adjacent gametest arenas.
+        if (level.getBlockEntity(em) instanceof com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity dbe) {
+            dbe.setRangeOverride(5);
+        }
         level.setBlock(em.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
 
@@ -1772,6 +1782,139 @@ public final class MagGameTests {
      * deliberate mutation from bleeding into the default-batch field/emitter
      * tests (which {@link #forceDefaultEmitterPower} also defends, belt-and-braces).
      */
+    /**
+     * Analog Redstone Strength: the signal level scales the emitted force along a ramp
+     * anchored at WEAK's force (signal 1) and EXTREME's force (signal 15), and does so
+     * ONLY while redstone is the driver and only for a block whose toggle is on.
+     *
+     * <p>Pinned to its OWN batch, not the shared {@code "configMutating"} one: tests
+     * within a batch tick concurrently, and {@code requireBothRedstoneAndEnergyGate}
+     * flips {@code REQUIRE_REDSTONE_AND_ENERGY} globally — which would break the FE-only
+     * case below. Batches run sequentially, so a private batch is real isolation.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 80, batch = "analogRedstone")
+    public static void analogRedstoneScalesForce(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos rel = new BlockPos(1, 1, 1);
+        helper.setBlock(rel, MagBlocks.ELECTROMAGNET.get());
+        final BlockPos pos = helper.absolutePos(rel);
+        final AbstractEmitterBlockEntity be = (AbstractEmitterBlockEntity) helper.getBlockEntity(rel);
+        final int cap = be.getEnergyBuffer().getMaxEnergyStored();
+
+        final boolean priorAnalog =
+                com.stonytark.magnetization.config.MagConfig.ANALOG_REDSTONE_ELECTROMAGNET.get();
+        final boolean priorBoth =
+                com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.get();
+        try {
+            forceDefaultEmitterPower();
+            com.stonytark.magnetization.config.MagConfig.ANALOG_REDSTONE_ELECTROMAGNET.set(true);
+
+            // (A) full signal → exactly EXTREME's force, the top of the ramp.
+            be.setEnergyForDebug(0);
+            be.setRedstoneLevel(15);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            final var atFull = be.currentField();
+            helper.assertTrue(atFull != null, "signal 15 should produce a field");
+            helper.assertTrue(Math.abs(atFull.force() - com.stonytark.magnetization.api.MagneticStrength.EXTREME.force()) < 1e-6,
+                    "signal 15 must give EXTREME's force; got " + atFull.force());
+
+            // (B) minimum signal → exactly WEAK's force, the bottom of the ramp.
+            be.setRedstoneLevel(1);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            final var atMin = be.currentField();
+            helper.assertTrue(atMin != null, "signal 1 should still produce a field");
+            helper.assertTrue(Math.abs(atMin.force() - com.stonytark.magnetization.api.MagneticStrength.WEAK.force()) < 1e-6,
+                    "signal 1 must give WEAK's force; got " + atMin.force());
+
+            // (C) the ramp is monotonic across the dial.
+            double previous = 0.0d;
+            for (int s = 1; s <= 15; s++) {
+                be.setRedstoneLevel(s);
+                AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+                final var f = be.currentField();
+                helper.assertTrue(f != null && f.force() > previous,
+                        "force must rise with the signal; stalled at level " + s);
+                previous = f.force();
+            }
+
+            // (D) signal 0 → dark, no field at all.
+            be.setRedstoneLevel(0);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            helper.assertTrue(!be.isPowered() && be.currentField() == null,
+                    "signal 0 must leave the emitter unpowered with no field");
+
+            // (E) FE-only drive is NEVER throttled — there is no signal to read, so the
+            // emitter must run at its full configured tier rather than at the floor.
+            be.setEnergyForDebug(cap);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            final var onEnergy = be.currentField();
+            helper.assertTrue(onEnergy != null && be.isPowered(),
+                    "buffered FE alone should power the emitter");
+            helper.assertTrue(!onEnergy.hasForceOverride(),
+                    "an FE-driven emitter must not carry an analog force override");
+            helper.assertTrue(Math.abs(onEnergy.force() - be.configuredStrength().force()) < 1e-6,
+                    "FE-driven force must equal the configured tier; got " + onEnergy.force());
+
+            // (F) toggle OFF → a weak signal gives full configured strength again, i.e.
+            //     the historical behaviour every existing world relies on.
+            com.stonytark.magnetization.config.MagConfig.ANALOG_REDSTONE_ELECTROMAGNET.set(false);
+            be.setEnergyForDebug(0);
+            be.setRedstoneLevel(1);
+            AbstractEmitterBlockEntity.serverTick(level, pos, be.getBlockState(), be);
+            final var legacy = be.currentField();
+            helper.assertTrue(legacy != null && !legacy.hasForceOverride(),
+                    "with the toggle off a partial signal must not throttle the field");
+            helper.assertTrue(Math.abs(legacy.force() - be.configuredStrength().force()) < 1e-6,
+                    "toggle off: force must equal the configured tier; got " + legacy.force());
+
+            // (G) the legacy on/off entry point still means "full drive".
+            be.setPowered(true);
+            helper.assertTrue(be.getRedstoneLevel() == 15,
+                    "setPowered(true) must store a full signal; got " + be.getRedstoneLevel());
+            be.setPowered(false);
+            helper.assertTrue(be.getRedstoneLevel() == 0,
+                    "setPowered(false) must store no signal; got " + be.getRedstoneLevel());
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.ANALOG_REDSTONE_ELECTROMAGNET.set(priorAnalog);
+            com.stonytark.magnetization.config.MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(priorBoth);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A pre-analog save carries only the boolean {@code Powered} tag. It must load as a
+     * FULL signal, otherwise every powered emitter in an existing world would quietly
+     * come back at the bottom of the ramp the first time an admin enabled the feature.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void legacyPoweredNbtLoadsAsFullSignal(final GameTestHelper helper) {
+        final BlockPos rel = new BlockPos(1, 1, 1);
+        helper.setBlock(rel, MagBlocks.ELECTROMAGNET.get());
+        final AbstractEmitterBlockEntity be = (AbstractEmitterBlockEntity) helper.getBlockEntity(rel);
+
+        final net.minecraft.nbt.CompoundTag legacy = new net.minecraft.nbt.CompoundTag();
+        legacy.putBoolean("Powered", true);   // no RedstoneLevel — a 1.3.0-era save
+        be.loadCustomOnly(legacy, helper.getLevel().registryAccess());
+        helper.assertTrue(be.getRedstoneLevel() == 15,
+                "a legacy Powered=true save must load as a full signal; got " + be.getRedstoneLevel());
+
+        final net.minecraft.nbt.CompoundTag off = new net.minecraft.nbt.CompoundTag();
+        off.putBoolean("Powered", false);
+        be.loadCustomOnly(off, helper.getLevel().registryAccess());
+        helper.assertTrue(be.getRedstoneLevel() == 0,
+                "a legacy Powered=false save must load as no signal; got " + be.getRedstoneLevel());
+
+        // And a modern save round-trips the exact level.
+        be.setRedstoneLevel(7);
+        final net.minecraft.nbt.CompoundTag saved =
+                be.saveWithoutMetadata(helper.getLevel().registryAccess());
+        be.setRedstoneLevel(0);
+        be.loadCustomOnly(saved, helper.getLevel().registryAccess());
+        helper.assertTrue(be.getRedstoneLevel() == 7,
+                "a saved partial signal must round-trip; got " + be.getRedstoneLevel());
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "configMutating")
     public static void requireBothRedstoneAndEnergyGate(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
@@ -2583,7 +2726,6 @@ public final class MagGameTests {
                 "SavedData should retain version 2 for one chunk");
         helper.succeed();
     }
-}
 
     /**
      * Optional AeroPortals integration: move an actual serialized Sable ship to
@@ -2697,3 +2839,4 @@ public final class MagGameTests {
         }
         return null;
     }
+}

@@ -163,6 +163,7 @@ public final class Magnetization {
         final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.energy.IEnergyStorage, net.minecraft.core.Direction> cap
                 = net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK;
         event.registerBlockEntity(cap, MagBlockEntities.ELECTROMAGNET.get(),       (be, side) -> be.getEnergyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.DIPOLE_ELECTROMAGNET.get(), (be, side) -> be.getEnergyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ANCHOR.get(),     (be, side) -> be.getEnergyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.REPULSOR_COIL.get(),       (be, side) -> be.getEnergyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.TRACTOR_BEAM.get(),        (be, side) -> be.getEnergyBuffer());
