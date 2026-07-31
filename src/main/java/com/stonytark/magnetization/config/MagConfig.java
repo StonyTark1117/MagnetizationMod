@@ -2,14 +2,26 @@ package com.stonytark.magnetization.config;
 
 import com.stonytark.magnetization.api.MagneticStrength;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import com.electronwill.nightconfig.core.Config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Server-side config for tunable physics constants. Values are read live from the
  * spec, so a config reload propagates immediately without restart.
  */
 public final class MagConfig {
+
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger("magnetization/config");
+    private static final Object CLIENT_SYNC_LOCK = new Object();
+    private static Map<String, Object> clientCommonOverrides = Map.of();
+    private static Map<String, Object> clientCommonOriginals = Map.of();
 
     /** SERVER-type spec: per-world, server-authoritative, synced server→client.
      *  Holds admin/balance categories (guiLimits, debug, commands) that should
@@ -1888,18 +1900,219 @@ public final class MagConfig {
     /** Helper: returns the configured permission level, or a fallback if the
      *  config isn't loaded yet (e.g. during early registration). */
     private static int permissionOr(final ModConfigSpec.IntValue v, final int fallback) {
-        try { return v.get(); } catch (final Throwable t) { return fallback; }
+        try { return commonClientValue(v, v.get()); } catch (final Throwable t) { return fallback; }
     }
 
     /** Config-not-loaded-tolerant int read (early registration / datagen). */
     private static int intOr(final ModConfigSpec.IntValue v, final int fallback) {
-        try { return v.get(); } catch (final Throwable t) { return fallback; }
+        try { return commonClientValue(v, v.get()); } catch (final Throwable t) { return fallback; }
     }
 
     /** Config-not-loaded-tolerant double read. */
     private static double doubleOr(final ModConfigSpec.DoubleValue v, final double fallback) {
-        try { return v.get(); } catch (final Throwable t) { return fallback; }
+        try { return commonClientValue(v, v.get()); } catch (final Throwable t) { return fallback; }
     }
+
+    private static boolean booleanOr(final ModConfigSpec.BooleanValue v, final boolean fallback) {
+        try { return commonClientValue(v, v.get()); } catch (final Throwable t) { return fallback; }
+    }
+
+    /**
+     * Returns a COMMON value as seen by the connected server on the physical
+     * client. COMMON files are intentionally local (they must be editable from
+     * the title screen), so NeoForge does not synchronize them like SERVER
+     * configs. The network snapshot fills that gap for client-side previews,
+     * compass properties, and other presentation code without changing the
+     * player's local file.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T commonClientValue(final ModConfigSpec.ConfigValue<T> value, final T localValue) {
+        synchronized (CLIENT_SYNC_LOCK) {
+            final Object override = clientCommonOverrides.get(String.join(".", value.getPath()));
+            return override == null ? localValue : (T) override;
+        }
+    }
+
+    /** Build a typed snapshot of every COMMON value for the server-to-client payload. */
+    public static CompoundTag commonSnapshot() {
+        final CompoundTag snapshot = new CompoundTag();
+        final Map<String, ModConfigSpec.ConfigValue<?>> values = new HashMap<>();
+        collectConfigValues(COMMON_SPEC.getValues(), values);
+        for (final Map.Entry<String, ModConfigSpec.ConfigValue<?>> entry : values.entrySet()) {
+            try {
+                final CompoundTag encoded = encodeValue(entry.getValue().get());
+                if (encoded != null) snapshot.put(entry.getKey(), encoded);
+            } catch (final Throwable ignored) {
+                // Configs may be observed during an early lifecycle boundary.
+            }
+        }
+        return snapshot;
+    }
+
+    /** Apply a server snapshot only in memory; it is never saved to the client file. */
+    public static void applyClientSnapshot(final CompoundTag snapshot) {
+        synchronized (CLIENT_SYNC_LOCK) {
+            restoreClientSnapshotLocked();
+            final Map<String, ModConfigSpec.ConfigValue<?>> values = new HashMap<>();
+            collectConfigValues(COMMON_SPEC.getValues(), values);
+            final Map<String, Object> originals = new HashMap<>();
+            final Map<String, Object> overrides = new HashMap<>();
+            for (final String key : snapshot.getAllKeys()) {
+                final ModConfigSpec.ConfigValue<?> value = values.get(key);
+                if (value == null) continue;
+                try {
+                    final Object local = value.get();
+                    final Object decoded = decodeValue(snapshot.getCompound(key), local, value.getDefault());
+                    if (decoded == null) continue;
+                    originals.put(key, local);
+                    overrides.put(key, decoded);
+                    setConfigValue(value, decoded);
+                } catch (final Throwable ignored) {
+                    // A malformed or future value must not disconnect the client.
+                }
+            }
+            clientCommonOriginals = originals;
+            clientCommonOverrides = overrides;
+        }
+    }
+
+    /** Restore the local COMMON file's values after leaving a server. */
+    public static void clearClientSnapshot() {
+        synchronized (CLIENT_SYNC_LOCK) {
+            restoreClientSnapshotLocked();
+        }
+    }
+
+    private static void restoreClientSnapshotLocked() {
+        for (final Map.Entry<String, Object> entry : clientCommonOriginals.entrySet()) {
+            final ModConfigSpec.ConfigValue<?> value = findCommonValue(entry.getKey());
+            if (value != null) {
+                try { setConfigValue(value, entry.getValue()); } catch (final Throwable ignored) { }
+            }
+        }
+        clientCommonOriginals = Map.of();
+        clientCommonOverrides = Map.of();
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void setConfigValue(final ModConfigSpec.ConfigValue<?> value, final Object decoded) {
+        ((ModConfigSpec.ConfigValue) value).set(decoded);
+    }
+
+    private static ModConfigSpec.ConfigValue<?> findCommonValue(final String path) {
+        final Map<String, ModConfigSpec.ConfigValue<?>> values = new HashMap<>();
+        collectConfigValues(COMMON_SPEC.getValues(), values);
+        return values.get(path);
+    }
+
+    private static void collectConfigValues(final Object node,
+                                            final Map<String, ModConfigSpec.ConfigValue<?>> values) {
+        if (node instanceof ModConfigSpec.ConfigValue<?> value) {
+            values.put(String.join(".", value.getPath()), value);
+        } else if (node instanceof Config config) {
+            for (final Object child : config.valueMap().values()) collectConfigValues(child, values);
+        }
+    }
+
+    private static CompoundTag encodeValue(final Object value) {
+        if (value == null) return null;
+        final CompoundTag encoded = new CompoundTag();
+        if (value instanceof Boolean bool) {
+            encoded.putString("type", "boolean");
+            encoded.putBoolean("value", bool);
+        } else if (value instanceof Integer integer) {
+            encoded.putString("type", "int");
+            encoded.putInt("value", integer);
+        } else if (value instanceof Long longValue) {
+            encoded.putString("type", "long");
+            encoded.putLong("value", longValue);
+        } else if (value instanceof Number number) {
+            encoded.putString("type", "double");
+            encoded.putDouble("value", number.doubleValue());
+        } else if (value instanceof Enum<?> enumValue) {
+            encoded.putString("type", "enum");
+            encoded.putString("value", enumValue.name());
+        } else if (value instanceof List<?> list) {
+            encoded.putString("type", "list");
+            final ListTag values = new ListTag();
+            for (final Object item : list) values.add(StringTag.valueOf(String.valueOf(item)));
+            encoded.put("value", values);
+        } else {
+            encoded.putString("type", "string");
+            encoded.putString("value", String.valueOf(value));
+        }
+        return encoded;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static Object decodeValue(final CompoundTag encoded, final Object local, final Object defaultValue) {
+        final String type = encoded.getString("type");
+        return switch (type) {
+            case "boolean" -> encoded.getBoolean("value");
+            case "int" -> encoded.getInt("value");
+            case "long" -> encoded.getLong("value");
+            case "double" -> encoded.getDouble("value");
+            case "enum" -> {
+                final Object basis = local != null ? local : defaultValue;
+                if (!(basis instanceof Enum<?> enumBasis)) yield null;
+                yield Enum.valueOf((Class<? extends Enum>) enumBasis.getDeclaringClass(), encoded.getString("value"));
+            }
+            case "list" -> {
+                final List<String> list = new ArrayList<>();
+                final ListTag values = encoded.getList("value", 8);
+                for (int i = 0; i < values.size(); i++) list.add(values.getString(i));
+                yield list;
+            }
+            case "string" -> encoded.getString("value");
+            default -> null;
+        };
+    }
+
+    /** Warn about invalid relationships and keep runtime accessors safe. */
+    public static void validateRelationships() {
+        warnIf("railgunMinLength must not exceed railgunMaxLength",
+                railgunMinLengthRaw(), railgunMaxLengthRaw());
+        warnIf("sensorRange must not exceed sensorMaxRange",
+                sensorRangeRaw(), sensorMaxRangeRaw());
+        warnIf("lenzBaseDrag must not exceed lenzMaxDrag",
+                lenzBaseDragRaw(), lenzMaxDragRaw());
+        warnIf("emitterEnergyTransferRate should not exceed emitterEnergyCapacity",
+                emitterEnergyTransferRateRaw(), emitterEnergyCapacityRaw());
+        warnIf("railgunFeReceive should not exceed railgunFeCapacity",
+                railgunFeReceiveRaw(), railgunFeCapacityRaw());
+        warnIf("fusionThrusterFeReceive should not exceed fusionThrusterFeCapacity",
+                fusionThrusterFeReceiveRaw(), fusionThrusterFeCapacityRaw());
+        warnIf("microThrusterFeReceive should not exceed microThrusterFeCapacity",
+                microThrusterFeReceiveRaw(), microThrusterFeCapacityRaw());
+        warnIf("mhdJetFeReceive should not exceed mhdJetFeCapacity",
+                mhdJetFeReceiveRaw(), mhdJetFeCapacityRaw());
+        warnIf("electrolyzerFeReceive should not exceed electrolyzerFeCapacity",
+                electrolyzerFeReceiveRaw(), electrolyzerFeCapacityRaw());
+    }
+
+    private static void warnIf(final String label, final double value, final double maximum) {
+        if (value > maximum) LOG.warn("Invalid Magnetization config relationship: {} ({} > {}). "
+                + "The runtime will clamp the effective value.", label, value, maximum);
+    }
+
+    private static int railgunMinLengthRaw() { return intOr(RAILGUN_MIN_LENGTH, 3); }
+    private static int railgunMaxLengthRaw() { return intOr(RAILGUN_MAX_LENGTH, 64); }
+    private static double sensorRangeRaw() { return doubleOr(SENSOR_RANGE, 8.0d); }
+    private static int sensorMaxRangeRaw() { return Math.max(1, intOr(SENSOR_MAX_RANGE, 32)); }
+    private static double lenzBaseDragRaw() { return doubleOr(LENZ_BASE_DRAG, 0.13d); }
+    private static double lenzMaxDragRaw() { return doubleOr(LENZ_MAX_DRAG, 0.55d); }
+    private static int emitterEnergyCapacityRaw() { return intOr(EMITTER_ENERGY_CAPACITY, 50_000); }
+    private static int emitterEnergyTransferRateRaw() { return intOr(EMITTER_ENERGY_TRANSFER_RATE, 200); }
+    private static int railgunFeCapacityRaw() { return intOr(RAILGUN_FE_CAPACITY, 1_000_000); }
+    private static int railgunFeReceiveRaw() { return intOr(RAILGUN_FE_RECEIVE, 64_000); }
+    private static int fusionThrusterFeCapacityRaw() { return intOr(FUSION_THRUSTER_FE_CAPACITY, 2_000_000); }
+    private static int fusionThrusterFeReceiveRaw() { return intOr(FUSION_THRUSTER_FE_RECEIVE, 64_000); }
+    private static int microThrusterFeCapacityRaw() { return intOr(MICRO_THRUSTER_FE_CAPACITY, 400_000); }
+    private static int microThrusterFeReceiveRaw() { return intOr(MICRO_THRUSTER_FE_RECEIVE, 16_000); }
+    private static int mhdJetFeCapacityRaw() { return intOr(MHD_JET_FE_CAPACITY, 400_000); }
+    private static int mhdJetFeReceiveRaw() { return intOr(MHD_JET_FE_RECEIVE, 8_000); }
+    private static int electrolyzerFeCapacityRaw() { return intOr(ELECTROLYZER_FE_CAPACITY, 200_000); }
+    private static int electrolyzerFeReceiveRaw() { return intOr(ELECTROLYZER_FE_RECEIVE, 8_000); }
 
     // ── combat accessors (fallbacks = previous hard-coded values) ──
     public static float  mrArmorImpactPerPiece()    { return (float) doubleOr(MR_ARMOR_IMPACT_PER_PIECE, 0.225d); }
@@ -1919,11 +2132,11 @@ public final class MagConfig {
     public static double galliumCurrentSpeed()      { return doubleOr(GALLIUM_CURRENT_SPEED, 0.09d); }
     public static int    galliumFreezeDelayTicks()  { return intOr(GALLIUM_FREEZE_DELAY, 40); }
     public static int    galliumMeltDelayTicks()    { return intOr(GALLIUM_MELT_DELAY, 120); }
-    public static double lenzBaseDrag()             { return doubleOr(LENZ_BASE_DRAG, 0.13d); }
-    public static double lenzMaxDrag()              { return doubleOr(LENZ_MAX_DRAG, 0.55d); }
+    public static double lenzBaseDrag()             { return Math.min(lenzBaseDragRaw(), lenzMaxDragRaw()); }
+    public static double lenzMaxDrag()              { return Math.max(lenzMaxDragRaw(), lenzBaseDragRaw()); }
     public static double lenzMinSpeed()             { return doubleOr(LENZ_MIN_SPEED, 0.04d); }
     public static int    lenzConductorCap()         { return Math.max(1, intOr(LENZ_CONDUCTOR_CAP, 8)); }
-    public static boolean halbachEnabled()          { try { return HALBACH_ENABLED.get(); } catch (final Throwable t) { return true; } }
+    public static boolean halbachEnabled()          { return booleanOr(HALBACH_ENABLED, true); }
     public static double petrifiedStormStrikeChance(){ return doubleOr(PETRIFIED_STORM_STRIKE_CHANCE, 0.5d); }
     public static int    petrifiedStormStrikeRadius(){ return intOr(PETRIFIED_STORM_STRIKE_RADIUS, 16); }
     public static int    tempFieldDurationTicks()    { return intOr(TEMP_FIELD_DURATION_TICKS, 600); }
@@ -1945,15 +2158,15 @@ public final class MagConfig {
     public static double anomalyShipForce()          { return doubleOr(ANOMALY_SHIP_FORCE, 1500.0d); }
     public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
     public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
-    public static boolean magneticPeaksEnabled()     { try { return MAGNETIC_PEAKS_ENABLED.get(); } catch (final Throwable t) { return false; } }
+    public static boolean magneticPeaksEnabled()     { return booleanOr(MAGNETIC_PEAKS_ENABLED, false); }
     public static float  anvilBreakMagnetite()       { return (float) doubleOr(ANVIL_BREAK_MAGNETITE, 0.10d); }
     public static float  anvilBreakMaghemite()       { return (float) doubleOr(ANVIL_BREAK_MAGHEMITE, 0.18d); }
     public static float  anvilBreakHematite()        { return (float) doubleOr(ANVIL_BREAK_HEMATITE, 0.15d); }
     public static float  anvilBreakTitanomagnetite() { return (float) doubleOr(ANVIL_BREAK_TITANOMAGNETITE, 0.0d); }
     public static float  anvilBreakDefault()         { return (float) doubleOr(ANVIL_BREAK_DEFAULT, 0.12d); }
     public static int    microThrusterTank()        { return intOr(MICRO_THRUSTER_TANK, 8000); }
-    public static int    microThrusterFeCapacity()  { return intOr(MICRO_THRUSTER_FE_CAPACITY, 400_000); }
-    public static int    microThrusterFeReceive()   { return intOr(MICRO_THRUSTER_FE_RECEIVE, 16_000); }
+    public static int    microThrusterFeCapacity()  { return microThrusterFeCapacityRaw(); }
+    public static int    microThrusterFeReceive()   { return Math.min(microThrusterFeReceiveRaw(), microThrusterFeCapacityRaw()); }
     public static int    microThrusterFePerTick()   { return intOr(MICRO_THRUSTER_FE_PER_TICK, 48); }
     public static int    microThrusterFluidPerTick(){ return intOr(MICRO_THRUSTER_FLUID_PER_TICK, 2); }
     public static double microThrusterMaxSpeed()    { return doubleOr(MICRO_THRUSTER_MAX_SPEED, 14.0d); }
@@ -1962,8 +2175,8 @@ public final class MagConfig {
     public static double fusionThrusterThrustBase()               { return doubleOr(FUSION_THRUSTER_THRUST_BASE, 0.5d); }
     public static double fusionThrusterThrustExponent()           { return doubleOr(FUSION_THRUSTER_THRUST_EXPONENT, 1.3d); }
     public static double fusionThrusterMaxSpeed()                 { return doubleOr(FUSION_THRUSTER_MAX_SPEED, 18.0d); }
-    public static int    fusionThrusterFeCapacity()               { return intOr(FUSION_THRUSTER_FE_CAPACITY, 2_000_000); }
-    public static int    fusionThrusterFeReceive()                { return intOr(FUSION_THRUSTER_FE_RECEIVE, 64_000); }
+    public static int    fusionThrusterFeCapacity()               { return fusionThrusterFeCapacityRaw(); }
+    public static int    fusionThrusterFeReceive()                { return Math.min(fusionThrusterFeReceiveRaw(), fusionThrusterFeCapacityRaw()); }
     public static int    fusionThrusterFeCostBase()               { return intOr(FUSION_THRUSTER_FE_COST_BASE, 64); }
     public static int    fusionThrusterFeCostPerInterior()        { return intOr(FUSION_THRUSTER_FE_COST_PER_INTERIOR, 16); }
     public static int    fusionThrusterTank()                     { return intOr(FUSION_THRUSTER_TANK, 32_000); }
@@ -1977,25 +2190,25 @@ public final class MagConfig {
     public static double fusionThrusterFluidDensityDeuteriumOxide() { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE, 0.35d); }
     public static double fusionThrusterFluidDensityTritium()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_TRITIUM, 4.5d); }
     public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
-    public static boolean allowRedstonePower() { try { return ALLOW_REDSTONE_POWER.get(); } catch (final Throwable t) { return true; } }
-    public static boolean allowEnergyPower()   { try { return ALLOW_ENERGY_POWER.get(); }   catch (final Throwable t) { return true; } }
+    public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
+    public static boolean allowEnergyPower()   { return booleanOr(ALLOW_ENERGY_POWER, true); }
     // Analog redstone strength — all default OFF, so an unloaded config behaves exactly
     // like the historical on/off emitters.
-    public static boolean analogRedstoneElectromagnet() { try { return ANALOG_REDSTONE_ELECTROMAGNET.get(); } catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneDipole()        { try { return ANALOG_REDSTONE_DIPOLE.get(); }        catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneAnchor()        { try { return ANALOG_REDSTONE_ANCHOR.get(); }        catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneRepulsor()      { try { return ANALOG_REDSTONE_REPULSOR.get(); }      catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneTractorBeam()   { try { return ANALOG_REDSTONE_TRACTOR_BEAM.get(); }   catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneExcavator()     { try { return ANALOG_REDSTONE_EXCAVATOR.get(); }      catch (final Throwable t) { return false; } }
-    public static boolean analogRedstoneInducer()       { try { return ANALOG_REDSTONE_INDUCER.get(); }        catch (final Throwable t) { return false; } }
-    public static boolean railgunEnabled()              { try { return RAILGUN_ENABLED.get(); }   catch (final Throwable t) { return true; } }
-    public static boolean railgunAutoFire()             { try { return RAILGUN_AUTO_FIRE.get(); }  catch (final Throwable t) { return true; } }
+    public static boolean analogRedstoneElectromagnet() { return booleanOr(ANALOG_REDSTONE_ELECTROMAGNET, false); }
+    public static boolean analogRedstoneDipole()        { return booleanOr(ANALOG_REDSTONE_DIPOLE, false); }
+    public static boolean analogRedstoneAnchor()        { return booleanOr(ANALOG_REDSTONE_ANCHOR, false); }
+    public static boolean analogRedstoneRepulsor()      { return booleanOr(ANALOG_REDSTONE_REPULSOR, false); }
+    public static boolean analogRedstoneTractorBeam()   { return booleanOr(ANALOG_REDSTONE_TRACTOR_BEAM, false); }
+    public static boolean analogRedstoneExcavator()     { return booleanOr(ANALOG_REDSTONE_EXCAVATOR, false); }
+    public static boolean analogRedstoneInducer()       { return booleanOr(ANALOG_REDSTONE_INDUCER, false); }
+    public static boolean railgunEnabled()              { return booleanOr(RAILGUN_ENABLED, true); }
+    public static boolean railgunAutoFire()             { return booleanOr(RAILGUN_AUTO_FIRE, true); }
     public static int    railgunCooldownTicks()         { return intOr(RAILGUN_COOLDOWN_TICKS, 40); }
     public static int    railgunMaxLaunchTicks()        { return intOr(RAILGUN_MAX_LAUNCH_TICKS, 100); }
     public static int    railgunHoldFeCost()            { return intOr(RAILGUN_HOLD_FE_COST, 8); }
     public static int    railgunTicks()                 { return intOr(RAILGUN_TICKS, 1); }
-    public static int    railgunMinLength()             { return intOr(RAILGUN_MIN_LENGTH, 3); }
-    public static int    railgunMaxLength()             { return intOr(RAILGUN_MAX_LENGTH, 64); }
+    public static int    railgunMinLength()             { return Math.min(railgunMinLengthRaw(), railgunMaxLengthRaw()); }
+    public static int    railgunMaxLength()             { return Math.max(railgunMaxLengthRaw(), railgunMinLengthRaw()); }
     public static int    railgunMaxGap()                { return intOr(RAILGUN_MAX_GAP, 12); }
     public static int    railgunChannelHalfThickness()  { return intOr(RAILGUN_CHANNEL_HALF_THICKNESS, 1); }
     public static double railgunLateralDamp()           { return doubleOr(RAILGUN_LATERAL_DAMP, 0.85d); }
@@ -2005,16 +2218,16 @@ public final class MagConfig {
     public static double railgunEntityScale()           { return doubleOr(RAILGUN_ENTITY_SCALE, 0.08d); }
     public static int    railgunFeCostBase()            { return intOr(RAILGUN_FE_COST_BASE, 32); }
     public static int    railgunFeCostPerLength()       { return intOr(RAILGUN_FE_COST_PER_LENGTH, 8); }
-    public static int    railgunFeCapacity()            { return intOr(RAILGUN_FE_CAPACITY, 1_000_000); }
-    public static int    railgunFeReceive()             { return intOr(RAILGUN_FE_RECEIVE, 64_000); }
-    public static boolean railgunBreaksBlocks()         { try { return RAILGUN_BREAKS_BLOCKS.get(); } catch (final Throwable t) { return true; } }
+    public static int    railgunFeCapacity()            { return railgunFeCapacityRaw(); }
+    public static int    railgunFeReceive()             { return Math.min(railgunFeReceiveRaw(), railgunFeCapacityRaw()); }
+    public static boolean railgunBreaksBlocks()         { return booleanOr(RAILGUN_BREAKS_BLOCKS, true); }
     public static int    railgunDestroyBudgetPerTick()  { return intOr(RAILGUN_DESTROY_BUDGET_PER_TICK, 16); }
-    public static boolean magnetSlotConsumesFuel()       { try { return MAGNET_SLOT_CONSUMES_FUEL.get(); } catch (final Throwable t) { return true; } }
+    public static boolean magnetSlotConsumesFuel()       { return booleanOr(MAGNET_SLOT_CONSUMES_FUEL, true); }
     public static int    magnetBurnTicksBase()           { return intOr(MAGNET_BURN_TICKS_BASE, 1200); }
     public static int    magnetBurnTicksPerPotency()     { return intOr(MAGNET_BURN_TICKS_PER_POTENCY, 400); }
     public static int    magnetBurnBlockFormMultiplier() { return intOr(MAGNET_BURN_BLOCK_FORM_MULTIPLIER, 9); }
-    public static int    mhdJetFeCapacity()         { return intOr(MHD_JET_FE_CAPACITY, 400_000); }
-    public static int    mhdJetFeReceive()          { return intOr(MHD_JET_FE_RECEIVE, 8_000); }
+    public static int    mhdJetFeCapacity()         { return mhdJetFeCapacityRaw(); }
+    public static int    mhdJetFeReceive()          { return Math.min(mhdJetFeReceiveRaw(), mhdJetFeCapacityRaw()); }
     public static double mhdJetMaxSpeedBase()       { return doubleOr(MHD_JET_MAX_SPEED_BASE, 4.0d); }
     public static double mhdJetMaxSpeedPerPotency() { return doubleOr(MHD_JET_MAX_SPEED_PER_POTENCY, 0.30d); }
     public static double mhdJetThrustBase()         { return doubleOr(MHD_JET_THRUST_BASE, 0.4d); }
@@ -2052,14 +2265,14 @@ public final class MagConfig {
     public static int    tokamakGenPerTickHelium3()    { return intOr(TOKAMAK_GEN_PER_TICK_HELIUM3, 3000); }
     public static int    tokamakOutputRateHelium3()    { return intOr(TOKAMAK_OUTPUT_RATE_HELIUM3, 24000); }
     public static int    tokamakBurnTicksHelium3()     { return intOr(TOKAMAK_BURN_TICKS_HELIUM3, 7200); }
-    public static int    electrolyzerFeCapacity()      { return intOr(ELECTROLYZER_FE_CAPACITY, 200_000); }
-    public static int    electrolyzerFeReceive()       { return intOr(ELECTROLYZER_FE_RECEIVE, 8_000); }
+    public static int    electrolyzerFeCapacity()      { return electrolyzerFeCapacityRaw(); }
+    public static int    electrolyzerFeReceive()       { return Math.min(electrolyzerFeReceiveRaw(), electrolyzerFeCapacityRaw()); }
     public static int    electrolyzerFePerTick()       { return intOr(ELECTROLYZER_FE_PER_TICK, 256); }
     public static int    electrolyzerWaterTank()       { return intOr(ELECTROLYZER_WATER_TANK, 8_000); }
     public static int    electrolyzerHydrogenTank()    { return intOr(ELECTROLYZER_HYDROGEN_TANK, 8_000); }
     public static int    electrolyzerWaterPerTick()    { return intOr(ELECTROLYZER_WATER_PER_TICK, 10); }
     public static int    electrolyzerHydrogenPerTick() { return intOr(ELECTROLYZER_HYDROGEN_PER_TICK, 10); }
-    public static boolean hopperFuelIntake()           { try { return HOPPER_FUEL_INTAKE.get(); } catch (final Throwable t) { return true; } }
+    public static boolean hopperFuelIntake()           { return booleanOr(HOPPER_FUEL_INTAKE, true); }
     public static double inducerPullAccel()         { return doubleOr(INDUCER_PULL_ACCEL, 16.0d); }
     public static double inducerMaxPullSpeed()      { return doubleOr(INDUCER_MAX_PULL_SPEED, 6.0d); }
     public static double inducerArrivalDistance()   { return doubleOr(INDUCER_ARRIVAL_DISTANCE, 2.5d); }
@@ -2067,14 +2280,14 @@ public final class MagConfig {
     public static int    inducerScanInterval()      { return intOr(INDUCER_SCAN_INTERVAL, 10); }
     public static int    inducerMaxStructures()     { return intOr(INDUCER_MAX_STRUCTURES, 8); }
     public static int    inducerTunnelBudget()      { return intOr(INDUCER_TUNNEL_BUDGET, 96); }
-    public static boolean inductionPadEnabled()     { try { return INDUCTION_PAD_ENABLED.get(); } catch (final Throwable t) { return false; } }
+    public static boolean inductionPadEnabled()     { return booleanOr(INDUCTION_PAD_ENABLED, false); }
     public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
     public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }
     public static int    inductionPadChargePerTick(){ return intOr(INDUCTION_PAD_CHARGE_PER_TICK, 4000); }
     public static double inductionPadRange()        { return doubleOr(INDUCTION_PAD_RANGE, 4.0d); }
     public static int    inductionPadInterval()     { return Math.max(1, intOr(INDUCTION_PAD_INTERVAL, 2)); }
-    public static double sensorRange()              { return doubleOr(SENSOR_RANGE, 8.0d); }
-    public static int    sensorMaxRange()           { return Math.max(1, intOr(SENSOR_MAX_RANGE, 32)); }
+    public static double sensorRange()              { return Math.min(sensorRangeRaw(), sensorMaxRangeRaw()); }
+    public static int    sensorMaxRange()           { return sensorMaxRangeRaw(); }
     public static double sensorMoveThreshold()      { return doubleOr(SENSOR_MOVE_THRESHOLD, 0.02d); }
     public static int    sensorInterval()           { return Math.max(1, intOr(SENSOR_INTERVAL, 2)); }
     public static int    sensorDecayPerStep()       { return intOr(SENSOR_DECAY_PER_STEP, 3); }

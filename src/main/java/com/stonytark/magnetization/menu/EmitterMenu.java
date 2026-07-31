@@ -317,7 +317,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
     public int inflightCap() { return inflightCap.get(); }
     /** Excavator-only: admin ceiling for the in-flight cap, from config. */
     public int inflightCapMax() {
-        try { return com.stonytark.magnetization.config.MagConfig.EXCAVATOR_MAX_IN_FLIGHT.get(); }
+        try { return MagConfig.commonClientValue(MagConfig.EXCAVATOR_MAX_IN_FLIGHT,
+                MagConfig.EXCAVATOR_MAX_IN_FLIGHT.get()); }
         catch (final Throwable t) { return 16; }
     }
     /** Slot 0 access for the screen. */
@@ -479,13 +480,13 @@ public final class EmitterMenu extends AbstractContainerMenu {
      *  same clamps the GUI applies. */
     public static MagneticStrength strengthCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
-            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
+            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.commonClientValue(MagConfig.ELECTROMAGNET_MAX_STRENGTH, MagConfig.ELECTROMAGNET_MAX_STRENGTH.get());
             if (be instanceof com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity)
-                                                               return MagConfig.ELECTROMAGNET_MAX_STRENGTH.get();
-            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_STRENGTH.get();
-            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_STRENGTH.get();
-            if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_STRENGTH.get();
-            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.EXCAVATOR_MAX_STRENGTH.get();
+                                                               return MagConfig.commonClientValue(MagConfig.ELECTROMAGNET_MAX_STRENGTH, MagConfig.ELECTROMAGNET_MAX_STRENGTH.get());
+            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.commonClientValue(MagConfig.ANCHOR_MAX_STRENGTH, MagConfig.ANCHOR_MAX_STRENGTH.get());
+            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.commonClientValue(MagConfig.REPULSOR_MAX_STRENGTH, MagConfig.REPULSOR_MAX_STRENGTH.get());
+            if (be instanceof TractorBeamBlockEntity)          return MagConfig.commonClientValue(MagConfig.TRACTOR_MAX_STRENGTH, MagConfig.TRACTOR_MAX_STRENGTH.get());
+            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.commonClientValue(MagConfig.EXCAVATOR_MAX_STRENGTH, MagConfig.EXCAVATOR_MAX_STRENGTH.get());
         } catch (final Throwable ignored) { /* config not loaded yet */ }
         return MagneticStrength.EXTREME;
     }
@@ -506,13 +507,13 @@ public final class EmitterMenu extends AbstractContainerMenu {
      *  same clamps the GUI applies. */
     public static int rangeCeilingFor(final AbstractEmitterBlockEntity be) {
         try {
-            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
+            if (be instanceof ElectromagnetBlockEntity)        return MagConfig.commonClientValue(MagConfig.ELECTROMAGNET_MAX_RANGE, MagConfig.ELECTROMAGNET_MAX_RANGE.get());
             if (be instanceof com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity)
-                                                               return MagConfig.ELECTROMAGNET_MAX_RANGE.get();
-            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.ANCHOR_MAX_RANGE.get();
-            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.REPULSOR_MAX_RANGE.get();
-            if (be instanceof TractorBeamBlockEntity)          return MagConfig.TRACTOR_MAX_RANGE.get();
-            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.EXCAVATOR_MAX_RANGE.get();
+                                                               return MagConfig.commonClientValue(MagConfig.ELECTROMAGNET_MAX_RANGE, MagConfig.ELECTROMAGNET_MAX_RANGE.get());
+            if (be instanceof MagneticAnchorBlockEntity)       return MagConfig.commonClientValue(MagConfig.ANCHOR_MAX_RANGE, MagConfig.ANCHOR_MAX_RANGE.get());
+            if (be instanceof RepulsorCoilBlockEntity)         return MagConfig.commonClientValue(MagConfig.REPULSOR_MAX_RANGE, MagConfig.REPULSOR_MAX_RANGE.get());
+            if (be instanceof TractorBeamBlockEntity)          return MagConfig.commonClientValue(MagConfig.TRACTOR_MAX_RANGE, MagConfig.TRACTOR_MAX_RANGE.get());
+            if (be instanceof MagneticExcavatorBlockEntity)    return MagConfig.commonClientValue(MagConfig.EXCAVATOR_MAX_RANGE, MagConfig.EXCAVATOR_MAX_RANGE.get());
         } catch (final Throwable ignored) { /* config not loaded yet */ }
         return RANGE_MAX;
     }

@@ -66,7 +66,8 @@ public final class CompassPropertyHooks {
 
     private static double liveCosmicRange() {
         try {
-            return com.stonytark.magnetization.config.MagConfig.COSMIC_COMPASS_RANGE.get();
+            return MagConfig.commonClientValue(MagConfig.COSMIC_COMPASS_RANGE,
+                    MagConfig.COSMIC_COMPASS_RANGE.get());
         } catch (final Throwable t) {
             return COSMIC_COMPASS_RANGE;
         }
@@ -169,12 +170,14 @@ public final class CompassPropertyHooks {
     }
 
     private static boolean naturesCompassEnabled() {
-        try { return MagConfig.ANOMALY_AFFECTS_NATURES_COMPASS.get(); }
+        try { return MagConfig.commonClientValue(MagConfig.ANOMALY_AFFECTS_NATURES_COMPASS,
+                MagConfig.ANOMALY_AFFECTS_NATURES_COMPASS.get()); }
         catch (final Throwable t) { return true; }
     }
 
     private static boolean explorersCompassEnabled() {
-        try { return MagConfig.ANOMALY_AFFECTS_EXPLORERS_COMPASS.get(); }
+        try { return MagConfig.commonClientValue(MagConfig.ANOMALY_AFFECTS_EXPLORERS_COMPASS,
+                MagConfig.ANOMALY_AFFECTS_EXPLORERS_COMPASS.get()); }
         catch (final Throwable t) { return true; }
     }
 
@@ -200,7 +203,8 @@ public final class CompassPropertyHooks {
     }
 
     private static boolean anomalyOverrideEnabled() {
-        try { return MagConfig.ANOMALY_AFFECTS_VANILLA_COMPASS.get(); }
+        try { return MagConfig.commonClientValue(MagConfig.ANOMALY_AFFECTS_VANILLA_COMPASS,
+                MagConfig.ANOMALY_AFFECTS_VANILLA_COMPASS.get()); }
         catch (final Throwable t) { return true; }
     }
 
@@ -308,6 +312,7 @@ public final class CompassPropertyHooks {
     }
 
     private static double compassRange() {
-        try { return MagConfig.COMPASS_RANGE.get(); } catch (Throwable t) { return 16.0d; }
+        try { return MagConfig.commonClientValue(MagConfig.COMPASS_RANGE,
+                MagConfig.COMPASS_RANGE.get()); } catch (Throwable t) { return 16.0d; }
     }
 }

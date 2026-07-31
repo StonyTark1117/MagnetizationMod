@@ -24,5 +24,17 @@ public final class MagClientConfig {
     public static void registerConfigScreen(final ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class,
                 (mod, parent) -> new ConfigurationScreen(mod, parent));
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(MagClientConfig::onClientLoggingIn);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(MagClientConfig::onClientLoggingOut);
+    }
+
+    private static void onClientLoggingIn(
+            final net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
+        com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
+    }
+
+    private static void onClientLoggingOut(
+            final net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+        com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
     }
 }

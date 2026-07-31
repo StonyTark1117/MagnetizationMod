@@ -35,6 +35,7 @@ public final class Magnetization {
     public static final String MOD_ID = "magnetization";
 
     public Magnetization(final IEventBus modBus, final ModContainer modContainer) {
+        com.stonytark.magnetization.config.MagConfigMigration.migrateLegacyServerWorldgen();
         MagBlocks.REGISTER.register(modBus);
         // ArmorMaterials must register before items that reference them.
         MagArmorMaterials.REGISTER.register(modBus);
@@ -68,6 +69,9 @@ public final class Magnetization {
         modBus.addListener(Magnetization::onCommonSetup);
         modBus.addListener(Magnetization::onRegisterCapabilities);
         modBus.addListener(Magnetization::onRegisterPayloads);
+        modBus.addListener(Magnetization::onConfigLoading);
+        modBus.addListener(Magnetization::onConfigReloading);
+        modBus.addListener(com.stonytark.magnetization.network.CommonConfigSync::onConfigReload);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
         NeoForge.EVENT_BUS.addListener(Magnetization::onServerStopped);
@@ -223,6 +227,15 @@ public final class Magnetization {
         final net.neoforged.neoforge.network.registration.PayloadRegistrar reg =
                 event.registrar(MOD_ID).versioned("1");
         com.stonytark.magnetization.network.UseCurioPayload.register(reg);
+        com.stonytark.magnetization.network.CommonConfigSyncPayload.register(reg);
+    }
+
+    private static void onConfigLoading(final net.neoforged.fml.event.config.ModConfigEvent.Loading event) {
+        MagConfig.validateRelationships();
+    }
+
+    private static void onConfigReloading(final net.neoforged.fml.event.config.ModConfigEvent.Reloading event) {
+        MagConfig.validateRelationships();
     }
 
     /** Drop the per-level ship-state caches when a dimension unloads, so we don't

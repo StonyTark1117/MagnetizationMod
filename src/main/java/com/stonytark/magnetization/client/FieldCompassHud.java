@@ -192,7 +192,8 @@ public final class FieldCompassHud {
     }
 
     private static double compassRange() {
-        try { return MagConfig.COMPASS_RANGE.get(); } catch (Throwable t) { return 16.0d; }
+        try { return MagConfig.commonClientValue(MagConfig.COMPASS_RANGE,
+                MagConfig.COMPASS_RANGE.get()); } catch (Throwable t) { return 16.0d; }
     }
 
     /** Map 0..360° to an 8-point compass-rose label. */
