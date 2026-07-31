@@ -3,8 +3,6 @@ package com.stonytark.magnetization.worldgen;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -12,7 +10,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -39,6 +36,9 @@ import java.util.Set;
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class ChunkSurfaceRepaintHandler {
+
+    public static final String MIGRATION_ID = "surface_repaint";
+    public static final int MIGRATION_VERSION = 1;
 
     /** Tick interval between scans. 20 ticks = 1s — well above what the
      *  player can visually notice as a "this chunk was just painted" lag. */
@@ -89,10 +89,8 @@ public final class ChunkSurfaceRepaintHandler {
             // renewable water/dirt into ferrofluid/ores by placing then restarting.
             // Per-level storage also means a second world in the same JVM can't
             // inherit the first world's gate.
-            final PaintedChunks painted = PaintedChunks.get(level);
             for (final long packed : targets) {
                 if (budget <= 0) return;
-                if (painted.isPainted(packed)) continue;
                 final var pos = new ChunkPos(packed);
                 // Only act on already-loaded chunks; skip otherwise so we
                 // don't force a load we wouldn't have done anyway.
@@ -102,9 +100,8 @@ public final class ChunkSurfaceRepaintHandler {
                 // with a heightmap + biome lookup per column — whether or not it ends
                 // up painting. Charge the per-tick budget for every examination, and
                 // mark it painted either way so it's a paint-once / examine-once gate.
-                paintIfRelevant(level, chunk);
-                painted.markPainted(packed);
-                budget--;
+                if (WorldChunkMigrations.apply(level, MIGRATION_ID, MIGRATION_VERSION, pos,
+                        () -> paintIfRelevant(level, chunk))) budget--;
             }
         }
     }
@@ -237,67 +234,4 @@ public final class ChunkSurfaceRepaintHandler {
         return MagBlocks.RAW_MAGNETITE_BLOCK.get().defaultBlockState();
     }
 
-    /**
-     * Persistent per-level record of which chunks the compatibility repaint has
-     * already processed — stored in {@code <level>/data/magnetization_surface_repaint.dat}.
-     * Being on disk (not an in-memory set) is what makes the repaint a genuine
-     * once-per-chunk migration: after a restart, already-painted chunks are skipped,
-     * so the pass never re-runs over terrain the player has since built on, and can't
-     * be abused to convert placed water/dirt into ferrofluid/ores by restarting.
-     */
-    public static final class PaintedChunks extends SavedData {
-        private static final String KEY = "magnetization_surface_repaint";
-
-        /**
-         * Schema version of the repaint migration. Bumping it does NOT re-run the
-         * repaint over already-painted chunks — that would reintroduce exactly the
-         * overwrite/renewable-resource problem the persistent gate exists to stop.
-         * It records which generation of the migration a save was last touched by, so
-         * {@code /magnetization debug audit} can report it and a future migration can
-         * make an informed, explicit decision about old saves.
-         */
-        public static final int MIGRATION_VERSION = 1;
-
-        private final Set<Long> painted = new HashSet<>();
-        private int version = MIGRATION_VERSION;
-
-        public static PaintedChunks get(final ServerLevel level) {
-            final PaintedChunks p = level.getDataStorage().computeIfAbsent(
-                    new Factory<>(PaintedChunks::new, PaintedChunks::load), KEY);
-            // Stamp forward in place: the record now describes the running migration,
-            // and the painted set is left alone so nothing is repainted.
-            if (p.version != MIGRATION_VERSION) {
-                p.version = MIGRATION_VERSION;
-                p.setDirty();
-            }
-            return p;
-        }
-
-        private PaintedChunks() {}
-
-        private static PaintedChunks load(final CompoundTag tag, final HolderLookup.Provider lookup) {
-            final PaintedChunks p = new PaintedChunks();
-            for (final long c : tag.getLongArray("Painted")) p.painted.add(c);
-            // Saves written before the version field existed read back as 0.
-            p.version = tag.getInt("Version");
-            return p;
-        }
-
-        @Override
-        public CompoundTag save(final CompoundTag tag, final HolderLookup.Provider lookup) {
-            tag.putLongArray("Painted", painted.stream().mapToLong(Long::longValue).toArray());
-            tag.putInt("Version", version);
-            return tag;
-        }
-
-        boolean isPainted(final long chunkKey) { return painted.contains(chunkKey); }
-
-        void markPainted(final long chunkKey) { if (painted.add(chunkKey)) setDirty(); }
-
-        /** Migration generation this level's repaint record was last stamped with. */
-        public int version() { return version; }
-
-        /** How many chunks the once-per-chunk repaint has already examined in this level. */
-        public int paintedCount() { return painted.size(); }
-    }
 }

@@ -2197,4 +2197,33 @@ public final class MagGameTests {
                 "An empty, unpowered thruster should report IDLE; got " + display.status());
         helper.succeed();
     }
+
+    /**
+     * Persistent migration framework semantics: a migration version runs once per
+     * chunk, a restart-safe completion record suppresses the second attempt, and
+     * an explicit version bump is allowed exactly once for that same chunk.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    public static void versionedChunkMigrationRunsOncePerVersion(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.level.ChunkPos chunk = new net.minecraft.world.level.ChunkPos(
+                helper.absolutePos(new BlockPos(1, 1, 1)));
+        final java.util.concurrent.atomic.AtomicInteger runs = new java.util.concurrent.atomic.AtomicInteger();
+        final String id = "gametest_versioned_migration";
+        helper.assertTrue(com.stonytark.magnetization.worldgen.WorldChunkMigrations.apply(
+                        level, id, 1, chunk, runs::incrementAndGet),
+                "First migration version should run");
+        helper.assertTrue(!com.stonytark.magnetization.worldgen.WorldChunkMigrations.apply(
+                        level, id, 1, chunk, runs::incrementAndGet),
+                "The same migration version must not run twice");
+        helper.assertTrue(com.stonytark.magnetization.worldgen.WorldChunkMigrations.apply(
+                        level, id, 2, chunk, runs::incrementAndGet),
+                "An explicit migration version bump should run once");
+        helper.assertTrue(runs.get() == 2,
+                "Migration action should run exactly once per applied version; runs=" + runs.get());
+        helper.assertTrue(com.stonytark.magnetization.worldgen.WorldChunkMigrations.version(level, id) == 2
+                        && com.stonytark.magnetization.worldgen.WorldChunkMigrations.completedCount(level, id) == 1,
+                "SavedData should retain version 2 for one chunk");
+        helper.succeed();
+    }
 }

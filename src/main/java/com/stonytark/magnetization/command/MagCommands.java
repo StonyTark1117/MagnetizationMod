@@ -895,7 +895,9 @@ public final class MagCommands {
         for (final ServerLevel level : server.getAllLevels()) {
             levels++;
             final int lirm = com.stonytark.magnetization.content.effect.TemporaryLirmFields.activeCount(level);
-            final var painted = com.stonytark.magnetization.worldgen.ChunkSurfaceRepaintHandler.PaintedChunks.get(level);
+            final String repaintId = com.stonytark.magnetization.worldgen.ChunkSurfaceRepaintHandler.MIGRATION_ID;
+            final int repaintVersion = com.stonytark.magnetization.worldgen.WorldChunkMigrations.version(level, repaintId);
+            final int paintedCount = com.stonytark.magnetization.worldgen.WorldChunkMigrations.completedCount(level, repaintId);
             final int meteorites = com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.activeCount(level);
             final int emitters = com.stonytark.magnetization.physics.EmitterRegistry.size(level);
             final int railguns = com.stonytark.magnetization.content.railgun.RailgunRegistry.size(level);
@@ -915,8 +917,8 @@ public final class MagCommands {
                     "    transient LIRM fields: %d   AE2 meteorite fields: %d", lirm, meteorites))
                     .withStyle(ChatFormatting.AQUA));
             lines.add(Component.literal(String.format(
-                    "    surface repaint: migration v%d, %,d chunk(s) painted",
-                    painted.version(), painted.paintedCount()))
+                    "    surface repaint: migration v%d, %,d chunk(s) applied",
+                    repaintVersion, paintedCount))
                     .withStyle(ChatFormatting.AQUA));
             lines.add(Component.literal(String.format(
                     "    caches — emitters %d, railguns %d", emitters, railguns))
