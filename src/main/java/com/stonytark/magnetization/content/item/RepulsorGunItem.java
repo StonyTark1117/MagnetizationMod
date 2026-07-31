@@ -266,7 +266,10 @@ public class RepulsorGunItem extends Item {
             }
             // Hidden `recoil_launch` advancement — fires on every successful
             // self-recoil shot, but the advancement itself only awards once.
-            com.stonytark.magnetization.registry.MagTriggers.RECOIL_LAUNCH.get().trigger(sp);
+            // A headless ServerPlayer has no advancement/network listener.
+            if (sp.connection != null) {
+                com.stonytark.magnetization.registry.MagTriggers.RECOIL_LAUNCH.get().trigger(sp);
+            }
         }
     }
 
