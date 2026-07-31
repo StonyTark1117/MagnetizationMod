@@ -5,6 +5,10 @@ build/
 run/
 */run/
 */run-data/
+# Isolated game directories for the release smoke-test profiles (build.gradle:
+# smokeServerMinimal / smokeClientNormal).
+run-smoke-server/
+run-smoke-client/
 # Dev-world snapshots (scripts/test-world.sh). Large binaries; force-add a
 # specific snapshot if you deliberately want to share it.
 test-worlds/

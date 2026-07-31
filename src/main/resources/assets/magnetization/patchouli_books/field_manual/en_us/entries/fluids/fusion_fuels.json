@@ -23,6 +23,16 @@
       "item": "magnetization:helium_3_bucket",
       "text": "book.magnetization.entry.fusion_fuels.helium3",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.compare_title",
+      "text": "book.magnetization.entry.fusion_fuels.compare"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.cells_title",
+      "text": "book.magnetization.entry.fusion_fuels.cells"
     }
   ]
 }

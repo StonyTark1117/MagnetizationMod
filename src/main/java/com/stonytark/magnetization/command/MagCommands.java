@@ -202,7 +202,10 @@ public final class MagCommands {
                                         IntegerArgumentType.getInteger(ctx, "radius")))))
                 // /magnetization debug ae2_meteorites — list AE2-sourced meteorite entries
                 .then(Commands.literal("ae2_meteorites")
-                        .executes(ctx -> listAeMeteorites(ctx.getSource())));
+                        .executes(ctx -> listAeMeteorites(ctx.getSource())))
+                // /magnetization debug audit — per-level world-effect inventory
+                .then(Commands.literal("audit")
+                        .executes(ctx -> auditWorldEffects(ctx.getSource())));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> buildLirmSubtree(
@@ -870,6 +873,71 @@ public final class MagCommands {
         return entries.size();
     }
 
+    /**
+     * Cross-level inventory of everything this mod keeps outside of block state:
+     * transient lightning fields, the surface-repaint migration record, the AE2
+     * meteorite registry, and each in-memory per-level cache.
+     *
+     * <p>Written for lifecycle debugging. Nearly every cross-world bug this mod has
+     * shipped (fields inherited by a second world in the same JVM, the repaint gate
+     * resetting on restart, emitter hum surviving unload) looks identical from the
+     * outside — "something is still happening" — and is instantly obvious the moment
+     * these counters are laid out per level. Runs over EVERY loaded level, not just
+     * the caller's, because the failure mode is precisely one level holding state
+     * that belongs to another.
+     */
+    private static int auditWorldEffects(final CommandSourceStack src) {
+        final var server = src.getServer();
+        final List<Component> lines = new ArrayList<>();
+        int levels = 0;
+        long grandTotal = 0L;
+
+        for (final ServerLevel level : server.getAllLevels()) {
+            levels++;
+            final int lirm = com.stonytark.magnetization.content.effect.TemporaryLirmFields.activeCount(level);
+            final var painted = com.stonytark.magnetization.worldgen.ChunkSurfaceRepaintHandler.PaintedChunks.get(level);
+            final int meteorites = com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.activeCount(level);
+            final int emitters = com.stonytark.magnetization.physics.EmitterRegistry.size(level);
+            final int railguns = com.stonytark.magnetization.content.railgun.RailgunRegistry.size(level);
+            final int ferroSrc = com.stonytark.magnetization.content.fluid.FerrofluidSourceRegistry.snapshot(level).size();
+            final int ferroMag = com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel(level).size();
+            final int ferroCreep = com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.snapshot(level).size();
+            final int mrSrc = com.stonytark.magnetization.content.fluid.MrFluidSourceRegistry.snapshot(level).size();
+            final int mrHard = com.stonytark.magnetization.content.fluid.HardenedMrFluidRegistry.snapshot(level).size();
+            final int gallium = com.stonytark.magnetization.content.fluid.GalliumRegistry.snapshot(level).size();
+
+            grandTotal += lirm + meteorites + emitters + railguns
+                    + ferroSrc + ferroMag + ferroCreep + mrSrc + mrHard + gallium;
+
+            lines.add(Component.literal("  " + level.dimension().location())
+                    .withStyle(ChatFormatting.GOLD));
+            lines.add(Component.literal(String.format(
+                    "    transient LIRM fields: %d   AE2 meteorite fields: %d", lirm, meteorites))
+                    .withStyle(ChatFormatting.AQUA));
+            lines.add(Component.literal(String.format(
+                    "    surface repaint: migration v%d, %,d chunk(s) painted",
+                    painted.version(), painted.paintedCount()))
+                    .withStyle(ChatFormatting.AQUA));
+            lines.add(Component.literal(String.format(
+                    "    caches — emitters %d, railguns %d", emitters, railguns))
+                    .withStyle(ChatFormatting.AQUA));
+            lines.add(Component.literal(String.format(
+                    "    caches — ferrofluid %d src / %d magnetized / %d creep", ferroSrc, ferroMag, ferroCreep))
+                    .withStyle(ChatFormatting.AQUA));
+            lines.add(Component.literal(String.format(
+                    "    caches — MR fluid %d src / %d hardened, gallium %d", mrSrc, mrHard, gallium))
+                    .withStyle(ChatFormatting.AQUA));
+        }
+
+        final int finalLevels = levels;
+        final long finalTotal = grandTotal;
+        src.sendSuccess(() -> Component.literal(String.format(
+                "Magnetization world audit — %d level(s), %,d tracked entrie(s) total:",
+                finalLevels, finalTotal)).withStyle(ChatFormatting.GOLD), false);
+        for (final Component line : lines) src.sendSuccess(() -> line, false);
+        return levels;
+    }
+
     /** Walk the EmitterRegistry for the player's level and print every active
      *  magnetic field source within {@code radius} blocks. Surfaces the
      *  block id, strength tier, polarity, and chebyshev distance — quick way
@@ -1250,6 +1318,7 @@ public final class MagCommands {
                 new Entry("/magnetization debug curios", "List items in the player's Curios slots.", debugP),
                 new Entry("/magnetization debug scan_fields [radius]", "List active emitters around the player (default 32).", debugP),
                 new Entry("/magnetization debug ae2_meteorites", "Dump AE2-sourced meteorite registry entries.", debugP),
+                new Entry("/magnetization debug audit", "Per-level world effects: LIRM fields, repaint version, caches.", debugP),
                 new Entry("/magnetization spawn_test_ship [size] [material]", "Drop a small ferromagnetic test ship mid-air.", spawnP),
                 new Entry("/magnetization spawn_test_anchor", "Drop a powered Magnetic Anchor 4 blocks ahead.", spawnP),
                 new Entry("/magnetization spawn_meteorite", "Drop a fully-charged meteorite_core 3 blocks ahead.", spawnP),

@@ -217,9 +217,9 @@ Update both public descriptions from the already comprehensive 1.3.0 changelog, 
 
 An incompatible future major release can satisfy dependency resolution and proceed into classloading/runtime failure instead of producing a clear dependency error. This is a release-hardening risk; no current configured dependency failed during the audit.
 
-**Fix direction**
+**Reality on #10 after previous fixes**
 
-Bound the supported major lines, for example Sable `<3` and Create `<7`, then widen after compatibility validation.
+The unbound upper ends were introduced at user request, previous major sable updates went above bounds and prevented players from launching due to the bound upper lines, they would rather have the hard crash.
 
 ### P3 — Release engineering and maintainability
 
@@ -321,9 +321,13 @@ These are **proposals, not bugs**. They are based on gaps visible in the current
 ### Optional polish/features
 
 7. **Fuel identity overlays/tooltips.** In addition to unique textures, show compact isotope/tier markings (H, D, T, He-3) and relative thrust/efficiency in JEI/EMI/Patchouli.
+   **DONE.** `FusionFuelInfo` is the single source of truth for badge + performance data. `MagFuelBadges` registers an `IItemDecorator` per fuel item, so the H / D / T / He³ / Li mark renders in the inventory, machine GUIs and JEI/REI/EMI alike. `MagItemTooltips` appends thrust + tank-runtime (relative to Deuterium Oxide), MHD conductivity, and Tokamak FE/tick + burn + total-per-cell, all read live from `MagConfig`. Patchouli's *Fusion Fuels* entry gained two pages explaining how to read them.
 8. **Railgun remote quality of life.** Show dimension and rail name/custom label in the tooltip, provide an explicit unbind action, and give clear feedback for missing/unloaded/different-dimension emitters instead of silently passing.
+   **DONE.** The binding now records facing, scanned rail length, and any anvil label alongside pos/dimension, and the tooltip shows all of it with a red cross-dimension warning. `use()` reports the specific reason it can't fire (not bound / wrong dimension / chunk not loaded / railgun gone) instead of passing. Sneak-use unbinds unconditionally — the rail is un-paired too when reachable — covered by the new `railgunRemoteUnbindsFromAMissingRailgun` GameTest.
 9. **Admin audit command for world effects.** Extend debug commands to list active transient LIRM fields, repaint migration version, registered AE meteor fields, and per-level cache sizes. This would make future cross-world lifecycle bugs visible in playtesting.
+   **DONE.** `/magnetization debug audit` walks every loaded level and prints transient LIRM fields, the surface-repaint migration version + painted-chunk count, AE2 meteorite entries, and each per-level cache size (emitters, railguns, ferrofluid source/magnetized/creep, MR fluid source/hardened, gallium). `PaintedChunks` gained a persisted `MIGRATION_VERSION`, stamped forward in place so a bump never re-paints and never reopens P0 #2.
 10. **Release smoke-test profiles.** Provide separate Gradle tasks for minimal dedicated server, normal client, compatibility-heavy client, and GameTest. A clean minimal-server log should become a release gate.
+    **DONE.** `smokeServerMinimal`, `smokeClientNormal`, `smokeClientCompat`, `smokeGameTest`, plus `releaseGate` (build + both automated gates). `smokeServerMinimal` boots a real dedicated server in its own directory on hard dependencies only, types `stop` after a configurable window, and fails on a FATAL, a stack trace, a server that never reported `Done`, or any unexplained `ERROR`. The third-party `ClientLevel` dist probes documented under *Runtime log context* below are the justified entries in its `smokeIgnoredErrors` allowlist; the skipped count is always printed.
 11. **Accessibility pass.** Ensure polarity, fuel tier, machine activity, and field strength never depend on red/blue or hue alone; use shapes, symbols, animation, or text as a second channel.
 
 ## Required manual playtest matrix
@@ -340,7 +344,7 @@ Automated checks cannot prove visual feel, balance, or GUI interaction quality. 
 ### Machines and automation
 
 - Electrolyzer: bucket, hopper, pipe, FE input, hydrogen extraction, full-output stall, save/reload, break/re-place.
-- Tokamak: all three cells, output rates, burn duration, hopper insertion, empty-container behavior, save/reload.
+- Tokamak: all three cells, output rates, burn duration, hopper insertion, empty-container behavior, save/reload.	
 - Micro/MHD/Fusion thrusters: pipe input, item automation where exposed, fuel mismatch rejection, save/reload, break behavior, and server-retuned capacities.
 - Fusion panel: minimum and maximum sizes, every orientation, mirrored/rotated structures, forming after pre-filling multiple cells, breaking/reforming, master changes, FE/fluid input on every interior cell, world reload while firing.
 - Railgun: auto and manual workflow, all six facings, min/max length/gap, 3+ rails, multiple nearby railguns, remote removal/use, unloaded target emitter, dimension mismatch, target entering/leaving during launch, obstruction/claim protection, and restart during each arc state.

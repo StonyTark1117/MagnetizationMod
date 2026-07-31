@@ -166,6 +166,10 @@ public final class MagItemTooltips {
         if (key != null) {
             lines.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
         }
+        // Fusion-fuel identity: relative thrust / runtime / FE numbers straight off the
+        // live config, paired with the icon badge from FusionFuelInfo. No-op for
+        // everything that isn't a fuel.
+        FusionFuelInfo.appendPerformance(stack, lines);
         // Magnetized armor: show its polarity stamp regardless of which item it is —
         // any tagged metal armor can be magnetized, including iron, gold, netherite, etc.
         final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());

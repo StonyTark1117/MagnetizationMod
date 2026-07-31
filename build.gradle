@@ -34,13 +34,28 @@ configurations {
     // its nested jars (see unwrapSodium), and put the REAL jars on localRuntime.
     sodiumWrapper
 }
-// The soft-dep / smoke-test mods on localRuntime are needed for runClient/runServer,
-// but several are client-only and NPE in the headless data run (e.g. immersive_aircraft
-// and sodium call Minecraft.getInstance() during mod construction, which is null in
-// datagen). The data run uses runtimeClasspath, so only fold localRuntime in when we're
-// NOT running datagen — keeping `./gradlew runData` clean while dev runs still get them.
-def runningDatagen = gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('rundata') }
-if (!runningDatagen) {
+// The soft-dep / smoke-test mods on localRuntime are the compatibility-heavy client
+// pack we validate against in `./gradlew runClient` (Sodium, Iris, JEI, the tag-
+// coverage mods, etc.). They must NOT be folded in for:
+//   - `runData`: several are client-only and NPE in the headless data run (sodium /
+//     immersive_aircraft call Minecraft.getInstance() during mod construction, null in datagen);
+//   - `runServer` / `runGameTestServer`: a dedicated-server dist shouldn't load client-only
+//     rendering mods — doing so spams `Attempted to load class .../client/... for invalid dist
+//     DEDICATED_SERVER` and makes the automated GameTest gate a poor stand-in for a real
+//     server. Keeping this classpath minimal (hard deps only) gives a clean physical-server run.
+//   - the `smokeClientNormal` / `smokeServerMinimal` release profiles, whose whole point
+//     is to prove the mod is healthy WITHOUT a compat pack propping it up.
+// So only extend runtimeClasspath with localRuntime for the compat client run (and plain `build`).
+def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
+// Task-name suffixes that must run against hard dependencies only. Matched on the
+// lowercased suffix so both `:runServer` and `runServer` forms hit.
+def minimalProfileTasks = [
+        'rundata',
+        'runserver', 'rungametestserver', 'runserversmoke', 'runclientminimal',
+        'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
+]
+def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
+if (!wantsMinimalClasspath) {
     configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
 }
 
@@ -52,6 +67,13 @@ if (!runningDatagen) {
 configurations.all {
     resolutionStrategy {
         force 'cc.tweaked:cc-tweaked-1.21.1-forge:1.116.2'
+        // Curios arrives as a Maven transitive of aeronautics + simulated at 9.2.2,
+        // but neoforge.mods.toml declares `curios [9.5.1,)`. FML enforces an OPTIONAL
+        // dependency's range whenever that mod IS present, so 9.2.2 on the classpath
+        // is a hard "only supports curios 9.5.1 or above" load failure — caught by
+        // `smokeServerMinimal`. Force the dev classpath up to the declared floor so
+        // the runtime we test matches the runtime we advertise.
+        force 'top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1'
     }
 }
 
@@ -208,8 +230,19 @@ neoForge {
         configureEach {
             systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
         }
+        // `client` is the COMPATIBILITY-HEAVY client: everything on localRuntime
+        // (Sodium/Iris/JEI/REI-adjacent/tag-coverage mods) rides along. Reach for
+        // `smokeClientCompat` when that's what you mean.
         client { client() }
+        // Same client, hard dependencies only — the classpath gate above drops
+        // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
+        // compat pack?", which is the question every player report starts with.
+        clientMinimal { client(); gameDirectory = file('run-smoke-client') }
         server { server(); programArgument 'nogui' }
+        // Minimal dedicated server for the release gate: own game directory (so its
+        // log is never a stale copy of a developer session), hard deps only, and
+        // stopped from stdin by `smokeServerMinimal` after a fixed boot window.
+        serverSmoke { server(); programArgument 'nogui'; gameDirectory = file('run-smoke-server') }
         // Headless test runner — invoke via `./gradlew runGameTestServer`.
         // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience
         // method (only client/server/data), so set the run type manually.
@@ -233,6 +266,169 @@ neoForge {
     mods {
         "${mod_id}" { sourceSet sourceSets.main }
     }
+}
+
+// ---------------------------------------------------------------------------
+// Release smoke-test profiles (1.3.0 audit #10)
+//
+//   ./gradlew smokeServerMinimal   dedicated server, hard deps only — RELEASE GATE
+//   ./gradlew smokeGameTest        headless GameTest suite          — RELEASE GATE
+//   ./gradlew smokeClientNormal    client, hard deps only           — manual
+//   ./gradlew smokeClientCompat    client + the whole compat pack   — manual
+//   ./gradlew releaseGate          build + both automated gates
+//
+// The two automated gates are the ones that can fail a build. `smokeServerMinimal`
+// boots a real dedicated server in its own directory, lets it run for a while, types
+// `stop` on its console, and then fails if the log carries a FATAL, a stack trace, or
+// (unless -PmagSmokeAllowErrors is passed) any ERROR line at all. Every dedicated-
+// server defect this mod has shipped — client-only classes loading on the server,
+// missing registry entries, capability registration order — announces itself in that
+// log long before a player does.
+// ---------------------------------------------------------------------------
+
+/**
+ * Stdin for the smoke server: blocks for a fixed window, then types `stop`.
+ * A dedicated server has no other clean self-shutdown, and a gate that needs a human
+ * to press a key is not a gate. The sleep happens on Gradle's stdin pump thread when
+ * the stream is first read, i.e. only once the server process is actually running.
+ */
+class DelayedStopInput extends InputStream {
+    private final long delayMs
+    private final byte[] payload = "stop\n".getBytes("UTF-8")
+    private int index = 0
+    private boolean waited = false
+
+    DelayedStopInput(long delayMs) { this.delayMs = delayMs }
+
+    @Override
+    int read() {
+        if (!waited) {
+            try { Thread.sleep(delayMs) } catch (InterruptedException ignored) { Thread.currentThread().interrupt() }
+            waited = true
+        }
+        return index >= payload.length ? -1 : (payload[index++] & 0xFF)
+    }
+}
+
+def smokeServerDir = file('run-smoke-server')
+def smokeServerSeconds = ((findProperty('magSmokeSeconds') ?: '210') as String) as int
+def smokeAllowErrors = findProperty('magSmokeAllowErrors') != null
+
+// Known-benign ERROR lines produced by the environment rather than by this mod. The
+// gate fails on every OTHER error line, and always reports how many it skipped, so
+// this list can't quietly grow into "ignore everything". Keep each entry justified.
+def smokeIgnoredErrors = [
+        // Mixin's class-loading pass resolves the targets of our HARD dependencies'
+        // client mixin configs (Create / Sable / Aeronautics / TerraBlender). On a
+        // dedicated server the dist cleaner refuses the client-only target and Mixin
+        // logs it, then carries on and skips the mixin — the intended behaviour. Our
+        // own client mixins live under the `client` key of magnetization.mixins.json
+        // and are never offered to the server, so these lines are never ours.
+        'for invalid dist DEDICATED_SERVER',
+        // First boot in a fresh smoke directory: vanilla reports the missing
+        // server.properties immediately before generating it.
+        'Failed to load properties from file: server.properties',
+]
+
+// A server refuses to boot without an accepted EULA. We never fabricate one — we copy
+// the acceptance the developer already made for the normal `run/` directory, and fail
+// with instructions if there isn't one.
+def propagateEula = { File targetDir ->
+    def target = new File(targetDir, 'eula.txt')
+    if (target.exists() && target.text.contains('eula=true')) return
+    def source = file('run/eula.txt')
+    if (!source.exists() || !source.text.contains('eula=true')) {
+        throw new GradleException(
+                "smokeServerMinimal needs an accepted Minecraft EULA.\n" +
+                "Run ./gradlew runServer once and accept it in run/eula.txt, or write " +
+                "eula=true into ${target} yourself.")
+    }
+    targetDir.mkdirs()
+    target.text = source.text
+    logger.lifecycle("smokeServerMinimal: copied the accepted EULA from run/eula.txt")
+}
+
+tasks.matching { it.name == 'runServerSmoke' }.configureEach {
+    standardInput = new DelayedStopInput(smokeServerSeconds * 1000L)
+    doFirst {
+        propagateEula(smokeServerDir)
+        // Delete the previous log so the gate can never pass by reading a stale clean
+        // run — an empty/missing log is treated as a failure below, not a pass.
+        delete new File(smokeServerDir, 'logs/latest.log')
+        logger.lifecycle("smokeServerMinimal: booting; will type `stop` after ${smokeServerSeconds}s")
+    }
+}
+
+tasks.register('smokeServerMinimal') {
+    group = 'verification'
+    description = 'RELEASE GATE — boots a minimal dedicated server and fails on a dirty log.'
+    dependsOn 'runServerSmoke'
+    doLast {
+        def log = new File(smokeServerDir, 'logs/latest.log')
+        if (!log.exists() || log.length() == 0L) {
+            throw new GradleException("smokeServerMinimal: no server log at ${log} — the server never got far enough to write one.")
+        }
+        def fatal = []
+        def errors = []
+        def ignored = 0
+        log.eachLine('UTF-8') { line ->
+            if (line.contains('/FATAL]') || line.contains('Exception in thread')
+                    || line.contains('Failed to start the minecraft server')) {
+                fatal << line
+            } else if (line.contains('/ERROR]')) {
+                if (smokeIgnoredErrors.any { line.contains(it) }) ignored++
+                else errors << line
+            }
+        }
+        // Did it actually finish booting? A server killed early can leave a log with no
+        // errors in it, which would otherwise read as a clean pass.
+        def booted = log.text.contains('Done (') || log.text.contains('For help, type "help"')
+        if (!booted) {
+            throw new GradleException(
+                    "smokeServerMinimal: the server never reported 'Done' — it did not finish loading " +
+                    "within ${smokeServerSeconds}s. Raise the window with -PmagSmokeSeconds=<n> if the " +
+                    "machine is just slow, otherwise read ${log}.")
+        }
+        if (ignored > 0) {
+            logger.lifecycle("smokeServerMinimal: skipped ${ignored} known-benign ERROR line(s) (see smokeIgnoredErrors in build.gradle)")
+        }
+        fatal.each { logger.error("  FATAL  ${it}") }
+        errors.each { logger.error("  ERROR  ${it}") }
+        if (!fatal.isEmpty()) {
+            throw new GradleException("smokeServerMinimal: ${fatal.size()} fatal line(s) in the dedicated-server log (see above).")
+        }
+        if (!errors.isEmpty() && !smokeAllowErrors) {
+            throw new GradleException(
+                    "smokeServerMinimal: ${errors.size()} unexplained ERROR line(s) in the dedicated-server log (see above). " +
+                    "Fix them, add a justified entry to smokeIgnoredErrors, or re-run with -PmagSmokeAllowErrors.")
+        }
+        logger.lifecycle("smokeServerMinimal: clean dedicated-server boot" +
+                (errors.isEmpty() ? "." : " (${errors.size()} ERROR line(s) accepted via -PmagSmokeAllowErrors)."))
+    }
+}
+
+tasks.register('smokeGameTest') {
+    group = 'verification'
+    description = 'RELEASE GATE — runs the headless GameTest suite on a dedicated server.'
+    dependsOn 'runGameTestServer'
+}
+
+tasks.register('smokeClientNormal') {
+    group = 'verification'
+    description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
+    dependsOn 'runClientMinimal'
+}
+
+tasks.register('smokeClientCompat') {
+    group = 'verification'
+    description = 'Manual smoke test — client with the full compatibility pack (Sodium/Iris/JEI/...).'
+    dependsOn 'runClient'
+}
+
+tasks.register('releaseGate') {
+    group = 'verification'
+    description = 'Everything that must be green before tagging a release: build + GameTests + minimal server.'
+    dependsOn 'build', 'smokeGameTest', 'smokeServerMinimal'
 }
 
 dependencies {
@@ -275,9 +471,9 @@ dependencies {
     // BlameJared's maven (api-only artifact), which is published with NeoForge-
     // compatible mappings; the Modrinth mirror has classpath baggage that pulls
     // Yarn intermediary stubs.
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.27.0.340")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.42.0.388")
     // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
-    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.27.0.340")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.42.0.388")
 
     // REI — alternative recipe browser. Soft-dep; plugin discovered via the
     // META-INF/services/me.shedaniel.rei.api.client.plugins.REIClientPlugin file.
@@ -363,8 +559,8 @@ dependencies {
     // `compat.CompatSodiumFluidRendererMixin` (@Inject require=1) matches 0 targets
     // against Sodium 0.8 and hard-crashes the client at world load. Bumped to a
     // Sodium-0.8-aware build. If you bump Sodium again, bump these to match.
-    localRuntime("maven.modrinth:supplementaries:Agn1kmUY") // 1.21.1-3.6.8
-    localRuntime("maven.modrinth:moonlight:CO2fjXOk") // 1.21.1-3.0.18, Supplementaries hard dep
+    localRuntime("maven.modrinth:supplementaries:UPJIp6At") // 1.21.1-3.8.5
+    localRuntime("maven.modrinth:moonlight:CitoQHqE") // 1.21.1-3.3.0, Supplementaries hard dep
     // Sodium — the renderer most users run. localRuntime so we validate our
     // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
     // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
@@ -384,8 +580,8 @@ dependencies {
     // upstream mod fixes it; tag coverage remains in place either way.
     // localRuntime("maven.modrinth:aether:K5X5qMwG")
     // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
-    localRuntime("maven.modrinth:sophisticated-storage:FOhBBmMK") // 1.21.1-1.5.60.1851
-    localRuntime("maven.modrinth:sophisticated-core:PaNVpd0p") // 1.21.1-1.4.59.2032, Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:sophisticated-storage:8A8N1c9A") // 1.21.1-1.5.83.2017
+    localRuntime("maven.modrinth:sophisticated-core:Yx6FiECq") // 1.21.1-1.4.80.2194, Sophisticated Storage hard dep
     localRuntime("maven.modrinth:immersive-aircraft:RkWu0N4D") // 1.4.6+1.21.1
     // create-new-age 1.2.0 declares an OPTIONAL computercraft dep with range
     // [1.116.2,); NeoForge still enforces that range when CC is present. CC:Tweaked
@@ -412,7 +608,7 @@ dependencies {
     localRuntime("maven.modrinth:accessories:Fb55Fgjz")
     localRuntime("maven.modrinth:accessories-compat-layer:JMgVNypu")
     localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // accessories-compat-layer hard dep
-    localRuntime("maven.modrinth:spartan-weaponry-unofficial:LED3KcKP") // 1.21.1-1.2.1
+    localRuntime("maven.modrinth:spartan-weaponry-unofficial:I7KW38kf") // 1.21.1-1.2.2
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

@@ -5,8 +5,8 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 ## Requirements
 
 - Minecraft **1.21.1**
-- NeoForge **21.1.233+**
-- [Create](https://modrinth.com/mod/create) **6.0.10+**
+- NeoForge **21.1.247+**
+- [Create](https://modrinth.com/mod/create) **6.0.11+**
 - [Sable](https://modrinth.com/mod/sable) **2.0.3+**
 - [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.3.0+**
 - Simulated **1.3.0+**
