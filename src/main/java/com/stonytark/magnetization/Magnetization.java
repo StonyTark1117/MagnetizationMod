@@ -86,6 +86,14 @@ public final class Magnetization {
             com.stonytark.magnetization.compat.alexscaves.MagAlexsCavesCompat.wire(modBus);
         }
 
+        // AeroPortals reconstructs Sable sublevels in the destination dimension.
+        // Follow its transfer event so derived caches and absolute railgun-remote
+        // bindings follow the moved ship. The compat class is never resolved when
+        // the optional mod is absent.
+        if (ModList.get().isLoaded("aeroportals")) {
+            com.stonytark.magnetization.compat.aeroportals.MagAeroPortalsCompat.wire(NeoForge.EVENT_BUS);
+        }
+
         // Client-only: light up the "Config" button on the Mods list with NeoForge's
         // built-in auto-generated config screen. The guard keeps the client-side
         // ConfigurationScreen / IConfigScreenFactory classes from being touched

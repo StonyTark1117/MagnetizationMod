@@ -81,6 +81,33 @@ public class RailgunRemoteItem extends Item {
         return loc == null ? null : ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, loc);
     }
 
+    /**
+     * Move an existing binding without discarding its cached label/geometry.
+     * Used by optional ship-transfer integrations after the emitter's Sable
+     * plot is reconstructed in another dimension.
+     *
+     * @return {@code true} when this stack contained the expected old binding
+     *         and was updated
+     */
+    public static boolean remapBinding(final ItemStack stack,
+                                       final ResourceKey<Level> oldDim,
+                                       final ResourceKey<Level> newDim,
+                                       final java.util.function.UnaryOperator<BlockPos> positionMapper) {
+        final CustomData data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        final BlockPos oldPos = boundPos(stack);
+        final ResourceKey<Level> dim = boundDim(stack);
+        if (data == null || oldPos == null || !oldDim.equals(dim)) return false;
+
+        final BlockPos newPos = positionMapper.apply(oldPos);
+        if (newPos == null || (newPos.equals(oldPos) && newDim.equals(oldDim))) return false;
+
+        final CompoundTag tag = data.copyTag();
+        tag.putLong("BoundPos", newPos.asLong());
+        tag.putString("BoundDim", newDim.location().toString());
+        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        return true;
+    }
+
     private static @Nullable String boundLabel(final ItemStack stack) {
         final CustomData data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
         if (data == null || !data.contains("BoundLabel")) return null;

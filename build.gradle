@@ -24,6 +24,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // the optional mod. Use it for soft-dep compats we want to smoke-test in dev.
 configurations {
     localRuntime
+    aeroportalsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -51,12 +52,16 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'rundata',
-        'runserver', 'rungametestserver', 'runserversmoke', 'runclientminimal',
+        'runserver', 'rungametestserver', 'runaeroportalsgametestserver', 'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
 def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
 if (!wantsMinimalClasspath) {
     configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+}
+def wantsAeroPortalsTests = lowered.any { it.endsWith('runaeroportalsgametestserver') || it.endsWith('smokeaeroportalsgametest') }
+if (wantsAeroPortalsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.aeroportalsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -149,7 +154,7 @@ tasks.matching { it.name == 'runClient' || it.name == 'runServer' || it.name == 
 // The `Dneoforge[.]gameTestServer=true` char-class regex matches that literal
 // flag but NOT this command's own text (which carries the bracketed form), so
 // pgrep can't self-match and kill its own shell.
-tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -164,7 +169,9 @@ tasks.matching { it.name == 'runGameTestServer' }.configureEach {
                 logger.warn("runGameTestServer: zombie-kill step failed (continuing): ${e.message}")
             }
         }
-        def lock = file('run/world/session.lock')
+        def lock = file(it.name == 'runAeroPortalsGameTestServer'
+                ? 'run-aeroportals-gametest/world/session.lock'
+                : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
             lock.delete()
@@ -196,6 +203,11 @@ processResources {
     filesMatching('META-INF/neoforge.mods.toml') {
         expand replaceTokens
     }
+    // The isolated optional-test namespace needs the same empty arena without
+    // committing a second binary NBT fixture.
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_aeroportals/structure'
+    }
 }
 
 repositories {
@@ -211,6 +223,7 @@ repositories {
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked (optional Maven transitive of aeronautics + simulated)
     maven { url = 'https://maven.shedaniel.me/' } // REI
     maven { url = 'https://maven.terraformersmc.com/releases' } // EMI
+    maven { url = 'https://www.cursemaven.com' } // CurseForge-hosted compatibility test mods
 
     exclusiveContent {
         forRepository {
@@ -249,6 +262,14 @@ neoForge {
         // The `neoforge.enabledGameTestNamespaces` system property (set in
         // configureEach above) gates which mods' tests get registered.
         gameTestServer { type = 'gameTestServer' }
+        // Dedicated optional-integration suite. Its task-name profile adds only
+        // AeroPortals to the otherwise-minimal GameTest runtime, keeping the
+        // release gate independent of a soft dependency.
+        aeroPortalsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-aeroportals-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals'
+        }
         data {
             data()
             // moddev 2.0.141 + NeoForge 21.1.230 doesn't automatically wire our
@@ -413,6 +434,12 @@ tasks.register('smokeGameTest') {
     dependsOn 'runGameTestServer'
 }
 
+tasks.register('smokeAeroPortalsGameTest') {
+    group = 'verification'
+    description = 'Runs Magnetization GameTests with the optional AeroPortals compatibility runtime.'
+    dependsOn 'runAeroPortalsGameTestServer'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -446,6 +473,12 @@ dependencies {
     // Create: Aeronautics + Simulated
     implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}")
     implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}")
+
+    // AeroPortals is optional for users. Compile against its public transfer
+    // event so bindings can follow a relocated Sable plot, and load it only in
+    // the dedicated compatibility GameTest profile.
+    compileOnly("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
+    aeroportalsRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
 
     // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
     // overworld). Hard dep so the region registers correctly on game load.

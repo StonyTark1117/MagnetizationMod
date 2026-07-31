@@ -2573,3 +2573,116 @@ public final class MagGameTests {
         helper.succeed();
     }
 }
+
+    /**
+     * Optional AeroPortals integration: move an actual serialized Sable ship to
+     * the Nether, then prove its UUID, derived magnetic state, railgun BE state,
+     * and installed remote binding all followed the reconstructed sublevel.
+     * Run with {@code ./gradlew runAeroPortalsGameTestServer}; the normal minimal
+     * suite treats an absent optional mod as not applicable.
+     */
+    public static void aeroPortalsRetainsMagneticShipState(final GameTestHelper helper) {
+        if (!net.neoforged.fml.ModList.get().isLoaded("aeroportals")) {
+            helper.succeed();
+            return;
+        }
+
+        final net.minecraft.server.level.ServerLevel src = helper.getLevel();
+        final net.minecraft.server.level.ServerLevel dst = src.getServer().getLevel(net.minecraft.world.level.Level.NETHER);
+        if (dst == null) { helper.fail("AeroPortals compat test requires the Nether"); return; }
+
+        final BlockPos origin = helper.absolutePos(new BlockPos(1, 2, 1));
+        final java.util.List<BlockPos> blocks = java.util.List.of(origin, origin.east(), origin.east(2));
+        src.setBlock(origin, MagBlocks.POLARITY_INVERTER.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        src.setBlock(origin.east(), MagBlocks.MAGNETITE_BLOCK.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        src.setBlock(origin.east(2), MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final var bounds = new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                origin.getX(), origin.getY(), origin.getZ(),
+                origin.getX() + 3, origin.getY() + 1, origin.getZ() + 1);
+        final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(src, origin, blocks, bounds);
+        if (ship == null) { helper.fail("Could not assemble AeroPortals compatibility ship"); return; }
+
+        final java.util.UUID uuid = ship.getUniqueId();
+        final var before = com.stonytark.magnetization.physics.ShipMagneticRegistry.get(src, ship);
+        final com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity oldEmitter =
+                findRailgunEmitter(ship);
+        if (oldEmitter == null) {
+            removeShip(src, ship);
+            helper.fail("Assembled ship lost its railgun emitter before transfer");
+            return;
+        }
+        oldEmitter.setManualMode(true);
+        oldEmitter.setRailLength(7);
+        final net.minecraft.world.item.ItemStack remote = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get());
+        com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
+                remote, oldEmitter, src.dimension());
+        oldEmitter.remoteContainer().setItem(0, remote);
+
+        final net.minecraft.world.phys.Vec3 destination = new net.minecraft.world.phys.Vec3(
+                origin.getX() / 8.0 + 0.5, 160.0, origin.getZ() / 8.0 + 0.5);
+        com.breakinblocks.aeroportals.portal.PortalTeleport.teleportToDimension(
+                src, ship, dst, destination, true, "magnetization:gametest");
+
+        // teleportToDimension posts SubLevelTransferEvent synchronously. Assert
+        // before the distant destination chunk can unload and move the rebuilt
+        // sublevel into Sable's holding map.
+        ((Runnable) () -> {
+            final var srcContainer = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(src);
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel moved =
+                    com.stonytark.magnetization.compat.aeroportals.MagAeroPortalsCompat.consumeRecentTransfer(uuid);
+            if (srcContainer != null && srcContainer.getSubLevel(uuid) != null) {
+                helper.fail("AeroPortals left ship " + uuid + " registered in its source dimension");
+                return;
+            }
+            if (moved == null) {
+                helper.fail("AeroPortals did not reconstruct ship " + uuid + " in the Nether");
+                return;
+            }
+
+            final var after = com.stonytark.magnetization.physics.ShipMagneticRegistry.get(dst, moved);
+            final var newEmitter = findRailgunEmitter(moved);
+            if (newEmitter == null) {
+                helper.fail("Railgun emitter did not survive AeroPortals transfer");
+                return;
+            }
+            final net.minecraft.world.item.ItemStack movedRemote = newEmitter.remoteContainer().getItem(0);
+            final boolean bindingRetained = dst.dimension().equals(
+                    com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedRemote))
+                    && newEmitter.getBlockPos().equals(
+                    com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedRemote));
+            final boolean beStateRetained = newEmitter.manualMode() && newEmitter.railLength() == 7;
+            // AeroPortals may immediately park this far-away ship in Sable's
+            // holding map. That object cannot be passed to removeSubLevel; this
+            // profile has its own disposable world, so shutdown owns cleanup.
+
+            helper.assertTrue(before.equals(after),
+                    "Magnetic ship state changed across AeroPortals transfer: " + before + " -> " + after);
+            helper.assertTrue(beStateRetained,
+                    "Railgun BE state was not retained (manual=" + newEmitter.manualMode()
+                            + ", length=" + newEmitter.railLength() + ")");
+            helper.assertTrue(bindingRetained,
+                    "Installed remote did not follow the moved railgun; pos="
+                            + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedRemote)
+                            + " dim=" + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedRemote)
+                            + " expected=" + newEmitter.getBlockPos() + "@" + dst.dimension().location());
+            helper.succeed();
+        }).run();
+    }
+
+    private static com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity findRailgunEmitter(
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
+        for (final var holder : ship.getPlot().getLoadedChunks()) {
+            for (final BlockEntity blockEntity : holder.getChunk().getBlockEntities().values()) {
+                if (blockEntity instanceof com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity railgun) {
+                    return railgun;
+                }
+            }
+        }
+        return null;
+    }
