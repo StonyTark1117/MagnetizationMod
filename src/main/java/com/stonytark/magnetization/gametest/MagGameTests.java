@@ -1086,7 +1086,7 @@ public final class MagGameTests {
     // Own batch: the RailgunHandler is a GLOBAL level scanner and gametests share one
     // level, so two paired-rail arcs at the same Y in the same batch can cross-pair.
     // A unique batch runs this in isolation (batches run sequentially).
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "railgunManualPersist")
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 220, batch = "railgunManualPersist")
     public static void railgunManualModeSurvivesRemoteRemovalAndFiresFromHand(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
@@ -1134,11 +1134,36 @@ public final class MagGameTests {
                 helper.runAfterDelay(26L, () -> {
                     final boolean launched = arrow.getDeltaMovement().z() < -0.4;
                     arrow.discard();
-                    clearRailgunRail(level, base);
-                    clearRailgunRail(level, other);
                     helper.assertTrue(launched,
                             "Firing the bound remote from hand should launch the held target; v=" + arrow.getDeltaMovement());
-                    helper.succeed();
+
+                    // Finish the real user workflow with sneak-use while the
+                    // reachable rail is transitioning out of LAUNCHING.
+                    player.setShiftKeyDown(true);
+                    com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()
+                            .use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND);
+                    helper.assertTrue(com.stonytark.magnetization.content.railgun.RailgunRemoteItem
+                                    .boundPos(boundRemote) == null,
+                            "Sneak-use should clear the held remote's binding after launch");
+                    helper.assertTrue(!master.manualMode(),
+                            "Sneak-use should return the reachable arc to automatic mode");
+
+                    helper.runAfterDelay(8L, () -> {
+                        helper.assertTrue(master.arcState()
+                                        == com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.COOLDOWN,
+                                "Launched arc should enter COOLDOWN after its target leaves; state="
+                                        + master.arcState());
+                        helper.runAfterDelay(90L, () -> {
+                            final boolean rearmed = master.arcState()
+                                    == com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ArcState.IDLE
+                                    && master.cooldownTicks() == 0;
+                            clearRailgunRail(level, base);
+                            clearRailgunRail(level, other);
+                            helper.assertTrue(rearmed,
+                                    "Manual arc should cool down and re-arm after fire/unbind");
+                            helper.succeed();
+                        });
+                    });
                 });
             });
         });
