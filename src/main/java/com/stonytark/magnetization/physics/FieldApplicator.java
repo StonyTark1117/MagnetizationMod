@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.content.effect.MagnetizedEffect;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,6 +132,9 @@ public final class FieldApplicator {
         if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
         applyToSubLevels(level, field, exclude, shipFilter);
         applyToEntities(level, field, true, true);
+        if (ModList.get().isLoaded("immersive_portals_core")) {
+            ImmersivePortalFieldCompat.applyThroughPortals(level, field, exclude, shipFilter);
+        }
     }
 
     /**
@@ -151,6 +156,21 @@ public final class FieldApplicator {
     }
 
     // ---------------- ships (Sable sub-levels) ----------------
+
+    /**
+     * Applies a field to ships in one level without re-running entity handling or
+     * portal traversal. Optional cross-dimensional integrations use this as their
+     * recursion boundary.
+     */
+    public static void applyToSubLevelsOnly(
+            final ServerLevel level,
+            final MagneticField field,
+            final @Nullable ServerSubLevel exclude,
+            final @Nullable Predicate<ServerSubLevel> shipFilter
+    ) {
+        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
+        applyToSubLevels(level, field, exclude, shipFilter);
+    }
 
     private static void applyToSubLevels(
             final ServerLevel level,
