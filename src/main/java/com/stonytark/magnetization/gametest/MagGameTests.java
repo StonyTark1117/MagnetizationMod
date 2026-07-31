@@ -2332,7 +2332,7 @@ public final class MagGameTests {
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "curio-repulsor-test"),
                 net.minecraft.server.level.ClientInformation.createDefault());
         final BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
-        player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        player.setPos(pos.getX() + 0.5, 300.0, pos.getZ() + 0.5);
         // Keep this payload test focused on Curios dispatch. Looking straight
         // up prevents the repulsor's optional magnetic-emitter recoil branch
         // from depending on a GameTest player's absent network connection.
