@@ -35,6 +35,10 @@ public final class ImmersiveAeronauticsGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 240, batch = "zIaRemoteTransfer")
     public static void railgunRemotesFollowTransferredShip(final GameTestHelper helper) {
+        if (!immersivePortalsApiAvailable()) {
+            helper.succeed();
+            return;
+        }
         final ServerLevel source = helper.getLevel();
         final ServerLevel destination = source.getServer().getLevel(Level.NETHER);
         if (destination == null) {
@@ -108,6 +112,10 @@ public final class ImmersiveAeronauticsGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 240, batch = "aIaCrossPortalField")
     public static void electromagnetFieldCrossesPortal(final GameTestHelper helper) {
+        if (!immersivePortalsApiAvailable()) {
+            helper.succeed();
+            return;
+        }
         final ServerLevel source = helper.getLevel();
         final ServerLevel destination = source.getServer().getLevel(Level.NETHER);
         if (destination == null) {
@@ -234,5 +242,15 @@ public final class ImmersiveAeronauticsGameTests {
             }
         }
         return null;
+    }
+
+    private static boolean immersivePortalsApiAvailable() {
+        try {
+            Class.forName("qouteall.imm_ptl.core.portal.Portal");
+            Class.forName("qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 }
