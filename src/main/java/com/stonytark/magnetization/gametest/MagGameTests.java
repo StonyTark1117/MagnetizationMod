@@ -644,6 +644,37 @@ public final class MagGameTests {
     }
 
     /**
+     * Build-preview diagnostic: a valid panel reports its deterministic master,
+     * facing, dimensions, and complete frame; removing one coil identifies that
+     * exact edge as invalid without mutating the world.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "fusionPreview")
+    public static void fusionPanelPreviewIdentifiesInvalidFrame(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        buildFusionPanel(level, base);
+        final BlockPos start = base.offset(1, 1, 0);
+        final var valid = com.stonytark.magnetization.content.jet.FusionThrusterPanel.preview(
+                level, start, net.minecraft.core.Direction.NORTH, 10);
+        helper.assertTrue(valid.valid(), "Preview should accept the complete panel");
+        helper.assertTrue(valid.master().equals(start), "Preview master should be " + start
+                + "; got " + valid.master());
+        helper.assertTrue(valid.panelWidth() == 5 && valid.panelHeight() == 3,
+                "Preview dimensions should be 5x3; got " + valid.panelWidth() + "x" + valid.panelHeight());
+        final BlockPos missing = base.offset(0, 0, 0);
+        level.setBlock(missing, Blocks.AIR.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        final var broken = com.stonytark.magnetization.content.jet.FusionThrusterPanel.preview(
+                level, start, net.minecraft.core.Direction.NORTH, 10);
+        helper.assertTrue(!broken.valid(), "Preview should reject a missing frame edge");
+        helper.assertTrue(broken.invalidEdge().contains(missing),
+                "Preview should mark missing frame edge " + missing + "; got " + broken.invalidEdge());
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
+
+    /**
      * #123 — Fusion Thruster thrusts a ship: build the panel, pre-load the master's
      * Helium-3 tank + FE (NBT carries through assembly), assemble the whole panel
      * into a Sable ship in open sky, tick, and assert the rigid body gained velocity

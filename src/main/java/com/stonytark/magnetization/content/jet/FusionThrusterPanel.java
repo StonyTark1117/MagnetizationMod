@@ -37,6 +37,17 @@ public final class FusionThrusterPanel {
         }
     }
 
+    /** Builder-facing diagnostic. Unlike {@link Result}, this keeps the expected
+     * frame and the first bad positions when a panel is malformed, so goggles and
+     * Ponder-style overlays can explain the repair instead of only saying "invalid". */
+    public record Preview(boolean valid, Direction facing, @Nullable BlockPos master,
+                          int interiorWidth, int interiorHeight,
+                          List<BlockPos> interior, List<BlockPos> requiredFrame,
+                          List<BlockPos> invalidEdge) {
+        public int panelWidth() { return interiorWidth + 2; }
+        public int panelHeight() { return interiorHeight + 2; }
+    }
+
     private static boolean isInterior(final BlockGetter level, final BlockPos pos, final Direction facing) {
         final BlockState s = level.getBlockState(pos);
         return s.is(MagBlocks.FUSION_THRUSTER.get())
@@ -126,6 +137,113 @@ public final class FusionThrusterPanel {
                                                 final Direction facing, final int maxEdge) {
         final Result r = validate(level, start, facing, maxEdge);
         return r.valid() ? r.master() : null;
+    }
+
+    /**
+     * Build a non-mutating construction diagnostic for the panel containing
+     * {@code start}. The returned {@code requiredFrame} is the complete perimeter
+     * around the discovered interior; {@code invalidEdge} contains missing interior
+     * cells and perimeter positions that are not Tokamak Coils. A non-interior hit
+     * is reported as one invalid position so a builder still gets a useful marker
+     * when looking at an empty frame location.
+     */
+    public static Preview preview(final BlockGetter level, final BlockPos start,
+                                  final Direction facing, final int maxEdge) {
+        final Result result = validate(level, start, facing, maxEdge);
+        final List<BlockPos> interior = connectedInterior(level, start, facing, maxEdge);
+        if (interior.isEmpty()) {
+            return new Preview(false, facing, null, 0, 0, List.of(), List.of(),
+                    List.of(start.immutable()));
+        }
+
+        final Bounds bounds = bounds(interior);
+        final int[] spans = inPlaneSpans(facing.getAxis(),
+                bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, bounds.maxZ - bounds.minZ);
+        final int iw = spans[0] + 1;
+        final int ih = spans[1] + 1;
+        final List<BlockPos> frame = framePositions(interior, bounds, facing);
+        final Set<BlockPos> present = new HashSet<>(interior);
+        final List<BlockPos> invalid = new ArrayList<>();
+
+        // A rectangular interior is required. Mark every missing cell, not merely
+        // the first one, so the overlay can show the complete repair area.
+        for (int x = bounds.minX; x <= bounds.maxX; x++) {
+            for (int y = bounds.minY; y <= bounds.maxY; y++) {
+                for (int z = bounds.minZ; z <= bounds.maxZ; z++) {
+                    final BlockPos p = new BlockPos(x, y, z);
+                    if (!present.contains(p)) invalid.add(p);
+                }
+            }
+        }
+        for (final BlockPos p : frame) {
+            if (!level.getBlockState(p).is(MagBlocks.TOKAMAK_COIL.get())) invalid.add(p);
+        }
+        if (iw + 2 < 3 || ih + 2 < 3 || iw + 2 > maxEdge || ih + 2 > maxEdge
+                || interior.size() != iw * ih) {
+            invalid.add(start.immutable());
+        }
+
+        return new Preview(result.valid(), facing, lessOf(interior), iw, ih,
+                List.copyOf(interior), List.copyOf(frame), List.copyOf(invalid));
+    }
+
+    private static List<BlockPos> connectedInterior(final BlockGetter level, final BlockPos start,
+                                                     final Direction facing, final int maxEdge) {
+        if (!isInterior(level, start, facing)) return List.of();
+        final Set<BlockPos> seen = new HashSet<>();
+        final Deque<BlockPos> stack = new ArrayDeque<>();
+        stack.push(start.immutable());
+        final int cap = Math.max(1, maxEdge * maxEdge);
+        final Direction[] inPlane = inPlaneDirections(facing);
+        while (!stack.isEmpty() && seen.size() <= cap) {
+            final BlockPos p = stack.pop();
+            if (!seen.add(p)) continue;
+            for (final Direction d : inPlane) {
+                final BlockPos n = p.relative(d);
+                if (!seen.contains(n) && isInterior(level, n, facing)) stack.push(n.immutable());
+            }
+        }
+        return new ArrayList<>(seen);
+    }
+
+    private record Bounds(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {}
+
+    private static Bounds bounds(final List<BlockPos> positions) {
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        for (final BlockPos p : positions) {
+            minX = Math.min(minX, p.getX()); maxX = Math.max(maxX, p.getX());
+            minY = Math.min(minY, p.getY()); maxY = Math.max(maxY, p.getY());
+            minZ = Math.min(minZ, p.getZ()); maxZ = Math.max(maxZ, p.getZ());
+        }
+        return new Bounds(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    private static List<BlockPos> framePositions(final List<BlockPos> interior,
+                                                  final Bounds b, final Direction facing) {
+        final Set<BlockPos> inside = new HashSet<>(interior);
+        final int minX = facing.getAxis() == Direction.Axis.X ? b.minX : b.minX - 1;
+        final int maxX = facing.getAxis() == Direction.Axis.X ? b.maxX : b.maxX + 1;
+        final int minY = facing.getAxis() == Direction.Axis.Y ? b.minY : b.minY - 1;
+        final int maxY = facing.getAxis() == Direction.Axis.Y ? b.maxY : b.maxY + 1;
+        final int minZ = facing.getAxis() == Direction.Axis.Z ? b.minZ : b.minZ - 1;
+        final int maxZ = facing.getAxis() == Direction.Axis.Z ? b.maxZ : b.maxZ + 1;
+        final List<BlockPos> out = new ArrayList<>();
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    final BlockPos p = new BlockPos(x, y, z);
+                    if (!inside.contains(p)) out.add(p);
+                }
+            }
+        }
+        return out;
+    }
+
+    private static @Nullable BlockPos lessOf(final List<BlockPos> positions) {
+        BlockPos best = null;
+        for (final BlockPos p : positions) if (best == null || lessThan(p, best)) best = p;
+        return best;
     }
 
     private static boolean lessThan(final BlockPos a, final BlockPos b) {
