@@ -138,6 +138,47 @@ public final class FieldApplicator {
     }
 
     /**
+     * Apply the two simultaneous poles of one emitter. Both passes are measured
+     * first, then receive one shared scale derived from their combined requested
+     * acceleration. This preserves their relative strengths while preventing the
+     * first pole from consuming the entire per-tick ship cap. Entity handling is
+     * uncapped and can use the normal independent passes.
+     */
+    public static void applyPaired(
+            final ServerLevel level,
+            final MagneticField first,
+            final MagneticField second,
+            final @Nullable ServerSubLevel exclude,
+            final @Nullable Predicate<ServerSubLevel> shipFilter
+    ) {
+        final java.util.Map<ServerSubLevel, Double> firstWanted = new java.util.HashMap<>();
+        final java.util.Map<ServerSubLevel, Double> secondWanted = new java.util.HashMap<>();
+        measureSubLevelAcceleration(level, first, exclude, shipFilter, firstWanted);
+        measureSubLevelAcceleration(level, second, exclude, shipFilter, secondWanted);
+
+        final java.util.Map<ServerSubLevel, Double> scales = new java.util.HashMap<>();
+        final java.util.Set<ServerSubLevel> affected = new java.util.HashSet<>(firstWanted.keySet());
+        affected.addAll(secondWanted.keySet());
+        final long now = level.getGameTime();
+        final double cap = maxAccelPerTick();
+        for (final ServerSubLevel ship : affected) {
+            final double wanted = firstWanted.getOrDefault(ship, 0.0d)
+                    + secondWanted.getOrDefault(ship, 0.0d);
+            if (wanted <= 0.0d) continue;
+            final double granted = ShipTickBudget.grant(ship, now, cap, wanted);
+            if (granted > 0.0d) scales.put(ship, granted / wanted);
+        }
+        applyToSubLevelsPlanned(level, first, exclude, shipFilter, scales);
+        applyToSubLevelsPlanned(level, second, exclude, shipFilter, scales);
+        applyToEntities(level, first, true, true);
+        applyToEntities(level, second, true, true);
+        if (ModList.get().isLoaded("immersive_portals_core")) {
+            ImmersivePortalFieldCompat.applyThroughPortals(level, first, exclude, shipFilter);
+            ImmersivePortalFieldCompat.applyThroughPortals(level, second, exclude, shipFilter);
+        }
+    }
+
+    /**
      * Apply with control over whether worn armor reacts to this particular field.
      * Used by the ore-break residual ({@link com.stonytark.magnetization.content.effect.ExtraLirmSources}
      * via {@link com.stonytark.magnetization.content.effect.TemporaryLirmFields}) so server
@@ -177,6 +218,37 @@ public final class FieldApplicator {
             final MagneticField field,
             final @Nullable ServerSubLevel exclude,
             final @Nullable Predicate<ServerSubLevel> shipFilter
+    ) {
+        applyToSubLevelsInternal(level, field, exclude, shipFilter, null, null);
+    }
+
+    private static void measureSubLevelAcceleration(
+            final ServerLevel level,
+            final MagneticField field,
+            final @Nullable ServerSubLevel exclude,
+            final @Nullable Predicate<ServerSubLevel> shipFilter,
+            final java.util.Map<ServerSubLevel, Double> wantedOut
+    ) {
+        applyToSubLevelsInternal(level, field, exclude, shipFilter, wantedOut, null);
+    }
+
+    private static void applyToSubLevelsPlanned(
+            final ServerLevel level,
+            final MagneticField field,
+            final @Nullable ServerSubLevel exclude,
+            final @Nullable Predicate<ServerSubLevel> shipFilter,
+            final java.util.Map<ServerSubLevel, Double> scales
+    ) {
+        applyToSubLevelsInternal(level, field, exclude, shipFilter, null, scales);
+    }
+
+    private static void applyToSubLevelsInternal(
+            final ServerLevel level,
+            final MagneticField field,
+            final @Nullable ServerSubLevel exclude,
+            final @Nullable Predicate<ServerSubLevel> shipFilter,
+            final @Nullable java.util.Map<ServerSubLevel, Double> wantedOut,
+            final @Nullable java.util.Map<ServerSubLevel, Double> plannedScales
     ) {
         final SubLevelContainer container = SubLevelContainer.getContainer(level);
         // Sable's container can be null very early in load (before its
@@ -335,9 +407,18 @@ public final class FieldApplicator {
             // cap per-sample would let whichever grid cell happened to be visited
             // first consume the entire budget — wrong, because cap is a total-accel
             // limit, not a per-sample limit.
+            final double wantedAccel = mass > 0.0d ? totalForceMag / mass : 0.0d;
+            if (wantedOut != null) {
+                wantedOut.put(server, wantedAccel);
+                continue;
+            }
+
             double scaleAll = 1.0;
-            if (cap > 0.0 && mass > 0.0) {
-                final double wantedAccel = totalForceMag / mass;
+            if (plannedScales != null) {
+                final Double planned = plannedScales.get(server);
+                if (planned == null || planned <= 0.0d) continue;
+                scaleAll = planned;
+            } else if (cap > 0.0 && mass > 0.0) {
                 final double granted = ShipTickBudget.grant(server, now, cap, wantedAccel);
                 if (granted <= 0.0) continue;
                 if (granted < wantedAccel) scaleAll = granted / wantedAccel;

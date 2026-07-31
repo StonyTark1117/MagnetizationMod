@@ -613,8 +613,6 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             lastEnergySyncTick = now;
             lastSyncedEnergy = currentEnergy;
         }
-        FieldApplicator.apply(server, worldField, host, shipFilter());
-
         // Multi-pole emitters (e.g. the Dipole Electromagnet) contribute a second
         // field this tick — run it through the SAME modifier pipeline and apply it
         // too, so both poles react identically to adjacent Inverter/Hematite/Halbach/
@@ -625,7 +623,9 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             final MagneticField worldSecondary = host == null
                     ? modifiedSecondary
                     : SableBridge.promoteToWorldSpace(host.logicalPose(), modifiedSecondary);
-            FieldApplicator.apply(server, worldSecondary, host, shipFilter());
+            FieldApplicator.applyPaired(server, worldField, worldSecondary, host, shipFilter());
+        } else {
+            FieldApplicator.apply(server, worldField, host, shipFilter());
         }
 
         // Only ingest when the emitter sits in the open world — emitters mounted on a

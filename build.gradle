@@ -79,6 +79,22 @@ if (wantsAeroPortalsTests) {
 def wantsImmersiveAeronauticsTests = lowered.any {
     it.endsWith('runimmersiveaeronauticsgametestserver') || it.endsWith('smokeimmersiveaeronauticsgametest')
 }
+
+// These profiles alter the shared runtimeClasspath for the whole Gradle process.
+// Running two of them in one invocation silently contaminates the supposedly
+// isolated classpaths (for example, `releaseGate smokeImmersiveAeronauticsGameTest`
+// used to put Immersive Portals on the minimal dedicated server). Keep mixed
+// invocations impossible and route the complete matrix through `releaseMatrixGate`,
+// which launches a fresh Gradle process for each profile.
+def wantsMinimalVerification = lowered.any {
+    it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
+}
+if ((wantsMinimalVerification && (wantsAeroPortalsTests || wantsImmersiveAeronauticsTests))
+        || (wantsAeroPortalsTests && wantsImmersiveAeronauticsTests)) {
+    throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
+            'Use ./gradlew releaseMatrixGate so minimal, AeroPortals, and Immersive Aeronautics ' +
+            'run with isolated classpaths.')
+}
 if (wantsImmersiveAeronauticsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.immersiveAeronauticsRuntime }
 }
@@ -510,6 +526,13 @@ tasks.register('releaseGate') {
     group = 'verification'
     description = 'Everything that must be green before tagging a release: build + GameTests + minimal server.'
     dependsOn 'build', 'smokeGameTest', 'smokeServerMinimal'
+}
+
+tasks.register('releaseMatrixGate', Exec) {
+    group = 'verification'
+    description = 'Runs the release gate and both optional compatibility suites in isolated Gradle processes.'
+    commandLine 'bash', 'scripts/run-release-matrix-gate.sh'
+    environment 'MAG_SMOKE_SECONDS', smokeServerSeconds.toString()
 }
 
 dependencies {

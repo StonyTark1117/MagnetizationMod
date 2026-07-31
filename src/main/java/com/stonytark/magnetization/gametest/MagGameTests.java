@@ -1392,8 +1392,13 @@ public final class MagGameTests {
     public static void diamagneticShipRepelledWhileFerrousAttracted(final GameTestHelper helper) {
         forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
-        final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
-        final BlockPos em = new BlockPos(a.getX(), 240, a.getZ());
+        // NeoForge can allocate a GameTest arena millions of blocks from origin.
+        // Sable rejects physics bodies at those coordinates as "enormous local
+        // sub-level collision bounds", leaving valid ships stationary. This test
+        // owns its batch, so stage its temporary physics fixture at a known-safe,
+        // otherwise-unused coordinate and remove every world block in finally.
+        final BlockPos a = new BlockPos(0, 1, 0);
+        final BlockPos em = new BlockPos(0, 240, 0);
         level.setBlock(em, MagBlocks.ELECTROMAGNET.get().defaultBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
         level.setBlock(em.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
@@ -1422,6 +1427,8 @@ public final class MagGameTests {
                 } finally {
                     removeShip(level, dia);
                     removeShip(level, iron);
+                    level.removeBlock(em, false);
+                    level.removeBlock(em.below(), false);
                 }
                 // GameTest success can synchronously tear down the arena. Clean
                 // Sable plots first, otherwise the finally block races teardown
@@ -1529,8 +1536,10 @@ public final class MagGameTests {
     public static void dipolePushesFerrousShipsWithDipoleSignature(final GameTestHelper helper) {
         forceDefaultEmitterPower();                                              // config-drift guard
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
-        final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
-        final BlockPos em = new BlockPos(a.getX(), 240, a.getZ());
+        // Keep Sable physics inside its reliable coordinate envelope; GameTest
+        // arena allocation itself is allowed to wander millions of blocks out.
+        final BlockPos a = new BlockPos(0, 1, 0);
+        final BlockPos em = new BlockPos(0, 240, 0);
         level.setBlock(em, MagBlocks.DIPOLE_ELECTROMAGNET.get().defaultBlockState()
                         .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
                                 net.minecraft.core.Direction.EAST),
@@ -1565,6 +1574,8 @@ public final class MagGameTests {
                 } finally {
                     removeShip(level, shipN);
                     removeShip(level, shipS);
+                    level.removeBlock(em, false);
+                    level.removeBlock(em.below(), false);
                 }
                 helper.succeed();
             });

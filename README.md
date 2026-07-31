@@ -359,6 +359,7 @@ Four separate profiles, so a failure says *which* environment broke rather than 
 ./gradlew smokeClientNormal    # manual — client, hard deps only (no compat pack)
 ./gradlew smokeClientCompat    # manual — client + Sodium/Iris/JEI/tag-coverage mods
 ./gradlew releaseGate          # build + both automated gates
+./gradlew releaseMatrixGate    # release gate + isolated AeroPortals and Immersive Aeronautics suites
 ```
 
 `smokeServerMinimal` boots a real dedicated server in its own `run-smoke-server/`

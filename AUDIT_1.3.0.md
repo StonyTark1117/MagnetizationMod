@@ -64,24 +64,24 @@ None found by the automated audit rerun. The manual playtest matrix remains requ
 
 - Dipole block, block entity, registration, creative-tab entry, recipe, loot table, models, blockstate, localization, and generated resources are present.
 - Analog force is carried through `MagneticField.forceOverride()` and physics now uses `field.force()` rather than the nominal tier force.
+- The two dipole poles are measured together and receive one proportional share of the per-ship acceleration budget. Previously the first pole could exhaust the cap and starve the second, making strong dipoles act like monopoles.
 - Unit coverage includes magnetic-strength scaling and override serialization/stepping behavior.
-- The standard 64-test profile passed with these changes present.
+- The real two-ship dipole-signature GameTest now stages physics inside Sable's reliable coordinate envelope and verifies both poles contribute under the default acceleration cap.
 
-No concrete defect was found in the code/resource pass. Manual validation is still required for redstone levels 1/7/15, GUI/HUD readings, polarity orientation, active texture state, and force balance on differently sized ships.
+Manual validation is still required for redstone levels 1/7/15, GUI/HUD readings, polarity orientation, active texture state, and force balance on differently sized ships.
 
 ### AeroPortals compatibility
 
 - AeroPortals is a published optional dependency with no upper bound and an isolated test runtime.
-- Transfer compatibility refreshes reconstructed ship state and remaps Railgun Remote bindings.
-- The real transfer GameTest passed on AeroPortals 1.2.3.
-- AeroPortals itself logged that a Simulated swivel-bearing `reattachConstraint` method was not found. The simple transfer test still passed, so this is not asserted as a Magnetization defect, but transferred ships containing swivel-bearing constraints need manual testing before compatibility is advertised without qualification.
+- Transfer compatibility refreshes reconstructed ship state, remaps Railgun Remote bindings, and repairs Simulated 1.3.0 swivel plate coordinates and rotary constraints that AeroPortals 1.2.3's outdated reflective signature skips.
+- The real transfer GameTest passed on AeroPortals 1.2.3 with retained chest inventory, installed/player-held remotes, a connected child ship, remapped swivel plate, and a live reattached constraint.
 
 ### Immersive Aeronautics / Immersive Portals compatibility
 
 - `immersive_portals_core` is a published optional dependency with no upper bound.
 - Railgun state and installed/player-held remotes survive the real cross-dimensional Sable reconstruction path.
 - Magnetic ship fields project through reachable portal apertures with transformed origin, axis, and scale, without recursive portal application.
-- Both isolated tests passed: remote transfer and an Overworld electromagnet pulling a Nether ship through an Immersive Portals transform.
+- All five isolated tests passed, covering remote transfer, portal-transformed magnetic force, aperture clipping, unreachable portals, and recursion/duplicate-force protection.
 - The upstream runtime emits repeated client-class probes on a dedicated-server test profile. These are third-party test-runtime noise, not failures in the two Magnetization assertions.
 
 ### Multiblock previews, progression, accessibility, and diagnostics
@@ -135,6 +135,7 @@ No missing registration/resource path was found for these additions.
 - Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
 - `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.
 - `./gradlew releaseGate --no-daemon -PmagSmokeSeconds=20` — completed unattended and successfully exercised the build, unit tests, supervised standard GameTests, and minimal dedicated-server smoke.
+- `./gradlew releaseMatrixGate --no-daemon -PmagSmokeSeconds=20` — passed the minimal release profile, AeroPortals profile, and Immersive Aeronautics profile in separate Gradle processes. Mixed-profile invocations now fail fast instead of silently contaminating the minimal runtime classpath.
 - All main/generated JSON files parsed with `jq`.
 - JAR duplicate-entry and unresolved-token checks passed.
 
@@ -190,5 +191,5 @@ Sable's physics thread can still keep a raw Minecraft GameTest JVM alive after i
 
 1. Execute the manual matrix on a disposable upgraded world and a fresh survival world, including portal ships with constraints.
 2. Run normal and compatibility-heavy client smoke tests with the intended release modpack/renderers.
-3. Re-run `releaseGate` and both supervised compatibility GameTest profiles after any final change.
+3. Run `releaseMatrixGate` after any final change. It invokes `releaseGate` and both supervised compatibility GameTest profiles in separate Gradle processes so their runtime classpaths cannot contaminate one another.
 4. Rebuild the release JAR, inspect it, record a new final SHA-256, and publish only that artifact.
