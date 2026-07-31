@@ -275,7 +275,12 @@ neoForge {
         // method (only client/server/data), so set the run type manually.
         // The `neoforge.enabledGameTestNamespaces` system property (set in
         // configureEach above) gates which mods' tests get registered.
-        gameTestServer { type = 'gameTestServer' }
+        gameTestServer {
+            type = 'gameTestServer'
+            // Keep GameTests isolated from the developer world. Sable sublevel
+            // files are not a safe fixture for a repeated headless test run.
+            gameDirectory = file('run-gametest')
+        }
         // Dedicated optional-integration suite. Its task-name profile adds only
         // AeroPortals to the otherwise-minimal GameTest runtime, keeping the
         // release gate independent of a soft dependency.

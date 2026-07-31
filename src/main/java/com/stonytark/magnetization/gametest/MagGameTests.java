@@ -978,7 +978,10 @@ public final class MagGameTests {
     public static void railgunManualHoldThenRemoteFire(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
-        final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
+        // Keep this manual-state regression outside the shared y=240 machine
+        // fixtures; neighboring electromagnets otherwise add unrelated drift
+        // to the arrow before the remote is fired.
+        final BlockPos base = new BlockPos(abs.getX(), 300, abs.getZ());
         final BlockPos other = base.offset(2, 0, 0);
         buildRailgunRail(level, base);
         buildRailgunRail(level, other);

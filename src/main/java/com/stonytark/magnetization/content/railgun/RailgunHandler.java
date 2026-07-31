@@ -323,6 +323,19 @@ public final class RailgunHandler {
                 h.addLinearAndAngularVelocity(dv, new Vector3d());
             }
         }
+
+        // Magnetic entities need the same hold-phase clamp as ships. Without
+        // this, HOLDING only changes the arc state while an entity can retain
+        // or acquire rail velocity before the remote is fired.
+        for (final Entity e : server.getEntitiesOfClass(Entity.class, channel, RailgunHandler::isMagnetizable)) {
+            final Vec3 v = e.getDeltaMovement();
+            final double along = v.dot(axis);
+            final Vec3 lateral = v.subtract(axis.scale(along));
+            Vec3 nv = lateral.scale(1.0 - lat);
+            if (dampForward) nv = nv.add(axis.scale(along * 0.5));
+            e.setDeltaMovement(nv);
+            e.hurtMarked = true;
+        }
     }
 
     private static void accelerateTargets(final @Nullable SubLevelContainer container, final ServerLevel server,
