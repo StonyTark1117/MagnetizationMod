@@ -25,6 +25,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     localRuntime
     aeroportalsRuntime
+    immersiveAeronauticsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -52,7 +53,8 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'rundata',
-        'runserver', 'rungametestserver', 'runaeroportalsgametestserver', 'runserversmoke', 'runclientminimal',
+        'runserver', 'rungametestserver', 'runaeroportalsgametestserver',
+        'runimmersiveaeronauticsgametestserver', 'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
 def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
@@ -62,6 +64,12 @@ if (!wantsMinimalClasspath) {
 def wantsAeroPortalsTests = lowered.any { it.endsWith('runaeroportalsgametestserver') || it.endsWith('smokeaeroportalsgametest') }
 if (wantsAeroPortalsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.aeroportalsRuntime }
+}
+def wantsImmersiveAeronauticsTests = lowered.any {
+    it.endsWith('runimmersiveaeronauticsgametestserver') || it.endsWith('smokeimmersiveaeronauticsgametest')
+}
+if (wantsImmersiveAeronauticsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.immersiveAeronauticsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -154,7 +162,8 @@ tasks.matching { it.name == 'runClient' || it.name == 'runServer' || it.name == 
 // The `Dneoforge[.]gameTestServer=true` char-class regex matches that literal
 // flag but NOT this command's own text (which carries the bracketed form), so
 // pgrep can't self-match and kill its own shell.
-tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer' }.configureEach {
+tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
+        || it.name == 'runImmersiveAeronauticsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -171,6 +180,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         }
         def lock = file(it.name == 'runAeroPortalsGameTestServer'
                 ? 'run-aeroportals-gametest/world/session.lock'
+                : it.name == 'runImmersiveAeronauticsGameTestServer'
+                ? 'run-immersive-aeronautics-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -207,6 +218,9 @@ processResources {
     // committing a second binary NBT fixture.
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_aeroportals/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_immersive_aeronautics/structure'
     }
 }
 
@@ -269,6 +283,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-aeroportals-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals'
+        }
+        immersiveAeronauticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-immersive-aeronautics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersive_aeronautics'
         }
         data {
             data()
@@ -440,6 +459,12 @@ tasks.register('smokeAeroPortalsGameTest') {
     dependsOn 'runAeroPortalsGameTestServer'
 }
 
+tasks.register('smokeImmersiveAeronauticsGameTest') {
+    group = 'verification'
+    description = 'Runs Railgun Remote transfer tests with Immersive Aeronautics.'
+    dependsOn 'runImmersiveAeronauticsGameTestServer'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -479,6 +504,13 @@ dependencies {
     // the dedicated compatibility GameTest profile.
     compileOnly("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
     aeroportalsRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
+
+    // Immersive Aeronautics is optional for users. Compile against its internal
+    // transfer bridge solely for the real integration GameTest; production code
+    // reaches it through an optional @Pseudo mixin.
+    compileOnly("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
+    immersiveAeronauticsRuntime("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
+    immersiveAeronauticsRuntime("me.shedaniel.cloth:cloth-config-neoforge:15.0.140")
 
     // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
     // overworld). Hard dep so the region registers correctly on game load.

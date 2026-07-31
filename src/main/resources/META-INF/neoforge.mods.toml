@@ -18,6 +18,10 @@ displayURL = "https://github.com/StonyTark1117/MagnetizationMod"
 [[mixins]]
 config = "magnetization.mixins.json"
 
+# Optional @Pseudo hook; harmless when Immersive Aeronautics is absent.
+[[mixins]]
+config = "magnetization.immersive_aeronautics.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
