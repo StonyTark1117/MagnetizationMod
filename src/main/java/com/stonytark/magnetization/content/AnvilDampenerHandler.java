@@ -29,13 +29,16 @@ public final class AnvilDampenerHandler {
         final Player player = event.getEntity();
         if (!(player.containerMenu instanceof AnvilMenu menu)) return;
         final ContainerLevelAccess access = ((ItemCombinerMenuAccessor) (Object) menu).magnetization$access();
-        access.evaluate((level, pos) -> {
+        // Use execute (BiConsumer), NOT evaluate (BiFunction): the positioned
+        // ContainerLevelAccess wraps a BiFunction result in Optional.of(...), which
+        // NPEs on a null return — aborting AnvilMenu.onTake mid-take and leaving the
+        // ingredients behind (the reported dupe). execute is side-effect-only and safe.
+        access.execute((level, pos) -> {
             // Magnetic-metal anvils carry their own per-metal break chance.
             final Float metalChance = magneticAnvilBreakChance(level.getBlockState(pos));
             if (metalChance != null) event.setBreakChance(metalChance);
             // An adjacent dampener magnet steadies any anvil — never degrades (wins).
             if (hasAdjacentDampener(level, pos)) event.setBreakChance(0.0f);
-            return null;
         });
     }
 
