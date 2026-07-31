@@ -257,7 +257,13 @@ public class RepulsorGunItem extends Item {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
             // Send velocity packet so the client sees the kickback immediately
             // rather than next tick (which is jittery at long range).
-            sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket(sp));
+            // GameTest and other server-only contexts can construct a
+            // ServerPlayer before attaching a network listener. The server
+            // state change is still authoritative; only the immediate client
+            // packet is unavailable in that context.
+            if (sp.connection != null) {
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket(sp));
+            }
             // Hidden `recoil_launch` advancement — fires on every successful
             // self-recoil shot, but the advancement itself only awards once.
             com.stonytark.magnetization.registry.MagTriggers.RECOIL_LAUNCH.get().trigger(sp);
