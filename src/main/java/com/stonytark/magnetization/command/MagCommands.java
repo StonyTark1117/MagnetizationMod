@@ -137,6 +137,8 @@ public final class MagCommands {
                                         .executes(ctx -> showConfig(ctx.getSource(),
                                                 StringArgumentType.getString(ctx, "filter"))))));
 
+        if (PlaytestWorldSetup.enabled()) root.then(PlaytestWorldSetup.command());
+
         event.getDispatcher().register(root);
     }
 

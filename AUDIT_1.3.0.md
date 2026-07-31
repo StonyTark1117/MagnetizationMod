@@ -103,6 +103,7 @@ No missing registration/resource path was found for these additions.
 - Machine automation coverage now rejects wrong cells, items, buckets, and fluids; prevents extraction of active fuel; checks one-for-one empty-container handling; and proves a full Electrolyzer output stalls without consuming water or FE.
 - Advancement coverage now performs real isotope inventory changes and real Fusion-panel formation/Railgun completion and firing before checking runtime criterion progress. Synthetic players are removed after each assertion to keep the shared server hermetic.
 - Moving-ship coverage now includes powered Fusion and Railgun behavior on rotated, already-moving Sable ships. The Railgun fixture uses a temporary launcher deck so gravity cannot invalidate the channel assertion before the arc scans.
+- Two persistent development-only manual-playtest profiles now stage a resettable 1.3.0 Test Lab and a Survival Progression world on first login. Their integration test verifies the critical machine/multiblock/ship-lane fixtures and proves the survival supplies omit finished isotope fuels.
 
 ## Asset and resource audit
 
@@ -113,7 +114,7 @@ No missing registration/resource path was found for these additions.
 - Every targeted original duplicate now has a different SHA-256: five fluid fills, three fuel cells, Lithium/Raw Lithium/Raw Gallium, Lithium/Helium-3/Hematite ores, deepslate Lithium/Hematite, and Railgun Remote/Repulsor Gun.
 - All PNGs referenced by the newly added models are present and the JAR builds successfully.
 - The built JAR has no duplicate ZIP entries and no unresolved `${...}` token in processed `neoforge.mods.toml`.
-- Current JAR SHA-256 from this rerun: `4fbc8eacaf83180aeea9204e50a1694ba69477e609d01c0d3ec3579f8daff150`.
+- Current JAR SHA-256 from this rerun: `83b37d6b5081fca2bc4cccf821a3e2d2e0228fcabb4a8cbae4d4c9cb961432f2`.
 
 ### Still requires visual playtesting
 
@@ -129,7 +130,7 @@ No missing registration/resource path was found for these additions.
 
 - `./gradlew clean test build --no-daemon` — successful.
 - 140 JUnit tests — 140 passed, 0 failures, 0 errors, 0 skipped.
-- Standard dedicated GameTests — all 78 required tests passed under bounded supervision and the task exited successfully.
+- Standard dedicated GameTests — all 79 required tests passed under bounded supervision and the task exited successfully.
 - AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.
 - Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
 - `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.

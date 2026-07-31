@@ -284,11 +284,49 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 
 ```sh
 ./gradlew build                # produces build/libs/magnetization-<version>.jar
-./gradlew test                 # 81 unit tests on field math + ship state
+./gradlew test                 # unit tests on field math + ship state
 ./gradlew runGameTestServer    # headless in-world integration tests (emitter lifecycle + energy drain)
 ```
 
 `./gradlew runClient` for an in-dev test run; `./gradlew runServer` for a hands-on dedicated-server run; `./gradlew runData` to regenerate recipes + loot tables (most other data is hand-authored).
+
+### Prepared 1.3.0 playtest worlds
+
+Two isolated client profiles keep persistent, disposable saves under
+`run-playtest-lab/` and `run-playtest-survival/`:
+
+```sh
+./gradlew runPlaytestLabClient
+./gradlew runPlaytestSurvivalClient
+```
+
+On the first launch of each profile, create one ordinary world from Minecraft's
+world screen. The first player login automatically stages that preset; subsequent
+launches reopen the persistent save without rebuilding over your observations.
+
+- **Test Lab:** Creative mode, a complete Magnetization item chest bank, a focused
+  inventory kit, texture/material gallery, Electrolyzer rejection and output-stall
+  stations, formed Tokamak and Fusion structures, a powered Railgun, all Dipole
+  facings, Gallium/Golem inspection, an automation bench, and marked ship/portal
+  lanes with their supplies.
+- **Survival Progression:** Survival mode, crafting/smelting infrastructure, empty
+  progression machines, formed Tokamak/Fusion structures, and raw inputs for the
+  Water → Hydrogen → Deuterium → Tritium → Helium-3 chain. Finished isotope fuels
+  are intentionally not supplied, so advancement and recipe progression remain real.
+
+The commands below exist only in these playtest profiles (permission level 2):
+
+```text
+/magnetization playtest lab reset
+/magnetization playtest lab kit
+/magnetization playtest survival reset
+/magnetization playtest survival kit
+/magnetization playtest where
+```
+
+Running `setup` instead of `reset` relocates a preset to the player's current
+chunk-aligned position. Both operations intentionally replace the preset's marked
+64×48 area; use them only inside the disposable playtest saves.
 
 ### Release smoke-test profiles
 

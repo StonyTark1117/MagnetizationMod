@@ -159,7 +159,8 @@ def unwrapSodium = tasks.register('unwrapSodium') {
 
 // Only the compatibility-heavy client consumes the assembled Sodium jars.
 // Server, minimal-client, and GameTest profiles deliberately exclude localRuntime.
-tasks.matching { it.name == 'runClient' }.configureEach { dependsOn unwrapSodium }
+tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
+        || it.name == 'runPlaytestSurvivalClient' }.configureEach { dependsOn unwrapSodium }
 
 // GameTest hygiene: a previous gameTestServer JVM can LINGER (Sable's physics
 // thread drags out shutdown) and then starve the next run's CPU and/or hold
@@ -275,6 +276,21 @@ neoForge {
         // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
         // compat pack?", which is the question every player report starts with.
         clientMinimal { client(); gameDirectory = file('run-smoke-client') }
+        // Persistent, disposable manual-playtest worlds. Create one normal world
+        // in each game directory on first launch; the preset stages itself on the
+        // first player login and remains resettable through /magnetization playtest.
+        playtestLabClient {
+            client()
+            gameDirectory = file('run-playtest-lab')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'lab'
+        }
+        playtestSurvivalClient {
+            client()
+            gameDirectory = file('run-playtest-survival')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'survival'
+        }
         server { server(); programArgument 'nogui' }
         // Minimal dedicated server for the release gate: own game directory (so its
         // log is never a stale copy of a developer session), hard deps only, and

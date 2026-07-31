@@ -9,6 +9,10 @@ run/
 # smokeServerMinimal / smokeClientNormal).
 run-smoke-server/
 run-smoke-client/
+# Persistent local manual-playtest saves. Their layouts are rebuilt by the
+# development-only playtest presets, so binary world data stays out of Git.
+run-playtest-lab/
+run-playtest-survival/
 # Isolated game directories for the GameTest run profiles.
 run-gametest/
 run-immersive-aeronautics-gametest/
