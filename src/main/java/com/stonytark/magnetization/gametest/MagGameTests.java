@@ -2872,17 +2872,31 @@ public final class MagGameTests {
         if (dst == null) { helper.fail("AeroPortals compat test requires the Nether"); return; }
 
         final BlockPos origin = helper.absolutePos(new BlockPos(1, 2, 1));
-        final java.util.List<BlockPos> blocks = java.util.List.of(origin, origin.east(), origin.east(2));
+        final BlockPos bearingWorldPos = origin.south();
+        final java.util.List<BlockPos> blocks = java.util.List.of(
+                origin, origin.east(), origin.east(2), origin.east(3), bearingWorldPos);
         src.setBlock(origin, MagBlocks.POLARITY_INVERTER.get().defaultBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
         src.setBlock(origin.east(), MagBlocks.MAGNETITE_BLOCK.get().defaultBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
         src.setBlock(origin.east(2), MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(),
                 net.minecraft.world.level.block.Block.UPDATE_ALL);
+        src.setBlock(origin.east(3), Blocks.CHEST.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        ((net.minecraft.world.level.block.entity.ChestBlockEntity) src.getBlockEntity(origin.east(3)))
+                .setItem(0, new net.minecraft.world.item.ItemStack(
+                        com.stonytark.magnetization.registry.MagItems.HELIUM_3_CELL.get(), 5));
+        src.setBlock(bearingWorldPos,
+                dev.simulated_team.simulated.index.SimBlocks.SWIVEL_BEARING.getDefaultState()
+                        .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING,
+                                net.minecraft.core.Direction.SOUTH)
+                        .setValue(dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlock.ASSEMBLED,
+                                true),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
 
         final var bounds = new dev.ryanhcode.sable.companion.math.BoundingBox3i(
                 origin.getX(), origin.getY(), origin.getZ(),
-                origin.getX() + 3, origin.getY() + 1, origin.getZ() + 1);
+                origin.getX() + 4, origin.getY() + 1, origin.getZ() + 2);
         final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
                 dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(src, origin, blocks, bounds);
         if (ship == null) { helper.fail("Could not assemble AeroPortals compatibility ship"); return; }
@@ -2896,6 +2910,43 @@ public final class MagGameTests {
             helper.fail("Assembled ship lost its railgun emitter before transfer");
             return;
         }
+        final BlockPos childOrigin = origin.offset(0, 0, 8);
+        src.setBlock(childOrigin,
+                dev.simulated_team.simulated.index.SimBlocks.SWIVEL_BEARING_LINK_BLOCK.getDefaultState()
+                        .setValue(net.minecraft.world.level.block.DirectionalBlock.FACING,
+                                net.minecraft.core.Direction.SOUTH),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        final var childBounds = new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                childOrigin.getX(), childOrigin.getY(), childOrigin.getZ(),
+                childOrigin.getX() + 1, childOrigin.getY() + 1, childOrigin.getZ() + 1);
+        final dev.ryanhcode.sable.sublevel.ServerSubLevel child =
+                dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(
+                        src, childOrigin, java.util.List.of(childOrigin), childBounds);
+        if (child == null) {
+            removeShip(src, ship);
+            helper.fail("Could not assemble swivel-attached child ship");
+            return;
+        }
+        final java.util.UUID childUuid = child.getUniqueId();
+        final var oldBearing = findSwivelBearing(ship);
+        if (oldBearing == null) {
+            removeShip(src, child);
+            removeShip(src, ship);
+            helper.fail("Could not install Simulated swivel bearing on compatibility ship");
+            return;
+        }
+        final BlockPos platePos = findSwivelPlatePos(child);
+        if (platePos == null) {
+            removeShip(src, child);
+            removeShip(src, ship);
+            helper.fail("Could not locate assembled Simulated swivel plate");
+            return;
+        }
+        oldBearing.setPlatePos(platePos);
+        oldBearing.setSubLevelID(childUuid);
+        oldBearing.reattachConstraint(child, true);
+        helper.assertTrue(hasSwivelConstraint(oldBearing),
+                "Pre-transfer Simulated swivel constraint was not created");
         oldEmitter.setManualMode(true);
         oldEmitter.setRailLength(7);
         final net.minecraft.world.item.ItemStack remote = new net.minecraft.world.item.ItemStack(
@@ -2946,6 +2997,16 @@ public final class MagGameTests {
                 helper.fail("Railgun emitter did not survive AeroPortals transfer");
                 return;
             }
+            final var movedBearing = findSwivelBearing(moved);
+            if (movedBearing == null) {
+                helper.fail("Simulated swivel bearing did not survive AeroPortals transfer");
+                return;
+            }
+            final var movedChest = findChest(moved);
+            if (movedChest == null) {
+                helper.fail("Inventory chest did not survive AeroPortals transfer");
+                return;
+            }
             final net.minecraft.world.item.ItemStack movedRemote = newEmitter.remoteContainer().getItem(0);
             final boolean bindingRetained = dst.dimension().equals(
                     com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedRemote))
@@ -2966,6 +3027,16 @@ public final class MagGameTests {
                             + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedRemote)
                             + " dim=" + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedRemote)
                             + " expected=" + newEmitter.getBlockPos() + "@" + dst.dimension().location());
+            helper.assertTrue(movedChest.getItem(0).is(
+                                    com.stonytark.magnetization.registry.MagItems.HELIUM_3_CELL.get())
+                            && movedChest.getItem(0).getCount() == 5,
+                    "Ship inventory contents changed during AeroPortals transfer");
+            helper.assertTrue(childUuid.equals(movedBearing.getSubLevelID()),
+                    "Swivel bearing lost its attached child UUID during transfer");
+            helper.assertTrue(!platePos.equals(movedBearing.getPlatePos()),
+                    "Swivel plate plot position was not remapped during transfer");
+            helper.assertTrue(hasSwivelConstraint(movedBearing),
+                    "Swivel constraint was not reattached after AeroPortals reconstruction");
             helper.assertTrue(dst.dimension().equals(
                             com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(player.getMainHandItem()))
                             && newEmitter.getBlockPos().equals(
@@ -2994,5 +3065,51 @@ public final class MagGameTests {
             }
         }
         return null;
+    }
+
+    private static dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity
+            findSwivelBearing(final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
+        for (final var holder : ship.getPlot().getLoadedChunks()) {
+            for (final BlockEntity blockEntity : holder.getChunk().getBlockEntities().values()) {
+                if (blockEntity instanceof
+                        dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity bearing) {
+                    return bearing;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static net.minecraft.world.level.block.entity.ChestBlockEntity findChest(
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
+        for (final var holder : ship.getPlot().getLoadedChunks()) {
+            for (final BlockEntity blockEntity : holder.getChunk().getBlockEntities().values()) {
+                if (blockEntity instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest) return chest;
+            }
+        }
+        return null;
+    }
+
+    private static BlockPos findSwivelPlatePos(
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
+        for (final var holder : ship.getPlot().getLoadedChunks()) {
+            for (final BlockEntity blockEntity : holder.getChunk().getBlockEntities().values()) {
+                if (blockEntity instanceof
+                        dev.simulated_team.simulated.content.blocks.swivel_bearing.link_block.SwivelBearingPlateBlockEntity) {
+                    return blockEntity.getBlockPos();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasSwivelConstraint(final Object bearing) {
+        try {
+            final java.lang.reflect.Field handle = bearing.getClass().getDeclaredField("handle");
+            handle.setAccessible(true);
+            return handle.get(bearing) != null;
+        } catch (final ReflectiveOperationException exception) {
+            throw new IllegalStateException("Unable to inspect Simulated swivel constraint", exception);
+        }
     }
 }

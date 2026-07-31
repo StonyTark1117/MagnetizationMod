@@ -14,8 +14,9 @@ import net.neoforged.bus.api.IEventBus;
 /** Optional lifecycle bridge for AeroPortals' reconstructed Sable sublevels. */
 public final class MagAeroPortalsCompat {
 
-    private static final java.util.concurrent.atomic.AtomicReference<RecentTransfer> RECENT_TRANSFER =
-            new java.util.concurrent.atomic.AtomicReference<>();
+    private static final java.util.concurrent.ConcurrentMap<java.util.UUID,
+            java.lang.ref.WeakReference<dev.ryanhcode.sable.sublevel.ServerSubLevel>> RECENT_TRANSFERS =
+            new java.util.concurrent.ConcurrentHashMap<>();
 
     private MagAeroPortalsCompat() {}
 
@@ -24,7 +25,7 @@ public final class MagAeroPortalsCompat {
     }
 
     static void onSubLevelTransfer(final SubLevelTransferEvent event) {
-        RECENT_TRANSFER.set(new RecentTransfer(event.subUuid(), new java.lang.ref.WeakReference<>(event.newSub())));
+        RECENT_TRANSFERS.put(event.subUuid(), new java.lang.ref.WeakReference<>(event.newSub()));
         // A transfer replaces the ServerSubLevel object and changes its owning
         // ServerLevel. Never allow either dimension's derived ship state to be
         // served from a cache populated before reconstruction.
@@ -42,6 +43,8 @@ public final class MagAeroPortalsCompat {
             }
         }
 
+        repairSimulatedSwivels(event);
+
         // A player can remove the paired remote before piloting the ship through
         // the portal. Update every online inventory whose binding points into one
         // of the plots moved by this transfer; unrelated source-dimension rails
@@ -55,12 +58,39 @@ public final class MagAeroPortalsCompat {
      * Package integration tests use this instead of assuming the destination
      * container kept a far-away sublevel active rather than in holding. */
     public static dev.ryanhcode.sable.sublevel.ServerSubLevel consumeRecentTransfer(final java.util.UUID uuid) {
-        final RecentTransfer transfer = RECENT_TRANSFER.getAndSet(null);
-        return transfer != null && transfer.uuid().equals(uuid) ? transfer.sub().get() : null;
+        final java.lang.ref.WeakReference<dev.ryanhcode.sable.sublevel.ServerSubLevel> transfer =
+                RECENT_TRANSFERS.remove(uuid);
+        return transfer == null ? null : transfer.get();
     }
 
-    private record RecentTransfer(java.util.UUID uuid,
-                                  java.lang.ref.WeakReference<dev.ryanhcode.sable.sublevel.ServerSubLevel> sub) {}
+    /**
+     * AeroPortals 1.2.3 looks up Simulated's constraint repair method with the
+     * old {@code SubLevel} parameter. Simulated 1.3.0 exposes the narrower
+     * {@code ServerSubLevel} signature, so the upstream reflective bridge skips
+     * both plate remapping and constraint reattachment. Use the hard dependency's
+     * current public API directly while this optional integration is active.
+     */
+    private static void repairSimulatedSwivels(final SubLevelTransferEvent event) {
+        final var container = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(event.dstLevel());
+        if (container == null) return;
+        for (final var holder : event.newSub().getPlot().getLoadedChunks()) {
+            for (final BlockEntity blockEntity : holder.getChunk().getBlockEntities().values()) {
+                if (!(blockEntity instanceof
+                        dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity bearing)) {
+                    continue;
+                }
+                final net.minecraft.core.BlockPos oldPlate = bearing.getPlatePos();
+                if (oldPlate != null) bearing.setPlatePos(event.remapPlotPos(oldPlate));
+                final java.util.UUID attachedId = bearing.getSubLevelID();
+                final dev.ryanhcode.sable.sublevel.SubLevel attached = attachedId == null
+                        ? null : container.getSubLevel(attachedId);
+                if (attached instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel serverAttached) {
+                    bearing.reattachConstraint(serverAttached, true);
+                    bearing.setChanged();
+                }
+            }
+        }
+    }
 
     private static void remapContainer(final Container container, final SubLevelTransferEvent event) {
         for (int slot = 0; slot < container.getContainerSize(); slot++) {
