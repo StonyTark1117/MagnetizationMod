@@ -74,6 +74,10 @@ public class KineticCoilBlockEntity extends BlockEntity
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return CAPACITY; }
     @Override public int guiStat1() { return lastGenerated; }   // FE/tick induced
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return lastGenerated > 0 ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     /** Coil status: induced FE/tick + generating/idle. The FE bar is drawn
      *  separately by the energy-bar provider from {@link #guiEnergyStored()}. */

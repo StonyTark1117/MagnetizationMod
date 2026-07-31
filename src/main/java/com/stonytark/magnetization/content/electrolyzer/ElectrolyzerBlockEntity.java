@@ -90,6 +90,12 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
     @Override public int guiStat1() { return waterTank.getFluidAmount(); }
     @Override public int guiStat2() { return hydrogenTank.getFluidAmount(); }
     @Override public int guiStat4() { return com.stonytark.magnetization.config.MagConfig.electrolyzerHydrogenTank(); }  // bar denominator (server config)
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
+                && getBlockState().getValue(BlockStateProperties.LIT)
+                ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     /** Pour one water bucket (1000 mB) into the water tank. */
     public boolean fillWaterFromBucket() {

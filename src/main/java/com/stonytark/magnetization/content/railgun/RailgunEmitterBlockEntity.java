@@ -135,6 +135,14 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     @Override public int guiStat1() { return railLength; }
     /** Pack mode (bit 4) + arc state ordinal (bits 0-3) into one synced int. */
     @Override public int guiStat2() { return (manualMode ? 16 : 0) | state.ordinal(); }
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return switch (state) {
+            case HOLDING -> com.stonytark.magnetization.menu.MachineDisplayData.Status.HOLDING;
+            case LAUNCHING -> com.stonytark.magnetization.menu.MachineDisplayData.Status.LAUNCHING;
+            case COOLDOWN -> com.stonytark.magnetization.menu.MachineDisplayData.Status.COOLDOWN;
+            case IDLE -> com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+        };
+    }
 
     public static void serverTick(final net.minecraft.world.level.Level level, final BlockPos pos,
                                   final BlockState st, final RailgunEmitterBlockEntity be) {

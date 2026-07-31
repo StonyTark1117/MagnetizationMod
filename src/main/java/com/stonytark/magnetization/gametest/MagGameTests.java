@@ -2188,6 +2188,13 @@ public final class MagGameTests {
                 (com.stonytark.magnetization.menu.MachineGuiData) helper.getBlockEntity(pos);
         helper.assertTrue(be.guiStat4() == com.stonytark.magnetization.config.MagConfig.microThrusterTank(),
                 "Micro Thruster bar max should equal the server-config tank; got " + be.guiStat4());
+        final com.stonytark.magnetization.menu.MachineDisplayData display = be.displayData();
+        helper.assertTrue(display.capacity() == com.stonytark.magnetization.config.MagConfig.microThrusterTank(),
+                "Named display capacity must use the server-config tank; got " + display.capacity());
+        helper.assertTrue(display.current() == be.guiStat1() && display.auxiliary() == be.guiStat2(),
+                "Named display snapshot must preserve current/auxiliary values");
+        helper.assertTrue(display.status() == com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE,
+                "An empty, unpowered thruster should report IDLE; got " + display.status());
         helper.succeed();
     }
 }

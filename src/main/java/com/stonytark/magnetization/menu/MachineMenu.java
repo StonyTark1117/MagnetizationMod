@@ -41,6 +41,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final WideData stat2 = new WideData();
     private final WideData stat3 = new WideData();
     private final WideData stat4 = new WideData();
+    private final DataSlot displayStatus = DataSlot.standalone();
 
     /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
      *  vanilla DataSlot is sent as a signed 16-bit short, so a single slot wraps to
@@ -96,6 +97,7 @@ public final class MachineMenu extends AbstractContainerMenu {
         addDataSlot(stat3.hi);
         addDataSlot(stat4.lo);
         addDataSlot(stat4.hi);
+        addDataSlot(displayStatus);
         refresh();
     }
 
@@ -119,16 +121,31 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int stat3() { return stat3.get(); }
     /** Authoritative fuel/fluid bar denominator, synced from the server's config. */
     public int stat4() { return stat4.get(); }
+    public int displayCurrent() { return stat1(); }
+    public int displayAuxiliary() { return stat2(); }
+    public int displayTier() { return stat3(); }
+    public int displayCapacity() { return Math.max(1, stat4()); }
+    public MachineDisplayData.Status displayStatus() {
+        final MachineDisplayData.Status[] values = MachineDisplayData.Status.values();
+        final int code = displayStatus.get();
+        return code >= 0 && code < values.length ? values[code] : MachineDisplayData.Status.IDLE;
+    }
+    public MachineDisplayData displayData() {
+        return new MachineDisplayData(energyStored(), energyMax(), displayCurrent(), displayCapacity(),
+                displayTier(), displayAuxiliary(), displayStatus());
+    }
 
     private void refresh() {
         access.execute((level, p) -> {
             if (level.getBlockEntity(p) instanceof MachineGuiData d) {
-                energyStored.set(d.guiEnergyStored());
-                energyMax.set(d.guiEnergyMax());
-                stat1.set(d.guiStat1());
-                stat2.set(d.guiStat2());
-                stat3.set(d.guiStat3());
-                stat4.set(d.guiStat4());
+                final MachineDisplayData snapshot = d.displayData();
+                energyStored.set(snapshot.energyStored());
+                energyMax.set(snapshot.energyCapacity());
+                stat1.set(snapshot.current());
+                stat2.set(snapshot.auxiliary());
+                stat3.set(snapshot.tier());
+                stat4.set(snapshot.capacity());
+                displayStatus.set(snapshot.statusCode());
             }
         });
     }

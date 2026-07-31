@@ -132,6 +132,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
     @Override public int guiStat4() {
         return (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterTank() * Math.max(1, cachedInterior));
     }
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        if (!cachedValid) return com.stonytark.magnetization.menu.MachineDisplayData.Status.INVALID;
+        return firing ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.FORMED;
+    }
 
     static boolean isFusionFluid(final Fluid fluid) {
         return fluid == MagFluids.HYDROGEN.get() || fluid == MagFluids.DEUTERIUM_OXIDE.get()

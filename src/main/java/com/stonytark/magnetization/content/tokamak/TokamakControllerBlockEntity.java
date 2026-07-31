@@ -102,6 +102,12 @@ public class TokamakControllerBlockEntity extends BlockEntity
     @Override public int guiStat2() { return lastOutput; }        // FE/tick out
     @Override public int guiStat3() { return currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
     @Override public int guiStat4() { return tierBurnTicks(currentTier); }  // bar denominator (server config)
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
+                && getBlockState().getValue(BlockStateProperties.LIT)
+                ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     /** Prepend the active fuel tier (D-D / D-T / D-He³) to the shared tokamak HUD
      *  lines so WTHIT/Jade/TOP show which cell is burning + its runtime + output. */

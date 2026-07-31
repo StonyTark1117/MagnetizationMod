@@ -66,7 +66,8 @@ public enum MachineEnergyBarProvider implements IBlockComponentProvider {
             return new long[]{buffer.getEnergyStored(), buffer.getMaxEnergyStored()};
         }
         if (be instanceof MachineGuiData machine && machine.guiEnergyStored() >= 0) {
-            return new long[]{machine.guiEnergyStored(), machine.guiEnergyMax()};
+            final var display = machine.displayData();
+            return new long[]{display.energyStored(), display.energyCapacity()};
         }
         return null;
     }
