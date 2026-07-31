@@ -177,6 +177,24 @@ public final class Magnetization {
                 MagBlockEntities.MHD_JET.get(), (be, side) -> be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.ELECTROLYZER.get(), (be, side) -> be.fluidHandler());
+
+        // Item-handler caps so hoppers / Create automation can feed every item-fuel
+        // machine (insert gated by each slot's canPlaceItem; only spent buckets extract
+        // — see MachineFuelItemHandler). The Fusion Thruster auto-drains each panel
+        // block's own bucket slot into the shared tank, so a per-block wrapper feeds the
+        // whole multiblock via any interior cell.
+        final net.neoforged.neoforge.capabilities.BlockCapability<net.neoforged.neoforge.items.IItemHandler, net.minecraft.core.Direction> items
+                = net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
+        event.registerBlockEntity(items, MagBlockEntities.TOKAMAK_CONTROLLER.get(),
+                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.fuelContainer()));
+        event.registerBlockEntity(items, MagBlockEntities.HOMOPOLAR_MOTOR.get(),
+                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()));
+        event.registerBlockEntity(items, MagBlockEntities.MHD_JET.get(),
+                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.magnetContainer()));
+        event.registerBlockEntity(items, MagBlockEntities.MICRO_THRUSTER.get(),
+                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()));
+        event.registerBlockEntity(items, MagBlockEntities.FUSION_THRUSTER.get(),
+                (be, side) -> new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()));
     }
 
     /** Wire the use-curio packet so clients can fire grapple/repulsor-gun from

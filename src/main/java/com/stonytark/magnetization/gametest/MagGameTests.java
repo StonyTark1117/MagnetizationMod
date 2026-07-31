@@ -1873,4 +1873,136 @@ public final class MagGameTests {
         clearFusionPanel(level, base);
         helper.succeed();
     }
+
+    // ── Hopper fuel intake (GitHub #3): every item-fuel machine exposes an
+    //    ItemHandler so hoppers / Create automation can feed it. ──
+
+    /**
+     * The Tokamak's fuel slot accepts a fusion cell through its item-handler
+     * capability (hopper insert), rejects a non-fuel item, and refuses to hand the
+     * cell back out — so a hopper below can't siphon fuel or reset the burn.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void tokamakFuelIntakeAcceptsCellsAndBlocksTheft(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.TOKAMAK_CONTROLLER.get());
+        final net.neoforged.neoforge.items.IItemHandler handler = helper.getLevel().getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, helper.absolutePos(pos), null);
+        helper.assertTrue(handler != null, "Tokamak should expose an item handler for hoppers");
+
+        final net.minecraft.world.item.ItemStack cell =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get());
+        helper.assertTrue(handler.insertItem(0, cell, false).isEmpty(),
+                "A deuterium cell should be fully accepted");
+        helper.assertTrue(handler.getStackInSlot(0).is(com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get()),
+                "The cell should land in the fuel slot");
+
+        final net.minecraft.world.item.ItemStack stone = new net.minecraft.world.item.ItemStack(Blocks.STONE);
+        helper.assertTrue(handler.insertItem(0, stone, false).getCount() == 1,
+                "A non-fuel item must be rejected by the fuel slot");
+
+        helper.assertTrue(handler.extractItem(0, 64, false).isEmpty(),
+                "Valid fuel must never be extractable (no hopper theft / burn refresh)");
+        helper.succeed();
+    }
+
+    /**
+     * The Homopolar Motor's magnet slot accepts a potency magnet through its
+     * item-handler capability and won't surrender a live magnet back to a hopper.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void motorMagnetIntakeAcceptsMagnet(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.HOMOPOLAR_MOTOR.get());
+        final net.neoforged.neoforge.items.IItemHandler handler = helper.getLevel().getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, helper.absolutePos(pos), null);
+        helper.assertTrue(handler != null, "Motor should expose an item handler for hoppers");
+
+        final net.minecraft.world.item.ItemStack magnet =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get());
+        helper.assertTrue(handler.insertItem(0, magnet, false).isEmpty(),
+                "A potency magnet should be accepted into the motor");
+        helper.assertTrue(handler.getStackInSlot(0).is(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()),
+                "The magnet should land in the motor slot");
+
+        helper.assertTrue(handler.extractItem(0, 64, false).isEmpty(),
+                "A live magnet must not be extractable");
+        helper.succeed();
+    }
+
+    /**
+     * Bucket-fed machines (here the Micro Thruster): a full fuel bucket inserts but
+     * can't be siphoned back; once the machine has drained it to a plain empty
+     * bucket, a hopper CAN pull that empty for recirculation — and it can't be
+     * re-inserted as fuel. This exercises the wrapper's "spent-only extraction" rule.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void bucketMachineRecirculatesEmptyBucket(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.MICRO_THRUSTER.get());
+        final net.neoforged.neoforge.items.IItemHandler handler = helper.getLevel().getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, helper.absolutePos(pos), null);
+        helper.assertTrue(handler != null, "Micro Thruster should expose an item handler");
+
+        final net.minecraft.world.item.ItemStack fuel =
+                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get());
+        helper.assertTrue(handler.insertItem(0, fuel, false).isEmpty(),
+                "A ferrofluid bucket should be accepted as fuel");
+        helper.assertTrue(handler.extractItem(0, 1, false).isEmpty(),
+                "A full fuel bucket must not be extractable (no theft)");
+
+        // Simulate the machine having drained the bucket: slot now holds an empty one.
+        final com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity be =
+                (com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity) helper.getBlockEntity(pos);
+        be.bucketContainer().setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
+
+        final net.minecraft.world.item.ItemStack pulled = handler.extractItem(0, 1, false);
+        helper.assertTrue(pulled.is(net.minecraft.world.item.Items.BUCKET),
+                "An emptied bucket should be extractable for recirculation; got " + pulled);
+        helper.assertTrue(handler.insertItem(0,
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET), false).getCount() == 1,
+                "An empty bucket must not be insertable as fuel");
+        helper.succeed();
+    }
+
+    /**
+     * Regression guard for the Magnetic Switch (GitHub #4): a switch in the open
+     * world reads a rising redstone signal when a Sable contraption comes within
+     * range. This covers the scan/refactor path that the on-ship fix shares. (The
+     * on-ship promotion — a switch mounted on a ship detecting OTHER ships via its
+     * host pose — mirrors the gyrostabilizer sable$tick pattern and is confirmed
+     * in-world, like every other sable$tick behaviour in this suite.)
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void magneticSwitchDetectsNearbyShip(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos switchRel = new BlockPos(1, 2, 1);
+        final BlockPos sky = new BlockPos(helper.absolutePos(switchRel).getX(), 240, helper.absolutePos(switchRel).getZ());
+        final BlockPos shipBase = helper.absolutePos(switchRel).offset(3, 0, 0);
+        final BlockPos shipSky = new BlockPos(shipBase.getX(), 240, shipBase.getZ());
+
+        level.setBlock(sky, MagBlocks.MAGNETIC_SWITCH.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.runAfterDelay(2L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel ship =
+                    assembleSingleBlockShip(level, shipBase, Blocks.IRON_BLOCK);
+            teleportShip(level, ship, shipSky);   // park it 3 blocks from the switch
+
+            helper.runAfterDelay(10L, () -> {
+                final com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity be =
+                        (com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity) level.getBlockEntity(sky);
+                // Drive the throttled world ticker a few times so the scan runs.
+                for (int i = 0; i < 8; i++) {
+                    com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity.serverTick(
+                            level, sky, level.getBlockState(sky), be);
+                }
+                final int signal = be.signal();
+                removeShip(level, ship);
+                helper.assertTrue(signal > 0,
+                        "A switch should sense a contraption 3 blocks away; signal=" + signal);
+                helper.succeed();
+            });
+        });
+    }
 }
