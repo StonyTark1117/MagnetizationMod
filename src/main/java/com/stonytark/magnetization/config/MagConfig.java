@@ -245,6 +245,7 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    TEMPORARY_MAGNET_LIFETIME;
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
+    public static final ModConfigSpec.BooleanValue MAGNETIC_PEAKS_ENABLED;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
 
@@ -1561,6 +1562,13 @@ public final class MagConfig {
          .translation("magnetization.configuration.worldgen")
          .push("worldgen");
 
+        MAGNETIC_PEAKS_ENABLED = b
+                .comment("If true, denser magnetite ore veins appear in mountain biomes",
+                         "(#minecraft:is_mountain). Adds a flavor pass in snowy/jagged peaks.",
+                         "Default off — opt-in.")
+                .translation("magnetization.configuration.worldgen.magneticPeaksEnabled")
+                .define("magneticPeaksEnabled", false);
+
         ANOMALY_BIOME_ENABLED = b
                 .comment("If true, the anomaly biome generates naturally and its runtime effects",
                          "activate (field-compass spin, vanilla-compass spin, 1.5× emitter",
@@ -1937,6 +1945,7 @@ public final class MagConfig {
     public static double anomalyShipForce()          { return doubleOr(ANOMALY_SHIP_FORCE, 1500.0d); }
     public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
     public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
+    public static boolean magneticPeaksEnabled()     { try { return MAGNETIC_PEAKS_ENABLED.get(); } catch (final Throwable t) { return false; } }
     public static float  anvilBreakMagnetite()       { return (float) doubleOr(ANVIL_BREAK_MAGNETITE, 0.10d); }
     public static float  anvilBreakMaghemite()       { return (float) doubleOr(ANVIL_BREAK_MAGHEMITE, 0.18d); }
     public static float  anvilBreakHematite()        { return (float) doubleOr(ANVIL_BREAK_HEMATITE, 0.15d); }

@@ -55,6 +55,7 @@ public record ConfigGatedAddFeaturesModifier(
     private static boolean isFlagEnabled(final String name) {
         try {
             return switch (name) {
+                case "magnetic_peaks" -> MagConfig.magneticPeaksEnabled();
                 case "anomaly_biome" -> MagConfig.ANOMALY_BIOME_ENABLED.get();
                 case "magnetic_gravel_in_vanilla" -> MagConfig.MAGNETIC_GRAVEL_IN_VANILLA_BIOMES.get();
                 default -> false;

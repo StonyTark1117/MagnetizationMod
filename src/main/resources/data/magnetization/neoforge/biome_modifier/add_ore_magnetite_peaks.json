@@ -1,5 +1,6 @@
 {
-  "type": "neoforge:add_features",
+  "type": "magnetization:config_gated_add_features",
+  "flag": "magnetic_peaks",
   "biomes": "#minecraft:is_mountain",
   "features": "magnetization:ore_magnetite_peaks",
   "step": "underground_ores"

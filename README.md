@@ -171,7 +171,11 @@ While goggles are worn, additional world overlays appear:
 
 ## Configuration
 
-`config/magnetization-server.toml`:
+The built-in Mods → Magnetization → Config screen and the generated TOML files are
+the canonical complete option list. Player-facing and world-generation options live in
+`config/magnetization-common.toml`; server-owner limits, diagnostics, and command
+permissions live in `config/magnetization-server.toml`.
+The tables below highlight selected high-impact settings; use the config screen or generated TOML files for the exhaustive list.
 
 ### compat — power sources
 | Key | Default | Description |
@@ -211,7 +215,7 @@ proportionally, so both keep working as usual.
 | `physics.shipPerFerrousSusceptibility` | 0.05 | 0.0–5.0 | Susceptibility added per ferromagnetic block (`#magnetization:ferromagnetic_blocks`) aboard. |
 | `physics.shipPerMagnetSusceptibility` | 0.15 | 0.0–5.0 | Susceptibility added per magnet emitter block (`#magnetization:magnetic_emitter`) aboard. Magnets count as ferrous-plus; their pole does NOT shift the ship's pole. |
 | `physics.shipMaxSusceptibility` | 20.0 | 1.0–100.0 | Upper cap on a ship's susceptibility multiplier. |
-| `physics.shipScanIntervalTicks` | 100 | 20–6000 | How often (ticks) a ship's magnetic state is rescanned. 100 = 5 s. Ships not inside any active field never get scanned regardless. |
+| `physics.shipScanIntervalTicks` | 20 | 1–6000 | How often (ticks) a ship's magnetic state is rescanned. 20 = 1 s. Ships not inside any active field never get scanned regardless. |
 
 ### guiLimits — per-emitter GUI ceilings (admin caps)
 | Key | Default | Range | Description |
