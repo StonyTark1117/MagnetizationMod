@@ -2822,6 +2822,17 @@ public final class MagGameTests {
         com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
                 remote, oldEmitter, src.dimension());
         oldEmitter.remoteContainer().setItem(0, remote);
+        final net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        final net.minecraft.world.item.ItemStack heldRemote = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get());
+        com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
+                heldRemote, oldEmitter, src.dimension());
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, heldRemote);
+        final net.minecraft.world.item.ItemStack inventoryRemote = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get());
+        com.stonytark.magnetization.content.railgun.RailgunRemoteItem.bind(
+                inventoryRemote, oldEmitter, src.dimension());
+        player.getInventory().setItem(0, inventoryRemote);
 
         final net.minecraft.world.phys.Vec3 destination = new net.minecraft.world.phys.Vec3(
                 origin.getX() / 8.0 + 0.5, 160.0, origin.getZ() / 8.0 + 0.5);
@@ -2870,6 +2881,17 @@ public final class MagGameTests {
                             + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedRemote)
                             + " dim=" + com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedRemote)
                             + " expected=" + newEmitter.getBlockPos() + "@" + dst.dimension().location());
+            helper.assertTrue(dst.dimension().equals(
+                            com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(player.getMainHandItem()))
+                            && newEmitter.getBlockPos().equals(
+                            com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(player.getMainHandItem())),
+                    "Player-held remote did not follow the moved railgun");
+            final net.minecraft.world.item.ItemStack movedInventoryRemote = player.getInventory().getItem(0);
+            helper.assertTrue(dst.dimension().equals(
+                            com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundDim(movedInventoryRemote))
+                            && newEmitter.getBlockPos().equals(
+                            com.stonytark.magnetization.content.railgun.RailgunRemoteItem.boundPos(movedInventoryRemote)),
+                    "Inventory remote did not follow the moved railgun");
             helper.succeed();
         }).run();
     }
