@@ -9,6 +9,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import qouteall.imm_ptl.core.portal.Portal;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /** Makes magnetic ship forces follow the space transformation of Immersive Portals. */
@@ -30,6 +32,7 @@ public final class ImmersivePortalFieldCompat {
         final double range = field.range();
         final Vec3 origin = field.origin();
         final AABB search = new AABB(origin, origin).inflate(range);
+        final Set<java.util.UUID> appliedShips = new HashSet<>();
 
         for (final Portal portal : source.getEntitiesOfClass(Portal.class, search)) {
             if (!portal.isPortalValid()
@@ -59,7 +62,10 @@ public final class ImmersivePortalFieldCompat {
                         (box.minY() + box.maxY()) * 0.5d,
                         (box.minZ() + box.maxZ()) * 0.5d);
                 final Vec3 sourceSideCenter = portal.inverseTransformPoint(center);
-                return portal.rayTrace(origin, sourceSideCenter) != null;
+                return portal.rayTrace(origin, sourceSideCenter) != null
+                        // Two overlapping portals can see the same destination ship.
+                        // A single field pass must not double its impulse.
+                        && appliedShips.add(ship.getUniqueId());
             };
 
             FieldApplicator.applyToSubLevelsOnly(destination, transformed, exclude, throughAperture);
