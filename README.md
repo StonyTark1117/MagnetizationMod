@@ -323,12 +323,27 @@ The commands below exist only in these playtest profiles (permission level 2):
 /magnetization playtest lab kit
 /magnetization playtest survival reset
 /magnetization playtest survival kit
+/magnetization playtest goto <station>
 /magnetization playtest where
 ```
 
 Running `setup` instead of `reset` relocates a preset to the player's current
 chunk-aligned position. Both operations intentionally replace the preset's marked
 64×48 area; use them only inside the disposable playtest saves.
+
+The prepared worlds can also be driven through the host desktop with
+`scripts/run-playtest-automation.sh lab` or `scripts/run-playtest-automation.sh survival`.
+The manifest in `playtest/automation-matrix.json` controls stations, log checks, video
+captures, and visual thresholds. Evidence is written beneath the ignored
+`playtest-results/` directory. The first accepted run creates baselines and reports
+`BASELINE_CREATED`; subsequent runs compare captures and report `PASS` or `FAIL`.
+The lab video actions spawn a moving Sable test ship and invoke an AeroPortals
+dimension transfer while recording; detailed ship-data retention remains covered by
+the deterministic compatibility GameTests. The matrix also opens the major machine
+GUIs, records their interaction states, and spawns both gallium and MR-fluid golems
+for visual inspection. Fuel-slot acceptance/rejection and setting changes remain
+operator-confirmed steps because their GUI coordinates vary with scale and recipe-viewer layout.
+Use the `attach` second argument to exercise an already-running matching profile.
 
 ### Release smoke-test profiles
 

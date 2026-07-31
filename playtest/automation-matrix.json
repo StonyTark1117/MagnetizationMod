@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "profiles": {
+    "lab": {
+      "gradleTask": "runPlaytestLabClient",
+      "gameDirectory": "run-playtest-lab",
+      "resetCommand": "/magnetization playtest lab reset",
+      "stations": ["overview", "gallery", "electrolyzer", "tokamak", "fusion", "railgun", "dipoles", "automation", "gallium", "ship", "portal"]
+    },
+    "survival": {
+      "gradleTask": "runPlaytestSurvivalClient",
+      "gameDirectory": "run-playtest-survival",
+      "resetCommand": "/magnetization playtest survival reset",
+      "stations": ["overview", "electrolyzer", "tokamak", "fusion", "railgun", "gallium"]
+    }
+  },
+  "visualThreshold": 0.08,
+  "videoStations": ["ship", "portal"],
+  "videoActions": {
+    "ship": "/magnetization spawn_test_ship north 4",
+    "portal": "/aeroportals teleport minecraft:the_nether"
+  },
+  "stationActions": {
+    "gallium": [
+      "/kill @e[type=magnetization:gallium_golem,distance=..16]",
+      "/kill @e[type=magnetization:mr_fluid_golem,distance=..16]",
+      "/summon magnetization:gallium_golem ~2 ~ ~",
+      "/summon magnetization:mr_fluid_golem ~-2 ~ ~"
+    ]
+  },
+  "guiStations": ["electrolyzer", "tokamak", "fusion", "railgun", "dipoles"],
+  "fatalLogPatterns": "/(?:ERROR|FATAL)\\]|Missing textures? in model|Unable to load model|assert(?:ion)? failed"
+}

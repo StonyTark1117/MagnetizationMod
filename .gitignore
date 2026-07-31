@@ -13,6 +13,8 @@ run-smoke-client/
 # development-only playtest presets, so binary world data stays out of Git.
 run-playtest-lab/
 run-playtest-survival/
+playtest-results/
+playtest/baselines/
 # Isolated game directories for the GameTest run profiles.
 run-gametest/
 run-immersive-aeronautics-gametest/

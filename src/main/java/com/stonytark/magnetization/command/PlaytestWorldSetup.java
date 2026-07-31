@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagBlocks;
@@ -31,6 +32,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /** Reproducible, development-only 1.3.0 manual-playtest worlds. */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
@@ -59,8 +62,27 @@ public final class PlaytestWorldSetup {
                         .then(Commands.literal("setup").executes(ctx -> setup(ctx.getSource(), Preset.SURVIVAL)))
                         .then(Commands.literal("reset").executes(ctx -> reset(ctx.getSource(), Preset.SURVIVAL)))
                         .then(Commands.literal("kit").executes(ctx -> kit(ctx.getSource(), Preset.SURVIVAL))))
+                .then(Commands.literal("goto")
+                        .then(Commands.argument("station", StringArgumentType.word())
+                                .suggests((ctx, builder) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
+                                        STATIONS.keySet(), builder))
+                                .executes(ctx -> goTo(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "station")))))
                 .then(Commands.literal("where").executes(ctx -> where(ctx.getSource())));
     }
+
+    private static final Map<String, BlockPos> STATIONS = Map.ofEntries(
+            Map.entry("overview", new BlockPos(2, 2, 2)),
+            Map.entry("gallery", new BlockPos(8, 2, 8)),
+            Map.entry("electrolyzer", new BlockPos(3, 2, 21)),
+            Map.entry("tokamak", new BlockPos(14, 2, 22)),
+            Map.entry("fusion", new BlockPos(27, 2, 22)),
+            Map.entry("railgun", new BlockPos(38, 2, 25)),
+            Map.entry("dipoles", new BlockPos(51, 2, 22)),
+            Map.entry("automation", new BlockPos(4, 2, 35)),
+            Map.entry("gallium", new BlockPos(16, 2, 35)),
+            Map.entry("ship", new BlockPos(32, 2, 40)),
+            Map.entry("portal", new BlockPos(51, 2, 40)));
 
     @SubscribeEvent
     public static void onLogin(final PlayerEvent.PlayerLoggedInEvent event) {
@@ -146,6 +168,32 @@ public final class PlaytestWorldSetup {
                     + " anchor=" + tag.getInt("X") + "," + tag.getInt("Y") + "," + tag.getInt("Z")), false);
             return 1;
         } catch (final Exception exception) {
+            return 0;
+        }
+    }
+
+    private static int goTo(final CommandSourceStack source, final String stationName) {
+        final BlockPos offset = STATIONS.get(stationName.toLowerCase(Locale.ROOT));
+        if (offset == null) {
+            source.sendFailure(Component.literal("Unknown station '" + stationName + "'. Options: "
+                    + String.join(", ", STATIONS.keySet())));
+            return 0;
+        }
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final CompoundTag tag = state(player);
+            if (tag.getInt("Version") != VERSION) {
+                source.sendFailure(Component.literal("No playtest preset has been staged for this player."));
+                return 0;
+            }
+            final BlockPos anchor = new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
+            final BlockPos target = anchor.offset(offset);
+            player.teleportTo(player.serverLevel(), target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
+                    Set.of(), 180.0f, 15.0f);
+            source.sendSuccess(() -> Component.literal("Station " + stationName + " at " + pos(target)), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal("This command must be run by a player."));
             return 0;
         }
     }
