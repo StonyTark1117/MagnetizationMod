@@ -8,6 +8,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.jet.FusionThrusterPanel;
 import com.stonytark.magnetization.content.railgun.RailgunEmitterBlock;
+import com.stonytark.magnetization.content.tokamak.TokamakRingPreview;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Construction diagnostics for the two 1.3 multiblocks. While Create's goggles
+ * Construction diagnostics for the three fixed-pattern machine multiblocks. While Create's goggles
  * (or a wrench) are active and the player looks at a relevant block, this draws
  * the required frame in-world and prints the same authoritative facts in a small
  * HUD: master cell, facing, invalid edge, and effective dimensions.
@@ -67,6 +68,8 @@ public final class MultiblockBuildPreviewOverlay {
 
         if (isFusionTarget(mc.level, hit)) {
             renderFusion(mc.level, hit, pose, camera, lines);
+        } else if (isTokamakTarget(mc.level, hit)) {
+            renderTokamak(mc.level, tokamakControllerTarget(mc.level, hit), pose, camera, lines);
         } else {
             final BlockPos emitter = findRailgunEmitter(mc.level, hit);
             if (emitter != null) renderRailgun(mc.level, emitter, pose, camera, lines);
@@ -94,6 +97,9 @@ public final class MultiblockBuildPreviewOverlay {
             final FusionThrusterPanel.Preview p = FusionThrusterPanel.preview(
                     mc.level, fusionInteriorTarget(mc.level, hit), facing, MagConfig.fusionThrusterMaxEdge());
             lines = fusionText(p);
+        } else if (isTokamakTarget(mc.level, hit)) {
+            lines = tokamakText(TokamakRingPreview.preview(
+                    mc.level, tokamakControllerTarget(mc.level, hit)));
         } else {
             final BlockPos emitter = findRailgunEmitter(mc.level, hit);
             if (emitter == null) return;
@@ -148,6 +154,23 @@ public final class MultiblockBuildPreviewOverlay {
         return hit;
     }
 
+    private static boolean isTokamakTarget(final Level level, final BlockPos hit) {
+        return tokamakControllerTarget(level, hit) != null;
+    }
+
+    private static BlockPos tokamakControllerTarget(final Level level, final BlockPos hit) {
+        if (level.getBlockState(hit).is(MagBlocks.TOKAMAK_CONTROLLER.get())) return hit;
+        if (!level.getBlockState(hit).is(MagBlocks.TOKAMAK_COIL.get())) return null;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
+                final BlockPos candidate = hit.offset(dx, 0, dz);
+                if (level.getBlockState(candidate).is(MagBlocks.TOKAMAK_CONTROLLER.get())) return candidate;
+            }
+        }
+        return null;
+    }
+
     private static Direction facingForFusion(final Level level, final BlockPos hit) {
         final BlockPos interior = fusionInteriorTarget(level, hit);
         final BlockState state = level.getBlockState(interior);
@@ -168,6 +191,17 @@ public final class MultiblockBuildPreviewOverlay {
         if (p.master() != null) drawCube(lines, pose, p.master(), camera, 0xFFFFD866);
     }
 
+    private static void renderTokamak(final Level level, final BlockPos controller,
+                                      final PoseStack pose, final Vec3 camera,
+                                      final VertexConsumer lines) {
+        final TokamakRingPreview.Preview p = TokamakRingPreview.preview(level, controller);
+        for (final BlockPos pos : p.requiredFrame())
+            drawCube(lines, pose, pos, camera, 0xFF70FF90);
+        for (final BlockPos pos : p.invalidEdges())
+            drawCube(lines, pose, pos, camera, 0xFFFF5050);
+        drawCube(lines, pose, p.controller(), camera, 0xFFFFD866);
+    }
+
     private static List<String> fusionText(final FusionThrusterPanel.Preview p) {
         final String bad = p.invalidEdge().isEmpty() ? "none" : pos(p.invalidEdge().get(0));
         return List.of(
@@ -177,6 +211,18 @@ public final class MultiblockBuildPreviewOverlay {
                 "Facing: " + p.facing().getName(),
                 "Dimensions: " + p.panelWidth() + "x" + p.panelHeight()
                         + " (" + p.interiorWidth() + "x" + p.interiorHeight() + " interior)",
+                "Invalid edge: " + bad,
+                "Status: " + (p.valid() ? "VALID" : "INVALID"));
+    }
+
+    private static List<String> tokamakText(final TokamakRingPreview.Preview p) {
+        final String bad = p.invalidEdges().isEmpty() ? "none" : pos(p.invalidEdges().get(0));
+        return List.of(
+                "Tokamak Preview",
+                "Frame: 8 Tokamak Coils",
+                "Master: " + pos(p.controller()),
+                "Facing: horizontal ring",
+                "Dimensions: 3x3x1",
                 "Invalid edge: " + bad,
                 "Status: " + (p.valid() ? "VALID" : "INVALID"));
     }
