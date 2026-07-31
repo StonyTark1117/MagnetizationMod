@@ -65,25 +65,35 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
     private static void handle(final UseCurioPayload payload, final IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             if (!(ctx.player() instanceof ServerPlayer sp)) return;
-            final ItemStack stack = findInCurios(sp, payload.kind());
-            if (stack == null || stack.isEmpty()) return;
-            // Route through each item's shared server-side activation, passing the
-            // REAL Curios stack. tryActivate does the cooldown check itself (so a
-            // scripted client can't fire past the rate limit), stamps FIRED_AT on
-            // the charm-slot item, and plays the same sound as the in-hand path.
-            switch (payload.kind()) {
-                case GRAPPLE -> {
-                    if (stack.getItem() instanceof MagneticGrappleItem grapple) {
-                        grapple.tryActivate(sp.level(), sp, stack);
-                    }
-                }
-                case REPULSOR_GUN -> {
-                    if (stack.getItem() instanceof RepulsorGunItem gun) {
-                        gun.tryActivate(sp.level(), sp, stack);
-                    }
+            handleServerbound(payload, sp);
+        });
+    }
+
+    /**
+     * Execute the same serverbound dispatch used by the registered payload
+     * handler. Kept public so an integration test can drive a real
+     * {@link ServerPlayer} and a real Curios capability without fabricating a
+     * Netty context; production network traffic enters through {@link #handle}.
+     */
+    public static void handleServerbound(final UseCurioPayload payload, final ServerPlayer player) {
+        final ItemStack stack = findInCurios(player, payload.kind());
+        if (stack == null || stack.isEmpty()) return;
+        // Route through each item's shared server-side activation, passing the
+        // REAL Curios stack. tryActivate does the cooldown check itself (so a
+        // scripted client can't fire past the rate limit), stamps FIRED_AT on
+        // the charm-slot item, and plays the same sound as the in-hand path.
+        switch (payload.kind()) {
+            case GRAPPLE -> {
+                if (stack.getItem() instanceof MagneticGrappleItem grapple) {
+                    grapple.tryActivate(player.level(), player, stack);
                 }
             }
-        });
+            case REPULSOR_GUN -> {
+                if (stack.getItem() instanceof RepulsorGunItem gun) {
+                    gun.tryActivate(player.level(), player, stack);
+                }
+            }
+        }
     }
 
     private static ItemStack findInCurios(final LivingEntity entity, final Kind kind) {

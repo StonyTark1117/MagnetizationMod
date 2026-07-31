@@ -35,6 +35,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  */
 @GameTestHolder(Magnetization.MOD_ID)
 @PrefixGameTestTemplate(false)
+@net.neoforged.fml.common.EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagGameTests {
 
     /** Template path only — the framework prepends the namespace from the
@@ -42,7 +43,19 @@ public final class MagGameTests {
      *  {@code (false)} suppresses the class-name prefix. */
     private static final String EMPTY_TEMPLATE = "empty";
 
+    private static final java.util.concurrent.atomic.AtomicInteger CURIO_SOUND_EVENTS =
+            new java.util.concurrent.atomic.AtomicInteger();
+
     private MagGameTests() {}
+
+    /** Capture the actual server sound event emitted by the shared item path. */
+    @net.neoforged.bus.api.SubscribeEvent
+    public static void captureCurioActivationSound(
+            final net.neoforged.neoforge.event.PlayLevelSoundEvent.AtPosition event) {
+        if (event.getSource() == net.minecraft.sounds.SoundSource.PLAYERS) {
+            CURIO_SOUND_EVENTS.incrementAndGet();
+        }
+    }
 
     private static int drainPerTickFromConfig() {
         try { return com.stonytark.magnetization.config.MagConfig.EMITTER_ENERGY_DRAIN_PER_TICK.get(); }
@@ -757,6 +770,23 @@ public final class MagGameTests {
         }
     }
 
+    /** Put a test stack into an actual Curios slot without bypassing the
+     * capability lookup used by {@code UseCurioPayload}. */
+    private static boolean placeCurio(final net.minecraft.server.level.ServerPlayer player,
+                                      final net.minecraft.world.item.ItemStack stack) {
+        if (!net.neoforged.fml.ModList.get().isLoaded("curios")) return false;
+        final var handler = player.getCapability(
+                top.theillusivec4.curios.api.CuriosCapability.INVENTORY);
+        if (handler == null || handler.getCurios() == null) return false;
+        for (final var entry : handler.getCurios().entrySet()) {
+            final var stacks = entry.getValue().getStacks();
+            if (stacks.getSlots() <= 0) continue;
+            stacks.setStackInSlot(0, stack);
+            return true;
+        }
+        return false;
+    }
+
     /** Small struct mirroring the panel validator's result for the gametest. */
     private record FusionThrusterPanelResult(boolean valid, int interiorCount, BlockPos master) {}
 
@@ -1308,6 +1338,94 @@ public final class MagGameTests {
                 } finally {
                     removeShip(level, dia);
                     removeShip(level, iron);
+                }
+            });
+        });
+    }
+
+    /**
+     * Dipole Electromagnet — the two poles are built correctly: a NORTH field offset
+     * to the +FACING end and a SOUTH field to the -FACING end, and at a shared sample
+     * point above the block the two poles push in OPPOSITE directions. Deterministic
+     * (reads the BE's public pole builders + FieldApplicator.forceAt), no ship physics.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 40)
+    public static void dipoleProducesTwoOppositePoles(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 2, 1);
+        helper.setBlock(pos, MagBlocks.DIPOLE_ELECTROMAGNET.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
+                        net.minecraft.core.Direction.UP));
+        final com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity be =
+                (com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity) helper.getBlockEntity(pos);
+        final net.minecraft.world.level.block.state.BlockState state = helper.getBlockState(pos);
+        final com.stonytark.magnetization.api.MagneticField north = be.northPoleField(state);
+        final com.stonytark.magnetization.api.MagneticField south = be.southPoleField(state);
+
+        helper.assertTrue(north.polarity() == com.stonytark.magnetization.api.MagneticPolarity.NORTH
+                        && south.polarity() == com.stonytark.magnetization.api.MagneticPolarity.SOUTH,
+                "North pole must be NORTH and south pole SOUTH");
+
+        final net.minecraft.world.phys.Vec3 center = net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(pos));
+        helper.assertTrue(north.origin().y > center.y && south.origin().y < center.y,
+                "North origin above centre, south below; n=" + north.origin() + " s=" + south.origin());
+        final double sep = north.origin().distanceTo(south.origin());
+        final double expected = 2.0 * com.stonytark.magnetization.config.MagConfig.dipolePoleOffset();
+        helper.assertTrue(Math.abs(sep - expected) < 0.01,
+                "Pole separation should be 2*offset=" + expected + "; got " + sep);
+
+        // Shared point above the block: north pole repels (+Y), south pole attracts (−Y).
+        final net.minecraft.world.phys.Vec3 p = center.add(0, 3, 0);
+        final double fN = com.stonytark.magnetization.physics.FieldApplicator.forceAt(north, p).y;
+        final double fS = com.stonytark.magnetization.physics.FieldApplicator.forceAt(south, p).y;
+        helper.assertTrue(fN > 0 && fS < 0,
+                "The two poles must push oppositely at a shared point; north.y=" + fN + " south.y=" + fS);
+        helper.succeed();
+    }
+
+    /**
+     * Dipole Electromagnet — in-world dipole signature on ships: a ferrous ship
+     * beyond the +FACING (NORTH) end is REPELLED outward while a ferrous ship beyond
+     * the -FACING (SOUTH) end is ATTRACTED inward, so BOTH drift the same world
+     * direction (+X for an EAST-facing block). A single (monopole) field would push
+     * the two ships in OPPOSITE directions — so "both +X" is the dipole's signature.
+     * Own batch: the field range reaches neighbouring gametest arenas.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 160, batch = "ship_dipole")
+    public static void dipolePushesFerrousShipsWithDipoleSignature(final GameTestHelper helper) {
+        forceDefaultEmitterPower();                                              // config-drift guard
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos a = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos em = new BlockPos(a.getX(), 240, a.getZ());
+        level.setBlock(em, MagBlocks.DIPOLE_ELECTROMAGNET.get().defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
+                                net.minecraft.core.Direction.EAST),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(em.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.runAfterDelay(3L, () -> {
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel shipN =
+                    assembleSingleBlockShip(level, a, Blocks.IRON_BLOCK);
+            final dev.ryanhcode.sable.sublevel.ServerSubLevel shipS =
+                    assembleSingleBlockShip(level, a.offset(0, 0, 6), Blocks.IRON_BLOCK);
+            teleportShip(level, shipN, em.offset(4, 0, 0));     // beyond the +X (NORTH) pole
+            teleportShip(level, shipS, em.offset(-4, 0, 0));    // beyond the -X (SOUTH) pole
+
+            helper.runAfterDelay(24L, () -> {
+                final var hN = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(shipN);
+                final var hS = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(shipS);
+                try {
+                    if (hN == null || hS == null) { helper.fail("no ship handle"); return; }
+                    final org.joml.Vector3d vN = hN.getLinearVelocity(new org.joml.Vector3d());
+                    final org.joml.Vector3d vS = hS.getLinearVelocity(new org.joml.Vector3d());
+                    helper.assertTrue(vN.x > 0.0 && vS.x > 0.0,
+                            "Both ferrous ships should drift +X — NORTH end repels outward, SOUTH end "
+                                    + "pulls inward (a monopole would push them opposite ways): n.x="
+                                    + vN.x + " s.x=" + vS.x);
+                    helper.succeed();
+                } finally {
+                    removeShip(level, shipN);
+                    removeShip(level, shipS);
                 }
             });
         });
@@ -2200,6 +2318,95 @@ public final class MagGameTests {
     }
 
     /**
+     * Drives the registered serverbound Curios payload with a real
+     * {@link net.minecraft.server.level.ServerPlayer} and the real Curios
+     * inventory capability. The same shared activation path must stamp the
+     * actual charm stack, emit the player sound, and arm the normal cooldown;
+     * a second packet is rejected by that cooldown rather than firing again.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "curiosActivation")
+    public static void curioRepulsorPayloadActivatesRealCharm(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.server.level.ServerPlayer player = new net.minecraft.server.level.ServerPlayer(
+                level.getServer(), level,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "curio-repulsor-test"),
+                net.minecraft.server.level.ClientInformation.createDefault());
+        final BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        final net.minecraft.world.item.ItemStack gun = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get());
+        helper.assertTrue(placeCurio(player, gun), "The mock server player should have a Curios slot");
+
+        CURIO_SOUND_EVENTS.set(0);
+        final com.stonytark.magnetization.network.UseCurioPayload payload =
+                new com.stonytark.magnetization.network.UseCurioPayload(
+                        com.stonytark.magnetization.network.UseCurioPayload.Kind.REPULSOR_GUN);
+        com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+        final Long firstStamp = gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get());
+        final int firstSounds = CURIO_SOUND_EVENTS.get();
+        helper.assertTrue(firstStamp != null,
+                "Serverbound Curios activation should stamp FIRED_AT on the charm-slot stack");
+        helper.assertTrue(player.getCooldowns().isOnCooldown(
+                        com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get()),
+                "Repulsor activation should arm its normal cooldown");
+        helper.assertTrue(firstSounds > 0,
+                "Serverbound Curios activation should emit the same player sound as hand use");
+
+        com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+        helper.assertTrue(java.util.Objects.equals(firstStamp,
+                        gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get())),
+                "Cooldown spam must not rewrite the source-stack fire component");
+        helper.assertTrue(CURIO_SOUND_EVENTS.get() == firstSounds,
+                "Cooldown spam must not emit a second activation sound");
+        player.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        helper.succeed();
+    }
+
+    /**
+     * The grapple variant uses a real Curios stack and a real serverbound
+     * payload, then verifies logout cleanup removes the UUID-keyed sustained
+     * pull. This catches both the source-stack/component regression and stale
+     * activation state surviving a disconnect.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "curiosActivation")
+    public static void curioGrapplePayloadClearsOnLogout(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.server.level.ServerPlayer player = new net.minecraft.server.level.ServerPlayer(
+                level.getServer(), level,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "curio-grapple-test"),
+                net.minecraft.server.level.ClientInformation.createDefault());
+        final BlockPos playerPos = helper.absolutePos(new BlockPos(1, 1, 1));
+        player.setPos(playerPos.getX() + 0.5, playerPos.getY(), playerPos.getZ() + 0.5);
+        final net.minecraft.world.entity.animal.Cow target = helper.spawn(
+                net.minecraft.world.entity.EntityType.COW, new BlockPos(5, 1, 1));
+        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                com.stonytark.magnetization.registry.MagEffects.MAGNETIZED, 200));
+        final net.minecraft.world.item.ItemStack grapple = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.MAGNETIC_GRAPPLE.get());
+        helper.assertTrue(placeCurio(player, grapple), "The mock server player should have a Curios slot");
+
+        CURIO_SOUND_EVENTS.set(0);
+        final com.stonytark.magnetization.network.UseCurioPayload payload =
+                new com.stonytark.magnetization.network.UseCurioPayload(
+                        com.stonytark.magnetization.network.UseCurioPayload.Kind.GRAPPLE);
+        com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+        helper.assertTrue(com.stonytark.magnetization.content.item.GrappleTickHandler.isPulling(player),
+                "Serverbound Curios grapple should start the real sustained pull");
+        helper.assertTrue(grapple.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get()) != null,
+                "Grapple activation should stamp FIRED_AT on the Curios source stack");
+        helper.assertTrue(CURIO_SOUND_EVENTS.get() > 0,
+                "Grapple Curios activation should emit its normal player sound");
+
+        com.stonytark.magnetization.content.item.PlayerStateCleanupHandler.onLogout(
+                new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(player));
+        helper.assertTrue(!com.stonytark.magnetization.content.item.GrappleTickHandler.isPulling(player),
+                "Logout cleanup must remove the active grapple for that player UUID");
+        target.discard();
+        player.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        helper.succeed();
+    }
+
+    /**
      * Bucket-fed machines (here the Micro Thruster): a full fuel bucket inserts but
      * can't be siphoned back; once the machine has drained it to a plain empty
      * bucket, a hopper CAN pull that empty for recirculation — and it can't be
@@ -2341,7 +2548,10 @@ public final class MagGameTests {
         final net.minecraft.world.level.ChunkPos chunk = new net.minecraft.world.level.ChunkPos(
                 helper.absolutePos(new BlockPos(1, 1, 1)));
         final java.util.concurrent.atomic.AtomicInteger runs = new java.util.concurrent.atomic.AtomicInteger();
-        final String id = "gametest_versioned_migration";
+        // GameTest worlds can be reused between launches; scope the synthetic
+        // id to this test chunk so an older run's completion record cannot make
+        // this run's one-chunk count ambiguous.
+        final String id = "gametest_versioned_migration_" + chunk.toLong();
         helper.assertTrue(com.stonytark.magnetization.worldgen.WorldChunkMigrations.apply(
                         level, id, 1, chunk, runs::incrementAndGet),
                 "First migration version should run");
