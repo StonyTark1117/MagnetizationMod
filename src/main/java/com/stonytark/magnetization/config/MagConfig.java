@@ -6,7 +6,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -2010,7 +2010,7 @@ public final class MagConfig {
                                             final Map<String, ModConfigSpec.ConfigValue<?>> values) {
         if (node instanceof ModConfigSpec.ConfigValue<?> value) {
             values.put(String.join(".", value.getPath()), value);
-        } else if (node instanceof Config config) {
+        } else if (node instanceof UnmodifiableConfig config) {
             for (final Object child : config.valueMap().values()) collectConfigValues(child, values);
         }
     }

@@ -130,7 +130,7 @@ No missing registration/resource path was found for these additions.
 
 - `./gradlew clean test build --no-daemon` — successful.
 - 140 JUnit tests — 140 passed, 0 failures, 0 errors, 0 skipped.
-- Standard dedicated GameTests — all 80 required tests passed under bounded supervision and the task exited successfully. The added progression-worldgen check proves Lithium ore and Helium-3 geodes are attached to vanilla Overworld/End biome generation, while the Anomaly and Petrified Forest retain their defining placed features.
+- Standard dedicated GameTests — all 82 required tests passed under bounded supervision and the task exited successfully. The multiplayer-config regression coverage proves typed COMMON settings survive payload codec transport, override a client's differing local values, restore those locals on disconnect, and keep machine GUI capacities server-authoritative across vanilla menu data transport. The progression-worldgen check proves Lithium ore and Helium-3 geodes are attached to vanilla Overworld/End biome generation, while the Anomaly and Petrified Forest retain their defining placed features.
 - AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.
 - Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
 - `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.

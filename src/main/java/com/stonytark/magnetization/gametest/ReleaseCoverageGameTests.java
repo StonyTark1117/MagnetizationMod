@@ -8,8 +8,10 @@ import com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity
 import com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity;
 import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
 import com.stonytark.magnetization.content.jet.FusionThrusterPanel;
+import com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity;
 import com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity;
 import com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity;
+import com.stonytark.magnetization.menu.MachineMenu;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagFluids;
 import com.stonytark.magnetization.registry.MagItems;
@@ -21,6 +23,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -36,6 +42,132 @@ public final class ReleaseCoverageGameTests {
     private static final String EMPTY = "empty";
 
     private ReleaseCoverageGameTests() {}
+
+    @GameTest(template = EMPTY, timeoutTicks = 40, batch = "configSyncPayload")
+    public static void commonSettingsPayloadOverridesAndRestoresClientValues(final GameTestHelper helper) {
+        final var tank = com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_TANK;
+        final var redstone = com.stonytark.magnetization.config.MagConfig.ALLOW_REDSTONE_POWER;
+        final var strength = com.stonytark.magnetization.config.MagConfig.STRENGTH_MULTIPLIER;
+        final var potionMode = com.stonytark.magnetization.config.MagConfig.ALEXSCAVES_POTION_MODE;
+        final int originalTank = tank.get();
+        final boolean originalRedstone = redstone.get();
+        final double originalStrength = strength.get();
+        final var originalPotionMode = potionMode.get();
+        try {
+            com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
+            tank.set(123_456);
+            redstone.set(false);
+            strength.set(2.75d);
+            potionMode.set(com.stonytark.magnetization.config.MagConfig.AlexsCavesPotionMode.OURS_ONLY);
+            final net.minecraft.network.RegistryFriendlyByteBuf buffer =
+                    new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(),
+                            helper.getLevel().registryAccess());
+            com.stonytark.magnetization.network.CommonConfigSyncPayload.CODEC.encode(buffer,
+                    new com.stonytark.magnetization.network.CommonConfigSyncPayload(
+                            com.stonytark.magnetization.config.MagConfig.commonSnapshot()));
+            final var received = com.stonytark.magnetization.network.CommonConfigSyncPayload.CODEC.decode(buffer);
+
+            tank.set(6_543);
+            redstone.set(true);
+            strength.set(0.625d);
+            potionMode.set(com.stonytark.magnetization.config.MagConfig.AlexsCavesPotionMode.THEIRS_ONLY);
+            com.stonytark.magnetization.config.MagConfig.applyClientSnapshot(received.values());
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterTank() == 123_456,
+                    "Integer COMMON setting did not synchronize from the server");
+            helper.assertTrue(!com.stonytark.magnetization.config.MagConfig.allowRedstonePower(),
+                    "Boolean COMMON setting did not synchronize from the server");
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.commonClientValue(
+                            strength, strength.get()) == 2.75d,
+                    "Double COMMON setting did not synchronize from the server");
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.commonClientValue(
+                            potionMode, potionMode.get())
+                            == com.stonytark.magnetization.config.MagConfig.AlexsCavesPotionMode.OURS_ONLY,
+                    "Enum COMMON setting did not synchronize from the server");
+
+            com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
+            helper.assertTrue(tank.get() == 6_543 && redstone.get() && strength.get() == 0.625d
+                            && potionMode.get()
+                            == com.stonytark.magnetization.config.MagConfig.AlexsCavesPotionMode.THEIRS_ONLY,
+                    "Disconnect did not restore the client's original local COMMON settings");
+            helper.succeed();
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
+            tank.set(originalTank);
+            redstone.set(originalRedstone);
+            strength.set(originalStrength);
+            potionMode.set(originalPotionMode);
+        }
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 40, batch = "configSyncMenu")
+    public static void serverMenuSettingsOverrideDifferentClientSettings(final GameTestHelper helper) {
+        final int originalTank = com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_TANK.get();
+        final int originalEnergy = com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_FE_CAPACITY.get();
+        final int serverTank = 123_456;
+        final int serverEnergy = 765_432;
+        final int clientTank = 4_321;
+        final int clientEnergy = 54_321;
+        try {
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_TANK.set(serverTank);
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_FE_CAPACITY.set(serverEnergy);
+            final BlockPos pos = new BlockPos(1, 1, 1);
+            helper.setBlock(pos, MagBlocks.MICRO_THRUSTER.get());
+            final MicroThrusterBlockEntity be = (MicroThrusterBlockEntity) helper.getBlockEntity(pos);
+            be.fluidHandler().fill(new FluidStack(MagFluids.FERROFLUID.get(), 23_456),
+                    IFluidHandler.FluidAction.EXECUTE);
+            be.energyBuffer().receiveEnergy(345_678, false);
+            final int serverStoredEnergy = be.energyBuffer().getEnergyStored();
+
+            final net.minecraft.server.level.ServerPlayer player = new net.minecraft.server.level.ServerPlayer(
+                    helper.getLevel().getServer(), helper.getLevel(),
+                    new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "config-sync"),
+                    net.minecraft.server.level.ClientInformation.createDefault());
+            final MachineMenu serverMenu = new MachineMenu(1, player.getInventory(),
+                    ContainerLevelAccess.create(helper.getLevel(), helper.absolutePos(pos)),
+                    helper.absolutePos(pos), MachineMenu.Kind.THRUSTER, be.bucketContainer());
+            final int[][] transported = {null};
+            serverMenu.setSynchronizer(new ContainerSynchronizer() {
+                @Override
+                public void sendInitialData(final AbstractContainerMenu menu,
+                                            final net.minecraft.core.NonNullList<ItemStack> items,
+                                            final ItemStack carried, final int[] data) {
+                    transported[0] = data.clone();
+                }
+
+                @Override public void sendSlotChange(final AbstractContainerMenu menu, final int slot,
+                                                     final ItemStack stack) {}
+                @Override public void sendCarriedChange(final AbstractContainerMenu menu,
+                                                        final ItemStack stack) {}
+                @Override public void sendDataChange(final AbstractContainerMenu menu, final int index,
+                                                     final int value) {}
+            });
+            serverMenu.broadcastFullState();
+            helper.assertTrue(transported[0] != null && transported[0].length == 13,
+                    "Server menu did not emit its complete 13-slot settings snapshot");
+
+            // A separate physical client can have different COMMON values. Apply only the
+            // vanilla menu packet captured above: displayed capacities must remain server-owned.
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_TANK.set(clientTank);
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_FE_CAPACITY.set(clientEnergy);
+            final MachineMenu clientMenu = new MachineMenu(1, player.getInventory(),
+                    ContainerLevelAccess.NULL, BlockPos.ZERO, MachineMenu.Kind.THRUSTER,
+                    new SimpleContainer(1));
+            for (int i = 0; i < transported[0].length; i++) clientMenu.setData(i, transported[0][i]);
+
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterTank() == clientTank,
+                    "Test client settings did not differ from the server settings");
+            helper.assertTrue(clientMenu.energyStored() == serverStoredEnergy
+                            && clientMenu.energyMax() == serverEnergy,
+                    "Client FE display did not retain the server's transported values");
+            helper.assertTrue(clientMenu.displayCurrent() == 23_456
+                            && clientMenu.displayCapacity() == serverTank,
+                    "Client fluid display did not retain the server's transported settings");
+            helper.succeed();
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_TANK.set(originalTank);
+            com.stonytark.magnetization.config.MagConfig.MICRO_THRUSTER_FE_CAPACITY.set(originalEnergy);
+        }
+    }
 
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void railgunArcLifecyclePersists(final GameTestHelper helper) {
