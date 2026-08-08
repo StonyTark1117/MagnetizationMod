@@ -192,9 +192,9 @@ public final class MagFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN =
-            FLUIDS.register("hydrogen", () -> new BaseFlowingFluid.Source(hydrogenProperties()));
+            FLUIDS.register("hydrogen", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Source(hydrogenProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> HYDROGEN_FLOWING =
-            FLUIDS.register("flowing_hydrogen", () -> new BaseFlowingFluid.Flowing(hydrogenProperties()));
+            FLUIDS.register("flowing_hydrogen", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Flowing(hydrogenProperties()));
 
     private static BaseFlowingFluid.Properties hydrogenProperties() {
         return new BaseFlowingFluid.Properties(HYDROGEN_TYPE, HYDROGEN, HYDROGEN_FLOWING)
@@ -217,9 +217,9 @@ public final class MagFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRITIUM =
-            FLUIDS.register("tritium", () -> new BaseFlowingFluid.Source(tritiumProperties()));
+            FLUIDS.register("tritium", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Source(tritiumProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> TRITIUM_FLOWING =
-            FLUIDS.register("flowing_tritium", () -> new BaseFlowingFluid.Flowing(tritiumProperties()));
+            FLUIDS.register("flowing_tritium", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Flowing(tritiumProperties()));
 
     private static BaseFlowingFluid.Properties tritiumProperties() {
         return new BaseFlowingFluid.Properties(TRITIUM_TYPE, TRITIUM, TRITIUM_FLOWING)
@@ -242,9 +242,9 @@ public final class MagFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HELIUM_3 =
-            FLUIDS.register("helium_3", () -> new BaseFlowingFluid.Source(helium3Properties()));
+            FLUIDS.register("helium_3", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Source(helium3Properties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> HELIUM_3_FLOWING =
-            FLUIDS.register("flowing_helium_3", () -> new BaseFlowingFluid.Flowing(helium3Properties()));
+            FLUIDS.register("flowing_helium_3", () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Flowing(helium3Properties()));
 
     private static BaseFlowingFluid.Properties helium3Properties() {
         return new BaseFlowingFluid.Properties(HELIUM_3_TYPE, HELIUM_3, HELIUM_3_FLOWING)

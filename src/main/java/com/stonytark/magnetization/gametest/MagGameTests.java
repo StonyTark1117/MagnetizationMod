@@ -513,6 +513,29 @@ public final class MagGameTests {
         });
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void fusionGasesRise(final GameTestHelper helper) {
+        final BlockPos[] sources = {
+                new BlockPos(1, 1, 1), new BlockPos(2, 1, 1), new BlockPos(1, 1, 2)
+        };
+        final net.minecraft.world.level.block.Block[] gases = {
+                MagBlocks.HYDROGEN_BLOCK.get(), MagBlocks.TRITIUM_BLOCK.get(), MagBlocks.HELIUM_3_BLOCK.get()
+        };
+        for (int i = 0; i < sources.length; i++) {
+            helper.setBlock(sources[i], gases[i]);
+            helper.setBlock(sources[i].above(2), Blocks.GLASS);
+        }
+        helper.runAfterDelay(40L, () -> {
+            for (int i = 0; i < sources.length; i++) {
+                helper.assertTrue(helper.getBlockState(sources[i].above()).is(gases[i]),
+                        "Gas should rise into the space below the ceiling: " + gases[i]);
+                helper.assertTrue(!helper.getBlockState(sources[i].below()).is(gases[i]),
+                        "Gas must not flow downward: " + gases[i]);
+            }
+            helper.succeed();
+        });
+    }
+
     /**
      * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
      * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
