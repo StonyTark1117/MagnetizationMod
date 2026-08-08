@@ -6,6 +6,7 @@ import com.stonytark.magnetization.content.fluid.GalliumRegistry;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.registry.MagBlocks;
+import com.stonytark.magnetization.registry.MagFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -563,6 +564,26 @@ public final class MagGameTests {
         });
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void fusionGasesDespawnAtSkyLimit(final GameTestHelper helper) {
+        final BlockPos structureOrigin = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos skyLimit = new BlockPos(structureOrigin.getX(),
+                helper.getLevel().getMaxBuildHeight() - 1, structureOrigin.getZ());
+        final net.minecraft.world.level.block.Block[] gases = {
+                MagBlocks.HYDROGEN_BLOCK.get(), MagBlocks.TRITIUM_BLOCK.get(), MagBlocks.HELIUM_3_BLOCK.get()
+        };
+        for (int i = 0; i < gases.length; i++) {
+            helper.getLevel().setBlock(skyLimit.offset(i, 0, 0), gases[i].defaultBlockState(), 3);
+        }
+        helper.runAfterDelay(20L, () -> {
+            for (int i = 0; i < gases.length; i++) {
+                helper.assertTrue(helper.getLevel().getBlockState(skyLimit.offset(i, 0, 0)).isAir(),
+                        "Gas should despawn at the sky limit: " + gases[i]);
+            }
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
     public static void fusionGasCeilingFlowDoesNotFillSky(final GameTestHelper helper) {
         final BlockPos source = new BlockPos(1, 1, 1);
@@ -581,6 +602,26 @@ public final class MagGameTests {
             }
             helper.assertTrue(gasBlocks <= 200,
                     "Blocked gas flow must remain a bounded ceiling layer; found " + gasBlocks + " gas blocks");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void fusionGasFollowsCeilingAndTurnsUpAtEdge(final GameTestHelper helper) {
+        final BlockPos source = new BlockPos(1, 1, 1);
+        helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
+        // The source rises to y=2 and is held there by a ceiling that ends at x=3.
+        helper.setBlock(new BlockPos(1, 3, 1), Blocks.GLASS);
+        helper.setBlock(new BlockPos(2, 3, 1), Blocks.GLASS);
+        helper.runAfterDelay(60L, () -> {
+            helper.assertTrue(helper.getBlockState(new BlockPos(2, 2, 1))
+                            .getFluidState().is(MagFluids.HYDROGEN.get()),
+                    "Gas should flow horizontally beneath a supporting ceiling");
+            helper.assertTrue(helper.getBlockState(new BlockPos(3, 3, 1))
+                            .getFluidState().is(MagFluids.HYDROGEN.get()),
+                    "Gas should turn upward where the ceiling ends");
+            helper.assertTrue(helper.getBlockState(new BlockPos(3, 2, 1)).getFluidState().isEmpty(),
+                    "Gas must not remain as an unsupported floating pool");
             helper.succeed();
         });
     }
