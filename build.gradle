@@ -29,6 +29,7 @@ configurations {
     immersiveAeronauticsRuntime
     simulatedCoastersRuntime
     createBigCannonsRuntime
+    createNewAgeRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -59,6 +60,7 @@ def minimalProfileTasks = [
         'runserver', 'rungametestserver', 'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runcreatebigcannonsgametestserver',
+        'runcreatenewagegametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -89,6 +91,9 @@ def wantsSimulatedCoastersTests = lowered.any {
 def wantsCreateBigCannonsTests = lowered.any {
     it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
 }
+def wantsCreateNewAgeTests = lowered.any {
+    it.endsWith('runcreatenewagegametestserver') || it.endsWith('smokecreatenewagegametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -100,7 +105,7 @@ def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
-                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests]
+                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -115,6 +120,9 @@ if (wantsSimulatedCoastersTests) {
 }
 if (wantsCreateBigCannonsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createBigCannonsRuntime }
+}
+if (wantsCreateNewAgeTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createNewAgeRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -279,6 +287,9 @@ processResources {
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createbigcannons/structure'
     }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_create_new_age/structure'
+    }
 }
 
 repositories {
@@ -375,6 +386,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-createbigcannons-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createbigcannons'
+        }
+        createNewAgeGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-create-new-age-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_new_age'
         }
         data {
             data()
@@ -564,6 +580,13 @@ tasks.register('smokeCreateBigCannonsGameTest', Exec) {
             'run-createbigcannons-gametest', '300'
 }
 
+tasks.register('smokeCreateNewAgeGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: New Age magnetic tag and multiblock compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateNewAgeGameTestServer',
+            'run-create-new-age-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -626,6 +649,9 @@ dependencies {
     compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
     simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
 
+    compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+    createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated
     // runtime exists only for the real CBC projectile GameTests.
@@ -639,7 +665,7 @@ dependencies {
     // Jade — optional HUD overlay. compileOnly so we can write the plugin without
     // forcing Jade as a runtime dependency; the plugin class loads only when Jade
     // is present (its mod scans classes for @WailaPlugin).
-    compileOnly("maven.modrinth:jade:15.10.5+neoforge")
+    compileOnly("maven.modrinth:jade:15.10.6+neoforge")
 
     // WTHIT — alternative HUD. Same soft-dep pattern; plugin entry is declared in
     // waila_plugins.json so the class only loads when WTHIT is present.
@@ -656,9 +682,9 @@ dependencies {
     // BlameJared's maven (api-only artifact), which is published with NeoForge-
     // compatible mappings; the Modrinth mirror has classpath baggage that pulls
     // Yarn intermediary stubs.
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.42.0.388")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.43.0.394")
     // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
-    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.42.0.388")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.43.0.394")
 
     // REI — alternative recipe browser. Soft-dep; plugin discovered via the
     // META-INF/services/me.shedaniel.rei.api.client.plugins.REIClientPlugin file.
@@ -745,8 +771,8 @@ dependencies {
     // `compat.CompatSodiumFluidRendererMixin` (@Inject require=1) matches 0 targets
     // against Sodium 0.8 and hard-crashes the client at world load. Bumped to a
     // Sodium-0.8-aware build. If you bump Sodium again, bump these to match.
-    localRuntime("maven.modrinth:supplementaries:UPJIp6At") // 1.21.1-3.8.5
-    localRuntime("maven.modrinth:moonlight:CitoQHqE") // 1.21.1-3.3.0, Supplementaries hard dep
+    localRuntime("maven.modrinth:supplementaries:qvhtxmU6") // 1.21.1-3.8.8
+    localRuntime("maven.modrinth:moonlight:in1fCzCm") // 1.21.1-3.3.2, Supplementaries hard dep
     // Sodium — the renderer most users run. localRuntime so we validate our
     // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
     // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
@@ -766,8 +792,8 @@ dependencies {
     // upstream mod fixes it; tag coverage remains in place either way.
     // localRuntime("maven.modrinth:aether:K5X5qMwG")
     // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
-    localRuntime("maven.modrinth:sophisticated-storage:8A8N1c9A") // 1.21.1-1.5.83.2017
-    localRuntime("maven.modrinth:sophisticated-core:Yx6FiECq") // 1.21.1-1.4.80.2194, Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:sophisticated-storage:g3RpAmpe") // 1.21.1-1.5.85.2060
+    localRuntime("maven.modrinth:sophisticated-core:JoVN8649") // 1.21.1-1.4.82.2230, Sophisticated Storage hard dep
     localRuntime("maven.modrinth:immersive-aircraft:RkWu0N4D") // 1.4.6+1.21.1
     // create-new-age 1.2.0 declares an OPTIONAL computercraft dep with range
     // [1.116.2,); NeoForge still enforces that range when CC is present. CC:Tweaked

@@ -50,6 +50,7 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 ### Release tooling
 - **Four separate smoke-test profiles** replace "run the client and hope": `smokeServerMinimal` (minimal dedicated server, hard dependencies only), `smokeGameTest` (headless GameTest suite), `smokeClientNormal` (client, hard deps only) and `smokeClientCompat` (client plus the full Sodium/Iris/JEI compat pack), with `releaseGate` running the build and both automated gates together. A failure now identifies *which* environment broke.
 - **A clean minimal-server log is a release gate.** `smokeServerMinimal` boots a real dedicated server in its own directory, runs it for a fixed window, stops it cleanly, and fails the build on a FATAL, a stack trace, a server that never finished loading, or any unexplained `ERROR` line. A short, individually-justified allowlist covers environment noise the mod doesn't own (chiefly Mixin resolving our hard dependencies' client-only mixin targets on a dedicated server) and the number of skipped lines is always printed.
+- **Create: New Age compatibility now follows its real 1.2.0 registry contract.** The stale `electromagnet` / `tesla_coil` IDs were replaced by New Age's authoritative magnet tag; its Generator Coil and wire blocks now carry the appropriate ferromagnetic/conductive roles. A dedicated published-mod GameTest profile verifies those tags and is part of `releaseMatrixGate`.
 
 ### Docs
 - Patchouli field-manual entries added for all the above.

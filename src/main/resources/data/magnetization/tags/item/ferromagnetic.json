@@ -81,6 +81,8 @@
     {"id": "createmagnetics:magnetized_crystal", "required": false},
     {"id": "createmagnetics:pure_magnetized_crystal", "required": false},
     {"id": "createmagnetics:magnetic_induction_coil", "required": false},
+    {"id": "#create_new_age:magnet", "required": false},
+    {"id": "create_new_age:generator_coil", "required": false},
     {"id": "alexscaves:azure_neodymium_ingot", "required": false},
     {"id": "alexscaves:scarlet_neodymium_ingot", "required": false},
     {"id": "alexscaves:raw_azure_neodymium", "required": false},

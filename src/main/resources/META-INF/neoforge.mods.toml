@@ -25,7 +25,7 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1.247,22.0)"
+versionRange = "[21.1.248,22.0)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -107,10 +107,19 @@ versionRange = "[5.11.7,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Create: New Age — its authoritative magnet tag contributes ship magnetism;
+# coils and conductive wire blocks participate in field/Lenz interactions.
+[[dependencies.${mod_id}]]
+modId = "create_new_age"
+type = "optional"
+versionRange = "[1.2.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"
-versionRange = "[15.10.5,)"
+versionRange = "[15.10.6,)"
 ordering = "AFTER"
 side = "CLIENT"
 
@@ -131,7 +140,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "jei"
 type = "optional"
-versionRange = "[19.42.0.388,)"
+versionRange = "[19.43.0.394,)"
 ordering = "AFTER"
 side = "CLIENT"
 
