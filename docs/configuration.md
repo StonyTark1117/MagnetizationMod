@@ -15,9 +15,11 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 |---|---|---|---|---|
 | COMMON | physics.strengthMultiplier | number | 1.0; 0.0-100.0 | Multiplier applied to every emitter's tier force value. 1.0 = default. Set globally up or down to tune feel without editing each emitter. |
 | COMMON | physics.lenzBrakingEnabled | boolean | true | Master switch for Lenz eddy-current ship braking. Turn off to disable the effect entirely (also skips its per-tick conductor scan). |
+| COMMON | physics.lenzBrakingStrength | number | 1.0; 0.0-10.0 | Eddy-current braking on a magnetic ship moving over conductive (copper/aluminium) blocks — it drags to a slow float/coast like a magnet in a copper pipe. 0 disables; 1.0 = default; higher = stronger brake. |
 | COMMON | physics.entityVelocityScale | number | 0.05; 0.0-1.0 | Scale factor for converting impulse units to vanilla entity delta-movement per tick. Default 1/20 = 0.05. |
 | COMMON | physics.conicalHalfAngleCos | number | 0.7071; 0.0-0.999 | Cosine of the half-angle of conical emitters (Repulsor Coil). Larger value = narrower cone. cos(45°) = 0.7071. |
 | COMMON | physics.maxAccelPerTick | number | 50.0; 0.0-1000.0 | Per-ship acceleration cap (m/s²) applied after Sable's mass scaling. Stops a STRONG emitter from launching a 1-block test ship across the world. 50 m/s² ≈ 5 g. Set to 0 to disable. |
+| COMMON | physics.dipolePoleOffset | number | 1.5; 0.25-8.0 | Distance in blocks from a Dipole Electromagnet's centre to each of its two pole origins along the facing axis (North at +offset, South at −offset). Values ≥ 1.0 keep the poles distinct; larger values spread them further apart. |
 | COMMON | physics.shipLinearDrag | number | 0.02; 0.0-1.0 | Per-tick linear-velocity damping applied to ships under magnetic pull. 0.02 = 2% speed lost per tick a magnet is acting, so constant-force pulls settle to a terminal velocity instead of accelerating without bound. Set to 0 to disable drag. |
 | COMMON | physics.shipAngularDrag | number | 0.05; 0.0-1.0 | Per-tick angular-velocity damping applied to ships under magnetic pull. Without it, the torque from off-center sample forces could keep a ship spinning indefinitely. 0.05 = 5% spin lost per tick. Set to 0 to disable. |
 | COMMON | physics.shipSampleSteps | number | 3; 1-7 | Grid size for integrating a field over a ship's bounding box. 1 = single closest-point sample (1.0.0 behaviour); 3 = 3×3×3 = 27 samples that produce realistic torque on larger ships. Quadratic cost in the count. |
@@ -26,6 +28,8 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | physics.shipPerMagnetSusceptibility | number | 0.15; 0.0-5.0 | Susceptibility added per magnet emitter block on a ship. Magnets count as ferrous-plus — their pole does NOT change ship polarity, only the strength. |
 | COMMON | physics.shipMaxSusceptibility | number | 20.0; 1.0-100.0 | Upper cap on a ship's susceptibility multiplier. Prevents a 500-block ferromagnetic airship from accelerating at 25× the rate of a small test cube. Set high (e.g. 100) to effectively disable. |
 | COMMON | physics.shipScanIntervalTicks | number | 20; 1-6000 | How often (in ticks) a ship's magnetic state is rescanned. 20 = 1 s. Lower = more responsive to block changes but more CPU. Inverter place/break invalidates instantly; this catches everything else. |
+| COMMON | physics.excludeConnectedSubLevels | boolean | true | An emitter on a contraption ignores its WHOLE assembly, not just the part it sits on. Stops a magnet on your aircraft from yanking its own bearing/spring-mounted subgroups — which looks wrong and can freeze the physics solver. Leave on unless you want emitters to act on connected subgroups of their own craft. |
+| COMMON | physics.diamagneticDefaultRepel | boolean | true | If true, a diamagnetic ship is repelled by magnetic fields of BOTH poles by default (true diamagnetism). Set false to make diamagnetic ships inert to fields unless otherwise driven. |
 
 ## Performance
 
@@ -240,6 +244,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | machines.itemFrameFeCapacity | number | 8000; 0-1000000000 | Internal FE buffer of the Magnetic Item Frame. |
 | COMMON | machines.itemFrameFePerTick | number | 2; 0-1000000 | FE drained per tick to spin the frame without a redstone signal (0 = redstone only). |
 | COMMON | machines.temporaryMagnetLifetime | number | 12000; 1-1000000000 | Ticks a placed Temporary Magnet lasts before reverting to iron (12000 = 10 minutes). |
+| COMMON | machines.hopperFuelIntake | boolean | true | Let hoppers, Create funnels/belts/arms, and other item transport insert fuel into item-burning machines (Tokamak, Homopolar Motor, MHD Jet, Fusion Thruster, Micro-Thruster). On by default. Turn off to require loading fuel by hand; energy and fluid piping are unaffected. |
 
 ## GUI limits
 
@@ -255,6 +260,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | SERVER | guiLimits.tractorMaxRange | number | 256; 0-512 | Highest range (blocks) a Tractor Beam's GUI can dial up to. |
 | SERVER | guiLimits.excavatorMaxStrength | enum | EXTREME | Highest strength tier an Excavator's GUI can select. Strength controls pull force and tunneling speed per in-flight ship. |
 | SERVER | guiLimits.excavatorMaxRange | number | 256; 1-384 | Highest column depth (blocks) an Excavator may rip ores from. EXTREME-tier reaches bedrock from surface with a 6× tier multiplier (~192 blocks). |
+| SERVER | guiLimits.excavatorMaxBlocksPerCycle | number | 256; 1-512 | Hard cap on cells the Excavator's cone scan considers per pass. Safety against config typos. |
 | SERVER | guiLimits.excavatorMaxInFlight | number | 16; 1-64 | Maximum ferromagnetic blocks one Magnetic Excavator may pull simultaneously. Each pulled block is a Sable sub-level, so this also caps physics-simulation cost. |
 
 ## Content
@@ -265,19 +271,26 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | content.disabledItems | list | [] | Magnetization item paths to disable (e.g. "magnetic_grapple"). Disabled items are hidden from the creative tab and their special effects skip. |
 | COMMON | content.armorReactsToFields | boolean | true | Whether worn metal armor makes its wearer react to magnetic fields. On (default): players and armored mobs are pulled/pushed by emitters, magnetic ores and other fields through their gear. Off: armor is magnetically inert. Turn off if you keep getting dragged into ore deposits or hazards by your own armor. |
 | COMMON | content.oreBreakAffectsArmor | boolean | true | Whether the brief residual field left when you break a ferromagnetic ore/block can pull the breaker through their metal armor. On (default): breaking ore leaves a short-lived field that tugs nearby magnetic things, armored players included. Off: the ore-break residual ignores worn armor so mining won't yank you around (it still nudges loose ferromagnetic item drops and magnetizable mobs). This is the narrow, ore-only version of Armor Reacts To Fields. |
+| COMMON | content.oreBreakAffectsItems | boolean | true | Whether the brief residual field left when you break a ferromagnetic ore/block can pull loose magnetic item drops toward it. On (default): the ore-break residual tugs nearby ferromagnetic (and floats diamagnetic) item entities. Off: that residual ignores item drops entirely, so mining doesn't scatter or gather your loot. Companion to Ore-Break Field Affects Armor; emitters and other fields still move items normally. |
+| COMMON | content.blockPlacementFirst | boolean | true | How right-clicking our interactible blocks (Electromagnet, Anchor, Repulsor, Tractor Beam, Excavator, Permanent/Temporary Magnet) behaves while holding a block. On (default): right-click places the block; shift-right-click opens the GUI / flips polarity. Off (legacy): right-click interacts, shift-right-click places. Empty hand or a non-block item always interacts on right-click. |
+| COMMON | content.solarSailNightFactor | number | 0.5; 0.0-1.0 | Solar Sail thrust at night as a fraction of daytime thrust. 1.0 = full power at night; 0.5 = half (default); 0 = the sail does nothing at night. |
 | COMMON | content.magnetiteOxidationEnabled | boolean | false | Master switch for the passive magnetite → maghemite inventory decay. Off by default — players found the slow rusting of hoarded magnetite more confusing than satisfying. Turn on to re-enable. |
 | COMMON | content.magnetiteOxidationTicks | number | 168000; 1200-2400000 | Ticks a stamped magnetite stack waits before converting to its maghemite equivalent. Default 168000 = 1 in-game week (7 days). Only consulted when magnetiteOxidationEnabled is true. |
+| COMMON | content.magneticSwitchRange | number | 8; 1-64 | How far the Magnetic Switch scans for a Sable ship/contraption to derive its redstone output strength. Default 8 blocks. Larger ranges let one switch cover a hangar; smaller ranges force tight placement. |
 
 ## Items
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
+| COMMON | items.grappleCooldownTicks | number | 20; 0-600 | Game ticks between Magnetic Grapple right-clicks. 20 = 1 second. |
 | COMMON | items.grappleMaxRange | number | 24; 4-128 | Maximum scan range (blocks) the Grapple uses to find an attractive emitter. |
 | COMMON | items.compassRange | number | 16; 4-128 | Scan radius (blocks) the Field Compass uses to list active fields. |
 | COMMON | items.cosmicCompassRange | number | 512; 32-4096 | Maximum distance (blocks) the Cosmic Compass scans for an active meteorite_core. Default 512 — generous because meteorites are rare and the compass's whole job is finding them. Larger values increase per-tick scan cost slightly. |
 | COMMON | items.repulsorGunRange | number | 12; 2-64 | Cone range in blocks. Shorter than the Magnetic Grapple's scan because the gun is crowd-control / self-launch, not long-range traversal. |
 | COMMON | items.repulsorGunConicalHalfAngleCos | number | 0.866; 0.0-0.999 | Cosine of the cone half-angle. 0.866 = 30°. Narrower than the Repulsor Coil's 45° so aim rewards. |
 | COMMON | items.repulsorGunSelfRecoilStrength | number | 0.8; 0.0-5.0 | Velocity (blocks/tick) the gun pushes the holder back when aiming at a magnetic emitter block. Linear falloff over the cone's range. Set 0 to disable self-recoil entirely. |
+| COMMON | items.repulsorGunCooldownTicks | number | 20; 0-600 | Game-ticks between shots (20 = 1s). Prevents spam-bouncing exploits while still allowing rapid follow-ups. |
+| COMMON | items.repulsorGunShipImpulse | number | 100000.0; 0.0-100000000.0 | Base linear impulse (Sable kg·m/s) applied to a ship per shot. Velocity change = impulse / ship-mass, so small ships fly farther. Default 100000 is intentionally strong for tiny ships and is limited by the separate velocity cap. |
 | COMMON | items.repulsorGunShipMaxVelocityDelta | number | 64.0; 0.0-500.0 | Per-shot cap on the velocity change a ship can receive (m/s). Stops tiny test ships from launching across the world. Default 64 m/s. |
 | COMMON | items.repulsorGunLooseObjectPush | number | 8.0; 0.0-100.0 | Per-shot velocity injection (blocks/tick) applied to loose drops, mobs, and other non-ship objects inside the cone. Falls off to zero at the cone's range. |
 | COMMON | items.elytraGlideSusceptibilityBonus | number | 4.0; 0.0-100.0 | While gliding with a Magnetic Elytra, the wearer's pull-by-field susceptibility is multiplied by this factor. 1.0 = no bonus. |
@@ -299,6 +312,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | tools.pullRadiusPerTool | number | 4.0; 0.0-64.0 | Scan radius (blocks) per magnetized tool the player is holding. Two tools doubles the radius. |
 | COMMON | tools.pullVelocity | number | 0.08; 0.0-10.0 | Base pull velocity (blocks/tick) applied to dropped ferromagnetic items, before distance falloff. |
 | COMMON | tools.pullMaxPerTick | number | 0.6; 0.0-10.0 | Per-tick cap (blocks/tick) on the velocity added to any one item, so close drops don't snap instantly. |
+| COMMON | tools.pullTicks | number | 1; 1-40 | How often the tool-pull handler scans for nearby items. 1 = every tick (smoothest). Raise it to cut the per-tick entity scan for players carrying magnetized tools; the per-pull velocity scales up to keep average pull strength the same. |
 | COMMON | tools.axePulseRadius | number | 10.0; 0.0-64.0 | Radius (blocks) of the radial pull emitted when a magnetized axe chops a log. |
 | COMMON | tools.axePulseStrength | number | 0.35; 0.0-10.0 | Peak pull velocity (blocks/tick) of the axe chop pulse at point-blank, before falloff. |
 | COMMON | tools.axePulseMaxDelta | number | 0.5; 0.0-10.0 | Per-target cap (blocks/tick) on the velocity the axe pulse can add. |
@@ -314,13 +328,24 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | worldgen.anomalyBiomeEnabled | boolean | false | If true, the Magnetic Anomaly biome spawns naturally and its runtime effects activate inside it (compass spin, 1.5× emitter strength, chaos field). Off = biome resource still loads (so /locate biome + /magnetization tp work) but it won't spawn naturally and effects stay inert. |
 | COMMON | worldgen.anomalyBiomeRarity | enum | EXTREMELYRARE | How rare the anomaly biome is when generating naturally. EXTREMELY_RARE (default) pins a single climate slot — you may go tens of thousands of blocks without seeing one. VERY_RARE / RARE widen the slot incrementally. COMMON is mostly for testing. |
 | COMMON | worldgen.anomalyChaosStrength | number | 1.0; 0.0-10.0 | Multiplier on the anomaly's chaos-field impulses (ships, players, items). 1.0 = default, 0 disables the chaos field while leaving compass spin + emitter bonus intact, higher values amplify. |
+| COMMON | worldgen.petrifiedForestEnabled | boolean | false | If true, the Petrified Forest biome registers a TerraBlender region so it spawns naturally (a cold/dry inland slot). Off = no natural generation; /locate biome and /magnetization tp petrified_forest still work. |
 | COMMON | worldgen.petrifiedForestRarity | enum | RARE | How rare the petrified forest biome is when generating naturally. Default RARE — encounterable on most overworld runs but not in every biome row. See anomalyBiomeRarity for what each tier means. |
+| COMMON | worldgen.magneticGravelInVanillaBiomes | boolean | true | If true, sparse patches of magnetic_gravel appear in vanilla overworld biomes at very low frequency (~1-in-24 chunks). Lets survival players who never visit an Anomaly biome still find a small supply through normal exploration. Off = magnetic_gravel is strictly anomaly-exclusive. |
+| COMMON | worldgen.meteoriteDecayTicks | number | 12000; 200-240000 | Ticks between a fresh meteorite's full-charge state and full inertness. Default 12000 = 10 in-game minutes. The strength tier steps EXTREME → STRONG → WEAK → inert as the timer elapses. Right-click with any ferromagnetic item to reset. |
+| COMMON | worldgen.meteoriteSaplingGrowTicks | number | 36000; 200-480000 | Ticks the Meteorite Sapling takes to mature into a fresh meteorite_core. Default 36000 = 30 in-game minutes. Adjust to taste; faster makes sapling-farming trivial, slower makes it a long-term project. |
 
 ## Lightning
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | lightning.lirmEnabled | boolean | true | If true, every lightning bolt magnetizes one unstamped metal armor/tool piece on the struck entity and has a high chance of converting nearby log blocks to petrified wood. |
+
+## Debug
+
+| Scope | Key | Type | Default / range | Description |
+|---|---|---|---|---|
+| SERVER | debug.debugLogging | boolean | false | Master toggle for FieldApplicator + anchor-binding debug logs. Leave off on busy servers; spammy at default. |
+| SERVER | debug.goggleDiagnostics | boolean | false | Show extra diagnostic lines in goggle/HUD tooltips (e.g. a machine's live kinetic speed / source / network state). Off by default; handy when diagnosing why a block won't power. |
 
 ## Commands
 
@@ -336,22 +361,28 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
+| COMMON | compat.alexsCavesPotionMode | enum | BOTH | How our Magnetized status effect coexists with Alex's Caves' Magnetizing effect. BOTH (default, parallel); OURS_ONLY (AC effect swapped for ours on application); THEIRS_ONLY (our effect swapped for AC's). |
 | COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like ships, whether loose or attached to track. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
 | COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize rail-engaged Create: Coasters Simulated trains, linked cars, and riveted bodies as one structure. Loose carts are ignored by the inducer but still react to magnets. Default on. |
-| COMMON | compat.steamNRailsFieldReaction | boolean | true | Project magnetic force along the rails and apply it once to each coupled Steam 'n' Rails train, keeping all linked cars together and on track. Assembled train entities remain outside Structural Inducer block capture. |
+| COMMON | compat.steamNRailsFieldReaction | boolean | true | Project magnetic force along the rails and apply it once to each coupled train, keeping all linked cars together and on track. Default on. |
 | COMMON | compat.steamNRailsTrainSusceptibility | number | 1.0; 0.0-100.0 | Scales magnetic acceleration and braking of Steam 'n' Rails trains. 1.0 is normal; 0 disables force without changing the main toggle. |
 | COMMON | compat.createBigCannonsProjectileReaction | boolean | true | Allow launched Create: Big Cannons shells, rounds, and projectile bursts to receive magnetic forces. Has no effect when Create: Big Cannons is not installed. Default on. |
 | COMMON | compat.createBigCannonsProjectileSusceptibility | number | 1.0; 0.0-100.0 | Base magnetic susceptibility of a launched Create: Big Cannons projectile. 1.0 matches a normal ferromagnetic entity; 0 disables the response. |
 | COMMON | compat.allowRedstonePower | boolean | true | Whether redstone signal activates the addon's redstone-powered emitters. Default true. Set false to force players to feed FE/RF — useful on hardcore servers. |
 | COMMON | compat.allowEnergyPower | boolean | true | Whether FE/RF energy activates the addon's emitters. Default true. Any FE-providing mod (C&A, Mekanism, Thermal, IE, AE2) works. Set false to disable energy-driven emitters. |
+| COMMON | compat.requireRedstoneAndEnergy | boolean | false | Require BOTH redstone and energy at once to run an emitter, instead of either-or. Default off (redstone OR FE runs it). When on: the emitter still accepts and buffers FE/RF at all times, but stays off — and burns no energy — until it also receives a redstone signal; with both present it runs and drains energy. Lets you pre-charge a magnet and gate its activation with redstone. Needs both Allow Redstone Power and Allow FE/RF Power on. |
+| COMMON | compat.analogRedstoneElectromagnet | boolean | false | Scale the Electromagnet's field force with the analog redstone level (1-15) instead of running at full strength for any signal. Default off. Signal 1 gives 200 N (the Weak tier's force) and signal 15 gives 8000 N (the Extreme tier's force), ramped geometrically in between, so every redstone level is an equal proportional step — wire a comparator, an analog sensor, or a run of redstone dust to get a real throttle. The strength tier picked in the GUI is unchanged and still sets the field's RANGE; only force is scaled. Only applies while redstone is driving — on FE/RF the emitter always runs at full configured strength, and a partial signal still consumes no FE. Adjacent hematite and Halbach arrays scale the throttled force proportionally, so both keep working as usual. |
 | COMMON | compat.analogRedstoneDipole | boolean | false | Scale the Dipole Electromagnet's field force with the analog redstone level (1-15). Default off. Both poles scale together. See Analog Redstone — Electromagnet for the full description. |
 | COMMON | compat.analogRedstoneAnchor | boolean | false | Scale the Magnetic Anchor's field force with the analog redstone level (1-15). Default off. See Analog Redstone — Electromagnet for the full description. |
 | COMMON | compat.analogRedstoneRepulsor | boolean | false | Scale the Repulsor Coil's field force with the analog redstone level (1-15). Default off. See Analog Redstone — Electromagnet for the full description. |
 | COMMON | compat.analogRedstoneTractorBeam | boolean | false | Scale the Tractor Beam's field force with the analog redstone level (1-15). Default off. See Analog Redstone — Electromagnet for the full description. |
+| COMMON | compat.analogRedstoneExcavator | boolean | false | Scale the Magnetic Excavator's field force with the analog redstone level (1-15). Default off. Its internal redstone-dust fuel counts as a full signal, so only an external signal throttles it. See Analog Redstone — Electromagnet for the full description. |
 | COMMON | compat.analogRedstoneInducer | boolean | false | Scale the Structural Inducer's field force with the analog redstone level (1-15). Default off. See Analog Redstone — Electromagnet for the full description. |
 | COMMON | compat.fieldManualAutoGive | boolean | true | Give players the Magnetization Field Manual (Patchouli guide book) on their first login. Per-player flag persists across reconnects. Requires Patchouli to be installed. |
 | COMMON | compat.emitterEnergyCapacity | number | 50000; 1000-10000000 | Internal FE buffer size per emitter. 50 000 ≈ 4 minutes of continuous operation at the default drain. |
 | COMMON | compat.emitterEnergyDrainPerTick | number | 10; 0-100000 | FE consumed per tick while an emitter is energy-driven. 10 FE/tick = 200 FE/s. Set 0 to make energy power free. |
 | COMMON | compat.emitterEnergyTransferRate | number | 200; 1-1000000 | Max FE/tick the emitter accepts from external sources. Higher = refills the buffer faster from heavy cabling. |
 | COMMON | compat.anomalyAffectsVanillaCompass | boolean | true | When true (default), the vanilla compass spins erratically inside the Magnetic Anomaly biome — same theming as our Field Compass. Set false to leave vanilla behaviour untouched (useful if other mods rely on stable compass readings). |
+| COMMON | compat.anomalyAffectsNaturesCompass | boolean | true | When true (default), Nature's Compass (if installed) also scrambles inside the anomaly. Set false to keep biome-search functional even inside the flux. |
+| COMMON | compat.anomalyAffectsExplorersCompass | boolean | true | When true (default), Explorer's Compass (if installed) also scrambles inside the anomaly. Set false to keep structure-search functional even inside the flux. |
 | COMMON | compat.ae2MeteoriteHookEnabled | boolean | true | If true and Applied Energistics 2 is installed, every AE2 meteor structure also emits a decaying magnetic field at its centre (same decay curve as our native meteorite_core, no extra block placed). Disable to skip the per-chunk AE2 scan if you don't want the cross-mod integration. |

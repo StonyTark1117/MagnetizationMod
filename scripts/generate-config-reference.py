@@ -73,7 +73,9 @@ def parse_spec() -> list[dict[str, str]]:
         i += 1
         while i < len(lines):
             chain.append(lines[i])
-            if ";" in lines[i]:
+            # A comment string may contain a semicolon. Only the statement's
+            # trailing semicolon ends this fluent builder chain.
+            if re.search(r";\s*$", lines[i]):
                 break
             i += 1
         text = "\n".join(chain)
