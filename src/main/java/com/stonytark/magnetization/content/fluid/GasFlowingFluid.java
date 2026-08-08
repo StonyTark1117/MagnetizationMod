@@ -59,7 +59,7 @@ public final class GasFlowingFluid {
         @Override
         protected Map<Direction, FluidState> getSpread(final Level level, final BlockPos pos,
                                                         final BlockState blockState) {
-            return Map.of(Direction.UP, getFlowing(7, false));
+            return Map.of();
         }
 
         @Override
@@ -75,17 +75,15 @@ public final class GasFlowingFluid {
                 level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 return;
             }
-            final BlockPos above = pos.above();
-            final BlockState targetState = level.getBlockState(above);
-            if (targetState.getFluidState().isEmpty() && targetState.canBeReplaced()) {
-                super.spreadTo(level, above, targetState, Direction.UP, getFlowing(7, false));
+            final int nextAmount = state.getAmount() - 1;
+            if (nextAmount <= 0) {
                 return;
             }
             for (final Direction direction : Direction.Plane.HORIZONTAL) {
                 final BlockPos side = pos.relative(direction);
                 final BlockState sideState = level.getBlockState(side);
                 if (sideState.getFluidState().isEmpty() && sideState.canBeReplaced()) {
-                    super.spreadTo(level, side, sideState, direction, getFlowing(7, false));
+                    super.spreadTo(level, side, sideState, direction, getFlowing(nextAmount, false));
                 }
             }
         }
