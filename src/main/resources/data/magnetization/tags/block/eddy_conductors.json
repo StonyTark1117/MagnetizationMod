@@ -26,6 +26,13 @@
     {"id": "createaddition:alternator", "required": false},
     {"id": "createaddition:rolling_mill", "required": false},
     {"id": "createaddition:modular_accumulator", "required": false},
-    {"id": "createaddition:tesla_coil", "required": false}
+    {"id": "createaddition:tesla_coil", "required": false},
+    {"id": "create_enchantment_industry:printer", "required": false},
+    {"id": "create_enchantment_industry:mechanical_grindstone", "required": false},
+    {"id": "create_enchantment_industry:grindstone_drain", "required": false},
+    {"id": "create_enchantment_industry:experience_hatch", "required": false},
+    {"id": "create_enchantment_industry:experience_lantern", "required": false},
+    {"id": "create_enchantment_industry:blaze_enchanter", "required": false},
+    {"id": "create_enchantment_industry:blaze_forger", "required": false}
   ]
 }

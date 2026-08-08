@@ -264,3 +264,17 @@ type = "optional"
 versionRange = "[1.21.1-93-neoforge,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "create_enchantment_industry"
+type = "optional"
+versionRange = "[2.4.2,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "createendertransmission"
+type = "optional"
+versionRange = "[2.1.1,)"
+ordering = "AFTER"
+side = "BOTH"

@@ -35,6 +35,8 @@ configurations {
     steamRailsRuntime
     dieselGeneratorsRuntime
     copycatsRuntime
+    enchantmentIndustryRuntime
+    enderTransmissionRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -71,6 +73,8 @@ def minimalProfileTasks = [
         'runsteamrailsgametestserver',
         'rundieselgeneratorsgametestserver',
         'runcopycatsgametestserver',
+        'runenchantmentindustrygametestserver',
+        'runendertransmissiongametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -119,6 +123,12 @@ def wantsDieselGeneratorsTests = lowered.any {
 def wantsCopycatsTests = lowered.any {
     it.endsWith('runcopycatsgametestserver') || it.endsWith('smokecopycatsgametest')
 }
+def wantsEnchantmentIndustryTests = lowered.any {
+    it.endsWith('runenchantmentindustrygametestserver') || it.endsWith('smokeenchantmentindustrygametest')
+}
+def wantsEnderTransmissionTests = lowered.any {
+    it.endsWith('runendertransmissiongametestserver') || it.endsWith('smokeendertransmissiongametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -132,7 +142,8 @@ def wantsMinimalVerification = lowered.any {
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
                             wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests,
-                            wantsDieselGeneratorsTests, wantsCopycatsTests]
+                            wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
+                            wantsEnderTransmissionTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -165,6 +176,12 @@ if (wantsDieselGeneratorsTests) {
 }
 if (wantsCopycatsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.copycatsRuntime }
+}
+if (wantsEnchantmentIndustryTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.enchantmentIndustryRuntime }
+}
+if (wantsEnderTransmissionTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.enderTransmissionRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -263,7 +280,9 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runCreateBigCannonsGameTestServer'
         || it.name == 'runSteamRailsGameTestServer'
         || it.name == 'runDieselGeneratorsGameTestServer'
-        || it.name == 'runCopycatsGameTestServer' }.configureEach {
+        || it.name == 'runCopycatsGameTestServer'
+        || it.name == 'runEnchantmentIndustryGameTestServer'
+        || it.name == 'runEnderTransmissionGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -292,6 +311,10 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-diesel-generators-gametest/world/session.lock'
                 : it.name == 'runCopycatsGameTestServer'
                 ? 'run-copycats-gametest/world/session.lock'
+                : it.name == 'runEnchantmentIndustryGameTestServer'
+                ? 'run-enchantment-industry-gametest/world/session.lock'
+                : it.name == 'runEnderTransmissionGameTestServer'
+                ? 'run-ender-transmission-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -355,6 +378,12 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_copycats/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_enchantment_industry/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ender_transmission/structure'
     }
 }
 
@@ -482,6 +511,16 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-copycats-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_copycats'
+        }
+        enchantmentIndustryGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-enchantment-industry-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_enchantment_industry'
+        }
+        enderTransmissionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ender-transmission-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ender_transmission'
         }
         data {
             data()
@@ -713,6 +752,20 @@ tasks.register('smokeCopycatsGameTest', Exec) {
             'run-copycats-gametest', '300'
 }
 
+tasks.register('smokeEnchantmentIndustryGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Enchantment Industry material-tag parity and intentional process isolation.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runEnchantmentIndustryGameTestServer',
+            'run-enchantment-industry-gametest', '300'
+}
+
+tasks.register('smokeEnderTransmissionGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Ender Transmission remote kinetics and chunk-loader compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runEnderTransmissionGameTestServer',
+            'run-ender-transmission-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -793,6 +846,13 @@ dependencies {
 
     compileOnly("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
     copycatsRuntime("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
+
+    compileOnly("curse.maven:create-enchantment-industry-688768:${enchantment_industry_test_file}") { transitive = false }
+    enchantmentIndustryRuntime("curse.maven:create-enchantment-industry-688768:${enchantment_industry_test_file}") { transitive = false }
+    enchantmentIndustryRuntime("curse.maven:create-dragons-plus-1216624:${create_dragons_plus_test_file}") { transitive = false }
+
+    compileOnly("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
+    enderTransmissionRuntime("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated
