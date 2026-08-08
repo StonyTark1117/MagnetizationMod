@@ -602,34 +602,39 @@ public final class MagGameTests {
             }
             helper.assertTrue(gasBlocks <= 200,
                     "Blocked gas flow must remain a bounded ceiling layer; found " + gasBlocks + " gas blocks");
+            for (int y = 12; y <= 20; y++) {
+                for (int x = 0; x <= 8; x++) {
+                    for (int z = 0; z <= 8; z++) {
+                        helper.assertTrue(helper.getBlockState(new BlockPos(x, y, z))
+                                        .getFluidState().isEmpty(),
+                                "Blocked gas must not fill the sky at Y=" + y);
+                    }
+                }
+            }
             helper.succeed();
         });
     }
 
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
     public static void fusionGasFollowsCeilingAndTurnsUpAtEdge(final GameTestHelper helper) {
-        final BlockPos source = new BlockPos(2, 1, 1);
+        final BlockPos source = new BlockPos(0, 1, 1);
         helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
         // The source is blocked immediately. Flow crosses the supported west cell,
         // then turns upward at the unsupported edge, all within the 3x3 template.
-        helper.setBlock(new BlockPos(2, 2, 1), Blocks.GLASS);
+        helper.setBlock(new BlockPos(0, 2, 1), Blocks.GLASS);
         helper.setBlock(new BlockPos(1, 2, 1), Blocks.GLASS);
+        helper.setBlock(new BlockPos(2, 1, 1), Blocks.AIR);
+        helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
         helper.runAfterDelay(60L, () -> {
             helper.assertTrue(helper.getBlockState(new BlockPos(1, 1, 1))
                             .is(MagBlocks.HYDROGEN_BLOCK.get()),
                     "Gas should flow horizontally beneath a supporting ceiling; got "
                             + helper.getBlockState(new BlockPos(1, 1, 1))
                             + ", source=" + helper.getBlockState(source));
-            boolean waterfall = false;
-            for (int y = 2; y <= 10; y++) {
-                if (helper.getBlockState(new BlockPos(0, y, 1)).is(MagBlocks.HYDROGEN_BLOCK.get())) {
-                    waterfall = true;
-                    break;
-                }
-            }
-            helper.assertTrue(waterfall, "Gas should turn upward where the ceiling ends");
-            helper.assertTrue(helper.getBlockState(new BlockPos(0, 1, 1)).getFluidState().isEmpty(),
-                    "Gas must not remain as an unsupported floating pool");
+            helper.assertTrue(helper.getBlockState(new BlockPos(2, 1, 1)).getFluidState().isEmpty(),
+                    "Gas must not flow horizontally into unsupported air");
+            helper.assertTrue(helper.getBlockState(new BlockPos(2, 2, 1)).getFluidState().isEmpty(),
+                    "Blocked ceiling flow must not create an unsupported waterfall branch");
             helper.succeed();
         });
     }

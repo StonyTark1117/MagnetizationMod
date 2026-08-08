@@ -56,7 +56,7 @@ public final class GasFlowingFluid {
                 final BlockPos side = pos.relative(direction);
                 final BlockState sideState = level.getBlockState(side);
                 final BlockState sideAboveState = level.getBlockState(side.above());
-                if (sideState.getFluidState().isEmpty() && sideState.canBeReplaced()
+                if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
                         && !sideAboveState.canBeReplaced()) {
                     super.spreadTo(level, side, sideState, direction, getFlowing(7, false));
                 }
@@ -107,8 +107,12 @@ public final class GasFlowingFluid {
             for (final Direction direction : Direction.Plane.HORIZONTAL) {
                 final BlockPos side = pos.relative(direction);
                 final BlockState sideState = level.getBlockState(side);
-                if (sideState.getFluidState().isEmpty() && sideState.canBeReplaced()) {
-                    super.spreadTo(level, side, sideState, direction, getFlowing(nextAmount, false));
+                final BlockState sideAboveState = level.getBlockState(side.above());
+                if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
+                        && !sideAboveState.canBeReplaced()) {
+                    final FluidState next = getFlowing(nextAmount, false);
+                    level.setBlockAndUpdate(side, next.createLegacyBlock());
+                    level.scheduleTick(side, next.getType(), next.getType().getTickDelay(level));
                 }
             }
         }
