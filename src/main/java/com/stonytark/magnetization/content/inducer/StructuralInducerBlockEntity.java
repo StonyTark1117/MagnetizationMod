@@ -396,13 +396,11 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
 
         try {
             final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(server, anchor, positions, bounds);
-            if (ship.getMassTracker().isInvalid()) {
-                final SubLevelContainer container = SubLevelContainer.getContainer(server);
-                if (container != null) container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
-                restoreCaptured(server, cap);
-                setStatus(server, "invalid", positions.size());
-                return false;
-            }
+            // A freshly assembled Sable body can report invalid until its first
+            // physics initialization pass. Track it immediately and let driveAll's
+            // INIT_GRACE_TICKS path distinguish that transient state from a truly
+            // invalid body; culling here broke BE-heavy structures such as Tracks
+            // mounts before they had one chance to initialize.
             final var pose0 = ship.logicalPose();
             final java.util.List<Vec3> localCenters = new ArrayList<>(positions.size());
             for (final BlockPos op : positions) {

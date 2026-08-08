@@ -20,5 +20,6 @@ run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoa
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 run_profile 'Create: New Age compatibility profile' smokeCreateNewAgeGameTest
 run_profile 'Create Crafts & Additions compatibility profile' smokeCreateAdditionGameTest
+run_profile 'Create: Tracks compatibility profile' smokeCreateTracksGameTest
 
 echo 'releaseMatrixGate: all isolated profiles passed'

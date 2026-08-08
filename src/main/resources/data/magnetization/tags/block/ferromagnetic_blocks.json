@@ -87,6 +87,7 @@
     {"id": "createaddition:rolling_mill", "required": false},
     {"id": "createaddition:tesla_coil", "required": false},
     {"id": "createaddition:barbed_wire", "required": false},
+    {"id": "tracks:track_mount", "required": false},
     {"id": "aether:gravitite_block", "required": false},
     {"id": "aether:enchanted_gravitite", "required": false},
     {"id": "ironchest:iron_chest", "required": false},

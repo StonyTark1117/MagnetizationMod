@@ -125,6 +125,15 @@ versionRange = "[1.6.0,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Create: Tracks — track mounts, suspension, and drive wheels remain part of
+# the Sable craft for magnetic-field and Structural Inducer behavior.
+[[dependencies.${mod_id}]]
+modId = "tracks"
+type = "optional"
+versionRange = "[1.0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"
