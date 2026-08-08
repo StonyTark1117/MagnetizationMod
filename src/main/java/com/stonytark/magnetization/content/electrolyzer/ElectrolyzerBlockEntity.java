@@ -79,6 +79,8 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
 
     /** 0..1 water fill fraction for the in-basin renderer. */
     public float waterFillFraction() { return waterTank.getFluidAmount() / (float) Math.max(1, waterTank.getCapacity()); }
+    /** 0..1 hydrogen fill fraction for the in-basin renderer. */
+    public float hydrogenFillFraction() { return hydrogenTank.getFluidAmount() / (float) Math.max(1, hydrogenTank.getCapacity()); }
     public int waterAmount() { return waterTank.getFluidAmount(); }
     public int hydrogenAmount() { return hydrogenTank.getFluidAmount(); }
 
