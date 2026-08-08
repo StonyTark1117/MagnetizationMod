@@ -537,20 +537,27 @@ public final class MagGameTests {
     }
 
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
-    public static void fusionGasesDespawnAtSkyLimit(final GameTestHelper helper) {
-        final BlockPos structureOrigin = helper.absolutePos(new BlockPos(1, 1, 1));
-        final BlockPos skyLimit = new BlockPos(structureOrigin.getX(),
-                helper.getLevel().getMaxBuildHeight() - 1, structureOrigin.getZ());
-        final net.minecraft.world.level.block.Block[] gases = {
-                MagBlocks.HYDROGEN_BLOCK.get(), MagBlocks.TRITIUM_BLOCK.get(), MagBlocks.HELIUM_3_BLOCK.get()
-        };
-        for (int i = 0; i < gases.length; i++) {
-            helper.getLevel().setBlock(skyLimit.offset(i, 0, 0), gases[i].defaultBlockState(), 3);
-        }
+    public static void fusionGasSourceRisesWithoutPyramid(final GameTestHelper helper) {
+        final BlockPos source = new BlockPos(1, 1, 1);
+        final net.minecraft.world.level.block.Block gas = MagBlocks.HYDROGEN_BLOCK.get();
+        helper.setBlock(source, gas);
         helper.runAfterDelay(20L, () -> {
-            for (int i = 0; i < gases.length; i++) {
-                helper.assertTrue(helper.getLevel().getBlockState(skyLimit.offset(i, 0, 0)).isAir(),
-                        "Gas should despawn at the sky limit: " + gases[i]);
+            helper.assertTrue(helper.getBlockState(source).getFluidState().isEmpty(),
+                    "An unobstructed gas source must leave its old position");
+            boolean sourceMovedUp = false;
+            for (int y = 2; y <= 20; y++) {
+                if (helper.getBlockState(new BlockPos(source.getX(), y, source.getZ()))
+                        .getFluidState().isSource()) {
+                    sourceMovedUp = true;
+                    break;
+                }
+            }
+            helper.assertTrue(sourceMovedUp, "An unobstructed gas source should float upward as a source");
+            helper.assertTrue(helper.getBlockState(source.below()).getFluidState().isEmpty(),
+                    "An unobstructed gas source must not flow downward");
+            for (final net.minecraft.core.Direction direction : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                helper.assertTrue(helper.getBlockState(source.relative(direction)).getFluidState().isEmpty(),
+                        "An unobstructed gas source must not spread sideways: " + direction);
             }
             helper.succeed();
         });
