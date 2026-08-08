@@ -57,7 +57,7 @@ public final class GasFlowingFluid {
                 final BlockState sideState = level.getBlockState(side);
                 final BlockState sideAboveState = level.getBlockState(side.above());
                 if (sideState.getFluidState().isEmpty() && sideState.canBeReplaced()
-                        && sideAboveState.getFluidState().isEmpty()) {
+                        && !sideAboveState.canBeReplaced()) {
                     super.spreadTo(level, side, sideState, direction, getFlowing(7, false));
                 }
             }
