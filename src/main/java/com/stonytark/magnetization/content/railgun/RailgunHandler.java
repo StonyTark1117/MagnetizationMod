@@ -368,8 +368,15 @@ public final class RailgunHandler {
                 if (along < maxSpeed) {
                     final double mass = ship.getMassTracker().getMass();
                     final org.joml.Vector3dc com = ship.getMassTracker().getCenterOfMass();
+                    // MassTracker reports the centre of mass in ship-local
+                    // coordinates, while applyWorldImpulse expects a world-space
+                    // point. Passing the local value directly gives a launched
+                    // ship a huge off-centre torque once it is away from the
+                    // origin, which can spin the body into Sable's removal path.
+                    final Vec3 worldCom = ship.logicalPose().transformPosition(
+                            new Vec3(com.x(), com.y(), com.z()));
                     SableBridge.applyWorldImpulse(ship,
-                            new Vec3(com.x(), com.y(), com.z()),
+                            worldCom,
                             new Vec3(axis.x * magnitude * mass, axis.y * magnitude * mass, axis.z * magnitude * mass));
                 }
                 breakAhead(server, ship.boundingBox(), facing);
