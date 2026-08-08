@@ -134,6 +134,16 @@ versionRange = "[1.0.1,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Steam 'n' Rails trains receive rail-projected field force once per coupled
+# consist. Its locomotive metals also participate in our material tags and its
+# track coupler receives a Magnetization Ponder scene.
+[[dependencies.${mod_id}]]
+modId = "railways"
+type = "optional"
+versionRange = "[0.2.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"

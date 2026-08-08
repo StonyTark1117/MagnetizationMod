@@ -410,6 +410,11 @@ public final class MagConfig {
     /** Allow Structural Inducers to adopt coaster cart sublevels already assembled
      *  in their scan cone instead of only assembling ordinary world blocks. */
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_STRUCTURAL_INDUCER;
+    /** Allow Steam 'n' Rails/Create train carriages to receive field force along
+     *  their rail tangent. Coupled cars are updated as one shared train. */
+    public static final ModConfigSpec.BooleanValue STEAM_N_RAILS_FIELD_REACTION;
+    /** Scalar applied to the rail-projected force on Steam 'n' Rails trains. */
+    public static final ModConfigSpec.DoubleValue STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY;
     /** Allow launched Create: Big Cannons shells, rounds, and projectile bursts to
      *  receive the ordinary entity magnetic-field impulse. */
     public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_PROJECTILE_REACTION;
@@ -1770,6 +1775,19 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.simulatedCoastersStructuralInducer")
                 .define("simulatedCoastersStructuralInducer", true);
 
+        STEAM_N_RAILS_FIELD_REACTION = b
+                .comment("Allow Create: Steam 'n' Rails trains to react to magnetic fields.",
+                         "Force is projected along the rail direction and applied once to the",
+                         "shared train, so coupled cars stay together and remain on track.")
+                .translation("magnetization.configuration.compat.steamNRailsFieldReaction")
+                .define("steamNRailsFieldReaction", true);
+
+        STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY = b
+                .comment("Magnetic susceptibility of a Steam 'n' Rails train.",
+                         "1.0 is the default response; 0 disables force without changing the toggle.")
+                .translation("magnetization.configuration.compat.steamNRailsTrainSusceptibility")
+                .defineInRange("steamNRailsTrainSusceptibility", 1.0d, 0.0d, 100.0d);
+
         CREATE_BIG_CANNONS_PROJECTILE_REACTION = b
                 .comment("Allow launched Create: Big Cannons shells, rounds, and projectile bursts",
                          "to receive magnetic forces. Has no effect when Create: Big Cannons is",
@@ -2239,6 +2257,12 @@ public final class MagConfig {
     }
     public static boolean simulatedCoastersStructuralInducer() {
         return booleanOr(SIMULATED_COASTERS_STRUCTURAL_INDUCER, true);
+    }
+    public static boolean steamRailsFieldReaction() {
+        return booleanOr(STEAM_N_RAILS_FIELD_REACTION, true);
+    }
+    public static double steamRailsTrainSusceptibility() {
+        return doubleOr(STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY, 1.0d);
     }
     public static boolean allowEnergyPower()   { return booleanOr(ALLOW_ENERGY_POWER, true); }
     // Analog redstone strength — all default OFF, so an unloaded config behaves exactly

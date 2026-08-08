@@ -20,6 +20,7 @@ run-gametest/
 run-aeroportals-gametest/
 run-immersive-aeronautics-gametest/
 run-simulated-coasters-gametest/
+run-*-gametest/
 # Dev-world snapshots (scripts/test-world.sh). Large binaries; force-add a
 # specific snapshot if you deliberately want to share it.
 test-worlds/

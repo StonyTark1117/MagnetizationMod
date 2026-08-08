@@ -92,6 +92,13 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .addStoryBoard(SCHEMATIC, machineScene("dipole_electromagnet", "Aim a Dipole Electromagnet",
                         "Power it and use a wrench to aim the separated NORTH and SOUTH pole origins.",
                         MagBlocks.DIPOLE_ELECTROMAGNET.get()));
+
+        // No hard Railways reference: the optional registry lookup keeps the
+        // normal client classpath clean while adding our field behavior to the
+        // port's existing coupler Ponder coverage when it is installed.
+        BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("railways", "track_coupler"))
+                .ifPresent(coupler -> blocks.forComponents(coupler)
+                        .addStoryBoard(SCHEMATIC, MagPonderPlugin::steamRailsMagnetism));
     }
 
     private static void prepare(final SceneBuilder scene, final String id, final String title) {
@@ -183,6 +190,24 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .text("Both rails must reach the minimum length before an arc can launch a target.")
                 .placeNearTarget();
         scene.idle(90);
+    }
+
+    private static void steamRailsMagnetism(final SceneBuilder scene, final SceneBuildingUtil util) {
+        prepare(scene, "steam_rails_magnetism", "Move coupled trains with magnetic fields");
+        final BlockPos coupler = util.grid().at(2, 1, 2);
+        final Block railwaysCoupler = BuiltInRegistries.BLOCK.get(
+                ResourceLocation.fromNamespaceAndPath("railways", "track_coupler"));
+        scene.world().setBlock(coupler, railwaysCoupler.defaultBlockState(), false);
+        final BlockPos magnet = util.grid().at(4, 1, 2);
+        scene.world().setBlock(magnet, MagBlocks.ELECTROMAGNET.get().defaultBlockState(), false);
+        show(scene, util, coupler, magnet);
+        text(scene, util, coupler, coupler,
+                "Steam 'n' Rails couplers share one train. A magnetic field accelerates or brakes the linked consist along its track.");
+        scene.overlay().showOutlineWithText(util.select().position(magnet), 100)
+                .colored(PonderPalette.OUTPUT)
+                .text("Structural Inducers ignore assembled train entities; disassemble a train before treating its blocks as a structure.")
+                .placeNearTarget();
+        scene.idle(110);
     }
 
     private static PonderStoryBoard machineScene(final String id, final String title,

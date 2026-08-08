@@ -8,6 +8,7 @@ import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.compat.createbigcannons.MagCreateBigCannonsCompat;
 import com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat;
+import com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.content.effect.MagnetizedEffect;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -481,6 +482,10 @@ public final class FieldApplicator {
 
     private static void applyToEntities(final ServerLevel level, final MagneticField field,
                                         final boolean affectsArmor, final boolean affectsItems) {
+        // Create trains are constrained to a rail graph, so entity knockback is
+        // ineffective (and unsafe for coupled cars). Steam 'n' Rails compatibility
+        // projects the field onto the rail tangent and updates the shared Train once.
+        MagSteamRailsCompat.applyToTrains(level, field);
         final double r = field.range();
         final AABB box = AABB.ofSize(field.origin(), 2 * r, 2 * r, 2 * r);
         final List<Entity> nearby = level.getEntities((Entity) null, box, e -> isMagnetizable(e, affectsArmor, affectsItems));

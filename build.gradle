@@ -32,6 +32,7 @@ configurations {
     createNewAgeRuntime
     createAdditionRuntime
     createTracksRuntime
+    steamRailsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -65,6 +66,7 @@ def minimalProfileTasks = [
         'runcreatenewagegametestserver',
         'runcreateadditiongametestserver',
         'runcreatetracksgametestserver',
+        'runsteamrailsgametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -104,6 +106,9 @@ def wantsCreateAdditionTests = lowered.any {
 def wantsCreateTracksTests = lowered.any {
     it.endsWith('runcreatetracksgametestserver') || it.endsWith('smokecreatetracksgametest')
 }
+def wantsSteamRailsTests = lowered.any {
+    it.endsWith('runsteamrailsgametestserver') || it.endsWith('smokesteamrailsgametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -116,7 +121,7 @@ def wantsMinimalVerification = lowered.any {
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
-                            wantsCreateAdditionTests, wantsCreateTracksTests]
+                            wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -140,6 +145,9 @@ if (wantsCreateAdditionTests) {
 }
 if (wantsCreateTracksTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createTracksRuntime }
+}
+if (wantsSteamRailsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.steamRailsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -235,7 +243,8 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
-        || it.name == 'runCreateBigCannonsGameTestServer' }.configureEach {
+        || it.name == 'runCreateBigCannonsGameTestServer'
+        || it.name == 'runSteamRailsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -258,6 +267,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-simulated-coasters-gametest/world/session.lock'
                 : it.name == 'runCreateBigCannonsGameTestServer'
                 ? 'run-createbigcannons-gametest/world/session.lock'
+                : it.name == 'runSteamRailsGameTestServer'
+                ? 'run-steam-rails-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -312,6 +323,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createtracks/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_steam_rails/structure'
     }
 }
 
@@ -424,6 +438,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-create-tracks-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createtracks'
+        }
+        steamRailsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-steam-rails-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_steam_rails'
         }
         data {
             data()
@@ -634,6 +653,13 @@ tasks.register('smokeCreateTracksGameTest', Exec) {
             'run-create-tracks-gametest', '300'
 }
 
+tasks.register('smokeSteamRailsGameTest', Exec) {
+    group = 'verification'
+    description = "Supervises Steam 'n' Rails train-field, coupling, inducer, tag, and Ponder compatibility."
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSteamRailsGameTestServer',
+            'run-steam-rails-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -705,6 +731,9 @@ dependencies {
     compileOnly("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
     createTracksRuntime("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
     createTracksRuntime("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_test_version}") { transitive = false }
+
+    compileOnly("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
+    steamRailsRuntime("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated
