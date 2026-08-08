@@ -35,8 +35,9 @@ public final class SimulatedCoastersGameTests {
     private SimulatedCoastersGameTests() {}
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "coasterFieldCompat")
-    public static void coasterCartFieldReactionHonorsConfig(final GameTestHelper helper) {
+    public static void looseCoasterCartReactsToFieldsButNotInducer(final GameTestHelper helper) {
         final boolean original = MagConfig.SIMULATED_COASTERS_FIELD_REACTION.get();
+        final boolean originalInducer = MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.get();
         final Vec3 cartPosition = Vec3.atCenterOf(helper.absolutePos(new BlockPos(6, 8, 6)));
         final ServerSubLevel cart = CoasterCartSpawner.spawnMinimalContraption(
                 helper.getLevel(), cartPosition, new Quaterniond());
@@ -48,6 +49,9 @@ public final class SimulatedCoastersGameTests {
             try {
                 helper.assertTrue(MagSimulatedCoastersCompat.isCoasterCart(cart),
                         "Published Coasters runtime did not recognize its spawned cart sublevel");
+                MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(true);
+                helper.assertTrue(!MagSimulatedCoastersCompat.structuralInducerCanAdopt(cart),
+                        "A loose coaster cart was accepted by the Structural Inducer");
                 final RigidBodyHandle handle = RigidBodyHandle.of(cart);
                 helper.assertTrue(handle != null, "Spawned coaster cart has no Sable physics handle");
                 final MagneticField field = new MagneticField(
@@ -67,10 +71,11 @@ public final class SimulatedCoastersGameTests {
                 FieldApplicator.applyToSubLevelsOnly(helper.getLevel(), field, null, null);
                 final Vector3d enabledAfter = handle.getLinearVelocity(new Vector3d());
                 helper.assertTrue(new Vector3d(enabledAfter).sub(enabledBefore).lengthSquared() > 1.0e-8,
-                        "Enabled coaster cart did not react to the magnetic field");
+                        "Loose coaster cart did not react to the magnetic field like a ship");
                 helper.succeed();
             } finally {
                 MagConfig.SIMULATED_COASTERS_FIELD_REACTION.set(original);
+                MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(originalInducer);
                 remove(helper, cart);
             }
         });

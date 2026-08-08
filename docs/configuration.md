@@ -336,8 +336,8 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
-| COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like other Sable physics structures. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
-| COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize rail-engaged Create: Coasters Simulated trains, linked cars, and riveted bodies as one structure. Loose carts remain unaffected. Default on. |
+| COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like ships, whether loose or attached to track. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
+| COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize rail-engaged Create: Coasters Simulated trains, linked cars, and riveted bodies as one structure. Loose carts are ignored by the inducer but still react to magnets. Default on. |
 | COMMON | compat.createBigCannonsProjectileReaction | boolean | true | Allow launched Create: Big Cannons shells, rounds, and projectile bursts to receive magnetic forces. Has no effect when Create: Big Cannons is not installed. Default on. |
 | COMMON | compat.createBigCannonsProjectileSusceptibility | number | 1.0; 0.0-100.0 | Base magnetic susceptibility of a launched Create: Big Cannons projectile. 1.0 matches a normal ferromagnetic entity; 0 disables the response. |
 | COMMON | compat.allowRedstonePower | boolean | true | Whether redstone signal activates the addon's redstone-powered emitters. Default true. Set false to force players to feed FE/RF — useful on hardcore servers. |

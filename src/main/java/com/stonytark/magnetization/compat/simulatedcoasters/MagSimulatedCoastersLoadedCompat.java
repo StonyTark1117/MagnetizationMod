@@ -17,6 +17,9 @@ final class MagSimulatedCoastersLoadedCompat {
     }
 
     static boolean receivesMagneticFields(final ServerSubLevel subLevel) {
+        // Cart-to-rail engagement is deliberately irrelevant here: coaster cars
+        // are physical Sable bodies and react to magnets whether loose or riding
+        // a coaster. Engagement only gates Structural Inducer adoption below.
         return !isPartOfCoasterStructure(subLevel)
                 || com.stonytark.magnetization.config.MagConfig.simulatedCoastersFieldReaction();
     }
