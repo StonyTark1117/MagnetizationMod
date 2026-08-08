@@ -13,6 +13,10 @@ import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import dev.silvergold.simulatedcoasters.track.cart.CoasterCartSpawner;
+import dev.silvergold.simulatedcoasters.track.graph.CoasterPathEdge;
+import dev.silvergold.simulatedcoasters.track.graph.CoasterPathGraphManager;
+import dev.silvergold.simulatedcoasters.track.graph.CoasterPathNode;
+import dev.silvergold.simulatedcoasters.track.graph.CoasterPathTrackFrame;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -73,36 +77,60 @@ public final class SimulatedCoastersGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "coasterInducerCompat")
-    public static void structuralInducerRecognizesCoasterCartAndHonorsConfig(final GameTestHelper helper) {
+    public static void structuralInducerRecognizesEngagedTrainButIgnoresLooseCart(final GameTestHelper helper) {
         final boolean original = MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.get();
         final BlockPos inducerPos = new BlockPos(4, 2, 4);
         helper.setBlock(inducerPos, MagBlocks.STRUCTURAL_INDUCER.get().defaultBlockState()
                 .setValue(DirectionalBlock.FACING, Direction.DOWN));
         final StructuralInducerBlockEntity inducer =
                 (StructuralInducerBlockEntity) helper.getBlockEntity(inducerPos);
-        final Vec3 cartPosition = Vec3.atCenterOf(helper.absolutePos(inducerPos.above(6)));
-        final ServerSubLevel cart = CoasterCartSpawner.spawnMinimalContraption(
+        final Vec3 scanCenter = Vec3.atCenterOf(helper.absolutePos(inducerPos.above(6)));
+        // Keep the loose cart inside the inducer cone but well outside the
+        // track snap radius, so Coasters cannot legitimately auto-engage it.
+        final Vec3 cartPosition = scanCenter.add(0.0d, 0.0d, 5.0d);
+        final ServerSubLevel looseCart = CoasterCartSpawner.spawnMinimalContraption(
                 helper.getLevel(), cartPosition, new Quaterniond());
-        if (cart == null) {
+        final Vec3 engagedPosition = scanCenter.add(2.0d, 0.0d, 0.0d);
+        final BlockPos railFrom = BlockPos.containing(engagedPosition.add(-3.0d, 0.0d, 0.0d));
+        final BlockPos railTo = railFrom.offset(6, 0, 0);
+        final CoasterPathEdge edge = CoasterPathEdge.straight(railFrom, railTo,
+                Vec3.atCenterOf(railFrom), Vec3.atCenterOf(railTo));
+        final var graph = CoasterPathGraphManager.get(helper.getLevel());
+        graph.upsertNode(new CoasterPathNode(railFrom, new Vec3(0, 1, 0)));
+        graph.upsertNode(new CoasterPathNode(railTo, new Vec3(0, 1, 0)));
+        graph.addEdge(edge);
+        final ServerSubLevel engagedCart = CoasterCartSpawner.spawnMinimalContraption(
+                helper.getLevel(), engagedPosition, new Quaterniond(),
+                new CoasterPathTrackFrame.GraphHit(engagedPosition, edge, 0.5d));
+        if (looseCart == null || engagedCart == null) {
             helper.fail("Create: Coasters Simulated could not spawn the inducer test cart");
             return;
         }
         helper.runAfterDelay(12L, () -> {
             try {
                 MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(false);
-                helper.assertTrue(!MagSimulatedCoastersCompat.structuralInducerCanAdopt(cart),
-                        "Disabled Structural Inducer coaster compatibility still accepted a cart");
+                helper.assertTrue(!MagSimulatedCoastersCompat.structuralInducerCanAdopt(engagedCart),
+                        "Disabled Structural Inducer coaster compatibility still accepted an engaged cart");
 
                 MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(true);
+                helper.assertTrue(!MagSimulatedCoastersCompat.structuralInducerCanAdopt(looseCart),
+                        "A loose/disengaged coaster cart was accepted as a rollercoaster structure");
+                helper.assertTrue(MagSimulatedCoastersCompat.structuralInducerCanAdopt(engagedCart),
+                        "A rail-engaged coaster cart was not accepted as a rollercoaster structure");
                 inducer.setExternalSignal(15);
                 StructuralInducerBlockEntity.serverTick(helper.getLevel(), helper.absolutePos(inducerPos),
                         inducer.getBlockState(), inducer);
-                helper.assertTrue(inducer.isTrackingStructure(cart.getUniqueId()),
-                        "Structural Inducer did not recognize the coaster cart in its scan cone");
+                helper.assertTrue(!inducer.isTrackingStructure(looseCart.getUniqueId()),
+                        "Structural Inducer tracked a loose coaster cart in its scan cone");
+                helper.assertTrue(inducer.isTrackingStructure(engagedCart.getUniqueId()),
+                        "Structural Inducer did not track a rail-engaged coaster cart");
+                helper.assertTrue(inducer.trackedStructureCount() == 1,
+                        "A rail-engaged coaster assembly was not counted as one structure");
                 helper.succeed();
             } finally {
                 MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(original);
-                remove(helper, cart);
+                remove(helper, looseCart);
+                remove(helper, engagedCart);
             }
         });
     }

@@ -28,6 +28,7 @@ configurations {
     aeroportalsRuntime
     immersiveAeronauticsRuntime
     simulatedCoastersRuntime
+    createBigCannonsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -57,6 +58,7 @@ def minimalProfileTasks = [
         'rundata',
         'runserver', 'rungametestserver', 'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
+        'runcreatebigcannonsgametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -84,6 +86,9 @@ def wantsImmersiveAeronauticsTests = lowered.any {
 def wantsSimulatedCoastersTests = lowered.any {
     it.endsWith('runsimulatedcoastersgametestserver') || it.endsWith('smokesimulatedcoastersgametest')
 }
+def wantsCreateBigCannonsTests = lowered.any {
+    it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -94,7 +99,8 @@ def wantsSimulatedCoastersTests = lowered.any {
 def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
-def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests, wantsSimulatedCoastersTests]
+def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
+                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -106,6 +112,9 @@ if (wantsImmersiveAeronauticsTests) {
 }
 if (wantsSimulatedCoastersTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersRuntime }
+}
+if (wantsCreateBigCannonsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createBigCannonsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -200,7 +209,8 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 // pgrep can't self-match and kill its own shell.
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
         || it.name == 'runImmersiveAeronauticsGameTestServer'
-        || it.name == 'runSimulatedCoastersGameTestServer' }.configureEach {
+        || it.name == 'runSimulatedCoastersGameTestServer'
+        || it.name == 'runCreateBigCannonsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -221,6 +231,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersGameTestServer'
                 ? 'run-simulated-coasters-gametest/world/session.lock'
+                : it.name == 'runCreateBigCannonsGameTestServer'
+                ? 'run-createbigcannons-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -263,6 +275,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulatedcoasters/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_createbigcannons/structure'
     }
 }
 
@@ -355,6 +370,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-simulated-coasters-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters'
+        }
+        createBigCannonsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-createbigcannons-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createbigcannons'
         }
         data {
             data()
@@ -537,6 +557,13 @@ tasks.register('smokeSimulatedCoastersGameTest', Exec) {
             'run-simulated-coasters-gametest', '300'
 }
 
+tasks.register('smokeCreateBigCannonsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the optional Create: Big Cannons projectile-field compatibility GameTest runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateBigCannonsGameTestServer',
+            'run-createbigcannons-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -598,6 +625,12 @@ dependencies {
     // resolver and load the real release only in the dedicated compatibility suite.
     compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
     simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+
+    // Create: Big Cannons and its projectile library are optional. Keep both
+    // artifacts out of normal client/server/build classpaths; this isolated
+    // runtime exists only for the real CBC projectile GameTests.
+    createBigCannonsRuntime("maven.modrinth:GWp4jCJj:${create_big_cannons_test_version}") { transitive = false }
+    createBigCannonsRuntime("maven.modrinth:B3pb093D:${ritchies_projectile_test_version}") { transitive = false }
 
     // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
     // overworld). Hard dep so the region registers correctly on game load.

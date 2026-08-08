@@ -17,5 +17,6 @@ run_profile 'minimal release profile' releaseGate "-PmagSmokeSeconds=$smoke_seco
 run_profile 'AeroPortals compatibility profile' smokeAeroPortalsGameTest
 run_profile 'Immersive Aeronautics compatibility profile' smokeImmersiveAeronauticsGameTest
 run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoastersGameTest
+run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 
 echo 'releaseMatrixGate: all isolated profiles passed'

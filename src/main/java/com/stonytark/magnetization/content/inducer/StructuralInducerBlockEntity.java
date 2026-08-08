@@ -94,6 +94,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
 
     /** One structure the inducer has assembled and is reeling in. */
     private static final class Lift {
+        final UUID groupId;
         final long startTick;
         /** Captured blocks in the ship's LOCAL (sub-level) frame, taken at
          *  capture; transformed back through the live pose each tick to follow
@@ -102,8 +103,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         /** Captured world states (keyed by ORIGINAL position), to restore if
          *  Sable culls this ship mid-lift. */
         final Map<BlockPos, BlockState> captured;
-        Lift(final long startTick, final java.util.List<Vec3> localCenters,
+        Lift(final UUID groupId, final long startTick, final java.util.List<Vec3> localCenters,
              final Map<BlockPos, BlockState> captured) {
+            this.groupId = groupId;
             this.startTick = startTick;
             this.localCenters = localCenters;
             this.captured = captured;
@@ -278,13 +280,13 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
      *  not just one. Already-assembled structures aren't world blocks, so they're
      *  not re-captured. */
     private void captureNewStructures(final ServerLevel server) {
-        if (lifted.size() >= MagConfig.inducerMaxStructures()) return;
+        if (trackedStructureCount() >= MagConfig.inducerMaxStructures()) return;
         final Direction grabDir = facing().getOpposite();
         int captured = adoptCoasterCarts(server, grabDir);
-        final List<List<BlockPos>> structures = lifted.size() < MagConfig.inducerMaxStructures()
+        final List<List<BlockPos>> structures = trackedStructureCount() < MagConfig.inducerMaxStructures()
                 ? collectAllStructures(server, grabDir) : List.of();
         for (final List<BlockPos> positions : structures) {
-            if (lifted.size() >= MagConfig.inducerMaxStructures()) break;
+            if (trackedStructureCount() >= MagConfig.inducerMaxStructures()) break;
             if (assembleAndTrack(server, positions)) captured++;
         }
         if (captured > 0) {
@@ -295,23 +297,31 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         }
     }
 
-    /** Adopt already-assembled Create: Coasters Simulated carts inside the same
-     *  cone used for ordinary structures. A coaster car is already a Sable body,
+    /** Adopt already-assembled, rail-engaged Create: Coasters Simulated carts
+     *  inside the same cone used for ordinary structures. A coaster car is already a Sable body,
      *  so assembling its blocks again would duplicate/corrupt it; tracking the
-     *  existing UUID lets the normal inducer reel logic operate safely. */
+     *  existing UUID lets the normal inducer reel logic operate safely. Loose
+     *  carts are deliberately ignored. Train-linked carts and riveted bodies are
+     *  expanded into one logical structure from the engaged seed. */
     private int adoptCoasterCarts(final ServerLevel server, final Direction grabDir) {
         if (!MagConfig.simulatedCoastersStructuralInducer()) return 0;
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) return 0;
         int adopted = 0;
         for (final var subLevel : container.getAllSubLevels()) {
-            if (lifted.size() >= MagConfig.inducerMaxStructures()) break;
+            if (trackedStructureCount() >= MagConfig.inducerMaxStructures()) break;
             if (!(subLevel instanceof ServerSubLevel ship)) continue;
             if (lifted.containsKey(ship.getUniqueId())) continue;
             if (!com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat
                     .structuralInducerCanAdopt(ship)) continue;
             if (!isInsideScanCone(ship, grabDir)) continue;
-            lifted.put(ship.getUniqueId(), new Lift(server.getGameTime(), List.of(), Map.of()));
+            final java.util.Set<UUID> assembly =
+                    com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat
+                            .coasterStructureIds(ship, server.getGameTime());
+            if (assembly.isEmpty() || assembly.stream().anyMatch(lifted::containsKey)) continue;
+            final UUID groupId = ship.getUniqueId();
+            final Lift lift = new Lift(groupId, server.getGameTime(), List.of(), Map.of());
+            for (final UUID id : assembly) lifted.put(id, lift);
             adopted++;
         }
         return adopted;
@@ -340,6 +350,12 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     /** Compatibility diagnostic used by the isolated real-mod GameTest. */
     public boolean isTrackingStructure(final UUID id) {
         return lifted.containsKey(id);
+    }
+
+    /** Number of logical structures, with a linked coaster train and all of its
+     * riveted bodies counted as one rather than consuming one slot per body. */
+    public int trackedStructureCount() {
+        return (int) lifted.values().stream().map(lift -> lift.groupId).distinct().count();
     }
 
     /** Assemble one structure's blocks into a tracked ship. Returns true on success. */
@@ -392,8 +408,8 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
             for (final BlockPos op : positions) {
                 localCenters.add(pose0.transformPositionInverse(Vec3.atCenterOf(op)));
             }
-            lifted.put(ship.getUniqueId(), new Lift(server.getGameTime(), localCenters, cap));
-            setStatus(server, "reeling", lifted.size());
+            lifted.put(ship.getUniqueId(), new Lift(ship.getUniqueId(), server.getGameTime(), localCenters, cap));
+            setStatus(server, "reeling", trackedStructureCount());
             return true;
         } catch (final Throwable t) {
             setStatus(server, "failed", 0);
@@ -421,37 +437,49 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         if (lifted.isEmpty()) return;
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) return;
-        final var it = lifted.entrySet().iterator();
+        final Map<UUID, Lift> groups = new java.util.LinkedHashMap<>();
+        for (final Lift lift : lifted.values()) groups.putIfAbsent(lift.groupId, lift);
+        final java.util.Set<UUID> finished = new java.util.HashSet<>();
         int reeling = 0;
-        while (it.hasNext()) {
-            final var entry = it.next();
-            final Lift lift = entry.getValue();
-            final var sub = container.getSubLevel(entry.getKey());
-            if (!(sub instanceof ServerSubLevel ship)) {
-                // The ship is simply GONE — shattered via /magnetization, culled,
-                // or chunk-unloaded. Do NOT restore the blocks (that resurrected
-                // shattered structures back to their origin). Just stop tracking.
-                it.remove();
+        for (final Lift lift : groups.values()) {
+            final java.util.List<ServerSubLevel> ships = new ArrayList<>();
+            for (final var entry : lifted.entrySet()) {
+                if (!entry.getValue().groupId.equals(lift.groupId)) continue;
+                final var sub = container.getSubLevel(entry.getKey());
+                if (sub instanceof ServerSubLevel ship) ships.add(ship);
+            }
+            if (ships.isEmpty()) {
+                finished.add(lift.groupId);
                 continue;
             }
             try {
-                if (ship.getMassTracker().isInvalid()) {
+                final ServerSubLevel invalid = ships.stream()
+                        .filter(ship -> ship.getMassTracker().isInvalid()).findFirst().orElse(null);
+                if (invalid != null) {
                     // A fresh body may read invalid for a tick or two while Sable
                     // initializes it — wait out the grace window before deciding.
                     if (server.getGameTime() - lift.startTick <= INIT_GRACE_TICKS) { reeling++; continue; }
                     // Genuine assembly failure (bad mass past grace): tear down the
                     // dead sub-level and put the structure's blocks back so they
                     // aren't lost. (A shattered/gone ship hits the branch above.)
-                    container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
+                    for (final ServerSubLevel ship : ships) {
+                        if (ship.getMassTracker().isInvalid()) {
+                            container.removeSubLevel(ship, SubLevelRemovalReason.REMOVED);
+                        }
+                    }
                     restoreCaptured(server, lift.captured);
-                    it.remove();
+                    finished.add(lift.groupId);
                     continue;
                 }
-                if (driveOne(server, ship, lift)) {
-                    it.remove(); // arrived / timed out — released as a free craft
-                } else {
-                    reeling++;
+                final boolean timedOut = server.getGameTime() - lift.startTick
+                        > MagConfig.inducerPullTimeoutTicks();
+                final boolean allArrived = ships.stream().allMatch(this::hasArrived);
+                if (timedOut || allArrived) {
+                    finished.add(lift.groupId);
+                    continue;
                 }
+                for (final ServerSubLevel ship : ships) driveOne(ship, lift);
+                reeling++;
             } catch (final RuntimeException ignored) {
                 // Off-thread physics: the ship can be torn down mid-tick, making
                 // logicalPose()/the handle throw. Skip it this tick (keep reeling);
@@ -459,20 +487,26 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                 reeling++;
             }
         }
+        if (!finished.isEmpty()) lifted.entrySet().removeIf(e -> finished.contains(e.getValue().groupId));
         if (reeling > 0) setStatus(server, "reeling", reeling);
         else if (lifted.isEmpty()) setStatus(server, "idle", 0);
     }
 
-    /** Reel one ship toward the inducer. Returns true once it should be released
-     *  (arrived or timed out). */
-    private boolean driveOne(final ServerLevel server, final ServerSubLevel ship, final Lift lift) {
+    private boolean hasArrived(final ServerSubLevel ship) {
+        final Vec3 target = Vec3.atCenterOf(getBlockPos());
+        final var shipPos = ship.logicalPose().position();
+        final double dx = target.x - shipPos.x(), dy = target.y - shipPos.y(), dz = target.z - shipPos.z();
+        return dx * dx + dy * dy + dz * dz <= net.minecraft.util.Mth.square(MagConfig.inducerArrivalDistance());
+    }
+
+    /** Reel one rigid body belonging to a tracked logical structure. Group
+     * completion is decided by {@link #driveAll}, so linked carts and riveted
+     * parts start and stop together. */
+    private void driveOne(final ServerSubLevel ship, final Lift lift) {
         final Vec3 target = Vec3.atCenterOf(getBlockPos());
         final var shipPos = ship.logicalPose().position();
         final double dx = target.x - shipPos.x(), dy = target.y - shipPos.y(), dz = target.z - shipPos.z();
         final double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist <= MagConfig.inducerArrivalDistance() || server.getGameTime() - lift.startTick > MagConfig.inducerPullTimeoutTicks()) {
-            return true; // reeled in (or timed out) — release as a free-floating craft
-        }
         final double inv = 1.0 / Math.max(dist, 0.0001);
         final double ux = dx * inv, uy = dy * inv, uz = dz * inv; // unit vector toward inducer
         final double mult = pullMultiplier();
@@ -488,7 +522,6 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         // Punch through only the world blocks directly on the leading faces of
         // this structure's OWN blocks (never a wide swath of untouched ground).
         punchThrough(ship, lift.localCenters, ux, uy, uz);
-        return false;
     }
 
     /** Break only the world blocks sitting directly on the leading faces of the

@@ -97,6 +97,16 @@ versionRange = "[0.1.4,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Create: Big Cannons — optional magnetic response for launched shells, rounds,
+# and projectile bursts. The integration is registry-ID based, so the main jar
+# remains loadable without CBC or Ritchie's Projectile Library.
+[[dependencies.${mod_id}]]
+modId = "createbigcannons"
+type = "optional"
+versionRange = "[5.11.7,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"

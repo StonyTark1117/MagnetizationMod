@@ -6,6 +6,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.compat.createbigcannons.MagCreateBigCannonsCompat;
 import com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.content.effect.MagnetizedEffect;
@@ -536,6 +537,7 @@ public final class FieldApplicator {
         if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
         if (e instanceof IMagnetizable) return true;
         if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
+        if (MagCreateBigCannonsCompat.isMagnetizableProjectile(e)) return true;
         if (e instanceof ItemEntity item) {
             if (MagConfig.isItemDisabled(item.getItem())) return false;
             // affectsItems == false (ore-break residual with the ore→items toggle off)
@@ -612,6 +614,8 @@ public final class FieldApplicator {
 
     private static double baseSusceptibility(final Entity e, final boolean affectsArmor) {
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
+        final double cbcSusceptibility = MagCreateBigCannonsCompat.projectileSusceptibility(e);
+        if (cbcSusceptibility > 0.0d) return cbcSusceptibility;
         if (e instanceof ItemEntity item) {
             if (MagConfig.isItemDisabled(item.getItem())) return 0.0d;
             if (item.getItem().getItem() instanceof IMagnetizable m) return m.magneticSusceptibility();

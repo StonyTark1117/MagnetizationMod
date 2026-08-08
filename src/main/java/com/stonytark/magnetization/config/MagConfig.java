@@ -410,6 +410,11 @@ public final class MagConfig {
     /** Allow Structural Inducers to adopt coaster cart sublevels already assembled
      *  in their scan cone instead of only assembling ordinary world blocks. */
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_STRUCTURAL_INDUCER;
+    /** Allow launched Create: Big Cannons shells, rounds, and projectile bursts to
+     *  receive the ordinary entity magnetic-field impulse. */
+    public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_PROJECTILE_REACTION;
+    /** Base susceptibility for a Create: Big Cannons launched projectile. */
+    public static final ModConfigSpec.DoubleValue CREATE_BIG_CANNONS_PROJECTILE_SUSCEPTIBILITY;
 
     /** Whether the vanilla Minecraft compass spins erratically inside the
      *  Magnetic Anomaly biome. Default true — matches the in-mod theming that
@@ -1764,6 +1769,21 @@ public final class MagConfig {
                          "structures and leave coaster cars under their normal track physics.")
                 .translation("magnetization.configuration.compat.simulatedCoastersStructuralInducer")
                 .define("simulatedCoastersStructuralInducer", true);
+
+        CREATE_BIG_CANNONS_PROJECTILE_REACTION = b
+                .comment("Allow launched Create: Big Cannons shells, rounds, and projectile bursts",
+                         "to receive magnetic forces. Has no effect when Create: Big Cannons is",
+                         "not installed. Disable if magnetic fields should leave artillery flight",
+                         "paths untouched.")
+                .translation("magnetization.configuration.compat.createBigCannonsProjectileReaction")
+                .define("createBigCannonsProjectileReaction", true);
+
+        CREATE_BIG_CANNONS_PROJECTILE_SUSCEPTIBILITY = b
+                .comment("Base magnetic susceptibility of a launched Create: Big Cannons projectile.",
+                         "1.0 matches a normal ferromagnetic entity. This scales the field impulse",
+                         "after the reaction toggle and may be set to 0 for a soft disable.")
+                .translation("magnetization.configuration.compat.createBigCannonsProjectileSusceptibility")
+                .defineInRange("createBigCannonsProjectileSusceptibility", 1.0d, 0.0d, 100.0d);
 
         ALLOW_REDSTONE_POWER = b
                 .comment("Whether redstone signal activates the addon's redstone-powered emitters",
