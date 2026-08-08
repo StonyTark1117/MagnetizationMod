@@ -536,6 +536,24 @@ public final class MagGameTests {
         });
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void fusionGasesDespawnAtSkyLimit(final GameTestHelper helper) {
+        final BlockPos skyLimit = new BlockPos(1, helper.getLevel().getMaxBuildHeight() - 1, 1);
+        final net.minecraft.world.level.block.Block[] gases = {
+                MagBlocks.HYDROGEN_BLOCK.get(), MagBlocks.TRITIUM_BLOCK.get(), MagBlocks.HELIUM_3_BLOCK.get()
+        };
+        for (int i = 0; i < gases.length; i++) {
+            helper.setBlock(skyLimit.offset(i, 0, 0), gases[i]);
+        }
+        helper.runAfterDelay(20L, () -> {
+            for (int i = 0; i < gases.length; i++) {
+                helper.assertTrue(helper.getBlockState(skyLimit.offset(i, 0, 0)).isAir(),
+                        "Gas should despawn at the sky limit: " + gases[i]);
+            }
+            helper.succeed();
+        });
+    }
+
     /**
      * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
      * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
