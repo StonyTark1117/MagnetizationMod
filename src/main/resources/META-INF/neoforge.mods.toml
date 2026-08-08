@@ -25,7 +25,7 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1.248,22.0)"
+versionRange = "[${neoforge_min_version},22.0)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -167,7 +167,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"
-versionRange = "[15.10.6,)"
+versionRange = "[${jade_min_version},)"
 ordering = "AFTER"
 side = "CLIENT"
 
@@ -188,7 +188,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "jei"
 type = "optional"
-versionRange = "[19.43.0.394,)"
+versionRange = "[${jei_min_version},)"
 ordering = "AFTER"
 side = "CLIENT"
 

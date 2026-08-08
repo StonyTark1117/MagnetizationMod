@@ -341,7 +341,10 @@ processResources {
         mod_description  : mod_description,
         mod_license      : mod_license,
         minecraft_version: minecraft_version,
-        neoforge_version : neoforge_version
+        neoforge_version : neoforge_version,
+        neoforge_min_version: neoforge_min_version,
+        jade_min_version: jade_min_version,
+        jei_min_version: jei_min_version
     ]
     inputs.properties(replaceTokens)
     filesMatching('META-INF/neoforge.mods.toml') {
