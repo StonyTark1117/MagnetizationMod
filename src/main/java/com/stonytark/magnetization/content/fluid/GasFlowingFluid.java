@@ -4,10 +4,12 @@ import java.util.Map;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 /** BaseFlowingFluid variant whose gas rises instead of falling. */
@@ -28,6 +30,13 @@ public final class GasFlowingFluid {
                                  final BlockState state, final Direction direction, final FluidState target) {
             if (direction == Direction.DOWN) return;
             super.spreadTo(level, pos, state, direction, target);
+        }
+
+        @Override
+        protected boolean canBeReplacedWith(final FluidState state, final BlockGetter level,
+                                             final BlockPos pos, final Fluid fluidIn,
+                                             final Direction direction) {
+            return direction != Direction.DOWN;
         }
 
         @Override
@@ -70,6 +79,13 @@ public final class GasFlowingFluid {
         }
 
         @Override
+        protected boolean canBeReplacedWith(final FluidState state, final BlockGetter level,
+                                             final BlockPos pos, final Fluid fluidIn,
+                                             final Direction direction) {
+            return direction != Direction.DOWN;
+        }
+
+        @Override
         protected void spread(final Level level, final BlockPos pos, final FluidState state) {
             if (pos.getY() >= level.getMaxBuildHeight() - 1) {
                 level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
@@ -82,6 +98,7 @@ public final class GasFlowingFluid {
             final BlockPos above = pos.above();
             final BlockState aboveState = level.getBlockState(above);
             if (aboveState.getFluidState().isEmpty() && aboveState.canBeReplaced()) {
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 super.spreadTo(level, above, aboveState, Direction.UP, getFlowing(nextAmount, false));
                 return;
             }
