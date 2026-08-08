@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:tokamak_coil",
+    { "id": "immersiveengineering:coil_lv", "required": false },
+    { "id": "immersiveengineering:coil_mv", "required": false },
+    { "id": "immersiveengineering:coil_hv", "required": false },
+    { "id": "tfmg:large_coil", "required": false }
+  ]
+}

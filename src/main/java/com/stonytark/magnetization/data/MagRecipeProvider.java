@@ -54,6 +54,9 @@ public final class MagRecipeProvider extends RecipeProvider {
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:dusts/redstone"));
     private static final TagKey<Item> C_STORAGE_BLOCKS_REDSTONE =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:storage_blocks/redstone"));
+    /** Tokamak Coil by default, with optional cross-mod coil-block alternatives. */
+    private static final TagKey<Item> ELECTROLYZER_COILS =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("magnetization:electrolyzer_coils"));
 
     public MagRecipeProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, lookup);
@@ -762,7 +765,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         // Electrolyzer: a powered cauldron that splits water + FE -> hydrogen (isotope-chain entry point).
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.ELECTROLYZER.get())
                 .pattern("rcr").pattern("cwc").pattern("rcr")
-                .define('r', Items.REDSTONE).define('c', MagItems.TOKAMAK_COIL.get()).define('w', Items.CAULDRON)
+                .define('r', Items.REDSTONE).define('c', ELECTROLYZER_COILS).define('w', Items.CAULDRON)
                 .unlockedBy("has_cauldron", has(Items.CAULDRON)).save(out, id("electrolyzer"));
         // Fusion Thruster interior — a micro-thruster core wrapped in coils + titanomagnetite.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.FUSION_THRUSTER.get(), 2)

@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "c": {
-      "item": "magnetization:tokamak_coil"
+      "tag": "magnetization:electrolyzer_coils"
     },
     "r": {
       "item": "minecraft:redstone"
