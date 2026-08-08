@@ -1,0 +1,32 @@
+{
+  "replace": false,
+  "values": [
+    {"id": "createdieselgenerators:canister", "required": false},
+    {"id": "createdieselgenerators:distillation_tank", "required": false},
+    {"id": "createdieselgenerators:bulk_fermenter", "required": false},
+    {"id": "createdieselgenerators:oil_barrel", "required": false},
+    {"id": "createdieselgenerators:burner", "required": false},
+    {"id": "createdieselgenerators:crude_oil", "required": false},
+    {"id": "createdieselgenerators:diesel", "required": false},
+    {"id": "createdieselgenerators:gasoline", "required": false},
+    {"id": "createdieselgenerators:biodiesel", "required": false},
+    {"id": "createdieselgenerators:ethanol", "required": false},
+    {"id": "createdieselgenerators:plant_oil", "required": false},
+    {"id": "createdieselgenerators:white_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:orange_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:magenta_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:light_blue_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:yellow_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:lime_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:pink_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:gray_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:light_gray_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:cyan_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:purple_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:blue_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:brown_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:green_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:red_concrete_encased_fluid_pipe", "required": false},
+    {"id": "createdieselgenerators:black_concrete_encased_fluid_pipe", "required": false}
+  ]
+}

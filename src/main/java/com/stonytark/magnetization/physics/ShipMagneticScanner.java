@@ -51,6 +51,7 @@ public final class ShipMagneticScanner {
                         for (int dz = 0; dz < 16; dz++) {
                             final BlockState state = states.get(dx, dy, dz);
                             if (state.isAir()) continue;
+                            if (state.is(MagTags.MAGNETIC_SUSCEPTIBILITY_EXCLUDED)) continue;
                             if (state.getBlock() instanceof PolarityInverterBlock) {
                                 inverters++;
                                 continue;

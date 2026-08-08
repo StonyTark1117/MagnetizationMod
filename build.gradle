@@ -33,6 +33,7 @@ configurations {
     createAdditionRuntime
     createTracksRuntime
     steamRailsRuntime
+    dieselGeneratorsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -67,6 +68,7 @@ def minimalProfileTasks = [
         'runcreateadditiongametestserver',
         'runcreatetracksgametestserver',
         'runsteamrailsgametestserver',
+        'rundieselgeneratorsgametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -109,6 +111,9 @@ def wantsCreateTracksTests = lowered.any {
 def wantsSteamRailsTests = lowered.any {
     it.endsWith('runsteamrailsgametestserver') || it.endsWith('smokesteamrailsgametest')
 }
+def wantsDieselGeneratorsTests = lowered.any {
+    it.endsWith('rundieselgeneratorsgametestserver') || it.endsWith('smokedieselgeneratorsgametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -121,7 +126,8 @@ def wantsMinimalVerification = lowered.any {
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
-                            wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests]
+                            wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests,
+                            wantsDieselGeneratorsTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -148,6 +154,9 @@ if (wantsCreateTracksTests) {
 }
 if (wantsSteamRailsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.steamRailsRuntime }
+}
+if (wantsDieselGeneratorsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.dieselGeneratorsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -244,7 +253,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
         || it.name == 'runCreateBigCannonsGameTestServer'
-        || it.name == 'runSteamRailsGameTestServer' }.configureEach {
+        || it.name == 'runSteamRailsGameTestServer'
+        || it.name == 'runDieselGeneratorsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -269,6 +279,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-createbigcannons-gametest/world/session.lock'
                 : it.name == 'runSteamRailsGameTestServer'
                 ? 'run-steam-rails-gametest/world/session.lock'
+                : it.name == 'runDieselGeneratorsGameTestServer'
+                ? 'run-diesel-generators-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -326,6 +338,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_steam_rails/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_diesel_generators/structure'
     }
 }
 
@@ -443,6 +458,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-steam-rails-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_steam_rails'
+        }
+        dieselGeneratorsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-diesel-generators-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_diesel_generators'
         }
         data {
             data()
@@ -660,6 +680,13 @@ tasks.register('smokeSteamRailsGameTest', Exec) {
             'run-steam-rails-gametest', '300'
 }
 
+tasks.register('smokeDieselGeneratorsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Diesel Generators kinetic, multiblock, goggles, material, and exclusion compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runDieselGeneratorsGameTestServer',
+            'run-diesel-generators-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -734,6 +761,11 @@ dependencies {
 
     compileOnly("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
     steamRailsRuntime("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
+
+    compileOnly("curse.maven:create-diesel-generators-869316:${diesel_generators_test_file}") { transitive = false }
+    dieselGeneratorsRuntime("curse.maven:create-diesel-generators-869316:${diesel_generators_test_file}") { transitive = false }
+
+    compileOnly("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated

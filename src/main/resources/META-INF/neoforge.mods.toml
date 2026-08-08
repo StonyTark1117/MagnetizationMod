@@ -144,6 +144,16 @@ versionRange = "[0.2.1,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Diesel engines share Create kinetics with Magnetization machines and their
+# structural metal contributes ship susceptibility; fuel/fluid machinery is
+# explicitly excluded from that material inference.
+[[dependencies.${mod_id}]]
+modId = "createdieselgenerators"
+type = "optional"
+versionRange = "[1.21.1-1.3.15,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"

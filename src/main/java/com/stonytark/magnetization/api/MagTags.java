@@ -73,6 +73,13 @@ public final class MagTags {
     public static final TagKey<Block> FERROMAGNETIC_BLOCKS =
             TagKey.create(Registries.BLOCK, Magnetization.id("ferromagnetic_blocks"));
 
+    /** Blocks whose contents or casing must not make a ship magnetically
+     *  susceptible. Checked before material tags by the ship scanner; intended
+     *  for fuel, fluid, and gas containers where the stored substance is not a
+     *  structural magnetic material. */
+    public static final TagKey<Block> MAGNETIC_SUSCEPTIBILITY_EXCLUDED =
+            TagKey.create(Registries.BLOCK, Magnetization.id("magnetic_susceptibility_excluded"));
+
     /** Blocks that make a Sable ship diamagnetic — repelled by BOTH poles of any
      *  field (reacts to positive + negative the same way). */
     public static final TagKey<Block> DIAMAGNETIC_BLOCKS =
