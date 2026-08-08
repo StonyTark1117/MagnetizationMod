@@ -146,6 +146,49 @@ public final class MagItemTooltips {
                 MagItems.HEMATITE_ANVIL.get(), MagItems.TITANOMAGNETITE_ANVIL.get(),
         }) m.put(anvil, "tooltip.magnetization.magnetic_anvil.use");
 
+        // Remaining registered items, including materials and the specialized
+        // gear families. Every addon item gets at least one highlighted use line.
+        for (final var i : new Item[]{
+                MagItems.DIAMAGNETIC_BLOCK.get(), MagItems.ANOMALY_STONE.get(),
+                MagItems.MAGNETIC_GRAVEL.get(), MagItems.COBBLED_ANOMALY_STONE.get(),
+                MagItems.ANOMALY_STONE_STAIRS.get(), MagItems.ANOMALY_STONE_SLAB.get(),
+                MagItems.COBBLED_ANOMALY_STONE_STAIRS.get(), MagItems.COBBLED_ANOMALY_STONE_SLAB.get(),
+                MagItems.COBBLED_ANOMALY_STONE_WALL.get(), MagItems.LITHIUM_ORE.get(),
+                MagItems.DEEPSLATE_LITHIUM_ORE.get(),
+        }) m.put(i, "tooltip.magnetization.material.use");
+        for (final var i : new Item[]{
+                MagItems.RAW_GALLIUM.get(), MagItems.GALLIUM_INGOT.get(), MagItems.RAW_LITHIUM.get(),
+                MagItems.LITHIUM.get(), MagItems.SOLID_GALLIUM.get(), MagItems.HELIUM_3_GAS.get(), MagItems.HELIUM_3_CELL.get(),
+                MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
+        }) m.put(i, "tooltip.magnetization.material.use");
+        for (final var i : new Item[]{
+                MagItems.GALLIUM_SWORD.get(), MagItems.GALLIUM_PICKAXE.get(), MagItems.GALLIUM_AXE.get(),
+                MagItems.GALLIUM_SHOVEL.get(), MagItems.GALLIUM_HOE.get(), MagItems.MR_FLUID_SWORD.get(),
+                MagItems.MR_FLUID_PICKAXE.get(), MagItems.MR_FLUID_AXE.get(), MagItems.MR_FLUID_SHOVEL.get(),
+                MagItems.MR_FLUID_HOE.get(),
+        }) m.put(i, "tooltip.magnetization.special_tool.use");
+        for (final var i : new Item[]{
+                MagItems.GALLIUM_HELMET.get(), MagItems.GALLIUM_CHESTPLATE.get(), MagItems.GALLIUM_LEGGINGS.get(),
+                MagItems.GALLIUM_BOOTS.get(), MagItems.GALLIUM_HORSE_ARMOR.get(), MagItems.MR_LIQUID_HELMET.get(),
+                MagItems.MR_LIQUID_CHESTPLATE.get(), MagItems.MR_LIQUID_LEGGINGS.get(), MagItems.MR_LIQUID_BOOTS.get(),
+                MagItems.MR_FLUID_HORSE_ARMOR.get(), MagItems.MAGNETORESISTIVE_BOOTS.get(), MagItems.ALFVEN_BACKPACK.get(),
+        }) m.put(i, "tooltip.magnetization.special_armor.use");
+        for (final var i : new Item[]{
+                MagItems.FERROFLUID_BUCKET.get(), MagItems.MR_FLUID_BUCKET.get(), MagItems.DEUTERIUM_OXIDE_BUCKET.get(),
+                MagItems.GALLIUM_BUCKET.get(), MagItems.MIXED_GALLIUM_BUCKET.get(), MagItems.HYDROGEN_BUCKET.get(),
+                MagItems.TRITIUM_BUCKET.get(), MagItems.HELIUM_3_BUCKET.get(), MagItems.LIQUID_LITHIUM_BUCKET.get(),
+        }) m.put(i, "tooltip.magnetization.fluid.use");
+        for (final var i : new Item[]{
+                MagItems.PYRRHOTITE_CATALYST.get(), MagItems.ENHANCED_PYRRHOTITE_CATALYST.get(),
+                MagItems.COSMIC_PYRRHOTITE_CATALYST.get(), MagItems.HELIUM_3_CRYSTAL_BLOCK.get(),
+        }) m.put(i, "tooltip.magnetization.advanced_material.use");
+        m.put(MagItems.RAILGUN_REMOTE.get(), "tooltip.magnetization.railgun_remote.use");
+        m.put(MagItems.COSMIC_COMPASS.get(), "tooltip.magnetization.cosmic_compass.use");
+        m.put(MagItems.ORE_COMPASS.get(), "tooltip.magnetization.ore_compass.use");
+        m.put(MagItems.HEMATITE_LENS.get(), "tooltip.magnetization.hematite_lens.use");
+        m.put(MagItems.IMPRINT_MODULE.get(), "tooltip.magnetization.imprint_module.use");
+        m.put(MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get(), "tooltip.magnetization.golem_spawn_egg.use");
+
         return m;
     }
 

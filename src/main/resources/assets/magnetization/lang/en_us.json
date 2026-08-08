@@ -1454,5 +1454,16 @@
   "advancement.magnetization.completed_railgun.title": "Build the Accelerator",
   "advancement.magnetization.completed_railgun.description": "Complete a powered Railgun with paired rails",
   "advancement.magnetization.fired_railgun.title": "Full Bore",
-  "advancement.magnetization.fired_railgun.description": "Fire a completed Railgun"
+  "advancement.magnetization.fired_railgun.description": "Fire a completed Railgun",
+  "tooltip.magnetization.material.use": "Material used in Magnetization crafting and processing.",
+  "tooltip.magnetization.special_tool.use": "Specialized tool with a material-specific ability; use it normally to activate its effect.",
+  "tooltip.magnetization.special_armor.use": "Specialized wearable gear. Equip it to gain its material-specific protection or movement effect.",
+  "tooltip.magnetization.fluid.use": "Portable fluid container. Use in the matching machine or recipe to process this fluid.",
+  "tooltip.magnetization.advanced_material.use": "Advanced component for heat bridging, fusion, or high-tier magnetic construction.",
+  "tooltip.magnetization.railgun_remote.use": "Use to pair with a Railgun and control its launch sequence from a safe distance.",
+  "tooltip.magnetization.cosmic_compass.use": "Tracks the nearest meteorite core and resists magnetic anomalies.",
+  "tooltip.magnetization.ore_compass.use": "Tune it to a metallic ore, then right-click to locate the nearest vein.",
+  "tooltip.magnetization.hematite_lens.use": "Optical component for inspecting and controlling hematite magnetic effects.",
+  "tooltip.magnetization.imprint_module.use": "Stores a magnetic field imprint for installation in compatible machinery.",
+  "tooltip.magnetization.golem_spawn_egg.use": "Spawns a magnetorheological fluid golem when used in the world."
 }
