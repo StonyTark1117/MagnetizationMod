@@ -310,6 +310,8 @@ public final class FieldApplicator {
             if (server.getMassTracker().isInvalid() || server.getMassTracker().getMass() <= 0.0) continue;
             if (container.getSubLevel(server.getUniqueId()) == null) continue;
             if (shipFilter != null && !shipFilter.test(server)) continue;
+            if (!com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat
+                    .receivesMagneticFields(server)) continue;
             if (diag) passedFilter++;
 
             final double mass = server.getMassTracker().getMass();

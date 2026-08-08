@@ -88,6 +88,15 @@ versionRange = "[6.0.7,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Create: Coasters Simulated — optional Sable coaster-cart integration. Coaster
+# carts can react to magnetic fields and be adopted by Structural Inducers.
+[[dependencies.${mod_id}]]
+modId = "simulatedcoasters"
+type = "optional"
+versionRange = "[0.1.4,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"

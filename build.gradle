@@ -27,6 +27,7 @@ configurations {
     gameTestRuntime
     aeroportalsRuntime
     immersiveAeronauticsRuntime
+    simulatedCoastersRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -55,7 +56,8 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 def minimalProfileTasks = [
         'rundata',
         'runserver', 'rungametestserver', 'runaeroportalsgametestserver',
-        'runimmersiveaeronauticsgametestserver', 'runserversmoke', 'runclientminimal',
+        'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
+        'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
 def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
@@ -79,6 +81,9 @@ if (wantsAeroPortalsTests) {
 def wantsImmersiveAeronauticsTests = lowered.any {
     it.endsWith('runimmersiveaeronauticsgametestserver') || it.endsWith('smokeimmersiveaeronauticsgametest')
 }
+def wantsSimulatedCoastersTests = lowered.any {
+    it.endsWith('runsimulatedcoastersgametestserver') || it.endsWith('smokesimulatedcoastersgametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -89,14 +94,18 @@ def wantsImmersiveAeronauticsTests = lowered.any {
 def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
-if ((wantsMinimalVerification && (wantsAeroPortalsTests || wantsImmersiveAeronauticsTests))
-        || (wantsAeroPortalsTests && wantsImmersiveAeronauticsTests)) {
+def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests, wantsSimulatedCoastersTests]
+        .count { it }
+if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
-            'Use ./gradlew releaseMatrixGate so minimal, AeroPortals, and Immersive Aeronautics ' +
+            'Use ./gradlew releaseMatrixGate so minimal and optional compatibility profiles ' +
             'run with isolated classpaths.')
 }
 if (wantsImmersiveAeronauticsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.immersiveAeronauticsRuntime }
+}
+if (wantsSimulatedCoastersTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -190,7 +199,8 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 // flag but NOT this command's own text (which carries the bracketed form), so
 // pgrep can't self-match and kill its own shell.
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
-        || it.name == 'runImmersiveAeronauticsGameTestServer' }.configureEach {
+        || it.name == 'runImmersiveAeronauticsGameTestServer'
+        || it.name == 'runSimulatedCoastersGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -209,6 +219,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-aeroportals-gametest/world/session.lock'
                 : it.name == 'runImmersiveAeronauticsGameTestServer'
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersGameTestServer'
+                ? 'run-simulated-coasters-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -248,6 +260,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_immersive_aeronautics/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters/structure'
     }
 }
 
@@ -335,6 +350,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-immersive-aeronautics-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersive_aeronautics'
+        }
+        simulatedCoastersGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters'
         }
         data {
             data()
@@ -510,6 +530,13 @@ tasks.register('smokeImmersiveAeronauticsGameTest', Exec) {
             'run-immersive-aeronautics-gametest', '300'
 }
 
+tasks.register('smokeSimulatedCoastersGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises magnetic-field and Structural Inducer compatibility with Create: Coasters Simulated.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersGameTestServer',
+            'run-simulated-coasters-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -530,7 +557,7 @@ tasks.register('releaseGate') {
 
 tasks.register('releaseMatrixGate', Exec) {
     group = 'verification'
-    description = 'Runs the release gate and both optional compatibility suites in isolated Gradle processes.'
+    description = 'Runs the release gate and all optional compatibility suites in isolated Gradle processes.'
     commandLine 'bash', 'scripts/run-release-matrix-gate.sh'
     environment 'MAG_SMOKE_SECONDS', smokeServerSeconds.toString()
 }
@@ -566,6 +593,11 @@ dependencies {
     compileOnly("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
     immersiveAeronauticsRuntime("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
     immersiveAeronauticsRuntime("me.shedaniel.cloth:cloth-config-neoforge:15.0.140")
+
+    // Create: Coasters Simulated is optional for users. Compile against its cart
+    // resolver and load the real release only in the dedicated compatibility suite.
+    compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+    simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
 
     // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
     // overworld). Hard dep so the region registers correctly on game load.

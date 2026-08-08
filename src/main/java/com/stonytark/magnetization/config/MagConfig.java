@@ -404,6 +404,12 @@ public final class MagConfig {
      *  {@code alexscaves} is on the mod list. */
     public enum AlexsCavesPotionMode { BOTH, OURS_ONLY, THEIRS_ONLY }
     public static final ModConfigSpec.EnumValue<AlexsCavesPotionMode> ALEXSCAVES_POTION_MODE;
+    /** Allow assembled Create: Coasters Simulated cart sublevels to receive the
+     *  same magnetic forces as other Sable physics structures. */
+    public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_FIELD_REACTION;
+    /** Allow Structural Inducers to adopt coaster cart sublevels already assembled
+     *  in their scan cone instead of only assembling ordinary world blocks. */
+    public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_STRUCTURAL_INDUCER;
 
     /** Whether the vanilla Minecraft compass spins erratically inside the
      *  Magnetic Anomaly biome. Default true — matches the in-mod theming that
@@ -1743,6 +1749,22 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.alexsCavesPotionMode")
                 .defineEnum("alexsCavesPotionMode", AlexsCavesPotionMode.BOTH);
 
+        SIMULATED_COASTERS_FIELD_REACTION = b
+                .comment("Allow Create: Coasters Simulated coaster cars to react to magnetic fields.",
+                         "Default true. The carts are Sable physics sublevels, so they receive the",
+                         "same polarity, force falloff, acceleration cap, and drag as other ships.",
+                         "Set false if magnetic launch/braking conflicts with a coaster layout.")
+                .translation("magnetization.configuration.compat.simulatedCoastersFieldReaction")
+                .define("simulatedCoastersFieldReaction", true);
+
+        SIMULATED_COASTERS_STRUCTURAL_INDUCER = b
+                .comment("Allow the Structural Inducer to recognize already-assembled Create:",
+                         "Coasters Simulated cars as structures in its scan cone and reel them in.",
+                         "Default true. Set false to limit the inducer to ordinary world-block",
+                         "structures and leave coaster cars under their normal track physics.")
+                .translation("magnetization.configuration.compat.simulatedCoastersStructuralInducer")
+                .define("simulatedCoastersStructuralInducer", true);
+
         ALLOW_REDSTONE_POWER = b
                 .comment("Whether redstone signal activates the addon's redstone-powered emitters",
                          "(Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator).",
@@ -2192,6 +2214,12 @@ public final class MagConfig {
     public static double fusionThrusterFluidDensityTritium()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_TRITIUM, 4.5d); }
     public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
+    public static boolean simulatedCoastersFieldReaction() {
+        return booleanOr(SIMULATED_COASTERS_FIELD_REACTION, true);
+    }
+    public static boolean simulatedCoastersStructuralInducer() {
+        return booleanOr(SIMULATED_COASTERS_STRUCTURAL_INDUCER, true);
+    }
     public static boolean allowEnergyPower()   { return booleanOr(ALLOW_ENERGY_POWER, true); }
     // Analog redstone strength — all default OFF, so an unloaded config behaves exactly
     // like the historical on/off emitters.

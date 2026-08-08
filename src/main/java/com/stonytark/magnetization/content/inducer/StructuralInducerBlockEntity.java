@@ -280,9 +280,9 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
     private void captureNewStructures(final ServerLevel server) {
         if (lifted.size() >= MagConfig.inducerMaxStructures()) return;
         final Direction grabDir = facing().getOpposite();
-        final List<List<BlockPos>> structures = collectAllStructures(server, grabDir);
-        if (structures.isEmpty()) return;
-        int captured = 0;
+        int captured = adoptCoasterCarts(server, grabDir);
+        final List<List<BlockPos>> structures = lifted.size() < MagConfig.inducerMaxStructures()
+                ? collectAllStructures(server, grabDir) : List.of();
         for (final List<BlockPos> positions : structures) {
             if (lifted.size() >= MagConfig.inducerMaxStructures()) break;
             if (assembleAndTrack(server, positions)) captured++;
@@ -293,6 +293,53 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
                     getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0, getBlockPos().getZ() + 0.5,
                     24, SCAN_RADIUS * 0.4, 1.5, SCAN_RADIUS * 0.4, 0.02);
         }
+    }
+
+    /** Adopt already-assembled Create: Coasters Simulated carts inside the same
+     *  cone used for ordinary structures. A coaster car is already a Sable body,
+     *  so assembling its blocks again would duplicate/corrupt it; tracking the
+     *  existing UUID lets the normal inducer reel logic operate safely. */
+    private int adoptCoasterCarts(final ServerLevel server, final Direction grabDir) {
+        if (!MagConfig.simulatedCoastersStructuralInducer()) return 0;
+        final SubLevelContainer container = SubLevelContainer.getContainer(server);
+        if (container == null) return 0;
+        int adopted = 0;
+        for (final var subLevel : container.getAllSubLevels()) {
+            if (lifted.size() >= MagConfig.inducerMaxStructures()) break;
+            if (!(subLevel instanceof ServerSubLevel ship)) continue;
+            if (lifted.containsKey(ship.getUniqueId())) continue;
+            if (!com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat
+                    .structuralInducerCanAdopt(ship)) continue;
+            if (!isInsideScanCone(ship, grabDir)) continue;
+            lifted.put(ship.getUniqueId(), new Lift(server.getGameTime(), List.of(), Map.of()));
+            adopted++;
+        }
+        return adopted;
+    }
+
+    private boolean isInsideScanCone(final ServerSubLevel ship, final Direction grabDir) {
+        final var box = ship.boundingBox();
+        final double x = (box.minX() + box.maxX()) * 0.5d;
+        final double y = (box.minY() + box.maxY()) * 0.5d;
+        final double z = (box.minZ() + box.maxZ()) * 0.5d;
+        final Vec3 origin = Vec3.atCenterOf(getBlockPos());
+        final double dx = x - origin.x, dy = y - origin.y, dz = z - origin.z;
+        final double depth = dx * grabDir.getStepX() + dy * grabDir.getStepY() + dz * grabDir.getStepZ();
+        if (depth < 1.0d || depth > scanDepth()) return false;
+        final int radius = Math.min(MAX_CONE_RADIUS, SCAN_RADIUS + (int) depth / 3);
+        final double u;
+        final double v;
+        switch (grabDir.getAxis()) {
+            case X -> { u = dy; v = dz; }
+            case Y -> { u = dx; v = dz; }
+            default -> { u = dx; v = dy; }
+        }
+        return Math.abs(u) <= radius + 0.5d && Math.abs(v) <= radius + 0.5d;
+    }
+
+    /** Compatibility diagnostic used by the isolated real-mod GameTest. */
+    public boolean isTrackingStructure(final UUID id) {
+        return lifted.containsKey(id);
     }
 
     /** Assemble one structure's blocks into a tracked ship. Returns true on success. */

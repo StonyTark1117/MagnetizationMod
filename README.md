@@ -18,6 +18,7 @@ Optional integrations (auto-detected when installed):
 - [Curios](https://modrinth.com/mod/curios) — adds three slots to the player: **charm** (Field Compass), **back** (Magnetic Grapple), **hands** (Repulsor Gun). The compass is purely passive — its needle and HUD overlay both read the slot directly. The grapple and gun are active and fire via configurable keybinds under *Options → Controls → Key Binds → Magnetization*. Default keys are unbound so they never collide with vanilla on first launch.
 - [Patchouli](https://modrinth.com/mod/patchouli) — adds a craftable in-game guide book (Book + Raw Magnetite) covering basics, emitters, ship polarity, and advanced systems.
 - [Alex's Caves](https://modrinth.com/mod/alexs-caves) — Magnetron + Ferrouslime are magnetizable; Azure/Scarlet magnets + neodymium ores/blocks are ferromagnetic. Config `compat.alexsCavesPotionMode` (BOTH / OURS_ONLY / THEIRS_ONLY) controls how our Magnetized effect coexists with AC's Magnetizing effect when both mods are present.
+- [Create: Coasters Simulated](https://www.curseforge.com/minecraft/mc-mods/create-coasters-simulated) — coaster cars react to magnetic fields and are recognized as existing structures by the Structural Inducer. The two behaviors have independent toggles under `compat.simulatedCoastersFieldReaction` and `compat.simulatedCoastersStructuralInducer`.
 - [Magnetizing](https://www.curseforge.com/minecraft/mc-mods/magnetizing) — its magnetite ingots are fungible with ours via `c:ingots/magnetite`; its block/item magnets and colored magnetite blocks count as ferromagnetic to our emitters; we honour its `magnetizing:unmoveable_by_magnets` entity tag so admins only need to curate one list.
 - [Create: Magnetics](https://www.curseforge.com/minecraft/mc-mods/create-magnetics) — ingot/sheet/block all fungible via the `c:` tags; its Kinetic Magnet counts as a magnet for ship susceptibility; magnetized crystals are ferromagnetic items.
 - **Simulated** — its Redstone Magnet block is recognized as a magnet emitter, so any contraption carrying one gains susceptibility from it and naturally responds to our fields.
@@ -359,7 +360,7 @@ Four separate profiles, so a failure says *which* environment broke rather than 
 ./gradlew smokeClientNormal    # manual — client, hard deps only (no compat pack)
 ./gradlew smokeClientCompat    # manual — client + Sodium/Iris/JEI/tag-coverage mods
 ./gradlew releaseGate          # build + both automated gates
-./gradlew releaseMatrixGate    # release gate + isolated AeroPortals and Immersive Aeronautics suites
+./gradlew releaseMatrixGate    # release gate + isolated AeroPortals, Immersive Aeronautics, and Coasters suites
 ```
 
 `smokeServerMinimal` boots a real dedicated server in its own `run-smoke-server/`

@@ -20,10 +20,10 @@ The required manual playtest matrix remains a release gate. Automated tests cann
 This rerun covered:
 
 - 293 Java source files and 1,626 files under main/generated resources.
-- The full 1.3.0 delta from `origin/main`, including all earlier audit fixes, the Dipole Electromagnet, analog-redstone force scaling, multiblock previews, accessibility work, AeroPortals support, and Immersive Aeronautics/Immersive Portals support.
+- The full 1.3.0 delta from `origin/main`, including all earlier audit fixes, the Dipole Electromagnet, analog-redstone force scaling, multiblock previews, accessibility work, AeroPortals support, Immersive Aeronautics/Immersive Portals support, and Create: Coasters Simulated support.
 - Dependency metadata and resolved development versions.
 - Registration/resource/package consistency through a clean Gradle build.
-- All JSON resources, unit tests, the standard GameTest profile, both portal compatibility profiles, and the minimal dedicated-server smoke profile.
+- All JSON resources, unit tests, the standard GameTest profile, all three isolated optional compatibility profiles, and the minimal dedicated-server smoke profile.
 - A targeted repeat of the original texture hash audit.
 
 A **confirmed issue** below is directly demonstrated by current source, metadata, or reproduced runtime behavior. Items requiring human observation remain in the manual matrix and are not asserted as bugs.
@@ -84,6 +84,13 @@ Manual validation is still required for redstone levels 1/7/15, GUI/HUD readings
 - All five isolated tests passed, covering remote transfer, portal-transformed magnetic force, aperture clipping, unreachable portals, and recursion/duplicate-force protection.
 - The upstream runtime emits repeated client-class probes on a dedicated-server test profile. These are third-party test-runtime noise, not failures in the two Magnetization assertions.
 
+### Create: Coasters Simulated compatibility
+
+- `simulatedcoasters` 0.1.4 is a published optional dependency with no upper bound and an isolated test runtime.
+- Coaster cars use the normal Sable ship-force pipeline, including polarity, falloff, acceleration caps, and drag; `compat.simulatedCoastersFieldReaction` can disable this behavior without affecting other ships.
+- Structural Inducers recognize already-assembled coaster cart sublevels in their scan cone and adopt the existing physics body rather than duplicating its blocks; `compat.simulatedCoastersStructuralInducer` independently disables this behavior.
+- Both isolated tests pass against a real cart spawned by the published mod, covering enabled/disabled field response and enabled/disabled Structural Inducer recognition.
+
 ### Multiblock previews, progression, accessibility, and diagnostics
 
 - Preview/tooltip coverage now includes Railgun, Fusion Thruster, Tokamak, and other multiblock construction paths.
@@ -133,9 +140,10 @@ No missing registration/resource path was found for these additions.
 - Standard dedicated GameTests — all 82 required tests passed under bounded supervision and the task exited successfully. The multiplayer-config regression coverage proves typed COMMON settings survive payload codec transport, override a client's differing local values, restore those locals on disconnect, and keep machine GUI capacities server-authoritative across vanilla menu data transport. The progression-worldgen check proves Lithium ore and Helium-3 geodes are attached to vanilla Overworld/End biome generation, while the Anomaly and Petrified Forest retain their defining placed features.
 - AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.
 - Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
+- Create: Coasters Simulated isolated GameTests — 2/2 passed on 0.1.4 under bounded supervision.
 - `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.
 - `./gradlew releaseGate --no-daemon -PmagSmokeSeconds=20` — completed unattended and successfully exercised the build, unit tests, supervised standard GameTests, and minimal dedicated-server smoke.
-- `./gradlew releaseMatrixGate --no-daemon -PmagSmokeSeconds=20` — passed the minimal release profile, AeroPortals profile, and Immersive Aeronautics profile in separate Gradle processes. Mixed-profile invocations now fail fast instead of silently contaminating the minimal runtime classpath.
+- `./gradlew releaseMatrixGate --no-daemon -PmagSmokeSeconds=20` — passed the minimal release profile plus AeroPortals, Immersive Aeronautics, and Create: Coasters Simulated profiles in separate Gradle processes. Mixed-profile invocations fail fast instead of silently contaminating the minimal runtime classpath.
 - All main/generated JSON files parsed with `jq`.
 - JAR duplicate-entry and unresolved-token checks passed.
 
@@ -191,5 +199,5 @@ Sable's physics thread can still keep a raw Minecraft GameTest JVM alive after i
 
 1. Execute the manual matrix on a disposable upgraded world and a fresh survival world, including portal ships with constraints.
 2. Run normal and compatibility-heavy client smoke tests with the intended release modpack/renderers.
-3. Run `releaseMatrixGate` after any final change. It invokes `releaseGate` and both supervised compatibility GameTest profiles in separate Gradle processes so their runtime classpaths cannot contaminate one another.
+3. Run `releaseMatrixGate` after any final change. It invokes `releaseGate` and all three supervised compatibility GameTest profiles in separate Gradle processes so their runtime classpaths cannot contaminate one another.
 4. Rebuild the release JAR, inspect it, record a new final SHA-256, and publish only that artifact.

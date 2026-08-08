@@ -336,6 +336,8 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
+| COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like other Sable physics structures. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
+| COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize already-assembled Create: Coasters Simulated cars in their scan cone and reel them in. Default on. |
 | COMMON | compat.allowRedstonePower | boolean | true | Whether redstone signal activates the addon's redstone-powered emitters. Default true. Set false to force players to feed FE/RF — useful on hardcore servers. |
 | COMMON | compat.allowEnergyPower | boolean | true | Whether FE/RF energy activates the addon's emitters. Default true. Any FE-providing mod (C&A, Mekanism, Thermal, IE, AE2) works. Set false to disable energy-driven emitters. |
 | COMMON | compat.analogRedstoneDipole | boolean | false | Scale the Dipole Electromagnet's field force with the analog redstone level (1-15). Default off. Both poles scale together. See Analog Redstone — Electromagnet for the full description. |
