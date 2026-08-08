@@ -3,7 +3,7 @@
   "textures": {
     "particle": "magnetization:block/fusion_thruster_side",
     "down": "magnetization:block/fusion_thruster_side",
-    "up": "magnetization:block/fusion_thruster_side",
+    "up": "magnetization:block/fusion_thruster_top",
     "east": "magnetization:block/fusion_thruster_side",
     "west": "magnetization:block/fusion_thruster_side",
     "south": "magnetization:block/fusion_thruster_side",

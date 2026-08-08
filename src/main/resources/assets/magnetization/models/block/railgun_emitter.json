@@ -3,7 +3,7 @@
   "textures": {
     "particle": "magnetization:block/railgun_emitter_side",
     "down": "magnetization:block/railgun_emitter_side",
-    "up": "magnetization:block/railgun_emitter_side",
+    "up": "magnetization:block/railgun_emitter_top",
     "east": "magnetization:block/railgun_emitter_side",
     "west": "magnetization:block/railgun_emitter_side",
     "south": "magnetization:block/railgun_emitter_side",
