@@ -2411,6 +2411,17 @@ public final class MagGameTests {
         final int masterFe = master.energyBuffer().getEnergyStored();
         helper.assertTrue(masterFe == 5000,
                 "FE cabled into a non-master interior should pool in the master buffer; master FE=" + masterFe);
+        helper.assertTrue(corner.guiEnergyStored() == 5000,
+                "A non-master Fusion Thruster HUD should show the shared master FE; HUD FE="
+                        + corner.guiEnergyStored());
+        corner.energyBuffer().receiveEnergy(2500, false);
+        helper.assertTrue(corner.guiEnergyStored() == 7500,
+                "The non-master Fusion Thruster HUD should update when shared FE changes; HUD FE="
+                        + corner.guiEnergyStored());
+        final net.minecraft.nbt.CompoundTag clientTag = corner.getUpdateTag(level.registryAccess());
+        helper.assertTrue(clientTag.getBoolean("Formed") && clientTag.contains("Master")
+                        && BlockPos.of(clientTag.getLong("Master")).equals(masterPos),
+                "A non-master client update must include formed-panel master metadata");
         clearFusionPanel(level, base);
         helper.succeed();
     }

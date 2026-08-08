@@ -123,8 +123,8 @@ public class FusionThrusterBlockEntity extends BlockEntity
     @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
         return com.stonytark.magnetization.menu.MachineMenu.Kind.FUSION_THRUSTER;
     }
-    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
-    @Override public int guiEnergyMax() { return MagConfig.fusionThrusterFeCapacity(); }
+    @Override public int guiEnergyStored() { return panelEnergy().getEnergyStored(); }
+    @Override public int guiEnergyMax() { return panelEnergy().getMaxEnergyStored(); }
     @Override public int guiStat1() { return panelTank().getFluidAmount(); }   // shared panel fluid mB
     @Override public int guiStat2() { return cachedInterior; }          // interior count
     // Bar denominator = shared tank × interior count, clamped like MachineScreen did
@@ -248,6 +248,13 @@ public class FusionThrusterBlockEntity extends BlockEntity
             // shared handlers (invalidateCapabilities clears every cap at this pos).
             if (!java.util.Objects.equals(prevMaster, cachedMaster)) {
                 level.invalidateCapabilities(getBlockPos());
+            }
+            // A non-master HUD resolves the shared buffer through cachedMaster.
+            // Publish panel metadata whenever it changes; subsequent live FE updates
+            // only need to be sent by the master whose buffer is actually changing.
+            if (prevValid != cachedValid || !java.util.Objects.equals(prevMaster, cachedMaster)
+                    || prevInterior.size() != cachedInteriorList.size()) {
+                server.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             }
         }
 
