@@ -1,3 +1,10 @@
 {
-  "parent": "minecraft:block/cauldron"
+  "parent": "minecraft:block/cauldron",
+  "textures": {
+    "particle": "magnetization:block/electrolyzer_side",
+    "top": "magnetization:block/electrolyzer_top",
+    "bottom": "magnetization:block/electrolyzer_bottom",
+    "side": "magnetization:block/electrolyzer_side",
+    "inside": "magnetization:block/electrolyzer_inner"
+  }
 }
