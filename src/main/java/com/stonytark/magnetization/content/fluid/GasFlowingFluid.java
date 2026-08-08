@@ -42,7 +42,7 @@ public final class GasFlowingFluid {
             final BlockPos above = pos.above();
             final BlockState targetState = level.getBlockState(above);
             if (targetState.getFluidState().isEmpty() && targetState.canBeReplaced()) {
-                level.setBlock(above, getFlowing(7, false).createLegacyBlock(), 3);
+                super.spreadTo(level, above, targetState, Direction.UP, getFlowing(7, false));
                 return;
             }
             for (final Direction direction : Direction.Plane.HORIZONTAL) {
@@ -83,7 +83,7 @@ public final class GasFlowingFluid {
             final BlockPos above = pos.above();
             final BlockState targetState = level.getBlockState(above);
             if (targetState.getFluidState().isEmpty() && targetState.canBeReplaced()) {
-                level.setBlock(above, getFlowing(7, false).createLegacyBlock(), 3);
+                super.spreadTo(level, above, targetState, Direction.UP, getFlowing(7, false));
                 return;
             }
             for (final Direction direction : Direction.Plane.HORIZONTAL) {
