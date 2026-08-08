@@ -116,6 +116,15 @@ versionRange = "[1.2.0,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Create Crafts & Additions — standard NeoForge FE interop plus magnetic roles
+# for its kinetic-electric machines and metal components.
+[[dependencies.${mod_id}]]
+modId = "createaddition"
+type = "optional"
+versionRange = "[1.6.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "jade"
 type = "optional"

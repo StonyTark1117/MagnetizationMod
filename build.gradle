@@ -30,6 +30,7 @@ configurations {
     simulatedCoastersRuntime
     createBigCannonsRuntime
     createNewAgeRuntime
+    createAdditionRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -61,6 +62,7 @@ def minimalProfileTasks = [
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
+        'runcreateadditiongametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -94,6 +96,9 @@ def wantsCreateBigCannonsTests = lowered.any {
 def wantsCreateNewAgeTests = lowered.any {
     it.endsWith('runcreatenewagegametestserver') || it.endsWith('smokecreatenewagegametest')
 }
+def wantsCreateAdditionTests = lowered.any {
+    it.endsWith('runcreateadditiongametestserver') || it.endsWith('smokecreateadditiongametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -105,7 +110,8 @@ def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
-                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests]
+                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
+                            wantsCreateAdditionTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -123,6 +129,9 @@ if (wantsCreateBigCannonsTests) {
 }
 if (wantsCreateNewAgeTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createNewAgeRuntime }
+}
+if (wantsCreateAdditionTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createAdditionRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -290,6 +299,9 @@ processResources {
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_create_new_age/structure'
     }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_createaddition/structure'
+    }
 }
 
 repositories {
@@ -391,6 +403,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-create-new-age-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_new_age'
+        }
+        createAdditionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-createaddition-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createaddition'
         }
         data {
             data()
@@ -587,6 +604,13 @@ tasks.register('smokeCreateNewAgeGameTest', Exec) {
             'run-create-new-age-gametest', '300'
 }
 
+tasks.register('smokeCreateAdditionGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create Crafts & Additions FE, kinetic, tag, and goggles compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateAdditionGameTestServer',
+            'run-createaddition-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -651,6 +675,9 @@ dependencies {
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+
+    compileOnly("maven.modrinth:createaddition:${createaddition_test_version}")
+    createAdditionRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated

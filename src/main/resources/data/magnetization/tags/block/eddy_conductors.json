@@ -21,6 +21,11 @@
     {"id": "create_new_age:copper_wire_block", "required": false},
     {"id": "create_new_age:overcharged_iron_wire_block", "required": false},
     {"id": "create_new_age:overcharged_golden_wire_block", "required": false},
-    {"id": "create_new_age:overcharged_diamond_wire_block", "required": false}
+    {"id": "create_new_age:overcharged_diamond_wire_block", "required": false},
+    {"id": "createaddition:electric_motor", "required": false},
+    {"id": "createaddition:alternator", "required": false},
+    {"id": "createaddition:rolling_mill", "required": false},
+    {"id": "createaddition:modular_accumulator", "required": false},
+    {"id": "createaddition:tesla_coil", "required": false}
   ]
 }
