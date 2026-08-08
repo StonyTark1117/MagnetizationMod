@@ -34,6 +34,7 @@ configurations {
     createTracksRuntime
     steamRailsRuntime
     dieselGeneratorsRuntime
+    copycatsRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -69,6 +70,7 @@ def minimalProfileTasks = [
         'runcreatetracksgametestserver',
         'runsteamrailsgametestserver',
         'rundieselgeneratorsgametestserver',
+        'runcopycatsgametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -114,6 +116,9 @@ def wantsSteamRailsTests = lowered.any {
 def wantsDieselGeneratorsTests = lowered.any {
     it.endsWith('rundieselgeneratorsgametestserver') || it.endsWith('smokedieselgeneratorsgametest')
 }
+def wantsCopycatsTests = lowered.any {
+    it.endsWith('runcopycatsgametestserver') || it.endsWith('smokecopycatsgametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -127,7 +132,7 @@ def wantsMinimalVerification = lowered.any {
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
                             wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests,
-                            wantsDieselGeneratorsTests]
+                            wantsDieselGeneratorsTests, wantsCopycatsTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -157,6 +162,9 @@ if (wantsSteamRailsTests) {
 }
 if (wantsDieselGeneratorsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.dieselGeneratorsRuntime }
+}
+if (wantsCopycatsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.copycatsRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -254,7 +262,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runSimulatedCoastersGameTestServer'
         || it.name == 'runCreateBigCannonsGameTestServer'
         || it.name == 'runSteamRailsGameTestServer'
-        || it.name == 'runDieselGeneratorsGameTestServer' }.configureEach {
+        || it.name == 'runDieselGeneratorsGameTestServer'
+        || it.name == 'runCopycatsGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -281,6 +290,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-steam-rails-gametest/world/session.lock'
                 : it.name == 'runDieselGeneratorsGameTestServer'
                 ? 'run-diesel-generators-gametest/world/session.lock'
+                : it.name == 'runCopycatsGameTestServer'
+                ? 'run-copycats-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -341,6 +352,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_diesel_generators/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_copycats/structure'
     }
 }
 
@@ -463,6 +477,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-diesel-generators-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_diesel_generators'
+        }
+        copycatsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-copycats-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_copycats'
         }
         data {
             data()
@@ -687,6 +706,13 @@ tasks.register('smokeDieselGeneratorsGameTest', Exec) {
             'run-diesel-generators-gametest', '300'
 }
 
+tasks.register('smokeCopycatsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Copycats+ material inference, assembled contraption, goggles, and Ponder compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCopycatsGameTestServer',
+            'run-copycats-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -766,6 +792,7 @@ dependencies {
     dieselGeneratorsRuntime("curse.maven:create-diesel-generators-869316:${diesel_generators_test_file}") { transitive = false }
 
     compileOnly("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
+    copycatsRuntime("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated

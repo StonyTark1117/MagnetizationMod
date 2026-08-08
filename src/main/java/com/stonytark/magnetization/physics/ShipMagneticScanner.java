@@ -8,6 +8,7 @@ import com.stonytark.magnetization.content.inverter.PolarityInverterBlock;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.plot.PlotChunkHolder;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
@@ -69,6 +70,23 @@ public final class ShipMagneticScanner {
                             }
                         }
                     }
+                }
+            }
+            // Copycats+ stores the imitated material in its block entity,
+            // not in the outer block state. Count each copycat once per chunk
+            // after the palette scan. This also works after Sable moves the
+            // block entity into a contraption.
+            for (final BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                final var materials = com.stonytark.magnetization.compat.copycats.MagCopycatsCompat
+                        .materialsOf(blockEntity);
+                if (materials.isEmpty()) continue;
+                if (materials.stream().anyMatch(s -> s.is(MagTags.MAGNETIC_SUSCEPTIBILITY_EXCLUDED))) {
+                    continue;
+                }
+                if (materials.stream().anyMatch(s -> s.is(MagTags.DIAMAGNETIC_BLOCKS))) {
+                    diamagnetic++;
+                } else if (materials.stream().anyMatch(s -> s.is(MagTags.FERROMAGNETIC_BLOCKS))) {
+                    ferrous++;
                 }
             }
         }

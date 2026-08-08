@@ -36,6 +36,12 @@ public final class MagPonderPlugin implements PonderPlugin {
 
     private MagPonderPlugin() {}
 
+    /** Common-safe probe used by the optional runtime GameTest. */
+    public static boolean hasCopycatsSceneTarget() {
+        return BuiltInRegistries.BLOCK.containsKey(
+                ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block"));
+    }
+
     /** Idempotent because client setup can be replayed by a dev environment. */
     public static void register() {
         if (REGISTERED.compareAndSet(false, true)) {
@@ -99,6 +105,9 @@ public final class MagPonderPlugin implements PonderPlugin {
         BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("railways", "track_coupler"))
                 .ifPresent(coupler -> blocks.forComponents(coupler)
                         .addStoryBoard(SCHEMATIC, MagPonderPlugin::steamRailsMagnetism));
+        BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block"))
+                .ifPresent(copycat -> blocks.forComponents(copycat)
+                        .addStoryBoard(SCHEMATIC, MagPonderPlugin::copycatMagnetism));
     }
 
     private static void prepare(final SceneBuilder scene, final String id, final String title) {
@@ -208,6 +217,23 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .text("Structural Inducers ignore assembled train entities; disassemble a train before treating its blocks as a structure.")
                 .placeNearTarget();
         scene.idle(110);
+    }
+
+    private static void copycatMagnetism(final SceneBuilder scene, final SceneBuildingUtil util) {
+        prepare(scene, "copycat_magnetism", "Copy magnetic material properties");
+        final BlockPos copycat = util.grid().at(2, 1, 2);
+        scene.world().setBlock(copycat, BuiltInRegistries.BLOCK.get(
+                ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block")).defaultBlockState(), false);
+        final BlockPos material = util.grid().at(3, 1, 2);
+        scene.world().setBlock(material, Blocks.IRON_BLOCK.defaultBlockState(), false);
+        show(scene, util, copycat, material);
+        text(scene, util, copycat, material,
+                "A Copycats+ block inherits magnetic susceptibility from its copied material, including after contraption assembly.");
+        scene.overlay().showOutlineWithText(util.select().position(copycat), 90)
+                .colored(PonderPalette.OUTPUT)
+                .text("Create goggles report whether the stored material is ferromagnetic, diamagnetic, excluded, or nonmagnetic.")
+                .placeNearTarget();
+        scene.idle(100);
     }
 
     private static PonderStoryBoard machineScene(final String id, final String title,

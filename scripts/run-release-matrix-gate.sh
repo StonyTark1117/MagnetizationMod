@@ -23,5 +23,6 @@ run_profile 'Create Crafts & Additions compatibility profile' smokeCreateAdditio
 run_profile 'Create: Tracks compatibility profile' smokeCreateTracksGameTest
 run_profile "Steam 'n' Rails compatibility profile" smokeSteamRailsGameTest
 run_profile 'Create: Diesel Generators compatibility profile' smokeDieselGeneratorsGameTest
+run_profile 'Create: Copycats+ compatibility profile' smokeCopycatsGameTest
 
 echo 'releaseMatrixGate: all isolated profiles passed'

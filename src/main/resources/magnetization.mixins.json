@@ -6,7 +6,8 @@
   "refmap": "magnetization.refmap.json",
   "mixins": [
     "DependencySorterCycleFixMixin",
-    "ItemCombinerMenuAccessor"
+    "ItemCombinerMenuAccessor",
+    "compat.CopycatsGoggleMixin"
   ],
   "client": [
     "client.AnvilSoundMixin"
