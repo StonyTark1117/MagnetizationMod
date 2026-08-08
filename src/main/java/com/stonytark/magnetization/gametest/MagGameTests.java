@@ -563,6 +563,28 @@ public final class MagGameTests {
         });
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    public static void fusionGasCeilingFlowDoesNotFillSky(final GameTestHelper helper) {
+        final BlockPos source = new BlockPos(1, 1, 1);
+        helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
+        helper.setBlock(source.above(2), Blocks.GLASS);
+        helper.runAfterDelay(80L, () -> {
+            int gasBlocks = 0;
+            for (int y = 1; y <= 20; y++) {
+                for (int x = 0; x <= 8; x++) {
+                    for (int z = 0; z <= 8; z++) {
+                        if (!helper.getBlockState(new BlockPos(x, y, z)).getFluidState().isEmpty()) {
+                            gasBlocks++;
+                        }
+                    }
+                }
+            }
+            helper.assertTrue(gasBlocks <= 200,
+                    "Blocked gas flow must remain a bounded ceiling layer; found " + gasBlocks + " gas blocks");
+            helper.succeed();
+        });
+    }
+
     /**
      * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
      * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
