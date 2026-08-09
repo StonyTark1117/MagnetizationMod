@@ -108,7 +108,7 @@ No missing registration/resource path was found for these additions.
 - Every topic has at least three descriptive lines and the same associated item set in JEI, REI, and EMI, eliminating the previous viewer-specific gaps and bare one-line pages.
 - The REI development and published optional floor is corrected to 16.0.799, the Minecraft 1.21/1.21.1 line. REI 17 targets Minecraft 1.21.2/1.21.3 and failed against this release's NeoForge 21.1 runtime through its newer Cloth Config dependency.
 - EMI information pages use stable synthetic recipe identifiers and Magnetization supplies readable names for every Magnetization-owned/common material tag exercised by the viewer.
-- Isolated client launches visually confirmed the new Gallium page in JEI 19.43.0.394, REI 16.0.799, and EMI 1.1.24. The final EMI launch registered Magnetization without missing synthetic-recipe errors or untranslated Magnetization/common material-tag warnings.
+- Isolated client launches visually confirmed both the shared Gallium coverage and the newly added Railgun machine page in JEI 19.43.0.394, REI 16.0.799, and EMI 1.1.24. The final EMI launch registered Magnetization without missing synthetic-recipe errors or untranslated Magnetization/common material-tag warnings.
 
 ### Additional pre-playtest GameTest coverage
 
