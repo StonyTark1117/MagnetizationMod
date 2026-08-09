@@ -6,7 +6,7 @@
       "item": "magnetization:deuterium_cell"
     },
     {
-      "item": "magnetization:lithium"
+      "tag": "c:ingots/lithium"
     }
   ],
   "result": {

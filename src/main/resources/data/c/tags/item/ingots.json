@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "magnetization:ferromagnetic_ingot",
-    "magnetization:magnetite_ingot"
+    "magnetization:magnetite_ingot",
+    "magnetization:lithium"
   ]
 }

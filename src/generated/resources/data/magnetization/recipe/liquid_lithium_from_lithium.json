@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "magnetization:lithium"
+      "tag": "c:ingots/lithium"
     },
     {
       "item": "minecraft:bucket"

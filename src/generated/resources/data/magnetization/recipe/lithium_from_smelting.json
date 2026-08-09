@@ -4,7 +4,7 @@
   "cookingtime": 200,
   "experience": 0.5,
   "ingredient": {
-    "item": "magnetization:raw_lithium"
+    "tag": "c:raw_materials/lithium"
   },
   "result": {
     "count": 1,

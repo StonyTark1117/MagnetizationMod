@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "magnetization:magnetite_ore",
-    "magnetization:deepslate_magnetite_ore",
     "magnetization:lithium_ore",
     "magnetization:deepslate_lithium_ore"
   ]

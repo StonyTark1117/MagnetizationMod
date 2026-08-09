@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "magnetization:lithium"
+            "tag": "c:ingots/lithium"
           }
         ]
       },

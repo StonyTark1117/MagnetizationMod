@@ -46,6 +46,10 @@ public final class MagRecipeProvider extends RecipeProvider {
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/zinc"));
     private static final TagKey<Item> C_INGOTS_ALUMINUM =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/aluminum"));
+    private static final TagKey<Item> C_INGOTS_LITHIUM =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:ingots/lithium"));
+    private static final TagKey<Item> C_RAW_MATERIALS_LITHIUM =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:raw_materials/lithium"));
     private static final TagKey<Item> C_PLATES =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:plates"));
     private static final TagKey<Item> C_STRINGS =
@@ -723,16 +727,16 @@ public final class MagRecipeProvider extends RecipeProvider {
         // Fluid transmutation is routed through cell/gas ITEMS (never bucket->bucket) so the
         // bucket craftRemainder never duplicates an empty bucket.
         // raw lithium -> lithium ingot (smelt + blast)
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(MagItems.RAW_LITHIUM.get()), RecipeCategory.MISC,
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(C_RAW_MATERIALS_LITHIUM), RecipeCategory.MISC,
                         MagItems.LITHIUM.get(), 0.5f, 200)
-                .unlockedBy("has_raw_lithium", has(MagItems.RAW_LITHIUM.get())).save(out, id("lithium_from_smelting"));
-        SimpleCookingRecipeBuilder.blasting(Ingredient.of(MagItems.RAW_LITHIUM.get()), RecipeCategory.MISC,
+                .unlockedBy("has_raw_lithium", has(C_RAW_MATERIALS_LITHIUM)).save(out, id("lithium_from_smelting"));
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(C_RAW_MATERIALS_LITHIUM), RecipeCategory.MISC,
                         MagItems.LITHIUM.get(), 0.5f, 100)
-                .unlockedBy("has_raw_lithium", has(MagItems.RAW_LITHIUM.get())).save(out, id("lithium_from_blasting"));
+                .unlockedBy("has_raw_lithium", has(C_RAW_MATERIALS_LITHIUM)).save(out, id("lithium_from_blasting"));
         // lithium + empty bucket -> liquid lithium bucket (melt). No dupe: bucket consumed into fill.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.LIQUID_LITHIUM_BUCKET.get())
-                .requires(MagItems.LITHIUM.get()).requires(Items.BUCKET)
-                .unlockedBy("has_lithium", has(MagItems.LITHIUM.get())).save(out, id("liquid_lithium_from_lithium"));
+                .requires(C_INGOTS_LITHIUM).requires(Items.BUCKET)
+                .unlockedBy("has_lithium", has(C_INGOTS_LITHIUM)).save(out, id("liquid_lithium_from_lithium"));
         // 2 hydrogen + frame -> deuterium cell (hydrogen->deuterium enrichment; CELL output, buckets conserved).
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.DEUTERIUM_CELL.get())
                 .pattern("rhr").pattern("gig").pattern("rhr")
@@ -742,7 +746,7 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .save(out, id("deuterium_cell_from_hydrogen"));
         // deuterium cell + lithium -> tritium cell (lithium-6 breeding).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.TRITIUM_CELL.get())
-                .requires(MagItems.DEUTERIUM_CELL.get()).requires(MagItems.LITHIUM.get())
+                .requires(MagItems.DEUTERIUM_CELL.get()).requires(C_INGOTS_LITHIUM)
                 .unlockedBy("has_deuterium_cell", has(MagItems.DEUTERIUM_CELL.get())).save(out, id("tritium_cell"));
         // tritium cell + glowstone -> helium-3 cell (enrichment / processing).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CELL.get())

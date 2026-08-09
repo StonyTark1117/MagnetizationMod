@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "magnetization:raw_lithium"
+            "tag": "c:raw_materials/lithium"
           }
         ]
       },
