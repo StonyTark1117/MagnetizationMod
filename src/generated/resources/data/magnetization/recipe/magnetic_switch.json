@@ -6,7 +6,7 @@
       "item": "minecraft:comparator"
     },
     "P": {
-      "item": "magnetization:magnetic_plate"
+      "tag": "c:plates/magnetic_alloy"
     },
     "R": {
       "tag": "c:dusts/redstone"

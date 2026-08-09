@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "pattern": ["MQK", "CPW", "MQK"],
+  "key": {
+    "C": { "item": "tfmg:circuit_board" },
+    "K": { "item": "tfmg:electromagnetic_coil" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "P": { "item": "tfmg:steel_mechanical_pump" },
+    "Q": { "item": "tfmg:capacitor_item" },
+    "W": { "tag": "c:wires/copper" }
+  },
+  "result": { "id": "tfmg:electric_pump", "count": 1 }
+}

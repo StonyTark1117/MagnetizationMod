@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "tfmg:magnet",
+      "required": false
+    },
+    {
+      "id": "tfmg:magnetic_alloy_ingot",
+      "required": false
+    },
+    {
+      "id": "tfmg:magnetic_alloy_sheet",
+      "required": false
+    }
+  ]
+}

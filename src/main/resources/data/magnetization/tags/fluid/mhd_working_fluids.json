@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:gallium",
+    "magnetization:flowing_gallium",
+    "magnetization:mixed_gallium",
+    "magnetization:flowing_mixed_gallium",
+    "magnetization:liquid_lithium",
+    "magnetization:flowing_liquid_lithium",
+    {
+      "id": "#c:molten_steel",
+      "required": false
+    }
+  ]
+}

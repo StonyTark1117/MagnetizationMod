@@ -52,6 +52,8 @@ public final class MagRecipeProvider extends RecipeProvider {
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:raw_materials/lithium"));
     private static final TagKey<Item> C_PLATES =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:plates"));
+    private static final TagKey<Item> C_PLATES_MAGNETIC_ALLOY =
+            TagKey.create(Registries.ITEM, ResourceLocation.parse("c:plates/magnetic_alloy"));
     private static final TagKey<Item> C_STRINGS =
             TagKey.create(Registries.ITEM, ResourceLocation.parse("c:strings"));
     private static final TagKey<Item> C_DUSTS_REDSTONE =
@@ -77,6 +79,8 @@ public final class MagRecipeProvider extends RecipeProvider {
         // Anywhere a recipe consumes a ferromagnetic ingot, accept any magnetic
         // alloy ingot (ours or TFMG's) so the two are interchangeable.
         final Ingredient magAlloy = Ingredient.of(C_INGOTS_MAGNETIC_ALLOY);
+        // Magnetic cladding likewise accepts our plate or TFMG's pressed sheet.
+        final Ingredient magneticPlate = Ingredient.of(C_PLATES_MAGNETIC_ALLOY);
 
         // -------- core materials --------
 
@@ -95,22 +99,22 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, core)
                 .pattern("PLP").pattern("LFL").pattern("PLP")
-                .define('P', plate).define('L', Blocks.LODESTONE).define('F', magAlloy)
-                .unlockedBy("has_plate", has(plate))
+                .define('P', magneticPlate).define('L', Blocks.LODESTONE).define('F', magAlloy)
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY))
                 .save(out, id("lodestone_core"));
 
         // -------- emitter blocks --------
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.ELECTROMAGNET.get())
                 .pattern("PRP").pattern("RCR").pattern("PRP")
-                .define('P', plate).define('R', Ingredient.of(C_DUSTS_REDSTONE)).define('C', core)
+                .define('P', magneticPlate).define('R', Ingredient.of(C_DUSTS_REDSTONE)).define('C', core)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("electromagnet"));
 
         // Dipole = two electromagnets fused end-to-end (the two poles) around a core.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.DIPOLE_ELECTROMAGNET.get())
                 .pattern("PEP").pattern("RCR").pattern("PEP")
-                .define('P', plate).define('E', MagItems.ELECTROMAGNET.get())
+                .define('P', magneticPlate).define('E', MagItems.ELECTROMAGNET.get())
                 .define('R', Ingredient.of(C_DUSTS_REDSTONE)).define('C', core)
                 .unlockedBy("has_electromagnet", has(MagItems.ELECTROMAGNET.get()))
                 .save(out, id("dipole_electromagnet"));
@@ -123,39 +127,39 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.REPULSOR_COIL.get())
                 .pattern("PPP").pattern("PCP").pattern("BBB")
-                .define('P', plate).define('C', core).define('B', Blocks.COPPER_BLOCK)
+                .define('P', magneticPlate).define('C', core).define('B', Blocks.COPPER_BLOCK)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("repulsor_coil"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.TRACTOR_BEAM.get())
                 .pattern("FPF").pattern("PCP").pattern("FPF")
-                .define('F', magAlloy).define('P', plate).define('C', core)
+                .define('F', magAlloy).define('P', magneticPlate).define('C', core)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("tractor_beam"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_EXCAVATOR.get())
                 .pattern("PMP").pattern("PCP").pattern("PMP")
-                .define('P', plate).define('M', magTag).define('C', core)
+                .define('P', magneticPlate).define('M', magTag).define('C', core)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("magnetic_excavator"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_SWITCH.get())
                 .pattern("PRP").pattern("PCP").pattern("SSS")
-                .define('P', plate).define('R', Ingredient.of(C_DUSTS_REDSTONE))
+                .define('P', magneticPlate).define('R', Ingredient.of(C_DUSTS_REDSTONE))
                 .define('C', Items.COMPARATOR).define('S', Items.SMOOTH_STONE)
-                .unlockedBy("has_plate", has(plate))
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY))
                 .save(out, id("magnetic_switch"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.PERMANENT_MAGNET.get(), 2)
                 .pattern("FFF").pattern("PLP").pattern("FFF")
-                .define('F', magAlloy).define('P', plate)
+                .define('F', magAlloy).define('P', magneticPlate)
                 .define('L', Ingredient.of(Items.LODESTONE, MagBlocks.MAGNETITE_BLOCK.get().asItem()))
-                .unlockedBy("has_plate", has(plate))
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY))
                 .save(out, id("permanent_magnet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.POLARITY_INVERTER.get())
                 .pattern("RPB").pattern("PCP").pattern("BPR")
-                .define('P', plate).define('C', core)
+                .define('P', magneticPlate).define('C', core)
                 .define('R', Ingredient.of(C_DUSTS_REDSTONE))
                 .define('B', Ingredient.of(C_STORAGE_BLOCKS_REDSTONE))
                 .unlockedBy("has_core", has(core))
@@ -171,7 +175,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MagItems.FIELD_COMPASS.get())
                 .pattern(" P ").pattern("PCP").pattern(" P ")
-                .define('P', plate).define('C', Items.COMPASS)
+                .define('P', magneticPlate).define('C', Items.COMPASS)
                 .unlockedBy("has_compass", has(Items.COMPASS))
                 .save(out, id("field_compass"));
 
@@ -184,7 +188,7 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MagItems.REPULSOR_GUN.get())
                 .pattern("PCR").pattern(" IR").pattern("  R")
-                .define('P', plate).define('C', core).define('I', magAlloy).define('R', Items.IRON_INGOT)
+                .define('P', magneticPlate).define('C', core).define('I', magAlloy).define('R', Items.IRON_INGOT)
                 .unlockedBy("has_core", has(core))
                 .save(out, id("repulsor_gun"));
 
@@ -313,7 +317,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         //          the standard 8-magnetite-around-lodestone recipe entirely.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.LODESTONE_CORE.get(), 4)
                 .requires(MagItems.METEORITE_FRAGMENT.get())
-                .requires(MagItems.MAGNETIC_PLATE.get())
+                .requires(magneticPlate)
                 .unlockedBy("has_fragment", has(MagItems.METEORITE_FRAGMENT.get()))
                 .save(out, id("lodestone_core_from_meteorite"));
 
@@ -381,7 +385,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, MagItems.MAGNETIC_ELYTRA.get())
                 .pattern("FPF").pattern("FEF").pattern(" F ")
                 .define('F', magAlloy)
-                .define('P', MagItems.MAGNETIC_PLATE.get())
+                .define('P', magneticPlate)
                 .define('E', Items.ELYTRA)
                 .unlockedBy("has_elytra", has(Items.ELYTRA))
                 .save(out, id("magnetic_elytra"));
@@ -394,7 +398,7 @@ public final class MagRecipeProvider extends RecipeProvider {
         // gets fixed into.
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, MagItems.HEMATITE_LENS.get())
                 .requires(MagItems.HEMATITE_INGOT.get())
-                .requires(MagItems.MAGNETIC_PLATE.get())
+                .requires(magneticPlate)
                 .unlockedBy("has_hematite", has(MagItems.HEMATITE_INGOT.get()))
                 .save(out, id("hematite_lens"));
 
@@ -640,8 +644,8 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .requires(Items.CHARCOAL).requires(Items.CHARCOAL).requires(Items.CHARCOAL).requires(Items.CHARCOAL)
                 .unlockedBy("has_charcoal", has(Items.CHARCOAL)).save(out, id("pyrolytic_carbon"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, MagItems.MAGNETIC_ITEM_FRAME.get())
-                .requires(Items.ITEM_FRAME).requires(plate)
-                .unlockedBy("has_plate", has(plate)).save(out, id("magnetic_item_frame"));
+                .requires(Items.ITEM_FRAME).requires(magneticPlate)
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY)).save(out, id("magnetic_item_frame"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.VECTOR_CORE.get())
                 .requires(MagItems.TITANOMAGNETITE_INGOT.get()).requires(Items.COMPASS).requires(Items.REDSTONE)
                 .unlockedBy("has_titano", has(MagItems.TITANOMAGNETITE_INGOT.get())).save(out, id("vector_core"));
@@ -662,15 +666,15 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_core", has(core)).save(out, id("gyrostabilizer"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.BARKHAUSEN_GENERATOR.get())
                 .pattern("rir").pattern("ipi").pattern("rir")
-                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', plate)
-                .unlockedBy("has_plate", has(plate)).save(out, id("barkhausen_generator"));
+                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', magneticPlate)
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY)).save(out, id("barkhausen_generator"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.MAGNETOSTRICTIVE_SENSOR.get())
                 .pattern("iri").pattern("rpr").pattern("iri")
-                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', plate)
-                .unlockedBy("has_plate", has(plate)).save(out, id("magnetostrictive_sensor"));
+                .define('i', Items.IRON_INGOT).define('r', Items.REDSTONE).define('p', magneticPlate)
+                .unlockedBy("has_plate", has(C_PLATES_MAGNETIC_ALLOY)).save(out, id("magnetostrictive_sensor"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.INDUCTION_PAD.get())
                 .pattern("ccc").pattern("cpc").pattern("clc")
-                .define('c', Items.COPPER_INGOT).define('p', plate).define('l', core)
+                .define('c', Items.COPPER_INGOT).define('p', magneticPlate).define('l', core)
                 .unlockedBy("has_core", has(core)).save(out, id("induction_pad"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.KINETIC_COIL.get())
                 .pattern("ccc").pattern("cic").pattern("ccc")
@@ -678,7 +682,7 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_copper", has(Items.COPPER_INGOT)).save(out, id("kinetic_coil"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.KINETIC_ELECTROMAGNET.get())
                 .pattern("PSP").pattern("ECE").pattern("PSP")
-                .define('P', plate).define('S', shaft).define('E', MagItems.ELECTROMAGNET.get()).define('C', core)
+                .define('P', magneticPlate).define('S', shaft).define('E', MagItems.ELECTROMAGNET.get()).define('C', core)
                 .unlockedBy("has_core", has(core)).save(out, id("kinetic_electromagnet"));
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.HOMOPOLAR_MOTOR.get())
                 .pattern(" h ").pattern("cmc").pattern("ccc")

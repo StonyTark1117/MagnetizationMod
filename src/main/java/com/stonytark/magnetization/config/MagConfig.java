@@ -197,6 +197,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_GALLIUM;
     public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_MIXED_GALLIUM;
     public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_LIQUID_LITHIUM;
+    public static final ModConfigSpec.DoubleValue MHD_CONDUCTIVITY_TAGGED_FLUID;
     public static final ModConfigSpec.DoubleValue MICRO_THRUSTER_MAGNETIZED_MULT;
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_FORCE;
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_BASE;
@@ -420,6 +421,21 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_PROJECTILE_REACTION;
     /** Base susceptibility for a Create: Big Cannons launched projectile. */
     public static final ModConfigSpec.DoubleValue CREATE_BIG_CANNONS_PROJECTILE_SUSCEPTIBILITY;
+    /** Allow datapack-tagged foreign magnets, including TFMG's magnetic alloy
+     *  forms, to drive the Homopolar Motor and MHD Jet. */
+    public static final ModConfigSpec.BooleanValue EXTERNAL_MACHINE_MAGNETS_ENABLED;
+    /** Potency assigned to foreign items in #magnetization:machine_magnets. */
+    public static final ModConfigSpec.IntValue EXTERNAL_MACHINE_MAGNET_POTENCY;
+    /** Enable Magnetization's supplemental TFMG processing and component recipes. */
+    public static final ModConfigSpec.BooleanValue TFMG_PROCESSING_RECIPES_ENABLED;
+    /** Enable the optional TFMG industrial-blasting routes for iron-rich ores. */
+    public static final ModConfigSpec.BooleanValue TFMG_STEELMAKING_RECIPES_ENABLED;
+    /** Opt-in active field emitted by a powered TFMG Polarizer. */
+    public static final ModConfigSpec.BooleanValue TFMG_POLARIZER_FIELD_ENABLED;
+    /** TFMG voltage at which the Polarizer field reaches the EXTREME tier. */
+    public static final ModConfigSpec.IntValue TFMG_POLARIZER_VOLTAGE_FOR_EXTREME;
+    /** Scalar applied to the voltage-derived TFMG Polarizer field force. */
+    public static final ModConfigSpec.DoubleValue TFMG_POLARIZER_FORCE_MULTIPLIER;
 
     /** Whether the vanilla Minecraft compass spins erratically inside the
      *  Magnetic Anomaly biome. Default true — matches the in-mod theming that
@@ -1086,6 +1102,12 @@ public final class MagConfig {
                 .defineInRange("mhdConductivityMixedGallium", 1.2d, 0.0d, 100.0d);
         MHD_CONDUCTIVITY_LIQUID_LITHIUM = b.translation("magnetization.configuration.propulsion.mhdConductivityLiquidLithium")
                 .defineInRange("mhdConductivityLiquidLithium", 1.6d, 0.0d, 100.0d);
+        MHD_CONDUCTIVITY_TAGGED_FLUID = b
+                .comment("Conductivity multiplier for fluids added through #magnetization:mhd_working_fluids",
+                         "that do not have a dedicated multiplier above. TFMG molten steel uses this",
+                         "fallback. Set 0 to reject all externally-tagged MHD working fluids.")
+                .translation("magnetization.configuration.propulsion.mhdConductivityTaggedFluid")
+                .defineInRange("mhdConductivityTaggedFluid", 0.8d, 0.0d, 100.0d);
         MICRO_THRUSTER_MAGNETIZED_MULT = b.translation("magnetization.configuration.propulsion.microThrusterMagnetizedMult")
                 .defineInRange("microThrusterMagnetizedMult", 1.3d, 0.0d, 100.0d);
         SOLAR_SAIL_FORCE = b.translation("magnetization.configuration.propulsion.solarSailForce")
@@ -1803,6 +1825,53 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.createBigCannonsProjectileSusceptibility")
                 .defineInRange("createBigCannonsProjectileSusceptibility", 1.0d, 0.0d, 100.0d);
 
+        EXTERNAL_MACHINE_MAGNETS_ENABLED = b
+                .comment("Allow foreign items in #magnetization:machine_magnets to drive the",
+                         "Homopolar Motor and MHD Jet. This includes TFMG's Magnet, Magnetic Alloy",
+                         "Ingot, and Magnetic Alloy Sheet. Set false to keep machine fuel strictly",
+                         "limited to Magnetization materials; ordinary item/block magnetic tags remain.")
+                .translation("magnetization.configuration.compat.externalMachineMagnetsEnabled")
+                .define("externalMachineMagnetsEnabled", true);
+
+        EXTERNAL_MACHINE_MAGNET_POTENCY = b
+                .comment("Potency assigned to every foreign item in #magnetization:machine_magnets.",
+                         "16 matches Magnetization's Ferromagnetic Ingot and is the conservative default.")
+                .translation("magnetization.configuration.compat.externalMachineMagnetPotency")
+                .defineInRange("externalMachineMagnetPotency", 16, 1, 1000);
+
+        TFMG_PROCESSING_RECIPES_ENABLED = b
+                .comment("Load Magnetization's supplemental TFMG recipes: lubricant-based Ferrofluid,",
+                         "gallium/lithium casting, magnetic plate/sheet processing, and direct use of",
+                         "Permanent Magnets in TFMG electrical components. Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.tfmgProcessingRecipesEnabled")
+                .define("tfmgProcessingRecipesEnabled", true);
+
+        TFMG_STEELMAKING_RECIPES_ENABLED = b
+                .comment("Load conservative TFMG Industrial Blast Furnace recipes for Raw Magnetite",
+                         "and Raw Hematite. Each input yields one ingot-equivalent of molten steel plus",
+                         "normal slag and furnace-gas byproducts. Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.tfmgSteelmakingRecipesEnabled")
+                .define("tfmgSteelmakingRecipesEnabled", true);
+
+        TFMG_POLARIZER_FIELD_ENABLED = b
+                .comment("Let a powered TFMG Polarizer emit a real Magnetization field whose force",
+                         "scales with its live TFMG network voltage. Disabled by default because this",
+                         "optional adapter depends on TFMG internals and changes nearby field physics.")
+                .translation("magnetization.configuration.compat.tfmgPolarizerFieldEnabled")
+                .define("tfmgPolarizerFieldEnabled", false);
+
+        TFMG_POLARIZER_VOLTAGE_FOR_EXTREME = b
+                .comment("TFMG Polarizer voltage that maps to Magnetization's EXTREME field tier.",
+                         "Lower positive voltages scale geometrically from WEAK up to this threshold.")
+                .translation("magnetization.configuration.compat.tfmgPolarizerVoltageForExtreme")
+                .defineInRange("tfmgPolarizerVoltageForExtreme", 500, 1, 1_000_000);
+
+        TFMG_POLARIZER_FORCE_MULTIPLIER = b
+                .comment("Multiplier applied after converting TFMG Polarizer voltage to field force.",
+                         "Set 0 for a soft disable while retaining the main integration toggle.")
+                .translation("magnetization.configuration.compat.tfmgPolarizerForceMultiplier")
+                .defineInRange("tfmgPolarizerForceMultiplier", 1.0d, 0.0d, 100.0d);
+
         ALLOW_REDSTONE_POWER = b
                 .comment("Whether redstone signal activates the addon's redstone-powered emitters",
                          "(Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator).",
@@ -2266,6 +2335,27 @@ public final class MagConfig {
     public static double steamRailsTrainSusceptibility() {
         return doubleOr(STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY, 1.0d);
     }
+    public static boolean externalMachineMagnetsEnabled() {
+        return booleanOr(EXTERNAL_MACHINE_MAGNETS_ENABLED, true);
+    }
+    public static int externalMachineMagnetPotency() {
+        return intOr(EXTERNAL_MACHINE_MAGNET_POTENCY, 16);
+    }
+    public static boolean tfmgProcessingRecipesEnabled() {
+        return booleanOr(TFMG_PROCESSING_RECIPES_ENABLED, true);
+    }
+    public static boolean tfmgSteelmakingRecipesEnabled() {
+        return booleanOr(TFMG_STEELMAKING_RECIPES_ENABLED, true);
+    }
+    public static boolean tfmgPolarizerFieldEnabled() {
+        return booleanOr(TFMG_POLARIZER_FIELD_ENABLED, false);
+    }
+    public static int tfmgPolarizerVoltageForExtreme() {
+        return intOr(TFMG_POLARIZER_VOLTAGE_FOR_EXTREME, 500);
+    }
+    public static double tfmgPolarizerForceMultiplier() {
+        return doubleOr(TFMG_POLARIZER_FORCE_MULTIPLIER, 1.0d);
+    }
     public static boolean allowEnergyPower()   { return booleanOr(ALLOW_ENERGY_POWER, true); }
     // Analog redstone strength — all default OFF, so an unloaded config behaves exactly
     // like the historical on/off emitters.
@@ -2314,6 +2404,7 @@ public final class MagConfig {
     public static double mhdConductivityGallium()       { return doubleOr(MHD_CONDUCTIVITY_GALLIUM, 1.0d); }
     public static double mhdConductivityMixedGallium()  { return doubleOr(MHD_CONDUCTIVITY_MIXED_GALLIUM, 1.2d); }
     public static double mhdConductivityLiquidLithium() { return doubleOr(MHD_CONDUCTIVITY_LIQUID_LITHIUM, 1.6d); }
+    public static double mhdConductivityTaggedFluid()   { return doubleOr(MHD_CONDUCTIVITY_TAGGED_FLUID, 0.8d); }
     public static double microThrusterMagnetizedMult()  { return doubleOr(MICRO_THRUSTER_MAGNETIZED_MULT, 1.3d); }
     public static double solarSailForce()           { return doubleOr(SOLAR_SAIL_FORCE, 60.0d); }
     public static double solarSailSpeedBase()       { return doubleOr(SOLAR_SAIL_SPEED_BASE, 0.7d); }

@@ -1,0 +1,13 @@
+{
+  "type": "create:pressing",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "ingredients": [
+    { "item": "magnetization:ferromagnetic_ingot" }
+  ],
+  "results": [
+    { "id": "tfmg:magnetic_alloy_sheet" }
+  ]
+}

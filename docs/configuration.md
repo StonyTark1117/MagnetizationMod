@@ -188,6 +188,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | propulsion.mhdConductivityGallium | number | 1.0; 0.0-100.0 | Thrust multiplier with gallium working fluid (baseline). |
 | COMMON | propulsion.mhdConductivityMixedGallium | number | 1.2; 0.0-100.0 | Thrust multiplier with mixed gallium. |
 | COMMON | propulsion.mhdConductivityLiquidLithium | number | 1.6; 0.0-100.0 | Thrust multiplier with liquid lithium (best MPD propellant). |
+| COMMON | propulsion.mhdConductivityTaggedFluid | number | 0.8; 0.0-100.0 | Fallback thrust multiplier for #magnetization:mhd_working_fluids entries without a dedicated setting, including TFMG molten steel. Set 0 to reject external working fluids. |
 | COMMON | propulsion.microThrusterMagnetizedMult | number | 1.3; 0.0-100.0 | Thrust multiplier when burning magnetized ferrofluid vs plain (1.0). |
 | COMMON | propulsion.solarSailForce | number | 60.0; 0.0-100000.0 | Per-panel thrust force at full strength. |
 | COMMON | propulsion.solarSailSpeedBase | number | 0.7; 0.0-100.0 | Baseline cruise speed ceiling. |
@@ -368,6 +369,13 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.steamNRailsTrainSusceptibility | number | 1.0; 0.0-100.0 | Scales magnetic acceleration and braking of Steam 'n' Rails trains. 1.0 is normal; 0 disables force without changing the main toggle. |
 | COMMON | compat.createBigCannonsProjectileReaction | boolean | true | Allow launched Create: Big Cannons shells, rounds, and projectile bursts to receive magnetic forces. Has no effect when Create: Big Cannons is not installed. Default on. |
 | COMMON | compat.createBigCannonsProjectileSusceptibility | number | 1.0; 0.0-100.0 | Base magnetic susceptibility of a launched Create: Big Cannons projectile. 1.0 matches a normal ferromagnetic entity; 0 disables the response. |
+| COMMON | compat.externalMachineMagnetsEnabled | boolean | true | Allow foreign items in #magnetization:machine_magnets, including TFMG magnets and magnetic alloy forms, to drive the Homopolar Motor and MHD Jet. |
+| COMMON | compat.externalMachineMagnetPotency | number | 16; 1-1000 | Potency assigned to foreign machine magnets. The default 16 matches Magnetization's Ferromagnetic Ingot. |
+| COMMON | compat.tfmgProcessingRecipesEnabled | boolean | true | Load lubricant Ferrofluid, casting, plate/sheet, polarizing, and Permanent Magnet component recipes when TFMG is installed. Takes effect on data reload. |
+| COMMON | compat.tfmgSteelmakingRecipesEnabled | boolean | true | Load conservative TFMG Industrial Blast Furnace routes for Raw Magnetite and Raw Hematite. Takes effect on data reload. |
+| COMMON | compat.tfmgPolarizerFieldEnabled | boolean | false | Opt in to a real Magnetization field from powered TFMG Polarizers. Disabled by default because the adapter depends on TFMG internals and changes nearby physics. |
+| COMMON | compat.tfmgPolarizerVoltageForExtreme | number | 500; 1-1000000 | TFMG voltage mapped to the EXTREME field tier; lower positive voltages scale geometrically upward from WEAK. |
+| COMMON | compat.tfmgPolarizerForceMultiplier | number | 1.0; 0.0-100.0 | Scales the voltage-derived Polarizer force. Set 0 for a soft disable. |
 | COMMON | compat.allowRedstonePower | boolean | true | Whether redstone signal activates the addon's redstone-powered emitters. Default true. Set false to force players to feed FE/RF — useful on hardcore servers. |
 | COMMON | compat.allowEnergyPower | boolean | true | Whether FE/RF energy activates the addon's emitters. Default true. Any FE-providing mod (C&A, Mekanism, Thermal, IE, AE2) works. Set false to disable energy-driven emitters. |
 | COMMON | compat.requireRedstoneAndEnergy | boolean | false | Require BOTH redstone and energy at once to run an emitter, instead of either-or. Default off (redstone OR FE runs it). When on: the emitter still accepts and buffers FE/RF at all times, but stays off — and burns no energy — until it also receives a redstone signal; with both present it runs and drains energy. Lets you pre-charge a magnet and gate its activation with redstone. Needs both Allow Redstone Power and Allow FE/RF Power on. |

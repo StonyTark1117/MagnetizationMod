@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "magnetization:magnetic_plate"
+            "items": "#c:plates/magnetic_alloy"
           }
         ]
       },

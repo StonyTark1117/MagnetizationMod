@@ -9,7 +9,7 @@
       "tag": "c:ingots/magnetite"
     },
     "P": {
-      "item": "magnetization:magnetic_plate"
+      "tag": "c:plates/magnetic_alloy"
     }
   },
   "pattern": [

@@ -6,7 +6,7 @@
       "item": "magnetization:meteorite_fragment"
     },
     {
-      "item": "magnetization:magnetic_plate"
+      "tag": "c:plates/magnetic_alloy"
     }
   ],
   "result": {

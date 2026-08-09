@@ -1,0 +1,17 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "pattern": ["CM  ", "ACM ", "ASCM", "WAAC"],
+  "key": {
+    "A": { "tag": "c:plates/aluminum" },
+    "C": { "item": "tfmg:electromagnetic_coil" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "S": { "tag": "c:storage_blocks/steel" },
+    "W": { "tag": "c:wires/copper" }
+  },
+  "result": { "id": "tfmg:stator", "count": 3 }
+}

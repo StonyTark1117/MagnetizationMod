@@ -74,10 +74,15 @@ public class MhdJetBlockEntity extends BlockEntity
     public int burnRemaining() { return burnRemaining; }
 
     /** Conductivity multiplier of the working fluid (0 = not a conductive fluid). */
-    private static double conductivityMult(final Fluid fluid) {
-        if (fluid == MagFluids.GALLIUM.get()) return MagConfig.mhdConductivityGallium();
-        if (fluid == MagFluids.MIXED_GALLIUM.get()) return MagConfig.mhdConductivityMixedGallium();
-        if (fluid == MagFluids.LIQUID_LITHIUM.get()) return MagConfig.mhdConductivityLiquidLithium();
+    public static double conductivityMult(final Fluid fluid) {
+        if (fluid == MagFluids.GALLIUM.get() || fluid == MagFluids.GALLIUM_FLOWING.get())
+            return MagConfig.mhdConductivityGallium();
+        if (fluid == MagFluids.MIXED_GALLIUM.get() || fluid == MagFluids.MIXED_GALLIUM_FLOWING.get())
+            return MagConfig.mhdConductivityMixedGallium();
+        if (fluid == MagFluids.LIQUID_LITHIUM.get() || fluid == MagFluids.LIQUID_LITHIUM_FLOWING.get())
+            return MagConfig.mhdConductivityLiquidLithium();
+        if (fluid.builtInRegistryHolder().is(com.stonytark.magnetization.api.MagTags.MHD_WORKING_FLUIDS))
+            return MagConfig.mhdConductivityTaggedFluid();
         return 0.0;
     }
 

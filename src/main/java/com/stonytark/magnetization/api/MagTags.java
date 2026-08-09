@@ -35,6 +35,12 @@ public final class MagTags {
     public static final TagKey<Item> FERROMAGNETIC_ITEMS =
             TagKey.create(Registries.ITEM, Magnetization.id("ferromagnetic"));
 
+    /** Foreign magnet items that may drive magnet-slot machines. Magnetization's
+     *  own materials retain their form/type potency ladder; members of this tag
+     *  receive the server-configured external potency. */
+    public static final TagKey<Item> MACHINE_MAGNETS =
+            TagKey.create(Registries.ITEM, Magnetization.id("machine_magnets"));
+
     /** Armor pieces that count as "metal" for player magnetization. Each
      *  worn piece in this tag adds {@link com.stonytark.magnetization.physics.FieldApplicator#PER_ARMOR_SUSCEPTIBILITY}
      *  to the wearer's susceptibility. Other mods can add their own metal
@@ -123,6 +129,11 @@ public final class MagTags {
      *  conductive but NOT ferromagnetic — these don't attract, they drag. */
     public static final TagKey<Block> EDDY_CONDUCTORS =
             TagKey.create(Registries.BLOCK, Magnetization.id("eddy_conductors"));
+
+    /** Conductive fluids accepted by the MHD Jet. Built-in fluids have dedicated
+     *  conductivity settings; other members use the tagged-fluid fallback. */
+    public static final TagKey<Fluid> MHD_WORKING_FLUIDS =
+            TagKey.create(Registries.FLUID, Magnetization.id("mhd_working_fluids"));
 
     /** Conductive metal blocks that work as Railgun rails (Lorentz-force track).
      *  Mirrors {@link #EDDY_CONDUCTORS} but kept separate so rail material is

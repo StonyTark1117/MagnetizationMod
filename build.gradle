@@ -790,7 +790,7 @@ tasks.register('smokeEnderTransmissionGameTest', Exec) {
 
 tasks.register('smokeTfmgGameTest', Exec) {
     group = 'verification'
-    description = 'Supervises TFMG hydrogen tags, recipes, and Fusion Thruster compatibility.'
+    description = 'Supervises TFMG magnetic, recipe, fluid, field, and Fusion Thruster compatibility.'
     commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runTfmgGameTestServer',
             'run-tfmg-gametest', '300'
 }

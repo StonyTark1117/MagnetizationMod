@@ -1,6 +1,8 @@
 package com.stonytark.magnetization.content;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +55,13 @@ public final class MagneticMaterials {
     public static int potency(final ItemStack stack) {
         if (stack.isEmpty()) return 0;
         final ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        if (id == null || !id.getNamespace().equals(Magnetization.MOD_ID)) return 0;
+        if (id == null) return 0;
+        if (!id.getNamespace().equals(Magnetization.MOD_ID)) {
+            return MagConfig.externalMachineMagnetsEnabled()
+                    && stack.is(MagTags.MACHINE_MAGNETS)
+                    ? MagConfig.externalMachineMagnetPotency()
+                    : 0;
+        }
         final String path = id.getPath();
         final Integer special = SPECIALS.get(path);
         if (special != null) return special;

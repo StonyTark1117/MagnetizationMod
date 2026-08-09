@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "pattern": ["NNN", "NCN", "AMA"],
+  "key": {
+    "A": { "tag": "c:ingots/steel" },
+    "C": { "item": "minecraft:compass" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "N": { "tag": "c:nuggets/steel" }
+  },
+  "result": { "id": "tfmg:voltmeter", "count": 1 }
+}

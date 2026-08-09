@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "pattern": ["MMM", "MNM", "WCW"],
+  "key": {
+    "C": { "item": "tfmg:steel_casing" },
+    "M": { "item": "magnetization:magnetic_plate" },
+    "N": { "tag": "c:plates/nickel" },
+    "W": { "tag": "c:wires/copper" }
+  },
+  "result": { "id": "tfmg:transformer", "count": 1 }
+}

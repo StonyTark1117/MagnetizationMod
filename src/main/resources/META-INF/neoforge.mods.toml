@@ -22,6 +22,9 @@ config = "magnetization.mixins.json"
 [[mixins]]
 config = "magnetization.immersive_aeronautics.mixins.json"
 
+[[mixins]]
+config = "magnetization.tfmg.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
@@ -230,10 +233,10 @@ versionRange = "[4.1.0.8,)"
 ordering = "BEFORE"
 side = "BOTH"
 
-# Create: The Factory Must Grow — optional. Supplies aluminium for gallium and
-# shares Hydrogen with the fusion-fuel chain through common fluid/container tags;
-# Magnetization gases also join TFMG's gas classifications. Without TFMG,
-# gallium comes from Create zinc and Magnetization's own Hydrogen remains complete.
+# Create: The Factory Must Grow — optional. Shares gases, magnetic materials,
+# industrial processing, electrical components, MHD working fluids, and an
+# opt-in Polarizer field. All foreign registry references remain soft when TFMG
+# is absent; the published 1.2.0 runtime is covered by a dedicated GameTest profile.
 [[dependencies.${mod_id}]]
 modId = "tfmg"
 type = "optional"

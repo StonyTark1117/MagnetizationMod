@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetic_plate",
+    {
+      "id": "tfmg:magnetic_alloy_sheet",
+      "required": false
+    }
+  ]
+}

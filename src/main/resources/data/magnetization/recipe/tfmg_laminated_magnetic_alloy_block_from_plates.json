@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "pattern": ["MMM", "MMM", "MMM"],
+  "key": {
+    "M": { "item": "magnetization:magnetic_plate" }
+  },
+  "result": { "id": "tfmg:laminated_magnetic_alloy_block", "count": 1 }
+}
