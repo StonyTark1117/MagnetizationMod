@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:raw_materials/lithium"
+            "items": "#c:raw_materials/lithium"
           }
         ]
       },

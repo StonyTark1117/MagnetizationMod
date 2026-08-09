@@ -1,6 +1,7 @@
 {
   "values": [
     "magnetization:electromagnet",
+    "magnetization:dipole_electromagnet",
     "magnetization:kinetic_electromagnet",
     "magnetization:magnetic_anchor",
     "magnetization:repulsor_coil",
