@@ -36,8 +36,9 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Expandable Fusion Thruster — a flat {@code W×H×1} panel multiblock (Tokamak-Coil
- * ring + this block tiled inside) that thrusts a Sable craft perpendicular to the
- * panel face. Bigger panel = exponentially more thrust. Burns the fusion fluids
+ * ring + this block tiled inside) whose exhaust leaves the panel's FACING side
+ * and thrusts a Sable craft in the opposite direction. Bigger panel = exponentially
+ * more thrust. Burns the fusion fluids
  * (Hydrogen / Deuterium Oxide / Tritium / Helium-3), with Helium-3 the strongest
  * AND longest-running (denser fluids drain slower). Only the deterministic master
  * interior fires; right-clicking any interior opens the master's shared GUI.
@@ -69,6 +70,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     private int cachedInterior;
     private @Nullable BlockPos cachedMaster;
     private java.util.List<BlockPos> cachedInteriorList = java.util.List.of();
+    private java.util.List<BlockPos> cachedFrameList = java.util.List.of();
     private long lastScanTick = Long.MIN_VALUE;
     private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
     /** Fractional fuel-consumption accumulator (denser fluids drain < 1 mB/tick). */
@@ -80,6 +82,19 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return panelEnergy(); }
+
+    /** Shared FE capability exposed by a Tokamak Coil in a valid thruster frame. */
+    public static @Nullable IEnergyStorage energyBufferFromFrame(final Level level,
+                                                                 final BlockPos framePos) {
+        final BlockPos masterPos = FusionThrusterPanel.findMasterFromFrame(
+                level, framePos, MagConfig.fusionThrusterMaxEdge());
+        if (masterPos == null
+                || !(level.getBlockEntity(masterPos) instanceof FusionThrusterBlockEntity master)
+                || MagConfig.isBlockDisabled(master.getBlockState())) return null;
+        // The resolved position is the deterministic master, so use its own buffer
+        // directly; capability access need not wait for its throttled panel scan.
+        return master.energy;
+    }
     // Insert-only: pipes can fuel the panel but can't siphon unburnt fusion fuel back
     // out. panelTank() resolves the (possibly remote master's) tank, so wrap per call.
     public IFluidHandler fluidHandler() {
@@ -117,6 +132,12 @@ public class FusionThrusterBlockEntity extends BlockEntity
     public boolean isFiring() { return firing; }
     public int interiorCount() { return cachedInterior; }
     public boolean formed() { return cachedValid; }
+
+    /** Drop cached cable views before an interior block (possibly the master) disappears. */
+    void invalidateCachedFrameCapabilities() {
+        if (level == null) return;
+        for (final BlockPos p : cachedFrameList) level.invalidateCapabilities(p);
+    }
 
     // ── MachineGuiData (shared GUI: fluid mB + interior count + FE bar) ──
     @Override public net.minecraft.world.Container guiInput() { return bucketSlot; }
@@ -226,12 +247,14 @@ public class FusionThrusterBlockEntity extends BlockEntity
             final BlockPos prevMaster = cachedMaster;
             final boolean prevValid = cachedValid;
             final java.util.List<BlockPos> prevInterior = cachedInteriorList;
+            final java.util.List<BlockPos> prevFrame = cachedFrameList;
             final FusionThrusterPanel.Result r = FusionThrusterPanel.validate(
                     level, getBlockPos(), facing, MagConfig.fusionThrusterMaxEdge());
             cachedValid = r.valid();
             cachedInterior = r.interiorCount();
             cachedMaster = r.master();
             cachedInteriorList = r.interior();
+            cachedFrameList = FusionThrusterPanel.framePositions(r);
             lastScanTick = server.getGameTime();
             if (!prevValid && cachedValid && cachedMaster != null
                     && getBlockPos().equals(cachedMaster)) {
@@ -259,6 +282,16 @@ public class FusionThrusterBlockEntity extends BlockEntity
             // shared handlers (invalidateCapabilities clears every cap at this pos).
             if (!java.util.Objects.equals(prevMaster, cachedMaster)) {
                 level.invalidateCapabilities(getBlockPos());
+            }
+            // Tokamak-Coil frame blocks dynamically expose this panel's shared FE
+            // buffer. Invalidate both old and new perimeters whenever formation or
+            // master ownership changes so cable capability caches cannot retain a
+            // stale handler (or a stale null) after the multiblock changes.
+            if (prevValid != cachedValid || !java.util.Objects.equals(prevMaster, cachedMaster)
+                    || !prevFrame.equals(cachedFrameList)) {
+                final java.util.Set<BlockPos> changedFrame = new java.util.HashSet<>(prevFrame);
+                changedFrame.addAll(cachedFrameList);
+                for (final BlockPos p : changedFrame) level.invalidateCapabilities(p);
             }
             // A non-master HUD resolves the shared buffer through cachedMaster.
             // Publish panel metadata whenever it changes; subsequent live FE updates
@@ -328,14 +361,16 @@ public class FusionThrusterBlockEntity extends BlockEntity
         return s.hasProperty(DirectionalBlock.FACING) ? s.getValue(DirectionalBlock.FACING) : Direction.NORTH;
     }
 
-    /** Push the host along the panel face (FACING normal, world-space), exponential
-     *  in interior count, scaled by the active fluid's strength multiplier. */
+    /** Push the host opposite the exhaust-facing panel face, exponential in
+     *  interior count and scaled by the active fluid's strength multiplier. */
     private void thrustHost(final ServerSubLevel host, final int count, final double fluidMult) {
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
         final RigidBodyHandle handle = RigidBodyHandle.of(host);
         if (handle == null || !handle.isValid()) return;
 
-        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing().getNormal());
+        // FACING is the visible exhaust/nozzle side. Reaction thrust moves the
+        // ship the other way, matching the Micro Thruster and MHD Jet convention.
+        final Vec3 dirLocal = Vec3.atLowerCornerOf(facing().getOpposite().getNormal());
         final Pose3dc pose = host.logicalPose();
         final Vec3 dirWorld = pose.transformNormal(new Vec3(dirLocal.x, dirLocal.y, dirLocal.z)).normalize();
         final Vector3dc v = handle.getLinearVelocity();

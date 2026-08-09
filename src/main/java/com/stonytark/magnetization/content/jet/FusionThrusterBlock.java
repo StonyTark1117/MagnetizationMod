@@ -33,10 +33,10 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Fusion Thruster interior block — see {@link FusionThrusterBlockEntity}. Tiled
- * inside a Tokamak-Coil ring to form a flat panel; thrust is along this block's
- * {@code FACING} (out the panel face). Right-click with a fusion-fluid bucket to
- * top up the panel's tank; empty-hand opens the shared panel GUI. {@code LIT} =
- * the panel is actively firing.
+ * inside a Tokamak-Coil ring to form a flat panel; {@code FACING} is the exhaust
+ * side and reaction thrust moves the ship opposite it. Right-click with a
+ * fusion-fluid bucket to top up the panel's tank; empty-hand opens the shared
+ * panel GUI. {@code LIT} = the panel is actively firing.
  */
 public final class FusionThrusterBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
@@ -141,9 +141,11 @@ public final class FusionThrusterBlock extends DirectionalBlock implements Entit
     @Override
     protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
                             final BlockState newState, final boolean moving) {
-        if (!state.is(newState.getBlock())
-                && level.getBlockEntity(pos) instanceof FusionThrusterBlockEntity be) {
-            net.minecraft.world.Containers.dropContents(level, pos, be.bucketContainer());
+        if (!state.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof FusionThrusterBlockEntity be) {
+                be.invalidateCachedFrameCapabilities();
+                net.minecraft.world.Containers.dropContents(level, pos, be.bucketContainer());
+            }
         }
         super.onRemove(state, level, pos, newState, moving);
     }

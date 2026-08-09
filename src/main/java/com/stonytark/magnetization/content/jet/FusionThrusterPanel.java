@@ -21,9 +21,10 @@ import java.util.Set;
  * <p>Shape: a {@code W×H×1} panel standing perpendicular to a shared {@code FACING}.
  * The {@code (W-2)×(H-2)} interior is {@link MagBlocks#FUSION_THRUSTER} (all sharing
  * one FACING); the surrounding 1-block ring (corners included) is
- * {@link MagBlocks#TOKAMAK_COIL}. Thrust is perpendicular to the panel = the
- * interior's FACING. Every read goes through {@link BlockGetter}, so this works
- * unchanged on a moving Sable sub-level (relative offsets, no world transform).
+ * {@link MagBlocks#TOKAMAK_COIL}. Exhaust leaves perpendicular to the panel in
+ * the interior's FACING direction, so the ship's reaction thrust is opposite
+ * FACING. Every read goes through {@link BlockGetter}, so this works unchanged
+ * on a moving Sable sub-level (relative offsets, no world transform).
  */
 public final class FusionThrusterPanel {
 
@@ -137,6 +138,46 @@ public final class FusionThrusterPanel {
                                                 final Direction facing, final int maxEdge) {
         final Result r = validate(level, start, facing, maxEdge);
         return r.valid() ? r.master() : null;
+    }
+
+    /**
+     * Resolve the Fusion Thruster master whose complete Tokamak-Coil perimeter
+     * contains {@code framePos}. A standalone coil (including one in a Tokamak)
+     * returns {@code null}; this is used to expose the thruster's shared FE buffer
+     * through every block of a formed panel without turning all coils into cables.
+     */
+    public static @Nullable BlockPos findMasterFromFrame(final BlockGetter level,
+                                                         final BlockPos framePos,
+                                                         final int maxEdge) {
+        if (!level.getBlockState(framePos).is(MagBlocks.TOKAMAK_COIL.get())) return null;
+
+        // A perimeter cell is at most one in-plane block (including diagonally at
+        // corners) from an interior cell. Only inspect the coil's own panel plane.
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    final BlockPos candidate = framePos.offset(dx, dy, dz);
+                    final BlockState state = level.getBlockState(candidate);
+                    if (!state.is(MagBlocks.FUSION_THRUSTER.get())
+                            || !state.hasProperty(DirectionalBlock.FACING)) continue;
+                    final Direction facing = state.getValue(DirectionalBlock.FACING);
+                    if (offsetOnAxis(facing.getAxis(), dx, dy, dz) != 0) continue;
+
+                    final Result result = validate(level, candidate, facing, maxEdge);
+                    if (result.valid() && framePositions(result).contains(framePos)) {
+                        return result.master();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Complete perimeter for a valid result, used for capability invalidation. */
+    public static List<BlockPos> framePositions(final Result result) {
+        if (!result.valid() || result.interior().isEmpty()) return List.of();
+        return List.copyOf(framePositions(result.interior(), bounds(result.interior()), result.facing()));
     }
 
     /**
@@ -263,6 +304,10 @@ public final class FusionThrusterPanel {
 
     private static int spanOnAxis(final Direction.Axis axis, final int sx, final int sy, final int sz) {
         return switch (axis) { case X -> sx; case Y -> sy; case Z -> sz; };
+    }
+
+    private static int offsetOnAxis(final Direction.Axis axis, final int x, final int y, final int z) {
+        return switch (axis) { case X -> x; case Y -> y; case Z -> z; };
     }
 
     /** The two in-plane spans (non-facing axes), in a stable order. */

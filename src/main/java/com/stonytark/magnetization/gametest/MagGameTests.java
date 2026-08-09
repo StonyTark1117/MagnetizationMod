@@ -970,7 +970,7 @@ public final class MagGameTests {
      * #123 — Fusion Thruster thrusts a ship: build the panel, pre-load the master's
      * Helium-3 tank + FE (NBT carries through assembly), assemble the whole panel
      * into a Sable ship in open sky, tick, and assert the rigid body gained velocity
-     * along the panel face (FACING = NORTH = −Z) and an interior lit.
+     * opposite the exhaust-facing panel face (FACING = NORTH, thrust = SOUTH).
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "shipAccel")
     public static void fusionThrusterPanelThrustsShip(final GameTestHelper helper) {
@@ -1009,19 +1009,18 @@ public final class MagGameTests {
                     dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
             if (h == null) { removeShip(level, ship); helper.fail("no ship handle"); return; }
             final org.joml.Vector3dc v = h.getLinearVelocity();
+            final double vx = v.x(), vy = v.y(), vz = v.z();
+            final net.minecraft.world.phys.Vec3 expectedWorld = ship.logicalPose().transformNormal(
+                    new net.minecraft.world.phys.Vec3(0.0, 0.0, 1.0)).normalize();
+            final double reactionSpeed = vx * expectedWorld.x + vy * expectedWorld.y + vz * expectedWorld.z;
             removeShip(level, ship);
-            // Proof the thruster fired: the ship gained HORIZONTAL velocity. Under
-            // gravity alone a free ship only accelerates on −Y, so any meaningful
-            // horizontal speed is the panel's thrust. We assert magnitude, NOT a
-            // world axis/sign: SableBridge.applyLocalImpulse pushes along the
-            // panel-FACING normal in the SHIP-LOCAL frame, and an assembled
-            // sub-level's local frame is not guaranteed axis-aligned with the
-            // world, so the thrust can land on world-X or world-Z depending on the
-            // ship's assembled orientation. (Observed runs: ~0.05 on Z, ~0.17 on X.)
-            final double horizontal = Math.sqrt(v.x() * v.x() + v.z() * v.z());
-            helper.assertTrue(horizontal > 0.02,
-                    "Fusion thruster should accelerate the ship along its panel axis; |v_horizontal|="
-                            + horizontal + " v=(" + v.x() + "," + v.y() + "," + v.z() + ")");
+            // FACING=NORTH is the exhaust direction. Transform local SOUTH through
+            // the assembled ship pose and require positive velocity along it; this
+            // catches a sign reversal even when Sable rotates local X/Z in world space.
+            helper.assertTrue(reactionSpeed > 0.02,
+                    "Fusion thruster should accelerate opposite its exhaust face; reactionSpeed="
+                            + reactionSpeed + " expectedWorld=" + expectedWorld
+                            + " v=(" + vx + "," + vy + "," + vz + ")");
             helper.succeed();
         });
     }
@@ -2856,6 +2855,61 @@ public final class MagGameTests {
         helper.assertTrue(clientTag.getBoolean("Formed") && clientTag.contains("Master")
                         && BlockPos.of(clientTag.getLong("Master")).equals(masterPos),
                 "A non-master client update must include formed-panel master metadata");
+        clearFusionPanel(level, base);
+        helper.succeed();
+    }
+
+    /**
+     * Every Tokamak Coil in a complete Fusion Thruster perimeter exposes the
+     * panel master's shared FE capability. This includes diagonal corner coils;
+     * an unrelated standalone coil must remain passive and expose no energy cap.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    public static void fusionThrusterAcceptsEnergyThroughEveryFrameCoil(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
+                helper.absolutePos(new BlockPos(1, 1, 1)).getZ());
+        buildFusionPanel(level, base);
+
+        int inserted = 0;
+        for (int x = 0; x <= 4; x++) {
+            for (int y = 0; y <= 2; y++) {
+                if (y == 1 && x >= 1 && x <= 3) continue;
+                final BlockPos framePos = base.offset(x, y, 0);
+                final net.neoforged.neoforge.energy.IEnergyStorage frameEnergy = level.getCapability(
+                        net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                        framePos, null);
+                if (frameEnergy == null) {
+                    clearFusionPanel(level, base);
+                    helper.fail("formed Fusion Thruster frame coil has no FE capability at " + framePos);
+                    return;
+                }
+                inserted += frameEnergy.receiveEnergy(1000, false);
+            }
+        }
+
+        final BlockPos masterPos = base.offset(1, 1, 0);
+        if (!(level.getBlockEntity(masterPos)
+                instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
+            clearFusionPanel(level, base);
+            helper.fail("missing Fusion Thruster master BE");
+            return;
+        }
+        helper.assertTrue(inserted == 12_000 && master.energyBuffer().getEnergyStored() == 12_000,
+                "all 12 frame coils should feed the shared master buffer; inserted=" + inserted
+                        + " master FE=" + master.energyBuffer().getEnergyStored());
+
+        final BlockPos standalone = base.offset(6, 0, 0);
+        level.setBlock(standalone, MagBlocks.TOKAMAK_COIL.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        final net.neoforged.neoforge.energy.IEnergyStorage unrelated = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                standalone, null);
+        helper.assertTrue(unrelated == null,
+                "a standalone Tokamak Coil must not expose Fusion Thruster FE storage");
+
+        level.setBlock(standalone, Blocks.AIR.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
         clearFusionPanel(level, base);
         helper.succeed();
     }

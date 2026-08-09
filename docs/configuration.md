@@ -134,7 +134,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | propulsion.fusionThrusterMaxEdge | number | 10; 3-64 | Largest in-plane side of the panel (W and H). 10 = up to a 10×10 panel. |
 | COMMON | propulsion.fusionThrusterThrustBase | number | 0.5; 0.0-1000.0 | Thrust of a single interior cell before the size exponent + fluid multiplier. |
 | COMMON | propulsion.fusionThrusterThrustExponent | number | 1.3; 0.0-4.0 | Thrust scales as interiorCount^exponent — bigger panels grow exponentially. |
-| COMMON | propulsion.fusionThrusterMaxSpeed | number | 18.0; 0.0-100.0 | Cruising speed ceiling along the panel face. |
+| COMMON | propulsion.fusionThrusterMaxSpeed | number | 18.0; 0.0-100.0 | Cruising speed ceiling opposite the exhaust-facing panel face. |
 | COMMON | propulsion.fusionThrusterFeCapacity | number | 2000000; 0-1000000000 | Internal FE buffer capacity. |
 | COMMON | propulsion.fusionThrusterFeReceive | number | 64000; 0-1000000000 | Max FE accepted per tick from cables/generators. |
 | COMMON | propulsion.fusionThrusterFeCostBase | number | 64; 0-1000000 | FE/tick burned while firing, before the per-cell add. |

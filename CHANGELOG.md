@@ -5,10 +5,10 @@
 A big content release: two new ship multiblocks, a real fusion-fuel chain with new fluids/items/worldgen, a powered Electrolyzer, machine rebalances, and a live status readout (WTHIT/Jade/The One Probe) on **every** Magnetization machine.
 
 ### New propulsion — Fusion Thruster (flat-panel multiblock)
-- A vertical **flat panel** you build on a Create: Aeronautics airship: an inner fill of **Fusion Thruster** blocks ringed by **Tokamak Coil** (the same frame the tokamak reuses). Minimum 3×3×1; a bigger panel pushes **exponentially harder**. Thrust comes straight out of the panel face.
+- A vertical **flat panel** you build on a Create: Aeronautics airship: an inner fill of **Fusion Thruster** blocks ringed by **Tokamak Coil** (the same frame the tokamak reuses). Minimum 3×3×1; a bigger panel pushes **exponentially harder**. Exhaust leaves through the facing panel face and pushes the ship in the opposite direction.
 - Burns the new **fusion fluids** — Hydrogen, Deuterium Oxide, Tritium, **Helium-3 (the best)** — fed by bucket or piped in. Premium fluids both hit harder *and* run longer per tank: one tank of Helium-3 outlasts a titanomagnetite storage block in a magnet machine.
 - **The panel's fuel tank scales with its size** — capacity is *per interior cell* (default 32,000 mB each), so a bigger panel holds proportionally more fuel in one shared tank. Pipe or bucket fuel into **any** interior block and it feeds the whole panel.
-- Right-click any panel block to open its shared GUI (fluid + FE + panel size); interiors light up while firing. Draws an FE bar and full status in WTHIT/Jade/TOP.
+- Right-click any interior block to open its shared GUI (fluid + FE + panel size); cables can feed FE through any interior or Tokamak-Coil frame block. Interiors light up while firing. Draws an FE bar and full status in WTHIT/Jade/TOP.
 - Tunables under **Propulsion**: *Fusion Thruster Max Edge*, *Base Thrust*, *Size Exponent*, *Max Speed (b/s)*, *FE Capacity / Receive Rate*, *FE Cost (base / per cell)*, *Fluid Tank (mB)*, *Fluid Cost (base / per cell)*, and per-fluid *Fusion Fluid Strength ·* and *Fusion Fluid Density ·* (Hydrogen / Deuterium Oxide / Tritium / Helium-3).
 
 ### New propulsion — Railgun (paired-rail accelerator)
