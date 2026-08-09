@@ -158,7 +158,7 @@ public final class MagItemTooltips {
         }) m.put(i, "tooltip.magnetization.material.use");
         for (final var i : new Item[]{
                 MagItems.RAW_GALLIUM.get(), MagItems.GALLIUM_INGOT.get(), MagItems.RAW_LITHIUM.get(),
-                MagItems.LITHIUM.get(), MagItems.SOLID_GALLIUM.get(), MagItems.HELIUM_3_GAS.get(), MagItems.HELIUM_3_CELL.get(),
+                MagItems.LITHIUM.get(), MagItems.SOLID_GALLIUM.get(), MagItems.HELIUM_3_CRYSTAL.get(), MagItems.HELIUM_3_CELL.get(),
                 MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
         }) m.put(i, "tooltip.magnetization.material.use");
         for (final var i : new Item[]{

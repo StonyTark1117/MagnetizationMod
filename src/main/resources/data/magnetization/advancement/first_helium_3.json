@@ -17,14 +17,14 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "items": "magnetization:helium_3_bucket" }] }
     },
-    "helium_gas": {
+    "helium_crystal": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [{ "items": "magnetization:helium_3_gas" }] }
+      "conditions": { "items": [{ "items": "magnetization:helium_3_crystal" }] }
     },
     "crystal": {
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "items": "magnetization:helium_3_crystal_block" }] }
     }
   },
-  "requirements": [["helium_cell", "helium_bucket", "helium_gas", "crystal"]]
+  "requirements": [["helium_cell", "helium_bucket", "helium_crystal", "crystal"]]
 }

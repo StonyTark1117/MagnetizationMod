@@ -73,7 +73,7 @@ public final class FusionFuelInfo {
         m.put(MagItems.TRITIUM_CELL.get(), t);
         m.put(MagItems.HELIUM_3_CELL.get(), he);
 
-        m.put(MagItems.HELIUM_3_GAS.get(), he);
+        m.put(MagItems.HELIUM_3_CRYSTAL.get(), he);
         m.put(MagItems.LITHIUM.get(), li);
         m.put(MagItems.RAW_LITHIUM.get(), li);
 

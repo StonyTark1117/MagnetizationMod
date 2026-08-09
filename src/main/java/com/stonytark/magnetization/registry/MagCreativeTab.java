@@ -147,7 +147,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.HELIUM_3_CELL);
                         accept(output, MagItems.LITHIUM);
                         accept(output, MagItems.RAW_LITHIUM);
-                        accept(output, MagItems.HELIUM_3_GAS);
+                        accept(output, MagItems.HELIUM_3_CRYSTAL);
                         accept(output, MagItems.PYRRHOTITE_CATALYST);
                         accept(output, MagItems.ENHANCED_PYRRHOTITE_CATALYST);
                         accept(output, MagItems.COSMIC_PYRRHOTITE_CATALYST);

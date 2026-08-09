@@ -20,10 +20,10 @@ A big content release: two new ship multiblocks, a real fusion-fuel chain with n
 - A powered, cauldron-shaped machine that **shows its water inside** and fills/empties like a cauldron. Feed it **water + FE** and it produces **Hydrogen** — the entry point of the fusion-fuel chain. Exposes fluid + energy capabilities so it pipes into Create/cable setups, and reports status in all three HUDs.
 
 ### New fuels, items & worldgen (the fusion-fuel ladder)
-- New fluids (each with a bucket): **Hydrogen, Tritium, Helium-3, Liquid Lithium**. New items: **Tritium Fuel Cell, Helium-3 Fuel Cell, Lithium, Raw Lithium, Helium-3 Gas**.
+- New fluids (each with a bucket): **Hydrogen, Tritium, Helium-3, Liquid Lithium**. New items: **Tritium Fuel Cell, Helium-3 Fuel Cell, Lithium, Raw Lithium, Helium-3 Crystal**.
 - **Create: The Factory Must Grow hydrogen is interchangeable with Magnetization hydrogen when TFMG is installed.** Either fluid can fill a TFMG Hydrogen Tank, either hydrogen container works in the Deuterium recipe and Fusion Thruster, and Magnetization's Hydrogen/Tritium/Helium-3 fluids participate in TFMG's gas classification (with Hydrogen/Tritium also classified as flammable).
 - The isotope chain: **Water → Hydrogen** (Electrolyzer) → **Deuterium Oxide** → (+ Lithium) **Tritium** → **Helium-3**, each a deterministic craft. Tokamak fuel cells are now uniformly *fluid bucket + frame*.
-- New worldgen: **Lithium Ore** (overworld + **Deepslate Lithium Ore**) for tritium breeding, and a rare **Helium-3 geode** (deepslate depths + the End) whose **Helium-3 Crystal** clusters drop Helium-3 Gas. He-3 is sourced by both crafting/enrichment and rare world finds.
+- New worldgen: **Lithium Ore** (overworld + **Deepslate Lithium Ore**) for tritium breeding, and a rare **Helium-3 geode** (deepslate depths + the End) whose **Helium-3 Crystal** blocks drop Helium-3 Crystals. He-3 is sourced by both crafting/enrichment and rare world finds.
 
 ### Machine rebalances
 - **Tokamak** now burns three fuel tiers with distinct output: **Deuterium (D-D)** baseline, **Tritium (D-T)** = raw power (most FE/tick), **Helium-3 (D-He³)** = efficiency (longest burn + highest output rate, the endgame). Tunables under **Machine Tuning**: *Tokamak FE/Tick ·*, *Output Rate ·*, *Burn Ticks ·* for Tritium and Helium-3.

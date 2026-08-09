@@ -118,9 +118,9 @@ public final class MagLootTableProvider {
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
             add(MagBlocks.DEEPSLATE_LITHIUM_ORE.get(),
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
-            // Helium-3 crystal (geode lining) drops helium-3 gas.
+            // Helium-3 crystal block (geode lining) drops helium-3 crystals.
             add(MagBlocks.HELIUM_3_CRYSTAL_BLOCK.get(),
-                    block -> createOreDrop(block, MagItems.HELIUM_3_GAS.get()));
+                    block -> createOreDrop(block, MagItems.HELIUM_3_CRYSTAL.get()));
 
             // -- Iron-oxide family: storage blocks dropSelf, ores drop raw_<name> --
             dropSelf(MagBlocks.MAGHEMITE_BLOCK.get()); dropSelf(MagBlocks.RAW_MAGHEMITE_BLOCK.get());

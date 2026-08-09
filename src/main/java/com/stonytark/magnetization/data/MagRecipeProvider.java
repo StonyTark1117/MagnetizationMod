@@ -756,10 +756,11 @@ public final class MagRecipeProvider extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CELL.get())
                 .requires(MagItems.TRITIUM_CELL.get()).requires(Items.GLOWSTONE).requires(Items.GLOWSTONE)
                 .unlockedBy("has_tritium_cell", has(MagItems.TRITIUM_CELL.get())).save(out, id("helium_3_cell_from_tritium"));
-        // helium-3 gas (geode) + iron -> helium-3 cell (the natural-source path).
+        // Helium-3 crystals (geode) + iron -> helium-3 cell (the natural-source path).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CELL.get())
-                .requires(MagItems.HELIUM_3_GAS.get(), 3).requires(Items.IRON_INGOT)
-                .unlockedBy("has_helium_3_gas", has(MagItems.HELIUM_3_GAS.get())).save(out, id("helium_3_cell_from_gas"));
+                .requires(MagItems.HELIUM_3_CRYSTAL.get(), 3).requires(Items.IRON_INGOT)
+                .unlockedBy("has_helium_3_crystal", has(MagItems.HELIUM_3_CRYSTAL.get()))
+                .save(out, id("helium_3_cell_from_crystal"));
         // Cell -> filled bucket fills for the fusion thruster (cell consumed, bucket conserved).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.TRITIUM_BUCKET.get())
                 .requires(MagItems.TRITIUM_CELL.get()).requires(Items.BUCKET)
@@ -767,10 +768,11 @@ public final class MagRecipeProvider extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_BUCKET.get())
                 .requires(MagItems.HELIUM_3_CELL.get()).requires(Items.BUCKET)
                 .unlockedBy("has_helium_3_cell", has(MagItems.HELIUM_3_CELL.get())).save(out, id("helium_3_bucket_from_cell"));
-        // helium-3 gas -> filled bucket directly (geode shortcut for the thruster).
+        // Helium-3 crystals -> filled bucket directly (geode shortcut for the thruster).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_BUCKET.get())
-                .requires(MagItems.HELIUM_3_GAS.get(), 4).requires(Items.BUCKET)
-                .unlockedBy("has_helium_3_gas", has(MagItems.HELIUM_3_GAS.get())).save(out, id("helium_3_bucket_from_gas"));
+                .requires(MagItems.HELIUM_3_CRYSTAL.get(), 4).requires(Items.BUCKET)
+                .unlockedBy("has_helium_3_crystal", has(MagItems.HELIUM_3_CRYSTAL.get()))
+                .save(out, id("helium_3_bucket_from_crystal"));
         // Electrolyzer: a powered cauldron that splits water + FE -> hydrogen (isotope-chain entry point).
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.ELECTROLYZER.get())
                 .pattern("rcr").pattern("cwc").pattern("rcr")

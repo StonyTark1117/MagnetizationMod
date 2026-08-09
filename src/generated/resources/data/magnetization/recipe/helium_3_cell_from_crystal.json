@@ -3,13 +3,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "magnetization:helium_3_gas"
+      "item": "magnetization:helium_3_crystal"
     },
     {
-      "item": "magnetization:helium_3_gas"
+      "item": "magnetization:helium_3_crystal"
     },
     {
-      "item": "magnetization:helium_3_gas"
+      "item": "magnetization:helium_3_crystal"
     },
     {
       "item": "minecraft:iron_ingot"

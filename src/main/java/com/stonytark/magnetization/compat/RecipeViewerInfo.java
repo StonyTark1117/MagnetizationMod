@@ -46,7 +46,7 @@ public final class RecipeViewerInfo {
             topic("fusion_fuels", 4, () -> stacks(
                     MagItems.HYDROGEN_BUCKET.get(), MagItems.DEUTERIUM_OXIDE_BUCKET.get(),
                     MagItems.TRITIUM_BUCKET.get(), MagItems.HELIUM_3_BUCKET.get(),
-                    MagItems.HELIUM_3_GAS.get(), MagItems.DEUTERIUM_CELL.get(),
+                    MagItems.HELIUM_3_CRYSTAL.get(), MagItems.DEUTERIUM_CELL.get(),
                     MagItems.TRITIUM_CELL.get(), MagItems.HELIUM_3_CELL.get())),
             topic("electrolyzer", 3, () -> stacks(MagItems.ELECTROLYZER.get())),
             topic("dipole_electromagnet", 3, () -> stacks(MagItems.DIPOLE_ELECTROMAGNET.get())),

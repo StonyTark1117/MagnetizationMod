@@ -149,9 +149,9 @@ public final class MagItems {
     /** Raw lithium — mined from lithium ore, smelts to the Lithium item. */
     public static final DeferredItem<Item> RAW_LITHIUM =
             REGISTER.registerSimpleItem("raw_lithium", new Item.Properties());
-    /** Helium-3 gas — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
-    public static final DeferredItem<Item> HELIUM_3_GAS =
-            REGISTER.registerSimpleItem("helium_3_gas", new Item.Properties());
+    /** Helium-3 crystal — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
+    public static final DeferredItem<Item> HELIUM_3_CRYSTAL =
+            REGISTER.registerSimpleItem("helium_3_crystal", new Item.Properties());
     /** Raw gallium — rare byproduct of mining zinc/aluminium-bearing ores; smelts to an ingot. */
     public static final DeferredItem<Item> RAW_GALLIUM =
             REGISTER.registerSimpleItem("raw_gallium", new Item.Properties());

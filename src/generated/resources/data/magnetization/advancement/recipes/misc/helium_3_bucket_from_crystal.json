@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_helium_3_gas": {
+    "has_helium_3_crystal": {
       "conditions": {
         "items": [
           {
-            "items": "magnetization:helium_3_gas"
+            "items": "magnetization:helium_3_crystal"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "magnetization:helium_3_cell_from_gas"
+        "recipe": "magnetization:helium_3_bucket_from_crystal"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_helium_3_gas"
+      "has_helium_3_crystal"
     ]
   ],
   "rewards": {
     "recipes": [
-      "magnetization:helium_3_cell_from_gas"
+      "magnetization:helium_3_bucket_from_crystal"
     ]
   }
 }

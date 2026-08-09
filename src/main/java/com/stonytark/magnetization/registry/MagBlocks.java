@@ -239,7 +239,7 @@ public final class MagBlocks {
             REGISTER.register("deepslate_lithium_ore", () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DEEPSLATE).strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
 
-    /** Helium-3 crystal — lines the rare deepslate/End geode; mined for Helium-3 gas. */
+    /** Helium-3 crystal block — lines the rare deepslate/End geode; mined for Helium-3 crystals. */
     public static final DeferredBlock<Block> HELIUM_3_CRYSTAL_BLOCK =
             REGISTER.register("helium_3_crystal_block", () -> new Block(BlockBehaviour.Properties.ofFullCopy(
                     net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)

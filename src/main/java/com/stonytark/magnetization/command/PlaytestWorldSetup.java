@@ -433,7 +433,7 @@ public final class PlaytestWorldSetup {
         stockChest(level, a.offset(2, 1, 9), List.of(stack(Items.IRON_INGOT, 64), stack(Items.COPPER_INGOT, 64),
                 stack(Items.REDSTONE, 64), stack(Items.QUARTZ, 32), stack(Items.COAL, 64),
                 stack(MagItems.RAW_MAGNETITE.get(), 64), stack(MagItems.RAW_LITHIUM.get(), 64),
-                stack(MagItems.RAW_GALLIUM.get(), 32), stack(MagItems.HELIUM_3_GAS.get(), 16)));
+                stack(MagItems.RAW_GALLIUM.get(), 32), stack(MagItems.HELIUM_3_CRYSTAL.get(), 16)));
         stockChest(level, a.offset(4, 1, 9), List.of(stack(Items.BUCKET, 16), stack(Items.WATER_BUCKET, 16),
                 stack(Items.GLASS_BOTTLE, 32), stack(Items.CHEST, 8), stack(Items.HOPPER, 8),
                 stack(Items.COPPER_BLOCK, 32), stack(Items.IRON_BLOCK, 32)));
