@@ -35,6 +35,11 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
     /** Vanilla generic single-chest texture as a clean stand-in: 176×166 with one slot recess
      *  near the top. We over-paint the slot at (80, 20) with the menu's armor slot. */
     private static final ResourceLocation BG = ResourceLocation.parse("textures/gui/container/generic_54.png");
+    private static final int TITLE_WIDTH_WITH_ENERGY = 146;
+    private static final int TITLE_WIDTH_WITHOUT_ENERGY = 160;
+    private static final int POLARITY_STATUS_WIDTH = 64;
+    private static final int STRENGTH_STATUS_WIDTH = 96;
+    private static final int INFLIGHT_STATUS_WIDTH = 88;
 
     private @Nullable Button[] strengthButtons;
     private @Nullable RepeatButton rangeMinus;
@@ -154,6 +159,7 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
     @Override
     public void render(final GuiGraphics g, final int mouseX, final int mouseY, final float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
+        renderBoundedTextTooltips(g, mouseX, mouseY);
         // Empty-slot hints — when the player hovers an empty special slot,
         // show what it accepts. Vanilla's item-tooltip takes over for non-empty
         // slots, so this only fires while a slot is empty.
@@ -172,6 +178,61 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
             default -> { /* player inventory slot — no custom hint */ }
         }
         if (hint != null) g.renderTooltip(font, hint, mouseX, mouseY);
+    }
+
+    private void renderBoundedTextTooltips(final GuiGraphics g, final int mouseX, final int mouseY) {
+        GuiTextLayout.renderTooltipIfClipped(g, font, title, leftPos + 8, topPos + 6,
+                titleWidth(), mouseX, mouseY);
+        if (menu.hasCap(EmitterMenu.CAP_STRENGTH)) {
+            GuiTextLayout.renderTooltipIfClipped(g, font, strengthReadout(), leftPos + 8, topPos + 40,
+                    STRENGTH_STATUS_WIDTH, mouseX, mouseY);
+        }
+        if (menu.hasCap(EmitterMenu.CAP_INFLIGHT)) {
+            GuiTextLayout.renderTooltipIfClipped(g, font, inflightReadout(), leftPos + 8, topPos + 68,
+                    INFLIGHT_STATUS_WIDTH, mouseX, mouseY);
+        }
+        if (menu.hasCap(EmitterMenu.CAP_ARMOR) && menu.hasCap(EmitterMenu.CAP_POLARITY)) {
+            GuiTextLayout.renderTooltipIfClipped(g, font, polarityReadout(), leftPos + 8, topPos + 24,
+                    POLARITY_STATUS_WIDTH, mouseX, mouseY);
+        }
+    }
+
+    private int titleWidth() {
+        return menu.energyCapacity() > 0 ? TITLE_WIDTH_WITH_ENERGY : TITLE_WIDTH_WITHOUT_ENERGY;
+    }
+
+    private Component strengthReadout() {
+        final int ord = menu.strengthOrdinal();
+        final MagneticStrength strength = ord < 0
+                ? MagneticStrength.STRONG
+                : MagneticStrength.values()[ord];
+        final Component label = Component.translatable(
+                "tooltip.magnetization.strength." + strength.name().toLowerCase(java.util.Locale.ROOT));
+        final int analogForce = menu.analogForce();
+        return analogForce > 0
+                ? Component.translatable("gui.magnetization.strength.analog",
+                        label, menu.redstoneSignal(), MagneticStrength.MAX_SIGNAL,
+                        String.format(java.util.Locale.ROOT, "%,d", analogForce))
+                : Component.translatable("gui.magnetization.strength", label);
+    }
+
+    private Component inflightReadout() {
+        final int cap = menu.inflightCap();
+        final int max = menu.inflightCapMax();
+        return Component.translatable("gui.magnetization.inflight_cap",
+                cap <= 0 ? max + " (max)" : (cap + "/" + max));
+    }
+
+    private Component polarityReadout() {
+        final ItemStack stack = menu.armorStack();
+        final MagneticPolarity polarity = stack.isEmpty()
+                ? null : stack.get(MagDataComponents.ARMOR_POLARITY.get());
+        return polarity == null
+                ? Component.translatable("gui.magnetization.polarity.unmagnetized")
+                : Component.literal(com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(polarity) + " ")
+                        .append(Component.translatable("tooltip.magnetization.polarity."
+                                + polarity.getSerializedName()))
+                        .withStyle(polarity == MagneticPolarity.NORTH ? ChatFormatting.AQUA : ChatFormatting.RED);
     }
 
     private void sendButton(final int id) {
@@ -257,7 +318,7 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
     @Override
     protected void renderLabels(final GuiGraphics g, final int mouseX, final int mouseY) {
         // Title.
-        g.drawString(font, title, 8, 6, 0xE0E0E0, false);
+        GuiTextLayout.drawClipped(g, font, title, 8, 6, titleWidth(), 0xE0E0E0);
         // Inventory label.
         g.drawString(font, playerInventoryTitle, 8, inventoryLabelY, 0xA0A0A0, false);
 
@@ -267,27 +328,12 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
         renderEnergyBar(g, mouseX, mouseY);
 
         if (menu.hasCap(EmitterMenu.CAP_STRENGTH)) {
-            final int ord = menu.strengthOrdinal();
-            // No override → use the BE's effective default (STRONG). Show that
-            // explicitly rather than "—" so the player sees what the emitter
-            // is actually doing before they ever click a tier button.
-            final MagneticStrength strength = ord < 0
-                    ? MagneticStrength.STRONG
-                    : MagneticStrength.values()[ord];
-            final Component label = Component.translatable(
-                    "tooltip.magnetization.strength." + strength.name().toLowerCase(java.util.Locale.ROOT));
             // When an analog redstone signal is throttling this emitter, say so — the tier
             // buttons still read as configured, so without this the GUI would claim
             // "Extreme" while the field is actually pushing at a fraction of that.
             final int analogForce = menu.analogForce();
-            if (analogForce > 0) {
-                g.drawString(font, Component.translatable("gui.magnetization.strength.analog",
-                                label, menu.redstoneSignal(), MagneticStrength.MAX_SIGNAL,
-                                String.format(java.util.Locale.ROOT, "%,d", analogForce)),
-                        8, 40, 0xFF8080, false);
-            } else {
-                g.drawString(font, Component.translatable("gui.magnetization.strength", label), 8, 40, 0xC0C0C0, false);
-            }
+            GuiTextLayout.drawClipped(g, font, strengthReadout(), 8, 40,
+                    STRENGTH_STATUS_WIDTH, analogForce > 0 ? 0xFF8080 : 0xC0C0C0);
         }
         if (menu.hasCap(EmitterMenu.CAP_RANGE)) {
             final int blocks = menu.rangeBlocks();
@@ -306,21 +352,12 @@ public class EmitterScreen extends AbstractContainerScreen<EmitterMenu> {
                     134, valueY, 0xFFFFFFFF);
         }
         if (menu.hasCap(EmitterMenu.CAP_INFLIGHT)) {
-            final int cap = menu.inflightCap();
-            final int max = menu.inflightCapMax();
-            final String label = cap <= 0 ? max + " (max)" : (cap + "/" + max);
-            g.drawString(font, Component.translatable("gui.magnetization.inflight_cap", label),
-                    8, 68, 0xC0C0C0, false);
+            GuiTextLayout.drawClipped(g, font, inflightReadout(), 8, 68,
+                    INFLIGHT_STATUS_WIDTH, 0xC0C0C0);
         }
         if (menu.hasCap(EmitterMenu.CAP_ARMOR) && menu.hasCap(EmitterMenu.CAP_POLARITY)) {
-            final ItemStack stack = menu.armorStack();
-            final MagneticPolarity pol = stack.isEmpty() ? null : stack.get(MagDataComponents.ARMOR_POLARITY.get());
-            final Component status = pol == null
-                    ? Component.translatable("gui.magnetization.polarity.unmagnetized")
-                    : Component.literal(com.stonytark.magnetization.api.FieldTooltipFormatter.polarityGlyph(pol) + " ")
-                            .append(Component.translatable("tooltip.magnetization.polarity." + pol.getSerializedName()))
-                            .withStyle(pol == MagneticPolarity.NORTH ? ChatFormatting.AQUA : ChatFormatting.RED);
-            g.drawString(font, status, 8, 24, 0xC0C0C0, false);
+            GuiTextLayout.drawClipped(g, font, polarityReadout(), 8, 24,
+                    POLARITY_STATUS_WIDTH, 0xC0C0C0);
         }
     }
 

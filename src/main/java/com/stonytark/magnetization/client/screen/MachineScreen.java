@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.client.screen;
 
 import com.stonytark.magnetization.menu.MachineGuiData;
+import com.stonytark.magnetization.menu.MachineGuiLayout;
 import com.stonytark.magnetization.menu.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -21,7 +22,8 @@ import java.util.List;
 public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     // Vertical bars on the right edge of the pane.
-    private static final int ENERGY_X = 156, BAR_Y = 18, BAR_W = 12, BAR_H = 54;
+    private static final int ENERGY_X = 156, BAR_Y = MachineGuiLayout.BAR_Y, BAR_W = 12,
+            BAR_H = MachineGuiLayout.BAR_HEIGHT;
     private static final int FLUID_X = 138;
     private Button railgunBreakingButton;
 
@@ -36,9 +38,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     public MachineScreen(final MachineMenu menu, final Inventory inv, final Component title) {
         super(menu, inv, title);
-        this.imageWidth = 176;
-        this.imageHeight = 166;
-        this.inventoryLabelY = imageHeight - 94;
+        this.imageWidth = MachineGuiLayout.IMAGE_WIDTH;
+        this.imageHeight = MachineGuiLayout.IMAGE_HEIGHT;
+        this.inventoryLabelY = MachineGuiLayout.INVENTORY_LABEL_Y;
     }
 
     @Override
@@ -88,11 +90,13 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // Player inventory + hotbar recesses (exact menu coords).
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                drawSlotRecess(g, leftPos + 8 + col * 18, topPos + 84 + row * 18, 0xFF1B1B1B);
+                drawSlotRecess(g, leftPos + 8 + col * 18,
+                        topPos + MachineGuiLayout.PLAYER_INVENTORY_Y + row * 18, 0xFF1B1B1B);
             }
         }
         for (int col = 0; col < 9; col++) {
-            drawSlotRecess(g, leftPos + 8 + col * 18, topPos + 142, 0xFF1B1B1B);
+            drawSlotRecess(g, leftPos + 8 + col * 18,
+                    topPos + MachineGuiLayout.HOTBAR_Y, 0xFF1B1B1B);
         }
 
         // Power bar (any machine reporting energy).
@@ -134,9 +138,18 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override
     protected void renderLabels(final GuiGraphics g, final int mx, final int my) {
-        g.drawString(font, title, 8, 6, 0xE0E0E0, false);
+        GuiTextLayout.drawClipped(g, font, title, 8, 6, imageWidth - 16, 0xE0E0E0);
         g.drawString(font, playerInventoryTitle, 8, inventoryLabelY, 0xA0A0A0, false);
 
+        final List<Component> lines = readoutLines();
+        int ly = MachineGuiLayout.READOUT_Y;
+        for (final Component line : lines) {
+            GuiTextLayout.drawClipped(g, font, line, 8, ly, imageWidth - 16, 0xC0C0C0);
+            ly += MachineGuiLayout.READOUT_LINE_HEIGHT;
+        }
+    }
+
+    private List<Component> readoutLines() {
         final List<Component> lines = new ArrayList<>();
         switch (menu.kind()) {
             case TOKAMAK -> {
@@ -183,11 +196,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if (menu.kind() != MachineMenu.Kind.RAILGUN) {
             lines.add(MachineGuiData.statusLine(menu.displayStatus()));
         }
-        int ly = 22;
-        for (final Component c : lines) {
-            g.drawString(font, c, 8, ly, 0xC0C0C0, false);
-            ly += 11;
-        }
+        return lines;
     }
 
     @Override
@@ -208,6 +217,15 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     ? Component.translatable("tooltip.magnetization.gui_fuel", menu.displayCurrent() / 20)
                     : Component.translatable("tooltip.magnetization.gui_fluid", menu.displayCurrent());
             g.renderTooltip(font, t, mx, my);
+        }
+        GuiTextLayout.renderTooltipIfClipped(g, font, title,
+                leftPos + 8, topPos + 6, imageWidth - 16, mx, my);
+        final List<Component> lines = readoutLines();
+        for (int i = 0; i < lines.size(); i++) {
+            GuiTextLayout.renderTooltipIfClipped(g, font, lines.get(i),
+                    leftPos + 8, topPos + MachineGuiLayout.READOUT_Y
+                            + i * MachineGuiLayout.READOUT_LINE_HEIGHT,
+                    imageWidth - 16, mx, my);
         }
     }
 

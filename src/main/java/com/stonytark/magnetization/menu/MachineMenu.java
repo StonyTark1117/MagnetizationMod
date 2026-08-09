@@ -32,7 +32,7 @@ public final class MachineMenu extends AbstractContainerMenu {
 
     public static final int INPUT_X = 80;
     public static final int WIDE_LABEL_INPUT_X = 112;
-    public static final int INPUT_Y = 33;
+    public static final int INPUT_Y = MachineGuiLayout.INPUT_Y;
 
     /** Railgun, fusion-thruster, and electrolyzer readouts need the extra label
      *  width to the left of their input slot. */
@@ -89,11 +89,12 @@ public final class MachineMenu extends AbstractContainerMenu {
         });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18,
+                        MachineGuiLayout.PLAYER_INVENTORY_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(inv, col, 8 + col * 18, 142));
+            addSlot(new Slot(inv, col, 8 + col * 18, MachineGuiLayout.HOTBAR_Y));
         }
         addDataSlot(energyStored.lo);
         addDataSlot(energyStored.hi);
