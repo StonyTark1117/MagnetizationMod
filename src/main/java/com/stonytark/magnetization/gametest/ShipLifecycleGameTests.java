@@ -195,6 +195,17 @@ public final class ShipLifecycleGameTests {
      * deterministic collision-shape test in {@link MagGameTests}. */
     @GameTest(template = EMPTY, timeoutTicks = 180, batch = "shipLifecycleRailgunCollisionGuard")
     public static void nonBreakingRailgunStopsRealShipAtWall(final GameTestHelper helper) {
+        runRailgunWallCollisionTest(helper, false);
+    }
+
+    /** Block-breaking mode must clear the projected wall before Rapier resolves
+     * contact, allowing the real launched ship to retain forward velocity. */
+    @GameTest(template = EMPTY, timeoutTicks = 180, batch = "shipLifecycleRailgunBreakingSweep")
+    public static void breakingRailgunClearsWallBeforeRealShipImpact(final GameTestHelper helper) {
+        runRailgunWallCollisionTest(helper, true);
+    }
+
+    private static void runRailgunWallCollisionTest(final GameTestHelper helper, final boolean breakBlocks) {
         MagConfig.REQUIRE_REDSTONE_AND_ENERGY.set(false);
         MagConfig.ALLOW_REDSTONE_POWER.set(true);
         MagConfig.ALLOW_ENERGY_POWER.set(true);
@@ -215,7 +226,7 @@ public final class ShipLifecycleGameTests {
         for (int x = 0; x <= RAILGUN_TEST_GAP; x++) for (int y = 0; y < 9; y++) {
             final BlockPos pos = wallBase.offset(x, y, 0);
             wall.add(pos);
-            level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(pos, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
         }
 
         final BlockPos shipOrigin = rail.offset(2, 0, -2);
@@ -239,18 +250,19 @@ public final class ShipLifecycleGameTests {
                 final var first = level.getBlockEntity(rail) instanceof RailgunEmitterBlockEntity be ? be : null;
                 final var second = level.getBlockEntity(sibling) instanceof RailgunEmitterBlockEntity be ? be : null;
                 if (first == null || second == null) {
-                    finishRailgunCollisionTest(level, ship, rail, sibling, railLength, wall,
+                    finishRailgunWallTest(level, ship, rail, sibling, railLength, wall,
                             priorLenzBraking, priorRailgunForceBase);
                     helper.fail("Railgun collision-guard emitters were not created");
                     return;
                 }
-                first.setBreakBlocks(false);
-                second.setBreakBlocks(false);
+                first.setBreakBlocks(breakBlocks);
+                second.setBreakBlocks(breakBlocks);
                 powerRailgun(level, rail);
                 powerRailgun(level, sibling);
 
                 final int[] samples = {0};
                 final double[] maxForwardSpeed = {0.0d};
+                final double[] maxForwardSpeedAfterBreak = {0.0d};
                 final double[] lastRegisteredZ = {Double.NaN};
                 final double[] lastForwardSpeed = {Double.NaN};
                 final Pose3d pose = new Pose3d();
@@ -267,7 +279,14 @@ public final class ShipLifecycleGameTests {
                                 .readPose(ship, pose).position().z();
                         lastForwardSpeed[0] = -velocity.z();
                     }
-                    if (registered && samples[0] < 35) {
+                    final boolean wallCarved = wall.stream()
+                            .anyMatch(pos -> level.getBlockState(pos).isAir());
+                    if (registered && wallCarved) {
+                        maxForwardSpeedAfterBreak[0] = Math.max(maxForwardSpeedAfterBreak[0], -velocity.z());
+                    }
+                    final boolean breakingComplete = breakBlocks && wallCarved
+                            && maxForwardSpeedAfterBreak[0] > 5.0d;
+                    if (registered && samples[0] < 35 && (!breakBlocks || !breakingComplete)) {
                         helper.runAfterDelay(1L, () -> monitor[0].run());
                         return;
                     }
@@ -276,24 +295,33 @@ public final class ShipLifecycleGameTests {
                             ? container.physicsSystem().getPipeline().readPose(ship, pose).position().z()
                             : Double.NEGATIVE_INFINITY;
                     final boolean wallIntact = wall.stream()
-                            .allMatch(pos -> level.getBlockState(pos).is(Blocks.OBSIDIAN));
-                    finishRailgunCollisionTest(level, ship, rail, sibling, railLength, wall,
+                            .allMatch(pos -> level.getBlockState(pos).is(Blocks.STONE));
+                    final boolean wallWasCarved = !wallIntact;
+                    finishRailgunWallTest(level, ship, rail, sibling, railLength, wall,
                             priorLenzBraking, priorRailgunForceBase);
 
                     helper.assertTrue(maxForwardSpeed[0] >= 15.0d,
                             "Collision-guard fixture never received a real launch; max speed="
                                     + maxForwardSpeed[0]);
-                    helper.assertTrue(registered,
-                            "Non-breaking railgun collision removed the launched ship; samples=" + samples[0]
-                                    + " max speed=" + maxForwardSpeed[0]
-                                    + " last z=" + lastRegisteredZ[0]
-                                    + " last speed=" + lastForwardSpeed[0]
-                                    + " wall z=" + wallBase.getZ());
-                    helper.assertTrue(finalZ >= wallBase.getZ() + 1.0d,
-                            "Non-breaking launch crossed into or through the wall; ship z=" + finalZ
-                                    + " wall z=" + wallBase.getZ());
-                    helper.assertTrue(wallIntact,
-                            "Non-breaking launch altered its collision wall");
+                    if (breakBlocks) {
+                        helper.assertTrue(wallWasCarved,
+                                "Breaking launch did not carve its path through the wall");
+                        helper.assertTrue(maxForwardSpeedAfterBreak[0] > 5.0d,
+                                "Breaking launch lost forward motion at the wall; speed after break="
+                                        + maxForwardSpeedAfterBreak[0]);
+                    } else {
+                        helper.assertTrue(registered,
+                                "Non-breaking railgun collision removed the launched ship; samples=" + samples[0]
+                                        + " max speed=" + maxForwardSpeed[0]
+                                        + " last z=" + lastRegisteredZ[0]
+                                        + " last speed=" + lastForwardSpeed[0]
+                                        + " wall z=" + wallBase.getZ());
+                        helper.assertTrue(finalZ >= wallBase.getZ() + 1.0d,
+                                "Non-breaking launch crossed into or through the wall; ship z=" + finalZ
+                                        + " wall z=" + wallBase.getZ());
+                        helper.assertTrue(wallIntact,
+                                "Non-breaking launch altered its collision wall");
+                    }
                     helper.succeed();
                 };
                 monitor[0].run();
@@ -708,15 +736,20 @@ public final class ShipLifecycleGameTests {
         level.setBlock(emitter.below(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     }
 
-    private static void finishRailgunCollisionTest(final net.minecraft.server.level.ServerLevel level,
-                                                    final ServerSubLevel ship,
-                                                    final BlockPos rail, final BlockPos sibling,
-                                                    final int railLength, final List<BlockPos> wall,
-                                                    final boolean priorLenzBraking,
-                                                    final double priorRailgunForceBase) {
+    private static void finishRailgunWallTest(final net.minecraft.server.level.ServerLevel level,
+                                               final ServerSubLevel ship,
+                                               final BlockPos rail, final BlockPos sibling,
+                                               final int railLength, final List<BlockPos> wall,
+                                               final boolean priorLenzBraking,
+                                               final double priorRailgunForceBase) {
         remove(level, ship);
         clear(level, rail, net.minecraft.core.Direction.NORTH, railLength);
         clear(level, sibling, net.minecraft.core.Direction.NORTH, railLength);
+        if (!wall.isEmpty()) {
+            level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                            new net.minecraft.world.phys.AABB(wall.get(0)).inflate(4.0d))
+                    .forEach(net.minecraft.world.entity.Entity::discard);
+        }
         wall.forEach(pos -> level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL));
         MagConfig.LENZ_BRAKING_ENABLED.set(priorLenzBraking);
         MagConfig.RAILGUN_FORCE_BASE.set(priorRailgunForceBase);

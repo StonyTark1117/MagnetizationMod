@@ -153,11 +153,9 @@ public final class RailgunHandler {
             return;
         }
 
-        // Rapier's discrete collision step can miss an obstacle when a fast
-        // body crosses it in one substep. Block-breaking launches avoid that by
-        // clearing their sweep; non-breaking launches instead ask vanilla for
-        // the maximum collision-safe translation and clamp the body to it.
-        guardNonBreakingLaunchedShips(server, container, event.getTimeStep());
+        // Resolve either launch mode before Rapier's discrete collision step:
+        // clear the breaking sweep now, or clamp a non-breaking translation.
+        protectLaunchedShipsBeforePhysics(server, container, event.getTimeStep());
 
         final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
         if (held == null || held.isEmpty()) return;
@@ -624,9 +622,11 @@ public final class RailgunHandler {
                 final Vector3d launchedVelocity = h.getLinearVelocity(new Vector3d());
                 double forwardSpeed = launchedVelocity.x * axis.x
                         + launchedVelocity.y * axis.y + launchedVelocity.z * axis.z;
-                breakPathAhead(server, ship.boundingBox(), facing, forwardSpeed, breakBlocks);
-                if (!breakBlocks || !MagConfig.railgunBreaksBlocks()) {
-                    clampToCollisionSafeVelocity(server, authoritativeBounds(container, ship), h, 1.0d / 20.0d);
+                final BoundingBox3d physicsBounds = authoritativeBounds(container, ship);
+                if (breakBlocks && MagConfig.railgunBreaksBlocks()) {
+                    breakPathAhead(server, physicsBounds, facing, forwardSpeed, true);
+                } else {
+                    clampToCollisionSafeVelocity(server, physicsBounds, h, 1.0d / 20.0d);
                     final Vector3d guardedVelocity = h.getLinearVelocity(new Vector3d());
                     forwardSpeed = guardedVelocity.x * axis.x
                             + guardedVelocity.y * axis.y + guardedVelocity.z * axis.z;
@@ -688,7 +688,8 @@ public final class RailgunHandler {
                     continue;
                 }
                 if (entry.getValue().breakBlocks() && MagConfig.railgunBreaksBlocks()) {
-                    breakPathAhead(server, ship.boundingBox(), entry.getValue().facing(), forwardSpeed, true);
+                    breakPathAhead(server, authoritativeBounds(container, ship),
+                            entry.getValue().facing(), forwardSpeed, true);
                 }
             } catch (final RuntimeException ex) {
                 iterator.remove();
@@ -708,14 +709,13 @@ public final class RailgunHandler {
                 ? new LaunchedShip(ship.facing(), ship.owner(), enabled) : ship);
     }
 
-    /** Clamp every non-breaking launch against vanilla's swept block collision
-     * shapes immediately before the Sable integration step. Applying the safe
-     * translation as this substep's velocity prevents both wall tunneling and
-     * downward ground clipping, while retaining unobstructed components so a
-     * glancing ship can slide along a surface instead of being deleted. */
-    private static void guardNonBreakingLaunchedShips(final ServerLevel server,
-                                                       final ServerSubLevelContainer container,
-                                                       final double timeStep) {
+    /** Protect every launch immediately before Sable integrates it. Breaking
+     * launches clear their authoritative projected hull before Rapier can
+     * collide and bounce; non-breaking launches clamp against vanilla's swept
+     * collision shapes. */
+    private static void protectLaunchedShipsBeforePhysics(final ServerLevel server,
+                                                           final ServerSubLevelContainer container,
+                                                           final double timeStep) {
         if (!Double.isFinite(timeStep) || timeStep <= 0.0d) return;
         final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
         if (launched == null || launched.isEmpty()) return;
@@ -723,7 +723,6 @@ public final class RailgunHandler {
         final var iterator = launched.entrySet().iterator();
         while (iterator.hasNext()) {
             final var entry = iterator.next();
-            if (entry.getValue().breakBlocks() && MagConfig.railgunBreaksBlocks()) continue;
             try {
                 final SubLevel subLevel = container.getSubLevel(entry.getKey());
                 if (!(subLevel instanceof ServerSubLevel ship) || ship.isRemoved()
@@ -736,7 +735,19 @@ public final class RailgunHandler {
                     iterator.remove();
                     continue;
                 }
-                clampToCollisionSafeVelocity(server, authoritativeBounds(container, ship), handle, timeStep);
+                final BoundingBox3d physicsBounds = authoritativeBounds(container, ship);
+                if (entry.getValue().breakBlocks() && MagConfig.railgunBreaksBlocks()) {
+                    final Vector3d velocity = handle.getLinearVelocity(new Vector3d());
+                    final var normal = entry.getValue().facing().getNormal();
+                    final double forwardSpeed = velocity.x * normal.getX()
+                            + velocity.y * normal.getY() + velocity.z * normal.getZ();
+                    // breakPathAhead is expressed in blocks/second at a 20 Hz
+                    // tick. Scale a Sable substep to the same travel distance.
+                    breakPathAhead(server, physicsBounds, entry.getValue().facing(),
+                            forwardSpeed * timeStep * 20.0d, true);
+                } else {
+                    clampToCollisionSafeVelocity(server, physicsBounds, handle, timeStep);
+                }
             } catch (final RuntimeException ex) {
                 iterator.remove();
             }
