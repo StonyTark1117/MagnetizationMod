@@ -1,6 +1,7 @@
 # Magnetization 1.3.0 — Full Release Audit (rerun)
 
 **Audit date:** 2026-07-31
+**Latest targeted follow-up:** 2026-08-09 (JEI/REI/EMI parity and runtime verification)
 **Target:** current `main` release candidate, 52 commits ahead of `origin/main` before this audit-coverage commit
 **Minecraft / loader:** Minecraft 1.21.1, NeoForge 21.1.247
 **Policy:** full audit rerun followed by remediation and verification of the two remaining release-engineering findings.
@@ -101,6 +102,14 @@ Manual validation is still required for redstone levels 1/7/15, GUI/HUD readings
 
 No missing registration/resource path was found for these additions.
 
+### JEI, REI, and EMI information compatibility
+
+- All three optional recipe viewers now consume one shared catalog of eight discoverability topics: ferromagnetic items, Magnetic Excavator targets, Magnetite, specialist iron-oxide ores, Lithium, Gallium, fusion fuels, and the Electrolyzer.
+- Every topic has at least three descriptive lines and the same associated item set in JEI, REI, and EMI, eliminating the previous viewer-specific gaps and bare one-line pages.
+- The REI development and published optional floor is corrected to 16.0.799, the Minecraft 1.21/1.21.1 line. REI 17 targets Minecraft 1.21.2/1.21.3 and failed against this release's NeoForge 21.1 runtime through its newer Cloth Config dependency.
+- EMI information pages use stable synthetic recipe identifiers and Magnetization supplies readable names for every Magnetization-owned/common material tag exercised by the viewer.
+- Isolated client launches visually confirmed the new Gallium page in JEI 19.43.0.394, REI 16.0.799, and EMI 1.1.24. The final EMI launch registered Magnetization without missing synthetic-recipe errors or untranslated Magnetization/common material-tag warnings.
+
 ### Additional pre-playtest GameTest coverage
 
 - Railgun lifecycle NBT now covers `HOLDING`, `LAUNCHING`, and `COOLDOWN`, including counters, manual pairing, rail length, and buffered FE.
@@ -136,6 +145,7 @@ No missing registration/resource path was found for these additions.
 ### Completed successfully in this rerun
 
 - `./gradlew clean test build --no-daemon` — successful.
+- The 2026-08-09 recipe-viewer follow-up passed all 147 current JUnit tests and the JAR build; isolated JEI, REI, and EMI client launches each rendered the shared Gallium information page.
 - 140 JUnit tests — 140 passed, 0 failures, 0 errors, 0 skipped.
 - Standard dedicated GameTests — all 82 required tests passed under bounded supervision and the task exited successfully. The multiplayer-config regression coverage proves typed COMMON settings survive payload codec transport, override a client's differing local values, restore those locals on disconnect, and keep machine GUI capacities server-authoritative across vanilla menu data transport. The progression-worldgen check proves Lithium ore and Helium-3 geodes are attached to vanilla Overworld/End biome generation, while the Anomaly and Petrified Forest retain their defining placed features.
 - AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.

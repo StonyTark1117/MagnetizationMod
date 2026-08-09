@@ -198,7 +198,7 @@ side = "CLIENT"
 [[dependencies.${mod_id}]]
 modId = "roughlyenoughitems"
 type = "optional"
-versionRange = "[17.0.807,)"
+versionRange = "[16.0.799,)"
 ordering = "AFTER"
 side = "CLIENT"
 

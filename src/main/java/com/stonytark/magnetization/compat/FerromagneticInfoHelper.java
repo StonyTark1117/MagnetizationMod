@@ -8,10 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shared helper for JEI and REI plugins that need to enumerate every item /
- * block in the magnetization tag families. Both plugins render an info page
- * off this list; the only difference is the wrapper type their respective
- * APIs require, so we hand them raw {@link ItemStack}s and let them adapt.
+ * Shared helper for recipe-viewer plugins that need to enumerate every item /
+ * block in the Magnetization tag families. The shared information catalog
+ * hands the raw {@link ItemStack}s to JEI, REI, or EMI for adaptation.
  */
 public final class FerromagneticInfoHelper {
 
