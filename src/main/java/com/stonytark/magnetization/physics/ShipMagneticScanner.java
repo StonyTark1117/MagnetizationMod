@@ -65,7 +65,7 @@ public final class ShipMagneticScanner {
                                 diamagnetic++;
                                 continue;
                             }
-                            if (state.is(MagTags.FERROMAGNETIC_BLOCKS)) {
+                            if (com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(state)) {
                                 ferrous++;
                             }
                         }
@@ -85,7 +85,8 @@ public final class ShipMagneticScanner {
                 }
                 if (materials.stream().anyMatch(s -> s.is(MagTags.DIAMAGNETIC_BLOCKS))) {
                     diamagnetic++;
-                } else if (materials.stream().anyMatch(s -> s.is(MagTags.FERROMAGNETIC_BLOCKS))) {
+                } else if (materials.stream().anyMatch(
+                        com.stonytark.magnetization.compat.FerromagneticCompat::isFerromagnetic)) {
                     ferrous++;
                 }
             }

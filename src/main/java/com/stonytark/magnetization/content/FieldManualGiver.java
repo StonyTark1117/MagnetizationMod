@@ -85,6 +85,7 @@ public final class FieldManualGiver {
     }
 
     private static boolean autoGiveEnabled() {
+        if (!MagConfig.patchouliCompatEnabled()) return false;
         try { return MagConfig.FIELD_MANUAL_AUTO_GIVE.get(); }
         catch (final Throwable t) { return true; }
     }

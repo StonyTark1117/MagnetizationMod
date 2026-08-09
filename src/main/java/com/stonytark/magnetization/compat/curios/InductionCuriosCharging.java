@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.compat.curios;
 
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -18,7 +19,7 @@ public final class InductionCuriosCharging {
 
     /** Top up energy items in {@code player}'s curio slots; returns FE consumed. */
     public static int chargeCurios(final Player player, final int budget) {
-        if (budget <= 0) return 0;
+        if (!MagConfig.curiosCompatEnabled() || budget <= 0) return 0;
         return CuriosApi.getCuriosInventory(player).map(inv -> {
             int spent = 0;
             final var handler = inv.getEquippedCurios();

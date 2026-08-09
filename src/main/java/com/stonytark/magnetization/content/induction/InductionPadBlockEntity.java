@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.induction;
 
 import com.stonytark.magnetization.api.EquippedArmor;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -74,7 +75,7 @@ public class InductionPadBlockEntity extends BlockEntity {
             if (budget - spent <= 0) return spent;
         }
         // Curios slots — only when the mod is present.
-        if (ModList.get().isLoaded("curios")) {
+        if (MagConfig.curiosCompatEnabled() && ModList.get().isLoaded("curios")) {
             spent += com.stonytark.magnetization.compat.curios.InductionCuriosCharging
                     .chargeCurios(player, budget - spent);
         }

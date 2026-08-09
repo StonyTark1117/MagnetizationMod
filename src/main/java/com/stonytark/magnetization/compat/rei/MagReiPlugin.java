@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.compat.rei;
 
 import com.stonytark.magnetization.compat.RecipeViewerInfo;
+import com.stonytark.magnetization.config.MagConfig;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -19,6 +20,7 @@ public class MagReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(final DisplayRegistry registry) {
+        if (!MagConfig.reiCompatEnabled()) return;
         for (final RecipeViewerInfo.Topic topic : RecipeViewerInfo.topics()) {
             registerInfoPage(registry, topic);
         }

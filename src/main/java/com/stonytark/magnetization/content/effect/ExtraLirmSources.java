@@ -100,7 +100,7 @@ public final class ExtraLirmSources {
     @SubscribeEvent
     public static void onBlockBreak(final BlockEvent.BreakEvent event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if (!event.getState().is(MagTags.FERROMAGNETIC_BLOCKS)) return;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(event.getState())) return;
         if (server.random.nextDouble() >= com.stonytark.magnetization.config.MagConfig.lirmOreBreakChance()) return;
         final BlockPos pos = event.getPos();
         // The two flags are the narrow ore→armor / ore→items toggles: with each off,

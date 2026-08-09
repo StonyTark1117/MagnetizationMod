@@ -152,7 +152,7 @@ public final class FieldCompassHud {
         if (!MagConfig.isItemDisabled(main) && main.is(MagItems.FIELD_COMPASS.get())) return main;
         final ItemStack off = entity.getOffhandItem();
         if (!MagConfig.isItemDisabled(off) && off.is(MagItems.FIELD_COMPASS.get())) return off;
-        if (!ModList.get().isLoaded("curios")) return null;
+        if (!MagConfig.curiosCompatEnabled() || !ModList.get().isLoaded("curios")) return null;
         return findCompassInCurios(entity);
     }
 

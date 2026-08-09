@@ -3136,25 +3136,37 @@ public final class MagGameTests {
         final com.stonytark.magnetization.network.UseCurioPayload payload =
                 new com.stonytark.magnetization.network.UseCurioPayload(
                         com.stonytark.magnetization.network.UseCurioPayload.Kind.REPULSOR_GUN);
-        com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
-        final Long firstStamp = gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get());
-        final int firstSounds = CURIO_SOUND_EVENTS.get();
-        helper.assertTrue(firstStamp != null,
-                "Serverbound Curios activation should stamp FIRED_AT on the charm-slot stack");
-        helper.assertTrue(player.getCooldowns().isOnCooldown(
-                        com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get()),
-                "Repulsor activation should arm its normal cooldown");
-        helper.assertTrue(firstSounds > 0,
-                "Serverbound Curios activation should emit the same player sound as hand use");
+        final boolean originalMaster = com.stonytark.magnetization.config.MagConfig.CURIOS_COMPAT_ENABLED.get();
+        try {
+            com.stonytark.magnetization.config.MagConfig.CURIOS_COMPAT_ENABLED.set(false);
+            com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+            helper.assertTrue(gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get()) == null
+                            && CURIO_SOUND_EVENTS.get() == 0,
+                    "Curios master switch did not suppress serverbound item activation");
 
-        com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
-        helper.assertTrue(java.util.Objects.equals(firstStamp,
-                        gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get())),
-                "Cooldown spam must not rewrite the source-stack fire component");
-        helper.assertTrue(CURIO_SOUND_EVENTS.get() == firstSounds,
-                "Cooldown spam must not emit a second activation sound");
-        player.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
-        helper.succeed();
+            com.stonytark.magnetization.config.MagConfig.CURIOS_COMPAT_ENABLED.set(true);
+            com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+            final Long firstStamp = gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get());
+            final int firstSounds = CURIO_SOUND_EVENTS.get();
+            helper.assertTrue(firstStamp != null,
+                    "Serverbound Curios activation should stamp FIRED_AT on the charm-slot stack");
+            helper.assertTrue(player.getCooldowns().isOnCooldown(
+                            com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get()),
+                    "Repulsor activation should arm its normal cooldown");
+            helper.assertTrue(firstSounds > 0,
+                    "Serverbound Curios activation should emit the same player sound as hand use");
+
+            com.stonytark.magnetization.network.UseCurioPayload.handleServerbound(payload, player);
+            helper.assertTrue(java.util.Objects.equals(firstStamp,
+                            gun.get(com.stonytark.magnetization.registry.MagDataComponents.FIRED_AT.get())),
+                    "Cooldown spam must not rewrite the source-stack fire component");
+            helper.assertTrue(CURIO_SOUND_EVENTS.get() == firstSounds,
+                    "Cooldown spam must not emit a second activation sound");
+            helper.succeed();
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.CURIOS_COMPAT_ENABLED.set(originalMaster);
+            player.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        }
     }
 
     /**

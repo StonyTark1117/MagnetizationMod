@@ -77,7 +77,10 @@ public final class MagHoeDowse {
         if (!enabled()) return false;
         if (!player.isShiftKeyDown()) return false;
         if (MagConfig.isItemDisabled(stack)) return false;
-        if (stack.isEmpty() || !stack.is(ItemTags.HOES) || !stack.is(MagTags.METAL_TOOLS)) return false;
+        if (stack.isEmpty() || !stack.is(ItemTags.HOES)
+                || !com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) {
+            return false;
+        }
         final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
         if (pol == null || pol == MagneticPolarity.NONE) return false;
         if (!(player instanceof ServerPlayer server)) return true; // client-side fires too; cancel + wait for server
@@ -99,7 +102,7 @@ public final class MagHoeDowse {
                 for (int dz = -radius; dz <= radius && hits < MAX_HITS; dz++) {
                     cursor.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
                     final BlockState s = level.getBlockState(cursor);
-                    if (!s.is(MagTags.FERROMAGNETIC_BLOCKS)) continue;
+                    if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(s)) continue;
                     pingBlock(level, cursor, server);
                     hits++;
                 }

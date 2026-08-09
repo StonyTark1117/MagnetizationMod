@@ -12,8 +12,10 @@ import net.neoforged.neoforge.common.conditions.ICondition;
 public record CompatConfigCondition(Feature feature) implements ICondition {
 
     public enum Feature {
+        TFMG_COMPAT("tfmg_compat"),
         TFMG_PROCESSING("tfmg_processing"),
         TFMG_STEELMAKING("tfmg_steelmaking"),
+        PATCHOULI("patchouli"),
         CREATE_NEW_AGE("create_new_age"),
         IMMERSIVE_ENGINEERING("immersive_engineering"),
         ALEXSCAVES("alexscaves"),
@@ -47,8 +49,10 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
     @Override
     public boolean test(final IContext context) {
         return switch (feature) {
+            case TFMG_COMPAT -> MagConfig.tfmgCompatEnabled();
             case TFMG_PROCESSING -> MagConfig.tfmgProcessingRecipesEnabled();
             case TFMG_STEELMAKING -> MagConfig.tfmgSteelmakingRecipesEnabled();
+            case PATCHOULI -> MagConfig.patchouliCompatEnabled();
             case CREATE_NEW_AGE -> MagConfig.createNewAgeRecipesEnabled();
             case IMMERSIVE_ENGINEERING -> MagConfig.immersiveEngineeringRecipesEnabled();
             case ALEXSCAVES -> MagConfig.alexsCavesRecipesEnabled();

@@ -30,5 +30,6 @@ run_profile 'Create: Copycats+ compatibility profile' smokeCopycatsGameTest
 run_profile 'Create: Enchantment Industry compatibility profile' smokeEnchantmentIndustryGameTest
 run_profile 'Create: Ender Transmission compatibility profile' smokeEnderTransmissionGameTest
 run_profile 'Create: The Factory Must Grow compatibility profile' smokeTfmgGameTest
+run_profile 'Curios compatibility profile' smokeCuriosGameTest
 
 echo 'releaseMatrixGate: all isolated profiles passed'

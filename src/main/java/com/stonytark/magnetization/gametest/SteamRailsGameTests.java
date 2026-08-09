@@ -4,6 +4,7 @@ import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.Train;
 import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.compat.FerromagneticCompat;
 import com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat;
 import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,6 +28,7 @@ public final class SteamRailsGameTests {
     @GameTest(template = "empty", timeoutTicks = 40, batch = "steamRailsTrainCompat")
     public static void coupledTrainReceivesOneRailProjectedImpulse(final GameTestHelper helper) {
         final boolean originalEnabled = MagConfig.STEAM_N_RAILS_FIELD_REACTION.get();
+        final boolean originalMaster = MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.get();
         final double originalSusceptibility = MagConfig.STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY.get();
         try {
             helper.assertTrue(classPresent("com.railwayteam.railways.content.coupling.TrainUtils"),
@@ -64,6 +66,14 @@ public final class SteamRailsGameTests {
             helper.assertTrue(!MagSteamRailsCompat.structuralInducerCanAdopt(carriage),
                     "Structural Inducer accepted an assembled rail-bound carriage entity");
 
+            MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.set(false);
+            helper.assertTrue(!MagConfig.steamRailsFieldReaction()
+                            && MagSteamRailsCompat.structuralInducerCanAdopt(carriage)
+                            && !FerromagneticCompat.isFerromagnetic(coupler.defaultBlockState())
+                            && !FerromagneticCompat.isFerromagnetic(locometal.defaultBlockState()),
+                    "Steam 'n' Rails master did not suppress force, inducer, and material integration");
+            MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.set(true);
+
             MagConfig.STEAM_N_RAILS_FIELD_REACTION.set(false);
             helper.assertTrue(!MagSteamRailsCompat.applyProjectedForce(
                             train, new Vec3(1, 0, 0), new Vec3(10, 0, 0), new HashSet<>()),
@@ -71,6 +81,7 @@ public final class SteamRailsGameTests {
             helper.succeed();
         } finally {
             MagConfig.STEAM_N_RAILS_FIELD_REACTION.set(originalEnabled);
+            MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.set(originalMaster);
             MagConfig.STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY.set(originalSusceptibility);
         }
     }

@@ -75,7 +75,7 @@ public final class MagnetizedArmorVacuum {
         int netPole = 0;
         for (final ItemStack armor : EquippedArmor.all(player)) {
             if (MagConfig.isItemDisabled(armor)) continue;
-            if (!armor.is(MagTags.METAL_ARMOR)) continue;
+            if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) continue;
             final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
             if (Lirm.strength(armor, now) <= LIRM_DEAD_THRESHOLD) continue;
@@ -100,7 +100,8 @@ public final class MagnetizedArmorVacuum {
         final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
                 item -> !item.hasPickUpDelay()
                         && !MagConfig.isItemDisabled(item.getItem())
-                        && (fullSet || item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)));
+                        && (fullSet || com.stonytark.magnetization.compat.FerromagneticCompat
+                                .isFerromagnetic(item.getItem())));
         for (final ItemEntity item : nearby) {
             final Vec3 delta = item.position().subtract(origin);
             final double dist = delta.length();

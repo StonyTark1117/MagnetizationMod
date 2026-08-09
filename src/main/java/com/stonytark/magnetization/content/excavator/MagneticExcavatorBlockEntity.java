@@ -634,7 +634,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
     private void tryDestroyNeighbor(final ServerLevel server, final BlockPos at, final ItemStack tool) {
         final BlockState bs = server.getBlockState(at);
         if (bs.isAir()) return;
-        if (bs.is(MagTags.FERROMAGNETIC_BLOCKS)) return;
+        if (com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(bs)) return;
         if (isBarrier(server, at, bs)) return;
         // Give claim/protection mods a veto, like a real break would.
         if (com.stonytark.magnetization.content.MagBlockBreaker.isBreakVetoed(server, at, bs)) return;
@@ -778,7 +778,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
             if (pulledShips.size() >= cap) break;
             if (newPulls >= PULLS_PER_SCAN_TICK) break;
             final BlockState bs = level.getBlockState(pos);
-            if (bs.isAir() || !bs.is(MagTags.FERROMAGNETIC_BLOCKS)) continue;
+            if (bs.isAir()
+                    || !com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(bs)) continue;
             if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
             if (tryAssemblePulled(level, pos, bs, now)) newPulls++;
         }
@@ -863,7 +864,7 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
                     final BlockState bs = level.getBlockState(cursor);
                     if (bs.isAir()) continue;
                     if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
-                    if (!bs.is(MagTags.FERROMAGNETIC_BLOCKS)) continue;
+                    if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(bs)) continue;
                     out.add(cursor.immutable());
                 }
             }

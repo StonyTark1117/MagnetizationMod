@@ -28,7 +28,7 @@ public abstract class CopycatsGoggleMixin implements IHaveGoggleInformation {
         final boolean diamagnetic = !excluded && materials.stream()
                 .anyMatch(s -> s.is(MagTags.DIAMAGNETIC_BLOCKS));
         final boolean ferromagnetic = !excluded && !diamagnetic && materials.stream()
-                .anyMatch(s -> s.is(MagTags.FERROMAGNETIC_BLOCKS));
+                .anyMatch(com.stonytark.magnetization.compat.FerromagneticCompat::isFerromagnetic);
         final String key = excluded ? "excluded"
                 : diamagnetic ? "diamagnetic"
                 : ferromagnetic ? "ferromagnetic" : "nonmagnetic";

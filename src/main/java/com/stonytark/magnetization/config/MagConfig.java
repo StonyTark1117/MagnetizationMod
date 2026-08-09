@@ -431,6 +431,21 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_FIELD_RELAY_ENABLED;
     public static final ModConfigSpec.BooleanValue PLANT_OIL_FERROFLUID_RECIPE_ENABLED;
+    public static final ModConfigSpec.BooleanValue AEROPORTALS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue IMMERSIVE_PORTALS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COPYCATS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue CURIOS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue TFMG_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue STEAM_N_RAILS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue PATCHOULI_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue JUST_ENOUGH_RESOURCES_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue JADE_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue WTHIT_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue THE_ONE_PROBE_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue JEI_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue REI_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue EMI_COMPAT_ENABLED;
     /** Allow assembled Create: Coasters Simulated cart sublevels to receive the
      *  same magnetic forces as other Sable physics structures. */
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_FIELD_REACTION;
@@ -1915,6 +1930,67 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.plantOilFerrofluidRecipeEnabled")
                 .define("plantOilFerrofluidRecipeEnabled", true);
 
+        AEROPORTALS_COMPAT_ENABLED = b
+                .comment("Master switch for AeroPortals ship-transfer state remapping and cache repair.")
+                .translation("magnetization.configuration.compat.aeroPortalsCompatEnabled")
+                .define("aeroPortalsCompatEnabled", true);
+        IMMERSIVE_PORTALS_COMPAT_ENABLED = b
+                .comment("Master switch for projecting magnetic forces through Immersive Portals.")
+                .translation("magnetization.configuration.compat.immersivePortalsCompatEnabled")
+                .define("immersivePortalsCompatEnabled", true);
+        COPYCATS_COMPAT_ENABLED = b
+                .comment("Master switch for Copycats+ copied-material susceptibility, goggles, and Ponder integration.")
+                .translation("magnetization.configuration.compat.copycatsCompatEnabled")
+                .define("copycatsCompatEnabled", true);
+        CURIOS_COMPAT_ENABLED = b
+                .comment("Master switch for Curios equipment capabilities, item activation, HUD lookup, and induction charging.")
+                .translation("magnetization.configuration.compat.curiosCompatEnabled")
+                .define("curiosCompatEnabled", true);
+        TFMG_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Create: The Factory Must Grow recipes, materials, fluids, machines, and Polarizer integration.")
+                .translation("magnetization.configuration.compat.tfmgCompatEnabled")
+                .define("tfmgCompatEnabled", true);
+        SIMULATED_COASTERS_COMPAT_ENABLED = b
+                .comment("Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer integration.")
+                .translation("magnetization.configuration.compat.simulatedCoastersCompatEnabled")
+                .define("simulatedCoastersCompatEnabled", true);
+        STEAM_N_RAILS_COMPAT_ENABLED = b
+                .comment("Master switch for Create: Steam 'n' Rails materials, projected train force, Structural Inducer, and Ponder integration.")
+                .translation("magnetization.configuration.compat.steamNRailsCompatEnabled")
+                .define("steamNRailsCompatEnabled", true);
+        PATCHOULI_COMPAT_ENABLED = b
+                .comment("Master switch for the Patchouli Field Manual, its recipes, and automatic first-login gift.")
+                .translation("magnetization.configuration.compat.patchouliCompatEnabled")
+                .define("patchouliCompatEnabled", true);
+        JUST_ENOUGH_RESOURCES_COMPAT_ENABLED = b
+                .comment("Master switch for registering Magnetization world-generation distributions with Just Enough Resources.")
+                .translation("magnetization.configuration.compat.justEnoughResourcesCompatEnabled")
+                .define("justEnoughResourcesCompatEnabled", true);
+        JADE_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization block information in Jade.")
+                .translation("magnetization.configuration.compat.jadeCompatEnabled")
+                .define("jadeCompatEnabled", true);
+        WTHIT_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization block information in WTHIT.")
+                .translation("magnetization.configuration.compat.wthitCompatEnabled")
+                .define("wthitCompatEnabled", true);
+        THE_ONE_PROBE_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization block information in The One Probe.")
+                .translation("magnetization.configuration.compat.theOneProbeCompatEnabled")
+                .define("theOneProbeCompatEnabled", true);
+        JEI_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization information pages in JEI.")
+                .translation("magnetization.configuration.compat.jeiCompatEnabled")
+                .define("jeiCompatEnabled", true);
+        REI_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization information pages in REI.")
+                .translation("magnetization.configuration.compat.reiCompatEnabled")
+                .define("reiCompatEnabled", true);
+        EMI_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization information pages in EMI.")
+                .translation("magnetization.configuration.compat.emiCompatEnabled")
+                .define("emiCompatEnabled", true);
+
         SIMULATED_COASTERS_FIELD_REACTION = b
                 .comment("Allow Create: Coasters Simulated coaster cars to react to magnetic fields.",
                          "Default true. The carts are Sable physics sublevels, so they receive the",
@@ -2457,14 +2533,20 @@ public final class MagConfig {
     public static double fusionThrusterFluidDensityTritium()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_TRITIUM, 4.5d); }
     public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
+    public static boolean simulatedCoastersCompatEnabled() {
+        return booleanOr(SIMULATED_COASTERS_COMPAT_ENABLED, true);
+    }
     public static boolean simulatedCoastersFieldReaction() {
-        return booleanOr(SIMULATED_COASTERS_FIELD_REACTION, true);
+        return simulatedCoastersCompatEnabled() && booleanOr(SIMULATED_COASTERS_FIELD_REACTION, true);
     }
     public static boolean simulatedCoastersStructuralInducer() {
-        return booleanOr(SIMULATED_COASTERS_STRUCTURAL_INDUCER, true);
+        return simulatedCoastersCompatEnabled() && booleanOr(SIMULATED_COASTERS_STRUCTURAL_INDUCER, true);
+    }
+    public static boolean steamRailsCompatEnabled() {
+        return booleanOr(STEAM_N_RAILS_COMPAT_ENABLED, true);
     }
     public static boolean steamRailsFieldReaction() {
-        return booleanOr(STEAM_N_RAILS_FIELD_REACTION, true);
+        return steamRailsCompatEnabled() && booleanOr(STEAM_N_RAILS_FIELD_REACTION, true);
     }
     public static double steamRailsTrainSusceptibility() {
         return doubleOr(STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY, 1.0d);
@@ -2532,6 +2614,35 @@ public final class MagConfig {
     public static boolean plantOilFerrofluidRecipeEnabled() {
         return booleanOr(PLANT_OIL_FERROFLUID_RECIPE_ENABLED, true);
     }
+    public static boolean aeroPortalsCompatEnabled() {
+        return booleanOr(AEROPORTALS_COMPAT_ENABLED, true);
+    }
+    public static boolean immersivePortalsCompatEnabled() {
+        return booleanOr(IMMERSIVE_PORTALS_COMPAT_ENABLED, true);
+    }
+    public static boolean copycatsCompatEnabled() {
+        return booleanOr(COPYCATS_COMPAT_ENABLED, true);
+    }
+    public static boolean curiosCompatEnabled() {
+        return booleanOr(CURIOS_COMPAT_ENABLED, true);
+    }
+    public static boolean tfmgCompatEnabled() {
+        return booleanOr(TFMG_COMPAT_ENABLED, true);
+    }
+    public static boolean patchouliCompatEnabled() {
+        return booleanOr(PATCHOULI_COMPAT_ENABLED, true);
+    }
+    public static boolean justEnoughResourcesCompatEnabled() {
+        return booleanOr(JUST_ENOUGH_RESOURCES_COMPAT_ENABLED, true);
+    }
+    public static boolean jadeCompatEnabled() { return booleanOr(JADE_COMPAT_ENABLED, true); }
+    public static boolean wthitCompatEnabled() { return booleanOr(WTHIT_COMPAT_ENABLED, true); }
+    public static boolean theOneProbeCompatEnabled() {
+        return booleanOr(THE_ONE_PROBE_COMPAT_ENABLED, true);
+    }
+    public static boolean jeiCompatEnabled() { return booleanOr(JEI_COMPAT_ENABLED, true); }
+    public static boolean reiCompatEnabled() { return booleanOr(REI_COMPAT_ENABLED, true); }
+    public static boolean emiCompatEnabled() { return booleanOr(EMI_COMPAT_ENABLED, true); }
     public static boolean externalMachineMagnetsEnabled() {
         return booleanOr(EXTERNAL_MACHINE_MAGNETS_ENABLED, true);
     }
@@ -2539,13 +2650,13 @@ public final class MagConfig {
         return intOr(EXTERNAL_MACHINE_MAGNET_POTENCY, 16);
     }
     public static boolean tfmgProcessingRecipesEnabled() {
-        return booleanOr(TFMG_PROCESSING_RECIPES_ENABLED, true);
+        return tfmgCompatEnabled() && booleanOr(TFMG_PROCESSING_RECIPES_ENABLED, true);
     }
     public static boolean tfmgSteelmakingRecipesEnabled() {
-        return booleanOr(TFMG_STEELMAKING_RECIPES_ENABLED, true);
+        return tfmgCompatEnabled() && booleanOr(TFMG_STEELMAKING_RECIPES_ENABLED, true);
     }
     public static boolean tfmgPolarizerFieldEnabled() {
-        return booleanOr(TFMG_POLARIZER_FIELD_ENABLED, false);
+        return tfmgCompatEnabled() && booleanOr(TFMG_POLARIZER_FIELD_ENABLED, false);
     }
     public static int tfmgPolarizerVoltageForExtreme() {
         return intOr(TFMG_POLARIZER_VOLTAGE_FOR_EXTREME, 500);

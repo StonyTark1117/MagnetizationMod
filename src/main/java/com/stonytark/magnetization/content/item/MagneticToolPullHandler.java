@@ -72,7 +72,7 @@ public final class MagneticToolPullHandler {
         int magnetCount = 0;
         for (final ItemStack stack : iterMagnetCarriers(player)) {
             if (MagConfig.isItemDisabled(stack)) continue;
-            if (!stack.is(MagTags.METAL_TOOLS)) continue;
+            if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
             netPolarity += pol.sign();
@@ -86,7 +86,7 @@ public final class MagneticToolPullHandler {
         final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
                 e -> !e.getItem().isEmpty()
                         && !MagConfig.isItemDisabled(e.getItem())
-                        && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS)
+                        && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(e.getItem())
                         && e.distanceToSqr(playerPos) <= radius * radius);
 
         // SOUTH net polarity attracts (item entities default to NORTH);

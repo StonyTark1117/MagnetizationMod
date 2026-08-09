@@ -63,7 +63,7 @@ public final class MagPickaxeOreRip {
             if (stack.isEmpty()) continue;
             if (MagConfig.isItemDisabled(stack)) continue;
             if (!stack.is(ItemTags.PICKAXES)) continue;
-            if (!stack.is(MagTags.METAL_TOOLS)) continue;
+            if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
             return stack;
@@ -84,7 +84,7 @@ public final class MagPickaxeOreRip {
                     cursor.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
                     final BlockState state = level.getBlockState(cursor);
                     if (state.isAir()) continue;
-                    if (!state.is(MagTags.FERROMAGNETIC_BLOCKS)) continue;
+                    if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(state)) continue;
                     if (state.is(MagTags.EXCAVATOR_IMMUNE)) continue;
                     final double d2 = origin.distSqr(cursor);
                     if (d2 < bestDistSqr) {

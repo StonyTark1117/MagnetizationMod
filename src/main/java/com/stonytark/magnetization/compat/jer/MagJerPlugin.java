@@ -2,6 +2,7 @@ package com.stonytark.magnetization.compat.jer;
 
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagItems;
+import com.stonytark.magnetization.config.MagConfig;
 import jeresources.api.IJERAPI;
 import jeresources.api.IWorldGenRegistry;
 import jeresources.api.distributions.DistributionBase;
@@ -49,6 +50,7 @@ public final class MagJerPlugin {
     private MagJerPlugin() {}
 
     public static void register() {
+        if (!MagConfig.justEnoughResourcesCompatEnabled()) return;
         final IJERAPI api = JERAPI.getInstance();
         final IWorldGenRegistry wg = api.getWorldGenRegistry();
 

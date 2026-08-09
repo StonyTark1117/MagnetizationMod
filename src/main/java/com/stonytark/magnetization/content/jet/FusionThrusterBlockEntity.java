@@ -165,18 +165,28 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     private static boolean isHydrogen(final Fluid fluid) {
-        return fluid.builtInRegistryHolder().is(com.stonytark.magnetization.api.MagTags.HYDROGEN_FLUIDS);
+        final net.minecraft.resources.ResourceLocation id =
+                net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid);
+        return !(id != null && id.getNamespace().equals("tfmg") && !MagConfig.tfmgCompatEnabled())
+                && fluid.builtInRegistryHolder().is(com.stonytark.magnetization.api.MagTags.HYDROGEN_FLUIDS);
     }
 
     /** Deterministic (client/server-identical) check for the 4 fusion-fluid buckets. */
     public static boolean isFusionFluidBucket(final ItemStack st) {
-        return st.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)
+        return isCompatibleHydrogenBucket(st)
                 || st.is(MagItems.DEUTERIUM_OXIDE_BUCKET.get())
                 || st.is(MagItems.TRITIUM_BUCKET.get()) || st.is(MagItems.HELIUM_3_BUCKET.get());
     }
 
+    private static boolean isCompatibleHydrogenBucket(final ItemStack stack) {
+        if (!stack.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)) return false;
+        final net.minecraft.resources.ResourceLocation id =
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return id == null || !id.getNamespace().equals("tfmg") || MagConfig.tfmgCompatEnabled();
+    }
+
     private static @Nullable Fluid bucketFluid(final ItemStack st) {
-        if (st.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)) {
+        if (isCompatibleHydrogenBucket(st)) {
             final java.util.Optional<FluidStack> contained =
                     net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(st);
             if (contained.isPresent() && isHydrogen(contained.get().getFluid())) {

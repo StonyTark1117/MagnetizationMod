@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.compat.top;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,7 +22,8 @@ public final class MagTopHook {
 
     @SubscribeEvent
     public static void onEnqueueIMC(final InterModEnqueueEvent event) {
-        if (!ModList.get().isLoaded("theoneprobe")) return;
+        if (!MagConfig.theOneProbeCompatEnabled()
+                || !ModList.get().isLoaded("theoneprobe")) return;
         MagTopRegistration.send();
     }
 }

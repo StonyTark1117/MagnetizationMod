@@ -75,6 +75,11 @@ public class MhdJetBlockEntity extends BlockEntity
 
     /** Conductivity multiplier of the working fluid (0 = not a conductive fluid). */
     public static double conductivityMult(final Fluid fluid) {
+        final net.minecraft.resources.ResourceLocation id =
+                net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid);
+        if (id != null && id.getNamespace().equals("tfmg") && !MagConfig.tfmgCompatEnabled()) {
+            return 0.0d;
+        }
         if (fluid == MagFluids.GALLIUM.get() || fluid == MagFluids.GALLIUM_FLOWING.get())
             return MagConfig.mhdConductivityGallium();
         if (fluid == MagFluids.MIXED_GALLIUM.get() || fluid == MagFluids.MIXED_GALLIUM_FLOWING.get())

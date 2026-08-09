@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.compat.curios;
 
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
@@ -28,6 +29,7 @@ public final class MagCurioCompat {
     }
 
     private static void onRegisterCapabilities(final RegisterCapabilitiesEvent event) {
+        if (!MagConfig.curiosCompatEnabled()) return;
         // Per-stack ICurio: declares each item as a valid curio so Curios slots
         // accept it.
         // - Field Compass: pure passive — its rotating needle and HUD overlay

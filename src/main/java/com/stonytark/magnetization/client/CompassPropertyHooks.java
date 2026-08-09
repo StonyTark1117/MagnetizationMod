@@ -123,7 +123,8 @@ public final class CompassPropertyHooks {
             match = state -> state.is(tuned);
         } else {
             key = "any";
-            match = state -> state.is(com.stonytark.magnetization.api.MagTags.METALLIC_ORES);
+            match = state -> com.stonytark.magnetization.compat.FerromagneticCompat
+                    .is(state, com.stonytark.magnetization.api.MagTags.METALLIC_ORES);
         }
         final BlockPos target = com.stonytark.magnetization.client.OreCompassScanner.nearest(
                 level, holder.blockPosition(), key, match);

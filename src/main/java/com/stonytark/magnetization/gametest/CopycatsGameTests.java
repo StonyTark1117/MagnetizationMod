@@ -4,6 +4,7 @@ import com.copycatsplus.copycats.foundation.copycat.ICopycatBlockEntity;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.stonytark.magnetization.client.MagPonderPlugin;
 import com.stonytark.magnetization.compat.copycats.MagCopycatsCompat;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.inducer.StructuralInducerBlockEntity;
 import com.stonytark.magnetization.physics.ShipMagneticScanner;
 import com.stonytark.magnetization.registry.MagBlocks;
@@ -29,6 +30,24 @@ import java.util.ArrayList;
 @PrefixGameTestTemplate(false)
 public final class CopycatsGameTests {
     private CopycatsGameTests() {}
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "copycatsMasterCompat")
+    public static void masterSwitchSuppressesCopiedMaterialAndPonder(final GameTestHelper helper) {
+        final boolean original = MagConfig.COPYCATS_COMPAT_ENABLED.get();
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, BuiltInRegistries.BLOCK.get(
+                ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block")));
+        try {
+            MagConfig.COPYCATS_COMPAT_ENABLED.set(false);
+            helper.assertTrue(MagCopycatsCompat.materialsOf(helper.getBlockEntity(pos)).isEmpty(),
+                    "Copycats master switch did not suppress copied-material inspection");
+            helper.assertTrue(!MagPonderPlugin.hasCopycatsSceneTarget(),
+                    "Copycats master switch did not suppress its Ponder target");
+            helper.succeed();
+        } finally {
+            MagConfig.COPYCATS_COMPAT_ENABLED.set(original);
+        }
+    }
 
     @GameTest(template = "empty", timeoutTicks = 140, batch = "copycatsMaterialCompat")
     public static void copiedIronSurvivesInducerAssemblyAndDrivesSusceptibility(

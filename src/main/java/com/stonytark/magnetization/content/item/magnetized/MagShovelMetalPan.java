@@ -65,7 +65,8 @@ public final class MagShovelMetalPan {
 
         final ItemStack shovel = player.getMainHandItem();
         if (MagConfig.isItemDisabled(shovel)) return;
-        if (!shovel.is(ItemTags.SHOVELS) || !shovel.is(MagTags.METAL_TOOLS)) return;
+        if (!shovel.is(ItemTags.SHOVELS)
+                || !com.stonytark.magnetization.compat.FerromagneticCompat.is(shovel, MagTags.METAL_TOOLS)) return;
         final MagneticPolarity pol = shovel.get(MagDataComponents.ARMOR_POLARITY.get());
         if (pol == null || pol == MagneticPolarity.NONE) return;
 

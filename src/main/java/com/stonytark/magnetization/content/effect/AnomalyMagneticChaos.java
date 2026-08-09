@@ -119,7 +119,7 @@ public final class AnomalyMagneticChaos {
         double susceptibility = 0.0d;
         for (final ItemStack armor : EquippedArmor.all(player)) {
             if (MagConfig.isItemDisabled(armor)) continue;
-            if (!armor.is(MagTags.METAL_ARMOR)) continue;
+            if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) continue;
             final MagneticPolarity pol = armor.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
             susceptibility += Lirm.strength(armor, now);
@@ -137,7 +137,8 @@ public final class AnomalyMagneticChaos {
         // Filter during traversal (skip pickup-delayed + non-ferromagnetic items)
         // instead of materialising every item in this large box and filtering after.
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box,
-                i -> !i.hasPickUpDelay() && i.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
+                i -> !i.hasPickUpDelay()
+                        && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(i.getItem()))) {
             if (!AnomalyBiome.isAtAssumeEnabled(server, item.blockPosition())) continue;
             final Vec3 chaos = chaosVectorAt(now, item.position());
             item.setDeltaMovement(item.getDeltaMovement().add(chaos.scale(com.stonytark.magnetization.config.MagConfig.anomalyEntityImpulse() * strength)));

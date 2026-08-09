@@ -38,7 +38,8 @@ public final class MagPonderPlugin implements PonderPlugin {
 
     /** Common-safe probe used by the optional runtime GameTest. */
     public static boolean hasCopycatsSceneTarget() {
-        return BuiltInRegistries.BLOCK.containsKey(
+        return com.stonytark.magnetization.config.MagConfig.copycatsCompatEnabled()
+                && BuiltInRegistries.BLOCK.containsKey(
                 ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block"));
     }
 
@@ -102,12 +103,16 @@ public final class MagPonderPlugin implements PonderPlugin {
         // No hard Railways reference: the optional registry lookup keeps the
         // normal client classpath clean while adding our field behavior to the
         // port's existing coupler Ponder coverage when it is installed.
-        BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("railways", "track_coupler"))
-                .ifPresent(coupler -> blocks.forComponents(coupler)
-                        .addStoryBoard(SCHEMATIC, MagPonderPlugin::steamRailsMagnetism));
-        BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block"))
-                .ifPresent(copycat -> blocks.forComponents(copycat)
-                        .addStoryBoard(SCHEMATIC, MagPonderPlugin::copycatMagnetism));
+        if (com.stonytark.magnetization.config.MagConfig.steamRailsCompatEnabled()) {
+            BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("railways", "track_coupler"))
+                    .ifPresent(coupler -> blocks.forComponents(coupler)
+                            .addStoryBoard(SCHEMATIC, MagPonderPlugin::steamRailsMagnetism));
+        }
+        if (com.stonytark.magnetization.config.MagConfig.copycatsCompatEnabled()) {
+            BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("copycats", "copycat_block"))
+                    .ifPresent(copycat -> blocks.forComponents(copycat)
+                            .addStoryBoard(SCHEMATIC, MagPonderPlugin::copycatMagnetism));
+        }
     }
 
     private static void prepare(final SceneBuilder scene, final String id, final String title) {

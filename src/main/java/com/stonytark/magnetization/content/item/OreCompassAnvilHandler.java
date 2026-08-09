@@ -34,7 +34,8 @@ public final class OreCompassAnvilHandler {
 
         final Block ore = blockItem.getBlock();
         // Only magnetic/metallic ores tune the compass.
-        if (!ore.defaultBlockState().is(MagTags.METALLIC_ORES)) return;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat
+                .is(ore.defaultBlockState(), MagTags.METALLIC_ORES)) return;
 
         final ItemStack out = left.copy();
         out.setCount(1);

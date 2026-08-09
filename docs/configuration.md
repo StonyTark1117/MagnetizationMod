@@ -386,6 +386,21 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.enderTransmissionCompatEnabled | boolean | true | Master switch for Create: Ender Transmission compatibility and its optional field relay. |
 | COMMON | compat.enderTransmissionFieldRelayEnabled | boolean | false | Experimental one-hop field projection through linked Energy Transmitters. Disabled by default because remote fields significantly change automation and combat. |
 | COMMON | compat.plantOilFerrofluidRecipeEnabled | boolean | true | Enable one common Create mixing recipe from c:plantoil and Raw Magnetite or Raw Hematite to Ferrofluid, regardless of which installed mod supplies the oil. |
+| COMMON | compat.aeroPortalsCompatEnabled | boolean | true | Master switch for AeroPortals ship-transfer cache invalidation, Railgun Remote remapping, and Simulated swivel repair. |
+| COMMON | compat.immersivePortalsCompatEnabled | boolean | true | Master switch for projecting Magnetization fields and forces through Immersive Portals. |
+| COMMON | compat.copycatsCompatEnabled | boolean | true | Master switch for copied-material susceptibility, Create goggles, and Magnetization Ponder integration for Copycats+. |
+| COMMON | compat.curiosCompatEnabled | boolean | true | Master switch for Curios equipment capabilities, active-item keybind lookup, Field Compass HUD lookup, and Induction Pad charging. |
+| COMMON | compat.tfmgCompatEnabled | boolean | true | Master switch for Magnetization's TFMG recipes, materials, fluids, machines, and Polarizer integration. |
+| COMMON | compat.simulatedCoastersCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer behavior. |
+| COMMON | compat.steamNRailsCompatEnabled | boolean | true | Master switch for Steam 'n' Rails materials, projected train forces, Structural Inducer exclusions, and Ponder integration. |
+| COMMON | compat.patchouliCompatEnabled | boolean | true | Master switch for the Patchouli Field Manual book, recipes, and automatic first-login gift. Restart after re-enabling it. |
+| COMMON | compat.justEnoughResourcesCompatEnabled | boolean | true | Master switch for registering Magnetization's naturally generated ores and geodes with Just Enough Resources. Takes effect on restart. |
+| COMMON | compat.jadeCompatEnabled | boolean | true | Master switch for Magnetization field and machine information in Jade. Takes effect on restart. |
+| COMMON | compat.wthitCompatEnabled | boolean | true | Master switch for Magnetization field, machine, fluid, and material information in WTHIT. Takes effect on restart. |
+| COMMON | compat.theOneProbeCompatEnabled | boolean | true | Master switch for Magnetization field and machine information in The One Probe. Takes effect on restart. |
+| COMMON | compat.jeiCompatEnabled | boolean | true | Master switch for Magnetization information pages in JEI. Takes effect when JEI reloads its runtime. |
+| COMMON | compat.reiCompatEnabled | boolean | true | Master switch for Magnetization information pages in REI. Takes effect when REI reloads its runtime. |
+| COMMON | compat.emiCompatEnabled | boolean | true | Master switch for Magnetization information pages in EMI. Takes effect when EMI reloads its runtime. |
 | COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like ships, whether loose or attached to track. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
 | COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize rail-engaged Create: Coasters Simulated trains, linked cars, and riveted bodies as one structure. Loose carts are ignored by the inducer but still react to magnets. Default on. |
 | COMMON | compat.steamNRailsFieldReaction | boolean | true | Project magnetic force along the rails and apply it once to each coupled train, keeping all linked cars together and on track. Default on. |

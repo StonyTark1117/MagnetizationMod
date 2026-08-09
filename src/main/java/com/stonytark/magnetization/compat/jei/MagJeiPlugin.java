@@ -2,6 +2,7 @@ package com.stonytark.magnetization.compat.jei;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.compat.RecipeViewerInfo;
+import com.stonytark.magnetization.config.MagConfig;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -23,6 +24,7 @@ public class MagJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(final IRecipeRegistration registration) {
+        if (!MagConfig.jeiCompatEnabled()) return;
         for (final RecipeViewerInfo.Topic topic : RecipeViewerInfo.topics()) {
             final List<ItemStack> stacks = topic.resolveStacks();
             if (stacks.isEmpty()) continue;

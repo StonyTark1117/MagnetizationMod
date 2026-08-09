@@ -5,9 +5,11 @@ import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
+import com.stonytark.magnetization.compat.FerromagneticCompat;
 import com.stonytark.magnetization.compat.tfmg.TfmgPolarizerCompat;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.MagneticMaterials;
+import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
 import com.stonytark.magnetization.content.jet.MhdJetBlockEntity;
 import com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity;
 import com.stonytark.magnetization.data.CompatConfigCondition;
@@ -47,6 +49,35 @@ public final class TfmgMagnetismGameTests {
             Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "plates/magnetic_alloy"));
 
     private TfmgMagnetismGameTests() {}
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void tfmgMasterSuppressesRuntimeBridges(final GameTestHelper helper) {
+        final boolean original = MagConfig.TFMG_COMPAT_ENABLED.get();
+        try {
+            MagConfig.TFMG_COMPAT_ENABLED.set(false);
+            helper.assertTrue(MagneticMaterials.potency(new ItemStack(item("magnet"))) == 0,
+                    "TFMG master did not disable TFMG machine magnets");
+            helper.assertTrue(MhdJetBlockEntity.conductivityMult(fluid("molten_steel")) == 0.0d,
+                    "TFMG master did not disable TFMG molten steel in the MHD Jet");
+            helper.assertTrue(!FusionThrusterBlockEntity.isFusionFluidBucket(
+                            new ItemStack(item("hydrogen_bucket"))),
+                    "TFMG master did not disable TFMG hydrogen containers in Fusion Thrusters");
+            helper.assertTrue(!FerromagneticCompat.isFerromagnetic(new ItemStack(item("magnet")))
+                            && !FerromagneticCompat.isFerromagnetic(
+                            block("large_coil").defaultBlockState()),
+                    "TFMG master did not disable effective material susceptibility");
+            helper.assertTrue(!FerromagneticCompat.is(
+                            block("large_coil").defaultBlockState(), MagTags.EDDY_CONDUCTORS)
+                            && !FerromagneticCompat.is(
+                            block("bauxite").defaultBlockState(), MagTags.GALLIUM_BEARING_ORES)
+                            && !FerromagneticCompat.is(
+                            new ItemStack(item("steel_pickaxe")), MagTags.METAL_TOOLS),
+                    "TFMG master did not suppress secondary tag-driven behavior");
+            helper.succeed();
+        } finally {
+            MagConfig.TFMG_COMPAT_ENABLED.set(original);
+        }
+    }
 
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void tfmgMaterialsAndElectricalMachinesHaveMagneticRoles(final GameTestHelper helper) {
@@ -184,13 +215,17 @@ public final class TfmgMagnetismGameTests {
     public static void tfmgRecipeConditionsFollowServerConfig(final GameTestHelper helper) {
         final boolean processing = MagConfig.TFMG_PROCESSING_RECIPES_ENABLED.get();
         final boolean steelmaking = MagConfig.TFMG_STEELMAKING_RECIPES_ENABLED.get();
+        final boolean master = MagConfig.TFMG_COMPAT_ENABLED.get();
         try {
+            final CompatConfigCondition masterCondition = new CompatConfigCondition(
+                    CompatConfigCondition.Feature.TFMG_COMPAT);
             final CompatConfigCondition processingCondition = new CompatConfigCondition(
                     CompatConfigCondition.Feature.TFMG_PROCESSING);
             final CompatConfigCondition steelmakingCondition = new CompatConfigCondition(
                     CompatConfigCondition.Feature.TFMG_STEELMAKING);
             MagConfig.TFMG_PROCESSING_RECIPES_ENABLED.set(true);
             MagConfig.TFMG_STEELMAKING_RECIPES_ENABLED.set(true);
+            MagConfig.TFMG_COMPAT_ENABLED.set(true);
             helper.assertTrue(processingCondition.test(ICondition.IContext.EMPTY)
                             && steelmakingCondition.test(ICondition.IContext.EMPTY),
                     "Enabled TFMG recipe configs did not admit compatibility recipes");
@@ -199,8 +234,16 @@ public final class TfmgMagnetismGameTests {
             helper.assertTrue(!processingCondition.test(ICondition.IContext.EMPTY)
                             && !steelmakingCondition.test(ICondition.IContext.EMPTY),
                     "Disabled TFMG recipe configs did not reject compatibility recipes");
+            MagConfig.TFMG_PROCESSING_RECIPES_ENABLED.set(true);
+            MagConfig.TFMG_STEELMAKING_RECIPES_ENABLED.set(true);
+            MagConfig.TFMG_COMPAT_ENABLED.set(false);
+            helper.assertTrue(!masterCondition.test(ICondition.IContext.EMPTY)
+                            && !processingCondition.test(ICondition.IContext.EMPTY)
+                            && !steelmakingCondition.test(ICondition.IContext.EMPTY),
+                    "TFMG master switch did not reject every compatibility recipe family");
             helper.succeed();
         } finally {
+            MagConfig.TFMG_COMPAT_ENABLED.set(master);
             MagConfig.TFMG_PROCESSING_RECIPES_ENABLED.set(processing);
             MagConfig.TFMG_STEELMAKING_RECIPES_ENABLED.set(steelmaking);
         }

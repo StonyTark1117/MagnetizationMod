@@ -32,7 +32,8 @@ public final class InventorySink {
 
         final AABB intakeBox = AABB.ofSize(emitterPos.getCenter(), 2 * INTAKE_RADIUS, 2 * INTAKE_RADIUS, 2 * INTAKE_RADIUS);
         final List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, intakeBox,
-                e -> e.isAlive() && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS));
+                e -> e.isAlive()
+                        && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(e.getItem()));
 
         for (ItemEntity drop : drops) {
             final ItemStack stack = drop.getItem();

@@ -38,6 +38,7 @@ public final class SimulatedCoastersGameTests {
     public static void looseCoasterCartReactsToFieldsButNotInducer(final GameTestHelper helper) {
         final boolean original = MagConfig.SIMULATED_COASTERS_FIELD_REACTION.get();
         final boolean originalInducer = MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.get();
+        final boolean originalMaster = MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED.get();
         final Vec3 cartPosition = Vec3.atCenterOf(helper.absolutePos(new BlockPos(6, 8, 6)));
         final ServerSubLevel cart = CoasterCartSpawner.spawnMinimalContraption(
                 helper.getLevel(), cartPosition, new Quaterniond());
@@ -59,6 +60,12 @@ public final class SimulatedCoastersGameTests {
                         MagneticPolarity.SOUTH, MagneticStrength.EXTREME,
                         MagneticField.Shape.OMNIDIRECTIONAL, 16.0d);
 
+                MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED.set(false);
+                helper.assertTrue(!MagConfig.simulatedCoastersFieldReaction()
+                                && !MagConfig.simulatedCoastersStructuralInducer(),
+                        "Simulated Coasters master did not suppress both behavior hooks");
+                MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED.set(true);
+
                 MagConfig.SIMULATED_COASTERS_FIELD_REACTION.set(false);
                 final Vector3d disabledBefore = handle.getLinearVelocity(new Vector3d());
                 FieldApplicator.applyToSubLevelsOnly(helper.getLevel(), field, null, null);
@@ -76,6 +83,7 @@ public final class SimulatedCoastersGameTests {
             } finally {
                 MagConfig.SIMULATED_COASTERS_FIELD_REACTION.set(original);
                 MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(originalInducer);
+                MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED.set(originalMaster);
                 remove(helper, cart);
             }
         });

@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.compat.emi;
 
 import com.stonytark.magnetization.compat.RecipeViewerInfo;
+import com.stonytark.magnetization.config.MagConfig;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -19,6 +20,7 @@ public class MagEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(final EmiRegistry registry) {
+        if (!MagConfig.emiCompatEnabled()) return;
         for (final RecipeViewerInfo.Topic topic : RecipeViewerInfo.topics()) {
             registerInfoPage(registry, topic);
         }

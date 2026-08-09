@@ -134,7 +134,8 @@ public final class FieldApplicator {
         if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
         applyToSubLevels(level, field, exclude, shipFilter);
         applyToEntities(level, field, true, true);
-        if (ModList.get().isLoaded("immersive_portals_core")) {
+        if (MagConfig.immersivePortalsCompatEnabled()
+                && ModList.get().isLoaded("immersive_portals_core")) {
             ImmersivePortalFieldCompat.applyThroughPortals(level, field, exclude, shipFilter);
         }
     }
@@ -174,7 +175,8 @@ public final class FieldApplicator {
         applyToSubLevelsPlanned(level, second, exclude, shipFilter, scales);
         applyToEntities(level, first, true, true);
         applyToEntities(level, second, true, true);
-        if (ModList.get().isLoaded("immersive_portals_core")) {
+        if (MagConfig.immersivePortalsCompatEnabled()
+                && ModList.get().isLoaded("immersive_portals_core")) {
             ImmersivePortalFieldCompat.applyThroughPortals(level, first, exclude, shipFilter);
             ImmersivePortalFieldCompat.applyThroughPortals(level, second, exclude, shipFilter);
         }
@@ -556,7 +558,7 @@ public final class FieldApplicator {
             // pull and the diamagnetic float handled downstream in applyToEntities.
             if (!affectsItems) return false;
             if (item.getItem().getItem() instanceof IMagnetizable) return true;
-            return item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)
+            return com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(item.getItem())
                     || item.getItem().is(MagTags.DIAMAGNETIC_ITEMS);
         }
         // Any living entity wearing tagged metal armor is magnetizable through
@@ -580,8 +582,10 @@ public final class FieldApplicator {
                 // magnetized (carries a polarity stamp) — the latter lets gear
                 // that's otherwise field-inert by design (e.g. the Magnetoresistive
                 // Boots) opt in once a player magnetizes it.
+                if (!com.stonytark.magnetization.compat.FerromagneticCompat.integrationEnabled(armor)) continue;
                 final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
-                if (!armor.is(MagTags.METAL_ARMOR) && !magnetized) continue;
+                if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)
+                        && !magnetized) continue;
                 // The magnetic elytra is an exception to armorReactsToFields:
                 // magnetic reaction is its core function (rail-riding), so it
                 // stays a candidate even when the toggle is off. Explicitly
@@ -633,7 +637,7 @@ public final class FieldApplicator {
             // Petrified wood is intrinsically weak — checked before the generic
             // ferromagnetic_items pass so the 1.0 baseline doesn't override it.
             if (item.getItem().is(MagItems.PETRIFIED_WOOD.get())) return PETRIFIED_WOOD_SUSCEPTIBILITY;
-            if (item.getItem().is(MagTags.FERROMAGNETIC_ITEMS)) return 1.0d;
+            if (com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(item.getItem())) return 1.0d;
         }
         // Tagged-entity baseline (zombies, iron golems, item drops marked
         // ferromagnetic-by-type, etc.) — counted before the armor pass so a
@@ -661,8 +665,10 @@ public final class FieldApplicator {
                 if (MagConfig.isItemDisabled(armor)) continue;
                 // MR armor never contributes pull susceptibility (it hardens, not pulls).
                 if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
+                if (!com.stonytark.magnetization.compat.FerromagneticCompat.integrationEnabled(armor)) continue;
                 final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
-                if (!armor.is(MagTags.METAL_ARMOR) && !magnetized) continue;
+                if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)
+                        && !magnetized) continue;
                 // armorReactsToFields off → only the magnetic elytra and
                 // explicitly-magnetized pieces still contribute, so plain armor
                 // won't yank the player but the elytra rail-ride / opted-in

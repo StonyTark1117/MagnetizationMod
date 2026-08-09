@@ -408,7 +408,8 @@ public final class MagCommands {
             src.sendFailure(Component.literal("Hold an item in your main hand first."));
             return 0;
         }
-        if (!held.is(MagTags.METAL_ARMOR) && !held.is(MagTags.METAL_TOOLS)) {
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(held, MagTags.METAL_ARMOR)
+                && !com.stonytark.magnetization.compat.FerromagneticCompat.is(held, MagTags.METAL_TOOLS)) {
             src.sendFailure(Component.literal(
                     "Held item " + held.getItem() + " isn't tagged metal_armor or metal_tools."));
             return 0;
@@ -455,7 +456,8 @@ public final class MagCommands {
     private static void describeLirm(final ItemStack stack, final long now,
                                      final List<Component> out, final String slot) {
         if (stack.isEmpty()) return;
-        if (!stack.is(MagTags.METAL_ARMOR) && !stack.is(MagTags.METAL_TOOLS)) return;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_ARMOR)
+                && !com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) return;
         final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
         final Long createdAt = stack.get(MagDataComponents.LIRM_CREATED_AT.get());
         final double strength = Lirm.strength(stack, now);
@@ -1150,6 +1152,10 @@ public final class MagCommands {
         try { player = src.getPlayerOrException(); }
         catch (final CommandSyntaxException e) {
             src.sendFailure(Component.literal("Run this as a player."));
+            return 0;
+        }
+        if (!MagConfig.curiosCompatEnabled()) {
+            src.sendFailure(Component.literal("Curios compatibility is disabled in Magnetization's config."));
             return 0;
         }
         if (!ModList.get().isLoaded("curios")) {

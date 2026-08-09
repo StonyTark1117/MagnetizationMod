@@ -76,6 +76,7 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
      * Netty context; production network traffic enters through {@link #handle}.
      */
     public static void handleServerbound(final UseCurioPayload payload, final ServerPlayer player) {
+        if (!com.stonytark.magnetization.config.MagConfig.curiosCompatEnabled()) return;
         final ItemStack stack = findInCurios(player, payload.kind());
         if (stack == null || stack.isEmpty()) return;
         // Route through each item's shared server-side activation, passing the
@@ -97,7 +98,8 @@ public record UseCurioPayload(Kind kind) implements CustomPacketPayload {
     }
 
     private static ItemStack findInCurios(final LivingEntity entity, final Kind kind) {
-        if (!ModList.get().isLoaded("curios")) return null;
+        if (!com.stonytark.magnetization.config.MagConfig.curiosCompatEnabled()
+                || !ModList.get().isLoaded("curios")) return null;
         try {
             final var handler = entity.getCapability(top.theillusivec4.curios.api.CuriosCapability.INVENTORY);
             if (handler == null) return null;

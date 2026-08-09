@@ -50,7 +50,8 @@ public final class MagnetizedAuraEffect {
             if (!(entity instanceof LivingEntity living)) continue;
             int northCount = 0, southCount = 0;
             for (final ItemStack stack : EquippedArmor.all(living)) {
-                final MagneticPolarity p = stack.is(MagTags.METAL_ARMOR)
+                final MagneticPolarity p = com.stonytark.magnetization.compat.FerromagneticCompat
+                        .is(stack, MagTags.METAL_ARMOR)
                         ? stack.get(MagDataComponents.ARMOR_POLARITY.get()) : null;
                 if (p == MagneticPolarity.NORTH) northCount++;
                 else if (p == MagneticPolarity.SOUTH) southCount++;
@@ -59,7 +60,8 @@ public final class MagnetizedAuraEffect {
                 final ItemStack main = player.getMainHandItem();
                 final ItemStack off = player.getOffhandItem();
                 for (final ItemStack stack : new ItemStack[] { main, off }) {
-                    if (!stack.is(MagTags.METAL_TOOLS)) continue;
+                    if (!com.stonytark.magnetization.compat.FerromagneticCompat
+                            .is(stack, MagTags.METAL_TOOLS)) continue;
                     final MagneticPolarity p = stack.get(MagDataComponents.ARMOR_POLARITY.get());
                     if (p == MagneticPolarity.NORTH) northCount++;
                     else if (p == MagneticPolarity.SOUTH) southCount++;

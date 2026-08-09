@@ -145,13 +145,19 @@ public final class Magnetization {
             org.slf4j.LoggerFactory.getLogger(MOD_ID)
                     .info("Surface rules registered for OVERWORLD category (anomaly + petrified_forest)");
 
+            // Patchouli discovers books before COMMON config is guaranteed to
+            // be loaded. Re-apply its master here after mod setup as a safety
+            // net so a disabled manual is absent from Patchouli's registry.
+            com.stonytark.magnetization.compat.patchouli.MagPatchouliCompat.applyMasterToggle();
+
             // Just Enough Resources integration — register magnetite ore
             // distributions directly via JERAPI.getInstance(). We avoid JER's
             // @JERPlugin annotation route because the 1.6.0.17 NeoForge build
             // scans for the wrong type and never finds the plugin. The
             // isLoaded check keeps MagJerPlugin (and its JER imports)
             // unloaded when JER isn't installed.
-            if (ModList.get().isLoaded("jeresources")) {
+            if (ModList.get().isLoaded("jeresources")
+                    && com.stonytark.magnetization.config.MagConfig.justEnoughResourcesCompatEnabled()) {
                 com.stonytark.magnetization.compat.jer.MagJerPlugin.register();
             }
         });
@@ -244,10 +250,12 @@ public final class Magnetization {
 
     private static void onConfigLoading(final net.neoforged.fml.event.config.ModConfigEvent.Loading event) {
         MagConfig.validateRelationships();
+        com.stonytark.magnetization.compat.patchouli.MagPatchouliCompat.applyMasterToggle();
     }
 
     private static void onConfigReloading(final net.neoforged.fml.event.config.ModConfigEvent.Reloading event) {
         MagConfig.validateRelationships();
+        com.stonytark.magnetization.compat.patchouli.MagPatchouliCompat.applyMasterToggle();
     }
 
     /** Drop the per-level ship-state caches when a dimension unloads, so we don't

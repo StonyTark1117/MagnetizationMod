@@ -37,7 +37,8 @@ public class GalliumOreDropModifier extends LootModifier {
     @Override
     protected ObjectArrayList<ItemStack> doApply(final ObjectArrayList<ItemStack> loot, final LootContext context) {
         final BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-        if (state != null && state.is(MagTags.GALLIUM_BEARING_ORES) && context.getRandom().nextFloat() < chance) {
+        if (state != null && com.stonytark.magnetization.compat.FerromagneticCompat
+                .is(state, MagTags.GALLIUM_BEARING_ORES) && context.getRandom().nextFloat() < chance) {
             loot.add(new ItemStack(MagItems.RAW_GALLIUM.get()));
         }
         return loot;

@@ -123,11 +123,13 @@ public final class LightningRemnantMagnetism {
         final List<ItemStack> candidates = new ArrayList<>(6);
         for (final ItemStack armor : EquippedArmor.all(target)) {
             if (!MagConfig.isItemDisabled(armor)
-                    && armor.is(MagTags.METAL_ARMOR) && !alreadyMagnetized(armor)) candidates.add(armor);
+                    && com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)
+                    && !alreadyMagnetized(armor)) candidates.add(armor);
         }
         for (final ItemStack hand : new ItemStack[]{target.getMainHandItem(), target.getOffhandItem()}) {
             if (!MagConfig.isItemDisabled(hand)
-                    && hand.is(MagTags.METAL_TOOLS) && !alreadyMagnetized(hand)) candidates.add(hand);
+                    && com.stonytark.magnetization.compat.FerromagneticCompat.is(hand, MagTags.METAL_TOOLS)
+                    && !alreadyMagnetized(hand)) candidates.add(hand);
         }
         if (candidates.isEmpty()) {
             if (MagConfig.debugLogging())
@@ -190,7 +192,8 @@ public final class LightningRemnantMagnetism {
         final double shockwaveRadius = com.stonytark.magnetization.config.MagConfig.lirmShockwaveRadius();
         final AABB box = AABB.ofSize(center, 2 * shockwaveRadius, 2 * shockwaveRadius, 2 * shockwaveRadius);
         for (final ItemEntity item : server.getEntitiesOfClass(ItemEntity.class, box,
-                e -> !e.getItem().isEmpty() && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
+                e -> !e.getItem().isEmpty()
+                        && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(e.getItem()))) {
             final Vec3 toCenter = center.subtract(item.position());
             final double dist = toCenter.length();
             if (dist < 0.5 || dist > shockwaveRadius) continue;

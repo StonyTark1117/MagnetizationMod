@@ -81,7 +81,8 @@ public final class MagAxePulse {
         final AABB box = AABB.ofSize(origin, 2 * pulseRadius(), 2 * pulseRadius(), 2 * pulseRadius());
 
         for (final ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, box,
-                e -> !e.getItem().isEmpty() && e.getItem().is(MagTags.FERROMAGNETIC_ITEMS))) {
+                e -> !e.getItem().isEmpty()
+                        && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(e.getItem()))) {
             final boolean petrified = item.getItem().is(MagItems.PETRIFIED_WOOD.get());
             pull(item, player.position(), petrified ? petrifiedPullMultiplier() : 1.0d);
         }
@@ -93,7 +94,7 @@ public final class MagAxePulse {
 
     private static boolean isMagnetized(final ItemStack axe) {
         if (MagConfig.isItemDisabled(axe)) return false;
-        if (!axe.is(MagTags.METAL_TOOLS)) return false;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(axe, MagTags.METAL_TOOLS)) return false;
         final MagneticPolarity pol = axe.get(MagDataComponents.ARMOR_POLARITY.get());
         return pol != null && pol != MagneticPolarity.NONE;
     }

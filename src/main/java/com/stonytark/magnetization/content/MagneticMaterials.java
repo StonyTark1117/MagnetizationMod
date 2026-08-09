@@ -57,6 +57,7 @@ public final class MagneticMaterials {
         final ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (id == null) return 0;
         if (!id.getNamespace().equals(Magnetization.MOD_ID)) {
+            if (id.getNamespace().equals("tfmg") && !MagConfig.tfmgCompatEnabled()) return 0;
             if (!MagConfig.externalMachineMagnetsEnabled() || !stack.is(MagTags.MACHINE_MAGNETS)) return 0;
             final int configured = MagConfig.externalMachineMagnetPotency();
             final int nativePotency = com.stonytark.magnetization.compat.ExternalFieldCompat

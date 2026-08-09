@@ -103,7 +103,8 @@ public final class LenzBrakingHandler {
                     if (++examined > SAMPLE_CAP) return count;
                     cursor.set(x, y, z);
                     if (!level.isLoaded(cursor)) continue;
-                    if (level.getBlockState(cursor).is(MagTags.EDDY_CONDUCTORS)) count++;
+                    if (com.stonytark.magnetization.compat.FerromagneticCompat
+                            .is(level.getBlockState(cursor), MagTags.EDDY_CONDUCTORS)) count++;
                 }
             }
         }

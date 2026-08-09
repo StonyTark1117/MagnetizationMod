@@ -197,7 +197,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
             @Override public boolean canPlaceItem(final int slot, final ItemStack stack) {
                 // Accept armor (player magnetization) OR tools/weapons (item-attractor)
                 // OR a ferrofluid bucket (magnetize the fluid → field-emitting when placed).
-                return stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS)
+                return com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_ARMOR)
+                        || com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)
                         || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
                         || stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get());
             }
@@ -400,7 +401,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
         if (!hasCap(CAP_POLARITY) || !hasCap(CAP_ARMOR)) return;
         final ItemStack stack = armorSlot.getItem(0);
         if (stack.isEmpty()) return;
-        if (!stack.is(MagTags.METAL_ARMOR) && !stack.is(MagTags.METAL_TOOLS)
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_ARMOR)
+                && !com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)
                 && !stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
                 && !stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get())) return;
         if (polarity == null) {
@@ -545,7 +547,8 @@ public final class EmitterMenu extends AbstractContainerMenu {
             // player inv → first matching slot.
             boolean moved = false;
             if (hasCap(CAP_ARMOR)
-                    && (original.is(MagTags.METAL_ARMOR) || original.is(MagTags.METAL_TOOLS))) {
+                    && (com.stonytark.magnetization.compat.FerromagneticCompat.is(original, MagTags.METAL_ARMOR)
+                    || com.stonytark.magnetization.compat.FerromagneticCompat.is(original, MagTags.METAL_TOOLS))) {
                 moved = moveItemStackTo(original, 0, 1, false);
             }
             if (!moved && hasCap(CAP_TOOL_SLOT)) {
@@ -581,7 +584,9 @@ public final class EmitterMenu extends AbstractContainerMenu {
             this.enabled = enabled;
         }
         @Override public boolean mayPlace(final ItemStack stack) {
-            return enabled && (stack.is(MagTags.METAL_ARMOR) || stack.is(MagTags.METAL_TOOLS)
+            return enabled && (com.stonytark.magnetization.compat.FerromagneticCompat
+                    .is(stack, MagTags.METAL_ARMOR)
+                    || com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)
                     || stack.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get())
                         || stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETORESISTIVE_BOOTS.get()));
         }

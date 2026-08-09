@@ -65,7 +65,9 @@ public final class MeteoriteCoreBlock extends Block implements EntityBlock {
         // Refill mechanic: any ferromagnetic item resets the decay timer to full.
         // Magnetite + family qualify via #magnetization:ferromagnetic.
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
-        if (!stack.is(MagTags.FERROMAGNETIC_ITEMS)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(stack)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
         if (!(level.getBlockEntity(pos) instanceof MeteoriteCoreBlockEntity be)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

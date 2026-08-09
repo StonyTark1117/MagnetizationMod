@@ -71,6 +71,7 @@ public final class MagSteamRailsCompat {
     /** Assembled trains are rail-constrained entities, not block structures.
      *  The Structural Inducer must never adopt a carriage independently. */
     public static boolean structuralInducerCanAdopt(final Entity entity) {
-        return !(entity instanceof CarriageContraptionEntity);
+        return !MagConfig.steamRailsCompatEnabled()
+                || !(entity instanceof CarriageContraptionEntity);
     }
 }

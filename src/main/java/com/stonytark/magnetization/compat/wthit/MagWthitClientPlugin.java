@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.compat.wthit;
 
+import com.stonytark.magnetization.config.MagConfig;
 import mcp.mobius.waila.api.IClientRegistrar;
 import mcp.mobius.waila.api.IWailaClientPlugin;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +25,7 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
 
     @Override
     public void register(final IClientRegistrar registrar) {
+        if (!MagConfig.wthitCompatEnabled()) return;
         registrar.body(EmitterBodyProvider.INSTANCE, Block.class);
         registrar.body(MachineBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);

@@ -172,7 +172,10 @@ public final class DecelerateToHoverHandler {
 
     private static boolean hasMetallicArmor(final Player player) {
         for (final ItemStack armor : player.getArmorSlots()) {
-            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor)
+                    && com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) {
+                return true;
+            }
         }
         return false;
     }

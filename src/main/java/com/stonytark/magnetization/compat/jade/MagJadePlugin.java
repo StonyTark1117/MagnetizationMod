@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.compat.jade;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import snownee.jade.api.IWailaClientRegistration;
@@ -26,6 +27,7 @@ public class MagJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(final IWailaClientRegistration registration) {
+        if (!MagConfig.jadeCompatEnabled()) return;
         // Register against Block.class so every block runs through our provider;
         // EmitterFieldProvider self-filters by checking for MagneticFieldSource on
         // the BE, so non-emitter blocks see a no-op.

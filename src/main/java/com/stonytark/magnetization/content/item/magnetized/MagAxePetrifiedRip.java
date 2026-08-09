@@ -58,7 +58,7 @@ public final class MagAxePetrifiedRip {
             if (stack.isEmpty()) continue;
             if (MagConfig.isItemDisabled(stack)) continue;
             if (!stack.is(ItemTags.AXES)) continue;
-            if (!stack.is(MagTags.METAL_TOOLS)) continue;
+            if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
             return stack;

@@ -57,7 +57,7 @@ public final class EmitterPlacementHandler {
         // when the held block is valid fuel and the core isn't full, let the
         // block's own useItemOn run. Non-fuel blocks still place against it.
         if (be instanceof com.stonytark.magnetization.content.meteorite.MeteoriteCoreBlockEntity core
-                && held.is(com.stonytark.magnetization.api.MagTags.FERROMAGNETIC_ITEMS)
+                && com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(held)
                 && !core.isAtFullCharge()) {
             return;
         }

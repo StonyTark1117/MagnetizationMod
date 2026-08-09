@@ -47,7 +47,10 @@ public final class GForceCushionBlock extends Block {
 
     private static boolean hasMetallicArmor(final LivingEntity living) {
         for (final ItemStack armor : living.getArmorSlots()) {
-            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor)
+                    && com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) {
+                return true;
+            }
         }
         return false;
     }

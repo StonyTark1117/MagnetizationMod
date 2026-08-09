@@ -44,7 +44,7 @@ public final class MagnetizedWeaponHits {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker)) return;
         final ItemStack weapon = attacker.getMainHandItem();
         if (MagConfig.isItemDisabled(weapon)) return;
-        if (weapon.isEmpty() || !weapon.is(MagTags.METAL_TOOLS)) return;
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(weapon, MagTags.METAL_TOOLS)) return;
         final MagneticPolarity weaponPol = weapon.get(MagDataComponents.ARMOR_POLARITY.get());
         if (weaponPol == null || weaponPol == MagneticPolarity.NONE) return;
 
@@ -91,7 +91,10 @@ public final class MagnetizedWeaponHits {
 
     private static boolean wearsMetalArmor(final LivingEntity entity) {
         for (final ItemStack armor : EquippedArmor.all(entity)) {
-            if (!MagConfig.isItemDisabled(armor) && armor.is(MagTags.METAL_ARMOR)) return true;
+            if (!MagConfig.isItemDisabled(armor)
+                    && com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) {
+                return true;
+            }
         }
         return false;
     }

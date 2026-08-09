@@ -22,7 +22,10 @@ public final class FerromagneticInfoHelper {
     public static List<ItemStack> stacks() {
         final List<ItemStack> out = new ArrayList<>();
         BuiltInRegistries.ITEM.getTag(MagTags.FERROMAGNETIC_ITEMS).ifPresent(set ->
-                set.forEach(holder -> out.add(new ItemStack(holder.value()))));
+                set.forEach(holder -> {
+                    final ItemStack stack = new ItemStack(holder.value());
+                    if (FerromagneticCompat.isFerromagnetic(stack)) out.add(stack);
+                }));
         return out;
     }
 
@@ -36,7 +39,10 @@ public final class FerromagneticInfoHelper {
         BuiltInRegistries.BLOCK.getTag(MagTags.FERROMAGNETIC_BLOCKS).ifPresent(set ->
                 set.forEach(holder -> {
                     final var item = holder.value().asItem();
-                    if (item != net.minecraft.world.item.Items.AIR) out.add(new ItemStack(item));
+                    if (item != net.minecraft.world.item.Items.AIR
+                            && FerromagneticCompat.isFerromagnetic(holder.value().defaultBlockState())) {
+                        out.add(new ItemStack(item));
+                    }
                 }));
         return out;
     }

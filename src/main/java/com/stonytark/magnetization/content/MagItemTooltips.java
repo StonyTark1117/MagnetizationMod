@@ -266,7 +266,7 @@ public final class MagItemTooltips {
 
             // Per-tool signature ability line — only when the item is a magnetized
             // tool from the metal_tools tag and matches a known tool category.
-            if (stack.is(MagTags.METAL_TOOLS)) {
+            if (com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) {
                 final String sigKey = signatureFor(stack);
                 if (sigKey != null) {
                     lines.add(Component.translatable(sigKey).withStyle(ChatFormatting.DARK_AQUA));

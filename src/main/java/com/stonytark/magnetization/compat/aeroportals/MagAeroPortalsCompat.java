@@ -3,6 +3,7 @@ package com.stonytark.magnetization.compat.aeroportals;
 import com.breakinblocks.aeroportals.api.SubLevelTransferEvent;
 import com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity;
 import com.stonytark.magnetization.content.railgun.RailgunRemoteItem;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,6 +26,7 @@ public final class MagAeroPortalsCompat {
     }
 
     static void onSubLevelTransfer(final SubLevelTransferEvent event) {
+        if (!MagConfig.aeroPortalsCompatEnabled()) return;
         RECENT_TRANSFERS.put(event.subUuid(), new java.lang.ref.WeakReference<>(event.newSub()));
         // A transfer replaces the ServerSubLevel object and changes its owning
         // ServerLevel. Never allow either dimension's derived ship state to be

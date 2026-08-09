@@ -5,7 +5,7 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 ## Requirements
 
 - Minecraft **1.21.1**
-- NeoForge **21.1.247+**
+- NeoForge **21.1.200+ and below 22.0** (development is pinned to **21.1.248**)
 - [Create](https://modrinth.com/mod/create) **6.0.11+**
 - [Sable](https://modrinth.com/mod/sable) **2.0.3+**
 - [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.3.0+**
@@ -13,21 +13,25 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 - [TerraBlender](https://modrinth.com/mod/terrablender) **4.1.0.8+**
 
 Optional integrations (auto-detected when installed):
-- [Jade](https://modrinth.com/mod/jade), [WTHIT](https://modrinth.com/mod/wthit), or [The One Probe](https://modrinth.com/mod/the-one-probe) for HUD info on emitters.
-- [JEI](https://modrinth.com/mod/jei), [REI](https://modrinth.com/mod/rei), or [EMI](https://modrinth.com/mod/emi) for an in-browser info page on the ferromagnetic-item tag.
-- [Curios](https://modrinth.com/mod/curios) — adds three slots to the player: **charm** (Field Compass), **back** (Magnetic Grapple), **hands** (Repulsor Gun). The compass is purely passive — its needle and HUD overlay both read the slot directly. The grapple and gun are active and fire via configurable keybinds under *Options → Controls → Key Binds → Magnetization*. Default keys are unbound so they never collide with vanilla on first launch.
-- [Patchouli](https://modrinth.com/mod/patchouli) — adds a craftable in-game guide book (Book + Raw Magnetite) covering basics, emitters, ship polarity, and advanced systems.
+
+- [Jade](https://modrinth.com/mod/jade), [WTHIT](https://modrinth.com/mod/wthit), or [The One Probe](https://modrinth.com/mod/the-one-probe) for live HUD information on Magnetization machines and emitters. Each viewer has its own master compatibility switch.
+- [JEI](https://modrinth.com/mod/jei), [REI](https://modrinth.com/mod/rei), or [EMI](https://modrinth.com/mod/emi) for recipe browsing plus discovery pages covering magnetic materials, ores, fusion fuels, and the major machines. Each recipe viewer has its own master compatibility switch.
+- [Just Enough Resources](https://www.curseforge.com/minecraft/mc-mods/just-enough-resources-jer) adds ore-distribution and drop information for Magnetization ores and Helium-3 geodes when JEI is present. `compat.justEnoughResourcesCompatEnabled` disables its registration.
+- [Curios](https://modrinth.com/mod/curios) — adds three slots to the player: **charm** (Field Compass), **back** (Magnetic Grapple), **hands** (Repulsor Gun). The compass is purely passive — its needle and HUD overlay both read the slot directly. The grapple and gun are active and fire via configurable keybinds under *Options → Controls → Key Binds → Magnetization*. Default keys are unbound so they never collide with vanilla on first launch. `compat.curiosCompatEnabled` disables the complete package.
+- [Patchouli](https://modrinth.com/mod/patchouli) — adds a craftable in-game guide book (Book + Raw Magnetite) covering basics, emitters, ship polarity, and advanced systems. `compat.patchouliCompatEnabled` gates the book registration, recipes, and automatic gift; restart after re-enabling it.
+- [Create: AeroPortals](https://www.curseforge.com/minecraft/mc-mods/aeroportals) — transfers Sable ships across dimensions, refreshes their derived magnetic state after traversal, and remaps paired Railgun Remotes to the transferred emitters. `compat.aeroPortalsCompatEnabled` disables the bridge. Verified against 1.2.3.
+- [Immersive Aeronautics](https://www.curseforge.com/minecraft/mc-mods/immersive-aeronautics) — preserves and refreshes a Sable ship's magnetic state when Immersive Portals moves it between dimensions. `compat.immersivePortalsCompatEnabled` disables cross-portal force and state projection. Verified against the 1.1.0 package and Immersive Portals Core 6.0.7.
 - [Alex's Caves](https://modrinth.com/mod/alexs-caves) — active Azure and Scarlet Magnets project opposite-polarity fields to physics ships while AC retains ownership of entity movement, preventing doubled force. Neodymium materials drive magnet-slot machines, shared Permanent Magnet/levitation/Ferrofluid recipes bridge progression, and `compat.alexsCavesPotionMode` controls effect coexistence. The complete package has independent master, field, recipe, and force controls.
-- [Create: Coasters Simulated](https://www.curseforge.com/minecraft/mc-mods/create-coasters-simulated) — coaster cars react to magnetic fields like other Sable craft. The Structural Inducer recognizes rail-engaged coaster trains (including linked cars and riveted bodies) as one existing structure, while loose carts are ignored. The two behaviors have independent toggles under `compat.simulatedCoastersFieldReaction` and `compat.simulatedCoastersStructuralInducer`.
+- [Create: Coasters Simulated](https://www.curseforge.com/minecraft/mc-mods/create-coasters-simulated) — coaster cars react to magnetic fields like other Sable craft. The Structural Inducer recognizes rail-engaged coaster trains (including linked cars and riveted bodies) as one existing structure, while loose carts are ignored. `compat.simulatedCoastersCompatEnabled` is the master above the two independent behavior toggles.
 - [Create: Big Cannons](https://www.curseforge.com/minecraft/mc-mods/create-big-cannons) — launched big-cannon shells, autocannon rounds, and their projectile bursts react to magnetic fields; cast iron, steel, Nethersteel, and cannon barrels receive magnetic/eddy-current material parity. Cannon carriages, gas clouds, and primed propellant remain excluded. A master switch sits above the projectile reaction and susceptibility controls.
 - [Create: New Age](https://www.curseforge.com/minecraft/mc-mods/create-new-age) — every native magnet emits a real field using CNA's published 1/2/4/8/24 strength ladder, with redstone reversing its presented pole. The same ladder drives machine-magnet potency; motors, Energisers, connectors, coils, and wires receive conductive roles; supplemental motor, generator-coil, and Energiser recipes accept Magnetization materials. Independently configurable and verified against 1.2.0.
 - [Create Crafts & Additions](https://www.curseforge.com/minecraft/mc-mods/createaddition) — a powered Tesla Coil emits a field scaled by live FE charge and its damage triggers LIRM. Electric machines, accumulators, connectors, and metal parts receive magnetic/conductive roles; Permanent Magnet motor/alternator recipes bridge progression; standard FE sources continue to power Magnetization machines. Independently configurable and verified against 1.6.0.
 - [Immersive Engineering](https://modrinth.com/mod/immersiveengineering) — powered Electromagnets emit continuous charge-scaled fields, Tesla Coils emit pulsed fields, and Railgun Shots react to nearby fields. IE Mixer and Metal Press recipes produce Ferrofluid and Magnetic Plates; electrical machines receive eddy-current parity. Magnetization rods and ingots were evaluated as Railgun ammunition but are deliberately not registered: IE's projectile API is a global, non-reloadable runtime list, so it cannot honor this integration's live config controls cleanly and would create an intrusive balance change. Independently configurable and verified against 12.4.2-194.
-- [Create: The Factory Must Grow](https://www.curseforge.com/minecraft/mc-mods/create-the-factory-must-grow) — Hydrogen, Lithium, magnetic alloy ingots/plates, magnets, electrical machinery, and industrial fluids interoperate in both directions. TFMG magnets drive Magnetization's magnet-slot machines; molten steel drives the MHD Jet; lubricant/casting/steelmaking/component recipes bridge both progression trees. Supplemental recipes, magnetic-fuel potency, tagged-fluid conductivity, and the opt-in voltage-scaled Polarizer field have dedicated server-facing controls. Verified against published 1.2.0.
+- [Create: The Factory Must Grow](https://www.curseforge.com/minecraft/mc-mods/create-the-factory-must-grow) — Hydrogen, Lithium, magnetic alloy ingots/plates, magnets, electrical machinery, and industrial fluids interoperate in both directions. TFMG magnets drive Magnetization's magnet-slot machines; molten steel drives the MHD Jet; lubricant/casting/steelmaking/component recipes bridge both progression trees. `compat.tfmgCompatEnabled` is the master above the recipe, magnetic-fuel, and opt-in Polarizer controls. Verified against published 1.2.0.
 - [Create: Tracks](https://www.curseforge.com/minecraft/mc-mods/create-tracks) — Track Mounts and all suspension/drive-wheel variants contribute to magnetic susceptibility. Tracked vehicles react as complete Sable craft, and the Structural Inducer preserves initialized Track Mount block entities when lifting a grounded vehicle. Verified against Tracks 1.0.1 with its required Offroad 1.3.0 runtime.
-- [Create: Steam 'n' Rails NeoForge](https://www.curseforge.com/minecraft/mc-mods/steam-n-rails-neoforge) — magnetic force is projected along the rail and applied once to the shared train, so coupled cars accelerate or brake together without leaving the track graph. Locometal and mechanical train parts receive material parity, assembled trains remain outside Structural Inducer block capture, and the track coupler gains a Magnetization Ponder scene. Verified against 0.2.1.
+- [Create: Steam 'n' Rails NeoForge](https://www.curseforge.com/minecraft/mc-mods/steam-n-rails-neoforge) — magnetic force is projected along the rail and applied once to the shared train, so coupled cars accelerate or brake together without leaving the track graph. Locometal and mechanical train parts receive material parity, assembled trains remain outside Structural Inducer block capture, and the track coupler gains a Magnetization Ponder scene. `compat.steamNRailsCompatEnabled` gates all behavior and documentation hooks. Verified against 0.2.1.
 - [Create: Diesel Generators](https://www.curseforge.com/minecraft/mc-mods/create-diesel-generators) — compact, modular, and huge engines retain their native Create kinetic/goggle behavior and their structural metal contributes ship susceptibility and eddy-current conduction. Chemical sprayers and turrets loaded with Ferrofluid apply Magnetized. Tanks, fermenters, barrels, fuel blocks, and encased pipes remain excluded. Independently configurable and verified against 1.21.1-1.3.15.
-- [Create: Copycats+](https://www.curseforge.com/minecraft/mc-mods/copycats) — susceptibility is inferred from the persisted copied material for both single- and multi-material copycats, including after Sable/Structural Inducer assembly. Create goggles show the resolved magnetic class and a dedicated Ponder scene explains the behavior. Verified against 3.0.4 for NeoForge 1.21.1.
+- [Create: Copycats+](https://www.curseforge.com/minecraft/mc-mods/copycats) — susceptibility is inferred from the persisted copied material for both single- and multi-material copycats, including after Sable/Structural Inducer assembly. Create goggles show the resolved magnetic class and a dedicated Ponder scene explains the behavior. `compat.copycatsCompatEnabled` disables the complete package. Verified against 3.0.4 for NeoForge 1.21.1.
 - [Create: Enchantment Industry](https://www.curseforge.com/minecraft/mc-mods/create-enchantment-industry) — metal processing machines participate as eddy-current conductors, while liquid/super experience and enchantment processing remain intentionally non-magnetic. The addon already supplies its own Create documentation, so compatibility is tag parity rather than a duplicate behavior hook. Verified against 2.4.2.
 - [Create: Ender Transmission](https://www.curseforge.com/minecraft/mc-mods/create-ender-transmission) — its Energy Transmitter carries **Create kinetic rotation**, not NeoForge FE. Dedicated tests cover linked rotation, chunk tickets, Ferrofluid/fusion-gas transport, and preservation of Magnetization item data components. An experimental one-hop field relay is available but disabled by default. Verified against 2.1.1.
 - [Magnetizing](https://www.curseforge.com/minecraft/mc-mods/magnetizing) — its magnetite ingots are fungible with ours via `c:ingots/magnetite`; its block/item magnets and colored magnetite blocks count as ferromagnetic to our emitters; we honour its `magnetizing:unmoveable_by_magnets` entity tag so admins only need to curate one list.
@@ -47,9 +51,10 @@ Optional integrations (auto-detected when installed):
 ## New in 1.3.0 — Fusion, Railgun & the fuel overhaul
 
 - **Fusion Thruster** — an expandable flat-panel multiblock thruster for airships: a `TOKAMAK_COIL` perimeter around a fill of fusion cells. A bigger panel means exponentially more thrust; it burns the fusion fluids below (Helium-3 is the strongest and longest-running).
-- **Railgun** — a paired-rail accelerator: two parallel powered rails form an arc that grabs a ship or magnetic entity and launches it down the channel with force that grows exponentially with rail length, smashing obstructing blocks. Block breaking can be disabled from either paired emitter GUI. Runs automatically, or pair the **Railgun Remote** for a manual hold-then-fire workflow (trap a ship on the rail, board it, then fire the remote from hand).
+- **Railgun** — a paired-rail accelerator: two parallel powered rails form an arc that grabs a ship or magnetic entity and launches it down the channel with force that grows exponentially with rail length, smashing obstructing blocks. Block breaking can be disabled from either paired emitter GUI. Runs automatically, or pair the **Railgun Remote** for a manual hold-then-fire workflow (trap a ship on the rail, board it, then fire the remote from hand). Rail length and power are uncapped by default; server owners can opt into a configurable maximum rail length.
 - **Electrolyzer** — a cauldron-style powered machine that splits water + FE into **Hydrogen**, the entry point of the fusion-fuel ladder: **Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3**. Tritium is bred from Deuterium + Lithium; Helium-3 is enriched or found in rare deepslate/End geodes.
-- **New worldgen** — a minor **Lithium ore** (overworld + deepslate) and a rare **Helium-3 geode**.
+- **New worldgen** — a minor **Lithium ore** (overworld + deepslate) and a rare **Helium-3 Geode** whose blocks drop **Helium-3 Crystals**. Nine crystals compact into **Solid Helium-3**, and the storage block unpacks back into nine crystals.
+- **Expanded material families** — Lithium, Pyrrhotite, Hematite, and Titanomagnetite now have complete tool, armor, and horse-armor sets. Ferromagnetic Alloy, Lithium, Raw Lithium, and Raw Gallium also have compact storage blocks alongside the existing iron-oxide families.
 - **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines now consume their magnet over a strength-scaled burn time (toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
 
 ## How it works
@@ -90,6 +95,7 @@ Magnets mounted on a ship still never pull their own ship directly (the carrying
 ## Items
 
 - **Ferromagnetic Ingot** — `8 iron + 1 lodestone → 8 ingots`. Base material for everything else.
+- **Ferromagnetic Block** — 9× compact storage for Ferromagnetic Ingots, reversible through normal crafting.
 - **Magnetic Plate** — `3 ferromagnetic ingot → 3 plates`. Cladding for emitter recipes.
 - **Field Compass** — `4 plates + 1 vanilla compass → 1 compass`. Right-click for the strongest active field nearby; sneak right-click lists every active field in range.
 - **Magnetic Grapple** — `2 plates + 1 lodestone core + 1 string → 1 grapple`. Right-click an attractive field source within 24 blocks to be yanked toward it.
@@ -97,6 +103,10 @@ Magnets mounted on a ship still never pull their own ship directly (the carrying
 - **Magnetite Ore / Deepslate Magnetite Ore** — naturally occurring Fe₃O₄. Drops raw magnetite (Fortune ore_drops formula). Stone-tier pickaxe.
 - **Raw Magnetite / Magnetite Ingot** — smelt or blast 1:1. Both are in `#magnetization:ferromagnetic` so emitters yank them straight off the ground.
 - **Block of Magnetite / Block of Raw Magnetite** — 9× compact storage. Iron-tier for the smelted block, stone-tier for the raw block. Both also ferromagnetic in bulk.
+- **Magnetic ore families** — Magnetite, Maghemite, Pyrrhotite, Hematite, and Titanomagnetite each provide raw/refined progression and compact storage. Their material properties differ across tool and armor families.
+- **Equipment families** — Magnetite, Ferromagnetic Alloy, Maghemite, Gallium, Lithium, Pyrrhotite, Hematite, and Titanomagnetite provide craftable tool, armor, and horse-armor options; magnetized tools retain their signature sword, pickaxe, axe, shovel, and hoe abilities.
+- **Lithium / Raw Lithium / Raw Gallium Blocks** — reversible 9× storage for their corresponding progression materials. Solid Gallium remains the phase-changing refined storage block.
+- **Helium-3 Crystal** — rare solid fusion fuel obtained from Helium-3 Geodes or late fusion-fuel processing. Nine crystals craft into **Solid Helium-3**, a reversible storage block.
 
 ## Propulsion track example
 
@@ -124,7 +134,7 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 
 ## Player interactions
 
-- **Iron / chainmail / gold / netherite / magnetite / ferromagnetic armor** makes you magnetizable. Each piece worn adds susceptibility — full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
+- **Tagged metal armor** makes you magnetizable, including vanilla iron/chainmail/gold/netherite and the Magnetite, Ferromagnetic Alloy, Maghemite, Gallium, Lithium, Pyrrhotite, Hematite, and Titanomagnetite families. Each piece worn adds susceptibility — a full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
 - **Magnetic Grapple** turns infrastructure into traversal. Right-click pointing at any space within 24 blocks of an active attractive field; the closest qualifying emitter pulls you toward it. Cooldown: 1 second.
 - **`/magnetization help`** lists every subcommand available to the caller's permission level with a one-line description.
 - **`/magnetization version`** prints mod + Create + Sable + Aeronautics + NeoForge versions. Handy for bug reports.
@@ -298,10 +308,10 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 ```sh
 ./gradlew build                # produces build/libs/magnetization-<version>.jar
 ./gradlew test                 # unit tests on field math + ship state
-./gradlew runGameTestServer    # headless in-world integration tests (emitter lifecycle + energy drain)
+./gradlew runGameTestServer    # headless in-world integration and compatibility GameTests
 ```
 
-`./gradlew runClient` for an in-dev test run; `./gradlew runServer` for a hands-on dedicated-server run; `./gradlew runData` to regenerate recipes + loot tables (most other data is hand-authored).
+`./gradlew runClient` starts an in-development client; `./gradlew runServer` starts a hands-on dedicated server. `./gradlew runData` regenerates recipes, loot tables, vanilla mining tags, and crater structure templates; compatibility tags and other curated data remain hand-authored.
 
 ### Prepared 1.3.0 playtest worlds
 
@@ -362,7 +372,7 @@ Use the `attach` second argument to exercise an already-running matching profile
 
 ### Release smoke-test profiles
 
-Four separate profiles, so a failure says *which* environment broke rather than "it broke".
+Core release profiles plus isolated optional-mod suites make failures attributable to a specific environment instead of a single undifferentiated smoke run.
 
 ```sh
 ./gradlew smokeServerMinimal   # RELEASE GATE — minimal dedicated server, hard deps only
@@ -372,6 +382,8 @@ Four separate profiles, so a failure says *which* environment broke rather than 
 ./gradlew releaseGate          # build + both automated gates
 ./gradlew releaseMatrixGate    # release gate + every isolated published optional-mod suite
 ```
+
+`releaseMatrixGate` runs the core release gate and each published optional integration in isolation; `scripts/run-release-matrix-gate.sh` provides the equivalent scripted entry point.
 
 `smokeServerMinimal` boots a real dedicated server in its own `run-smoke-server/`
 directory with **hard dependencies only**, lets it run (default 210 s, override with
@@ -392,6 +404,7 @@ without it, which is how you tell "our bug" from "the compat pack's bug".
 ## Known issues
 
 - Sable may log `Received a sub-level movement packet for a non-existent sub-level` on the client at low frequency while the Magnetic Excavator is actively pulling. This is a packet-ordering race during the excavator's rapid sub-level assemble→remove cycle for blocks Sable couldn't initialize a body for; it's non-fatal and only affects log noise.
+- Headless Sable physics GameTests can be timing-sensitive under load. If a physics assertion fails, rerun the named isolated batch to establish whether it is reproducible; repeated failure of the same assertion should be treated as a regression, while different one-off failures across runs point to harness timing or isolation.
 
 ## License
 
