@@ -5,8 +5,8 @@ A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/cre
 ## Requirements
 
 - Minecraft **1.21.1**
-- NeoForge **21.1.200+ and below 22.0** (development is pinned to **21.1.248**)
-- [Create](https://modrinth.com/mod/create) **6.0.11+**
+- NeoForge **21.1.219+ and below 22.0** for the complete required stack (Magnetization itself permits **21.1.200+**; Create 6.0.10 sets the effective 21.1.219 floor; development uses **21.1.248**)
+- [Create](https://modrinth.com/mod/create) **6.0.10+** (development uses the newer official Maven build 6.0.11-295)
 - [Sable](https://modrinth.com/mod/sable) **2.0.3+**
 - [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.3.0+**
 - Simulated **1.3.0+**

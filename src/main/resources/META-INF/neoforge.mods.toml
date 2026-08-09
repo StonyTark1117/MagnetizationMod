@@ -44,7 +44,7 @@ modId = "create"
 type = "required"
 # Open upper bound: a future major (7.x) is far more likely to still work than to
 # need us blocked from launching. Loose ranges avoid a hard lock-out on updates.
-versionRange = "[6.0.11,)"
+versionRange = "[${create_mod_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -202,7 +202,10 @@ side = "CLIENT"
 [[dependencies.${mod_id}]]
 modId = "theoneprobe"
 type = "optional"
-versionRange = "[12.0.8,)"
+# TOP prefixes its actual NeoForge mod version with the Minecraft line. A bare
+# 12.0.8 floor does not match the released 1.21_neo-12.0.8 jar under NeoForge's
+# Maven version comparison.
+versionRange = "[1.21_neo-12.0.8,)"
 ordering = "AFTER"
 side = "BOTH"
 

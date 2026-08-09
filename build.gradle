@@ -390,6 +390,7 @@ processResources {
         minecraft_version: minecraft_version,
         neoforge_version : neoforge_version,
         neoforge_min_version: neoforge_min_version,
+        create_mod_version: create_mod_version,
         jade_min_version: jade_min_version,
         jei_min_version: jei_min_version
     ]
