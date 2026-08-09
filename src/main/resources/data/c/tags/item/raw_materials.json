@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "magnetization:raw_magnetite",
-    "magnetization:raw_lithium"
+    "magnetization:raw_maghemite",
+    "magnetization:raw_pyrrhotite",
+    "magnetization:raw_hematite",
+    "magnetization:raw_titanomagnetite",
+    "magnetization:raw_lithium",
+    "magnetization:raw_gallium"
   ]
 }

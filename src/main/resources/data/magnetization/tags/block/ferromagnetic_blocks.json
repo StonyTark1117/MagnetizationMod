@@ -12,6 +12,7 @@
     {"id": "#c:storage_blocks/raw_iron", "required": false},
     {"id": "#c:storage_blocks/raw_gold", "required": false},
     {"id": "#c:storage_blocks/raw_copper", "required": false},
+    {"id": "#c:storage_blocks/magnetic_alloy", "required": false},
     {"id": "#c:ores/magnetite", "required": false},
     {"id": "#c:storage_blocks/magnetite", "required": false},
     {"id": "#c:storage_blocks/raw_magnetite", "required": false},

@@ -64,6 +64,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> DEEPSLATE_MAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_MAGNETITE_ORE);
     public static final DeferredItem<BlockItem> MAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> RAW_MAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_MAGNETITE_BLOCK);
+    public static final DeferredItem<BlockItem> FERROMAGNETIC_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.FERROMAGNETIC_BLOCK);
     public static final DeferredItem<BlockItem> ANOMALY_STONE = REGISTER.registerSimpleBlockItem(MagBlocks.ANOMALY_STONE);
     public static final DeferredItem<BlockItem> MAGNETIC_GRAVEL = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_GRAVEL);
     public static final DeferredItem<BlockItem> COBBLED_ANOMALY_STONE = REGISTER.registerSimpleBlockItem(MagBlocks.COBBLED_ANOMALY_STONE);
@@ -327,10 +328,13 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> RAW_TITANOMAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_TITANOMAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.LITHIUM_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_LITHIUM_ORE);
+    public static final DeferredItem<BlockItem> LITHIUM_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.LITHIUM_BLOCK);
+    public static final DeferredItem<BlockItem> RAW_LITHIUM_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_LITHIUM_BLOCK);
     public static final DeferredItem<BlockItem> HELIUM_3_GEODE = REGISTER.registerSimpleBlockItem(MagBlocks.HELIUM_3_GEODE);
     public static final DeferredItem<BlockItem> SOLID_HELIUM_3 = REGISTER.registerSimpleBlockItem(MagBlocks.SOLID_HELIUM_3);
     public static final DeferredItem<Item> RAW_TITANOMAGNETITE = REGISTER.registerSimpleItem("raw_titanomagnetite", new Item.Properties());
     public static final DeferredItem<Item> TITANOMAGNETITE_INGOT = REGISTER.registerSimpleItem("titanomagnetite_ingot", new Item.Properties());
+    public static final DeferredItem<BlockItem> RAW_GALLIUM_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_GALLIUM_BLOCK);
 
     public static final DeferredItem<com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteCatalystBlockItem> PYRRHOTITE_CATALYST =
             REGISTER.registerItem("pyrrhotite_catalyst",
@@ -529,6 +533,97 @@ public final class MagItems {
                     p -> new AnimalArmorItem(MagArmorMaterials.ferromagnetic(),
                             AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
                     new Item.Properties().stacksTo(1));
+
+    // ---- Additional complete metal families ----
+    // Lithium is fast and enchantable but deliberately fragile. Pyrrhotite and
+    // hematite fill the iron progression; scarce titanomagnetite is diamond-tier.
+    public static final DeferredItem<SwordItem> LITHIUM_SWORD = sword("lithium_sword", MagTiers.LITHIUM, 3, -2.4f);
+    public static final DeferredItem<PickaxeItem> LITHIUM_PICKAXE = pickaxe("lithium_pickaxe", MagTiers.LITHIUM, 1, -2.8f);
+    public static final DeferredItem<AxeItem> LITHIUM_AXE = axe("lithium_axe", MagTiers.LITHIUM, 6, -3.1f);
+    public static final DeferredItem<ShovelItem> LITHIUM_SHOVEL = shovel("lithium_shovel", MagTiers.LITHIUM, 1.5f, -3.0f);
+    public static final DeferredItem<HoeItem> LITHIUM_HOE = hoe("lithium_hoe", MagTiers.LITHIUM, 0, -3.0f);
+    public static final DeferredItem<ArmorItem> LITHIUM_HELMET = armor("lithium_helmet", MagArmorMaterials.lithium(), ArmorItem.Type.HELMET, 4);
+    public static final DeferredItem<ArmorItem> LITHIUM_CHESTPLATE = armor("lithium_chestplate", MagArmorMaterials.lithium(), ArmorItem.Type.CHESTPLATE, 4);
+    public static final DeferredItem<ArmorItem> LITHIUM_LEGGINGS = armor("lithium_leggings", MagArmorMaterials.lithium(), ArmorItem.Type.LEGGINGS, 4);
+    public static final DeferredItem<ArmorItem> LITHIUM_BOOTS = armor("lithium_boots", MagArmorMaterials.lithium(), ArmorItem.Type.BOOTS, 4);
+    public static final DeferredItem<AnimalArmorItem> LITHIUM_HORSE_ARMOR = horseArmor("lithium_horse_armor", MagArmorMaterials.lithium());
+
+    public static final DeferredItem<SwordItem> PYRRHOTITE_SWORD = sword("pyrrhotite_sword", MagTiers.PYRRHOTITE, 3, -2.4f);
+    public static final DeferredItem<PickaxeItem> PYRRHOTITE_PICKAXE = pickaxe("pyrrhotite_pickaxe", MagTiers.PYRRHOTITE, 1, -2.8f);
+    public static final DeferredItem<AxeItem> PYRRHOTITE_AXE = axe("pyrrhotite_axe", MagTiers.PYRRHOTITE, 6, -3.1f);
+    public static final DeferredItem<ShovelItem> PYRRHOTITE_SHOVEL = shovel("pyrrhotite_shovel", MagTiers.PYRRHOTITE, 1.5f, -3.0f);
+    public static final DeferredItem<HoeItem> PYRRHOTITE_HOE = hoe("pyrrhotite_hoe", MagTiers.PYRRHOTITE, -2, -1.0f);
+    public static final DeferredItem<ArmorItem> PYRRHOTITE_HELMET = armor("pyrrhotite_helmet", MagArmorMaterials.pyrrhotite(), ArmorItem.Type.HELMET, 14);
+    public static final DeferredItem<ArmorItem> PYRRHOTITE_CHESTPLATE = armor("pyrrhotite_chestplate", MagArmorMaterials.pyrrhotite(), ArmorItem.Type.CHESTPLATE, 14);
+    public static final DeferredItem<ArmorItem> PYRRHOTITE_LEGGINGS = armor("pyrrhotite_leggings", MagArmorMaterials.pyrrhotite(), ArmorItem.Type.LEGGINGS, 14);
+    public static final DeferredItem<ArmorItem> PYRRHOTITE_BOOTS = armor("pyrrhotite_boots", MagArmorMaterials.pyrrhotite(), ArmorItem.Type.BOOTS, 14);
+    public static final DeferredItem<AnimalArmorItem> PYRRHOTITE_HORSE_ARMOR = horseArmor("pyrrhotite_horse_armor", MagArmorMaterials.pyrrhotite());
+
+    public static final DeferredItem<SwordItem> HEMATITE_SWORD = sword("hematite_sword", MagTiers.HEMATITE, 3, -2.4f);
+    public static final DeferredItem<PickaxeItem> HEMATITE_PICKAXE = pickaxe("hematite_pickaxe", MagTiers.HEMATITE, 1, -2.8f);
+    public static final DeferredItem<AxeItem> HEMATITE_AXE = axe("hematite_axe", MagTiers.HEMATITE, 6, -3.1f);
+    public static final DeferredItem<ShovelItem> HEMATITE_SHOVEL = shovel("hematite_shovel", MagTiers.HEMATITE, 1.5f, -3.0f);
+    public static final DeferredItem<HoeItem> HEMATITE_HOE = hoe("hematite_hoe", MagTiers.HEMATITE, -2, -1.0f);
+    public static final DeferredItem<ArmorItem> HEMATITE_HELMET = armor("hematite_helmet", MagArmorMaterials.hematite(), ArmorItem.Type.HELMET, 18);
+    public static final DeferredItem<ArmorItem> HEMATITE_CHESTPLATE = armor("hematite_chestplate", MagArmorMaterials.hematite(), ArmorItem.Type.CHESTPLATE, 18);
+    public static final DeferredItem<ArmorItem> HEMATITE_LEGGINGS = armor("hematite_leggings", MagArmorMaterials.hematite(), ArmorItem.Type.LEGGINGS, 18);
+    public static final DeferredItem<ArmorItem> HEMATITE_BOOTS = armor("hematite_boots", MagArmorMaterials.hematite(), ArmorItem.Type.BOOTS, 18);
+    public static final DeferredItem<AnimalArmorItem> HEMATITE_HORSE_ARMOR = horseArmor("hematite_horse_armor", MagArmorMaterials.hematite());
+
+    public static final DeferredItem<SwordItem> TITANOMAGNETITE_SWORD = sword("titanomagnetite_sword", MagTiers.TITANOMAGNETITE, 3, -2.4f);
+    public static final DeferredItem<PickaxeItem> TITANOMAGNETITE_PICKAXE = pickaxe("titanomagnetite_pickaxe", MagTiers.TITANOMAGNETITE, 1, -2.8f);
+    public static final DeferredItem<AxeItem> TITANOMAGNETITE_AXE = axe("titanomagnetite_axe", MagTiers.TITANOMAGNETITE, 5, -3.0f);
+    public static final DeferredItem<ShovelItem> TITANOMAGNETITE_SHOVEL = shovel("titanomagnetite_shovel", MagTiers.TITANOMAGNETITE, 1.5f, -3.0f);
+    public static final DeferredItem<HoeItem> TITANOMAGNETITE_HOE = hoe("titanomagnetite_hoe", MagTiers.TITANOMAGNETITE, -3, 0.0f);
+    public static final DeferredItem<ArmorItem> TITANOMAGNETITE_HELMET = armor("titanomagnetite_helmet", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.HELMET, 30);
+    public static final DeferredItem<ArmorItem> TITANOMAGNETITE_CHESTPLATE = armor("titanomagnetite_chestplate", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.CHESTPLATE, 30);
+    public static final DeferredItem<ArmorItem> TITANOMAGNETITE_LEGGINGS = armor("titanomagnetite_leggings", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.LEGGINGS, 30);
+    public static final DeferredItem<ArmorItem> TITANOMAGNETITE_BOOTS = armor("titanomagnetite_boots", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.BOOTS, 30);
+    public static final DeferredItem<AnimalArmorItem> TITANOMAGNETITE_HORSE_ARMOR = horseArmor("titanomagnetite_horse_armor", MagArmorMaterials.titanomagnetite());
+
+    private static DeferredItem<SwordItem> sword(final String name, final net.minecraft.world.item.Tier tier,
+                                                  final float damage, final float speed) {
+        return REGISTER.registerItem(name, p -> new SwordItem(tier, p),
+                new Item.Properties().attributes(SwordItem.createAttributes(tier, damage, speed)));
+    }
+
+    private static DeferredItem<PickaxeItem> pickaxe(final String name, final net.minecraft.world.item.Tier tier,
+                                                      final float damage, final float speed) {
+        return REGISTER.registerItem(name, p -> new PickaxeItem(tier, p),
+                new Item.Properties().attributes(PickaxeItem.createAttributes(tier, damage, speed)));
+    }
+
+    private static DeferredItem<AxeItem> axe(final String name, final net.minecraft.world.item.Tier tier,
+                                              final float damage, final float speed) {
+        return REGISTER.registerItem(name, p -> new AxeItem(tier, p),
+                new Item.Properties().attributes(AxeItem.createAttributes(tier, damage, speed)));
+    }
+
+    private static DeferredItem<ShovelItem> shovel(final String name, final net.minecraft.world.item.Tier tier,
+                                                    final float damage, final float speed) {
+        return REGISTER.registerItem(name, p -> new ShovelItem(tier, p),
+                new Item.Properties().attributes(ShovelItem.createAttributes(tier, damage, speed)));
+    }
+
+    private static DeferredItem<HoeItem> hoe(final String name, final net.minecraft.world.item.Tier tier,
+                                              final float damage, final float speed) {
+        return REGISTER.registerItem(name, p -> new HoeItem(tier, p),
+                new Item.Properties().attributes(HoeItem.createAttributes(tier, damage, speed)));
+    }
+
+    private static DeferredItem<ArmorItem> armor(final String name,
+                                                  final net.minecraft.core.Holder<net.minecraft.world.item.ArmorMaterial> material,
+                                                  final ArmorItem.Type type, final int durabilityFactor) {
+        return REGISTER.registerItem(name, p -> new ArmorItem(material, type, p),
+                new Item.Properties().durability(type.getDurability(durabilityFactor)));
+    }
+
+    private static DeferredItem<AnimalArmorItem> horseArmor(final String name,
+                                                             final net.minecraft.core.Holder<net.minecraft.world.item.ArmorMaterial> material) {
+        return REGISTER.registerItem(name,
+                p -> new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
+                new Item.Properties().stacksTo(1));
+    }
 
     private MagItems() {}
 }

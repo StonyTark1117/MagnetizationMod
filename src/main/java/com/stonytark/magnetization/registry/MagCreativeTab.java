@@ -43,6 +43,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.RAW_PYRRHOTITE);
                         accept(output, MagItems.RAW_HEMATITE);
                         accept(output, MagItems.RAW_TITANOMAGNETITE);
+                        accept(output, MagItems.RAW_LITHIUM);
+                        accept(output, MagItems.RAW_GALLIUM);
                         // ── Ingots ──
                         accept(output, MagItems.MAGNETITE_INGOT);
                         accept(output, MagItems.FERROMAGNETIC_INGOT);
@@ -50,6 +52,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.PYRRHOTITE_INGOT);
                         accept(output, MagItems.HEMATITE_INGOT);
                         accept(output, MagItems.TITANOMAGNETITE_INGOT);
+                        accept(output, MagItems.LITHIUM);
+                        accept(output, MagItems.GALLIUM_INGOT);
                         // ── Storage blocks (refined + raw) ──
                         accept(output, MagItems.MAGNETITE_BLOCK);
                         accept(output, MagItems.RAW_MAGNETITE_BLOCK);
@@ -61,6 +65,12 @@ public final class MagCreativeTab {
                         accept(output, MagItems.RAW_HEMATITE_BLOCK);
                         accept(output, MagItems.TITANOMAGNETITE_BLOCK);
                         accept(output, MagItems.RAW_TITANOMAGNETITE_BLOCK);
+                        accept(output, MagItems.FERROMAGNETIC_BLOCK);
+                        accept(output, MagItems.LITHIUM_BLOCK);
+                        accept(output, MagItems.RAW_LITHIUM_BLOCK);
+                        accept(output, MagItems.SOLID_GALLIUM);
+                        accept(output, MagItems.RAW_GALLIUM_BLOCK);
+                        accept(output, MagItems.SOLID_HELIUM_3);
 
                         // ── Worldgen stone, gravel & decoration ──
                         accept(output, MagItems.ANOMALY_STONE);
@@ -89,6 +99,26 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGHEMITE_AXE);
                         accept(output, MagItems.MAGHEMITE_SHOVEL);
                         accept(output, MagItems.MAGHEMITE_HOE);
+                        accept(output, MagItems.PYRRHOTITE_SWORD);
+                        accept(output, MagItems.PYRRHOTITE_PICKAXE);
+                        accept(output, MagItems.PYRRHOTITE_AXE);
+                        accept(output, MagItems.PYRRHOTITE_SHOVEL);
+                        accept(output, MagItems.PYRRHOTITE_HOE);
+                        accept(output, MagItems.HEMATITE_SWORD);
+                        accept(output, MagItems.HEMATITE_PICKAXE);
+                        accept(output, MagItems.HEMATITE_AXE);
+                        accept(output, MagItems.HEMATITE_SHOVEL);
+                        accept(output, MagItems.HEMATITE_HOE);
+                        accept(output, MagItems.TITANOMAGNETITE_SWORD);
+                        accept(output, MagItems.TITANOMAGNETITE_PICKAXE);
+                        accept(output, MagItems.TITANOMAGNETITE_AXE);
+                        accept(output, MagItems.TITANOMAGNETITE_SHOVEL);
+                        accept(output, MagItems.TITANOMAGNETITE_HOE);
+                        accept(output, MagItems.LITHIUM_SWORD);
+                        accept(output, MagItems.LITHIUM_PICKAXE);
+                        accept(output, MagItems.LITHIUM_AXE);
+                        accept(output, MagItems.LITHIUM_SHOVEL);
+                        accept(output, MagItems.LITHIUM_HOE);
                         accept(output, MagItems.MR_FLUID_SWORD);
                         accept(output, MagItems.MR_FLUID_PICKAXE);
                         accept(output, MagItems.MR_FLUID_AXE);
@@ -116,6 +146,26 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGHEMITE_LEGGINGS);
                         accept(output, MagItems.MAGHEMITE_BOOTS);
                         accept(output, MagItems.MAGHEMITE_HORSE_ARMOR);
+                        accept(output, MagItems.PYRRHOTITE_HELMET);
+                        accept(output, MagItems.PYRRHOTITE_CHESTPLATE);
+                        accept(output, MagItems.PYRRHOTITE_LEGGINGS);
+                        accept(output, MagItems.PYRRHOTITE_BOOTS);
+                        accept(output, MagItems.PYRRHOTITE_HORSE_ARMOR);
+                        accept(output, MagItems.HEMATITE_HELMET);
+                        accept(output, MagItems.HEMATITE_CHESTPLATE);
+                        accept(output, MagItems.HEMATITE_LEGGINGS);
+                        accept(output, MagItems.HEMATITE_BOOTS);
+                        accept(output, MagItems.HEMATITE_HORSE_ARMOR);
+                        accept(output, MagItems.TITANOMAGNETITE_HELMET);
+                        accept(output, MagItems.TITANOMAGNETITE_CHESTPLATE);
+                        accept(output, MagItems.TITANOMAGNETITE_LEGGINGS);
+                        accept(output, MagItems.TITANOMAGNETITE_BOOTS);
+                        accept(output, MagItems.TITANOMAGNETITE_HORSE_ARMOR);
+                        accept(output, MagItems.LITHIUM_HELMET);
+                        accept(output, MagItems.LITHIUM_CHESTPLATE);
+                        accept(output, MagItems.LITHIUM_LEGGINGS);
+                        accept(output, MagItems.LITHIUM_BOOTS);
+                        accept(output, MagItems.LITHIUM_HORSE_ARMOR);
                         accept(output, MagItems.MR_FLUID_HORSE_ARMOR);
                         accept(output, MagItems.GALLIUM_HELMET);
                         accept(output, MagItems.GALLIUM_CHESTPLATE);
@@ -137,17 +187,11 @@ public final class MagCreativeTab {
                         accept(output, MagItems.MAGNETIC_PLATE);
                         accept(output, MagItems.PYROLYTIC_CARBON);
                         accept(output, MagItems.DIAMAGNETIC_BLOCK);
-                        accept(output, MagItems.RAW_GALLIUM);
-                        accept(output, MagItems.GALLIUM_INGOT);
-                        accept(output, MagItems.SOLID_GALLIUM);
-                        accept(output, MagItems.SOLID_HELIUM_3);
                         accept(output, MagItems.HEMATITE_LENS);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.DEUTERIUM_CELL);
                         accept(output, MagItems.TRITIUM_CELL);
                         accept(output, MagItems.HELIUM_3_CELL);
-                        accept(output, MagItems.LITHIUM);
-                        accept(output, MagItems.RAW_LITHIUM);
                         accept(output, MagItems.HELIUM_3_CRYSTAL);
                         accept(output, MagItems.PYRRHOTITE_CATALYST);
                         accept(output, MagItems.ENHANCED_PYRRHOTITE_CATALYST);

@@ -174,9 +174,76 @@ public final class MagArmorMaterials {
                 );
             });
 
+    /** Lightweight lithium armor: leather-level protection, very high
+     *  enchantability, and deliberately low durability on the item registrations. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> LITHIUM =
+            REGISTER.register("lithium", () -> material(
+                    1, 3, 2, 1, 3, 24,
+                    SoundEvents.ARMOR_EQUIP_GOLD,
+                    () -> Ingredient.of(MagItems.LITHIUM.get()),
+                    "lithium", 0.0f, 0.0f));
+
+    /** Pyrrhotite is an iron-tier sulfide: protective, but less stable than refined iron. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> PYRRHOTITE =
+            REGISTER.register("pyrrhotite", () -> material(
+                    2, 5, 4, 2, 5, 12,
+                    SoundEvents.ARMOR_EQUIP_IRON,
+                    () -> Ingredient.of(MagItems.PYRRHOTITE_INGOT.get()),
+                    "pyrrhotite", 0.0f, 0.0f));
+
+    /** Dense hematite is slightly more durable than the other common oxides. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> HEMATITE =
+            REGISTER.register("hematite", () -> material(
+                    2, 6, 5, 2, 5, 9,
+                    SoundEvents.ARMOR_EQUIP_IRON,
+                    () -> Ingredient.of(MagItems.HEMATITE_INGOT.get()),
+                    "hematite", 0.0f, 0.0f));
+
+    /** High-tier titanomagnetite armor: diamond-like defense with a little more
+     *  toughness and a small amount of knockback resistance. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> TITANOMAGNETITE =
+            REGISTER.register("titanomagnetite", () -> material(
+                    3, 8, 6, 3, 11, 12,
+                    SoundEvents.ARMOR_EQUIP_DIAMOND,
+                    () -> Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get()),
+                    "titanomagnetite", 2.5f, 0.05f));
+
+    private static ArmorMaterial material(final int helmet, final int chestplate,
+                                           final int leggings, final int boots,
+                                           final int body, final int enchantment,
+                                           final net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent> sound,
+                                           final java.util.function.Supplier<Ingredient> repair,
+                                           final String texture, final float toughness,
+                                           final float knockbackResistance) {
+        final Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.HELMET, helmet);
+        defense.put(ArmorItem.Type.CHESTPLATE, chestplate);
+        defense.put(ArmorItem.Type.LEGGINGS, leggings);
+        defense.put(ArmorItem.Type.BOOTS, boots);
+        defense.put(ArmorItem.Type.BODY, body);
+        return new ArmorMaterial(
+                defense,
+                enchantment,
+                sound,
+                repair,
+                List.of(new ArmorMaterial.Layer(
+                        ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, texture),
+                        "", false)),
+                toughness,
+                knockbackResistance);
+    }
+
     public static Holder<ArmorMaterial> gallium() {
         return GALLIUM;
     }
+
+    public static Holder<ArmorMaterial> lithium() { return LITHIUM; }
+
+    public static Holder<ArmorMaterial> pyrrhotite() { return PYRRHOTITE; }
+
+    public static Holder<ArmorMaterial> hematite() { return HEMATITE; }
+
+    public static Holder<ArmorMaterial> titanomagnetite() { return TITANOMAGNETITE; }
 
     public static Holder<ArmorMaterial> mrLiquid() {
         return MR_LIQUID;

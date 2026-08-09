@@ -276,6 +276,9 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_block", has(MagBlocks.RAW_MAGNETITE_BLOCK.get()))
                 .save(out, id("raw_magnetite_from_block"));
 
+        storageBlock(out, "ferromagnetic_block", "ferromagnetic_ingot_from_block",
+                magAlloy, ferro, MagBlocks.FERROMAGNETIC_BLOCK.get());
+
         // -------- craftable ore blocks (raw_magnetite + stone/deepslate) --------
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, MagBlocks.MAGNETITE_ORE.get())
@@ -561,6 +564,38 @@ public final class MagRecipeProvider extends RecipeProvider {
         shapelessFluidTool(out, MagItems.MR_LIQUID_LEGGINGS.get(), Items.IRON_LEGGINGS, mrBucket, "mr_liquid_leggings");
         shapelessFluidTool(out, MagItems.MR_LIQUID_BOOTS.get(), Items.IRON_BOOTS, mrBucket, "mr_liquid_boots");
 
+        // -------- Remaining refined-metal equipment families --------
+        equipmentSet(out, Ingredient.of(C_INGOTS_LITHIUM), "lithium",
+                MagItems.LITHIUM_SWORD.get(), MagItems.LITHIUM_PICKAXE.get(), MagItems.LITHIUM_AXE.get(),
+                MagItems.LITHIUM_SHOVEL.get(), MagItems.LITHIUM_HOE.get(),
+                MagItems.LITHIUM_HELMET.get(), MagItems.LITHIUM_CHESTPLATE.get(),
+                MagItems.LITHIUM_LEGGINGS.get(), MagItems.LITHIUM_BOOTS.get(), MagItems.LITHIUM.get());
+        horseArmor(out, "lithium", Ingredient.of(C_INGOTS_LITHIUM), MagItems.LITHIUM_HORSE_ARMOR.get(), MagItems.LITHIUM.get());
+
+        equipmentSet(out, Ingredient.of(MagItems.PYRRHOTITE_INGOT.get()), "pyrrhotite",
+                MagItems.PYRRHOTITE_SWORD.get(), MagItems.PYRRHOTITE_PICKAXE.get(), MagItems.PYRRHOTITE_AXE.get(),
+                MagItems.PYRRHOTITE_SHOVEL.get(), MagItems.PYRRHOTITE_HOE.get(),
+                MagItems.PYRRHOTITE_HELMET.get(), MagItems.PYRRHOTITE_CHESTPLATE.get(),
+                MagItems.PYRRHOTITE_LEGGINGS.get(), MagItems.PYRRHOTITE_BOOTS.get(), MagItems.PYRRHOTITE_INGOT.get());
+        horseArmor(out, "pyrrhotite", Ingredient.of(MagItems.PYRRHOTITE_INGOT.get()),
+                MagItems.PYRRHOTITE_HORSE_ARMOR.get(), MagItems.PYRRHOTITE_INGOT.get());
+
+        equipmentSet(out, Ingredient.of(MagItems.HEMATITE_INGOT.get()), "hematite",
+                MagItems.HEMATITE_SWORD.get(), MagItems.HEMATITE_PICKAXE.get(), MagItems.HEMATITE_AXE.get(),
+                MagItems.HEMATITE_SHOVEL.get(), MagItems.HEMATITE_HOE.get(),
+                MagItems.HEMATITE_HELMET.get(), MagItems.HEMATITE_CHESTPLATE.get(),
+                MagItems.HEMATITE_LEGGINGS.get(), MagItems.HEMATITE_BOOTS.get(), MagItems.HEMATITE_INGOT.get());
+        horseArmor(out, "hematite", Ingredient.of(MagItems.HEMATITE_INGOT.get()),
+                MagItems.HEMATITE_HORSE_ARMOR.get(), MagItems.HEMATITE_INGOT.get());
+
+        equipmentSet(out, Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get()), "titanomagnetite",
+                MagItems.TITANOMAGNETITE_SWORD.get(), MagItems.TITANOMAGNETITE_PICKAXE.get(), MagItems.TITANOMAGNETITE_AXE.get(),
+                MagItems.TITANOMAGNETITE_SHOVEL.get(), MagItems.TITANOMAGNETITE_HOE.get(),
+                MagItems.TITANOMAGNETITE_HELMET.get(), MagItems.TITANOMAGNETITE_CHESTPLATE.get(),
+                MagItems.TITANOMAGNETITE_LEGGINGS.get(), MagItems.TITANOMAGNETITE_BOOTS.get(), MagItems.TITANOMAGNETITE_INGOT.get());
+        horseArmor(out, "titanomagnetite", Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get()),
+                MagItems.TITANOMAGNETITE_HORSE_ARMOR.get(), MagItems.TITANOMAGNETITE_INGOT.get());
+
         // -------- Gallium gear (gold-like; M = gallium_ingot) --------
         final Item gIngot = MagItems.GALLIUM_INGOT.get();
         equipmentSet(out, Ingredient.of(gIngot), "gallium",
@@ -589,6 +624,13 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .requires(MagBlocks.SOLID_GALLIUM.get())
                 .unlockedBy("has_block", has(MagBlocks.SOLID_GALLIUM.get()))
                 .save(out, id("gallium_ingot_from_block"));
+
+        storageBlock(out, "raw_gallium_block", "raw_gallium_from_block",
+                Ingredient.of(MagItems.RAW_GALLIUM.get()), MagItems.RAW_GALLIUM.get(), MagBlocks.RAW_GALLIUM_BLOCK.get());
+        storageBlock(out, "lithium_block", "lithium_from_block",
+                Ingredient.of(C_INGOTS_LITHIUM), MagItems.LITHIUM.get(), MagBlocks.LITHIUM_BLOCK.get());
+        storageBlock(out, "raw_lithium_block", "raw_lithium_from_block",
+                Ingredient.of(C_RAW_MATERIALS_LITHIUM), MagItems.RAW_LITHIUM.get(), MagBlocks.RAW_LITHIUM_BLOCK.get());
 
         // -------- Solid Helium-3 storage block <-> 9 crystals --------
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, MagBlocks.SOLID_HELIUM_3.get())
@@ -923,6 +965,30 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('M', mat)
                 .unlockedBy("has_material", has(unlockTrigger))
                 .save(out, id(prefix + "_boots"));
+    }
+
+    private static void horseArmor(final RecipeOutput out, final String prefix, final Ingredient material,
+                                   final Item result, final ItemLike unlockTrigger) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result)
+                .pattern("M M").pattern("MMM").pattern("M M")
+                .define('M', material)
+                .unlockedBy("has_material", has(unlockTrigger))
+                .save(out, id(prefix + "_horse_armor"));
+    }
+
+    /** Nine-item storage compaction and lossless unpacking. */
+    private static void storageBlock(final RecipeOutput out, final String blockRecipe,
+                                     final String unpackRecipe, final Ingredient material,
+                                     final Item result, final Block block) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, block)
+                .pattern("MMM").pattern("MMM").pattern("MMM")
+                .define('M', material)
+                .unlockedBy("has_material", has(result))
+                .save(out, id(blockRecipe));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, result, 9)
+                .requires(block)
+                .unlockedBy("has_block", has(block))
+                .save(out, id(unpackRecipe));
     }
 
     /** Magnetite-mirroring recipe set for a single iron-oxide ore: storage

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "c:ingots/lithium"
+    }
+  },
+  "pattern": [
+    "M M",
+    "MMM",
+    "M M"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:lithium_horse_armor"
+  }
+}

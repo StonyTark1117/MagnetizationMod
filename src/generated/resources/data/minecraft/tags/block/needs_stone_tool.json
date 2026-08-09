@@ -13,6 +13,8 @@
     "magnetization:deepslate_hematite_ore",
     "magnetization:raw_hematite_block",
     "magnetization:lithium_ore",
-    "magnetization:deepslate_lithium_ore"
+    "magnetization:deepslate_lithium_ore",
+    "magnetization:raw_lithium_block",
+    "magnetization:raw_gallium_block"
   ]
 }

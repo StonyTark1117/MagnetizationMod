@@ -113,6 +113,14 @@ public final class MagBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()));
 
+    /** Storage block from nine ferromagnetic-alloy ingots. */
+    public static final DeferredBlock<Block> FERROMAGNETIC_BLOCK =
+            REGISTER.register("ferromagnetic_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(5.5f, 7.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()));
+
     /** Natural-look terrain block for the anomaly biome — stone-grey with
      *  iron-oxide tinting baked into the texture. Acts as the "bedrock" of
      *  the biome surface so it doesn't read as a storage-block dump. */
@@ -238,6 +246,12 @@ public final class MagBlocks {
     public static final DeferredBlock<Block> DEEPSLATE_LITHIUM_ORE =
             REGISTER.register("deepslate_lithium_ore", () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DEEPSLATE).strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> LITHIUM_BLOCK =
+            REGISTER.register("lithium_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f, 4.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> RAW_LITHIUM_BLOCK =
+            REGISTER.register("raw_lithium_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(3.0f, 3.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
 
     /** Helium-3 geode — lines rare deepslate/End geodes; mined for Helium-3 crystals. */
     public static final DeferredBlock<Block> HELIUM_3_GEODE =
@@ -481,6 +495,12 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.IRON_BLOCK)
                             .mapColor(MapColor.METAL)
                             .strength(0.5f)));
+
+    /** Storage block from nine raw gallium chunks. Unlike solid gallium, this
+     *  unrefined form does not melt when heated. */
+    public static final DeferredBlock<Block> RAW_GALLIUM_BLOCK =
+            REGISTER.register("raw_gallium_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(3.0f, 3.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
 
     private MagBlocks() {}
 }

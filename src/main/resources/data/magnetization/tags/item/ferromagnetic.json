@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "magnetization:ferromagnetic_ingot",
+    "magnetization:ferromagnetic_block",
     "magnetization:magnetic_plate",
     "magnetization:lodestone_core",
     "magnetization:magnetite_ingot",

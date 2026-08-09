@@ -36,6 +36,7 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
     protected void addTags(final HolderLookup.Provider provider) {
         tag(MagTags.FERROMAGNETIC_ITEMS)
                 .add(MagItems.FERROMAGNETIC_INGOT.get())
+                .add(MagItems.FERROMAGNETIC_BLOCK.get())
                 .add(MagItems.MAGNETIC_PLATE.get())
                 .add(MagItems.LODESTONE_CORE.get())
                 .add(MagItems.MAGNETITE_INGOT.get())
@@ -86,20 +87,37 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.MAGHEMITE_LEGGINGS.get())
                 .add(MagItems.MAGHEMITE_BOOTS.get())
                 .add(MagItems.MAGHEMITE_HORSE_ARMOR.get())
+                .add(MagItems.LITHIUM_HELMET.get()).add(MagItems.LITHIUM_CHESTPLATE.get())
+                .add(MagItems.LITHIUM_LEGGINGS.get()).add(MagItems.LITHIUM_BOOTS.get())
+                .add(MagItems.LITHIUM_HORSE_ARMOR.get())
+                .add(MagItems.PYRRHOTITE_HELMET.get()).add(MagItems.PYRRHOTITE_CHESTPLATE.get())
+                .add(MagItems.PYRRHOTITE_LEGGINGS.get()).add(MagItems.PYRRHOTITE_BOOTS.get())
+                .add(MagItems.PYRRHOTITE_HORSE_ARMOR.get())
+                .add(MagItems.HEMATITE_HELMET.get()).add(MagItems.HEMATITE_CHESTPLATE.get())
+                .add(MagItems.HEMATITE_LEGGINGS.get()).add(MagItems.HEMATITE_BOOTS.get())
+                .add(MagItems.HEMATITE_HORSE_ARMOR.get())
+                .add(MagItems.TITANOMAGNETITE_HELMET.get()).add(MagItems.TITANOMAGNETITE_CHESTPLATE.get())
+                .add(MagItems.TITANOMAGNETITE_LEGGINGS.get()).add(MagItems.TITANOMAGNETITE_BOOTS.get())
+                .add(MagItems.TITANOMAGNETITE_HORSE_ARMOR.get())
                 .add(MagItems.MAGNETIC_ELYTRA.get());
 
         tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get())
                 .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.PYRRHOTITE_INGOT.get())
-                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.TITANOMAGNETITE_INGOT.get());
+                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.TITANOMAGNETITE_INGOT.get())
+                .add(MagItems.LITHIUM.get()).add(MagItems.GALLIUM_INGOT.get());
         tag(common("plates")).add(MagItems.MAGNETIC_PLATE.get());
         tag(common("raw_materials")).add(MagItems.RAW_MAGNETITE.get())
                 .add(MagItems.RAW_MAGHEMITE.get()).add(MagItems.RAW_PYRRHOTITE.get())
-                .add(MagItems.RAW_HEMATITE.get()).add(MagItems.RAW_TITANOMAGNETITE.get());
+                .add(MagItems.RAW_HEMATITE.get()).add(MagItems.RAW_TITANOMAGNETITE.get())
+                .add(MagItems.RAW_LITHIUM.get()).add(MagItems.RAW_GALLIUM.get());
         tag(common("storage_blocks")).add(MagItems.MAGNETITE_BLOCK.get()).add(MagItems.RAW_MAGNETITE_BLOCK.get())
+                .add(MagItems.FERROMAGNETIC_BLOCK.get())
                 .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
                 .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
                 .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
                 .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
+                .add(MagItems.LITHIUM_BLOCK.get()).add(MagItems.RAW_LITHIUM_BLOCK.get())
+                .add(MagItems.SOLID_GALLIUM.get()).add(MagItems.RAW_GALLIUM_BLOCK.get())
                 .add(MagItems.SOLID_HELIUM_3.get());
         tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get())
                 .add(MagItems.MAGHEMITE_ORE.get()).add(MagItems.DEEPSLATE_MAGHEMITE_ORE.get())

@@ -80,5 +80,55 @@ public final class MagTiers {
         }
     };
 
+    /** Lithium is exceptionally soft but light and enchantable. Its equipment is
+     *  intentionally a novelty/early-game set: quick to enchant, quick to wear. */
+    public static final Tier LITHIUM = new Tier() {
+        @Override public int getUses() { return 24; }
+        @Override public float getSpeed() { return 10.0f; }
+        @Override public float getAttackDamageBonus() { return 0.0f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_GOLD_TOOL; }
+        @Override public int getEnchantmentValue() { return 24; }
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.LITHIUM.get());
+        }
+    };
+
+    /** Brassy iron sulfide: roughly iron-tier, with modest durability and mining speed. */
+    public static final Tier PYRRHOTITE = new Tier() {
+        @Override public int getUses() { return 300; }
+        @Override public float getSpeed() { return 6.5f; }
+        @Override public float getAttackDamageBonus() { return 2.0f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
+        @Override public int getEnchantmentValue() { return 12; }
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.PYRRHOTITE_INGOT.get());
+        }
+    };
+
+    /** Dense hematite holds a sturdier edge than ordinary iron oxide. */
+    public static final Tier HEMATITE = new Tier() {
+        @Override public int getUses() { return 420; }
+        @Override public float getSpeed() { return 7.0f; }
+        @Override public float getAttackDamageBonus() { return 2.5f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_IRON_TOOL; }
+        @Override public int getEnchantmentValue() { return 9; }
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.HEMATITE_INGOT.get());
+        }
+    };
+
+    /** Rare titanomagnetite is the strongest native ore gear, sitting between
+     *  diamond and netherite without the latter's fireproof item behavior. */
+    public static final Tier TITANOMAGNETITE = new Tier() {
+        @Override public int getUses() { return 1200; }
+        @Override public float getSpeed() { return 8.5f; }
+        @Override public float getAttackDamageBonus() { return 3.5f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_DIAMOND_TOOL; }
+        @Override public int getEnchantmentValue() { return 12; }
+        @Override public Ingredient getRepairIngredient() {
+            return Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get());
+        }
+    };
+
     private MagTiers() {}
 }

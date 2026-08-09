@@ -15,6 +15,7 @@
     "magnetization:deepslate_magnetite_ore",
     "magnetization:magnetite_block",
     "magnetization:raw_magnetite_block",
+    "magnetization:ferromagnetic_block",
     "magnetization:anomaly_stone",
     "magnetization:cobbled_anomaly_stone",
     "magnetization:anomaly_stone_stairs",
@@ -40,6 +41,8 @@
     "magnetization:raw_titanomagnetite_block",
     "magnetization:lithium_ore",
     "magnetization:deepslate_lithium_ore",
+    "magnetization:lithium_block",
+    "magnetization:raw_lithium_block",
     "magnetization:helium_3_geode",
     "magnetization:solid_helium_3",
     "magnetization:pyrrhotite_catalyst",
@@ -70,6 +73,7 @@
     "magnetization:diamagnetic_block",
     "magnetization:hardened_mr_fluid",
     "magnetization:electrolyzer",
-    "magnetization:solid_gallium"
+    "magnetization:solid_gallium",
+    "magnetization:raw_gallium_block"
   ]
 }

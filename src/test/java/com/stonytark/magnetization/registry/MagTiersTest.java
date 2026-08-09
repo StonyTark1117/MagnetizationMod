@@ -72,4 +72,17 @@ class MagTiersTest {
         assertEquals(7.5f, MagTiers.FERROMAGNETIC.getSpeed());
         assertEquals(3.0f, MagTiers.FERROMAGNETIC.getAttackDamageBonus());
     }
+
+    @Test
+    void additionalMaterialTiersKeepTheirIntendedProgression() {
+        assertEquals(24, MagTiers.LITHIUM.getUses());
+        assertEquals("minecraft:incorrect_for_gold_tool",
+                MagTiers.LITHIUM.getIncorrectBlocksForDrops().location().toString());
+
+        assertTrue(MagTiers.PYRRHOTITE.getUses() > MagTiers.MAGNETITE.getUses());
+        assertTrue(MagTiers.HEMATITE.getUses() > MagTiers.PYRRHOTITE.getUses());
+        assertTrue(MagTiers.TITANOMAGNETITE.getUses() > MagTiers.FERROMAGNETIC.getUses());
+        assertEquals("minecraft:incorrect_for_diamond_tool",
+                MagTiers.TITANOMAGNETITE.getIncorrectBlocksForDrops().location().toString());
+    }
 }
