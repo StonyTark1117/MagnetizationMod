@@ -239,12 +239,19 @@ public final class MagBlocks {
             REGISTER.register("deepslate_lithium_ore", () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.DEEPSLATE).strength(4.5f, 3.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
 
-    /** Helium-3 crystal block — lines the rare deepslate/End geode; mined for Helium-3 crystals. */
-    public static final DeferredBlock<Block> HELIUM_3_CRYSTAL_BLOCK =
-            REGISTER.register("helium_3_crystal_block", () -> new Block(BlockBehaviour.Properties.ofFullCopy(
+    /** Helium-3 geode — lines rare deepslate/End geodes; mined for Helium-3 crystals. */
+    public static final DeferredBlock<Block> HELIUM_3_GEODE =
+            REGISTER.register("helium_3_geode", () -> new Block(BlockBehaviour.Properties.ofFullCopy(
                     net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)
-                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .mapColor(MapColor.COLOR_PURPLE)
                     .lightLevel(s -> 8)
+                    .requiresCorrectToolForDrops()));
+
+    /** Solid Helium-3 — compact storage block crafted from nine Helium-3 crystals. */
+    public static final DeferredBlock<Block> SOLID_HELIUM_3 =
+            REGISTER.register("solid_helium_3", () -> new Block(BlockBehaviour.Properties.ofFullCopy(
+                    net.minecraft.world.level.block.Blocks.AMETHYST_BLOCK)
+                    .mapColor(MapColor.COLOR_PURPLE)
                     .requiresCorrectToolForDrops()));
 
     /** Pyrrhotite Catalyst — passive heat-bridge. Pyrrhotite reactors within

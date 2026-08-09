@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:solid_helium_3"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "magnetization:helium_3_crystal"
+  }
+}

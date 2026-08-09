@@ -118,9 +118,10 @@ public final class MagLootTableProvider {
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
             add(MagBlocks.DEEPSLATE_LITHIUM_ORE.get(),
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
-            // Helium-3 crystal block (geode lining) drops helium-3 crystals.
-            add(MagBlocks.HELIUM_3_CRYSTAL_BLOCK.get(),
+            // Helium-3 geode lining drops helium-3 crystals; Silk Touch preserves the geode.
+            add(MagBlocks.HELIUM_3_GEODE.get(),
                     block -> createOreDrop(block, MagItems.HELIUM_3_CRYSTAL.get()));
+            dropSelf(MagBlocks.SOLID_HELIUM_3.get());
 
             // -- Iron-oxide family: storage blocks dropSelf, ores drop raw_<name> --
             dropSelf(MagBlocks.MAGHEMITE_BLOCK.get()); dropSelf(MagBlocks.RAW_MAGHEMITE_BLOCK.get());

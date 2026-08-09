@@ -99,7 +99,8 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
                 .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
                 .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
-                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get());
+                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
+                .add(MagItems.SOLID_HELIUM_3.get());
         tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get())
                 .add(MagItems.MAGHEMITE_ORE.get()).add(MagItems.DEEPSLATE_MAGHEMITE_ORE.get())
                 .add(MagItems.PYRRHOTITE_ORE.get()).add(MagItems.DEEPSLATE_PYRRHOTITE_ORE.get())

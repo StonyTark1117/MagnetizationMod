@@ -158,7 +158,8 @@ public final class MagItemTooltips {
         }) m.put(i, "tooltip.magnetization.material.use");
         for (final var i : new Item[]{
                 MagItems.RAW_GALLIUM.get(), MagItems.GALLIUM_INGOT.get(), MagItems.RAW_LITHIUM.get(),
-                MagItems.LITHIUM.get(), MagItems.SOLID_GALLIUM.get(), MagItems.HELIUM_3_CRYSTAL.get(), MagItems.HELIUM_3_CELL.get(),
+                MagItems.LITHIUM.get(), MagItems.SOLID_GALLIUM.get(), MagItems.SOLID_HELIUM_3.get(),
+                MagItems.HELIUM_3_CRYSTAL.get(), MagItems.HELIUM_3_CELL.get(),
                 MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
         }) m.put(i, "tooltip.magnetization.material.use");
         for (final var i : new Item[]{
@@ -180,7 +181,7 @@ public final class MagItemTooltips {
         }) m.put(i, "tooltip.magnetization.fluid.use");
         for (final var i : new Item[]{
                 MagItems.PYRRHOTITE_CATALYST.get(), MagItems.ENHANCED_PYRRHOTITE_CATALYST.get(),
-                MagItems.COSMIC_PYRRHOTITE_CATALYST.get(), MagItems.HELIUM_3_CRYSTAL_BLOCK.get(),
+                MagItems.COSMIC_PYRRHOTITE_CATALYST.get(), MagItems.HELIUM_3_GEODE.get(),
         }) m.put(i, "tooltip.magnetization.advanced_material.use");
         m.put(MagItems.RAILGUN_REMOTE.get(), "tooltip.magnetization.railgun_remote.use");
         m.put(MagItems.COSMIC_COMPASS.get(), "tooltip.magnetization.cosmic_compass.use");

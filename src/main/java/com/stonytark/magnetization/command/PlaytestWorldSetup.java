@@ -446,7 +446,8 @@ public final class PlaytestWorldSetup {
     private static void buildGallery(final ServerLevel level, final BlockPos origin) {
         label(level, origin, "TEXTURE GALLERY", "Ore/material/fuel", "Inspect all lighting", "Items in chests ->");
         final List<Block> blocks = List.of(MagBlocks.LITHIUM_ORE.get(), MagBlocks.DEEPSLATE_LITHIUM_ORE.get(),
-                MagBlocks.HELIUM_3_CRYSTAL_BLOCK.get(), MagBlocks.SOLID_GALLIUM.get(), MagBlocks.MAGNETITE_BLOCK.get(),
+                MagBlocks.HELIUM_3_GEODE.get(), MagBlocks.SOLID_HELIUM_3.get(),
+                MagBlocks.SOLID_GALLIUM.get(), MagBlocks.MAGNETITE_BLOCK.get(),
                 MagBlocks.HEMATITE_BLOCK.get(), MagBlocks.PYRRHOTITE_BLOCK.get(), MagBlocks.TITANOMAGNETITE_BLOCK.get(),
                 MagBlocks.ELECTROLYZER.get(), MagBlocks.TOKAMAK_CONTROLLER.get(), MagBlocks.FUSION_THRUSTER.get(),
                 MagBlocks.RAILGUN_EMITTER.get(), MagBlocks.DIPOLE_ELECTROMAGNET.get(), MagBlocks.MHD_JET.get());

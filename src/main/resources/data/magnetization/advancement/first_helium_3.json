@@ -1,7 +1,7 @@
 {
   "parent": "magnetization:first_tritium",
   "display": {
-    "icon": { "id": "magnetization:helium_3_crystal_block" },
+    "icon": { "id": "magnetization:helium_3_geode" },
     "title": { "translate": "advancement.magnetization.first_helium_3.title" },
     "description": { "translate": "advancement.magnetization.first_helium_3.description" },
     "frame": "challenge",
@@ -21,10 +21,14 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "items": "magnetization:helium_3_crystal" }] }
     },
-    "crystal": {
+    "geode": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [{ "items": "magnetization:helium_3_crystal_block" }] }
+      "conditions": { "items": [{ "items": "magnetization:helium_3_geode" }] }
+    },
+    "solid_helium_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "magnetization:solid_helium_3" }] }
     }
   },
-  "requirements": [["helium_cell", "helium_bucket", "helium_crystal", "crystal"]]
+  "requirements": [["helium_cell", "helium_bucket", "helium_crystal", "geode", "solid_helium_3"]]
 }

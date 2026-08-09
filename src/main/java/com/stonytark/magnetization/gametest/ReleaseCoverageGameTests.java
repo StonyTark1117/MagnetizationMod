@@ -438,7 +438,7 @@ public final class ReleaseCoverageGameTests {
         final String[][] criteria = {
                 {"hydrogen"},
                 {"tritium_cell", "tritium_bucket"},
-                {"helium_cell", "helium_bucket", "helium_crystal", "crystal"}
+                {"helium_cell", "helium_bucket", "helium_crystal", "geode", "solid_helium_3"}
         };
         for (int i = 0; i < paths.length; i++) revokeAll(player, paths[i]);
 
@@ -462,7 +462,8 @@ public final class ReleaseCoverageGameTests {
                 new ItemStack(MagItems.HELIUM_3_CELL.get()),
                 new ItemStack(MagItems.HELIUM_3_BUCKET.get()),
                 new ItemStack(MagItems.HELIUM_3_CRYSTAL.get()),
-                new ItemStack(MagItems.HELIUM_3_CRYSTAL_BLOCK.get())
+                new ItemStack(MagItems.HELIUM_3_GEODE.get()),
+                new ItemStack(MagItems.SOLID_HELIUM_3.get())
         };
         for (int i = 0; i < heliumItems.length; i++) {
             player.getInventory().clearContent();

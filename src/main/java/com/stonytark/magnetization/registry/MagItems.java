@@ -327,7 +327,8 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> RAW_TITANOMAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_TITANOMAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.LITHIUM_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_LITHIUM_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_LITHIUM_ORE);
-    public static final DeferredItem<BlockItem> HELIUM_3_CRYSTAL_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.HELIUM_3_CRYSTAL_BLOCK);
+    public static final DeferredItem<BlockItem> HELIUM_3_GEODE = REGISTER.registerSimpleBlockItem(MagBlocks.HELIUM_3_GEODE);
+    public static final DeferredItem<BlockItem> SOLID_HELIUM_3 = REGISTER.registerSimpleBlockItem(MagBlocks.SOLID_HELIUM_3);
     public static final DeferredItem<Item> RAW_TITANOMAGNETITE = REGISTER.registerSimpleItem("raw_titanomagnetite", new Item.Properties());
     public static final DeferredItem<Item> TITANOMAGNETITE_INGOT = REGISTER.registerSimpleItem("titanomagnetite_ingot", new Item.Properties());
 

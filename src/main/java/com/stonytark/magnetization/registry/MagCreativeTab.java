@@ -36,7 +36,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.DEEPSLATE_TITANOMAGNETITE_ORE);
                         accept(output, MagItems.LITHIUM_ORE);
                         accept(output, MagItems.DEEPSLATE_LITHIUM_ORE);
-                        accept(output, MagItems.HELIUM_3_CRYSTAL_BLOCK);
+                        accept(output, MagItems.HELIUM_3_GEODE);
                         // ── Raw drops ──
                         accept(output, MagItems.RAW_MAGNETITE);
                         accept(output, MagItems.RAW_MAGHEMITE);
@@ -140,6 +140,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.RAW_GALLIUM);
                         accept(output, MagItems.GALLIUM_INGOT);
                         accept(output, MagItems.SOLID_GALLIUM);
+                        accept(output, MagItems.SOLID_HELIUM_3);
                         accept(output, MagItems.HEMATITE_LENS);
                         accept(output, MagItems.VECTOR_CORE);
                         accept(output, MagItems.DEUTERIUM_CELL);

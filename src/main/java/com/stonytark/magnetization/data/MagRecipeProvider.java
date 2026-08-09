@@ -590,6 +590,17 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_block", has(MagBlocks.SOLID_GALLIUM.get()))
                 .save(out, id("gallium_ingot_from_block"));
 
+        // -------- Solid Helium-3 storage block <-> 9 crystals --------
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, MagBlocks.SOLID_HELIUM_3.get())
+                .pattern("CCC").pattern("CCC").pattern("CCC")
+                .define('C', MagItems.HELIUM_3_CRYSTAL.get())
+                .unlockedBy("has_helium_3_crystal", has(MagItems.HELIUM_3_CRYSTAL.get()))
+                .save(out, id("solid_helium_3"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.HELIUM_3_CRYSTAL.get(), 9)
+                .requires(MagBlocks.SOLID_HELIUM_3.get())
+                .unlockedBy("has_solid_helium_3", has(MagBlocks.SOLID_HELIUM_3.get()))
+                .save(out, id("helium_3_crystal_from_block"));
+
         // -------- Mixed gallium = gallium ingot + magnetite/iron + an EMPTY bucket --------
         // Use a gallium INGOT (not a gallium_bucket) as the fluid source: a filled
         // gallium_bucket leaves an empty bucket as its crafting remainder, so a

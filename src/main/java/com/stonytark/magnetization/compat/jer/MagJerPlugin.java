@@ -81,16 +81,16 @@ public final class MagJerPlugin {
 
         // Helium-3 geodes are natural resources rather than conventional ores:
         // they generate rarely in both the Overworld and the End. Register the
-        // crystal block as the displayed resource and retain both dimension tabs.
+        // geode as the displayed resource and retain both dimension tabs.
         final float geodeChance = 1f / 53f;
-        wg.register(new ItemStack(MagBlocks.HELIUM_3_CRYSTAL_BLOCK.get()),
+        wg.register(new ItemStack(MagBlocks.HELIUM_3_GEODE.get()),
                 new DistributionCustom(DistributionHelpers.getSquareDistribution(-58, 16, geodeChance)),
                 Restriction.OVERWORLD,
-                new LootDrop(MagItems.HELIUM_3_CRYSTAL_BLOCK.get(), 1, 1));
-        wg.register(new ItemStack(MagBlocks.HELIUM_3_CRYSTAL_BLOCK.get()),
+                new LootDrop(MagItems.HELIUM_3_CRYSTAL.get(), 1, 1));
+        wg.register(new ItemStack(MagBlocks.HELIUM_3_GEODE.get()),
                 new DistributionCustom(DistributionHelpers.getSquareDistribution(0, 96, 1f / 40f)),
                 Restriction.END,
-                new LootDrop(MagItems.HELIUM_3_CRYSTAL_BLOCK.get(), 1, 1));
+                new LootDrop(MagItems.HELIUM_3_CRYSTAL.get(), 1, 1));
     }
 
     /** Reference vanilla-iron worldgen count used to scale {@link #CHANCE}
