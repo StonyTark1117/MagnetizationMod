@@ -20,8 +20,10 @@ public final class PlaytestSetupGameTests {
     @GameTest(template = "empty", timeoutTicks = 240, batch = "playtestSetup")
     public static void presetsStageAndReplaceOneAnother(final GameTestHelper helper) {
         final var level = helper.getLevel();
-        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
-        final BlockPos anchor = new BlockPos(abs.getX(), 240, abs.getZ());
+        // The preset spans several chunks. Use the already generated spawn area
+        // so this content test does not synchronously generate remote chunks in
+        // the shared GameTest server and turn worldgen latency into a test hang.
+        final BlockPos anchor = new BlockPos(0, 240, 0);
 
         PlaytestWorldSetup.stageForTest(level, anchor, "lab");
         helper.assertTrue(level.getBlockState(anchor.offset(2, 0, 17)).is(MagBlocks.ELECTROLYZER.get()),

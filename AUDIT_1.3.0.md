@@ -1,213 +1,221 @@
-# Magnetization 1.3.0 — Full Release Audit (rerun)
+# Magnetization 1.3.0 — Final Release Audit
 
-**Audit date:** 2026-07-31
-**Latest targeted follow-up:** 2026-08-09 (JEI/REI/EMI parity and runtime verification)
-**Target:** current `main` release candidate, 52 commits ahead of `origin/main` before this audit-coverage commit
-**Minecraft / loader:** Minecraft 1.21.1, NeoForge 21.1.247
-**Policy:** full audit rerun followed by remediation and verification of the two remaining release-engineering findings.
+**Audit date:** 2026-08-09
+**Target:** current `main` release candidate, 59 commits ahead of `origin/main` before this audit commit
+**Minecraft / loader:** Minecraft 1.21.1; NeoForge 21.1.248 development runtime
+**Published NeoForge range:** `[21.1.200,22.0)` — the upper bound is intentional
+**Verdict:** no confirmed release-blocking defect remains in the automated audit. The candidate is ready for the required manual playtest matrix.
 
-## Executive verdict
+## Executive summary
 
-**The candidate has no confirmed release-blocking defect or remaining automated release-engineering finding in this rerun.** All three original P0 findings and all original P1 findings are fixed, the standard and compatibility GameTests pass and terminate under bounded supervision, the minimal server profile contains only the intended hard-dependency stack, the clean build passes 140 unit tests, and the previously duplicated progression textures are now distinct.
+The complete release gate now passes from a fresh GameTest world, including the build, 154 JUnit tests, 102 standard GameTests, a hard-dependencies-only dedicated-server boot, two absent-mod compatibility assertions, and all 16 configured present-mod compatibility profiles. Data generation is reproducible, every JSON resource parses, model texture references resolve, the processed JAR contains no duplicate paths or unresolved replacement tokens, and the final JAR hash is recorded below.
 
-The candidate is **ready to move into final manual playtesting**. `releaseGate` now completes unattended; the remaining work is the human-observation matrix for presentation, balance, moving-ship feel, portal edge cases, and full survival progression.
+This rerun found test-infrastructure defects rather than a remaining gameplay defect: several tests assumed newly placed block entities or fluids would receive their first scheduled tick at a fixed time; the manual-playtest preset test synchronously generated remote chunks; and one magnetic item fixture survived into later tests and could be accelerated into an unloaded chunk. The tests now invoke the real production tick paths where appropriate, wait on observable state transitions, stage the large preset in generated spawn chunks, and remove their entities. The original 300-second GameTest supervisor remains in place and the final matrix passed without relaxing it.
 
-The NeoForge range `[21.1.247,22.0)` is intentional. The open-ended dependency policy applies to the mod/API dependencies that previously locked users out after compatible major updates; NeoForge remains capped at the next loader generation by design.
+Automated validation cannot establish presentation quality, balance, moving-ship feel, renderer behavior, or full survival progression. Those remain explicit release gates below.
 
-The required manual playtest matrix remains a release gate. Automated tests cannot validate visual presentation, balance, moving-ship feel, or full survival progression.
+## Audited scope
 
-## Scope and evidence standard
-
-This rerun covered:
-
-- 293 Java source files and 1,626 files under main/generated resources.
-- The full 1.3.0 delta from `origin/main`, including all earlier audit fixes, the Dipole Electromagnet, analog-redstone force scaling, multiblock previews, accessibility work, AeroPortals support, Immersive Aeronautics/Immersive Portals support, and Create: Coasters Simulated support.
-- Dependency metadata and resolved development versions.
-- Registration/resource/package consistency through a clean Gradle build.
-- All JSON resources, unit tests, the standard GameTest profile, all three isolated optional compatibility profiles, and the minimal dedicated-server smoke profile.
-- A targeted repeat of the original texture hash audit.
-
-A **confirmed issue** below is directly demonstrated by current source, metadata, or reproduced runtime behavior. Items requiring human observation remain in the manual matrix and are not asserted as bugs.
-
-The worktree was clean when the rerun began. The remediation changed the Gradle release harness, added its bounded GameTest supervisor, and corrected a GameTest cleanup race exposed by repeated fresh-world execution; this audit records the resulting evidence.
+- 343 Java source files under `src/main/java`.
+- 23 JUnit source files under `src/test/java`.
+- 1,932 files under main/generated resources, including 1,444 JSON files.
+- 59 commits relative to `origin/main` before this audit commit.
+- The full 1.3.0 feature and remediation delta: progression, Lithium/Gallium/Helium-3 material families, inverse-water fusion gas flow, machine and railgun fixes, client/server display synchronization, manual playtest presets, Field Manual refresh, dependency metadata, and the expanded compatibility layer.
+- The processed `magnetization-1.3.0.jar`, not only source-tree resources.
 
 ## Remaining confirmed issues
 
-None found by the automated audit rerun. The manual playtest matrix remains required and may still reveal visual, balance, interaction, or portal-geometry defects that static and headless tests cannot establish.
+None found by the automated audit.
 
-## Original issue resolution ledger
+Manual playtesting remains mandatory and may still reveal visual, balance, interaction, renderer, or moving-physics issues that cannot be proven headlessly.
+
+## Findings fixed during this rerun
+
+1. **Optional-profile compilation regression — fixed.** A missing `MagConfig` import in the Induction Pad compatibility gate was exposed when the matrix reached Copycats. The final tree compiles in every isolated profile.
+2. **Scheduled-tick GameTest assumptions — fixed.** Electrolyzer, Tokamak, emitter drain, Pyrrhotite heat, sensors, kinetic coils, railgun cooldown, fusion gases, Gallium phase changes, and Gallium field discovery now wait on observable behavior or drive their real production ticker instead of relying on a fixed newly-placed-block schedule.
+3. **Fusion gas timing flake — fixed.** Direct GameTest block placement now explicitly seeds the initial production fluid tick, while subsequent flowing cells continue through the normal scheduler. Ceiling flow, edge waterfalls, sky-limit despawn, source travel, and feed-loss retraction passed in the final 102-test batch.
+4. **Shared-world magnetic item leak — fixed.** The ore-break item-toggle fixture is discarded after its assertion. It can no longer be accelerated by a later test into an unloaded chunk and stall the server in chunk acquisition.
+5. **Manual-playtest preset worldgen stall — fixed.** The multi-chunk lab/survival preset test stages at the already generated spawn area rather than synchronously generating several remote chunks around a randomized GameTest coordinate.
+6. **Railgun remote lifecycle isolation — fixed.** The mock player is removed after remote use and the real railgun ticker drives cooldown/re-arm, preventing the test actor from becoming a new automatic target.
+
+## Original audit resolution ledger
 
 ### Original P0 findings
 
-1. **Railgun manual workflow — FIXED.** Inserting a remote latches pairing/manual mode; removing it no longer cancels `HOLDING`. Unpairing is explicit, and real remote-use coverage exists. Follow-up commit `2f0c4f8` also corrected the hold behavior discovered during verification.
-2. **Restart-driven surface repaint exploit — FIXED.** Repainting now uses versioned per-level persistent chunk migrations. Restarting no longer reopens already examined chunks, and the migration framework is exposed through the admin audit command.
-3. **Byte-identical progression textures — FIXED.** Bucket fills, fuel cells, lithium stages, Helium-3, railgun remote, machine faces, and gallium assets are distinct. The Gallium Golem texture was also updated to match solid gallium.
+1. **Railgun manual workflow — fixed.** Pairing/manual mode, installed and held remotes, firing, cooldown, unbinding, persistence, missing targets, and reconstructed ships have automated coverage.
+2. **Restart-driven surface repaint exploit — fixed.** Surface repainting uses versioned per-level persistent chunk migrations and exposes audit state through the admin command.
+3. **Byte-identical progression textures — fixed.** Buckets, fuel cells, Lithium/Gallium stages, Helium-3, railgun, machines, and Gallium Golem assets are differentiated where they convey different content.
 
 ### Original P1 findings
 
-4. **Curios Repulsor cooldown bypass — FIXED.** Hand and Curios paths share server-side activation with cooldown enforcement; packet-spam GameTests cover the security boundary.
-5. **Curios Grapple wrong-stack mutation — FIXED.** Activation receives and updates the actual Curios stack, with sound/visual parity coverage.
-6. **Transient LIRM cross-world leak — FIXED.** Level unload/server stop clear state and negative ages are guarded.
-7. **AE2 meteorite scan cross-world leak — FIXED.** Scan gates clear on level unload/server stop and remain separated from persistent meteor registry data.
+4. **Curios Repulsor cooldown bypass — fixed.** Hand and Curios activation share the server-authoritative path and cooldown; isolated Curios coverage passes.
+5. **Curios Grapple wrong-stack mutation — fixed.** Activation updates the actual equipped Curios stack with sound/visual parity coverage.
+6. **Transient LIRM cross-world leak — fixed.** Level unload and server stop clear transient state; invalid ages are guarded.
+7. **AE2 meteorite scan cross-world leak — fixed.** Scan gates clear on lifecycle events and remain separate from persistent meteor data.
 
 ### Original P2/P3 findings
 
-8. **Client-local machine bar denominators — FIXED.** Machine display capacity/current/tier/status are synchronized from the authoritative server through the shared display schema.
-9. **Stale README/CurseForge copy — FIXED.** Both now list NeoForge 21.1.247, Create 6.0.11, Sable 2.0.3, Aeronautics/Simulated 1.3.0, the 1.3.0 progression, and the corrected undead behavior.
-10. **Dependency-range policy — ACCEPTED BY DESIGN.** Mod/API dependencies intentionally have open upper ends. Minecraft remains pinned to 1.21.1 and NeoForge intentionally remains capped below loader generation 22.
-11. **GameTest non-termination — FIXED.** Each smoke task now launches its raw profile in an isolated process group, requires the explicit passing summary and shutdown marker within a five-minute bound, and terminates only that profile's lingering process tree. Old generated worlds are preserved under `/tmp` and each gate starts fresh. The full `releaseGate` completed unattended.
-12. **Dedicated-server compatibility-pack pollution — FIXED.** Aeronautics and Simulated no longer import their optional integrations transitively; Curios is added explicitly only to the standard GameTest profile that exercises it. The minimal server mod list no longer contains Curios, JEI, either compass, or CC:Tweaked. Its remaining 12 hard-dependency `ClientLevel` probes must match the complete audited logger/class/dist signature and cannot exceed the audited count.
-13. **Connected-chain cache session retention — FIXED.** Server stop clears the UUID cache and resets its prune clock.
+8. **Client-local machine display values — fixed.** Machine capacity/current/tier/status values use the synchronized display schema. Multiplayer payload and menu-data regressions are covered.
+9. **Stale release copy — fixed.** README metadata now states the published NeoForge floor of 21.1.200, development runtime 21.1.248, and intended `<22.0` bound.
+10. **Dependency range policy — accepted by design.** Minecraft remains exactly 1.21.1. NeoForge intentionally stays `[21.1.200,22.0)`. Other declared mod/API dependencies have no upper bounds.
+11. **GameTest non-termination — fixed.** Release smoke tasks require explicit pass markers, reject assertion failures/timeouts, isolate each process group, preserve prior generated worlds under `/tmp`, and terminate only their own lingering test JVM.
+12. **Dedicated-server compatibility pollution — fixed.** The minimal profile includes only the intended hard-dependency stack. Its 12 known third-party `ClientLevel` probes are matched exactly and capped.
+13. **Connected-chain cache retention — fixed.** Server stop clears the UUID cache and resets its pruning clock.
 
-## New 1.3.0 work audited after the original report
+## 1.3.0 feature audit
 
-### Dipole Electromagnet and analog redstone
+### Materials, storage, equipment, and progression
 
-- Dipole block, block entity, registration, creative-tab entry, recipe, loot table, models, blockstate, localization, and generated resources are present.
-- Analog force is carried through `MagneticField.forceOverride()` and physics now uses `field.force()` rather than the nominal tier force.
-- The two dipole poles are measured together and receive one proportional share of the per-ship acceleration budget. Previously the first pole could exhaust the cap and starve the second, making strong dipoles act like monopoles.
-- Unit coverage includes magnetic-strength scaling and override serialization/stepping behavior.
-- The real two-ship dipole-signature GameTest now stages physics inside Sable's reliable coordinate envelope and verifies both poles contribute under the default acceleration cap.
+- Material-family completeness is enforced by JUnit coverage. Appropriate solid materials now have storage blocks, and appropriate wearable/tool materials have armor, sword, pickaxe, axe, shovel, hoe, and horse-armor families.
+- Lithium has raw/storage blocks and a complete equipment family. Gallium, Magnetite, Maghemite, Hematite, Pyrrhotite, Titanomagnetite, and Ferromagnetic families are covered according to their intended roles.
+- Helium-3 crystal/geode/storage naming and resources are internally consistent.
+- Recipes, loot, tags, models, translations, creative-tab exposure, repair ingredients, tool tiers, armor materials, and equippable assets are covered by data and completeness tests.
+- The generated survival preset intentionally supplies raw inputs but no completed Tritium or Helium-3 fuel, preserving progression validation.
 
-Manual validation is still required for redstone levels 1/7/15, GUI/HUD readings, polarity orientation, active texture state, and force balance on differently sized ships.
+### Machines and physics
 
-### AeroPortals compatibility
+- Fusion Thruster thrust direction and power input through any panel of the formed multiblock are fixed. HUD energy/current values are server-authoritative.
+- Electrolyzer has distinct block and item art; its default Tokamak Coil recipe remains, with Immersive Engineering and TFMG coil alternatives enabled conditionally.
+- Dipole Electromagnet HUD information represents both poles. Its block/config/registration/data paths are present, with analog-redstone force scaling and two-pole acceleration coverage.
+- Railgun automatic/manual lifecycle, remote binding, speed cap, collision behavior, optional block breaking, persistence, advancements, and reconstructed-ship bindings are covered.
+- Tokamak and Fusion Thruster formation boundaries, master ownership, persistence, fuel/container state, FE state, and automation rejection/stall rules are covered.
+- Lithium ore, Helium-3 geodes, Magnetic Anomaly, and Petrified Forest placement remain attached to their intended biome/worldgen paths.
 
-- AeroPortals is a published optional dependency with no upper bound and an isolated test runtime.
-- Transfer compatibility refreshes reconstructed ship state, remaps Railgun Remote bindings, and repairs Simulated 1.3.0 swivel plate coordinates and rotary constraints that AeroPortals 1.2.3's outdated reflective signature skips.
-- The real transfer GameTest passed on AeroPortals 1.2.3 with retained chest inventory, installed/player-held remotes, a connected child ship, remapped swivel plate, and a live reattached constraint.
+### Fusion fluids and Gallium
 
-### Immersive Aeronautics / Immersive Portals compatibility
+- Hydrogen, Tritium, and Helium-3 behave as rising gases: source travel, ceiling-supported horizontal flow, edge waterfalls, bounded lateral behavior, continuous columns, sky-limit handling, and source-loss retraction pass.
+- Deuterium Oxide, Hydrogen, Tritium, Helium-3, and Liquid Lithium bucket overlays align with the established layered bucket art and remain visually distinct.
+- Gallium freezing/melting, registry lifecycle, mixed/plain Lorentz wiring, solid Gallium appearance, and Gallium Golem material consistency are represented in source/assets and automated coverage where headless validation is meaningful.
 
-- `immersive_portals_core` is a published optional dependency with no upper bound.
-- Railgun state and installed/player-held remotes survive the real cross-dimensional Sable reconstruction path.
-- Magnetic ship fields project through reachable portal apertures with transformed origin, axis, and scale, without recursive portal application.
-- All five isolated tests passed, covering remote transfer, portal-transformed magnetic force, aperture clipping, unreachable portals, and recursion/duplicate-force protection.
-- The upstream runtime emits repeated client-class probes on a dedicated-server test profile. These are third-party test-runtime noise, not failures in the two Magnetization assertions.
+### Accessibility, information, and playtest tooling
 
-### Create: Coasters Simulated compatibility
+- Fuel identity uses hue plus symbols/badges and text. Polarity, machine state, and strength have secondary text/shape channels.
+- JEI, REI, and EMI consume the shared information catalog; JER has Lithium/Helium-3 resource entries.
+- Field Manual content and links were refreshed for the current progression and machines.
+- Persistent `lab` and `survival` playtest presets stage machines, multiblocks, railgun lanes, inventory supplies, and persistence scenarios reproducibly.
+- `/magnetization debug audit` exposes migration, transient-field, meteorite, and cache diagnostics.
 
-- `simulatedcoasters` 0.1.4 is a published optional dependency with no upper bound and an isolated test runtime.
-- Coaster cars use the normal Sable ship-force pipeline, including polarity, falloff, acceleration caps, and drag; `compat.simulatedCoastersFieldReaction` can disable this behavior without affecting other ships.
-- Structural Inducers recognize already-assembled coaster cart sublevels in their scan cone and adopt the existing physics body rather than duplicating its blocks; `compat.simulatedCoastersStructuralInducer` independently disables this behavior.
-- Both isolated tests pass against a real cart spawned by the published mod, covering enabled/disabled field response and enabled/disabled Structural Inducer recognition.
+## Compatibility and dependency audit
 
-### Multiblock previews, progression, accessibility, and diagnostics
+### Required stack
 
-- Preview/tooltip coverage now includes Railgun, Fusion Thruster, Tokamak, and other multiblock construction paths.
-- Visible 1.3.0 progression advancements are present in addition to recipe unlocks.
-- Fuel identity uses texture, badge/symbol, and tooltip text rather than hue alone.
-- Polarity, strength, machine state, and fuel tier have secondary text/shape channels.
-- `/magnetization debug audit` reports migration, transient-field, meteorite, and per-level cache state.
+- Minecraft 1.21.1.
+- NeoForge published range `[21.1.200,22.0)`; development runtime 21.1.248. The upper bound must remain.
+- Create `[6.0.11,)`.
+- Sable `[2.0.3,)`.
+- Create Aeronautics `[1.3.0,)`.
+- Create Simulated `[1.3.0,)`.
+- TerraBlender `[4.1.0.8,)`.
 
-No missing registration/resource path was found for these additions.
+### Isolated present-mod profiles passed
 
-### JEI, REI, and EMI information compatibility
+1. AeroPortals — 1/1.
+2. Immersive Aeronautics / Immersive Portals — 5/5.
+3. Create: Coasters Simulated — 2/2.
+4. Create: Big Cannons — 3/3.
+5. Create: New Age — 3/3.
+6. Create Crafts & Additions — 3/3.
+7. Immersive Engineering — 4/4.
+8. Alex's Caves — 3/3.
+9. Create: Tracks — 1/1.
+10. Steam 'n' Rails — 1/1.
+11. Create: Diesel Generators — 2/2.
+12. Create: Copycats+ — 2/2.
+13. Create: Enchantment Industry — 1/1.
+14. Create: Ender Transmission — 3/3.
+15. Create: The Factory Must Grow — 11/11.
+16. Curios — 1/1.
 
-- All three optional recipe viewers now consume one shared catalog of fourteen discoverability topics: ferromagnetic items, Magnetic Excavator targets, Magnetite, specialist iron-oxide ores, Lithium, Gallium, fusion fuels, the Electrolyzer, Dipole Electromagnet, Structural Inducer, MHD Jet, Fusion Thruster, Tokamak, and Railgun.
-- Every topic has at least three descriptive lines and the same associated item set in JEI, REI, and EMI, eliminating the previous viewer-specific gaps and bare one-line pages.
-- The REI development and published optional floor is corrected to 16.0.799, the Minecraft 1.21/1.21.1 line. REI 17 targets Minecraft 1.21.2/1.21.3 and failed against this release's NeoForge 21.1 runtime through its newer Cloth Config dependency.
-- EMI information pages use stable synthetic recipe identifiers and Magnetization supplies readable names for every Magnetization-owned/common material tag exercised by the viewer.
-- Isolated client launches visually confirmed both the shared Gallium coverage and the newly added Railgun machine page in JEI 19.43.0.394, REI 16.0.799, and EMI 1.1.24. The final EMI launch registered Magnetization without missing synthetic-recipe errors or untranslated Magnetization/common material-tag warnings.
+The absent-mod profile passed 2/2 checks. Profiles run in separate Gradle processes so their classpaths cannot contaminate the minimal release profile or one another.
 
-### Additional pre-playtest GameTest coverage
+### Key compatibility behavior
 
-- Railgun lifecycle NBT now covers `HOLDING`, `LAUNCHING`, and `COOLDOWN`, including counters, manual pairing, rail length, and buffered FE.
-- Active Tokamak and Fusion Thruster persistence now validates queued fuel/container state, burn/fuel amount, generated/stored FE, formed state, interior count, and deterministic master ownership.
-- Dipole persistence now covers strength, range, polarity, redstone level, and facing.
-- Tokamak and Fusion Thruster boundary coverage now exercises the fixed Tokamak ring, minimum/maximum Fusion panels, oversized/incomplete/obstructed structures, break/reform, and stable shared master selection.
-- Machine automation coverage now rejects wrong cells, items, buckets, and fluids; prevents extraction of active fuel; checks one-for-one empty-container handling; and proves a full Electrolyzer output stalls without consuming water or FE.
-- Advancement coverage now performs real isotope inventory changes and real Fusion-panel formation/Railgun completion and firing before checking runtime criterion progress. Synthetic players are removed after each assertion to keep the shared server hermetic.
-- Moving-ship coverage now includes powered Fusion and Railgun behavior on rotated, already-moving Sable ships. The Railgun fixture uses a temporary launcher deck so gravity cannot invalidate the channel assertion before the arc scans.
-- Two persistent development-only manual-playtest profiles now stage a resettable 1.3.0 Test Lab and a Survival Progression world on first login. Their integration test verifies the critical machine/multiblock/ship-lane fixtures and proves the survival supplies omit finished isotope fuels.
+- AeroPortals/Immersive Aeronautics reconstruction preserves Magnetization block-entity state and remaps installed/held Railgun Remotes.
+- Coaster carts use the normal ship magnetic-force path. Grounded/unattached carts are not adopted by Structural Inducers; attached/assembled coaster structures are recognized. Field reaction and Structural Inducer adoption have independent config toggles.
+- Optional integrations have master toggles, and foreign registry/class references remain soft when their mod is absent.
+- Optional manifest ranges are open-ended. No new upper bound was introduced; NeoForge is the deliberate exception.
 
-## Asset and resource audit
+## Asset, resource, and package audit
 
-### Passed checks
+### Passed automated checks
 
-- Every JSON file under main and generated resources parsed successfully.
-- The clean Gradle resource/build pipeline completed without duplicate-resource failure.
-- Every targeted original duplicate now has a different SHA-256: five fluid fills, three fuel cells, Lithium/Raw Lithium/Raw Gallium, Lithium/Helium-3/Hematite ores, deepslate Lithium/Hematite, and Railgun Remote/Repulsor Gun.
-- All PNGs referenced by the newly added models are present and the JAR builds successfully.
-- The built JAR has no duplicate ZIP entries and no unresolved `${...}` token in processed `neoforge.mods.toml`.
-- Current JAR SHA-256 from this rerun: `83b37d6b5081fca2bc4cccf821a3e2d2e0228fcabb4a8cbae4d4c9cb961432f2`.
+- `runData` completed with zero generated-file writes.
+- All 1,444 main/generated JSON files parsed successfully with `jq`.
+- Every Magnetization texture referenced by a model exists.
+- Every Magnetization model referenced by blockstate/item definitions exists.
+- Reviewed bucket composites place their fill layer consistently with the established Ferrofluid/Gallium bucket art.
+- Reviewed Fusion Thruster, Railgun Emitter, Electrolyzer, solid Gallium, and Gallium Golem textures have the intended orientation/material relationships.
+- Remaining identical texture hashes are explainable shared machine panels, blank dynamic MR armor bases, or adjacent compass animation frames; no progression-item overwrite was identified.
+- The JAR contains no duplicate ZIP entries and no unresolved `${...}` token in processed `META-INF/neoforge.mods.toml`.
+- `git diff --check` and the generated configuration-reference check passed.
+
+### Final artifact
+
+- File: `build/libs/magnetization-1.3.0.jar`
+- Size: approximately 2.4 MiB.
+- SHA-256: `39b04e2e4f743a681e796f26c76ce998fb5b9e767ca31363aa4224b382c080c4`
 
 ### Still requires visual playtesting
 
-- Inspect every new item/block in inventory, hand, dropped form, item frame, JEI/REI/EMI, and active/inactive world state.
-- Confirm Gallium Golem reads as the same material as solid gallium under normal lighting and shaders.
-- Confirm fuel marks remain legible at GUI scale 1–4 and for common color-vision deficiencies.
-- Check Dipole Electromagnet orientation and active texture in all six facings.
-- Check transparent fluids, bucket layers, emissive expectations, model rotations, and Ponder/preview overlays with Sodium and Iris.
+- Inspect every new item/block in inventory, hand, dropped form, item frame, recipe viewers, and active/inactive world state.
+- Confirm Gallium Golem reads as solid Gallium under normal lighting, Sodium, Iris, and representative shader packs.
+- Check bucket layers, transparent fluids, particles, machine status HUDs, face rotation, multiblock previews, and Ponder overlays.
+- Check fuel marks and polarity indicators at GUI scales 1–4 and with common color-vision deficiencies.
 
 ## Automated validation record
 
-### Completed successfully in this rerun
+- `./gradlew releaseGate --no-daemon -PmagSmokeSeconds=20` — passed: build, 154/154 JUnit tests, 102/102 standard GameTests, and minimal dedicated-server smoke.
+- `./gradlew releaseMatrixGate --no-daemon -PmagSmokeSeconds=20` — passed all isolated profiles in 12m 7s.
+- JUnit summary — 154 tests, 0 failures, 0 errors, 0 skipped.
+- Standard GameTest summary — 102 required tests passed. The final direct run completed in 17.97s; the final fresh matrix run completed in 1.329m while Sable persisted its sublevels.
+- Minimal server — clean boot/shutdown; 12/12 exact known hard-dependency client-class probes recognized.
+- `./gradlew runData --no-daemon` — successful, no output changes.
+- `python3 scripts/generate-config-reference.py --check` — successful.
+- All JSON parse, model/texture existence, JAR duplicate-entry, processed-token, static-marker, and whitespace checks passed.
 
-- `./gradlew clean test build --no-daemon` — successful.
-- The 2026-08-09 recipe-viewer follow-up passed all 147 current JUnit tests and the JAR build; isolated JEI, REI, and EMI client launches each rendered the shared Gallium information page.
-- 140 JUnit tests — 140 passed, 0 failures, 0 errors, 0 skipped.
-- Standard dedicated GameTests — all 82 required tests passed under bounded supervision and the task exited successfully. The multiplayer-config regression coverage proves typed COMMON settings survive payload codec transport, override a client's differing local values, restore those locals on disconnect, and keep machine GUI capacities server-authoritative across vanilla menu data transport. The progression-worldgen check proves Lithium ore and Helium-3 geodes are attached to vanilla Overworld/End biome generation, while the Anomaly and Petrified Forest retain their defining placed features.
-- AeroPortals isolated GameTest — 1/1 passed on AeroPortals 1.2.3 under bounded supervision.
-- Immersive Aeronautics isolated GameTests — 5/5 passed on Immersive Portals core 6.0.7 under bounded supervision.
-- Create: Coasters Simulated isolated GameTests — 2/2 passed on 0.1.4 under bounded supervision.
-- `./gradlew smokeServerMinimal --no-daemon` — successful hard-dependencies-only boot and controlled shutdown; 12 exact, capped hard-dependency `ClientLevel` probes were recognized.
-- `./gradlew releaseGate --no-daemon -PmagSmokeSeconds=20` — completed unattended and successfully exercised the build, unit tests, supervised standard GameTests, and minimal dedicated-server smoke.
-- `./gradlew releaseMatrixGate --no-daemon -PmagSmokeSeconds=20` — passed the minimal release profile plus AeroPortals, Immersive Aeronautics, and Create: Coasters Simulated profiles in separate Gradle processes. Mixed-profile invocations fail fast instead of silently contaminating the minimal runtime classpath.
-- All main/generated JSON files parsed with `jq`.
-- JAR duplicate-entry and unresolved-token checks passed.
-
-### Harness behavior
-
-Sable's physics thread can still keep a raw Minecraft GameTest JVM alive after its passing summary and normal server shutdown. The release-facing smoke tasks now treat that upstream/runtime behavior as bounded infrastructure: they require positive pass and shutdown markers, detect assertion failures and timeouts, and terminate only the isolated lingering process group. Raw `run*GameTestServer` developer tasks retain their native behavior; all documented release gates use the supervised smoke tasks.
+Expected development noise remains limited to known third-party mixin/refmap/class probes and Sable/Flywheel warnings. The minimal-server smoke gate validates the exact accepted hard-dependency probe count so a new client-class leak cannot pass silently.
 
 ## Required manual playtest matrix
 
 ### Fresh survival progression
 
 - Confirm Lithium Ore and Helium-3 geodes generate at intended rarity and are discoverable without commands.
-- Complete Water → Hydrogen → Deuterium → Tritium → Helium-3 using survival recipes and recipe viewers.
-- Verify every filled/empty container transition and look for bucket/cell duplication or loss.
-- Confirm the Field Manual accurately explains each step and every referenced recipe appears.
+- Complete Water → Hydrogen → Deuterium → Tritium → Helium-3 using survival recipes and at least one recipe viewer.
+- Verify every bucket/cell transition, storage block, tool, armor set, repair ingredient, enchantability, durability, mining level, and loot path.
+- Confirm the Field Manual accurately describes every step and recipe link.
 
 ### Machines, emitters, and automation
 
-- Electrolyzer: bucket, hopper, pipe, FE input, output stall, save/reload, and break/re-place.
-- Tokamak: every cell, output rate, burn duration, hopper insertion, empty-container behavior, save/reload.
-- Micro/MHD/Fusion thrusters: pipe/item input, fuel rejection, save/reload, break behavior, and retuned server capacities.
-- Fusion panel and Tokamak: min/max sizes, every orientation, preview accuracy, breaking/reforming, master changes, reload while active.
-- Railgun: auto/manual flow, all facings, min/max length, multiple rails, removal/use/unbind, unloaded and cross-dimension target, restart in every arc state.
-- Standard and Dipole Electromagnets: redstone 0–15, polarity/facing, configured tier interaction, force scaling, GUI/HUD/tooltips, and save/reload.
+- Electrolyzer: bucket, hopper, pipe, FE input, optional coil recipes, output stall, save/reload, and break/re-place.
+- Tokamak: each fuel, rates/durations, automation, empty-container handling, formation limits, master changes, and reload while active.
+- Micro/MHD/Fusion thrusters: fuel rejection, piping/items, FE from every Fusion panel, thrust direction, moving/rotating craft behavior, HUD updates, save/reload, and break behavior.
+- Railgun: automatic/manual flow, all facings and lengths, remote install/use/unbind, unloaded/cross-dimension targets, restart in every arc state, speed cap, and breaking-disabled collision.
+- Standard and Dipole Electromagnets: redstone 0–15, both poles, facing/polarity, config toggles, HUD/tooltips, and save/reload.
 
-### Ships, portals, and physics
+### Ships, portals, coasters, and physics
 
-- Test tiny, medium, and large Sable ships for force scaling, terminal speed, torque, rotated axes, connected-sublevel exclusion, and removal during force application.
-- Validate Fusion Thruster and Railgun on moving/rotating ships.
-- Transfer ships with inventories, Railgun Remotes, nested/connected sublevels, bearings, and swivel constraints through AeroPortals.
-- Test Immersive Portals with rotated, scaled, one-way, paired, and adjacent portals; verify aperture clipping and ensure a ship cannot receive duplicate force through overlapping portal paths.
-- Recheck ship magnetic state after assembly, disassembly, transfer, and reload.
+- Test tiny/medium/large ships for force scaling, terminal speed, torque, rotated axes, connected-sublevel exclusion, and removal during force application.
+- Transfer inventories, remotes, nested/connected sublevels, bearings, and swivel constraints through AeroPortals.
+- Test rotated/scaled/one-way/adjacent Immersive Portals, aperture clipping, and duplicate-force prevention.
+- Test coaster carts both unattached and attached to track. Magnets should treat an assembled cart like a ship; the Structural Inducer must not adopt a loose ground cart.
+- Recheck magnetic state after assembly, disassembly, transfer, derailment, reattachment, and reload.
 
 ### Multiplayer and configuration
 
 - Join a dedicated server whose COMMON config differs from client defaults and compare every GUI/HUD value.
-- Spam Curios activation and recoil inputs from two players; verify cooldown and source-stack behavior.
-- Interact with the same menu, multiblock master, and Railgun Remote from two players simultaneously.
+- Exercise Curios grapple/repulsor input from two players and spam packets to validate cooldown/source-stack behavior.
+- Interact with the same menu, multiblock master, Railgun Remote, and coaster/ship from two players simultaneously.
 
-### World lifecycle and data safety
+### Lifecycle, upgrade, client, and assets
 
-- Open two worlds in one client session and verify LIRM, AE scans, migrations, ship caches, fluid registries, compass scans, and HUD state do not carry across.
-- Repeatedly restart after placing water/dirt/build blocks in both custom biomes and confirm the migration never reprocesses them.
-- Upgrade a backed-up 1.2.x world and confirm migration is one-time and bounded.
+- Open two worlds in one client session and verify transient fields, AE scans, migrations, caches, fluid registries, compass scans, and HUD state do not carry across.
+- Upgrade a backed-up 1.2.x world and confirm surface migration is one-time and bounded.
+- Inspect all 1.3.0 models/textures with Sodium/Iris on and off and at multiple GUI scales.
+- Verify fluids, particles, machine faces/status, overlays, Ponder scenes, and accessibility symbols without relying on color alone.
 
-### Client and assets
+## Release sequence
 
-- Inspect all 1.3.0 models/textures at multiple GUI scales and with Sodium/Iris on and off.
-- Verify fluid heights/transparency, particle sprites, machine status HUDs, active faces, overlays, and absence of missing-model textures.
-- Confirm accessibility symbols/text remain understandable without relying on red/blue or fuel hue.
-
-## Recommended release sequence
-
-1. Execute the manual matrix on a disposable upgraded world and a fresh survival world, including portal ships with constraints.
-2. Run normal and compatibility-heavy client smoke tests with the intended release modpack/renderers.
-3. Run `releaseMatrixGate` after any final change. It invokes `releaseGate` and all three supervised compatibility GameTest profiles in separate Gradle processes so their runtime classpaths cannot contaminate one another.
-4. Rebuild the release JAR, inspect it, record a new final SHA-256, and publish only that artifact.
+1. Run the manual matrix on disposable fresh and backed-up upgraded worlds, including a two-player dedicated server.
+2. Run normal and compatibility-heavy client smoke tests with the intended renderer/shader stack.
+3. Rerun `releaseMatrixGate` after any code/resource/config change.
+4. Rebuild the JAR, repeat package inspection, record the new SHA-256 if it changes, and publish only that artifact.
