@@ -1,0 +1,18 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "createaddition" },
+    { "type": "magnetization:compat_config", "feature": "create_addition" }
+  ],
+  "pattern": ["  A  ", " BSB ", "BSMSB", " BCB "],
+  "key": {
+    "A": { "item": "create:andesite_alloy" },
+    "B": { "tag": "c:plates/brass" },
+    "C": { "item": "createaddition:capacitor" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "S": { "item": "createaddition:copper_spool" }
+  },
+  "result": { "id": "createaddition:electric_motor", "count": 1 }
+}

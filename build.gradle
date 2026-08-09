@@ -31,6 +31,8 @@ configurations {
     createBigCannonsRuntime
     createNewAgeRuntime
     createAdditionRuntime
+    immersiveEngineeringRuntime
+    alexsCavesRuntime
     createTracksRuntime
     steamRailsRuntime
     dieselGeneratorsRuntime
@@ -65,11 +67,14 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'rundata',
-        'runserver', 'rungametestserver', 'runaeroportalsgametestserver',
+        'runserver', 'rungametestserver', 'runoptionalcompatibilityabsentgametestserver',
+        'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
         'runcreateadditiongametestserver',
+        'runimmersiveengineeringgametestserver',
+        'runalexscavesgametestserver',
         'runcreatetracksgametestserver',
         'runsteamrailsgametestserver',
         'rundieselgeneratorsgametestserver',
@@ -77,6 +82,14 @@ def minimalProfileTasks = [
         'runenchantmentindustrygametestserver',
         'runendertransmissiongametestserver',
         'runtfmggametestserver',
+        'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
+        'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
+        'smokecreatenewagegametest', 'smokecreateadditiongametest',
+        'smokeimmersiveengineeringgametest', 'smokealexscavesgametest',
+        'smokecreatetracksgametest', 'smokesteamrailsgametest',
+        'smokedieselgeneratorsgametest', 'smokecopycatsgametest',
+        'smokeenchantmentindustrygametest', 'smokeendertransmissiongametest',
+        'smoketfmggametest', 'smokeoptionalcompatibilityabsentgametest',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -113,6 +126,12 @@ def wantsCreateNewAgeTests = lowered.any {
 def wantsCreateAdditionTests = lowered.any {
     it.endsWith('runcreateadditiongametestserver') || it.endsWith('smokecreateadditiongametest')
 }
+def wantsImmersiveEngineeringTests = lowered.any {
+    it.endsWith('runimmersiveengineeringgametestserver') || it.endsWith('smokeimmersiveengineeringgametest')
+}
+def wantsAlexsCavesTests = lowered.any {
+    it.endsWith('runalexscavesgametestserver') || it.endsWith('smokealexscavesgametest')
+}
 def wantsCreateTracksTests = lowered.any {
     it.endsWith('runcreatetracksgametestserver') || it.endsWith('smokecreatetracksgametest')
 }
@@ -146,7 +165,8 @@ def wantsMinimalVerification = lowered.any {
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
-                            wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests,
+                            wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
+                            wantsCreateTracksTests, wantsSteamRailsTests,
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
                             wantsEnderTransmissionTests, wantsTfmgTests]
         .count { it }
@@ -169,6 +189,12 @@ if (wantsCreateNewAgeTests) {
 }
 if (wantsCreateAdditionTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createAdditionRuntime }
+}
+if (wantsImmersiveEngineeringTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.immersiveEngineeringRuntime }
+}
+if (wantsAlexsCavesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.alexsCavesRuntime }
 }
 if (wantsCreateTracksTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createTracksRuntime }
@@ -367,6 +393,9 @@ processResources {
         into 'data/magnetization_aeroportals/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_compat_absent/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_immersive_aeronautics/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -380,6 +409,12 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createaddition/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_immersiveengineering/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_alexscaves/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createtracks/structure'
@@ -476,6 +511,11 @@ neoForge {
             // files are not a safe fixture for a repeated headless test run.
             gameDirectory = file('run-gametest')
         }
+        optionalCompatibilityAbsentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-compat-absent-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_compat_absent'
+        }
         // Dedicated optional-integration suite. Its task-name profile adds only
         // AeroPortals to the otherwise-minimal GameTest runtime, keeping the
         // release gate independent of a soft dependency.
@@ -508,6 +548,16 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-createaddition-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createaddition'
+        }
+        immersiveEngineeringGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-immersive-engineering-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersiveengineering'
+        }
+        alexsCavesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-alexscaves-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_alexscaves'
         }
         createTracksGameTestServer {
             type = 'gameTestServer'
@@ -704,6 +754,13 @@ tasks.register('smokeGameTest', Exec) {
     commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runGameTestServer', 'run-gametest', '300'
 }
 
+tasks.register('smokeOptionalCompatibilityAbsentGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the optional-compatibility absent-mod profile on the minimal runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runOptionalCompatibilityAbsentGameTestServer',
+            'run-compat-absent-gametest', '300'
+}
+
 tasks.register('smokeAeroPortalsGameTest', Exec) {
     group = 'verification'
     description = 'Supervises the optional AeroPortals compatibility GameTest runtime.'
@@ -744,6 +801,20 @@ tasks.register('smokeCreateAdditionGameTest', Exec) {
     description = 'Supervises Create Crafts & Additions FE, kinetic, tag, and goggles compatibility.'
     commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateAdditionGameTestServer',
             'run-createaddition-gametest', '300'
+}
+
+tasks.register('smokeImmersiveEngineeringGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Immersive Engineering field, railgun, recipe, and material compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runImmersiveEngineeringGameTestServer',
+            'run-immersive-engineering-gametest', '300'
+}
+
+tasks.register('smokeAlexsCavesGameTest', Exec) {
+    group = 'verification'
+    description = "Supervises Alex's Caves polarity, Neodymium, recipe, and duplicate-force compatibility."
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAlexsCavesGameTestServer',
+            'run-alexscaves-gametest', '300'
 }
 
 tasks.register('smokeCreateTracksGameTest', Exec) {
@@ -862,6 +933,10 @@ dependencies {
 
     compileOnly("maven.modrinth:createaddition:${createaddition_test_version}")
     createAdditionRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
+
+    immersiveEngineeringRuntime("maven.modrinth:immersiveengineering:${ie_test_version}") { transitive = false }
+    alexsCavesRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}") { transitive = false }
+    alexsCavesRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}") { transitive = false }
 
     compileOnly("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
     createTracksRuntime("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }

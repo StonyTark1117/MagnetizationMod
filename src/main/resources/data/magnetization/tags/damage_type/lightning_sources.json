@@ -12,7 +12,9 @@
     {"id": "alexscaves:magnetron_shock", "required": false},
     {"id": "twilightforest:lightning", "required": false},
     {"id": "immersiveengineering:tesla", "required": false},
+    {"id": "immersiveengineering:tesla_primary", "required": false},
     {"id": "immersiveengineering:razor_shock", "required": false},
-    {"id": "immersiveengineering:razor_wire", "required": false}
+    {"id": "immersiveengineering:razor_wire", "required": false},
+    {"id": "createaddition:tesla_coil", "required": false}
   ]
 }

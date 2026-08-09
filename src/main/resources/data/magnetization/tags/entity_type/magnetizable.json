@@ -6,6 +6,7 @@
     "minecraft:trident",
     {"id": "alexscaves:magnetron", "required": false},
     {"id": "alexscaves:ferrouslime", "required": false},
+    {"id": "immersiveengineering:railgun_shot", "required": false},
     {"id": "modulargolems:iron_golem_entity", "required": false},
     {"id": "modulargolems:metal_golem_entity", "required": false},
     {"id": "extragolems:iron_golem", "required": false},

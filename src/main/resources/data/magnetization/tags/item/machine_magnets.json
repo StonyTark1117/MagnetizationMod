@@ -12,6 +12,15 @@
     {
       "id": "tfmg:magnetic_alloy_sheet",
       "required": false
-    }
+    },
+    { "id": "create_new_age:magnetite_block", "required": false },
+    { "id": "create_new_age:redstone_magnet", "required": false },
+    { "id": "create_new_age:layered_magnet", "required": false },
+    { "id": "create_new_age:fluxuated_magnetite", "required": false },
+    { "id": "create_new_age:netherite_magnet", "required": false },
+    { "id": "alexscaves:azure_magnet", "required": false },
+    { "id": "alexscaves:scarlet_magnet", "required": false },
+    { "id": "alexscaves:azure_neodymium_ingot", "required": false },
+    { "id": "alexscaves:scarlet_neodymium_ingot", "required": false }
   ]
 }

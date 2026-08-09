@@ -93,7 +93,7 @@
     {"id": "alexscaves:raw_azure_neodymium", "required": false},
     {"id": "alexscaves:raw_scarlet_neodymium", "required": false},
     {"id": "alexscaves:heart_of_iron", "required": false},
-    {"id": "alexscaves:ferrouslimeball", "required": false},
+    {"id": "alexscaves:ferrouslime_ball", "required": false},
     {"id": "twilightforest:knightmetal_ingot", "required": false},
     {"id": "twilightforest:steeleaf", "required": false},
     {"id": "twilightforest:ironwood_ingot", "required": false},
@@ -120,10 +120,6 @@
     {"id": "createdieselgenerators:large_diesel_engine", "required": false},
     {"id": "createdieselgenerators:huge_diesel_engine", "required": false},
     {"id": "createdieselgenerators:powered_engine_shaft", "required": false},
-    {"id": "createdieselgenerators:pumpjack_bearing", "required": false},
-    {"id": "createdieselgenerators:pumpjack_bearing_b", "required": false},
-    {"id": "createdieselgenerators:pumpjack_head", "required": false},
-    {"id": "createdieselgenerators:pumpjack_crank", "required": false},
     {"id": "createdieselgenerators:sheet_metal_panel", "required": false},
     {"id": "createdieselgenerators:chemical_turret", "required": false},
     {"id": "aether:gravitite", "required": false},
@@ -174,6 +170,17 @@
     {"id": "immersive_aircraft:rotary_cannon", "required": false},
     {"id": "immersive_aircraft:heavy_crossbow", "required": false},
     {"id": "immersive_aircraft:telescope", "required": false},
-    {"id": "immersive_aircraft:bomb_bay", "required": false}
+    {"id": "immersive_aircraft:bomb_bay", "required": false},
+    {"id": "createbigcannons:cast_iron_ingot", "required": false},
+    {"id": "createbigcannons:steel_ingot", "required": false},
+    {"id": "createbigcannons:nethersteel_ingot", "required": false},
+    {"id": "createbigcannons:cast_iron_block", "required": false},
+    {"id": "createbigcannons:steel_block", "required": false},
+    {"id": "createbigcannons:nethersteel_block", "required": false},
+    {"id": "createbigcannons:cast_iron_autocannon_barrel", "required": false},
+    {"id": "createbigcannons:steel_autocannon_barrel", "required": false},
+    {"id": "createbigcannons:cast_iron_cannon_barrel", "required": false},
+    {"id": "createbigcannons:steel_cannon_barrel", "required": false},
+    {"id": "createbigcannons:nethersteel_cannon_barrel", "required": false}
   ]
 }

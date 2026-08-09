@@ -1,0 +1,17 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "createaddition" },
+    { "type": "magnetization:compat_config", "feature": "create_addition" }
+  ],
+  "pattern": ["  A  ", " ISI ", "ISMSI", " ISI ", "  A  "],
+  "key": {
+    "A": { "item": "create:andesite_alloy" },
+    "I": { "tag": "c:plates/iron" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "S": { "item": "createaddition:copper_spool" }
+  },
+  "result": { "id": "createaddition:alternator", "count": 1 }
+}

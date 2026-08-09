@@ -1,0 +1,14 @@
+{
+  "type": "create:mixing",
+  "neoforge:conditions": [
+    { "type": "magnetization:compat_config", "feature": "plant_oil_ferrofluid" }
+  ],
+  "ingredients": [
+    { "tag": "magnetization:ferrofluid_minerals" },
+    { "tag": "magnetization:ferrofluid_minerals" },
+    { "type": "neoforge:tag", "amount": 1000, "tag": "c:plantoil" }
+  ],
+  "results": [
+    { "id": "magnetization:ferrofluid", "amount": 1000 }
+  ]
+}

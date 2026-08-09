@@ -128,6 +128,24 @@ versionRange = "[1.6.0,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Immersive Engineering — powered electromagnets/Tesla coils, railgun-shot
+# response, industrial Ferrofluid mixing, and magnetic plate pressing.
+[[dependencies.${mod_id}]]
+modId = "immersiveengineering"
+type = "optional"
+versionRange = "[12.4.2-194,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Alex's Caves — polarity-correct Azure/Scarlet fields, Neodymium machine
+# magnets, shared magnetic progression, and effect coexistence controls.
+[[dependencies.${mod_id}]]
+modId = "alexscaves"
+type = "optional"
+versionRange = "[2.0.10,)"
+ordering = "AFTER"
+side = "BOTH"
+
 # Create: Tracks — track mounts, suspension, and drive wheels remain part of
 # the Sable craft for magnetic-field and Structural Inducer behavior.
 [[dependencies.${mod_id}]]

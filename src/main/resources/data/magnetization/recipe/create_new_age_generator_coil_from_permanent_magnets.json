@@ -1,0 +1,15 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "create_new_age" },
+    { "type": "magnetization:compat_config", "feature": "create_new_age" }
+  ],
+  "pattern": ["CMC", "CAC", "CMC"],
+  "key": {
+    "A": { "item": "create:andesite_alloy_block" },
+    "C": { "tag": "c:ingots/copper" },
+    "M": { "item": "magnetization:permanent_magnet" }
+  },
+  "result": { "id": "create_new_age:generator_coil", "count": 1 }
+}

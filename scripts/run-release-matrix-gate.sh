@@ -14,12 +14,15 @@ run_profile() {
 }
 
 run_profile 'minimal release profile' releaseGate "-PmagSmokeSeconds=$smoke_seconds"
+run_profile 'optional compatibility absent-mod profile' smokeOptionalCompatibilityAbsentGameTest
 run_profile 'AeroPortals compatibility profile' smokeAeroPortalsGameTest
 run_profile 'Immersive Aeronautics compatibility profile' smokeImmersiveAeronauticsGameTest
 run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoastersGameTest
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 run_profile 'Create: New Age compatibility profile' smokeCreateNewAgeGameTest
 run_profile 'Create Crafts & Additions compatibility profile' smokeCreateAdditionGameTest
+run_profile 'Immersive Engineering compatibility profile' smokeImmersiveEngineeringGameTest
+run_profile "Alex's Caves compatibility profile" smokeAlexsCavesGameTest
 run_profile 'Create: Tracks compatibility profile' smokeCreateTracksGameTest
 run_profile "Steam 'n' Rails compatibility profile" smokeSteamRailsGameTest
 run_profile 'Create: Diesel Generators compatibility profile' smokeDieselGeneratorsGameTest

@@ -13,7 +13,12 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
 
     public enum Feature {
         TFMG_PROCESSING("tfmg_processing"),
-        TFMG_STEELMAKING("tfmg_steelmaking");
+        TFMG_STEELMAKING("tfmg_steelmaking"),
+        CREATE_NEW_AGE("create_new_age"),
+        IMMERSIVE_ENGINEERING("immersive_engineering"),
+        ALEXSCAVES("alexscaves"),
+        CREATE_ADDITION("create_addition"),
+        PLANT_OIL_FERROFLUID("plant_oil_ferrofluid");
 
         private final String serializedName;
 
@@ -44,6 +49,11 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         return switch (feature) {
             case TFMG_PROCESSING -> MagConfig.tfmgProcessingRecipesEnabled();
             case TFMG_STEELMAKING -> MagConfig.tfmgSteelmakingRecipesEnabled();
+            case CREATE_NEW_AGE -> MagConfig.createNewAgeRecipesEnabled();
+            case IMMERSIVE_ENGINEERING -> MagConfig.immersiveEngineeringRecipesEnabled();
+            case ALEXSCAVES -> MagConfig.alexsCavesRecipesEnabled();
+            case CREATE_ADDITION -> MagConfig.createAdditionRecipesEnabled();
+            case PLANT_OIL_FERROFLUID -> MagConfig.plantOilFerrofluidRecipeEnabled();
         };
     }
 

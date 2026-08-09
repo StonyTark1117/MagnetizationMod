@@ -48,7 +48,8 @@ public final class MagCreateBigCannonsCompat {
 
     private static boolean projectileReactionEnabled() {
         try {
-            return MagConfig.CREATE_BIG_CANNONS_PROJECTILE_REACTION.get();
+            return MagConfig.createBigCannonsCompatEnabled()
+                    && MagConfig.CREATE_BIG_CANNONS_PROJECTILE_REACTION.get();
         } catch (final Throwable ignored) {
             return true;
         }

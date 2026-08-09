@@ -363,6 +363,29 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | compat.alexsCavesPotionMode | enum | BOTH | How our Magnetized status effect coexists with Alex's Caves' Magnetizing effect. BOTH (default, parallel); OURS_ONLY (AC effect swapped for ours on application); THEIRS_ONLY (our effect swapped for AC's). |
+| COMMON | compat.createNewAgeCompatEnabled | boolean | true | Master switch for Magnetization's Create: New Age runtime and supplemental recipe integration. |
+| COMMON | compat.createNewAgeFieldsEnabled | boolean | true | Make New Age magnet blocks emit real fields using their native 1/2/4/8/24 strength ladder. Redstone reverses the presented pole. |
+| COMMON | compat.createNewAgeRecipesEnabled | boolean | true | Load Permanent Magnet motor and generator-coil alternatives plus Energiser magnet production. Takes effect on data reload. |
+| COMMON | compat.createNewAgeFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by Create: New Age magnet blocks; 0 is a soft disable. |
+| COMMON | compat.immersiveEngineeringCompatEnabled | boolean | true | Master switch for Magnetization's Immersive Engineering runtime and supplemental recipe integration. |
+| COMMON | compat.immersiveEngineeringFieldsEnabled | boolean | true | Make powered IE Electromagnets emit continuous charge-scaled fields and Tesla Coils emit pulsed fields. |
+| COMMON | compat.immersiveEngineeringRecipesEnabled | boolean | true | Load IE Mixer Ferrofluid and Metal Press Magnetic Plate routes. Takes effect on data reload. |
+| COMMON | compat.immersiveEngineeringRailgunReaction | boolean | true | Allow launched Immersive Engineering Railgun Shot entities to receive magnetic field force. |
+| COMMON | compat.immersiveEngineeringFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by IE Electromagnets and Tesla Coils; 0 is a soft disable. |
+| COMMON | compat.alexsCavesCompatEnabled | boolean | true | Master switch for Alex's Caves field, material, effect, and supplemental recipe integration. |
+| COMMON | compat.alexsCavesFieldsEnabled | boolean | true | Project active Azure and Scarlet Magnet fields to physics ships. Alex's Caves keeps its own entity movement to prevent doubled force. |
+| COMMON | compat.alexsCavesRecipesEnabled | boolean | true | Load shared Neodymium, Permanent Magnet, levitation-rail, and Ferrofluid recipes. Takes effect on data reload. |
+| COMMON | compat.alexsCavesFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales the fields Alex's Caves magnets project to physics ships; 0 is a soft disable. |
+| COMMON | compat.createAdditionCompatEnabled | boolean | true | Master switch for Create Crafts & Additions runtime and supplemental recipe integration. |
+| COMMON | compat.createAdditionFieldsEnabled | boolean | true | Make powered Crafts & Additions Tesla Coils emit fields scaled by their live FE charge. |
+| COMMON | compat.createAdditionRecipesEnabled | boolean | true | Load Permanent Magnet alternatives for the Electric Motor and Alternator. Takes effect on data reload. |
+| COMMON | compat.createAdditionFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by Crafts & Additions Tesla Coils; 0 is a soft disable. |
+| COMMON | compat.createBigCannonsCompatEnabled | boolean | true | Master switch for Create: Big Cannons projectile runtime compatibility. Datapack material tags remain available independently. |
+| COMMON | compat.dieselGeneratorsCompatEnabled | boolean | true | Master switch for Create: Diesel Generators runtime compatibility. |
+| COMMON | compat.dieselGeneratorsFerrofluidSprayEnabled | boolean | true | Make chemical sprayer and turret projectiles carrying Ferrofluid apply Magnetized for ten seconds. |
+| COMMON | compat.enderTransmissionCompatEnabled | boolean | true | Master switch for Create: Ender Transmission compatibility and its optional field relay. |
+| COMMON | compat.enderTransmissionFieldRelayEnabled | boolean | false | Experimental one-hop field projection through linked Energy Transmitters. Disabled by default because remote fields significantly change automation and combat. |
+| COMMON | compat.plantOilFerrofluidRecipeEnabled | boolean | true | Enable one common Create mixing recipe from c:plantoil and Raw Magnetite or Raw Hematite to Ferrofluid, regardless of which installed mod supplies the oil. |
 | COMMON | compat.simulatedCoastersFieldReaction | boolean | true | Allow Create: Coasters Simulated coaster cars to receive magnetic forces like ships, whether loose or attached to track. Default on. Disable if magnetic launch or braking conflicts with a coaster layout. |
 | COMMON | compat.simulatedCoastersStructuralInducer | boolean | true | Allow Structural Inducers to recognize rail-engaged Create: Coasters Simulated trains, linked cars, and riveted bodies as one structure. Loose carts are ignored by the inducer but still react to magnets. Default on. |
 | COMMON | compat.steamNRailsFieldReaction | boolean | true | Project magnetic force along the rails and apply it once to each coupled train, keeping all linked cars together and on track. Default on. |

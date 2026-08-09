@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:raw_magnetite",
+    "magnetization:raw_hematite"
+  ]
+}

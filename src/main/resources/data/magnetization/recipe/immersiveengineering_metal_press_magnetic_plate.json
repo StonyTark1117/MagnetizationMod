@@ -1,0 +1,11 @@
+{
+  "type": "immersiveengineering:metal_press",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "immersiveengineering" },
+    { "type": "magnetization:compat_config", "feature": "immersive_engineering" }
+  ],
+  "energy": 2400,
+  "input": { "item": "magnetization:ferromagnetic_ingot" },
+  "mold": "immersiveengineering:mold_plate",
+  "result": { "id": "magnetization:magnetic_plate" }
+}

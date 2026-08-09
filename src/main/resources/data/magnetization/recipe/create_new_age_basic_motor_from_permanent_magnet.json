@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "create_new_age" },
+    { "type": "magnetization:compat_config", "feature": "create_new_age" }
+  ],
+  "pattern": ["NNN", "MCS", "NNN"],
+  "key": {
+    "C": { "item": "create:andesite_casing" },
+    "M": { "item": "magnetization:permanent_magnet" },
+    "N": { "tag": "c:nuggets/iron" },
+    "S": { "item": "create:shaft" }
+  },
+  "result": { "id": "create_new_age:basic_motor", "count": 1 }
+}

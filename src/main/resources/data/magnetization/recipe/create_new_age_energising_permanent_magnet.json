@@ -1,0 +1,14 @@
+{
+  "type": "create_new_age:energising",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "create_new_age" },
+    { "type": "magnetization:compat_config", "feature": "create_new_age" }
+  ],
+  "energy_needed": 12000,
+  "ingredients": [
+    { "item": "magnetization:ferromagnetic_ingot" }
+  ],
+  "results": [
+    { "id": "magnetization:permanent_magnet" }
+  ]
+}

@@ -90,10 +90,13 @@ public final class CopycatsGameTests {
                                 + magneticState.ferrousBlockCount() + ", blockEntities="
                                 + assembledBlockEntities.stream().map(be -> be.getClass().getName()).toList()
                                 + ", materials=" + assembledMaterials);
-                helper.succeed();
             } finally {
+                // GameTest success may synchronously tear down the arena. Remove
+                // the Sable sub-level first so cleanup cannot race that teardown
+                // and throw "No sub-level at ..." after every assertion passed.
                 container.removeSubLevel(assembled, SubLevelRemovalReason.REMOVED);
             }
+            helper.succeed();
         });
     }
 }

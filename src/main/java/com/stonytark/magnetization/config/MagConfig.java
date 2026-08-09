@@ -405,6 +405,32 @@ public final class MagConfig {
      *  {@code alexscaves} is on the mod list. */
     public enum AlexsCavesPotionMode { BOTH, OURS_ONLY, THEIRS_ONLY }
     public static final ModConfigSpec.EnumValue<AlexsCavesPotionMode> ALEXSCAVES_POTION_MODE;
+    /** Master switches for the substantial optional compatibility packages. Static
+     *  material tags remain datapack-controlled; these gates cover runtime behavior
+     *  and supplemental recipes owned by Magnetization. */
+    public static final ModConfigSpec.BooleanValue CREATE_NEW_AGE_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_NEW_AGE_FIELDS_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_NEW_AGE_RECIPES_ENABLED;
+    public static final ModConfigSpec.DoubleValue CREATE_NEW_AGE_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_FIELDS_ENABLED;
+    public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_RECIPES_ENABLED;
+    public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_RAILGUN_REACTION;
+    public static final ModConfigSpec.DoubleValue IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue ALEXSCAVES_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue ALEXSCAVES_FIELDS_ENABLED;
+    public static final ModConfigSpec.BooleanValue ALEXSCAVES_RECIPES_ENABLED;
+    public static final ModConfigSpec.DoubleValue ALEXSCAVES_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue CREATE_ADDITION_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ADDITION_FIELDS_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ADDITION_RECIPES_ENABLED;
+    public static final ModConfigSpec.DoubleValue CREATE_ADDITION_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_FERROFLUID_SPRAY_ENABLED;
+    public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_FIELD_RELAY_ENABLED;
+    public static final ModConfigSpec.BooleanValue PLANT_OIL_FERROFLUID_RECIPE_ENABLED;
     /** Allow assembled Create: Coasters Simulated cart sublevels to receive the
      *  same magnetic forces as other Sable physics structures. */
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_FIELD_REACTION;
@@ -1781,6 +1807,114 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.alexsCavesPotionMode")
                 .defineEnum("alexsCavesPotionMode", AlexsCavesPotionMode.BOTH);
 
+        CREATE_NEW_AGE_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Create: New Age runtime and recipe integration.")
+                .translation("magnetization.configuration.compat.createNewAgeCompatEnabled")
+                .define("createNewAgeCompatEnabled", true);
+        CREATE_NEW_AGE_FIELDS_ENABLED = b
+                .comment("Let Create: New Age magnet blocks emit real Magnetization fields.",
+                         "Their native 1/2/4/8/24 strength ladder controls field force; a redstone",
+                         "signal reverses the presented pole without changing New Age generation.")
+                .translation("magnetization.configuration.compat.createNewAgeFieldsEnabled")
+                .define("createNewAgeFieldsEnabled", true);
+        CREATE_NEW_AGE_RECIPES_ENABLED = b
+                .comment("Load supplemental Create: New Age motor, generator-coil, and Energiser recipes.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.createNewAgeRecipesEnabled")
+                .define("createNewAgeRecipesEnabled", true);
+        CREATE_NEW_AGE_FIELD_FORCE_MULTIPLIER = b
+                .comment("Force multiplier for fields emitted by Create: New Age magnets.")
+                .translation("magnetization.configuration.compat.createNewAgeFieldForceMultiplier")
+                .defineInRange("createNewAgeFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
+
+        IMMERSIVE_ENGINEERING_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Immersive Engineering integration.")
+                .translation("magnetization.configuration.compat.immersiveEngineeringCompatEnabled")
+                .define("immersiveEngineeringCompatEnabled", true);
+        IMMERSIVE_ENGINEERING_FIELDS_ENABLED = b
+                .comment("Let powered IE Electromagnets and Tesla Coils emit real magnetic fields.")
+                .translation("magnetization.configuration.compat.immersiveEngineeringFieldsEnabled")
+                .define("immersiveEngineeringFieldsEnabled", true);
+        IMMERSIVE_ENGINEERING_RECIPES_ENABLED = b
+                .comment("Load IE Mixer and Metal Press routes for Ferrofluid and Magnetic Plates.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.immersiveEngineeringRecipesEnabled")
+                .define("immersiveEngineeringRecipesEnabled", true);
+        IMMERSIVE_ENGINEERING_RAILGUN_REACTION = b
+                .comment("Allow IE Railgun Shot entities to receive magnetic field force.")
+                .translation("magnetization.configuration.compat.immersiveEngineeringRailgunReaction")
+                .define("immersiveEngineeringRailgunReaction", true);
+        IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER = b
+                .comment("Force multiplier for IE Electromagnet and Tesla Coil fields.")
+                .translation("magnetization.configuration.compat.immersiveEngineeringFieldForceMultiplier")
+                .defineInRange("immersiveEngineeringFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
+
+        ALEXSCAVES_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Alex's Caves integration.")
+                .translation("magnetization.configuration.compat.alexsCavesCompatEnabled")
+                .define("alexsCavesCompatEnabled", true);
+        ALEXSCAVES_FIELDS_ENABLED = b
+                .comment("Let active Azure and Scarlet Magnets project polarity-correct fields to ships.",
+                         "Alex's Caves keeps ownership of its entity push so forces are not doubled.")
+                .translation("magnetization.configuration.compat.alexsCavesFieldsEnabled")
+                .define("alexsCavesFieldsEnabled", true);
+        ALEXSCAVES_RECIPES_ENABLED = b
+                .comment("Load shared Neodymium, Permanent Magnet, levitation-rail, and Ferrofluid recipes.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.alexsCavesRecipesEnabled")
+                .define("alexsCavesRecipesEnabled", true);
+        ALEXSCAVES_FIELD_FORCE_MULTIPLIER = b
+                .comment("Force multiplier for Alex's Caves magnet fields applied to physics ships.")
+                .translation("magnetization.configuration.compat.alexsCavesFieldForceMultiplier")
+                .defineInRange("alexsCavesFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
+
+        CREATE_ADDITION_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Create Crafts & Additions integration.")
+                .translation("magnetization.configuration.compat.createAdditionCompatEnabled")
+                .define("createAdditionCompatEnabled", true);
+        CREATE_ADDITION_FIELDS_ENABLED = b
+                .comment("Let a powered Crafts & Additions Tesla Coil emit a field scaled by live FE charge.")
+                .translation("magnetization.configuration.compat.createAdditionFieldsEnabled")
+                .define("createAdditionFieldsEnabled", true);
+        CREATE_ADDITION_RECIPES_ENABLED = b
+                .comment("Load Permanent Magnet alternatives for Crafts & Additions motors and alternators.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.createAdditionRecipesEnabled")
+                .define("createAdditionRecipesEnabled", true);
+        CREATE_ADDITION_FIELD_FORCE_MULTIPLIER = b
+                .comment("Force multiplier for Crafts & Additions Tesla Coil fields.")
+                .translation("magnetization.configuration.compat.createAdditionFieldForceMultiplier")
+                .defineInRange("createAdditionFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
+
+        CREATE_BIG_CANNONS_COMPAT_ENABLED = b
+                .comment("Master switch for Create: Big Cannons projectile runtime compatibility.")
+                .translation("magnetization.configuration.compat.createBigCannonsCompatEnabled")
+                .define("createBigCannonsCompatEnabled", true);
+        DIESEL_GENERATORS_COMPAT_ENABLED = b
+                .comment("Master switch for Create: Diesel Generators compatibility.")
+                .translation("magnetization.configuration.compat.dieselGeneratorsCompatEnabled")
+                .define("dieselGeneratorsCompatEnabled", true);
+        DIESEL_GENERATORS_FERROFLUID_SPRAY_ENABLED = b
+                .comment("Let Diesel Generators chemical sprayer projectiles carrying Ferrofluid",
+                         "apply Magnetized to struck living entities.")
+                .translation("magnetization.configuration.compat.dieselGeneratorsFerrofluidSprayEnabled")
+                .define("dieselGeneratorsFerrofluidSprayEnabled", true);
+        ENDER_TRANSMISSION_COMPAT_ENABLED = b
+                .comment("Master switch for Create: Ender Transmission compatibility and validation hooks.")
+                .translation("magnetization.configuration.compat.enderTransmissionCompatEnabled")
+                .define("enderTransmissionCompatEnabled", true);
+        ENDER_TRANSMISSION_FIELD_RELAY_ENABLED = b
+                .comment("Experimental: relay a field through linked Ender Transmission energy transmitters.",
+                         "Disabled by default because remote fields can substantially change automation and combat.")
+                .translation("magnetization.configuration.compat.enderTransmissionFieldRelayEnabled")
+                .define("enderTransmissionFieldRelayEnabled", false);
+        PLANT_OIL_FERROFLUID_RECIPE_ENABLED = b
+                .comment("Enable the single common Create mixing route from c:plantoil and raw Magnetite/Hematite",
+                         "to Ferrofluid. Any installed mod may supply the common plant-oil fluid tag.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.plantOilFerrofluidRecipeEnabled")
+                .define("plantOilFerrofluidRecipeEnabled", true);
+
         SIMULATED_COASTERS_FIELD_REACTION = b
                 .comment("Allow Create: Coasters Simulated coaster cars to react to magnetic fields.",
                          "Default true. The carts are Sable physics sublevels, so they receive the",
@@ -2334,6 +2468,69 @@ public final class MagConfig {
     }
     public static double steamRailsTrainSusceptibility() {
         return doubleOr(STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY, 1.0d);
+    }
+    public static boolean createNewAgeCompatEnabled() { return booleanOr(CREATE_NEW_AGE_COMPAT_ENABLED, true); }
+    public static boolean createNewAgeFieldsEnabled() {
+        return createNewAgeCompatEnabled() && booleanOr(CREATE_NEW_AGE_FIELDS_ENABLED, true);
+    }
+    public static boolean createNewAgeRecipesEnabled() {
+        return createNewAgeCompatEnabled() && booleanOr(CREATE_NEW_AGE_RECIPES_ENABLED, true);
+    }
+    public static double createNewAgeFieldForceMultiplier() {
+        return doubleOr(CREATE_NEW_AGE_FIELD_FORCE_MULTIPLIER, 1.0d);
+    }
+    public static boolean immersiveEngineeringCompatEnabled() {
+        return booleanOr(IMMERSIVE_ENGINEERING_COMPAT_ENABLED, true);
+    }
+    public static boolean immersiveEngineeringFieldsEnabled() {
+        return immersiveEngineeringCompatEnabled() && booleanOr(IMMERSIVE_ENGINEERING_FIELDS_ENABLED, true);
+    }
+    public static boolean immersiveEngineeringRecipesEnabled() {
+        return immersiveEngineeringCompatEnabled() && booleanOr(IMMERSIVE_ENGINEERING_RECIPES_ENABLED, true);
+    }
+    public static boolean immersiveEngineeringRailgunReaction() {
+        return immersiveEngineeringCompatEnabled() && booleanOr(IMMERSIVE_ENGINEERING_RAILGUN_REACTION, true);
+    }
+    public static double immersiveEngineeringFieldForceMultiplier() {
+        return doubleOr(IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER, 1.0d);
+    }
+    public static boolean alexsCavesCompatEnabled() { return booleanOr(ALEXSCAVES_COMPAT_ENABLED, true); }
+    public static boolean alexsCavesFieldsEnabled() {
+        return alexsCavesCompatEnabled() && booleanOr(ALEXSCAVES_FIELDS_ENABLED, true);
+    }
+    public static boolean alexsCavesRecipesEnabled() {
+        return alexsCavesCompatEnabled() && booleanOr(ALEXSCAVES_RECIPES_ENABLED, true);
+    }
+    public static double alexsCavesFieldForceMultiplier() {
+        return doubleOr(ALEXSCAVES_FIELD_FORCE_MULTIPLIER, 1.0d);
+    }
+    public static boolean createAdditionCompatEnabled() { return booleanOr(CREATE_ADDITION_COMPAT_ENABLED, true); }
+    public static boolean createAdditionFieldsEnabled() {
+        return createAdditionCompatEnabled() && booleanOr(CREATE_ADDITION_FIELDS_ENABLED, true);
+    }
+    public static boolean createAdditionRecipesEnabled() {
+        return createAdditionCompatEnabled() && booleanOr(CREATE_ADDITION_RECIPES_ENABLED, true);
+    }
+    public static double createAdditionFieldForceMultiplier() {
+        return doubleOr(CREATE_ADDITION_FIELD_FORCE_MULTIPLIER, 1.0d);
+    }
+    public static boolean createBigCannonsCompatEnabled() {
+        return booleanOr(CREATE_BIG_CANNONS_COMPAT_ENABLED, true);
+    }
+    public static boolean dieselGeneratorsCompatEnabled() {
+        return booleanOr(DIESEL_GENERATORS_COMPAT_ENABLED, true);
+    }
+    public static boolean dieselGeneratorsFerrofluidSprayEnabled() {
+        return dieselGeneratorsCompatEnabled() && booleanOr(DIESEL_GENERATORS_FERROFLUID_SPRAY_ENABLED, true);
+    }
+    public static boolean enderTransmissionCompatEnabled() {
+        return booleanOr(ENDER_TRANSMISSION_COMPAT_ENABLED, true);
+    }
+    public static boolean enderTransmissionFieldRelayEnabled() {
+        return enderTransmissionCompatEnabled() && booleanOr(ENDER_TRANSMISSION_FIELD_RELAY_ENABLED, false);
+    }
+    public static boolean plantOilFerrofluidRecipeEnabled() {
+        return booleanOr(PLANT_OIL_FERROFLUID_RECIPE_ENABLED, true);
     }
     public static boolean externalMachineMagnetsEnabled() {
         return booleanOr(EXTERNAL_MACHINE_MAGNETS_ENABLED, true);

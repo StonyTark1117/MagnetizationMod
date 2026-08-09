@@ -24,11 +24,9 @@ public final class MagneticFields {
         final boolean[] found = {false};
         EmitterRegistry.forEach(level, (lvl, p) -> {
             if (found[0]) return;
-            if (lvl.getBlockEntity(p) instanceof MagneticFieldSource src) {
-                final MagneticField f = src.currentField();
-                if (f != null && f.origin().distanceToSqr(pos) <= f.range() * f.range()) {
-                    found[0] = true;
-                }
+            final MagneticField f = fieldAt(lvl, p);
+            if (f != null && f.origin().distanceToSqr(pos) <= f.range() * f.range()) {
+                found[0] = true;
             }
         });
         if (found[0]) return true;
@@ -56,17 +54,24 @@ public final class MagneticFields {
         final MagneticField[] best = {null};
         final double[] bestSq = {Double.MAX_VALUE};
         EmitterRegistry.forEach(level, (lvl, p) -> {
-            if (lvl.getBlockEntity(p) instanceof MagneticFieldSource src) {
-                final MagneticField f = src.currentField();
-                if (f != null) {
-                    final double d = f.origin().distanceToSqr(pos);
-                    if (d <= f.range() * f.range() && d < bestSq[0]) {
-                        bestSq[0] = d;
-                        best[0] = f;
-                    }
+            final MagneticField f = fieldAt(lvl, p);
+            if (f != null) {
+                final double d = f.origin().distanceToSqr(pos);
+                if (d <= f.range() * f.range() && d < bestSq[0]) {
+                    bestSq[0] = d;
+                    best[0] = f;
                 }
             }
         });
         return best[0];
+    }
+
+    private static @Nullable MagneticField fieldAt(final net.minecraft.world.level.Level level,
+                                                    final BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof MagneticFieldSource source) {
+            final MagneticField field = source.currentField();
+            if (field != null) return field;
+        }
+        return com.stonytark.magnetization.compat.ExternalFieldCompat.currentField(level, pos);
     }
 }

@@ -541,7 +541,13 @@ public final class FieldApplicator {
         // it's a hard veto.
         if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
         if (e instanceof IMagnetizable) return true;
-        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) return true;
+        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) {
+            if (com.stonytark.magnetization.compat.ExternalFieldCompat
+                    .isImmersiveEngineeringRailgunShot(e)) {
+                return MagConfig.immersiveEngineeringRailgunReaction();
+            }
+            return true;
+        }
         if (MagCreateBigCannonsCompat.isMagnetizableProjectile(e)) return true;
         if (e instanceof ItemEntity item) {
             if (MagConfig.isItemDisabled(item.getItem())) return false;
@@ -633,7 +639,12 @@ public final class FieldApplicator {
         // ferromagnetic-by-type, etc.) — counted before the armor pass so a
         // tagged mob wearing magnetized iron stacks both contributions.
         double sum = 0.0d;
-        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) sum += 1.0d;
+        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
+                && (!com.stonytark.magnetization.compat.ExternalFieldCompat
+                        .isImmersiveEngineeringRailgunShot(e)
+                    || MagConfig.immersiveEngineeringRailgunReaction())) {
+            sum += 1.0d;
+        }
         // Any LivingEntity wearing tagged metal armor is pulled in proportion to
         // how many pieces it has on. Magnetized pieces (stamped with a polarity
         // by the electromagnet GUI) get an additional bonus on top — so a zombie

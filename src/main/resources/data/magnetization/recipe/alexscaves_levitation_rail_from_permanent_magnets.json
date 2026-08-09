@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "alexscaves" },
+    { "type": "magnetization:compat_config", "feature": "alexscaves" }
+  ],
+  "pattern": ["IMI", "ISI", "IMI"],
+  "key": {
+    "M": { "item": "magnetization:permanent_magnet" },
+    "I": { "tag": "c:ingots/iron" },
+    "S": { "tag": "c:rods/wooden" }
+  },
+  "result": { "id": "alexscaves:magnetic_levitation_rail", "count": 6 }
+}

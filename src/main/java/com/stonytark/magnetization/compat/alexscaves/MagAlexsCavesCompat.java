@@ -44,6 +44,7 @@ public final class MagAlexsCavesCompat {
     }
 
     private static void onEffectAdded(final MobEffectEvent.Added event) {
+        if (!MagConfig.alexsCavesCompatEnabled()) return;
         final MagConfig.AlexsCavesPotionMode mode;
         try { mode = MagConfig.ALEXSCAVES_POTION_MODE.get(); }
         catch (final Throwable t) { return; } // config not loaded yet

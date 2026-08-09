@@ -57,10 +57,11 @@ public final class MagneticMaterials {
         final ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (id == null) return 0;
         if (!id.getNamespace().equals(Magnetization.MOD_ID)) {
-            return MagConfig.externalMachineMagnetsEnabled()
-                    && stack.is(MagTags.MACHINE_MAGNETS)
-                    ? MagConfig.externalMachineMagnetPotency()
-                    : 0;
+            if (!MagConfig.externalMachineMagnetsEnabled() || !stack.is(MagTags.MACHINE_MAGNETS)) return 0;
+            final int configured = MagConfig.externalMachineMagnetPotency();
+            final int nativePotency = com.stonytark.magnetization.compat.ExternalFieldCompat
+                    .machineMagnetPotency(id, configured);
+            return nativePotency > 0 ? nativePotency : configured;
         }
         final String path = id.getPath();
         final Integer special = SPECIALS.get(path);

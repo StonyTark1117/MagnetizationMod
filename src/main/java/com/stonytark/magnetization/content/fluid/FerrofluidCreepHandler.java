@@ -122,8 +122,9 @@ public final class FerrofluidCreepHandler {
     private static List<Magnet> gatherMagnets(final ServerLevel server) {
         final List<Magnet> magnets = new ArrayList<>();
         EmitterRegistry.forEach(server, (lvl, pos) -> {
-            if (!(lvl.getBlockEntity(pos) instanceof MagneticFieldSource src)) return;
-            final MagneticField f = src.currentField();
+            MagneticField f = null;
+            if (lvl.getBlockEntity(pos) instanceof MagneticFieldSource src) f = src.currentField();
+            if (f == null) f = com.stonytark.magnetization.compat.ExternalFieldCompat.currentField(lvl, pos);
             if (f == null) return;
             magnets.add(new Magnet(f.origin(), f.polarity(), f.range(), true));
         });
