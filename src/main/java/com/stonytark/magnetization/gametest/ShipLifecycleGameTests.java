@@ -121,7 +121,7 @@ public final class ShipLifecycleGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = EMPTY, timeoutTicks = 160, batch = "shipLifecycle")
+    @GameTest(template = EMPTY, timeoutTicks = 160, batch = "shipLifecycleFusionThrusterRotated")
     public static void fusionThrusterWorksOnRotatedMovingShip(final GameTestHelper helper) {
         final var level = helper.getLevel();
         final BlockPos base = skyBase(helper, 240);
@@ -135,28 +135,36 @@ public final class ShipLifecycleGameTests {
         master.energyBuffer().receiveEnergy(2_000_000, false);
         final List<BlockPos> blocks = panelBlocks(base, 5, 3);
         final ServerSubLevel ship = assemble(level, masterPos, blocks);
-        try {
-            final Quaterniond rotation = new Quaterniond().rotateY(Math.PI / 2.0d);
-            final var container = SubLevelContainer.getContainer(level);
-            container.physicsSystem().getPipeline().teleport(ship,
-                    new Vector3d(base.getX() + 0.5d, 245.0d, base.getZ() + 0.5d), rotation);
+        final Quaterniond rotation = new Quaterniond().rotateY(Math.PI / 2.0d);
+        final var container = SubLevelContainer.getContainer(level);
+        container.physicsSystem().getPipeline().teleport(ship,
+                new Vector3d(base.getX() + 0.5d, 245.0d, base.getZ() + 0.5d), rotation);
+        // Give Sable time to publish the rotated logical pose and let the moved
+        // block entities establish their sub-level ticker before taking the
+        // baseline. Without this warmup the test could sample only gravity even
+        // though the same panel fires correctly once the ship is live.
+        helper.runAfterDelay(5L, () -> {
             final var handle = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
-            handle.addLinearAndAngularVelocity(new Vector3d(0.25d, 0.0d, 0.0d), new Vector3d());
+            if (handle == null || !handle.isValid()) {
+                remove(level, ship);
+                helper.fail("Rotated Fusion Thruster ship has no valid rigid-body handle");
+                return;
+            }
+            final Vector3d expectedWorld = rotation.transform(new Vector3d(0.0d, 0.0d, 1.0d));
+            expectedWorld.normalize();
+            handle.addLinearAndAngularVelocity(new Vector3d(expectedWorld).mul(0.25d), new Vector3d());
             final Vector3d before = handle.getLinearVelocity(new Vector3d());
             helper.runAfterDelay(20L, () -> {
                 final Vector3d after = handle.getLinearVelocity(new Vector3d());
                 remove(level, ship);
-                final double beforeHorizontal = Math.hypot(before.x(), before.z());
-                final double afterHorizontal = Math.hypot(after.x(), after.z());
-                helper.assertTrue(afterHorizontal > beforeHorizontal + 0.01d,
-                        "Rotated Fusion Thruster must add thrust while the ship is already moving; before="
-                                + before + " after=" + after);
+                final double beforeAlongThrust = before.dot(expectedWorld);
+                final double afterAlongThrust = after.dot(expectedWorld);
+                helper.assertTrue(afterAlongThrust > beforeAlongThrust + 0.01d,
+                        "Rotated Fusion Thruster must add reaction thrust while the ship is already moving; "
+                                + "axis=" + expectedWorld + " before=" + before + " after=" + after);
                 helper.succeed();
             });
-            return;
-        } finally {
-            // The delayed assertion owns cleanup after the ship has had time to tick.
-        }
+        });
     }
 
     // RailgunHandler scans every registered emitter in the shared ServerLevel.

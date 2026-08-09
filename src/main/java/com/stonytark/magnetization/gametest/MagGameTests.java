@@ -169,7 +169,7 @@ public final class MagGameTests {
      * mob (whose getKnownMovement == getDeltaMovement) with motion re-applied
      * each tick so the sensor samples a non-zero speed regardless of drag/timing.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100, batch = "sensorMovement")
     public static void sensorEmitsRedstoneOnMovement(final GameTestHelper helper) {
         final BlockPos sensorPos = new BlockPos(1, 1, 1);
         helper.setBlock(sensorPos, MagBlocks.MAGNETOSTRICTIVE_SENSOR.get());
@@ -2087,7 +2087,7 @@ public final class MagGameTests {
      * source that's covered by a field. Asserts a stationary mob gains horizontal
      * velocity once the gallium is both signal-powered and in-field.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "galliumLorentzPlain")
     public static void galliumLorentzPushesEntity(final GameTestHelper helper) {
         galliumPushTest(helper, MagBlocks.GALLIUM_BLOCK.get());
     }
@@ -2097,7 +2097,7 @@ public final class MagGameTests {
      * (the second of its two abilities; the ferrofluid-style creep is a slow
      * block-spread covered by registry membership). Same assertion as #103.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "galliumLorentzMixed")
     public static void mixedGalliumLorentzPushesEntity(final GameTestHelper helper) {
         galliumPushTest(helper, MagBlocks.MIXED_GALLIUM_BLOCK.get());
     }
