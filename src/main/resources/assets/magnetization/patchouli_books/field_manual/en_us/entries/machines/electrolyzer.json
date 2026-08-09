@@ -8,6 +8,11 @@
       "item": "magnetization:electrolyzer",
       "text": "book.magnetization.entry.electrolyzer.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.electrolyzer.recipe.title",
+      "text": "book.magnetization.entry.electrolyzer.recipe.text"
     }
   ]
 }

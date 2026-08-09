@@ -33,6 +33,11 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.fusion_fuels.cells_title",
       "text": "book.magnetization.entry.fusion_fuels.cells"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.behavior_title",
+      "text": "book.magnetization.entry.fusion_fuels.behavior"
     }
   ]
 }

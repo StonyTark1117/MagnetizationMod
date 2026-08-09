@@ -18,6 +18,11 @@
       "item": "magnetization:railgun_remote",
       "text": "book.magnetization.entry.railgun.remote",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.railgun.controls.title",
+      "text": "book.magnetization.entry.railgun.controls.text"
     }
   ]
 }

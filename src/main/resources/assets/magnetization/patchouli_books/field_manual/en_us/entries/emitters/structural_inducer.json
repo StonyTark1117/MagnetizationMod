@@ -8,6 +8,11 @@
       "item": "magnetization:structural_inducer",
       "text": "book.magnetization.entry.structural_inducer.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.structural_inducer.compat.title",
+      "text": "book.magnetization.entry.structural_inducer.compat.text"
     }
   ]
 }

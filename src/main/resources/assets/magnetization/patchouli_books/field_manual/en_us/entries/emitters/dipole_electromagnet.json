@@ -1,0 +1,23 @@
+{
+  "name": "book.magnetization.entry.dipole.name",
+  "icon": "magnetization:dipole_electromagnet",
+  "category": "magnetization:emitters",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:dipole_electromagnet",
+      "text": "book.magnetization.entry.dipole.spotlight",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.dipole.ends.title",
+      "text": "book.magnetization.entry.dipole.ends.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.dipole.controls.title",
+      "text": "book.magnetization.entry.dipole.controls.text"
+    }
+  ]
+}

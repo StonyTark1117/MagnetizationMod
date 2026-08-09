@@ -1,0 +1,22 @@
+{
+  "name": "book.magnetization.entry.automation.name",
+  "icon": "minecraft:hopper",
+  "category": "magnetization:machines",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.automation.intake.title",
+      "text": "book.magnetization.entry.automation.intake.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.automation.fluids.title",
+      "text": "book.magnetization.entry.automation.fluids.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.automation.safety.title",
+      "text": "book.magnetization.entry.automation.safety.text"
+    }
+  ]
+}

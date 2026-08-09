@@ -1,0 +1,22 @@
+{
+  "name": "book.magnetization.entry.configuration.name",
+  "icon": "minecraft:comparator",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.configuration.files.title",
+      "text": "book.magnetization.entry.configuration.files.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.configuration.disable.title",
+      "text": "book.magnetization.entry.configuration.disable.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.configuration.multiplayer.title",
+      "text": "book.magnetization.entry.configuration.multiplayer.text"
+    }
+  ]
+}

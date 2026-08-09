@@ -1,0 +1,32 @@
+{
+  "name": "book.magnetization.entry.compatibility.name",
+  "icon": "create:wrench",
+  "category": "magnetization:advanced",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.ships.title",
+      "text": "book.magnetization.entry.compatibility.ships.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.vehicles.title",
+      "text": "book.magnetization.entry.compatibility.vehicles.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.create.title",
+      "text": "book.magnetization.entry.compatibility.create.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.fuels.title",
+      "text": "book.magnetization.entry.compatibility.fuels.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.overlays.title",
+      "text": "book.magnetization.entry.compatibility.overlays.text"
+    }
+  ]
+}
