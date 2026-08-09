@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.gametest;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.content.fluid.GalliumRegistry;
 import com.stonytark.magnetization.physics.EmitterRegistry;
@@ -1080,7 +1081,7 @@ public final class MagGameTests {
      * #124 — Railgun walks its rail: an emitter + a 6-block copper rail reports
      * railLength==6 via the handler's pure walk.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "railgunLengthLimit")
     public static void railgunDetectsRailLength(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
@@ -1092,15 +1093,32 @@ public final class MagGameTests {
             level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
                     Blocks.COPPER_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
         }
-        final int len = com.stonytark.magnetization.content.railgun.RailgunHandler.walkRail(
-                level, emitter, net.minecraft.core.Direction.NORTH);
-        // Clean up the sky blocks.
-        level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
-        for (int i = 1; i <= 6; i++) {
-            level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
-                    Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        final boolean priorLimitEnabled = MagConfig.RAILGUN_LENGTH_LIMIT_ENABLED.get();
+        final int priorMaxLength = MagConfig.RAILGUN_MAX_LENGTH.get();
+        final int unlimitedLength;
+        final int limitedLength;
+        try {
+            MagConfig.RAILGUN_LENGTH_LIMIT_ENABLED.set(false);
+            unlimitedLength = com.stonytark.magnetization.content.railgun.RailgunHandler.walkRail(
+                    level, emitter, net.minecraft.core.Direction.NORTH);
+            MagConfig.RAILGUN_MAX_LENGTH.set(4);
+            MagConfig.RAILGUN_LENGTH_LIMIT_ENABLED.set(true);
+            limitedLength = com.stonytark.magnetization.content.railgun.RailgunHandler.walkRail(
+                    level, emitter, net.minecraft.core.Direction.NORTH);
+        } finally {
+            MagConfig.RAILGUN_LENGTH_LIMIT_ENABLED.set(priorLimitEnabled);
+            MagConfig.RAILGUN_MAX_LENGTH.set(priorMaxLength);
+            // Clean up the sky blocks.
+            level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+            for (int i = 1; i <= 6; i++) {
+                level.setBlock(emitter.relative(net.minecraft.core.Direction.NORTH, i),
+                        Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+            }
         }
-        helper.assertTrue(len == 6, "Railgun should detect a 6-block rail; got " + len);
+        helper.assertTrue(unlimitedLength == 6,
+                "Disabled optional limit should detect all 6 rail blocks; got " + unlimitedLength);
+        helper.assertTrue(limitedLength == 4,
+                "Enabled optional limit should cap a 6-block rail at 4 effective blocks; got " + limitedLength);
         helper.succeed();
     }
 
@@ -1189,6 +1207,67 @@ public final class MagGameTests {
             clearRailgunRail(level, base);
             clearRailgunRail(level, other);
             helper.assertTrue(both, "One remote should pair both sibling rails into manual mode");
+            helper.succeed();
+        });
+    }
+
+    /** Both emitter views describe one arc, except for their independently fed
+     * FE buffers. The GUI switch must also update the complete pair even when
+     * clicked from the non-owner emitter. */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100, batch = "railgunPairedDisplay")
+    public static void railgunPairedDisplaysShareArcDataButNotEnergy(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos base = new BlockPos(abs.getX(), 236, abs.getZ());
+        final BlockPos other = base.offset(2, 0, 0);
+        buildRailgunRail(level, base);
+        buildRailgunRail(level, other);
+        // The effective paired length is the shorter rail, regardless of which
+        // emitter the registry happens to process first.
+        level.setBlock(other.relative(net.minecraft.core.Direction.NORTH, 5), Blocks.AIR.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(other.relative(net.minecraft.core.Direction.NORTH, 6), Blocks.AIR.defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final var beA = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity)
+                level.getBlockEntity(base);
+        final var beB = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity)
+                level.getBlockEntity(other);
+        if (beA == null || beB == null) { helper.fail("paired emitters were not created"); return; }
+        beA.energyBuffer().receiveEnergy(1_234, false);
+        beB.energyBuffer().receiveEnergy(5_678, false);
+        // B is not the lower-BlockPos arc owner; pairing from it exercises the
+        // former one-sided manual-mode synchronization bug.
+        beB.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+
+        helper.runAfterDelay(10L, () -> {
+            final net.minecraft.world.entity.player.Player player =
+                    helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
+            final com.stonytark.magnetization.menu.MachineMenu menu =
+                    new com.stonytark.magnetization.menu.MachineMenu(1, player.getInventory(),
+                            net.minecraft.world.inventory.ContainerLevelAccess.create(level, other), other,
+                            com.stonytark.magnetization.menu.MachineMenu.Kind.RAILGUN, beB.remoteContainer());
+            final boolean clickAccepted = menu.clickMenuButton(player,
+                    com.stonytark.magnetization.menu.MachineMenu.BUTTON_RAILGUN_BLOCK_BREAKING);
+
+            final boolean sharedLength = beA.guiStat1() == 4 && beB.guiStat1() == 4;
+            final boolean sharedMode = beA.manualMode() && beB.manualMode();
+            final boolean sharedBreaking = !beA.breaksBlocks() && !beB.breaksBlocks();
+            final boolean sharedPacked = beA.guiStat2() == beB.guiStat2();
+            final boolean independentEnergy = beA.guiEnergyStored() == 1_234
+                    && beB.guiEnergyStored() == 5_678;
+            clearRailgunRail(level, base);
+            clearRailgunRail(level, other);
+
+            helper.assertTrue(clickAccepted, "Railgun GUI block-breaking button was rejected");
+            helper.assertTrue(sharedLength, "Paired GUIs must show effective length 4; A="
+                    + beA.guiStat1() + " B=" + beB.guiStat1());
+            helper.assertTrue(sharedMode, "Manual mode must mirror from the non-owner emitter");
+            helper.assertTrue(sharedBreaking, "Block-breaking switch must update both emitter GUIs");
+            helper.assertTrue(sharedPacked, "Paired HUD/GUI arc data must be identical");
+            helper.assertTrue(independentEnergy, "Each emitter must retain its own FE reading; A="
+                    + beA.guiEnergyStored() + " B=" + beB.guiEnergyStored());
             helper.succeed();
         });
     }
@@ -1457,10 +1536,22 @@ public final class MagGameTests {
         level.setBlock(bedrock, Blocks.BEDROCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
         level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
 
-        final boolean stoneBroke = com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, stone);
-        final boolean railSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, rail);
-        final boolean bedrockSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, bedrock);
-        final boolean emitterSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, emitter);
+        final boolean priorDrops = level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS);
+        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS)
+                .set(false, level.getServer());
+        final boolean stoneBroke;
+        final boolean railSpared;
+        final boolean bedrockSpared;
+        final boolean emitterSpared;
+        try {
+            stoneBroke = com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, stone);
+            railSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, rail);
+            bedrockSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, bedrock);
+            emitterSpared = !com.stonytark.magnetization.content.railgun.RailgunHandler.breakIfObstructing(level, emitter);
+        } finally {
+            level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS)
+                    .set(priorDrops, level.getServer());
+        }
 
         final boolean stoneGone = level.getBlockState(stone).isAir();
         final boolean railStays = level.getBlockState(rail).is(Blocks.COPPER_BLOCK);
@@ -1471,11 +1562,79 @@ public final class MagGameTests {
         level.setBlock(rail, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
         level.setBlock(bedrock, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
         level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                new net.minecraft.world.phys.AABB(b).inflate(12.0d)).forEach(net.minecraft.world.entity.Entity::discard);
 
         helper.assertTrue(stoneBroke && stoneGone, "Railgun should break a plain obstructing block");
         helper.assertTrue(railSpared && railStays, "Railgun must never break its own rails");
         helper.assertTrue(bedrockSpared && bedrockStays, "Railgun must not break bedrock");
         helper.assertTrue(emitterSpared && emitterStays, "Railgun must not break its emitter controls");
+        helper.succeed();
+    }
+
+    /** A launched ship's high-speed sweep clears every ordinary obstruction it
+     * can cross this tick, while the per-arc switch and railgun immunity remain
+     * effective. This directly covers the path routine called by the Sable ship
+     * acceleration branch. */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "railgunBreakPath")
+    public static void railgunShipSweepBreaksPathAndHonorsToggle(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos b = new BlockPos(abs.getX(), 232, abs.getZ());
+        final BlockPos farStone = b.offset(0, 0, 1);
+        final BlockPos rail = b.offset(0, 0, 2);
+        final BlockPos emitter = b.offset(0, 0, 3);
+        final BlockPos disabledStone = b;
+        level.setBlock(farStone, Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(rail, Blocks.COPPER_BLOCK.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState(),
+                net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final boolean priorGlobal = MagConfig.RAILGUN_BREAKS_BLOCKS.get();
+        final boolean priorDrops = level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS);
+        final int broken;
+        final int disabledBroken;
+        try {
+            MagConfig.RAILGUN_BREAKS_BLOCKS.set(true);
+            level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS)
+                    .set(false, level.getServer());
+            // The ship occupies z=4; at 80 blocks/s it can cross four blocks in
+            // one tick. The old one-slab implementation never reached farStone.
+            final var bounds = new dev.ryanhcode.sable.companion.math.BoundingBox3d(
+                    b.getX() + 0.1d, b.getY() + 0.1d, b.getZ() + 4.1d,
+                    b.getX() + 0.9d, b.getY() + 0.9d, b.getZ() + 4.9d);
+            broken = com.stonytark.magnetization.content.railgun.RailgunHandler.breakPathAhead(
+                    level, bounds, net.minecraft.core.Direction.NORTH, 80.0d, true);
+            level.setBlock(disabledStone, Blocks.STONE.defaultBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_ALL);
+            disabledBroken = com.stonytark.magnetization.content.railgun.RailgunHandler.breakPathAhead(
+                    level, bounds, net.minecraft.core.Direction.NORTH, 80.0d, false);
+        } finally {
+            MagConfig.RAILGUN_BREAKS_BLOCKS.set(priorGlobal);
+            level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS)
+                    .set(priorDrops, level.getServer());
+        }
+
+        final boolean stoneGone = level.getBlockState(farStone).isAir();
+        final boolean railStays = level.getBlockState(rail).is(Blocks.COPPER_BLOCK);
+        final boolean emitterStays = level.getBlockState(emitter).is(MagBlocks.RAILGUN_EMITTER.get());
+        final boolean disabledStays = level.getBlockState(disabledStone).is(Blocks.STONE);
+        level.setBlock(farStone, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(rail, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(emitter, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(disabledStone, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        // These fixtures live high above the tiny test arena. Do not leave the
+        // intentionally generated stone drop falling into unloaded chunks after
+        // the test has completed; that can stall unrelated later GameTests.
+        level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                new net.minecraft.world.phys.AABB(b).inflate(12.0d)).forEach(net.minecraft.world.entity.Entity::discard);
+
+        helper.assertTrue(broken == 1 && stoneGone,
+                "Ship sweep should break the distant path obstruction; broken=" + broken);
+        helper.assertTrue(railStays, "Ship sweep must not break railgun rails");
+        helper.assertTrue(emitterStays, "Ship sweep must not break railgun emitters");
+        helper.assertTrue(disabledBroken == 0 && disabledStays,
+                "Per-arc GUI switch must completely disable path breaking");
         helper.succeed();
     }
 

@@ -3,6 +3,7 @@ package com.stonytark.magnetization.client.screen;
 import com.stonytark.magnetization.menu.MachineGuiData;
 import com.stonytark.magnetization.menu.MachineMenu;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,6 +23,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     // Vertical bars on the right edge of the pane.
     private static final int ENERGY_X = 156, BAR_Y = 18, BAR_W = 12, BAR_H = 54;
     private static final int FLUID_X = 138;
+    private Button railgunBreakingButton;
 
     /** Denominator for the secondary fuel/fluid bar. Uses the server-authoritative
      *  value synced through the menu ({@code stat4}) so a multiplayer client whose
@@ -40,6 +42,36 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
 
     @Override
+    protected void init() {
+        super.init();
+        if (menu.kind() == MachineMenu.Kind.RAILGUN) {
+            railgunBreakingButton = addRenderableWidget(Button.builder(railgunBreakingLabel(), button -> {
+                if (minecraft != null && minecraft.gameMode != null) {
+                    minecraft.gameMode.handleInventoryButtonClick(
+                            menu.containerId, MachineMenu.BUTTON_RAILGUN_BLOCK_BREAKING);
+                }
+            }).bounds(leftPos + 8, topPos + 55, 104, 14).build());
+        }
+    }
+
+    private boolean railgunBreaksBlocks() {
+        return (menu.displayAuxiliary()
+                & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.BREAK_BLOCKS_BIT) != 0;
+    }
+
+    private Component railgunBreakingLabel() {
+        return Component.translatable(railgunBreaksBlocks()
+                ? "gui.magnetization.railgun_break_blocks_on"
+                : "gui.magnetization.railgun_break_blocks_off");
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (railgunBreakingButton != null) railgunBreakingButton.setMessage(railgunBreakingLabel());
+    }
+
+    @Override
     protected void renderBg(final GuiGraphics g, final float partial, final int mx, final int my) {
         // Dark neutral panel (matches EmitterScreen).
         g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xC0202020);
@@ -51,7 +83,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case THRUSTER, FUSION_THRUSTER, JET -> 0xFF16242B;
             default -> 0xFF1B1B1B;
         };
-        drawSlotRecess(g, leftPos + MachineMenu.INPUT_X, topPos + MachineMenu.INPUT_Y, tint);
+        drawSlotRecess(g, leftPos + MachineMenu.inputX(menu.kind()), topPos + MachineMenu.INPUT_Y, tint);
 
         // Player inventory + hotbar recesses (exact menu coords).
         for (int row = 0; row < 3; row++) {
@@ -136,15 +168,21 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case RAILGUN -> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_rail_length", Math.max(0, menu.displayCurrent())));
                 final int packed = Math.max(0, menu.displayAuxiliary());
-                final boolean manual = (packed & 16) != 0;
+                final boolean manual = (packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.MANUAL_MODE_BIT) != 0;
                 final String[] states = {"idle", "holding", "launching", "cooldown"};
                 lines.add(Component.translatable(manual
                         ? "tooltip.magnetization.gui_railgun_manual" : "tooltip.magnetization.gui_railgun_auto"));
                 lines.add(Component.translatable("tooltip.magnetization.gui_railgun_state_"
-                        + states[Math.min(states.length - 1, packed & 15)]));
+                        + states[Math.min(states.length - 1, packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ARC_STATE_MASK)]));
             }
         }
-        lines.add(MachineGuiData.statusLine(menu.displayStatus()));
+        // Railgun already has a precise arc-state row; its final machine-status
+        // row was duplicate information and now makes room for the toggle.
+        if (menu.kind() != MachineMenu.Kind.RAILGUN) {
+            lines.add(MachineGuiData.statusLine(menu.displayStatus()));
+        }
         int ly = 22;
         for (final Component c : lines) {
             g.drawString(font, c, 8, ly, 0xC0C0C0, false);

@@ -49,7 +49,7 @@ public final class FusionFuelInfo {
     private static final int HYDROGEN_COLOR  = 0xFF9FD8FF; // pale blue
     private static final int DEUTERIUM_COLOR = 0xFF6EA8FF; // mid blue
     private static final int TRITIUM_COLOR   = 0xFF7CFF9E; // green (radioluminescent)
-    private static final int HELIUM3_COLOR   = 0xFFFFD866; // gold
+    private static final int HELIUM3_COLOR   = 0xFFC9A7FF; // luminous lavender, matching the crystal palette
     private static final int LITHIUM_COLOR   = 0xFFE0E0E8; // silver
     private static final int GALLIUM_COLOR   = 0xFF8FB4D9; // blue-grey
 

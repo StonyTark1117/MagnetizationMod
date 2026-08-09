@@ -29,6 +29,10 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 public class RailgunEmitterBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData {
 
+    public static final int ARC_STATE_MASK = 15;
+    public static final int MANUAL_MODE_BIT = 16;
+    public static final int BREAK_BLOCKS_BIT = 32;
+
     /** Arc lifecycle. The lower-BlockPos emitter of a pair owns the live state. */
     public enum ArcState { IDLE, HOLDING, LAUNCHING, COOLDOWN }
 
@@ -41,6 +45,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     private int launchTicks;
     private int cooldownTicks;
     private boolean manualMode;     // a remote is paired on this arc
+    private boolean breakBlocks = true; // per-arc player control; server config remains the global gate
     private boolean fireRequested;  // set by the bound remote; consumed by the handler
 
     private int railLength;         // cached by the handler each scan
@@ -73,6 +78,10 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     public void setCooldownTicks(final int t) { cooldownTicks = t; }
     public boolean manualMode() { return manualMode; }
     public void setManualMode(final boolean m) { if (manualMode != m) { manualMode = m; setChanged(); } }
+    public boolean breaksBlocks() { return breakBlocks; }
+    public void setBreakBlocks(final boolean enabled) {
+        if (breakBlocks != enabled) { breakBlocks = enabled; setChanged(); }
+    }
     public int railLength() { return railLength; }
     public void setRailLength(final int l) { if (railLength != l) { railLength = l; setChanged(); } }
 
@@ -123,8 +132,12 @@ public class RailgunEmitterBlockEntity extends BlockEntity
      *  held target back to IDLE. Invoked by sneak-using the bound remote so a player
      *  who took the remote out of the slot can still un-pair. */
     public void unpair() {
-        setManualMode(false);
-        if (state == ArcState.HOLDING) setArcState(ArcState.IDLE);
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            RailgunHandler.unpairArc(server, getBlockPos());
+        } else {
+            setManualMode(false);
+            if (state == ArcState.HOLDING) setArcState(ArcState.IDLE);
+        }
     }
 
     // ── MachineGuiData (Kind.RAILGUN: rail length + mode/state, FE bar) ──
@@ -133,8 +146,11 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return MagConfig.railgunFeCapacity(); }
     @Override public int guiStat1() { return railLength; }
-    /** Pack mode (bit 4) + arc state ordinal (bits 0-3) into one synced int. */
-    @Override public int guiStat2() { return (manualMode ? 16 : 0) | state.ordinal(); }
+    /** Pack arc state (bits 0-3), mode (bit 4), and block breaking (bit 5). */
+    @Override public int guiStat2() {
+        return (manualMode ? MANUAL_MODE_BIT : 0)
+                | (breakBlocks ? BREAK_BLOCKS_BIT : 0) | state.ordinal();
+    }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
         return switch (state) {
             case HOLDING -> com.stonytark.magnetization.menu.MachineDisplayData.Status.HOLDING;
@@ -186,6 +202,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         tag.putInt("Launch", launchTicks);
         tag.putInt("Cooldown", cooldownTicks);
         tag.putBoolean("Manual", manualMode);
+        tag.putBoolean("BreakBlocks", breakBlocks);
         tag.putBoolean("RedstonePowered", redstonePowered);
         tag.putInt("RailLength", railLength);
         tag.put("Remote", remoteSlot.createTag(registries));
@@ -199,6 +216,9 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         launchTicks = tag.getInt("Launch");
         cooldownTicks = tag.getInt("Cooldown");
         manualMode = tag.getBoolean("Manual");
+        // Existing worlds predate the per-arc switch and retain the historical
+        // block-breaking behaviour until a player explicitly disables it.
+        breakBlocks = !tag.contains("BreakBlocks") || tag.getBoolean("BreakBlocks");
         redstonePowered = tag.getBoolean("RedstonePowered");
         railLength = tag.getInt("RailLength");
         remoteSlot.fromTag(tag.getList("Remote", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);

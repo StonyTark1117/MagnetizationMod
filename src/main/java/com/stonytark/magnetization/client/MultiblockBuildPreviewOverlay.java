@@ -266,7 +266,10 @@ public final class MultiblockBuildPreviewOverlay {
 
     private static int clientRailLength(final Level level, final BlockPos emitter, final Direction facing) {
         int length = 0;
-        for (BlockPos p = emitter.relative(facing); length < MagConfig.railgunMaxLength();
+        final int maxLength = MagConfig.railgunLengthLimitEnabled()
+                ? MagConfig.railgunMaxLength() : Integer.MAX_VALUE;
+        for (BlockPos p = emitter.relative(facing); length < maxLength
+                && level.isInWorldBounds(p) && level.hasChunkAt(p);
              p = p.relative(facing)) {
             if (!level.getBlockState(p).is(MagTags.RAILGUN_RAILS)) break;
             length++;
@@ -277,12 +280,16 @@ public final class MultiblockBuildPreviewOverlay {
     private static BlockPos findRailgunEmitter(final Level level, final BlockPos hit) {
         if (level.getBlockState(hit).is(MagBlocks.RAILGUN_EMITTER.get())) return hit;
         if (!level.getBlockState(hit).is(MagTags.RAILGUN_RAILS)) return null;
+        final int maxLength = MagConfig.railgunLengthLimitEnabled()
+                ? MagConfig.railgunMaxLength() : Integer.MAX_VALUE;
         for (final Direction facing : Direction.values()) {
-            for (int i = 1; i <= MagConfig.railgunMaxLength(); i++) {
+            for (int i = 1; i > 0 && i <= maxLength; i++) {
                 final BlockPos candidate = hit.relative(facing.getOpposite(), i);
+                if (!level.isInWorldBounds(candidate) || !level.hasChunkAt(candidate)) break;
                 final BlockState state = level.getBlockState(candidate);
                 if (state.is(MagBlocks.RAILGUN_EMITTER.get())
                         && state.getValue(RailgunEmitterBlock.FACING) == facing) return candidate;
+                if (!state.is(MagTags.RAILGUN_RAILS)) break;
             }
         }
         return null;

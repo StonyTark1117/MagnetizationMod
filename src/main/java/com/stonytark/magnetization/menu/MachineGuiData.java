@@ -120,14 +120,22 @@ public interface MachineGuiData extends IHaveGoggleInformation {
             case RAILGUN -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_rail_length", Math.max(0, display.current())).withStyle(ChatFormatting.GRAY));
                 final int packed = Math.max(0, display.auxiliary());
-                final boolean manual = (packed & 16) != 0;
+                final boolean manual = (packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.MANUAL_MODE_BIT) != 0;
+                final boolean breakBlocks = (packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.BREAK_BLOCKS_BIT) != 0;
                 final String[] states = {"idle", "holding", "launching", "cooldown"};
-                final String stateKey = states[Math.min(states.length - 1, packed & 15)];
+                final String stateKey = states[Math.min(states.length - 1, packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ARC_STATE_MASK)];
                 out.add(Component.translatable(manual
                         ? "tooltip.magnetization.gui_railgun_manual" : "tooltip.magnetization.gui_railgun_auto")
                         .withStyle(manual ? ChatFormatting.GOLD : ChatFormatting.GREEN));
                 out.add(Component.translatable("tooltip.magnetization.gui_railgun_state_" + stateKey)
                         .withStyle(ChatFormatting.AQUA));
+                out.add(Component.translatable(breakBlocks
+                        ? "tooltip.magnetization.gui_railgun_break_blocks_on"
+                        : "tooltip.magnetization.gui_railgun_break_blocks_off")
+                        .withStyle(breakBlocks ? ChatFormatting.RED : ChatFormatting.GREEN));
                 out.add(statusLine(display.status()));
             }
             case MOTOR -> {

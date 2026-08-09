@@ -5,9 +5,13 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.SableBridge;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
+import dev.ryanhcode.sable.companion.math.Pose3d;
+import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
+import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.BlockPos;
@@ -25,8 +29,12 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
 
 /**
  * Drives Railgun arcs: the inverse of {@link com.stonytark.magnetization.content.effect.LenzBrakingHandler}.
@@ -39,15 +47,69 @@ import java.util.Set;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class RailgunHandler {
 
+    /**
+     * Sable's force bridge integrates over one 1/20-second physics tick. The
+     * original railgun coefficient was tuned before that conversion and left
+     * short, practical rails adding only a fraction of a block/second per tick.
+     * Restore the tick conversion and add a small launch calibration so existing
+     * 0.6 configs receive the intended force without rewriting player files.
+     * By default there is no speed or force ceiling: channel length is the
+     * natural limit, and longer rails retain their exponential advantage. A
+     * server may opt into a maximum effective rail length below.
+     */
+    private static final double SHIP_LAUNCH_FORCE_CALIBRATION = 24.0d;
+    /** Avoid an invalid/extreme physics velocity turning one tick into an
+     * unbounded world scan. This still covers 5,120 blocks/s of travel. */
+    private static final int MAX_BLOCK_BREAK_SWEEP_DISTANCE = 256;
+
+    /**
+     * Manual arcs temporarily turn captured ships into suspended payloads. The
+     * weak level key keeps this transient state out of saves and lets closed
+     * worlds disappear without a static reference leak.
+     */
+    private static final Map<ServerLevel, Map<UUID, HeldShip>> HELD_SHIPS = new WeakHashMap<>();
+    /** Ships keep their railgun provenance after crossing the muzzle so their
+     * swept block-breaking volume follows the full coast, not just rail ticks. */
+    private static final Map<ServerLevel, Map<UUID, LaunchedShip>> LAUNCHED_SHIPS = new WeakHashMap<>();
+
+    private record ArcKey(BlockPos first, BlockPos second) {
+        private static ArcKey of(final BlockPos a, final BlockPos b) {
+            return compare(a, b) <= 0 ? new ArcKey(a.immutable(), b.immutable())
+                    : new ArcKey(b.immutable(), a.immutable());
+        }
+
+        private boolean contains(final BlockPos pos) {
+            return first.equals(pos) || second.equals(pos);
+        }
+    }
+
+    private static final class HeldShip {
+        private final ArcKey owner;
+        private final Pose3d anchor;
+        private long lastRefreshTick;
+
+        private HeldShip(final ArcKey owner, final Pose3d anchor, final long lastRefreshTick) {
+            this.owner = owner;
+            this.anchor = anchor;
+            this.lastRefreshTick = lastRefreshTick;
+        }
+    }
+
+    private record LaunchedShip(Direction facing, ArcKey owner) {}
+
     private RailgunHandler() {}
 
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if (!MagConfig.railgunEnabled()) return;
+        final ServerSubLevelContainer container = SubLevelContainer.getContainer(server);
+        if (!MagConfig.railgunEnabled()) {
+            LAUNCHED_SHIPS.remove(server);
+            return;
+        }
+        processLaunchedShipBreaking(server, container);
         if ((server.getGameTime() % MagConfig.railgunTicks()) != 0L) return;
 
-        final SubLevelContainer container = SubLevelContainer.getContainer(server);
         final Set<BlockPos> snapshot = RailgunRegistry.snapshot(server);
         if (snapshot.isEmpty()) return;
         final Set<BlockPos> processed = new HashSet<>();
@@ -67,9 +129,69 @@ public final class RailgunHandler {
         }
     }
 
+    /**
+     * Pin manually held ships before every Sable physics substep. Merely damping
+     * velocity once per Minecraft tick leaves gravity free to move the body a
+     * little on every step; over a long boarding pause that accumulated into a
+     * ground collision. Resetting to the captured pose here makes HOLDING a true
+     * suspension, while the small opposite-gravity seed lets Rapier finish the
+     * substep at zero velocity instead of immediately beginning another fall.
+     */
+    @SubscribeEvent
+    public static void onSablePrePhysicsTick(final ForgeSablePrePhysicsTickEvent event) {
+        final var physics = event.getPhysicsSystem();
+        final ServerLevel server = physics.getLevel();
+        final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
+        if (held == null || held.isEmpty()) return;
+
+        final ServerSubLevelContainer container = SubLevelContainer.getContainer(server);
+        if (container == null) {
+            HELD_SHIPS.remove(server);
+            return;
+        }
+
+        final long now = server.getGameTime();
+        final long maxAge = Math.max(1L, MagConfig.railgunTicks()) + 1L;
+        final var iterator = held.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final var entry = iterator.next();
+            final HeldShip suspension = entry.getValue();
+            if (now - suspension.lastRefreshTick > maxAge) {
+                iterator.remove();
+                continue;
+            }
+
+            try {
+                final SubLevel subLevel = container.getSubLevel(entry.getKey());
+                if (!(subLevel instanceof ServerSubLevel ship) || ship.isRemoved()
+                        || ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0d) {
+                    iterator.remove();
+                    continue;
+                }
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) {
+                    iterator.remove();
+                    continue;
+                }
+
+                final Vector3d linear = handle.getLinearVelocity(new Vector3d());
+                final Vector3d angular = handle.getAngularVelocity(new Vector3d());
+                final Vector3d supportedVelocity = DimensionPhysicsData.getGravity(
+                        server, suspension.anchor.position(), new Vector3d()).mul(-event.getTimeStep());
+                handle.teleport(suspension.anchor.position(), suspension.anchor.orientation());
+                handle.addLinearAndAngularVelocity(supportedVelocity.sub(linear), angular.negate());
+            } catch (final RuntimeException ex) {
+                // Assembly, removal, and chunk handoff can invalidate a Sable
+                // body between UUID lookup and the native handle operation.
+                iterator.remove();
+            }
+        }
+        if (held.isEmpty()) HELD_SHIPS.remove(server);
+    }
+
     /** Process a single emitter's arc; factored out so {@link #onLevelTick} can
      *  isolate per-emitter Sable query failures without aborting the tick. */
-    private static void processEmitter(final ServerLevel server, final @Nullable SubLevelContainer container,
+    private static void processEmitter(final ServerLevel server, final @Nullable ServerSubLevelContainer container,
                                        final Set<BlockPos> snapshot, final Set<BlockPos> processed,
                                        final BlockPos pos, final RailgunEmitterBlockEntity be) {
         final BlockState state = be.getBlockState();
@@ -102,14 +224,28 @@ public final class RailgunHandler {
         final RailgunEmitterBlockEntity master = iAmMaster ? be : sibBe;
         final RailgunEmitterBlockEntity other = iAmMaster ? sibBe : be;
 
+        // Re-read by role: registry iteration order is unspecified, so l1 may
+        // belong to either the owner or its sibling.
+        final int masterLength = walkRail(server, masterPos, facing);
+        final int otherLength = walkRail(server, otherPos, facing);
+        final int effL = Math.min(masterLength, otherLength);
+        // Every arc-level readout must agree from either control block. Stored
+        // FE deliberately remains local because each rail needs its own source.
+        master.setRailLength(effL);
+        other.setRailLength(effL);
+        final boolean manual = master.manualMode() || other.manualMode();
+        master.setManualMode(manual);
+        other.setManualMode(manual);
+        final boolean breakBlocks = master.breaksBlocks();
+        other.setBreakBlocks(breakBlocks);
+
         if (!master.isPowered() || !other.isPowered()) {
+            releaseHolds(server, ArcKey.of(masterPos, otherPos));
             master.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
             other.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
             return;
         }
 
-        final int l2 = walkRail(server, otherPos, facing);
-        final int effL = Math.min(l1, l2);
         if (effL >= MagConfig.railgunMinLength()) {
             for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
                 if (player.distanceToSqr(masterPos.getX() + 0.5, masterPos.getY() + 0.5,
@@ -119,25 +255,29 @@ public final class RailgunHandler {
                 }
             }
         }
-        final boolean manual = master.manualMode() || other.manualMode();
         final AABB channel = channelBox(masterPos, otherPos, facing, effL);
 
-        processArc(server, container, master, other, channel, facing, effL, manual);
+        processArc(server, container, master, other, channel, facing, effL, manual, breakBlocks,
+                ArcKey.of(masterPos, otherPos));
 
         // Mirror to the display sibling.
         other.setArcState(master.arcState());
-        other.setManualMode(manual);
     }
 
-    private static void processArc(final ServerLevel server, final @Nullable SubLevelContainer container,
+    private static void processArc(final ServerLevel server, final @Nullable ServerSubLevelContainer container,
                                    final RailgunEmitterBlockEntity master, final RailgunEmitterBlockEntity other,
-                                   final AABB channel, final Direction facing, final int effL, final boolean manual) {
+                                   final AABB channel, final Direction facing, final int effL, final boolean manual,
+                                   final boolean breakBlocks, final ArcKey arc) {
         final boolean hasTarget = anyShipInChannel(container, server, channel) || anyEntityInChannel(server, channel);
         switch (master.arcState()) {
             case IDLE -> {
                 if (hasTarget) {
-                    if (manual) master.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
+                    if (manual) {
+                        master.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
+                        trapTargets(container, server, channel, facing, effL, true, arc);
+                    }
                     else if (MagConfig.railgunAutoFire()) {
+                        releaseHolds(server, arc);
                         master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                         master.setLaunchTicks(0);
                         triggerRailgunFire(server, master.getBlockPos());
@@ -145,26 +285,35 @@ public final class RailgunHandler {
                 }
             }
             case HOLDING -> {
-                if (!hasTarget) { master.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE); break; }
+                if (!hasTarget) {
+                    releaseHolds(server, arc);
+                    master.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
+                    break;
+                }
                 master.drawPower(MagConfig.railgunHoldFeCost());
-                trapTargets(container, server, channel, facing, effL, true);   // hold: damp forward too
+                trapTargets(container, server, channel, facing, effL, true, arc);   // hold: damp forward too
                 if (master.consumeFireRequest() || other.consumeFireRequest()) {
+                    releaseHolds(server, arc);
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                     master.setLaunchTicks(0);
                     triggerRailgunFire(server, master.getBlockPos());
                 }
             }
             case LAUNCHING -> {
+                releaseHolds(server, arc);
                 final int feCost = MagConfig.railgunFeCostBase() + MagConfig.railgunFeCostPerLength() * effL;
                 if (!hasTarget || master.launchTicks() >= MagConfig.railgunMaxLaunchTicks() || !master.drawPower(feCost)) {
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.COOLDOWN);
                     master.setCooldownTicks(MagConfig.railgunCooldownTicks());
                 } else {
-                    accelerateTargets(container, server, channel, facing, effL);
+                    accelerateTargets(container, server, channel, facing, effL, breakBlocks, arc);
                     master.setLaunchTicks(master.launchTicks() + 1);
                 }
             }
-            case COOLDOWN -> { /* decays in the BE tick, then re-arms to IDLE */ }
+            case COOLDOWN -> {
+                releaseHolds(server, arc);
+                /* decays in the BE tick, then re-arms to IDLE */
+            }
         }
     }
 
@@ -182,8 +331,13 @@ public final class RailgunHandler {
     public static int walkRail(final ServerLevel level, final BlockPos emitter, final Direction facing) {
         int len = 0;
         final BlockPos.MutableBlockPos cur = emitter.relative(facing).mutable();
-        final int max = MagConfig.railgunMaxLength();
-        while (len < max && level.getBlockState(cur).is(MagTags.RAILGUN_RAILS)) {
+        // Stop at unloaded chunks rather than loading terrain from the tick
+        // handler. By default every contiguous loaded rail contributes to effL;
+        // server admins may opt into a shared length/power ceiling.
+        final int maxLength = MagConfig.railgunLengthLimitEnabled()
+                ? MagConfig.railgunMaxLength() : Integer.MAX_VALUE;
+        while (len < maxLength && level.isInWorldBounds(cur) && level.hasChunkAt(cur)
+                && level.getBlockState(cur).is(MagTags.RAILGUN_RAILS)) {
             len++;
             cur.move(facing);
         }
@@ -293,7 +447,7 @@ public final class RailgunHandler {
         return new BoundingBox3d(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
-    private static boolean anyShipInChannel(final @Nullable SubLevelContainer container, final ServerLevel server, final AABB channel) {
+    private static boolean anyShipInChannel(final @Nullable ServerSubLevelContainer container, final ServerLevel server, final AABB channel) {
         if (container == null) return false;
         for (final SubLevel sub : container.queryIntersecting(sable(channel))) {
             if (sub instanceof ServerSubLevel ship && !ship.getMassTracker().isInvalid()
@@ -312,8 +466,9 @@ public final class RailgunHandler {
 
     /** Hold a target on the rail: damp lateral motion fully, and (if {@code dampForward})
      *  bleed forward speed toward the breech so it parks for boarding. */
-    private static void trapTargets(final @Nullable SubLevelContainer container, final ServerLevel server,
-                                    final AABB channel, final Direction facing, final int effL, final boolean dampForward) {
+    private static void trapTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
+                                    final AABB channel, final Direction facing, final int effL,
+                                    final boolean dampForward, final ArcKey arc) {
         final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
         final double lat = MagConfig.railgunLateralDamp();
         if (container != null) {
@@ -321,6 +476,7 @@ public final class RailgunHandler {
                 if (!(sub instanceof ServerSubLevel ship)) continue;
                 final RigidBodyHandle h = RigidBodyHandle.of(ship);
                 if (h == null || !h.isValid()) continue;
+                markHeld(server, container, ship, arc);
                 final Vector3dc v = h.getLinearVelocity();
                 final double along = v.x() * axis.x + v.y() * axis.y + v.z() * axis.z;
                 final Vec3 lateral = new Vec3(v.x() - along * axis.x, v.y() - along * axis.y, v.z() - along * axis.z);
@@ -344,12 +500,82 @@ public final class RailgunHandler {
         }
     }
 
-    private static void accelerateTargets(final @Nullable SubLevelContainer container, final ServerLevel server,
-                                          final AABB channel, final Direction facing, final int effL) {
+    private static void markHeld(final ServerLevel server, final ServerSubLevelContainer container,
+                                 final ServerSubLevel ship, final ArcKey owner) {
+        final long now = server.getGameTime();
+        final Map<UUID, HeldShip> held = HELD_SHIPS.computeIfAbsent(server, ignored -> new HashMap<>());
+        final UUID id = ship.getUniqueId();
+        final HeldShip existing = held.get(id);
+        if (existing != null && existing.owner.equals(owner)
+                && now - existing.lastRefreshTick <= Math.max(1L, MagConfig.railgunTicks()) + 1L) {
+            existing.lastRefreshTick = now;
+            return;
+        }
+        final Pose3d livePose = container.physicsSystem().getPipeline().readPose(ship, new Pose3d());
+        held.put(id, new HeldShip(owner, new Pose3d(livePose), now));
+    }
+
+    private static void releaseHolds(final ServerLevel server, final ArcKey owner) {
+        final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
+        if (held == null) return;
+        held.values().removeIf(suspension -> suspension.owner.equals(owner));
+        if (held.isEmpty()) HELD_SHIPS.remove(server);
+    }
+
+    static void releaseHoldsForEmitter(final ServerLevel server, final BlockPos emitter) {
+        final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
+        if (held == null) return;
+        held.values().removeIf(suspension -> suspension.owner.contains(emitter));
+        if (held.isEmpty()) HELD_SHIPS.remove(server);
+    }
+
+    /** Apply the GUI's block-breaking switch to the whole resolved arc. */
+    public static boolean setArcBlockBreaking(final ServerLevel server, final BlockPos emitter,
+                                              final boolean enabled) {
+        if (!(server.getBlockEntity(emitter) instanceof RailgunEmitterBlockEntity be)) return false;
+        be.setBreakBlocks(enabled);
+        final BlockState state = be.getBlockState();
+        if (!state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) return true;
+        final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
+        final SiblingResult sibling = findSibling(server, emitter, facing, RailgunRegistry.snapshot(server));
+        if (!sibling.dissipated && sibling.pos != null
+                && server.getBlockEntity(sibling.pos) instanceof RailgunEmitterBlockEntity other) {
+            other.setBreakBlocks(enabled);
+        }
+        if (!enabled) removeLaunchedShipsForEmitter(server, emitter);
+        return true;
+    }
+
+    /** Explicit remote unpairing is arc-wide, regardless of which emitter owns
+     * the live state or which control the remote was originally inserted into. */
+    public static void unpairArc(final ServerLevel server, final BlockPos emitter) {
+        if (!(server.getBlockEntity(emitter) instanceof RailgunEmitterBlockEntity be)) return;
+        be.setManualMode(false);
+        if (be.arcState() == RailgunEmitterBlockEntity.ArcState.HOLDING) {
+            be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
+        }
+        final BlockState state = be.getBlockState();
+        if (state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) {
+            final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
+            final SiblingResult sibling = findSibling(server, emitter, facing, RailgunRegistry.snapshot(server));
+            if (!sibling.dissipated && sibling.pos != null
+                    && server.getBlockEntity(sibling.pos) instanceof RailgunEmitterBlockEntity other) {
+                other.setManualMode(false);
+                if (other.arcState() == RailgunEmitterBlockEntity.ArcState.HOLDING) {
+                    other.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
+                }
+            }
+        }
+        releaseHoldsForEmitter(server, emitter);
+    }
+
+    private static void accelerateTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
+                                          final AABB channel, final Direction facing, final int effL,
+                                          final boolean breakBlocks, final ArcKey arc) {
         final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
         final double magnitude = MagConfig.railgunForceBase() * Math.pow(effL, MagConfig.railgunForceExponent());
+        final double shipMagnitude = magnitude * SHIP_LAUNCH_FORCE_CALIBRATION;
         final double lat = MagConfig.railgunLateralDamp();
-        final double maxSpeed = MagConfig.railgunMaxSpeed();
 
         // Ships.
         if (container != null) {
@@ -364,8 +590,10 @@ public final class RailgunHandler {
                 final Vec3 lateral = new Vec3(v.x() - along * axis.x, v.y() - along * axis.y, v.z() - along * axis.z);
                 h.addLinearAndAngularVelocity(
                         new Vector3d(-lateral.x * lat, -lateral.y * lat, -lateral.z * lat), new Vector3d());
-                // Forward push (speed-capped).
-                if (along < maxSpeed) {
+                // Forward push. Multiplying by mass makes the resulting
+                // acceleration mass-independent after Sable's F/m integration,
+                // so a large ship gets the same decisive launch as a small one.
+                if (shipMagnitude > 0.0d) {
                     final double mass = ship.getMassTracker().getMass();
                     final org.joml.Vector3dc com = ship.getMassTracker().getCenterOfMass();
                     // MassTracker reports the centre of mass in ship-local
@@ -377,9 +605,18 @@ public final class RailgunHandler {
                             new Vec3(com.x(), com.y(), com.z()));
                     SableBridge.applyWorldImpulse(ship,
                             worldCom,
-                            new Vec3(axis.x * magnitude * mass, axis.y * magnitude * mass, axis.z * magnitude * mass));
+                            new Vec3(axis.x * shipMagnitude * mass,
+                                    axis.y * shipMagnitude * mass,
+                                    axis.z * shipMagnitude * mass));
                 }
-                breakAhead(server, ship.boundingBox(), facing);
+                final Vector3d launchedVelocity = h.getLinearVelocity(new Vector3d());
+                final double forwardSpeed = launchedVelocity.x * axis.x
+                        + launchedVelocity.y * axis.y + launchedVelocity.z * axis.z;
+                breakPathAhead(server, ship.boundingBox(), facing, forwardSpeed, breakBlocks);
+                if (breakBlocks && MagConfig.railgunBreaksBlocks() && forwardSpeed > 0.5d) {
+                    LAUNCHED_SHIPS.computeIfAbsent(server, ignored -> new HashMap<>())
+                            .put(ship.getUniqueId(), new LaunchedShip(facing, arc));
+                }
             }
         }
 
@@ -390,33 +627,105 @@ public final class RailgunHandler {
             final double along = v.dot(axis);
             final Vec3 lateral = v.subtract(axis.scale(along));
             Vec3 nv = lateral.scale(1.0 - lat).add(axis.scale(along));
-            if (along < maxSpeed) nv = nv.add(axis.scale(entMag));
+            if (entMag > 0.0d) nv = nv.add(axis.scale(entMag));
             e.setDeltaMovement(nv);
             e.hurtMarked = true;
         }
     }
 
-    /** Smash obstructing blocks in a small leading slab ahead of the object along FACING.
-     *  Rails + emitters + excavator-immune + bedrock + block entities are spared. */
-    private static void breakAhead(final ServerLevel server, final BoundingBox3dc bb, final Direction facing) {
-        if (!MagConfig.railgunBreaksBlocks()) return;
-        final var n = facing.getNormal();
+    /** Continue the protected swept-volume carve after a ship leaves the arc's
+     * channel. Tracking ends when the body disappears, becomes invalid, or no
+     * longer has meaningful velocity along its original launch direction. */
+    private static void processLaunchedShipBreaking(final ServerLevel server,
+                                                     final @Nullable ServerSubLevelContainer container) {
+        final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
+        if (launched == null || launched.isEmpty()) return;
+        if (!MagConfig.railgunBreaksBlocks() || container == null) {
+            LAUNCHED_SHIPS.remove(server);
+            return;
+        }
+        final var iterator = launched.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final var entry = iterator.next();
+            try {
+                final SubLevel subLevel = container.getSubLevel(entry.getKey());
+                if (!(subLevel instanceof ServerSubLevel ship) || ship.isRemoved()
+                        || ship.getMassTracker().isInvalid()) {
+                    iterator.remove();
+                    continue;
+                }
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) {
+                    iterator.remove();
+                    continue;
+                }
+                final Vector3d velocity = handle.getLinearVelocity(new Vector3d());
+                final var normal = entry.getValue().facing().getNormal();
+                final double forwardSpeed = velocity.x * normal.getX()
+                        + velocity.y * normal.getY() + velocity.z * normal.getZ();
+                if (!Double.isFinite(forwardSpeed) || forwardSpeed <= 0.5d) {
+                    iterator.remove();
+                    continue;
+                }
+                breakPathAhead(server, ship.boundingBox(), entry.getValue().facing(), forwardSpeed, true);
+            } catch (final RuntimeException ex) {
+                iterator.remove();
+            }
+        }
+        if (launched.isEmpty()) LAUNCHED_SHIPS.remove(server);
+    }
+
+    private static void removeLaunchedShipsForEmitter(final ServerLevel server, final BlockPos emitter) {
+        final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
+        if (launched == null) return;
+        launched.values().removeIf(ship -> ship.owner().contains(emitter));
+        if (launched.isEmpty()) LAUNCHED_SHIPS.remove(server);
+    }
+
+    /** Smash blocks across the volume the ship can traverse before the next
+     * physics tick. Scanning only one leading slab allowed high-speed launches
+     * to tunnel through obstructions. Rails, emitters, protected blocks, and
+     * block entities remain immune through {@link #breakIfObstructing}. */
+    public static int breakPathAhead(final ServerLevel server, final BoundingBox3dc bb,
+                                     final Direction facing, final double forwardSpeed,
+                                     final boolean arcEnabled) {
+        if (!arcEnabled || !MagConfig.railgunBreaksBlocks()) return 0;
         final int budget = MagConfig.railgunDestroyBudgetPerTick();
+        if (budget <= 0) return 0;
         int broken = 0;
-        final int x0 = (int) Math.floor(bb.minX()), x1 = (int) Math.ceil(bb.maxX());
-        final int y0 = (int) Math.floor(bb.minY()), y1 = (int) Math.ceil(bb.maxY());
-        final int z0 = (int) Math.floor(bb.minZ()), z1 = (int) Math.ceil(bb.maxZ());
-        // One-block leading slab on the muzzle side.
-        final int lead = 1;
-        for (int x = x0; x <= x1 && broken < budget; x++) {
-            for (int y = y0; y <= y1 && broken < budget; y++) {
-                for (int z = z0; z <= z1 && broken < budget; z++) {
-                    final BlockPos p = new BlockPos(
-                            x + n.getX() * lead, y + n.getY() * lead, z + n.getZ() * lead);
-                    if (breakIfObstructing(server, p)) broken++;
+        final int x0 = (int) Math.floor(bb.minX()), x1 = Math.max(x0, (int) Math.ceil(bb.maxX()) - 1);
+        final int y0 = (int) Math.floor(bb.minY()), y1 = Math.max(y0, (int) Math.ceil(bb.maxY()) - 1);
+        final int z0 = (int) Math.floor(bb.minZ()), z1 = Math.max(z0, (int) Math.ceil(bb.maxZ()) - 1);
+        final double speed = Double.isFinite(forwardSpeed) ? Math.max(0.0d, forwardSpeed) : 0.0d;
+        final int travel = Math.min(MAX_BLOCK_BREAK_SWEEP_DISTANCE,
+                Math.max(0, (int) Math.ceil(speed / 20.0d)));
+        final boolean positive = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+        final double leading = switch (facing.getAxis()) {
+            case X -> positive ? bb.maxX() : bb.minX();
+            case Y -> positive ? bb.maxY() : bb.minY();
+            case Z -> positive ? bb.maxZ() : bb.minZ();
+        };
+        final int start = positive ? (int) Math.floor(leading) : (int) Math.ceil(leading) - 1;
+        final int stepSign = positive ? 1 : -1;
+
+        // Nearest slabs first so a low destruction budget always clears the
+        // obstruction immediately in front of the ship before farther blocks.
+        for (int step = 0; step <= travel && broken < budget; step++) {
+            final int along = start + stepSign * step;
+            for (int x = x0; x <= x1 && broken < budget; x++) {
+                for (int y = y0; y <= y1 && broken < budget; y++) {
+                    for (int z = z0; z <= z1 && broken < budget; z++) {
+                        final BlockPos p = switch (facing.getAxis()) {
+                            case X -> new BlockPos(along, y, z);
+                            case Y -> new BlockPos(x, along, z);
+                            case Z -> new BlockPos(x, y, along);
+                        };
+                        if (breakIfObstructing(server, p)) broken++;
+                    }
                 }
             }
         }
+        return broken;
     }
 
     // Visible so a gametest can assert the safety carve-outs directly

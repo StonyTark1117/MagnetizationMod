@@ -157,19 +157,19 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | propulsion.railgunHoldFeCost | number | 8; 0-1000000 | FE/tick upkeep while trapping a target in manual mode. |
 | COMMON | propulsion.railgunTicks | number | 1; 1-40 | How often arcs are processed. 1 = every tick. |
 | COMMON | propulsion.railgunMinLength | number | 3; 1-512 | Shortest rail that forms a working arc. |
-| COMMON | propulsion.railgunMaxLength | number | 64; 1-512 | Longest rail walked from the emitter. |
+| COMMON | propulsion.railgunLengthLimitEnabled | boolean | false | When enabled, cap effective rail length and exponential power scaling at Railgun Max Rail Length. Disabled by default. |
+| COMMON | propulsion.railgunMaxLength | number | 64; 1-1000000 | Maximum rail blocks counted per side when the optional length and power limit is enabled. |
 | COMMON | propulsion.railgunMaxGap | number | 12; 1-32 | Largest spacing between the two parallel rails. |
 | COMMON | propulsion.railgunChannelHalfThickness | number | 1; 0-8 | Half-height of the capture channel on the third axis. 1 = 3-block tall. |
 | COMMON | propulsion.railgunLateralDamp | number | 0.85; 0.0-1.0 | How hard off-axis motion is bled so targets stay trapped on the rail (0.85 = 85%). |
 | COMMON | propulsion.railgunForceBase | number | 0.6; 0.0-1000.0 | Launch force of a minimum-length rail before the length exponent. |
 | COMMON | propulsion.railgunForceExponent | number | 1.4; 0.0-4.0 | Force scales as length^exponent — longer rails launch exponentially harder. |
-| COMMON | propulsion.railgunMaxSpeed | number | 40.0; 0.0-200.0 | Speed ceiling a launched object reaches along the rail. |
 | COMMON | propulsion.railgunEntityScale | number | 0.08; 0.0-10.0 | Fraction of ship force applied to loose magnetic entities. |
 | COMMON | propulsion.railgunFeCostBase | number | 32; 0-1000000 | FE/tick while launching, before the per-length add. |
 | COMMON | propulsion.railgunFeCostPerLength | number | 8; 0-1000000 | Extra FE/tick per rail block while launching. |
 | COMMON | propulsion.railgunFeCapacity | number | 1000000; 0-1000000000 | Internal FE buffer capacity per emitter. |
 | COMMON | propulsion.railgunFeReceive | number | 64000; 0-1000000000 | Max FE accepted per tick from cables. |
-| COMMON | propulsion.railgunBreaksBlocks | boolean | true | Launched objects smash obstructing blocks ahead (rails + emitters are immune). |
+| COMMON | propulsion.railgunBreaksBlocks | boolean | true | Globally permits launched ships to smash obstructing blocks in their path (rails + emitters are immune). Each paired railgun also has its own GUI toggle. |
 | COMMON | propulsion.railgunDestroyBudgetPerTick | number | 16; 0-256 | Max blocks smashed per tick per launch. |
 | COMMON | propulsion.magnetSlotConsumesFuel | boolean | true | On (default): the Homopolar Motor + MHD Jet consume their magnet over time. Off: legacy infinite magnets. |
 | COMMON | propulsion.magnetBurnTicksBase | number | 1200; 0-10000000 | Base active ticks a magnet lasts before the potency + form bonus. |

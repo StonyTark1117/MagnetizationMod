@@ -166,13 +166,13 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    RAILGUN_HOLD_FE_COST;
     public static final ModConfigSpec.IntValue    RAILGUN_TICKS;
     public static final ModConfigSpec.IntValue    RAILGUN_MIN_LENGTH;
+    public static final ModConfigSpec.BooleanValue RAILGUN_LENGTH_LIMIT_ENABLED;
     public static final ModConfigSpec.IntValue    RAILGUN_MAX_LENGTH;
     public static final ModConfigSpec.IntValue    RAILGUN_MAX_GAP;
     public static final ModConfigSpec.IntValue    RAILGUN_CHANNEL_HALF_THICKNESS;
     public static final ModConfigSpec.DoubleValue RAILGUN_LATERAL_DAMP;
     public static final ModConfigSpec.DoubleValue RAILGUN_FORCE_BASE;
     public static final ModConfigSpec.DoubleValue RAILGUN_FORCE_EXPONENT;
-    public static final ModConfigSpec.DoubleValue RAILGUN_MAX_SPEED;
     public static final ModConfigSpec.DoubleValue RAILGUN_ENTITY_SCALE;
     public static final ModConfigSpec.IntValue    RAILGUN_FE_COST_BASE;
     public static final ModConfigSpec.IntValue    RAILGUN_FE_COST_PER_LENGTH;
@@ -1024,8 +1024,10 @@ public final class MagConfig {
                 .defineInRange("railgunTicks", 1, 1, 40);
         RAILGUN_MIN_LENGTH = b.translation("magnetization.configuration.propulsion.railgunMinLength")
                 .defineInRange("railgunMinLength", 3, 1, 512);
+        RAILGUN_LENGTH_LIMIT_ENABLED = b.translation("magnetization.configuration.propulsion.railgunLengthLimitEnabled")
+                .define("railgunLengthLimitEnabled", false);
         RAILGUN_MAX_LENGTH = b.translation("magnetization.configuration.propulsion.railgunMaxLength")
-                .defineInRange("railgunMaxLength", 64, 1, 512);
+                .defineInRange("railgunMaxLength", 64, 1, 1_000_000);
         RAILGUN_MAX_GAP = b.translation("magnetization.configuration.propulsion.railgunMaxGap")
                 .defineInRange("railgunMaxGap", 12, 1, 32);
         RAILGUN_CHANNEL_HALF_THICKNESS = b.translation("magnetization.configuration.propulsion.railgunChannelHalfThickness")
@@ -1036,8 +1038,6 @@ public final class MagConfig {
                 .defineInRange("railgunForceBase", 0.6d, 0.0d, 1000.0d);
         RAILGUN_FORCE_EXPONENT = b.translation("magnetization.configuration.propulsion.railgunForceExponent")
                 .defineInRange("railgunForceExponent", 1.4d, 0.0d, 4.0d);
-        RAILGUN_MAX_SPEED = b.translation("magnetization.configuration.propulsion.railgunMaxSpeed")
-                .defineInRange("railgunMaxSpeed", 40.0d, 0.0d, 200.0d);
         RAILGUN_ENTITY_SCALE = b.translation("magnetization.configuration.propulsion.railgunEntityScale")
                 .defineInRange("railgunEntityScale", 0.08d, 0.0d, 10.0d);
         RAILGUN_FE_COST_BASE = b.translation("magnetization.configuration.propulsion.railgunFeCostBase")
@@ -2131,8 +2131,10 @@ public final class MagConfig {
 
     /** Warn about invalid relationships and keep runtime accessors safe. */
     public static void validateRelationships() {
-        warnIf("railgunMinLength must not exceed railgunMaxLength",
-                railgunMinLengthRaw(), railgunMaxLengthRaw());
+        if (railgunLengthLimitEnabled()) {
+            warnIf("railgunMinLength must not exceed railgunMaxLength when the optional limit is enabled",
+                    railgunMinLengthRaw(), railgunMaxLengthRaw());
+        }
         warnIf("sensorRange must not exceed sensorMaxRange",
                 sensorRangeRaw(), sensorMaxRangeRaw());
         warnIf("lenzBaseDrag must not exceed lenzMaxDrag",
@@ -2280,14 +2282,14 @@ public final class MagConfig {
     public static int    railgunMaxLaunchTicks()        { return intOr(RAILGUN_MAX_LAUNCH_TICKS, 100); }
     public static int    railgunHoldFeCost()            { return intOr(RAILGUN_HOLD_FE_COST, 8); }
     public static int    railgunTicks()                 { return intOr(RAILGUN_TICKS, 1); }
-    public static int    railgunMinLength()             { return Math.min(railgunMinLengthRaw(), railgunMaxLengthRaw()); }
+    public static int    railgunMinLength()             { return railgunMinLengthRaw(); }
+    public static boolean railgunLengthLimitEnabled()   { return booleanOr(RAILGUN_LENGTH_LIMIT_ENABLED, false); }
     public static int    railgunMaxLength()             { return Math.max(railgunMaxLengthRaw(), railgunMinLengthRaw()); }
     public static int    railgunMaxGap()                { return intOr(RAILGUN_MAX_GAP, 12); }
     public static int    railgunChannelHalfThickness()  { return intOr(RAILGUN_CHANNEL_HALF_THICKNESS, 1); }
     public static double railgunLateralDamp()           { return doubleOr(RAILGUN_LATERAL_DAMP, 0.85d); }
     public static double railgunForceBase()             { return doubleOr(RAILGUN_FORCE_BASE, 0.6d); }
     public static double railgunForceExponent()         { return doubleOr(RAILGUN_FORCE_EXPONENT, 1.4d); }
-    public static double railgunMaxSpeed()              { return doubleOr(RAILGUN_MAX_SPEED, 40.0d); }
     public static double railgunEntityScale()           { return doubleOr(RAILGUN_ENTITY_SCALE, 0.08d); }
     public static int    railgunFeCostBase()            { return intOr(RAILGUN_FE_COST_BASE, 32); }
     public static int    railgunFeCostPerLength()       { return intOr(RAILGUN_FE_COST_PER_LENGTH, 8); }

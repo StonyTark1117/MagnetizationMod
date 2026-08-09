@@ -23,13 +23,23 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class MachineMenu extends AbstractContainerMenu {
 
+    public static final int BUTTON_RAILGUN_BLOCK_BREAKING = 0;
+
     /** Display flavour — drives slot tooltip + stat labels on the screen. */
     public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
         /** HUD-only kinds — no GUI menu, surface live status in WTHIT/Jade/TOP/Create goggles. */
         COIL, SAIL }
 
     public static final int INPUT_X = 80;
+    public static final int WIDE_LABEL_INPUT_X = 112;
     public static final int INPUT_Y = 33;
+
+    /** Railgun, fusion-thruster, and electrolyzer readouts need the extra label
+     *  width to the left of their input slot. */
+    public static int inputX(final Kind kind) {
+        return kind == Kind.RAILGUN || kind == Kind.FUSION_THRUSTER || kind == Kind.ELECTROLYZER
+                ? WIDE_LABEL_INPUT_X : INPUT_X;
+    }
 
     private final ContainerLevelAccess access;
     private final BlockPos pos;
@@ -67,7 +77,7 @@ public final class MachineMenu extends AbstractContainerMenu {
         // resolved from the item ID + this menu's kind, so it returns the SAME
         // answer on the client and the server (no dummy-container desync), and
         // the cap is a hard 1 on both sides.
-        addSlot(new Slot(input, 0, INPUT_X, INPUT_Y) {
+        addSlot(new Slot(input, 0, inputX(kind), INPUT_Y) {
             @Override
             public boolean mayPlace(final ItemStack stack) {
                 return accepts(stack);
@@ -196,5 +206,19 @@ public final class MachineMenu extends AbstractContainerMenu {
                 level.getBlockEntity(p) instanceof MachineGuiData
                         && player.distanceToSqr(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5) <= 64.0,
                 true);
+    }
+
+    @Override
+    public boolean clickMenuButton(final Player player, final int id) {
+        if (kind != Kind.RAILGUN || id != BUTTON_RAILGUN_BLOCK_BREAKING) return false;
+        return access.evaluate((level, p) -> {
+            if (!(level instanceof net.minecraft.server.level.ServerLevel server)
+                    || !(server.getBlockEntity(p) instanceof
+                    com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity railgun)) {
+                return false;
+            }
+            return com.stonytark.magnetization.content.railgun.RailgunHandler.setArcBlockBreaking(
+                    server, p, !railgun.breaksBlocks());
+        }, false);
     }
 }
