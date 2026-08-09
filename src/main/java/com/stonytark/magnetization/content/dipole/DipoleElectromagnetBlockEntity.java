@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.content.dipole;
 
+import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
@@ -8,10 +9,13 @@ import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Dipole Electromagnet — a placement-dependent, wrench-rotatable electromagnet
@@ -28,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
  * {@link #effectiveStrength} / {@link #effectiveRange}, so the GUI tunes them
  * together.
  *
- * <p>The primary (NORTH) field is what {@link #currentField()} / the HUD surface —
- * intended; the SOUTH field is emitted via {@link #computeSecondaryField}. Both run
+ * <p>The primary field is what {@link #currentField()} stores; the HUD expands it
+ * into both ends. The opposite field is emitted via {@link #computeSecondaryField}. Both run
  * through the shared modifier pipeline, so an adjacent Polarity Inverter flips both
  * (the ends swap), and Hematite/Halbach/Lens act on both.
  */
@@ -88,5 +92,10 @@ public class DipoleElectromagnetBlockEntity extends AbstractEmitterBlockEntity {
     @Override
     protected @Nullable MagneticField computeSecondaryField(final BlockState state) {
         return isPowered() ? southPoleField(state) : null;
+    }
+
+    @Override
+    public List<Component> fieldTooltipLines(final boolean verbose) {
+        return FieldTooltipFormatter.formatDipole(currentField(), verbose);
     }
 }

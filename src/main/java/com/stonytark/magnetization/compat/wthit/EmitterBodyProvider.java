@@ -1,6 +1,5 @@
 package com.stonytark.magnetization.compat.wthit;
 
-import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import mcp.mobius.waila.api.IBlockAccessor;
 import mcp.mobius.waila.api.IBlockComponentProvider;
@@ -11,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * WTHIT body lines for any block whose BE implements {@link MagneticFieldSource}.
- * Mirrors the goggles / Jade output by reusing {@link FieldTooltipFormatter}.
+ * Mirrors the goggles / Jade output through the source's shared HUD lines.
  */
 public enum EmitterBodyProvider implements IBlockComponentProvider {
     INSTANCE;
@@ -21,7 +20,7 @@ public enum EmitterBodyProvider implements IBlockComponentProvider {
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MagneticFieldSource source)) return;
         if (source.showsFieldStatus()) {
-            for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
+            for (Component line : source.fieldTooltipLines(true)) {
                 tooltip.addLine(line);
             }
         }

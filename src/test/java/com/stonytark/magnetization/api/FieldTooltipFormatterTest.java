@@ -70,6 +70,22 @@ class FieldTooltipFormatterTest {
     }
 
     @Test
+    void dipoleRendersBothOppositePolesAndSharedDetails() {
+        final MagneticField north = new MagneticField(
+                ORIGIN, AXIS, MagneticPolarity.NORTH,
+                MagneticStrength.STRONG, MagneticField.Shape.OMNIDIRECTIONAL);
+        final List<Component> lines = FieldTooltipFormatter.formatDipole(north, true);
+
+        assertEquals(4, lines.size(), "two ends plus one shared range and shape line");
+        assertTrue(textOf(lines.get(0)).contains("dipole.positive_end"));
+        assertTrue(argumentText(lines.get(0)).contains("NORTH"));
+        assertTrue(textOf(lines.get(1)).contains("dipole.negative_end"));
+        assertTrue(argumentText(lines.get(1)).contains("SOUTH"));
+        assertTrue(joinedText(lines).contains("Range:"));
+        assertTrue(joinedText(lines).contains("Shape:"));
+    }
+
+    @Test
     void weakStrengthRendersDistinctly() {
         assertTierTextContains(MagneticStrength.WEAK, "WEAK");
     }
@@ -138,6 +154,11 @@ class FieldTooltipFormatterTest {
         if (c.getContents() instanceof PlainTextContents p) return p.text();
         if (c.getContents() instanceof TranslatableContents t) return t.getKey();
         return c.getString();
+    }
+
+    private static String argumentText(final Component c) {
+        if (!(c.getContents() instanceof TranslatableContents t) || t.getArgs().length == 0) return "";
+        return t.getArgs()[0] instanceof Component argument ? textOf(argument) : String.valueOf(t.getArgs()[0]);
     }
 
     private static boolean isInactive(final Component c) {

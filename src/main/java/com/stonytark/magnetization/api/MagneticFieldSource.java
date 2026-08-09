@@ -33,6 +33,14 @@ public interface MagneticFieldSource {
     }
 
     /**
+     * Field-status lines for HUD integrations. Multi-field sources can override
+     * this without teaching every overlay about their internal field layout.
+     */
+    default List<Component> fieldTooltipLines(final boolean verbose) {
+        return FieldTooltipFormatter.format(currentField(), verbose);
+    }
+
+    /**
      * Optional extra HUD lines emitted by an emitter. Appended after the standard
      * field block by goggles, in-world hover, Jade, WTHIT, and TOP. Used for
      * source-specific status that doesn't fit the {@link MagneticField} model —

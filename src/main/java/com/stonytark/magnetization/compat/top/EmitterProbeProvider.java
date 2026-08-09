@@ -1,7 +1,6 @@
 package com.stonytark.magnetization.compat.top;
 
 import com.stonytark.magnetization.Magnetization;
-import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -36,7 +35,7 @@ public enum EmitterProbeProvider implements IProbeInfoProvider {
 
         final BlockEntity be = level.getBlockEntity(data.getPos());
         if (!(be instanceof MagneticFieldSource source)) return;
-        for (Component line : FieldTooltipFormatter.format(source.currentField(), true)) {
+        for (Component line : source.fieldTooltipLines(true)) {
             probeInfo.text(line);
         }
         for (Component line : source.extraTooltipLines(true)) {

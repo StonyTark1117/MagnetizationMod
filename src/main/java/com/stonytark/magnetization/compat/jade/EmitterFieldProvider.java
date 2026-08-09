@@ -1,7 +1,5 @@
 package com.stonytark.magnetization.compat.jade;
 
-import com.stonytark.magnetization.api.FieldTooltipFormatter;
-import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,8 +31,7 @@ public enum EmitterFieldProvider implements IBlockComponentProvider {
 
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MagneticFieldSource source)) return;
-        final MagneticField field = source.currentField();
-        for (Component line : FieldTooltipFormatter.format(field, true)) {
+        for (Component line : source.fieldTooltipLines(true)) {
             tooltip.add(line);
         }
         for (Component line : source.extraTooltipLines(true)) {

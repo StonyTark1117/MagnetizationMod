@@ -1,6 +1,5 @@
 package com.stonytark.magnetization.content;
 
-import com.stonytark.magnetization.api.FieldTooltipFormatter;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticStrength;
@@ -780,7 +779,7 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
             tooltip.add(Component.literal("        ").append(
                     Component.translatable("tooltip.magnetization.field_status")
                             .withStyle(ChatFormatting.GRAY)));
-            tooltip.addAll(FieldTooltipFormatter.format(cachedField, true));
+            tooltip.addAll(fieldTooltipLines(true));
         }
         tooltip.addAll(extraTooltipLines(true));
         return true;

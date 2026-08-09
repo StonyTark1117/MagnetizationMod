@@ -973,6 +973,8 @@
   "item.minecraft.lingering_potion.effect.magnetization.magnetized": "Lingering Potion of Magnetization",
   "item.minecraft.tipped_arrow.effect.magnetization.magnetized": "Arrow of Magnetization",
   "tooltip.magnetization.field_status": "Magnetic Field",
+  "tooltip.magnetization.dipole.positive_end": "+ Facing end: %s",
+  "tooltip.magnetization.dipole.negative_end": "− Facing end: %s",
   "tooltip.magnetization.inactive": "Inactive",
   "tooltip.magnetization.temporary_magnet.decay": "Decay: %s remaining",
   "tooltip.magnetization.magnetized_armor": "Magnetized — %s",

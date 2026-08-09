@@ -63,6 +63,23 @@ public final class FieldTooltipFormatter {
         return out;
     }
 
+    /** Formats a true dipole without repeating its shared range and shape data. */
+    public static List<Component> formatDipole(final @Nullable MagneticField positiveEnd,
+                                                final boolean verbose) {
+        if (positiveEnd == null) return format(null, verbose);
+
+        final MagneticPolarity opposite = positiveEnd.polarity() == MagneticPolarity.NORTH
+                ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH;
+        final MagneticField negativeEnd = positiveEnd.withPolarity(opposite);
+        final List<Component> positiveLines = format(positiveEnd, verbose);
+        final List<Component> negativeLines = format(negativeEnd, false);
+        final List<Component> out = new ArrayList<>();
+        out.add(Component.translatable("tooltip.magnetization.dipole.positive_end", positiveLines.getFirst()));
+        out.add(Component.translatable("tooltip.magnetization.dipole.negative_end", negativeLines.getFirst()));
+        if (verbose) out.addAll(positiveLines.subList(1, positiveLines.size()));
+        return out;
+    }
+
     /** Hue-independent SHAPE marker for a pole: an up-triangle for NORTH, a
      *  down-triangle for SOUTH, a hollow diamond for NONE. Distinct silhouettes so
      *  the pole reads even in grayscale / for red-cyan color-vision deficiency.
