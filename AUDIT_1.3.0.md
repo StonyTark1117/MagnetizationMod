@@ -104,7 +104,7 @@ No missing registration/resource path was found for these additions.
 
 ### JEI, REI, and EMI information compatibility
 
-- All three optional recipe viewers now consume one shared catalog of eight discoverability topics: ferromagnetic items, Magnetic Excavator targets, Magnetite, specialist iron-oxide ores, Lithium, Gallium, fusion fuels, and the Electrolyzer.
+- All three optional recipe viewers now consume one shared catalog of fourteen discoverability topics: ferromagnetic items, Magnetic Excavator targets, Magnetite, specialist iron-oxide ores, Lithium, Gallium, fusion fuels, the Electrolyzer, Dipole Electromagnet, Structural Inducer, MHD Jet, Fusion Thruster, Tokamak, and Railgun.
 - Every topic has at least three descriptive lines and the same associated item set in JEI, REI, and EMI, eliminating the previous viewer-specific gaps and bare one-line pages.
 - The REI development and published optional floor is corrected to 16.0.799, the Minecraft 1.21/1.21.1 line. REI 17 targets Minecraft 1.21.2/1.21.3 and failed against this release's NeoForge 21.1 runtime through its newer Cloth Config dependency.
 - EMI information pages use stable synthetic recipe identifiers and Magnetization supplies readable names for every Magnetization-owned/common material tag exercised by the viewer.

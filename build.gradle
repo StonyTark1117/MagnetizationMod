@@ -917,8 +917,8 @@ dependencies {
     // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
     localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.43.0.394")
 
-    // REI — alternative recipe browser. Soft-dep; plugin discovered via the
-    // META-INF/services/me.shedaniel.rei.api.client.plugins.REIClientPlugin file.
+    // REI — alternative recipe browser. Soft-dep; plugin discovered through
+    // REI's @REIPluginClient annotation scanner.
     compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}")
     compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}")
 

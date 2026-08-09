@@ -17,6 +17,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RecipeViewerInfoTest {
 
+    private static final Set<String> EXPECTED_TOPICS = Set.of(
+            "magnetization:info/ferromagnetic_items",
+            "magnetization:info/excavator_targets",
+            "magnetization:info/magnetite",
+            "magnetization:info/iron_oxide_ores",
+            "magnetization:info/lithium",
+            "magnetization:info/gallium",
+            "magnetization:info/fusion_fuels",
+            "magnetization:info/electrolyzer",
+            "magnetization:info/dipole_electromagnet",
+            "magnetization:info/structural_inducer",
+            "magnetization:info/mhd_jet",
+            "magnetization:info/fusion_thruster",
+            "magnetization:info/tokamak",
+            "magnetization:info/railgun");
+
     private static final List<String> VIEWER_TAG_TRANSLATIONS = List.of(
             "tag.fluid.c.hydrogen",
             "tag.fluid.magnetization.mhd_working_fluids",
@@ -73,7 +89,7 @@ class RecipeViewerInfoTest {
             assertEquals(topic.descriptionKeys().size(), new HashSet<>(topic.descriptionKeys()).size(),
                     () -> topic.id() + " repeats a description line");
         }
-        assertEquals(8, ids.size(), "Unexpected recipe-viewer topic drift");
+        assertEquals(EXPECTED_TOPICS, ids, "Unexpected recipe-viewer topic drift");
     }
 
     @Test

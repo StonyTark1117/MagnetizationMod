@@ -48,7 +48,13 @@ public final class RecipeViewerInfo {
                     MagItems.TRITIUM_BUCKET.get(), MagItems.HELIUM_3_BUCKET.get(),
                     MagItems.HELIUM_3_GAS.get(), MagItems.DEUTERIUM_CELL.get(),
                     MagItems.TRITIUM_CELL.get(), MagItems.HELIUM_3_CELL.get())),
-            topic("electrolyzer", 3, () -> stacks(MagItems.ELECTROLYZER.get()))
+            topic("electrolyzer", 3, () -> stacks(MagItems.ELECTROLYZER.get())),
+            topic("dipole_electromagnet", 3, () -> stacks(MagItems.DIPOLE_ELECTROMAGNET.get())),
+            topic("structural_inducer", 3, () -> stacks(MagItems.STRUCTURAL_INDUCER.get())),
+            topic("mhd_jet", 3, () -> stacks(MagItems.MHD_JET.get())),
+            topic("fusion_thruster", 4, () -> stacks(MagItems.FUSION_THRUSTER.get())),
+            topic("tokamak", 4, () -> stacks(MagItems.TOKAMAK_CONTROLLER.get(), MagItems.TOKAMAK_COIL.get())),
+            topic("railgun", 4, () -> stacks(MagItems.RAILGUN_EMITTER.get(), MagItems.RAILGUN_REMOTE.get()))
     );
 
     private RecipeViewerInfo() {}
