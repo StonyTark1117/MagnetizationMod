@@ -584,38 +584,46 @@ public final class MagGameTests {
         });
     }
 
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 180)
     public static void fusionGasCeilingFlowDoesNotFillSky(final GameTestHelper helper) {
-        final BlockPos source = new BlockPos(1, 1, 1);
+        final BlockPos source = new BlockPos(0, 1, 1);
+        for (int x = 0; x <= 2; x++) {
+            for (int z = 0; z <= 2; z++) {
+                for (int y = 3; y <= 100; y++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(new BlockPos(0, 2, 1), Blocks.GLASS);
+        helper.setBlock(new BlockPos(1, 2, 1), Blocks.GLASS);
         helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
-        helper.setBlock(source.above(2), Blocks.GLASS);
-        helper.runAfterDelay(80L, () -> {
-            int gasBlocks = 0;
-            for (int y = 1; y <= 20; y++) {
-                for (int x = 0; x <= 8; x++) {
-                    for (int z = 0; z <= 8; z++) {
-                        if (!helper.getBlockState(new BlockPos(x, y, z)).getFluidState().isEmpty()) {
-                            gasBlocks++;
+        helper.runAfterDelay(120L, () -> {
+            int waterfallCells = 0;
+            for (int y = 2; y <= 20; y++) {
+                for (int x = 0; x <= 2; x++) {
+                    for (int z = 0; z <= 2; z++) {
+                        if (helper.getBlockState(new BlockPos(x, y, z)).getFluidState().isEmpty()) {
+                            continue;
                         }
+                        waterfallCells++;
+                        // The supported cell at (1,1,1) has three open edges.
+                        // Each may make one vertical waterfall, but gas may not
+                        // occupy the interior sky or another horizontal ring.
+                        final boolean expectedColumn = (x == 2 && z == 1)
+                                || (x == 1 && z == 0)
+                                || (x == 1 && z == 2);
+                        helper.assertTrue(expectedColumn,
+                                "Ceiling flow escaped its edge waterfalls at " + x + "," + y + "," + z);
                     }
                 }
             }
-            helper.assertTrue(gasBlocks <= 200,
-                    "Blocked gas flow must remain a bounded ceiling layer; found " + gasBlocks + " gas blocks");
-            for (int y = 12; y <= 20; y++) {
-                for (int x = 0; x <= 8; x++) {
-                    for (int z = 0; z <= 8; z++) {
-                        helper.assertTrue(helper.getBlockState(new BlockPos(x, y, z))
-                                        .getFluidState().isEmpty(),
-                                "Blocked gas must not fill the sky at Y=" + y);
-                    }
-                }
-            }
+            helper.assertTrue(waterfallCells > 0,
+                    "Gas should form bounded upward waterfalls at the ceiling perimeter");
             helper.succeed();
         });
     }
 
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 140)
     public static void fusionGasFollowsCeilingAndTurnsUpAtEdge(final GameTestHelper helper) {
         final BlockPos source = new BlockPos(0, 1, 1);
         helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
@@ -625,16 +633,112 @@ public final class MagGameTests {
         helper.setBlock(new BlockPos(1, 2, 1), Blocks.GLASS);
         helper.setBlock(new BlockPos(2, 1, 1), Blocks.AIR);
         helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
-        helper.runAfterDelay(60L, () -> {
+        for (int x = 0; x <= 2; x++) {
+            for (int z = 0; z <= 2; z++) {
+                for (int y = 3; y <= 100; y++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.AIR);
+                }
+            }
+        }
+        final int[] previousWaterfallTop = {0};
+        for (long tick = 30L; tick <= 100L; tick += 10L) {
+            final long checkTick = tick;
+            helper.runAfterDelay(checkTick, () -> {
+                int waterfallTop = 0;
+                for (int y = 1; y <= 100; y++) {
+                    if (!helper.getBlockState(new BlockPos(2, y, 1)).getFluidState().isEmpty()) {
+                        waterfallTop = y;
+                    }
+                }
+                helper.assertTrue(waterfallTop >= previousWaterfallTop[0],
+                        "Waterfall retreated between checks at tick " + checkTick
+                                + "; previous top=" + previousWaterfallTop[0]
+                                + ", current top=" + waterfallTop);
+                for (int y = 1; y <= waterfallTop; y++) {
+                    helper.assertTrue(!helper.getBlockState(new BlockPos(2, y, 1))
+                                    .getFluidState().isEmpty(),
+                            "Waterfall column has a transient gap at tick " + checkTick + ", Y=" + y);
+                    helper.assertTrue(helper.getBlockState(new BlockPos(2, y, 0))
+                                    .getFluidState().isEmpty()
+                                    && helper.getBlockState(new BlockPos(2, y, 2))
+                                    .getFluidState().isEmpty(),
+                            "Waterfall transiently fans sideways at tick " + checkTick + ", Y=" + y);
+                }
+                previousWaterfallTop[0] = waterfallTop;
+            });
+        }
+        helper.runAfterDelay(100L, () -> {
             helper.assertTrue(helper.getBlockState(new BlockPos(1, 1, 1))
                             .is(MagBlocks.HYDROGEN_BLOCK.get()),
                     "Gas should flow horizontally beneath a supporting ceiling; got "
                             + helper.getBlockState(new BlockPos(1, 1, 1))
                             + ", source=" + helper.getBlockState(source));
-            helper.assertTrue(helper.getBlockState(new BlockPos(2, 1, 1)).getFluidState().isEmpty(),
-                    "Gas must not flow horizontally into unsupported air");
-            helper.assertTrue(helper.getBlockState(new BlockPos(2, 2, 1)).getFluidState().isEmpty(),
-                    "Blocked ceiling flow must not create an unsupported waterfall branch");
+            boolean waterfall = false;
+            int waterfallY = -1;
+            for (int y = 2; y <= 100; y++) {
+                if (!helper.getBlockState(new BlockPos(2, y, 1)).getFluidState().isEmpty()) {
+                    waterfall = true;
+                    waterfallY = y;
+                }
+            }
+            helper.assertTrue(waterfall,
+                    "Gas should spill upward at the ceiling edge instead of stopping; "
+                            + "supported=" + helper.getBlockState(new BlockPos(1, 1, 1))
+                            + ", edge=" + helper.getBlockState(new BlockPos(2, 1, 1))
+                            + ", edgeAbove=" + helper.getBlockState(new BlockPos(2, 2, 1))
+                            + ", edgeNext=" + helper.getBlockState(new BlockPos(2, 3, 1)));
+            helper.assertTrue(waterfallY >= 9,
+                    "Gas waterfall should keep moving upward beyond the edge; found at Y=" + waterfallY);
+            for (int y = 1; y <= waterfallY; y++) {
+                helper.assertTrue(!helper.getBlockState(new BlockPos(2, y, 1)).getFluidState().isEmpty(),
+                        "Gas waterfall must be continuous; missing column cell at Y=" + y);
+            }
+            for (int y = 1; y <= 100; y++) {
+                helper.assertTrue(helper.getBlockState(new BlockPos(2, y, 0)).getFluidState().isEmpty()
+                                && helper.getBlockState(new BlockPos(2, y, 2)).getFluidState().isEmpty(),
+                        "Waterfall must not fan sideways into open air at Y=" + y);
+            }
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 180)
+    public static void fusionGasWaterfallRetractsWhenFeedIsRemoved(final GameTestHelper helper) {
+        final BlockPos source = new BlockPos(0, 1, 1);
+        for (int x = 0; x <= 2; x++) {
+            for (int z = 0; z <= 2; z++) {
+                for (int y = 3; y <= 100; y++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.AIR);
+                }
+            }
+        }
+        helper.setBlock(new BlockPos(0, 2, 1), Blocks.GLASS);
+        helper.setBlock(new BlockPos(1, 2, 1), Blocks.GLASS);
+        helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
+
+        helper.runAfterDelay(60L, () -> {
+            int waterfallTop = 0;
+            for (int y = 1; y <= 30; y++) {
+                if (!helper.getBlockState(new BlockPos(2, y, 1)).getFluidState().isEmpty()) {
+                    waterfallTop = y;
+                }
+            }
+            helper.assertTrue(waterfallTop >= 3,
+                    "Precondition failed: expected a developed waterfall before removing its source; top="
+                            + waterfallTop);
+            helper.setBlock(source, Blocks.AIR);
+        });
+
+        helper.runAfterDelay(150L, () -> {
+            for (int x = 0; x <= 2; x++) {
+                for (int y = 1; y <= 30; y++) {
+                    for (int z = 0; z <= 2; z++) {
+                        helper.assertTrue(helper.getBlockState(new BlockPos(x, y, z))
+                                        .getFluidState().isEmpty(),
+                                "An unpowered waterfall left orphaned gas at " + x + "," + y + "," + z);
+                    }
+                }
+            }
             helper.succeed();
         });
     }

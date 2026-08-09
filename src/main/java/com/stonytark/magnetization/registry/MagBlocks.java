@@ -436,7 +436,7 @@ public final class MagBlocks {
             REGISTER.register("hydrogen", () -> new net.minecraft.world.level.block.LiquidBlock(
                     com.stonytark.magnetization.registry.MagFluids.HYDROGEN.get(),
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
-                            .mapColor(MapColor.SNOW)));
+                            .mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
     /** Tritium liquid block — D-T fusion fuel, faintly glowing. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> TRITIUM_BLOCK =
@@ -446,12 +446,12 @@ public final class MagBlocks {
                             .mapColor(MapColor.COLOR_CYAN)
                             .lightLevel(s -> 6)));
 
-    /** Helium-3 liquid block — premium aneutronic fuel, pale. */
+    /** Helium-3 liquid block — premium aneutronic fuel, luminous violet. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> HELIUM_3_BLOCK =
             REGISTER.register("helium_3", () -> new net.minecraft.world.level.block.LiquidBlock(
                     com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(),
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
-                            .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                            .mapColor(MapColor.COLOR_PURPLE)
                             .lightLevel(s -> 4)));
 
     /** Liquid lithium — conductive working fluid for the MHD jet; light silvery metal. */

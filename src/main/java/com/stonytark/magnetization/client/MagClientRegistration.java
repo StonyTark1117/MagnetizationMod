@@ -109,53 +109,17 @@ public final class MagClientRegistration {
             }
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
 
-        // Hydrogen: water textures tinted pale near-white.
-        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
-            @Override
-            public net.minecraft.resources.ResourceLocation getStillTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
-            }
-            @Override
-            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
-            }
-            @Override
-            public int getTintColor() {
-                return 0xFFE6F0FF; // pale near-white
-            }
-        }, com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
+        // Hydrogen: water textures tinted soft aqua to match the bucket fill.
+        event.registerFluidType(gasFluid(0xFFB9E7EB), // soft aqua
+                com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
 
         // Tritium: water textures tinted glowing cyan.
-        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
-            @Override
-            public net.minecraft.resources.ResourceLocation getStillTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
-            }
-            @Override
-            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
-            }
-            @Override
-            public int getTintColor() {
-                return 0xFF3FE0D0; // glowing cyan
-            }
-        }, com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
+        event.registerFluidType(gasFluid(0xFF3FE0D0), // glowing cyan
+                com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
 
-        // Helium-3: water textures tinted pale icy blue.
-        event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
-            @Override
-            public net.minecraft.resources.ResourceLocation getStillTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
-            }
-            @Override
-            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
-            }
-            @Override
-            public int getTintColor() {
-                return 0xFFAFE0FF; // pale icy blue
-            }
-        }, com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
+        // Helium-3: water textures tinted luminous violet to match the crystal palette.
+        event.registerFluidType(gasFluid(0xFF9B72D6), // luminous violet
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
         // Liquid lithium: water textures tinted warm silvery metal.
         event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
@@ -172,6 +136,36 @@ public final class MagClientRegistration {
                 return 0xFFD8D2C0; // warm silver
             }
         }, com.stonytark.magnetization.registry.MagFluids.LIQUID_LITHIUM_TYPE.get());
+    }
+
+    private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions gasFluid(
+            final int tint) {
+        return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override
+            public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+
+            @Override
+            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+
+            @Override
+            public int getTintColor() {
+                return tint;
+            }
+
+            @Override
+            public boolean renderFluid(final net.minecraft.world.level.material.FluidState fluidState,
+                                       final net.minecraft.world.level.BlockAndTintGetter level,
+                                       final net.minecraft.core.BlockPos pos,
+                                       final com.mojang.blaze3d.vertex.VertexConsumer vertices,
+                                       final net.minecraft.world.level.block.state.BlockState blockState) {
+                return com.stonytark.magnetization.client.render.CeilingGasRenderer.render(
+                        fluidState, level, pos, vertices, blockState);
+            }
+        };
     }
 
     @SubscribeEvent

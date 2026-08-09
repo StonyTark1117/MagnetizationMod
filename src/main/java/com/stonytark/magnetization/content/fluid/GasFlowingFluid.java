@@ -41,6 +41,9 @@ public final class GasFlowingFluid {
 
         @Override
         protected void spread(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.isEmpty()) {
+                return;
+            }
             if (pos.getY() >= level.getMaxBuildHeight() - 1) {
                 level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 return;
@@ -88,20 +91,93 @@ public final class GasFlowingFluid {
         }
 
         @Override
+        public void tick(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.getValue(FALLING)) {
+                final FluidState feed = level.getFluidState(pos.below());
+                if (!feed.getType().isSame(this)) {
+                    // Upward waterfalls are fed from below. Once the horizontal
+                    // flow or lower column cell disappears, retract the contiguous
+                    // falling tail. Waiting one fluid delay per cell leaves a tall
+                    // orphan column long after its feed is gone.
+                    BlockPos cursor = pos;
+                    while (cursor.getY() < level.getMaxBuildHeight()) {
+                        final FluidState cursorState = level.getFluidState(cursor);
+                        if (cursorState.isEmpty() || !cursorState.getType().isSame(this)
+                                || !cursorState.getValue(FALLING)) {
+                            break;
+                        }
+                        level.setBlockAndUpdate(cursor, Blocks.AIR.defaultBlockState());
+                        cursor = cursor.above();
+                    }
+                    return;
+                }
+                // Vanilla recomputes unsupported flowing cells from horizontal
+                // neighbours before spreading them. That is correct for a
+                // horizontal layer, but it deletes an upward gas waterfall from
+                // the middle. A vertical gas cell keeps its falling strength and
+                // advances upward instead.
+                spread(level, pos, state);
+                return;
+            }
+            final FluidState above = level.getFluidState(pos.above());
+            if (!above.isEmpty() && above.getType().isSame(this)
+                    && hasHorizontalFeed(level, pos, state)) {
+                // This is the unsupported root at a ceiling edge. Vanilla's
+                // downward-gravity recomputation can briefly erase it even while
+                // a stronger horizontal cell is feeding it, which makes the
+                // entire upward column blink. Preserve it only while that real
+                // feed exists; source removal still lets it decay normally.
+                return;
+            }
+            super.tick(level, pos, state);
+        }
+
+        private boolean hasHorizontalFeed(final Level level, final BlockPos pos, final FluidState state) {
+            for (final Direction direction : Direction.Plane.HORIZONTAL) {
+                final FluidState neighbour = level.getFluidState(pos.relative(direction));
+                if (!neighbour.isEmpty() && neighbour.getType().isSame(this)
+                        && (neighbour.isSource() || neighbour.getAmount() > state.getAmount())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
         protected void spread(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.isEmpty()) {
+                return;
+            }
             if (pos.getY() >= level.getMaxBuildHeight() - 1) {
-                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                // A source drifting through open air despawns at the sky limit.
+                // A source-fed waterfall instead terminates there, mirroring a
+                // water waterfall terminating at the bottom of the world.
+                return;
+            }
+            final BlockPos above = pos.above();
+            final BlockState aboveState = level.getBlockState(above);
+            final FluidState aboveFluid = aboveState.getFluidState();
+            if (aboveFluid.isEmpty() && aboveState.canBeReplaced()) {
+                // Falling water keeps full vertical strength while descending.
+                // Use that state as an upward gas waterfall and leave the
+                // current cell in place so the column stays continuous.
+                super.spreadTo(level, above, aboveState, Direction.UP, getFlowing(8, true));
+                return;
+            }
+            if (!aboveFluid.isEmpty() && aboveFluid.getType().isSame(this)) {
+                // This cell is already part of a vertical gas column. It must not
+                // reinterpret the gas above as a ceiling and spread sideways.
                 return;
             }
             final int nextAmount = state.getAmount() - 1;
             if (nextAmount <= 0) {
                 return;
             }
-            final BlockPos above = pos.above();
-            final BlockState aboveState = level.getBlockState(above);
-            if (aboveState.getFluidState().isEmpty() && aboveState.canBeReplaced()) {
-                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                super.spreadTo(level, above, aboveState, Direction.UP, getFlowing(nextAmount, false));
+            // Horizontal travel is only possible while this cell is held under a
+            // ceiling. At the ceiling edge, allow one unsupported side cell to be
+            // seeded; its next tick moves upward, while the resulting vertical
+            // column cannot fan out through open air.
+            if (aboveState.canBeReplaced()) {
                 return;
             }
             for (final Direction direction : Direction.Plane.HORIZONTAL) {
@@ -109,7 +185,7 @@ public final class GasFlowingFluid {
                 final BlockState sideState = level.getBlockState(side);
                 final BlockState sideAboveState = level.getBlockState(side.above());
                 if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
-                        && !sideAboveState.canBeReplaced()) {
+                        && sideAboveState.getFluidState().isEmpty()) {
                     final FluidState next = getFlowing(nextAmount, false);
                     level.setBlockAndUpdate(side, next.createLegacyBlock());
                     level.scheduleTick(side, next.getType(), next.getType().getTickDelay(level));
