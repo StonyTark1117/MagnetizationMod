@@ -11,7 +11,7 @@
   "criteria": {
     "hydrogen": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [{ "items": "magnetization:hydrogen_bucket" }] }
+      "conditions": { "items": [{ "items": "#c:buckets/hydrogen" }] }
     }
   },
   "requirements": [["hydrogen"]]

@@ -37,6 +37,7 @@ configurations {
     copycatsRuntime
     enchantmentIndustryRuntime
     enderTransmissionRuntime
+    tfmgRuntime
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -75,6 +76,7 @@ def minimalProfileTasks = [
         'runcopycatsgametestserver',
         'runenchantmentindustrygametestserver',
         'runendertransmissiongametestserver',
+        'runtfmggametestserver',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -129,6 +131,9 @@ def wantsEnchantmentIndustryTests = lowered.any {
 def wantsEnderTransmissionTests = lowered.any {
     it.endsWith('runendertransmissiongametestserver') || it.endsWith('smokeendertransmissiongametest')
 }
+def wantsTfmgTests = lowered.any {
+    it.endsWith('runtfmggametestserver') || it.endsWith('smoketfmggametest')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -143,7 +148,7 @@ def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTest
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
                             wantsCreateAdditionTests, wantsCreateTracksTests, wantsSteamRailsTests,
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
-                            wantsEnderTransmissionTests]
+                            wantsEnderTransmissionTests, wantsTfmgTests]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -182,6 +187,9 @@ if (wantsEnchantmentIndustryTests) {
 }
 if (wantsEnderTransmissionTests) {
     configurations.runtimeClasspath { extendsFrom configurations.enderTransmissionRuntime }
+}
+if (wantsTfmgTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.tfmgRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -282,7 +290,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runDieselGeneratorsGameTestServer'
         || it.name == 'runCopycatsGameTestServer'
         || it.name == 'runEnchantmentIndustryGameTestServer'
-        || it.name == 'runEnderTransmissionGameTestServer' }.configureEach {
+        || it.name == 'runEnderTransmissionGameTestServer'
+        || it.name == 'runTfmgGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
@@ -315,6 +324,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-enchantment-industry-gametest/world/session.lock'
                 : it.name == 'runEnderTransmissionGameTestServer'
                 ? 'run-ender-transmission-gametest/world/session.lock'
+                : it.name == 'runTfmgGameTestServer'
+                ? 'run-tfmg-gametest/world/session.lock'
                 : 'run/world/session.lock')
         if (lock.exists()) {
             logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
@@ -387,6 +398,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_ender_transmission/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_tfmg/structure'
     }
 }
 
@@ -524,6 +538,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-ender-transmission-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ender_transmission'
+        }
+        tfmgGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-tfmg-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_tfmg'
         }
         data {
             data()
@@ -769,6 +788,13 @@ tasks.register('smokeEnderTransmissionGameTest', Exec) {
             'run-ender-transmission-gametest', '300'
 }
 
+tasks.register('smokeTfmgGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises TFMG hydrogen tags, recipes, and Fusion Thruster compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runTfmgGameTestServer',
+            'run-tfmg-gametest', '300'
+}
+
 tasks.register('smokeClientNormal') {
     group = 'verification'
     description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
@@ -1009,10 +1035,10 @@ dependencies {
     localRuntime("maven.modrinth:create-new-age:IwtuwMZy") // 1.2.0+mc1.21.1
 
     // Create: The Factory Must Grow (TFMG) — soft dep for gallium's aluminium
-    // sourcing (gallium occurs with bauxite/aluminium). Present in dev so we can
-    // verify the real aluminium ingot/ore IDs the gallium recipes + ore-byproduct
-    // loot modifier hook onto. Without TFMG, gallium still comes from Create zinc.
+    // sourcing and bidirectional Hydrogen/gas-tag compatibility. Present in the
+    // client pack and an isolated GameTest runtime; neither configuration ships.
     localRuntime("maven.modrinth:create-tfmg:uDi14nbt")
+    tfmgRuntime("maven.modrinth:create-tfmg:uDi14nbt")
 
     // === Crash-repro deps (player's modpack StackOverflowError in
     // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref

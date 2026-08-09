@@ -6,7 +6,7 @@
       "item": "minecraft:glowstone_dust"
     },
     "h": {
-      "item": "magnetization:hydrogen_bucket"
+      "tag": "c:buckets/hydrogen"
     },
     "i": {
       "item": "minecraft:iron_ingot"

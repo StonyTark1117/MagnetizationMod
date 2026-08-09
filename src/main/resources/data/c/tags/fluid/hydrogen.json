@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:hydrogen",
+    "magnetization:flowing_hydrogen",
+    { "id": "tfmg:hydrogen", "required": false },
+    { "id": "tfmg:flowing_hydrogen", "required": false }
+  ]
+}

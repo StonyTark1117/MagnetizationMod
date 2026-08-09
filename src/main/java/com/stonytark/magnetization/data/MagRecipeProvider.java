@@ -737,8 +737,9 @@ public final class MagRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.DEUTERIUM_CELL.get())
                 .pattern("rhr").pattern("gig").pattern("rhr")
                 .define('r', Items.REDSTONE).define('i', Items.IRON_INGOT).define('g', Items.GLOWSTONE_DUST)
-                .define('h', MagItems.HYDROGEN_BUCKET.get())
-                .unlockedBy("has_hydrogen", has(MagItems.HYDROGEN_BUCKET.get())).save(out, id("deuterium_cell_from_hydrogen"));
+                .define('h', com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)
+                .unlockedBy("has_hydrogen", has(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS))
+                .save(out, id("deuterium_cell_from_hydrogen"));
         // deuterium cell + lithium -> tritium cell (lithium-6 breeding).
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.TRITIUM_CELL.get())
                 .requires(MagItems.DEUTERIUM_CELL.get()).requires(MagItems.LITHIUM.get())

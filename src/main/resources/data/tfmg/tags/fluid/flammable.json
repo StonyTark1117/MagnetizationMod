@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:hydrogen",
+    "magnetization:flowing_hydrogen",
+    "magnetization:tritium",
+    "magnetization:flowing_tritium"
+  ]
+}

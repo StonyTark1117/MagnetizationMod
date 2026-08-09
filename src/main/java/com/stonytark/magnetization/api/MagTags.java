@@ -7,6 +7,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 
 /**
  * Public tag identifiers other mods can target to opt content into magnetism.
@@ -17,6 +18,19 @@ import net.minecraft.world.level.block.Block;
  * field sources and may be selectively rendered/processed by client tools.
  */
 public final class MagTags {
+
+    /** Common hydrogen identity shared with processing/technology mods. Both
+     * source and flowing variants belong here; consumers should test this tag
+     * instead of hard-coding a registry ID. */
+    public static final TagKey<Fluid> HYDROGEN_FLUIDS =
+            TagKey.create(Registries.FLUID,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "hydrogen"));
+
+    /** Filled hydrogen containers. TFMG already publishes its Hydrogen Tank to
+     * this common tag; Magnetization contributes its bucket as the counterpart. */
+    public static final TagKey<Item> HYDROGEN_BUCKETS =
+            TagKey.create(Registries.ITEM,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "buckets/hydrogen"));
 
     public static final TagKey<Item> FERROMAGNETIC_ITEMS =
             TagKey.create(Registries.ITEM, Magnetization.id("ferromagnetic"));

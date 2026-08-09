@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:hydrogen_bucket",
+    { "id": "tfmg:hydrogen_bucket", "required": false }
+  ]
+}

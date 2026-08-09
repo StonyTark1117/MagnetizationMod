@@ -139,18 +139,29 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     static boolean isFusionFluid(final Fluid fluid) {
-        return fluid == MagFluids.HYDROGEN.get() || fluid == MagFluids.DEUTERIUM_OXIDE.get()
+        return isHydrogen(fluid) || fluid == MagFluids.DEUTERIUM_OXIDE.get()
                 || fluid == MagFluids.TRITIUM.get() || fluid == MagFluids.HELIUM_3.get();
+    }
+
+    private static boolean isHydrogen(final Fluid fluid) {
+        return fluid.builtInRegistryHolder().is(com.stonytark.magnetization.api.MagTags.HYDROGEN_FLUIDS);
     }
 
     /** Deterministic (client/server-identical) check for the 4 fusion-fluid buckets. */
     public static boolean isFusionFluidBucket(final ItemStack st) {
-        return st.is(MagItems.HYDROGEN_BUCKET.get()) || st.is(MagItems.DEUTERIUM_OXIDE_BUCKET.get())
+        return st.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)
+                || st.is(MagItems.DEUTERIUM_OXIDE_BUCKET.get())
                 || st.is(MagItems.TRITIUM_BUCKET.get()) || st.is(MagItems.HELIUM_3_BUCKET.get());
     }
 
     private static @Nullable Fluid bucketFluid(final ItemStack st) {
-        if (st.is(MagItems.HYDROGEN_BUCKET.get())) return MagFluids.HYDROGEN.get();
+        if (st.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)) {
+            final java.util.Optional<FluidStack> contained =
+                    net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(st);
+            if (contained.isPresent() && isHydrogen(contained.get().getFluid())) {
+                return contained.get().getFluid();
+            }
+        }
         if (st.is(MagItems.DEUTERIUM_OXIDE_BUCKET.get())) return MagFluids.DEUTERIUM_OXIDE.get();
         if (st.is(MagItems.TRITIUM_BUCKET.get())) return MagFluids.TRITIUM.get();
         if (st.is(MagItems.HELIUM_3_BUCKET.get())) return MagFluids.HELIUM_3.get();
@@ -170,14 +181,14 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     private double fluidMult(final Fluid fluid) {
-        if (fluid == MagFluids.HYDROGEN.get()) return MagConfig.fusionThrusterFluidMultHydrogen();
+        if (isHydrogen(fluid)) return MagConfig.fusionThrusterFluidMultHydrogen();
         if (fluid == MagFluids.TRITIUM.get()) return MagConfig.fusionThrusterFluidMultTritium();
         if (fluid == MagFluids.HELIUM_3.get()) return MagConfig.fusionThrusterFluidMultHelium3();
         return MagConfig.fusionThrusterFluidMultDeuteriumOxide();
     }
 
     private double fluidDensity(final Fluid fluid) {
-        if (fluid == MagFluids.HYDROGEN.get()) return MagConfig.fusionThrusterFluidDensityHydrogen();
+        if (isHydrogen(fluid)) return MagConfig.fusionThrusterFluidDensityHydrogen();
         if (fluid == MagFluids.TRITIUM.get()) return MagConfig.fusionThrusterFluidDensityTritium();
         if (fluid == MagFluids.HELIUM_3.get()) return MagConfig.fusionThrusterFluidDensityHelium3();
         return MagConfig.fusionThrusterFluidDensityDeuteriumOxide();

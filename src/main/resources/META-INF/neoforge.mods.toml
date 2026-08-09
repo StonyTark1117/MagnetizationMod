@@ -230,10 +230,10 @@ versionRange = "[4.1.0.8,)"
 ordering = "BEFORE"
 side = "BOTH"
 
-# Create: The Factory Must Grow — optional. Supplies aluminium: gallium ingots
-# can be re-smelted from aluminium ingots (#c:ingots/aluminum) and raw gallium
-# drops as a byproduct of mining bauxite. Without TFMG, gallium comes entirely
-# from Create's zinc, so this stays optional.
+# Create: The Factory Must Grow — optional. Supplies aluminium for gallium and
+# shares Hydrogen with the fusion-fuel chain through common fluid/container tags;
+# Magnetization gases also join TFMG's gas classifications. Without TFMG,
+# gallium comes from Create zinc and Magnetization's own Hydrogen remains complete.
 [[dependencies.${mod_id}]]
 modId = "tfmg"
 type = "optional"

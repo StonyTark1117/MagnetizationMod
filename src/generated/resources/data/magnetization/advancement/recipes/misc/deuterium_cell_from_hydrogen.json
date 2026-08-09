@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "magnetization:hydrogen_bucket"
+            "items": "#c:buckets/hydrogen"
           }
         ]
       },
