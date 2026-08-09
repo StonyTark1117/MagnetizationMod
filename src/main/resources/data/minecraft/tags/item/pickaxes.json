@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_pickaxe",
+    "magnetization:maghemite_pickaxe",
+    "magnetization:ferromagnetic_pickaxe",
+    "magnetization:gallium_pickaxe",
+    "magnetization:lithium_pickaxe",
+    "magnetization:pyrrhotite_pickaxe",
+    "magnetization:hematite_pickaxe",
+    "magnetization:titanomagnetite_pickaxe",
+    "magnetization:mr_fluid_pickaxe"
+  ]
+}

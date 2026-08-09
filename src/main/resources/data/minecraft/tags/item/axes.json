@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_axe",
+    "magnetization:maghemite_axe",
+    "magnetization:ferromagnetic_axe",
+    "magnetization:gallium_axe",
+    "magnetization:lithium_axe",
+    "magnetization:pyrrhotite_axe",
+    "magnetization:hematite_axe",
+    "magnetization:titanomagnetite_axe",
+    "magnetization:mr_fluid_axe"
+  ]
+}

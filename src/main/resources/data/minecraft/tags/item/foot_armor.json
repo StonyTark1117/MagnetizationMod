@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_boots",
+    "magnetization:maghemite_boots",
+    "magnetization:ferromagnetic_boots",
+    "magnetization:gallium_boots",
+    "magnetization:lithium_boots",
+    "magnetization:pyrrhotite_boots",
+    "magnetization:hematite_boots",
+    "magnetization:titanomagnetite_boots",
+    "magnetization:mr_liquid_boots",
+    "magnetization:magnetoresistive_boots"
+  ]
+}

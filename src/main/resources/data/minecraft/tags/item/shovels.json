@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_shovel",
+    "magnetization:maghemite_shovel",
+    "magnetization:ferromagnetic_shovel",
+    "magnetization:gallium_shovel",
+    "magnetization:lithium_shovel",
+    "magnetization:pyrrhotite_shovel",
+    "magnetization:hematite_shovel",
+    "magnetization:titanomagnetite_shovel",
+    "magnetization:mr_fluid_shovel"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_sword",
+    "magnetization:maghemite_sword",
+    "magnetization:ferromagnetic_sword",
+    "magnetization:gallium_sword",
+    "magnetization:lithium_sword",
+    "magnetization:pyrrhotite_sword",
+    "magnetization:hematite_sword",
+    "magnetization:titanomagnetite_sword",
+    "magnetization:mr_fluid_sword"
+  ]
+}

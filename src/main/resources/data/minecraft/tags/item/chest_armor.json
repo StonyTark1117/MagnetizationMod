@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_chestplate",
+    "magnetization:maghemite_chestplate",
+    "magnetization:ferromagnetic_chestplate",
+    "magnetization:gallium_chestplate",
+    "magnetization:lithium_chestplate",
+    "magnetization:pyrrhotite_chestplate",
+    "magnetization:hematite_chestplate",
+    "magnetization:titanomagnetite_chestplate",
+    "magnetization:mr_liquid_chestplate"
+  ]
+}

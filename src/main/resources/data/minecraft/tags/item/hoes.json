@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_hoe",
+    "magnetization:maghemite_hoe",
+    "magnetization:ferromagnetic_hoe",
+    "magnetization:gallium_hoe",
+    "magnetization:lithium_hoe",
+    "magnetization:pyrrhotite_hoe",
+    "magnetization:hematite_hoe",
+    "magnetization:titanomagnetite_hoe",
+    "magnetization:mr_fluid_hoe"
+  ]
+}

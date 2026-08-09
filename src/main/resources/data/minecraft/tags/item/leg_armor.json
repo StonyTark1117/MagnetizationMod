@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_leggings",
+    "magnetization:maghemite_leggings",
+    "magnetization:ferromagnetic_leggings",
+    "magnetization:gallium_leggings",
+    "magnetization:lithium_leggings",
+    "magnetization:pyrrhotite_leggings",
+    "magnetization:hematite_leggings",
+    "magnetization:titanomagnetite_leggings",
+    "magnetization:mr_liquid_leggings"
+  ]
+}

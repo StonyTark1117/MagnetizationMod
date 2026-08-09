@@ -91,6 +91,17 @@ public final class MagItemTooltips {
                 MagItems.FERROMAGNETIC_SWORD.get(), MagItems.FERROMAGNETIC_PICKAXE.get(),
                 MagItems.FERROMAGNETIC_AXE.get(), MagItems.FERROMAGNETIC_SHOVEL.get(),
                 MagItems.FERROMAGNETIC_HOE.get(),
+                MagItems.GALLIUM_SWORD.get(), MagItems.GALLIUM_PICKAXE.get(),
+                MagItems.GALLIUM_AXE.get(), MagItems.GALLIUM_SHOVEL.get(), MagItems.GALLIUM_HOE.get(),
+                MagItems.LITHIUM_SWORD.get(), MagItems.LITHIUM_PICKAXE.get(),
+                MagItems.LITHIUM_AXE.get(), MagItems.LITHIUM_SHOVEL.get(), MagItems.LITHIUM_HOE.get(),
+                MagItems.PYRRHOTITE_SWORD.get(), MagItems.PYRRHOTITE_PICKAXE.get(),
+                MagItems.PYRRHOTITE_AXE.get(), MagItems.PYRRHOTITE_SHOVEL.get(), MagItems.PYRRHOTITE_HOE.get(),
+                MagItems.HEMATITE_SWORD.get(), MagItems.HEMATITE_PICKAXE.get(),
+                MagItems.HEMATITE_AXE.get(), MagItems.HEMATITE_SHOVEL.get(), MagItems.HEMATITE_HOE.get(),
+                MagItems.TITANOMAGNETITE_SWORD.get(), MagItems.TITANOMAGNETITE_PICKAXE.get(),
+                MagItems.TITANOMAGNETITE_AXE.get(), MagItems.TITANOMAGNETITE_SHOVEL.get(),
+                MagItems.TITANOMAGNETITE_HOE.get(),
         }) m.put(t, "tooltip.magnetization.metal_tool.use");
         for (final var a : new Item[]{
                 MagItems.MAGHEMITE_HELMET.get(), MagItems.MAGHEMITE_CHESTPLATE.get(),
@@ -99,11 +110,24 @@ public final class MagItemTooltips {
                 MagItems.MAGNETITE_LEGGINGS.get(), MagItems.MAGNETITE_BOOTS.get(),
                 MagItems.FERROMAGNETIC_HELMET.get(), MagItems.FERROMAGNETIC_CHESTPLATE.get(),
                 MagItems.FERROMAGNETIC_LEGGINGS.get(), MagItems.FERROMAGNETIC_BOOTS.get(),
+                MagItems.GALLIUM_HELMET.get(), MagItems.GALLIUM_CHESTPLATE.get(),
+                MagItems.GALLIUM_LEGGINGS.get(), MagItems.GALLIUM_BOOTS.get(),
+                MagItems.LITHIUM_HELMET.get(), MagItems.LITHIUM_CHESTPLATE.get(),
+                MagItems.LITHIUM_LEGGINGS.get(), MagItems.LITHIUM_BOOTS.get(),
+                MagItems.PYRRHOTITE_HELMET.get(), MagItems.PYRRHOTITE_CHESTPLATE.get(),
+                MagItems.PYRRHOTITE_LEGGINGS.get(), MagItems.PYRRHOTITE_BOOTS.get(),
+                MagItems.HEMATITE_HELMET.get(), MagItems.HEMATITE_CHESTPLATE.get(),
+                MagItems.HEMATITE_LEGGINGS.get(), MagItems.HEMATITE_BOOTS.get(),
+                MagItems.TITANOMAGNETITE_HELMET.get(), MagItems.TITANOMAGNETITE_CHESTPLATE.get(),
+                MagItems.TITANOMAGNETITE_LEGGINGS.get(), MagItems.TITANOMAGNETITE_BOOTS.get(),
         }) m.put(a, "tooltip.magnetization.metal_armor.use");
         for (final var h : new Item[]{
                 MagItems.MAGHEMITE_HORSE_ARMOR.get(),
                 MagItems.MAGNETITE_HORSE_ARMOR.get(),
                 MagItems.FERROMAGNETIC_HORSE_ARMOR.get(),
+                MagItems.GALLIUM_HORSE_ARMOR.get(), MagItems.LITHIUM_HORSE_ARMOR.get(),
+                MagItems.PYRRHOTITE_HORSE_ARMOR.get(), MagItems.HEMATITE_HORSE_ARMOR.get(),
+                MagItems.TITANOMAGNETITE_HORSE_ARMOR.get(),
         }) m.put(h, "tooltip.magnetization.horse_armor.use");
 
         m.put(MagItems.MAGNETIC_ELYTRA.get(),     "tooltip.magnetization.magnetic_elytra.use");
@@ -163,15 +187,13 @@ public final class MagItemTooltips {
                 MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
         }) m.put(i, "tooltip.magnetization.material.use");
         for (final var i : new Item[]{
-                MagItems.GALLIUM_SWORD.get(), MagItems.GALLIUM_PICKAXE.get(), MagItems.GALLIUM_AXE.get(),
-                MagItems.GALLIUM_SHOVEL.get(), MagItems.GALLIUM_HOE.get(), MagItems.MR_FLUID_SWORD.get(),
-                MagItems.MR_FLUID_PICKAXE.get(), MagItems.MR_FLUID_AXE.get(), MagItems.MR_FLUID_SHOVEL.get(),
+                MagItems.MR_FLUID_SWORD.get(), MagItems.MR_FLUID_PICKAXE.get(),
+                MagItems.MR_FLUID_AXE.get(), MagItems.MR_FLUID_SHOVEL.get(),
                 MagItems.MR_FLUID_HOE.get(),
         }) m.put(i, "tooltip.magnetization.special_tool.use");
         for (final var i : new Item[]{
-                MagItems.GALLIUM_HELMET.get(), MagItems.GALLIUM_CHESTPLATE.get(), MagItems.GALLIUM_LEGGINGS.get(),
-                MagItems.GALLIUM_BOOTS.get(), MagItems.GALLIUM_HORSE_ARMOR.get(), MagItems.MR_LIQUID_HELMET.get(),
-                MagItems.MR_LIQUID_CHESTPLATE.get(), MagItems.MR_LIQUID_LEGGINGS.get(), MagItems.MR_LIQUID_BOOTS.get(),
+                MagItems.MR_LIQUID_HELMET.get(), MagItems.MR_LIQUID_CHESTPLATE.get(),
+                MagItems.MR_LIQUID_LEGGINGS.get(), MagItems.MR_LIQUID_BOOTS.get(),
                 MagItems.MR_FLUID_HORSE_ARMOR.get(), MagItems.MAGNETORESISTIVE_BOOTS.get(), MagItems.ALFVEN_BACKPACK.get(),
         }) m.put(i, "tooltip.magnetization.special_armor.use");
         for (final var i : new Item[]{

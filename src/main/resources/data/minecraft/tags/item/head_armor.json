@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:magnetite_helmet",
+    "magnetization:maghemite_helmet",
+    "magnetization:ferromagnetic_helmet",
+    "magnetization:gallium_helmet",
+    "magnetization:lithium_helmet",
+    "magnetization:pyrrhotite_helmet",
+    "magnetization:hematite_helmet",
+    "magnetization:titanomagnetite_helmet",
+    "magnetization:mr_liquid_helmet"
+  ]
+}
