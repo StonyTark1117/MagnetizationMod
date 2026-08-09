@@ -1638,6 +1638,51 @@ public final class MagGameTests {
         helper.succeed();
     }
 
+    /** Non-breaking launches use vanilla's swept collision solver before each
+     * Sable step. A high-speed body must stop at a wall and at the ground while
+     * leaving both collision blocks intact; unobstructed movement is unchanged. */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "railgunCollisionGuard")
+    public static void railgunNonBreakingSweepStopsAtWorldCollision(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos origin = new BlockPos(abs.getX(), 236, abs.getZ());
+        final BlockPos wall = origin.offset(0, 0, 3);
+        final BlockPos ground = origin.below();
+        level.setBlock(wall, Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(ground, Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        final var bounds = new dev.ryanhcode.sable.companion.math.BoundingBox3d(
+                origin.getX() + 0.1d, origin.getY() + 0.1d, origin.getZ() + 0.1d,
+                origin.getX() + 0.9d, origin.getY() + 0.9d, origin.getZ() + 0.9d);
+        final net.minecraft.world.phys.Vec3 wallRequest = new net.minecraft.world.phys.Vec3(0.0d, 0.0d, 5.0d);
+        final net.minecraft.world.phys.Vec3 groundRequest = new net.minecraft.world.phys.Vec3(0.0d, -3.0d, 0.0d);
+        final net.minecraft.world.phys.Vec3 openRequest = new net.minecraft.world.phys.Vec3(1.0d, 0.0d, 0.0d);
+        final net.minecraft.world.phys.Vec3 safeWall =
+                com.stonytark.magnetization.content.railgun.RailgunHandler.collisionSafeMovement(
+                        level, bounds, wallRequest);
+        final net.minecraft.world.phys.Vec3 safeGround =
+                com.stonytark.magnetization.content.railgun.RailgunHandler.collisionSafeMovement(
+                        level, bounds, groundRequest);
+        final net.minecraft.world.phys.Vec3 safeOpen =
+                com.stonytark.magnetization.content.railgun.RailgunHandler.collisionSafeMovement(
+                        level, bounds, openRequest);
+
+        final boolean wallStays = level.getBlockState(wall).is(Blocks.STONE);
+        final boolean groundStays = level.getBlockState(ground).is(Blocks.STONE);
+        level.setBlock(wall, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+        level.setBlock(ground, Blocks.AIR.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_ALL);
+
+        helper.assertTrue(safeWall.z > 1.9d && safeWall.z < 2.2d,
+                "Non-breaking sweep should stop at the wall; safe movement=" + safeWall);
+        helper.assertTrue(safeGround.y > -0.2d && safeGround.y <= 0.0d,
+                "Non-breaking sweep should stop above the ground; safe movement=" + safeGround);
+        helper.assertTrue(safeOpen.distanceToSqr(openRequest) <= 1.0E-12d,
+                "Collision guard must not reduce unobstructed launch movement; safe movement=" + safeOpen);
+        helper.assertTrue(wallStays && groundStays,
+                "Non-breaking collision guard must preserve every collided block");
+        helper.succeed();
+    }
+
     /** Build an emitter (FACING NORTH) + a 6-block copper rail at {@code emitter}. */
     private static void buildRailgunRail(final net.minecraft.server.level.ServerLevel level, final BlockPos emitter) {
         level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState()

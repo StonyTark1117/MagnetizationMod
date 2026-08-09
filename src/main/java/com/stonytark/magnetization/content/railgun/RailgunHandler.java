@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -58,6 +59,9 @@ public final class RailgunHandler {
      * server may opt into a maximum effective rail length below.
      */
     private static final double SHIP_LAUNCH_FORCE_CALIBRATION = 24.0d;
+    /** Keep a clamped Sable body just shy of vanilla's exact touching pose.
+     * Rapier can treat that boundary as penetration after its own integration. */
+    private static final double NON_BREAKING_COLLISION_STANDOFF = 0.05d;
     /** Avoid an invalid/extreme physics velocity turning one tick into an
      * unbounded world scan. This still covers 5,120 blocks/s of travel. */
     private static final int MAX_BLOCK_BREAK_SWEEP_DISTANCE = 256;
@@ -69,7 +73,8 @@ public final class RailgunHandler {
      */
     private static final Map<ServerLevel, Map<UUID, HeldShip>> HELD_SHIPS = new WeakHashMap<>();
     /** Ships keep their railgun provenance after crossing the muzzle so their
-     * swept block-breaking volume follows the full coast, not just rail ticks. */
+     * swept block-breaking or non-destructive collision protection follows the
+     * full coast, not just rail ticks. */
     private static final Map<ServerLevel, Map<UUID, LaunchedShip>> LAUNCHED_SHIPS = new WeakHashMap<>();
 
     private record ArcKey(BlockPos first, BlockPos second) {
@@ -95,7 +100,7 @@ public final class RailgunHandler {
         }
     }
 
-    private record LaunchedShip(Direction facing, ArcKey owner) {}
+    private record LaunchedShip(Direction facing, ArcKey owner, boolean breakBlocks) {}
 
     private RailgunHandler() {}
 
@@ -107,7 +112,7 @@ public final class RailgunHandler {
             LAUNCHED_SHIPS.remove(server);
             return;
         }
-        processLaunchedShipBreaking(server, container);
+        processLaunchedShips(server, container);
         if ((server.getGameTime() % MagConfig.railgunTicks()) != 0L) return;
 
         final Set<BlockPos> snapshot = RailgunRegistry.snapshot(server);
@@ -141,14 +146,21 @@ public final class RailgunHandler {
     public static void onSablePrePhysicsTick(final ForgeSablePrePhysicsTickEvent event) {
         final var physics = event.getPhysicsSystem();
         final ServerLevel server = physics.getLevel();
-        final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
-        if (held == null || held.isEmpty()) return;
-
         final ServerSubLevelContainer container = SubLevelContainer.getContainer(server);
         if (container == null) {
             HELD_SHIPS.remove(server);
+            LAUNCHED_SHIPS.remove(server);
             return;
         }
+
+        // Rapier's discrete collision step can miss an obstacle when a fast
+        // body crosses it in one substep. Block-breaking launches avoid that by
+        // clearing their sweep; non-breaking launches instead ask vanilla for
+        // the maximum collision-safe translation and clamp the body to it.
+        guardNonBreakingLaunchedShips(server, container, event.getTimeStep());
+
+        final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
+        if (held == null || held.isEmpty()) return;
 
         final long now = server.getGameTime();
         final long maxAge = Math.max(1L, MagConfig.railgunTicks()) + 1L;
@@ -542,7 +554,7 @@ public final class RailgunHandler {
                 && server.getBlockEntity(sibling.pos) instanceof RailgunEmitterBlockEntity other) {
             other.setBreakBlocks(enabled);
         }
-        if (!enabled) removeLaunchedShipsForEmitter(server, emitter);
+        updateLaunchedShipsForEmitter(server, emitter, enabled);
         return true;
     }
 
@@ -610,12 +622,18 @@ public final class RailgunHandler {
                                     axis.z * shipMagnitude * mass));
                 }
                 final Vector3d launchedVelocity = h.getLinearVelocity(new Vector3d());
-                final double forwardSpeed = launchedVelocity.x * axis.x
+                double forwardSpeed = launchedVelocity.x * axis.x
                         + launchedVelocity.y * axis.y + launchedVelocity.z * axis.z;
                 breakPathAhead(server, ship.boundingBox(), facing, forwardSpeed, breakBlocks);
-                if (breakBlocks && MagConfig.railgunBreaksBlocks() && forwardSpeed > 0.5d) {
+                if (!breakBlocks || !MagConfig.railgunBreaksBlocks()) {
+                    clampToCollisionSafeVelocity(server, authoritativeBounds(container, ship), h, 1.0d / 20.0d);
+                    final Vector3d guardedVelocity = h.getLinearVelocity(new Vector3d());
+                    forwardSpeed = guardedVelocity.x * axis.x
+                            + guardedVelocity.y * axis.y + guardedVelocity.z * axis.z;
+                }
+                if (forwardSpeed > 0.5d) {
                     LAUNCHED_SHIPS.computeIfAbsent(server, ignored -> new HashMap<>())
-                            .put(ship.getUniqueId(), new LaunchedShip(facing, arc));
+                            .put(ship.getUniqueId(), new LaunchedShip(facing, arc, breakBlocks));
                 }
             }
         }
@@ -633,14 +651,16 @@ public final class RailgunHandler {
         }
     }
 
-    /** Continue the protected swept-volume carve after a ship leaves the arc's
-     * channel. Tracking ends when the body disappears, becomes invalid, or no
-     * longer has meaningful velocity along its original launch direction. */
-    private static void processLaunchedShipBreaking(final ServerLevel server,
-                                                     final @Nullable ServerSubLevelContainer container) {
+    /** Continue launch protection after a ship leaves the arc's channel.
+     * Block-breaking launches carve their projected path here; non-breaking
+     * launches are clamped immediately before Sable's physics step. Tracking
+     * ends when the body disappears, becomes invalid, or no longer has
+     * meaningful velocity along its original launch direction. */
+    private static void processLaunchedShips(final ServerLevel server,
+                                             final @Nullable ServerSubLevelContainer container) {
         final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
         if (launched == null || launched.isEmpty()) return;
-        if (!MagConfig.railgunBreaksBlocks() || container == null) {
+        if (container == null) {
             LAUNCHED_SHIPS.remove(server);
             return;
         }
@@ -667,7 +687,9 @@ public final class RailgunHandler {
                     iterator.remove();
                     continue;
                 }
-                breakPathAhead(server, ship.boundingBox(), entry.getValue().facing(), forwardSpeed, true);
+                if (entry.getValue().breakBlocks() && MagConfig.railgunBreaksBlocks()) {
+                    breakPathAhead(server, ship.boundingBox(), entry.getValue().facing(), forwardSpeed, true);
+                }
             } catch (final RuntimeException ex) {
                 iterator.remove();
             }
@@ -675,11 +697,99 @@ public final class RailgunHandler {
         if (launched.isEmpty()) LAUNCHED_SHIPS.remove(server);
     }
 
-    private static void removeLaunchedShipsForEmitter(final ServerLevel server, final BlockPos emitter) {
+    /** Keep in-flight ships protected if an operator changes the arc switch
+     * after launch. Enabling resumes carving; disabling immediately changes the
+     * same tracked body to non-destructive swept collision handling. */
+    private static void updateLaunchedShipsForEmitter(final ServerLevel server, final BlockPos emitter,
+                                                       final boolean enabled) {
         final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
         if (launched == null) return;
-        launched.values().removeIf(ship -> ship.owner().contains(emitter));
+        launched.replaceAll((id, ship) -> ship.owner().contains(emitter)
+                ? new LaunchedShip(ship.facing(), ship.owner(), enabled) : ship);
+    }
+
+    /** Clamp every non-breaking launch against vanilla's swept block collision
+     * shapes immediately before the Sable integration step. Applying the safe
+     * translation as this substep's velocity prevents both wall tunneling and
+     * downward ground clipping, while retaining unobstructed components so a
+     * glancing ship can slide along a surface instead of being deleted. */
+    private static void guardNonBreakingLaunchedShips(final ServerLevel server,
+                                                       final ServerSubLevelContainer container,
+                                                       final double timeStep) {
+        if (!Double.isFinite(timeStep) || timeStep <= 0.0d) return;
+        final Map<UUID, LaunchedShip> launched = LAUNCHED_SHIPS.get(server);
+        if (launched == null || launched.isEmpty()) return;
+
+        final var iterator = launched.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final var entry = iterator.next();
+            if (entry.getValue().breakBlocks() && MagConfig.railgunBreaksBlocks()) continue;
+            try {
+                final SubLevel subLevel = container.getSubLevel(entry.getKey());
+                if (!(subLevel instanceof ServerSubLevel ship) || ship.isRemoved()
+                        || ship.getMassTracker().isInvalid()) {
+                    iterator.remove();
+                    continue;
+                }
+                final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+                if (handle == null || !handle.isValid()) {
+                    iterator.remove();
+                    continue;
+                }
+                clampToCollisionSafeVelocity(server, authoritativeBounds(container, ship), handle, timeStep);
+            } catch (final RuntimeException ex) {
+                iterator.remove();
+            }
+        }
         if (launched.isEmpty()) LAUNCHED_SHIPS.remove(server);
+    }
+
+    private static BoundingBox3d authoritativeBounds(final ServerSubLevelContainer container,
+                                                       final ServerSubLevel ship) {
+        // readPose updates only position/orientation. Seed from logicalPose so
+        // the plot-space rotation point and scale survive into the transform.
+        final Pose3d physicsPose = new Pose3d(ship.logicalPose());
+        container.physicsSystem().getPipeline().readPose(ship, physicsPose);
+        return new BoundingBox3d(ship.getPlot().getBoundingBox()).transform(physicsPose);
+    }
+
+    private static void clampToCollisionSafeVelocity(final ServerLevel server, final BoundingBox3dc bounds,
+                                                      final RigidBodyHandle handle, final double timeStep) {
+        final Vector3d velocity = handle.getLinearVelocity(new Vector3d());
+        if (!Double.isFinite(velocity.x) || !Double.isFinite(velocity.y) || !Double.isFinite(velocity.z)) return;
+        final Vec3 requested = new Vec3(velocity.x * timeStep, velocity.y * timeStep, velocity.z * timeStep);
+        final Vec3 collisionSafe = collisionSafeMovement(server, bounds, requested);
+        if (collisionSafe.distanceToSqr(requested) <= 1.0E-12d) return;
+        final Vec3 safe = new Vec3(
+                collisionStandoff(requested.x, collisionSafe.x),
+                collisionStandoff(requested.y, collisionSafe.y),
+                collisionStandoff(requested.z, collisionSafe.z));
+
+        final double inverseStep = 1.0d / timeStep;
+        final Vector3d angular = handle.getAngularVelocity(new Vector3d());
+        handle.addLinearAndAngularVelocity(
+                new Vector3d(safe.x * inverseStep - velocity.x,
+                        safe.y * inverseStep - velocity.y,
+                        safe.z * inverseStep - velocity.z),
+                angular.negate());
+    }
+
+    private static double collisionStandoff(final double requested, final double safe) {
+        if (Math.abs(requested - safe) <= 1.0E-7d) return safe;
+        final double magnitude = Math.max(0.0d, Math.abs(safe) - NON_BREAKING_COLLISION_STANDOFF);
+        return Math.copySign(magnitude, safe == 0.0d ? requested : safe);
+    }
+
+    /** Return the collision-safe portion of a ship's requested translation.
+     * Public for deterministic GameTest coverage without requiring a native
+     * Rapier body. */
+    public static Vec3 collisionSafeMovement(final ServerLevel server, final BoundingBox3dc bounds,
+                                             final Vec3 requested) {
+        if (!Double.isFinite(requested.x) || !Double.isFinite(requested.y)
+                || !Double.isFinite(requested.z)) return Vec3.ZERO;
+        final AABB vanillaBounds = new AABB(bounds.minX(), bounds.minY(), bounds.minZ(),
+                bounds.maxX(), bounds.maxY(), bounds.maxZ());
+        return Entity.collideBoundingBox(null, requested, vanillaBounds, server, List.of());
     }
 
     /** Smash blocks across the volume the ship can traverse before the next
