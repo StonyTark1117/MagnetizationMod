@@ -110,7 +110,7 @@ public final class MagClientRegistration {
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
 
         // Hydrogen: nearly invisible while dormant, rose-pink Balmer discharge while excited.
-        event.registerFluidType(excitableGasFluid(0xE6FF6680, true),
+        event.registerFluidType(excitableGasFluid(0xA6FF6680, true),
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
 
         // Tritium: steady cyan radioluminescence; it does not need external excitation.
@@ -118,20 +118,20 @@ public final class MagClientRegistration {
                 com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
 
         // Helium-3 shares ordinary helium's peach electronic discharge spectrum.
-        event.registerFluidType(excitableGasFluid(0xE6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
-        event.registerFluidType(excitableGasFluid(0xE6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xE6FF2A16, true),
+        event.registerFluidType(excitableGasFluid(0xA6FF2A16, true),
                 com.stonytark.magnetization.registry.MagFluids.NEON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xE6B56CFF, false),
+        event.registerFluidType(excitableGasFluid(0xA6B56CFF, false),
                 com.stonytark.magnetization.registry.MagFluids.ARGON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xE6D8FFE6, false),
+        event.registerFluidType(excitableGasFluid(0xA6D8FFE6, false),
                 com.stonytark.magnetization.registry.MagFluids.KRYPTON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xE64FA9FF, false),
+        event.registerFluidType(excitableGasFluid(0xA64FA9FF, false),
                 com.stonytark.magnetization.registry.MagFluids.XENON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xE66657FF, false),
+        event.registerFluidType(excitableGasFluid(0xA66657FF, false),
                 com.stonytark.magnetization.registry.MagFluids.RADON_TYPE.get());
 
         // Liquid lithium: water textures tinted warm silvery metal.
@@ -183,6 +183,7 @@ public final class MagClientRegistration {
 
     private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions excitableGasFluid(
             final int excitedTint, final boolean rises) {
+        final int dormantTint = 0x08FFFFFF;
         return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             @Override public net.minecraft.resources.ResourceLocation getStillTexture() {
                 return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
@@ -190,7 +191,7 @@ public final class MagClientRegistration {
             @Override public net.minecraft.resources.ResourceLocation getFlowingTexture() {
                 return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
             }
-            @Override public int getTintColor() { return 0x18FFFFFF; }
+            @Override public int getTintColor() { return dormantTint; }
             @Override
             public int getTintColor(final net.minecraft.world.level.material.FluidState fluidState,
                                     final net.minecraft.world.level.BlockAndTintGetter level,
@@ -198,7 +199,7 @@ public final class MagClientRegistration {
                 final net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
                 return state.hasProperty(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED)
                         && state.getValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED)
-                        ? excitedTint : 0x18FFFFFF;
+                        ? excitedTint : dormantTint;
             }
             @Override
             public boolean renderFluid(final net.minecraft.world.level.material.FluidState fluidState,
@@ -299,6 +300,8 @@ public final class MagClientRegistration {
         event.register(MagMenus.EMITTER.get(), EmitterScreen::new);
         event.register(MagMenus.MACHINE.get(),
                 com.stonytark.magnetization.client.screen.MachineScreen::new);
+        event.register(MagMenus.AIR_SEPARATOR.get(),
+                com.stonytark.magnetization.client.screen.AirSeparatorScreen::new);
     }
 
 
