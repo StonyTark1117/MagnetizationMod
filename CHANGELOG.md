@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.1 — Field Manual recovery & large-world stability
 
 ### Added
 - Added the permission-free **`/magnetization manual`** recovery command so players can replace a lost Patchouli Field Manual. A full inventory drops the replacement at the player's feet, and missing or disabled Patchouli support produces a clear error instead of an invalid book.
