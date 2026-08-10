@@ -386,6 +386,25 @@ Core release profiles plus isolated optional-mod suites make failures attributab
 
 `releaseMatrixGate` runs the core release gate and each published optional integration in isolation; `scripts/run-release-matrix-gate.sh` provides the equivalent scripted entry point.
 
+### Large-world dedicated-server reproducer
+
+`./gradlew reproduceLargeWorldIssue` runs the disposable regression scenario for
+[GitHub issue #7](https://github.com/StonyTark1117/MagnetizationMod/issues/7).
+It creates a fresh world on every attempt, uses Chunky Offline plus Chunky to
+generate at least 10,000 overworld chunks, then reloads that world with every
+server-safe optional compatibility mod and compatibility boolean enabled. The
+reporter's NeoForge 21.1.241, Lithium 0.15.4, and ModernFix 5.27.20 versions are
+the defaults. Compact logs and a summary remain under
+`build/reports/large-world-repro/`; the generated world is deleted on exit.
+
+The run requires an already accepted `run/eula.txt`. Useful overrides include
+`MAG_REPRO_RADIUS`, `MAG_REPRO_TIMEOUT_SECONDS`, `MAG_REPRO_OBSERVE_SECONDS`,
+`MAG_REPRO_SHUTDOWN_TIMEOUT_SECONDS`, `MAG_REPRO_NEOFORGE_VERSION`, and
+`MAG_REPRO_KEEP_WORLD=1`. The last option is for manual inspection only; the
+next repeat still removes that retained run directory before creating its new
+world. Client-only HUD and recipe viewers are deliberately excluded from the
+dedicated-server profile.
+
 `smokeServerMinimal` boots a real dedicated server in its own `run-smoke-server/`
 directory with **hard dependencies only**, lets it run (default 210 s, override with
 `-PmagSmokeSeconds=<n>`), types `stop` on its console, and then **fails the build** if

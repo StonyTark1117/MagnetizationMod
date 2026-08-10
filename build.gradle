@@ -40,6 +40,20 @@ configurations {
     enchantmentIndustryRuntime
     enderTransmissionRuntime
     tfmgRuntime
+    largeWorldFixtureRuntime
+    // Dedicated-server-only aggregate used by the large-world regression
+    // reproducer. Keep it separate from localRuntime: that configuration also
+    // contains client-only renderers and recipe viewers.
+    largeWorldReproRuntime {
+        extendsFrom aeroportalsRuntime, immersiveAeronauticsRuntime,
+                simulatedCoastersRuntime, createBigCannonsRuntime,
+                createNewAgeRuntime, createAdditionRuntime,
+                immersiveEngineeringRuntime, alexsCavesRuntime,
+                createTracksRuntime, steamRailsRuntime,
+                dieselGeneratorsRuntime, copycatsRuntime,
+                enchantmentIndustryRuntime, enderTransmissionRuntime,
+                tfmgRuntime
+    }
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -83,6 +97,7 @@ def minimalProfileTasks = [
         'runendertransmissiongametestserver',
         'runtfmggametestserver',
         'runcuriosgametestserver',
+        'runlargeworldfixtureserver', 'runlargeworldreproserver', 'reproducelargeworldissue',
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
         'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
@@ -160,6 +175,12 @@ def wantsEnderTransmissionTests = lowered.any {
 def wantsTfmgTests = lowered.any {
     it.endsWith('runtfmggametestserver') || it.endsWith('smoketfmggametest')
 }
+def wantsLargeWorldRepro = lowered.any {
+    it.endsWith('runlargeworldreproserver')
+}
+def wantsLargeWorldFixture = lowered.any {
+    it.endsWith('runlargeworldfixtureserver')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -175,7 +196,8 @@ def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTest
                             wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
                             wantsCreateTracksTests, wantsSteamRailsTests,
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
-                            wantsEnderTransmissionTests, wantsTfmgTests]
+                            wantsEnderTransmissionTests, wantsTfmgTests,
+                            wantsLargeWorldFixture, wantsLargeWorldRepro]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -223,6 +245,12 @@ if (wantsEnderTransmissionTests) {
 }
 if (wantsTfmgTests) {
     configurations.runtimeClasspath { extendsFrom configurations.tfmgRuntime }
+}
+if (wantsLargeWorldRepro) {
+    configurations.runtimeClasspath { extendsFrom configurations.largeWorldReproRuntime }
+}
+if (wantsLargeWorldFixture) {
+    configurations.runtimeClasspath { extendsFrom configurations.largeWorldFixtureRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -514,6 +542,19 @@ neoForge {
         // log is never a stale copy of a developer session), hard deps only, and
         // stopped from stdin by `smokeServerMinimal` after a fixed boot window.
         serverSmoke { server(); programArgument 'nogui'; gameDirectory = file('run-smoke-server') }
+        // Disposable dedicated server for GitHub issue #7. The script owning
+        // this run creates a fresh world, pregenerates it, captures evidence,
+        // and removes the generated data after each attempt.
+        largeWorldReproServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
+        largeWorldFixtureServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
         // Headless test runner — invoke via `./gradlew runGameTestServer`.
         // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience
         // method (only client/server/data), so set the run type manually.
@@ -712,6 +753,13 @@ tasks.matching { it.name == 'runServerSmoke' }.configureEach {
         delete new File(smokeServerDir, 'logs/latest.log')
         logger.lifecycle("smokeServerMinimal: booting; will type `stop` after ${smokeServerSeconds}s")
     }
+}
+
+// ModDev's run task otherwise replaces stdin when launched through a Gradle
+// daemon. The large-world supervisor owns this stream and uses it for Chunky
+// commands and clean server shutdowns between phases.
+tasks.matching { it.name == 'runLargeWorldFixtureServer' || it.name == 'runLargeWorldReproServer' }.configureEach {
+    standardInput = System.in
 }
 
 tasks.register('smokeServerMinimal') {
@@ -915,6 +963,12 @@ tasks.register('releaseMatrixGate', Exec) {
     description = 'Runs the release gate and all optional compatibility suites in isolated Gradle processes.'
     commandLine 'bash', 'scripts/run-release-matrix-gate.sh'
     environment 'MAG_SMOKE_SECONDS', smokeServerSeconds.toString()
+}
+
+tasks.register('reproduceLargeWorldIssue', Exec) {
+    group = 'verification'
+    description = 'Generate a fresh 10,000-chunk world and reproduce GitHub issue #7 on a full server compat stack.'
+    commandLine 'bash', 'scripts/run-large-world-repro.sh'
 }
 
 dependencies {
@@ -1140,6 +1194,20 @@ dependencies {
     // client pack and an isolated GameTest runtime; neither configuration ships.
     localRuntime("maven.modrinth:create-tfmg:uDi14nbt")
     tfmgRuntime("maven.modrinth:create-tfmg:uDi14nbt")
+
+    // Full dedicated-server compatibility stack for the large-world issue #7
+    // reproducer. Gameplay integrations are inherited from the isolated
+    // runtimes above; these are the server-safe integrations and diagnostics
+    // that do not otherwise have a dedicated runtime configuration.
+    largeWorldReproRuntime("maven.modrinth:curios:${curios_version}")
+    largeWorldReproRuntime("maven.modrinth:patchouli:${patchouli_version}")
+    largeWorldReproRuntime("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+    largeWorldReproRuntime("maven.modrinth:chunky:${chunky_test_version}")
+    largeWorldReproRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
+    largeWorldReproRuntime("maven.modrinth:lithium:${lithium_repro_version}")
+    largeWorldReproRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
+    largeWorldFixtureRuntime("maven.modrinth:chunky:${chunky_test_version}")
+    largeWorldFixtureRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
 
     // === Crash-repro deps (player's modpack StackOverflowError in
     // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
