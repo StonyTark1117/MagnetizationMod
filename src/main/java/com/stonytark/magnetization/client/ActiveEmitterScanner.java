@@ -13,6 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.util.List;
+import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 
@@ -57,16 +58,21 @@ public final class ActiveEmitterScanner {
         final var viewer = mc.player.position();
         final double radiusSqr = VIEW_RADIUS * VIEW_RADIUS;
 
-        EmitterRegistry.forEach(level, (lvl, pos) -> {
-            if (pos.getCenter().distanceToSqr(viewer) > radiusSqr) return;
-            final BlockEntity be = lvl.getBlockEntity(pos);
-            if (!(be instanceof MagneticFieldSource source)) return;
+        final BlockPos viewerPos = BlockPos.containing(viewer);
+        final var nearbyEmitters = new HashSet<>(EmitterRegistry.snapshotNativeNear(
+                level, viewerPos, (int) VIEW_RADIUS));
+        nearbyEmitters.addAll(EmitterRegistry.snapshotExternalNear(
+                level, viewerPos, (int) VIEW_RADIUS, Integer.MAX_VALUE));
+        for (final BlockPos pos : nearbyEmitters) {
+            if (pos.getCenter().distanceToSqr(viewer) > radiusSqr) continue;
+            final BlockEntity be = level.getBlockEntity(pos);
+            if (!(be instanceof MagneticFieldSource source)) continue;
             final MagneticField field = source.currentField();
-            if (field == null) return;
+            if (field == null) continue;
             for (BiConsumer<BlockPos, MagneticField> l : listeners) {
                 l.accept(pos, field);
             }
-        });
+        }
 
         for (Runnable hook : postScanHooks) hook.run();
     }

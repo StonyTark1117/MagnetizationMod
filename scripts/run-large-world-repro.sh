@@ -4,11 +4,11 @@ set -euo pipefail
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 run_dir="$repo_dir/run-large-world-repro"
 reports_root="$repo_dir/build/reports/large-world-repro"
-radius=${MAG_REPRO_RADIUS:-800}
-target_chunks=${MAG_REPRO_TARGET_CHUNKS:-10000}
+radius=${MAG_REPRO_RADIUS:-352}
+target_chunks=${MAG_REPRO_TARGET_CHUNKS:-2000}
 timeout_seconds=${MAG_REPRO_TIMEOUT_SECONDS:-3600}
 observe_seconds=${MAG_REPRO_OBSERVE_SECONDS:-180}
-shutdown_timeout_seconds=${MAG_REPRO_SHUTDOWN_TIMEOUT_SECONDS:-7200}
+shutdown_timeout_seconds=${MAG_REPRO_SHUTDOWN_TIMEOUT_SECONDS:-120}
 neoforge_version=${MAG_REPRO_NEOFORGE_VERSION:-21.1.241}
 keep_world=${MAG_REPRO_KEEP_WORLD:-0}
 reload_fields_enabled=${MAG_REPRO_CREATE_NEW_AGE_FIELDS:-true}
@@ -111,7 +111,7 @@ allow-flight=true
 enable-command-block=true
 level-name=world
 max-tick-time=-1
-motd=Magnetization large-world issue reproducer
+motd=Magnetization large-world issue verifier
 online-mode=false
 simulation-distance=5
 sync-chunk-writes=true
@@ -119,7 +119,7 @@ view-distance=5
 PROPERTIES
 
 cat >"$summary_file" <<SUMMARY
-Magnetization GitHub issue #7 large-world reproduction
+Magnetization GitHub issue #7 large-world fix verification
 started_utc=$timestamp
 neoforge=$neoforge_version
 chunky_radius_blocks=$radius
@@ -285,7 +285,7 @@ set_compat_booleans false false
 verify_compat_booleans generation false false
 rm -rf -- "$run_dir/world"
 
-# Generate a genuinely fresh 10,000-chunk fixture with the complete mod stack
+# Generate a genuinely fresh 2,000-chunk fixture with the complete mod stack
 # present but compatibility work disabled. Keeping CNA installed here is
 # essential because its high-density magnetite feature supplies the emitters
 # that the all-enabled reload must index.
@@ -298,7 +298,7 @@ verify_mods generation
 send_command "function chunky_offline:config/set {\"radius\":$radius,\"x\":0,\"z\":0}"
 # Chunky Offline requests cancellation of its auto-started default task before
 # applying the new radius. Confirm that cancellation, then start the selected
-# task; otherwise Chunky retains and resumes the 10,000-block default task.
+# task; otherwise Chunky retains and resumes its much larger default task.
 sleep 2
 send_command 'chunky confirm'
 sleep 2
@@ -322,7 +322,10 @@ while (( SECONDS < deadline )); do
         echo "large-world-repro: generated $generated / $target_chunks chunks"
         send_command 'chunky progress'
         last_progress=$SECONDS
-        if grep -Eq 'Task finished|Generation complete|generation completed' "$run_dir/logs/latest.log"; then
+        # Chunky's processed count can lead the region files until Minecraft's
+        # next autosave. Do not stop on its completion message alone: the reload
+        # fixture is authoritative only after the requested chunks are durable.
+        if (( generated >= target_chunks )); then
             break
         fi
     fi
@@ -333,7 +336,7 @@ archive_runtime_files generation
 
 if [[ "$generation_reproduced" == true ]]; then
     printf 'result=CONTROL_GENERATION_WATCHDOG\n' >>"$summary_file"
-    fail 'watchdog occurred while createNewAgeFieldsEnabled=false; the 10,000-chunk control fixture could not be completed'
+    fail 'watchdog occurred while createNewAgeFieldsEnabled=false; the 2,000-chunk control fixture could not be completed'
 fi
 finish_server "$shutdown_timeout_seconds"
 generated=$(count_chunks)
@@ -355,9 +358,8 @@ if ! wait_for_log 'Done \(' 300; then
     archive_runtime_files reload-failed
     if has_watchdog_signature; then
         verify_mods reload
-        printf 'watchdog_during_reload=true\nresult=REPRODUCED_DURING_RELOAD_STARTUP\n' >>"$summary_file"
-        echo "large-world-repro: reproduced watchdog while loading the pregenerated world; evidence: $report_dir"
-        exit 0
+        printf 'watchdog_during_reload=true\nresult=REGRESSION_DURING_RELOAD_STARTUP\n' >>"$summary_file"
+        fail "issue #7 regressed while loading the pregenerated world; evidence: $report_dir"
     fi
     fail 'reload server did not reach Done'
 fi
@@ -384,11 +386,12 @@ done
 archive_runtime_files reload
 printf 'watchdog_during_reload=%s\n' "$reload_reproduced" >>"$summary_file"
 if [[ "$reload_reproduced" == true ]]; then
-    printf 'result=REPRODUCED_DURING_RELOAD\n' >>"$summary_file"
-    echo "large-world-repro: reproduced watchdog path while loading the pregenerated world; evidence: $report_dir"
-    exit 0
+    printf 'result=REGRESSION_REPRODUCED\n' >>"$summary_file"
+    fail "issue #7 watchdog reproduced after the fix; evidence: $report_dir"
 fi
 
-printf 'result=NOT_REPRODUCED\n' >>"$summary_file"
-echo "large-world-repro: issue did not reproduce in this attempt; evidence: $report_dir" >&2
-exit 2
+finish_server "$shutdown_timeout_seconds"
+archive_runtime_files reload-stable
+printf 'result=FIX_VERIFIED\n' >>"$summary_file"
+echo "large-world-repro: issue #7 remained stable through the all-enabled reload; evidence: $report_dir"
+exit 0

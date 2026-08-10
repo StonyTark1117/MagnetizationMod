@@ -405,6 +405,8 @@ public final class MagConfig {
      *  {@code alexscaves} is on the mod list. */
     public enum AlexsCavesPotionMode { BOTH, OURS_ONLY, THEIRS_ONLY }
     public static final ModConfigSpec.EnumValue<AlexsCavesPotionMode> ALEXSCAVES_POTION_MODE;
+    /** Maximum optional-mod emitter fields evaluated in one server-level tick. */
+    public static final ModConfigSpec.IntValue EXTERNAL_FIELD_APPLICATION_BUDGET;
     /** Master switches for the substantial optional compatibility packages. Static
      *  material tags remain datapack-controlled; these gates cover runtime behavior
      *  and supplemental recipes owned by Magnetization. */
@@ -1829,6 +1831,13 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.alexsCavesPotionMode")
                 .defineEnum("alexsCavesPotionMode", AlexsCavesPotionMode.BOTH);
 
+        EXTERNAL_FIELD_APPLICATION_BUDGET = b
+                .comment("Maximum optional-mod magnetic emitters evaluated per server-level tick.",
+                         "The scheduler considers only chunks near magnetic entities, physics ships,",
+                         "or ferrofluid sources; this cap bounds dense worldgen magnets within that area.")
+                .translation("magnetization.configuration.compat.externalFieldApplicationBudget")
+                .defineInRange("externalFieldApplicationBudget", 256, 1, 4096);
+
         CREATE_NEW_AGE_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's Create: New Age runtime and recipe integration.")
                 .translation("magnetization.configuration.compat.createNewAgeCompatEnabled")
@@ -2581,6 +2590,9 @@ public final class MagConfig {
         return doubleOr(STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY, 1.0d);
     }
     public static boolean createNewAgeCompatEnabled() { return booleanOr(CREATE_NEW_AGE_COMPAT_ENABLED, true); }
+    public static int externalFieldApplicationBudget() {
+        return intOr(EXTERNAL_FIELD_APPLICATION_BUDGET, 256);
+    }
     public static boolean createNewAgeFieldsEnabled() {
         return createNewAgeCompatEnabled() && booleanOr(CREATE_NEW_AGE_FIELDS_ENABLED, true);
     }

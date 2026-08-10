@@ -6,6 +6,9 @@
 - Added the permission-free **`/magnetization manual`** recovery command so players can replace a lost Patchouli Field Manual. A full inventory drops the replacement at the player's feet, and missing or disabled Patchouli support produces a clear error instead of an invalid book.
 - Added independent config switches for the **Book + Raw Magnetite**, **Book + Iron Ingot**, and **Book + Lodestone** Field Manual recipes. Magnetite and lodestone default on; iron defaults off with a warning that its generic ingredients may conflict with another Patchouli guide-book recipe.
 
+### Fixed
+- **Large pregenerated worlds no longer watchdog while optional magnetic integrations are enabled.** External emitters are now indexed in chunk-local buckets, removed atomically on unload, evaluated only from already-loaded chunks near active targets, and capped by a configurable per-tick application budget. The disposable issue #7 regression gate now verifies the all-enabled reload against a fresh 2,000-chunk world.
+
 ## 1.3.0 — Fusion Thruster, Railgun & the fuel overhaul
 
 A big content release: two new ship multiblocks, a real fusion-fuel chain with new fluids/items/worldgen, a powered Electrolyzer, machine rebalances, and a live status readout (WTHIT/Jade/The One Probe) on **every** Magnetization machine.

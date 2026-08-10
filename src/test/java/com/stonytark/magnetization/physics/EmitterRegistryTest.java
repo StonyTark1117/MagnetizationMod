@@ -2,6 +2,7 @@ package com.stonytark.magnetization.physics;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ChunkPos;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,9 @@ class EmitterRegistryTest {
     void clearBucket() {
         // Leave the registry empty between tests so order doesn't matter.
         EmitterRegistry.forEach(LVL, (lvl, pos) -> EmitterRegistry.unregister(lvl, pos));
+        for (final BlockPos pos : EmitterRegistry.snapshotExternal(LVL)) {
+            EmitterRegistry.unregisterExternal(LVL, pos);
+        }
     }
 
     @Test
@@ -124,5 +128,45 @@ class EmitterRegistryTest {
         EmitterRegistry.unregister(LVL, A);
         EmitterRegistry.unregister(LVL, A); // already gone → safe
         assertEquals(0, EmitterRegistry.size(LVL));
+    }
+
+    @Test
+    void externalChunkReplacementIsAtomicAndPreservesNativeEmitters() {
+        final ChunkPos chunk = new ChunkPos(A);
+        EmitterRegistry.register(LVL, A);
+        EmitterRegistry.replaceExternalChunk(LVL, chunk, Set.of(A, new BlockPos(2, 3, 4)));
+        assertEquals(2, EmitterRegistry.externalSize(LVL));
+
+        final BlockPos replacement = new BlockPos(8, 9, 10);
+        EmitterRegistry.replaceExternalChunk(LVL, chunk, Set.of(replacement));
+        assertEquals(Set.of(replacement), EmitterRegistry.snapshotExternal(LVL));
+        assertTrue(EmitterRegistry.snapshot(LVL).contains(A),
+                "Replacing an external scan must not erase a native BE registration");
+    }
+
+    @Test
+    void unloadingChunkDropsOnlyItsExternalBucket() {
+        final BlockPos sameChunk = new BlockPos(2, 3, 4);
+        final BlockPos otherChunk = new BlockPos(40, 5, 40);
+        EmitterRegistry.replaceExternalChunk(LVL, new ChunkPos(A), Set.of(A, sameChunk));
+        EmitterRegistry.replaceExternalChunk(LVL, new ChunkPos(otherChunk), Set.of(otherChunk));
+
+        EmitterRegistry.dropExternalChunk(LVL, new ChunkPos(A));
+
+        assertEquals(Set.of(otherChunk), EmitterRegistry.snapshotExternal(LVL));
+    }
+
+    @Test
+    void spatialExternalQueryExcludesUnrelatedChunksAndHonorsLimit() {
+        final BlockPos nearbyA = new BlockPos(1, 2, 1);
+        final BlockPos nearbyB = new BlockPos(17, 2, 1);
+        final BlockPos far = new BlockPos(1600, 2, 1600);
+        EmitterRegistry.registerExternal(LVL, nearbyA);
+        EmitterRegistry.registerExternal(LVL, nearbyB);
+        EmitterRegistry.registerExternal(LVL, far);
+
+        final Set<BlockPos> near = EmitterRegistry.snapshotExternalNear(LVL, BlockPos.ZERO, 32, 8);
+        assertEquals(Set.of(nearbyA, nearbyB), near);
+        assertEquals(1, EmitterRegistry.snapshotExternalNear(LVL, BlockPos.ZERO, 32, 1).size());
     }
 }

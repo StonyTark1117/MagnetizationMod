@@ -419,6 +419,8 @@
   "magnetization.configuration.compat.tooltip": "Tunings that only take effect when the named mod is installed; otherwise inert.",
   "magnetization.configuration.compat.alexsCavesPotionMode": "Alex's Caves Potion Mode",
   "magnetization.configuration.compat.alexsCavesPotionMode.tooltip": "How our Magnetized status effect coexists with Alex's Caves' Magnetizing effect. BOTH (default, parallel); OURS_ONLY (AC effect swapped for ours on application); THEIRS_ONLY (our effect swapped for AC's).",
+  "magnetization.configuration.compat.externalFieldApplicationBudget": "External Field Application Budget",
+  "magnetization.configuration.compat.externalFieldApplicationBudget.tooltip": "Maximum optional-mod emitters evaluated per level tick after target-local chunk filtering. Lower this if dense worldgen magnets still consume too much server time.",
   "magnetization.configuration.compat.createNewAgeCompatEnabled": "Create: New Age Compatibility",
   "magnetization.configuration.compat.createNewAgeCompatEnabled.tooltip": "Master switch for Magnetization's Create: New Age runtime and supplemental recipe integration.",
   "magnetization.configuration.compat.createNewAgeFieldsEnabled": "Create: New Age Magnet Fields",

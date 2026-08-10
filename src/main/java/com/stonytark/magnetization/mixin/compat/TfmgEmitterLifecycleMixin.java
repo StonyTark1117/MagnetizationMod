@@ -16,6 +16,6 @@ public abstract class TfmgEmitterLifecycleMixin {
     private void magnetization$unregisterOptionalFieldSource(final CallbackInfo ci) {
         if (!((Object) this instanceof MagneticFieldSource)) return;
         final BlockEntity self = (BlockEntity) (Object) this;
-        if (self.getLevel() != null) EmitterRegistry.unregister(self.getLevel(), self.getBlockPos());
+        if (self.getLevel() != null) EmitterRegistry.unregisterExternal(self.getLevel(), self.getBlockPos());
     }
 }

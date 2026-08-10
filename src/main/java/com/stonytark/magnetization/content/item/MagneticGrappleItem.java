@@ -4,6 +4,7 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.physics.EmitterRegistry;
+import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.physics.ShipMagneticRegistry;
 import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEffects;
@@ -31,6 +32,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Right-click to scan for the nearest grappleable target within 24 blocks and
@@ -115,12 +118,26 @@ public class MagneticGrappleItem extends Item {
         Supplier<Vec3> best = null;
 
         // 1. Attractive emitters (static position).
-        for (var pos : EmitterRegistry.snapshot(level)) {
+        final Set<net.minecraft.core.BlockPos> emitterPositions;
+        if (level instanceof ServerLevel server) {
+            final net.minecraft.core.BlockPos target = net.minecraft.core.BlockPos.containing(from);
+            emitterPositions = new HashSet<>(EmitterRegistry.snapshotNativeNear(
+                    server, target, (int) Math.ceil(SCAN_RADIUS)));
+            emitterPositions.addAll(EmitterRegistry.snapshotExternalNear(
+                    server, target, (int) Math.ceil(SCAN_RADIUS), Integer.MAX_VALUE));
+        } else {
+            emitterPositions = EmitterRegistry.snapshot(level);
+        }
+        for (var pos : emitterPositions) {
             final double d2 = pos.getCenter().distanceToSqr(from);
             if (d2 >= bestDistSqr) continue;
-            final BlockEntity be = level.getBlockEntity(pos);
-            if (!(be instanceof MagneticFieldSource source)) continue;
-            final MagneticField field = source.currentField();
+            final MagneticField field;
+            if (level instanceof ServerLevel server) {
+                field = MagneticFields.fieldAtLoaded(server, pos);
+            } else {
+                final BlockEntity be = level.getBlockEntity(pos);
+                field = be instanceof MagneticFieldSource source ? source.currentField() : null;
+            }
             if (field == null) continue;
             if (field.polarity() != MagneticPolarity.SOUTH) continue;
             final Vec3 center = pos.getCenter();

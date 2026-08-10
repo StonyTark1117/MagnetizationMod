@@ -482,6 +482,15 @@ public final class FieldApplicator {
         applyToEntities(level, field, true, true);
     }
 
+    /**
+     * Cheap target predicate shared with the external-emitter scheduler. Keeping
+     * candidate discovery identical to the eventual entity application prevents
+     * ordinary animals in loaded chunks from waking thousands of worldgen magnets.
+     */
+    public static boolean isMagnetizableTarget(final Entity entity) {
+        return isMagnetizable(entity, true, true);
+    }
+
     private static void applyToEntities(final ServerLevel level, final MagneticField field,
                                         final boolean affectsArmor, final boolean affectsItems) {
         // Create trains are constrained to a rail graph, so entity knockback is

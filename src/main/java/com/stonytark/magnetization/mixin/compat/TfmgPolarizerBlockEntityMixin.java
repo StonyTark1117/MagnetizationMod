@@ -21,7 +21,7 @@ public abstract class TfmgPolarizerBlockEntityMixin implements MagneticFieldSour
     private void magnetization$registerPoweredPolarizer(final CallbackInfo ci) {
         if (!MagConfig.tfmgPolarizerFieldEnabled()) return;
         final BlockEntity self = (BlockEntity) (Object) this;
-        if (self.getLevel() != null) EmitterRegistry.register(self.getLevel(), self.getBlockPos());
+        if (self.getLevel() != null) EmitterRegistry.registerExternal(self.getLevel(), self.getBlockPos());
     }
 
     @Override

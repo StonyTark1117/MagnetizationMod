@@ -3,15 +3,22 @@ package com.stonytark.magnetization.gametest;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.compat.ExternalFieldCompat;
+import com.stonytark.magnetization.compat.ExternalEmitterTracker;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.MagneticMaterials;
+import com.stonytark.magnetization.physics.EmitterRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -97,6 +104,95 @@ public final class CreateNewAgeGameTests {
                     "Missing Create: New Age compatibility recipe " + id);
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void disabledFieldsAreNotIndexed(final GameTestHelper helper) {
+        final boolean compat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final boolean fields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final ServerLevel level = helper.getLevel();
+        final BlockPos relative = new BlockPos(2, 2, 2);
+        final BlockPos absolute = helper.absolutePos(relative);
+        try {
+            helper.setBlock(relative, block("create_new_age", "magnetite_block"));
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(false);
+            ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(absolute));
+            helper.assertTrue(!EmitterRegistry.snapshotExternal(level).contains(absolute),
+                    "Create: New Age magnet was indexed while its field integration was disabled");
+
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(absolute));
+            helper.assertTrue(EmitterRegistry.snapshotExternal(level).contains(absolute),
+                    "Enabled Create: New Age magnet was not indexed");
+            helper.succeed();
+        } finally {
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(compat);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(fields);
+            ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(absolute));
+        }
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void absentEmitterChunkIsNeverLoadedByFieldQuery(final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final BlockPos absent = new BlockPos(24_000_000, 64, 24_000_000);
+        final int chunkX = Math.floorDiv(absent.getX(), 16);
+        final int chunkZ = Math.floorDiv(absent.getZ(), 16);
+        helper.assertTrue(level.getChunkSource().getChunkNow(chunkX, chunkZ) == null,
+                "Chosen field-query chunk was already loaded");
+        helper.assertTrue(ExternalFieldCompat.currentField(level, absent) == null,
+                "An absent chunk unexpectedly produced an external field");
+        helper.assertTrue(level.getChunkSource().getChunkNow(chunkX, chunkZ) == null,
+                "External field query synchronously loaded an absent chunk");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void externalFieldSchedulerIsTargetLocalAndBudgeted(final GameTestHelper helper) {
+        final boolean compat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final boolean fields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final int budget = MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.get();
+        final ServerLevel level = helper.getLevel();
+        final BlockPos first = new BlockPos(2, 2, 2);
+        final BlockPos second = new BlockPos(4, 2, 2);
+        final BlockPos targetPos = helper.absolutePos(new BlockPos(3, 2, 3));
+        final ItemEntity target = new ItemEntity(level,
+                targetPos.getX() + 0.5d, targetPos.getY() + 0.5d, targetPos.getZ() + 0.5d,
+                new ItemStack(Items.IRON_INGOT));
+        target.setNoGravity(true);
+        target.setDeltaMovement(Vec3.ZERO);
+        try {
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(1);
+            helper.setBlock(first, block("create_new_age", "magnetite_block"));
+            helper.setBlock(second, block("create_new_age", "magnetite_block"));
+            level.addFreshEntity(target);
+            ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(helper.absolutePos(first)));
+            helper.runAfterDelay(8, () -> {
+                try {
+                    helper.assertTrue(ExternalEmitterTracker.lastCandidateCount(level) >= 2,
+                            "Nearby magnetizable item did not wake the local CNA emitter bucket");
+                    helper.assertTrue(ExternalEmitterTracker.lastAppliedCount(level) > 0,
+                            "Target-local scheduler did not apply any active CNA field");
+                    helper.assertTrue(ExternalEmitterTracker.lastAppliedCount(level) <= 1,
+                            "External field scheduler exceeded its configured per-tick budget");
+                    helper.succeed();
+                } finally {
+                    MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(compat);
+                    MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(fields);
+                    MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(budget);
+                    target.discard();
+                }
+            });
+        } catch (final RuntimeException | Error failure) {
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(compat);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(fields);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(budget);
+            target.discard();
+            throw failure;
+        }
     }
 
     private static Block block(final String namespace, final String path) {

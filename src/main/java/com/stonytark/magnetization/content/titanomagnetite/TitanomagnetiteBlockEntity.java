@@ -94,28 +94,36 @@ public final class TitanomagnetiteBlockEntity extends AbstractEmitterBlockEntity
         final BlockPos pos = getBlockPos();
         final Vec3 hereCenter = Vec3.atCenterOf(pos);
 
-        // Walk every registered emitter in this level within CAPTURE_SCAN_RADIUS
-        // and pick the strongest non-null currentField(). The registry is
-        // already maintained on BE load/unload, so we get every emitter type
+        // Query only emitter chunk buckets intersecting CAPTURE_SCAN_RADIUS and
+        // pick the strongest non-null currentField(). The registry is
+        // maintained on load/unload, so we get every emitter type
         // (PermanentMagnet, Electromagnet, Repulsor, TractorBeam, Pyrrhotite,
         // MeteoriteCore, etc.) without per-type code here.
-        final MagneticField[] strongestRef = new MagneticField[]{null};
-        com.stonytark.magnetization.physics.EmitterRegistry.forEach(level, (lvl, srcPos) -> {
-            if (srcPos.equals(pos)) return;
-            if (srcPos.distSqr(pos) > (double) (CAPTURE_SCAN_RADIUS * CAPTURE_SCAN_RADIUS)) return;
-            final BlockEntity be = lvl.getBlockEntity(srcPos);
-            if (!(be instanceof MagneticFieldSource src) || be == this) return;
-            final MagneticField nf = src.currentField();
-            if (nf == null) return;
+        final java.util.Set<BlockPos> candidates = new java.util.HashSet<>(
+                com.stonytark.magnetization.physics.EmitterRegistry.snapshotNativeNear(
+                        level, pos, CAPTURE_SCAN_RADIUS));
+        candidates.addAll(com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalNear(
+                level, pos, CAPTURE_SCAN_RADIUS, Integer.MAX_VALUE));
+        MagneticField strongestNeighbour = null;
+        for (final BlockPos srcPos : candidates) {
+            if (srcPos.equals(pos)) continue;
+            if (srcPos.distSqr(pos) > (double) (CAPTURE_SCAN_RADIUS * CAPTURE_SCAN_RADIUS)) continue;
+            final MagneticField nf;
+            if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                nf = com.stonytark.magnetization.physics.MagneticFields.fieldAtLoaded(server, srcPos);
+            } else {
+                final BlockEntity be = level.getBlockEntity(srcPos);
+                nf = be instanceof MagneticFieldSource src && be != this ? src.currentField() : null;
+            }
+            if (nf == null) continue;
             // Range gate: only count emitters whose own range covers us. This
             // is the "field touches the titanomagnetite" check.
-            if (Math.sqrt(srcPos.distSqr(pos)) > nf.range() + 1.0) return;
-            if (strongestRef[0] == null
-                    || nf.strength().ordinal() > strongestRef[0].strength().ordinal()) {
-                strongestRef[0] = nf;
+            if (Math.sqrt(srcPos.distSqr(pos)) > nf.range() + 1.0) continue;
+            if (strongestNeighbour == null
+                    || nf.strength().ordinal() > strongestNeighbour.strength().ordinal()) {
+                strongestNeighbour = nf;
             }
-        });
-        MagneticField strongestNeighbour = strongestRef[0];
+        }
 
         // Fallback for tick-order races: if the registry walk found nothing,
         // re-scan the 6 axis neighbours by blockstate so a freshly-placed
@@ -124,7 +132,14 @@ public final class TitanomagnetiteBlockEntity extends AbstractEmitterBlockEntity
         // info we need; we synthesise a WEAK NORTH/SOUTH field from it.
         if (strongestNeighbour == null) {
             for (final Direction d : Direction.values()) {
-                final BlockState neighbourState = level.getBlockState(pos.relative(d));
+                final BlockState neighbourState;
+                if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                    neighbourState = com.stonytark.magnetization.physics.LoadedChunkAccess
+                            .blockState(server, pos.relative(d));
+                    if (neighbourState == null) continue;
+                } else {
+                    neighbourState = level.getBlockState(pos.relative(d));
+                }
                 if (!(neighbourState.getBlock() instanceof com.stonytark.magnetization.content.permanent.PermanentMagnetBlock)) continue;
                 final com.stonytark.magnetization.api.MagneticPolarity pol =
                         neighbourState.getValue(com.stonytark.magnetization.content.permanent.PermanentMagnetBlock.POLARITY);

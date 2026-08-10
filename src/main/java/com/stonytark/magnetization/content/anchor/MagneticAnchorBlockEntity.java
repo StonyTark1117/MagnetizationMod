@@ -146,24 +146,21 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
         );
     }
 
-    /** Walk every loaded emitter pos in this level to find another anchor with
-     *  the same {@code boundShipId}. The scan is O(N emitters) but throttled to
-     *  once per second per anchor, so cumulative cost is O(N) per second per
-     *  anchor in a coop arrangement — fine at typical scale. */
+    /** Search native emitter buckets near this anchor for a cooperative peer. */
     private boolean hasCoopPeer(final ServerLevel server) {
         final UUID mine = boundShipId;
         if (mine == null) return false;
         final BlockPos myPos = getBlockPos();
-        final boolean[] found = { false };
-        EmitterRegistry.forEach(server, (lvl, p) -> {
-            if (found[0] || p.equals(myPos)) return;
-            if (lvl.getBlockEntity(p) instanceof MagneticAnchorBlockEntity peer
+        for (final BlockPos p : EmitterRegistry.snapshotNativeNear(server, myPos, 512)) {
+            if (p.equals(myPos)) continue;
+            if (com.stonytark.magnetization.physics.LoadedChunkAccess.blockEntity(server, p)
+                    instanceof MagneticAnchorBlockEntity peer
                     && peer.isPowered()
                     && mine.equals(peer.boundShipId())) {
-                found[0] = true;
+                return true;
             }
-        });
-        return found[0];
+        }
+        return false;
     }
 
     /** Throttle: log at most once every 20 ticks (1s) so the console isn't spammed.

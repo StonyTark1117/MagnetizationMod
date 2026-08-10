@@ -2,14 +2,16 @@ package com.stonytark.magnetization.content.fluid;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticField;
-import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.physics.EmitterRegistry;
+import com.stonytark.magnetization.physics.LoadedChunkAccess;
+import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +22,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,12 +67,10 @@ public final class FerrofluidCreepHandler {
         final boolean recede = (time % com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks()) == 0L;
         if (!growMag && !growPlain && !recede) return;
 
-        final List<Magnet> magnets = gatherMagnets(server);
-        if (recede) recedeUnsupported(server, magnets);
-        if (magnets.isEmpty() || (!growMag && !growPlain)) return;
-
         final List<BlockPos> anchors = gatherAnchors(server); // fluid SOURCE cells
-        if (anchors.isEmpty()) return;
+        final List<Magnet> magnets = gatherMagnets(server, anchors);
+        if (recede) recedeUnsupported(server, magnets);
+        if (anchors.isEmpty() || magnets.isEmpty() || (!growMag && !growPlain)) return;
         // Spatially index the anchors so each magnet iterates only nearby cells instead
         // of the whole list. A magnetized-ferrofluid pool registers one WEAK-range magnet
         // per source cell, so the naive magnets×anchors loop is O(N²) over the pool size;
@@ -119,15 +120,23 @@ public final class FerrofluidCreepHandler {
 
     /** Real emitters (live field) + magnetized-ferrofluid pools, EXCLUDING creep
      *  cells (so a path doesn't act as its own magnet). */
-    private static List<Magnet> gatherMagnets(final ServerLevel server) {
+    private static List<Magnet> gatherMagnets(final ServerLevel server, final List<BlockPos> anchors) {
         final List<Magnet> magnets = new ArrayList<>();
-        EmitterRegistry.forEach(server, (lvl, pos) -> {
-            MagneticField f = null;
-            if (lvl.getBlockEntity(pos) instanceof MagneticFieldSource src) f = src.currentField();
-            if (f == null) f = com.stonytark.magnetization.compat.ExternalFieldCompat.currentField(lvl, pos);
-            if (f == null) return;
-            magnets.add(new Magnet(f.origin(), f.polarity(), f.range(), true));
-        });
+        final Set<Long> nativeChunks = new LinkedHashSet<>();
+        final Set<Long> externalChunks = new LinkedHashSet<>();
+        for (final BlockPos anchor : anchors) {
+            addChunkKeys(nativeChunks, anchor, 512);
+            addChunkKeys(externalChunks, anchor, (int) MagneticStrength.EXTREME.range());
+        }
+        final Set<BlockPos> candidates = new HashSet<>(
+                EmitterRegistry.snapshotNativeInChunks(server, nativeChunks));
+        candidates.addAll(EmitterRegistry.snapshotExternalInChunks(
+                server, externalChunks, Integer.MAX_VALUE));
+        for (final BlockPos pos : candidates) {
+            final MagneticField field = MagneticFields.fieldAtLoaded(server, pos);
+            if (field != null) magnets.add(new Magnet(
+                    field.origin(), field.polarity(), field.range(), true));
+        }
         for (final Map.Entry<BlockPos, MagneticPolarity> e : MagnetizedFerrofluidRegistry.forLevel(server).entrySet()) {
             if (FerrofluidCreepRegistry.contains(server, e.getKey())) continue;
             magnets.add(new Magnet(Vec3.atCenterOf(e.getKey()), e.getValue(), MagneticStrength.WEAK.range(), false));
@@ -135,17 +144,29 @@ public final class FerrofluidCreepHandler {
         return magnets;
     }
 
+    private static void addChunkKeys(final Set<Long> keys, final BlockPos target, final int radius) {
+        final int minX = Math.floorDiv(target.getX() - radius, 16);
+        final int maxX = Math.floorDiv(target.getX() + radius, 16);
+        final int minZ = Math.floorDiv(target.getZ() - radius, 16);
+        final int maxZ = Math.floorDiv(target.getZ() + radius, 16);
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) keys.add(ChunkPos.asLong(x, z));
+        }
+    }
+
     /** Every ferrofluid SOURCE cell (plain + magnetized), pruning registry entries
      *  that are no longer a source (drained / flowed away). */
     private static List<BlockPos> gatherAnchors(final ServerLevel server) {
         final Set<BlockPos> out = new HashSet<>();
         for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {
-            final BlockState st = server.getBlockState(p);
+            final BlockState st = LoadedChunkAccess.blockState(server, p);
+            if (st == null) continue;
             if (isPlain(st) && st.getFluidState().isSource()) out.add(p);
             else FerrofluidSourceRegistry.remove(server, p);
         }
         for (final BlockPos p : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
-            final BlockState st = server.getBlockState(p);
+            final BlockState st = LoadedChunkAccess.blockState(server, p);
+            if (st == null) continue;
             if (st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get()) && st.getFluidState().isSource()) out.add(p);
         }
         return new ArrayList<>(out);

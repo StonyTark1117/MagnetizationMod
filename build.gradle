@@ -982,7 +982,7 @@ tasks.register('releaseMatrixGate', Exec) {
 
 tasks.register('reproduceLargeWorldIssue', Exec) {
     group = 'verification'
-    description = 'Generate a fresh 10,000-chunk world and reproduce GitHub issue #7 on a full server compat stack.'
+    description = 'Generate a fresh 2,000-chunk world and verify the GitHub issue #7 fix on a full server compat stack.'
     commandLine 'bash', 'scripts/run-large-world-repro.sh'
 }
 

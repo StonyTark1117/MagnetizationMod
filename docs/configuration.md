@@ -363,6 +363,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | compat.alexsCavesPotionMode | enum | BOTH | How our Magnetized status effect coexists with Alex's Caves' Magnetizing effect. BOTH (default, parallel); OURS_ONLY (AC effect swapped for ours on application); THEIRS_ONLY (our effect swapped for AC's). |
+| COMMON | compat.externalFieldApplicationBudget | number | 256; 1-4096 | Maximum optional-mod emitters evaluated per level tick after target-local chunk filtering. Lower this if dense worldgen magnets still consume too much server time. |
 | COMMON | compat.createNewAgeCompatEnabled | boolean | true | Master switch for Magnetization's Create: New Age runtime and supplemental recipe integration. |
 | COMMON | compat.createNewAgeFieldsEnabled | boolean | true | Make New Age magnet blocks emit real fields using their native 1/2/4/8/24 strength ladder. Redstone reverses the presented pole. |
 | COMMON | compat.createNewAgeRecipesEnabled | boolean | true | Load Permanent Magnet motor and generator-coil alternatives plus Energiser magnet production. Takes effect on data reload. |

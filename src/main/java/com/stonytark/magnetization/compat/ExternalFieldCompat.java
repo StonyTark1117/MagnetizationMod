@@ -4,10 +4,12 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.physics.LoadedChunkAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -66,9 +68,30 @@ public final class ExternalFieldCompat {
         };
     }
 
+    /** Blocks that need an external-index entry for either a local field or relay behavior. */
+    public static boolean isIndexableEmitter(final BlockState state) {
+        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        if (id == null || !isKnownEmitter(state)) return false;
+        return "createendertransmission".equals(id.getNamespace())
+                ? MagConfig.enderTransmissionFieldRelayEnabled()
+                : isSupportedEmitter(state);
+    }
+
     public static @Nullable MagneticField currentField(final Level level, final BlockPos pos) {
-        if (!level.hasChunkAt(pos)) return null;
-        final BlockState state = level.getBlockState(pos);
+        final BlockState state;
+        if (level instanceof ServerLevel server) {
+            state = LoadedChunkAccess.blockState(server, pos);
+            if (state == null) return null;
+        } else {
+            if (!level.hasChunkAt(pos)) return null;
+            state = level.getBlockState(pos);
+        }
+        return currentField(level, pos, state);
+    }
+
+    /** Evaluate an already-loaded emitter state without asking the level for its chunk. */
+    public static @Nullable MagneticField currentField(final Level level, final BlockPos pos,
+                                                       final BlockState state) {
         final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (id == null || !isSupportedEmitter(state)) return null;
         return switch (id.getNamespace()) {
@@ -76,7 +99,7 @@ public final class ExternalFieldCompat {
             case "immersiveengineering" -> immersiveEngineeringField(level, pos, state, id.getPath());
             case "alexscaves" -> alexsCavesField(level, pos, state, id.getPath());
             case "createaddition" -> createAdditionField(level, pos, state);
-            case "tfmg" -> tfmgField(level.getBlockEntity(pos));
+            case "tfmg" -> tfmgField(blockEntity(level, pos));
             default -> null;
         };
     }
@@ -123,14 +146,14 @@ public final class ExternalFieldCompat {
         } catch (final ReflectiveOperationException | RuntimeException ignored) { }
         if (nativeStrength <= 0.0f) return null;
         final double force = MagneticStrength.WEAK.force() * nativeStrength * multiplier;
-        final MagneticPolarity polarity = level.hasNeighborSignal(pos)
+        final MagneticPolarity polarity = hasNeighborSignal(level, pos)
                 ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH;
         return field(pos, Direction.UP, polarity, force, 0.0d);
     }
 
     private static @Nullable MagneticField alexsCavesField(final Level level, final BlockPos pos,
                                                            final BlockState state, final String path) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
+        final BlockEntity blockEntity = blockEntity(level, pos);
         // Alex's Caves only maintains isLocallyActive on the client for its
         // looping sound.  The server-side source of truth used by its own
         // magnet tick is the block's POWERED property.
@@ -147,7 +170,7 @@ public final class ExternalFieldCompat {
 
     private static @Nullable MagneticField immersiveEngineeringField(final Level level, final BlockPos pos,
                                                                      final BlockState state, final String path) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
+        final BlockEntity blockEntity = blockEntity(level, pos);
         if (blockEntity == null) return null;
         final double ratio = energyRatio(blockEntity);
         if (ratio <= 0.0d) return null;
@@ -169,7 +192,7 @@ public final class ExternalFieldCompat {
 
     private static @Nullable MagneticField createAdditionField(final Level level, final BlockPos pos,
                                                                final BlockState state) {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
+        final BlockEntity blockEntity = blockEntity(level, pos);
         if (blockEntity == null || !invokeBoolean(blockEntity, "isPoweredState", false)) return null;
         final double ratio = Math.max(0.05d, energyRatio(blockEntity));
         final double force = (MagneticStrength.WEAK.force()
@@ -206,9 +229,21 @@ public final class ExternalFieldCompat {
     }
 
     private static boolean redstoneEnabled(final Level level, final BlockPos pos, final BlockEntity blockEntity) {
-        final boolean powered = invokeBoolean(blockEntity, "isRSPowered", level.hasNeighborSignal(pos));
+        final boolean powered = invokeBoolean(blockEntity, "isRSPowered", hasNeighborSignal(level, pos));
         final boolean inverted = readBooleanField(blockEntity, "redstoneControlInverted", false);
         return powered != inverted;
+    }
+
+    private static boolean hasNeighborSignal(final Level level, final BlockPos pos) {
+        return level instanceof ServerLevel server
+                ? LoadedChunkAccess.hasNeighborSignal(server, pos)
+                : level.hasNeighborSignal(pos);
+    }
+
+    private static @Nullable BlockEntity blockEntity(final Level level, final BlockPos pos) {
+        return level instanceof ServerLevel server
+                ? LoadedChunkAccess.blockEntity(server, pos)
+                : level.getBlockEntity(pos);
     }
 
     private static double energyRatio(final BlockEntity blockEntity) {
