@@ -3,6 +3,7 @@ package com.stonytark.magnetization.data;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.stonytark.magnetization.config.MagConfig;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PatchouliFieldManualTest {
@@ -94,6 +97,44 @@ class PatchouliFieldManualTest {
             assertTrue(Files.isRegularFile(BOOK.resolve("entries").resolve(path)),
                     () -> "Field Manual is missing release-critical entry " + path);
         }
+    }
+
+    @Test
+    void manualRecipesHaveIndependentConfigConditionsAndSafeDefaults() throws IOException {
+        assertManualRecipeCondition("field_manual.json", "patchouli_manual_magnetite");
+        assertManualRecipeCondition("field_manual_from_iron.json", "patchouli_manual_iron");
+        assertManualRecipeCondition("field_manual_from_lodestone.json", "patchouli_manual_lodestone");
+
+        assertTrue(MagConfig.FIELD_MANUAL_MAGNETITE_RECIPE_ENABLED.getDefault());
+        assertFalse(MagConfig.FIELD_MANUAL_IRON_RECIPE_ENABLED.getDefault());
+        assertTrue(MagConfig.FIELD_MANUAL_LODESTONE_RECIPE_ENABLED.getDefault());
+
+        final JsonObject translations = parse(EN_US).getAsJsonObject();
+        final String ironWarning = translations
+                .get("magnetization.configuration.compat.fieldManualIronRecipeEnabled.tooltip")
+                .getAsString()
+                .toLowerCase(java.util.Locale.ROOT);
+        assertTrue(ironWarning.contains("conflict") && ironWarning.contains("patchouli"),
+                "Iron recipe tooltip must warn about possible Patchouli recipe conflicts");
+    }
+
+    private static void assertManualRecipeCondition(final String recipeName, final String expectedFeature)
+            throws IOException {
+        final Path recipe = RESOURCES.resolve("data/magnetization/recipe").resolve(recipeName);
+        final JsonObject json = parse(recipe).getAsJsonObject();
+        final var conditions = json.getAsJsonArray("neoforge:conditions");
+        assertTrue(conditions.asList().stream().anyMatch(element -> {
+            final JsonObject condition = element.getAsJsonObject();
+            return "neoforge:mod_loaded".equals(condition.get("type").getAsString())
+                    && "patchouli".equals(condition.get("modid").getAsString());
+        }), () -> recipe + " must require Patchouli");
+        final List<String> configFeatures = conditions.asList().stream()
+                .map(JsonElement::getAsJsonObject)
+                .filter(condition -> "magnetization:compat_config".equals(condition.get("type").getAsString()))
+                .map(condition -> condition.get("feature").getAsString())
+                .toList();
+        assertEquals(List.of(expectedFeature), configFeatures,
+                () -> recipe + " must use its independent recipe config condition");
     }
 
     private static List<Path> entryFiles() throws IOException {

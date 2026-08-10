@@ -16,6 +16,9 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         TFMG_PROCESSING("tfmg_processing"),
         TFMG_STEELMAKING("tfmg_steelmaking"),
         PATCHOULI("patchouli"),
+        PATCHOULI_MANUAL_MAGNETITE("patchouli_manual_magnetite"),
+        PATCHOULI_MANUAL_IRON("patchouli_manual_iron"),
+        PATCHOULI_MANUAL_LODESTONE("patchouli_manual_lodestone"),
         CREATE_NEW_AGE("create_new_age"),
         IMMERSIVE_ENGINEERING("immersive_engineering"),
         ALEXSCAVES("alexscaves"),
@@ -53,6 +56,9 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
             case TFMG_PROCESSING -> MagConfig.tfmgProcessingRecipesEnabled();
             case TFMG_STEELMAKING -> MagConfig.tfmgSteelmakingRecipesEnabled();
             case PATCHOULI -> MagConfig.patchouliCompatEnabled();
+            case PATCHOULI_MANUAL_MAGNETITE -> MagConfig.fieldManualMagnetiteRecipeEnabled();
+            case PATCHOULI_MANUAL_IRON -> MagConfig.fieldManualIronRecipeEnabled();
+            case PATCHOULI_MANUAL_LODESTONE -> MagConfig.fieldManualLodestoneRecipeEnabled();
             case CREATE_NEW_AGE -> MagConfig.createNewAgeRecipesEnabled();
             case IMMERSIVE_ENGINEERING -> MagConfig.immersiveEngineeringRecipesEnabled();
             case ALEXSCAVES -> MagConfig.alexsCavesRecipesEnabled();

@@ -523,8 +523,15 @@ public final class MagConfig {
     /** Give the Patchouli field manual to each player on their first login.
      *  Default true. Per-player flag is stored in the player's persistent NBT
      *  so reconnecting doesn't re-give the manual. Set false if your server
-     *  prefers players craft it from the (cheap) recipes. */
+     *  prefers players craft it from an enabled recovery recipe. */
     public static final ModConfigSpec.BooleanValue FIELD_MANUAL_AUTO_GIVE;
+    /** Enable the shapeless Book + Raw Magnetite Field Manual recipe. Default true. */
+    public static final ModConfigSpec.BooleanValue FIELD_MANUAL_MAGNETITE_RECIPE_ENABLED;
+    /** Enable the shapeless Book + Iron Ingot Field Manual recipe. Default false
+     *  because the generic ingredients may conflict with another Patchouli book. */
+    public static final ModConfigSpec.BooleanValue FIELD_MANUAL_IRON_RECIPE_ENABLED;
+    /** Enable the shapeless Book + Lodestone Field Manual recipe. Default true. */
+    public static final ModConfigSpec.BooleanValue FIELD_MANUAL_LODESTONE_RECIPE_ENABLED;
     /** Internal FE buffer capacity per emitter, in FE. Default 50_000 (about
      *  5_000 ticks = 250s of operation at the default drain). */
     public static final ModConfigSpec.IntValue EMITTER_ENERGY_CAPACITY;
@@ -2174,10 +2181,32 @@ public final class MagConfig {
                 .comment("Give the Patchouli field manual to each player on their first login.",
                          "Default true. The per-player flag is stored in persistent NBT so",
                          "reconnecting doesn't re-give the manual. Players can also craft it",
-                         "from cheap recipes (book + raw_magnetite OR iron ingot OR lodestone).",
+                         "from the enabled recovery recipes.",
                          "Set false on servers that prefer players craft it themselves.")
                 .translation("magnetization.configuration.compat.fieldManualAutoGive")
                 .define("fieldManualAutoGive", true);
+
+        FIELD_MANUAL_MAGNETITE_RECIPE_ENABLED = b
+                .comment("Enable the shapeless Book + Raw Magnetite Field Manual recipe.",
+                         "Default true. This is the cheap, Magnetization-specific recovery recipe.",
+                         "Requires Patchouli compatibility to be enabled; takes effect on data reload.")
+                .translation("magnetization.configuration.compat.fieldManualMagnetiteRecipeEnabled")
+                .define("fieldManualMagnetiteRecipeEnabled", true);
+
+        FIELD_MANUAL_IRON_RECIPE_ENABLED = b
+                .comment("Enable the shapeless Book + Iron Ingot Field Manual recipe.",
+                         "Default false. This generic ingredient combination may conflict with",
+                         "another mod's Patchouli guide-book recipe, so enable it only when wanted.",
+                         "Requires Patchouli compatibility to be enabled; takes effect on data reload.")
+                .translation("magnetization.configuration.compat.fieldManualIronRecipeEnabled")
+                .define("fieldManualIronRecipeEnabled", false);
+
+        FIELD_MANUAL_LODESTONE_RECIPE_ENABLED = b
+                .comment("Enable the shapeless Book + Lodestone Field Manual recipe.",
+                         "Default true. This is the more expensive vanilla-material recovery recipe.",
+                         "Requires Patchouli compatibility to be enabled; takes effect on data reload.")
+                .translation("magnetization.configuration.compat.fieldManualLodestoneRecipeEnabled")
+                .define("fieldManualLodestoneRecipeEnabled", true);
 
         EMITTER_ENERGY_CAPACITY = b
                 .comment("Internal FE buffer capacity per emitter. 50000 ≈ 4 minutes of continuous",
@@ -2631,6 +2660,15 @@ public final class MagConfig {
     }
     public static boolean patchouliCompatEnabled() {
         return booleanOr(PATCHOULI_COMPAT_ENABLED, true);
+    }
+    public static boolean fieldManualMagnetiteRecipeEnabled() {
+        return patchouliCompatEnabled() && booleanOr(FIELD_MANUAL_MAGNETITE_RECIPE_ENABLED, true);
+    }
+    public static boolean fieldManualIronRecipeEnabled() {
+        return patchouliCompatEnabled() && booleanOr(FIELD_MANUAL_IRON_RECIPE_ENABLED, false);
+    }
+    public static boolean fieldManualLodestoneRecipeEnabled() {
+        return patchouliCompatEnabled() && booleanOr(FIELD_MANUAL_LODESTONE_RECIPE_ENABLED, true);
     }
     public static boolean justEnoughResourcesCompatEnabled() {
         return booleanOr(JUST_ENOUGH_RESOURCES_COMPAT_ENABLED, true);

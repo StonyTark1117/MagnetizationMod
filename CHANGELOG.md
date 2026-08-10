@@ -4,6 +4,7 @@
 
 ### Added
 - Added the permission-free **`/magnetization manual`** recovery command so players can replace a lost Patchouli Field Manual. A full inventory drops the replacement at the player's feet, and missing or disabled Patchouli support produces a clear error instead of an invalid book.
+- Added independent config switches for the **Book + Raw Magnetite**, **Book + Iron Ingot**, and **Book + Lodestone** Field Manual recipes. Magnetite and lodestone default on; iron defaults off with a warning that its generic ingredients may conflict with another Patchouli guide-book recipe.
 
 ## 1.3.0 — Fusion Thruster, Railgun & the fuel overhaul
 
