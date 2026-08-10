@@ -1,0 +1,7 @@
+{
+  "type": "magnetization:config_gated_add_features",
+  "flag": "radon_pockets",
+  "biomes": "#minecraft:is_overworld",
+  "features": "magnetization:radon_pocket",
+  "step": "underground_decoration"
+}

@@ -1,0 +1,1 @@
+{ "parent": "minecraft:item/generated", "textures": { "layer0": "minecraft:item/bucket", "layer1": "magnetization:item/xenon_fill" } }

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "e": {
+      "item": "magnetization:electromagnet"
+    },
+    "p": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "t": {
+      "item": "magnetization:titanomagnetite_ingot"
+    }
+  },
+  "pattern": [
+    "cpc",
+    "rer",
+    "ctc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:ion_thruster"
+  }
+}

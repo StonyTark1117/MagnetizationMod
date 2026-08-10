@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "magnetization:helium", "magnetization:flowing_helium",
+    "magnetization:neon", "magnetization:flowing_neon",
+    "magnetization:argon", "magnetization:flowing_argon",
+    "magnetization:krypton", "magnetization:flowing_krypton",
+    "magnetization:xenon", "magnetization:flowing_xenon",
+    "magnetization:radon", "magnetization:flowing_radon"
+  ]
+}

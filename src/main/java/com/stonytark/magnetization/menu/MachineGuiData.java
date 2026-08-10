@@ -102,7 +102,7 @@ public interface MachineGuiData extends IHaveGoggleInformation {
                 }
                 out.add(statusLine(display.status()));
             }
-            case THRUSTER -> {
+            case THRUSTER, ION_THRUSTER -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, display.current())).withStyle(ChatFormatting.AQUA));
                 out.add(statusLine(display.status()));
             }

@@ -193,6 +193,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.TRITIUM_CELL);
                         accept(output, MagItems.HELIUM_3_CELL);
                         accept(output, MagItems.HELIUM_3_CRYSTAL);
+                        accept(output, MagItems.ISOTOPE_SEPARATION_MODULE);
                         accept(output, MagItems.PYRRHOTITE_CATALYST);
                         accept(output, MagItems.ENHANCED_PYRRHOTITE_CATALYST);
                         accept(output, MagItems.COSMIC_PYRRHOTITE_CATALYST);
@@ -207,6 +208,12 @@ public final class MagCreativeTab {
                         accept(output, MagItems.GALLIUM_BUCKET);
                         accept(output, MagItems.MIXED_GALLIUM_BUCKET);
                         accept(output, MagItems.HYDROGEN_BUCKET);
+                        accept(output, MagItems.HELIUM_BUCKET);
+                        accept(output, MagItems.NEON_BUCKET);
+                        accept(output, MagItems.ARGON_BUCKET);
+                        accept(output, MagItems.KRYPTON_BUCKET);
+                        accept(output, MagItems.XENON_BUCKET);
+                        accept(output, MagItems.RADON_BUCKET);
                         accept(output, MagItems.TRITIUM_BUCKET);
                         accept(output, MagItems.HELIUM_3_BUCKET);
                         accept(output, MagItems.LIQUID_LITHIUM_BUCKET);
@@ -245,12 +252,15 @@ public final class MagCreativeTab {
                         accept(output, MagItems.TOKAMAK_CONTROLLER);
                         accept(output, MagItems.TOKAMAK_COIL);
                         accept(output, MagItems.ELECTROLYZER);
+                        accept(output, MagItems.GAS_EXCITER);
+                        accept(output, MagItems.AIR_SEPARATOR);
                         accept(output, MagItems.G_FORCE_CUSHION);
 
                         // ── Propulsion ──
                         accept(output, MagItems.SOLAR_SAIL);
                         accept(output, MagItems.MHD_JET);
                         accept(output, MagItems.MICRO_THRUSTER);
+                        accept(output, MagItems.ION_THRUSTER);
                         accept(output, MagItems.FUSION_THRUSTER);
                         accept(output, MagItems.RAILGUN_EMITTER);
                         accept(output, MagItems.RAILGUN_REMOTE);

@@ -185,7 +185,7 @@ public final class MagFluids {
             () -> new FluidType(FluidType.Properties.create()
                     .density(70)            // liquid hydrogen is very light
                     .viscosity(150)
-                    .canSwim(true)
+                    .motionScale(0.0).canPushEntity(false).canSwim(false).fallDistanceModifier(1.0F)
                     .canDrown(true)
                     .supportsBoating(false)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -210,7 +210,7 @@ public final class MagFluids {
             () -> new FluidType(FluidType.Properties.create()
                     .density(250)
                     .viscosity(200)
-                    .canSwim(true)
+                    .motionScale(0.0).canPushEntity(false).canSwim(false).fallDistanceModifier(1.0F)
                     .canDrown(true)
                     .supportsBoating(false)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -235,7 +235,7 @@ public final class MagFluids {
             () -> new FluidType(FluidType.Properties.create()
                     .density(60)            // even lighter than hydrogen
                     .viscosity(120)
-                    .canSwim(true)
+                    .motionScale(0.0).canPushEntity(false).canSwim(false).fallDistanceModifier(1.0F)
                     .canDrown(true)
                     .supportsBoating(false)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -252,6 +252,89 @@ public final class MagFluids {
                 .levelDecreasePerBlock(2)
                 .block(MagBlocks.HELIUM_3_BLOCK)
                 .bucket(MagItems.HELIUM_3_BUCKET);
+    }
+
+    // ---------------- Excitable noble gases (1.4) ----------------
+
+    private static FluidType nobleGasType(final int density, final int viscosity) {
+        return new FluidType(FluidType.Properties.create()
+                .density(density).viscosity(viscosity)
+                .motionScale(0.0).canPushEntity(false).canSwim(false).canDrown(true)
+                .fallDistanceModifier(1.0F).supportsBoating(false)
+                .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY));
+    }
+
+    public static final Supplier<FluidType> HELIUM_TYPE = FLUID_TYPES.register("helium",
+            () -> nobleGasType(164, 120));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HELIUM = FLUIDS.register("helium",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Source(heliumProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> HELIUM_FLOWING = FLUIDS.register("flowing_helium",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Flowing(heliumProperties()));
+    private static BaseFlowingFluid.Properties heliumProperties() {
+        return new BaseFlowingFluid.Properties(HELIUM_TYPE, HELIUM, HELIUM_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.HELIUM_BLOCK).bucket(MagItems.HELIUM_BUCKET);
+    }
+
+    public static final Supplier<FluidType> NEON_TYPE = FLUID_TYPES.register("neon",
+            () -> nobleGasType(900, 150));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> NEON = FLUIDS.register("neon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Source(neonProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> NEON_FLOWING = FLUIDS.register("flowing_neon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.Flowing(neonProperties()));
+    private static BaseFlowingFluid.Properties neonProperties() {
+        return new BaseFlowingFluid.Properties(NEON_TYPE, NEON, NEON_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.NEON_BLOCK).bucket(MagItems.NEON_BUCKET);
+    }
+
+    public static final Supplier<FluidType> ARGON_TYPE = FLUID_TYPES.register("argon",
+            () -> nobleGasType(1784, 180));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ARGON = FLUIDS.register("argon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseSource(argonProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> ARGON_FLOWING = FLUIDS.register("flowing_argon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseFlowing(argonProperties()));
+    private static BaseFlowingFluid.Properties argonProperties() {
+        return new BaseFlowingFluid.Properties(ARGON_TYPE, ARGON, ARGON_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.ARGON_BLOCK).bucket(MagItems.ARGON_BUCKET);
+    }
+
+    public static final Supplier<FluidType> KRYPTON_TYPE = FLUID_TYPES.register("krypton",
+            () -> nobleGasType(3749, 210));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> KRYPTON = FLUIDS.register("krypton",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseSource(kryptonProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> KRYPTON_FLOWING = FLUIDS.register("flowing_krypton",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseFlowing(kryptonProperties()));
+    private static BaseFlowingFluid.Properties kryptonProperties() {
+        return new BaseFlowingFluid.Properties(KRYPTON_TYPE, KRYPTON, KRYPTON_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.KRYPTON_BLOCK).bucket(MagItems.KRYPTON_BUCKET);
+    }
+
+    public static final Supplier<FluidType> XENON_TYPE = FLUID_TYPES.register("xenon",
+            () -> nobleGasType(5894, 240));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> XENON = FLUIDS.register("xenon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseSource(xenonProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> XENON_FLOWING = FLUIDS.register("flowing_xenon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseFlowing(xenonProperties()));
+    private static BaseFlowingFluid.Properties xenonProperties() {
+        return new BaseFlowingFluid.Properties(XENON_TYPE, XENON, XENON_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.XENON_BLOCK).bucket(MagItems.XENON_BUCKET);
+    }
+
+    public static final Supplier<FluidType> RADON_TYPE = FLUID_TYPES.register("radon",
+            () -> nobleGasType(9073, 280));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RADON = FLUIDS.register("radon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseSource(radonProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> RADON_FLOWING = FLUIDS.register("flowing_radon",
+            () -> new com.stonytark.magnetization.content.fluid.GasFlowingFluid.DenseFlowing(radonProperties()));
+    private static BaseFlowingFluid.Properties radonProperties() {
+        return new BaseFlowingFluid.Properties(RADON_TYPE, RADON, RADON_FLOWING)
+                .slopeFindDistance(2).levelDecreasePerBlock(2)
+                .block(MagBlocks.RADON_BLOCK).bucket(MagItems.RADON_BUCKET);
     }
 
     // ---------------- Liquid lithium (conductive working fluid for the MHD jet) ----------------

@@ -185,6 +185,7 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.TOKAMAK_CONTROLLER.get(),  (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MHD_JET.get(),             (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MICRO_THRUSTER.get(),      (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.ION_THRUSTER.get(),        (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.FUSION_THRUSTER.get(),     (be, side) -> disabled(be) ? null : be.energyBuffer());
         // A formed Fusion Thruster is one multiblock: cables may connect to any
         // Tokamak-Coil perimeter block and still feed the deterministic master's
@@ -197,14 +198,19 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.GYROSTABILIZER.get(),      (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.ELECTROLYZER.get(),        (be, side) -> disabled(be) ? null : be.energyBuffer());
+        event.registerBlockEntity(cap, MagBlockEntities.GAS_EXCITER.get(),         (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.MICRO_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.ION_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.FUSION_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.MHD_JET.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.ELECTROLYZER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.AIR_SEPARATOR.get(), (be, side) -> disabled(be) || side == null ? null : be.fluidHandler(side));
 
         // Item-handler caps so hoppers / Create automation can feed every item-fuel
         // machine (insert gated by each slot's canPlaceItem; only spent buckets extract
@@ -227,6 +233,11 @@ public final class Magnetization {
         event.registerBlockEntity(items, MagBlockEntities.MICRO_THRUSTER.get(),
                 (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                         ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
+        event.registerBlockEntity(items, MagBlockEntities.ION_THRUSTER.get(),
+                (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
+                        ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);
+        event.registerBlockEntity(items, MagBlockEntities.AIR_SEPARATOR.get(),
+                (be, side) -> disabled(be) ? null : be.itemHandler());
         event.registerBlockEntity(items, MagBlockEntities.FUSION_THRUSTER.get(),
                 (be, side) -> !disabled(be) && com.stonytark.magnetization.config.MagConfig.hopperFuelIntake()
                 ? new com.stonytark.magnetization.content.MachineFuelItemHandler(be.bucketContainer()) : null);

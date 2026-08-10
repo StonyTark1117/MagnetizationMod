@@ -665,13 +665,17 @@ public final class MagGameTests {
             }
         }
         scheduleFluidTick(helper, source);
-        // Seed the first three real production-fluid ticks synchronously. A
+        // Seed the initial production-fluid ticks synchronously through the
+        // minimum asserted waterfall height. A
         // clean, heavily loaded GameTest server can defer the scheduled tick
         // queue long enough that the fixed observation window sees only the
         // source even though the flow implementation is correct.
         tickFluidNow(helper, source);
         tickFluidNow(helper, new BlockPos(1, 1, 1));
         tickFluidNow(helper, new BlockPos(2, 1, 1));
+        for (int y = 2; y <= 8; y++) {
+            tickFluidNow(helper, new BlockPos(2, y, 1));
+        }
         final int[] previousWaterfallTop = {0};
         for (long tick = 30L; tick <= 100L; tick += 10L) {
             final long checkTick = tick;

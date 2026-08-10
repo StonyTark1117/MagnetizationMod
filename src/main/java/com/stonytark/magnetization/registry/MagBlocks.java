@@ -365,6 +365,12 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.jet.MicroThrusterBlock> MICRO_THRUSTER =
             REGISTER.register("micro_thruster", () -> new com.stonytark.magnetization.content.jet.MicroThrusterBlock(poweredMetal()));
 
+    /** Electric propulsion with gas-dependent thrust, efficiency, and speed. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.jet.IonThrusterBlock> ION_THRUSTER =
+            REGISTER.register("ion_thruster", () -> new com.stonytark.magnetization.content.jet.IonThrusterBlock(
+                    metal().lightLevel(state -> state.hasProperty(BlockStateProperties.LIT)
+                            && state.getValue(BlockStateProperties.LIT) ? 8 : 0)));
+
     /** MHD Jet Thruster — strongest ship propulsion; magnet sets ceiling, FE powers it. */
     public static final DeferredBlock<com.stonytark.magnetization.content.jet.MhdJetBlock> MHD_JET =
             REGISTER.register("mhd_jet", () -> new com.stonytark.magnetization.content.jet.MhdJetBlock(poweredMetal()));
@@ -474,6 +480,40 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_PURPLE)
                             .lightLevel(s -> 4)));
+
+    private static BlockBehaviour.Properties excitableGas(final MapColor color) {
+        return BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
+                .mapColor(color)
+                .lightLevel(state -> state.hasProperty(
+                                com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED)
+                        && state.getValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED) ? 15 : 0);
+    }
+
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> HELIUM_BLOCK =
+            REGISTER.register("helium", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.HELIUM.get(), excitableGas(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> NEON_BLOCK =
+            REGISTER.register("neon", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.NEON.get(), excitableGas(MapColor.COLOR_RED)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> ARGON_BLOCK =
+            REGISTER.register("argon", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.ARGON.get(), excitableGas(MapColor.COLOR_PURPLE)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> KRYPTON_BLOCK =
+            REGISTER.register("krypton", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.KRYPTON.get(), excitableGas(MapColor.COLOR_LIGHT_GREEN)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> XENON_BLOCK =
+            REGISTER.register("xenon", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.XENON.get(), excitableGas(MapColor.COLOR_LIGHT_BLUE)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> RADON_BLOCK =
+            REGISTER.register("radon", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
+                    com.stonytark.magnetization.registry.MagFluids.RADON.get(), excitableGas(MapColor.COLOR_PURPLE)));
+
+    /** Receive-only FE electrode that energizes an adjacent noble-gas network. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.gas.GasExciterBlock> GAS_EXCITER =
+            REGISTER.register("gas_exciter", () -> new com.stonytark.magnetization.content.gas.GasExciterBlock(
+                    metal().lightLevel(state -> 4)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.gas.AirSeparatorBlock> AIR_SEPARATOR =
+            REGISTER.register("air_separator", () -> new com.stonytark.magnetization.content.gas.AirSeparatorBlock(metal()));
 
     /** Liquid lithium — conductive working fluid for the MHD jet; light silvery metal. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> LIQUID_LITHIUM_BLOCK =

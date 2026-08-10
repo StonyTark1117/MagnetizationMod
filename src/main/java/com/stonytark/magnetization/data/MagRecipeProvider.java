@@ -762,6 +762,12 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .pattern("ctc").pattern("tjt").pattern("ctc")
                 .define('c', Items.COPPER_BLOCK).define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('j', MagItems.MHD_JET.get())
                 .unlockedBy("has_mhd_jet", has(MagItems.MHD_JET.get())).save(out, id("micro_thruster"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, MagItems.ION_THRUSTER.get())
+                .pattern("cpc").pattern("rer").pattern("ctc")
+                .define('c', Items.COPPER_INGOT).define('p', MagItems.MAGNETIC_PLATE.get())
+                .define('r', Items.REDSTONE).define('e', MagItems.ELECTROMAGNET.get())
+                .define('t', MagItems.TITANOMAGNETITE_INGOT.get())
+                .unlockedBy("has_electromagnet", has(MagItems.ELECTROMAGNET.get())).save(out, id("ion_thruster"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.STRUCTURAL_INDUCER.get())
                 .pattern("tmt").pattern("mlm").pattern("tmt")
                 .define('t', MagItems.TITANOMAGNETITE_INGOT.get()).define('m', MagItems.MAGNETITE_BLOCK.get()).define('l', Items.LODESTONE)
@@ -831,6 +837,22 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .pattern("rcr").pattern("cwc").pattern("rcr")
                 .define('r', Items.REDSTONE).define('c', ELECTROLYZER_COILS).define('w', Items.CAULDRON)
                 .unlockedBy("has_cauldron", has(Items.CAULDRON)).save(out, id("electrolyzer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.GAS_EXCITER.get())
+                .pattern("rgr").pattern("cec").pattern("rgr")
+                .define('r', Items.REDSTONE).define('g', Items.GLOWSTONE_DUST)
+                .define('c', Items.COPPER_INGOT).define('e', MagItems.ELECTROMAGNET.get())
+                .unlockedBy("has_electromagnet", has(MagItems.ELECTROMAGNET.get())).save(out, id("gas_exciter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.AIR_SEPARATOR.get())
+                .pattern("cpc").pattern("tst").pattern("cpc")
+                .define('c', Items.COPPER_INGOT).define('p', MagItems.MAGNETIC_PLATE.get())
+                .define('t', MagItems.TOKAMAK_COIL.get())
+                .define('s', shaft)
+                .unlockedBy("has_coil", has(MagItems.TOKAMAK_COIL.get())).save(out, id("air_separator"));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.ISOTOPE_SEPARATION_MODULE.get())
+                .requires(ingr("create:precision_mechanism")).requires(MagItems.TRITIUM_CELL.get())
+                .requires(MagItems.TOKAMAK_COIL.get(), 2)
+                .unlockedBy("has_tritium", has(MagItems.TRITIUM_CELL.get()))
+                .save(out, id("isotope_separation_module"));
         // Fusion Thruster interior — a micro-thruster core wrapped in coils + titanomagnetite.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.FUSION_THRUSTER.get(), 2)
                 .pattern("ctc").pattern("tmt").pattern("ctc")

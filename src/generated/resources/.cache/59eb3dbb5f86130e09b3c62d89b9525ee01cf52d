@@ -1,4 +1,5 @@
-// 1.21.1	2026-08-09T06:39:13.27457218	Loot Tables
+// 1.21.1	2026-08-10T15:05:49.090678137	Loot Tables
+752475434e068b166727134c81e2fe013d8dc76e data/magnetization/loot_table/blocks/air_separator.json
 f21258bbdbc58951e64d6984127d1c905773b7c7 data/magnetization/loot_table/blocks/anomaly_stone.json
 b09b647b2ddcbc4a2c2368076365742ba63398a0 data/magnetization/loot_table/blocks/anomaly_stone_slab.json
 d93b76c7d0361310a2d77a40826bb227916e18a4 data/magnetization/loot_table/blocks/anomaly_stone_stairs.json
@@ -23,6 +24,7 @@ f6f26bbe6054a6b00557bb12dfb35dd6dd425041 data/magnetization/loot_table/blocks/el
 5e52aecf262f5c0f02be948de16c3bdfb64aa514 data/magnetization/loot_table/blocks/ferromagnetic_block.json
 58d4a3abd843440f8e2d611f0d201c3e3ac7b6d2 data/magnetization/loot_table/blocks/fusion_thruster.json
 a106b42b8adb6c0d95350271cb5500652016ecb8 data/magnetization/loot_table/blocks/g_force_cushion.json
+296b73d84a2ff2f3bdf4206e30dc34cec302a39d data/magnetization/loot_table/blocks/gas_exciter.json
 cc640e1017b4c101d7a801db1de7ed63e801ee43 data/magnetization/loot_table/blocks/gyrostabilizer.json
 b9c62781a7c2e66db2635e2f24d37ff80d7b0042 data/magnetization/loot_table/blocks/helium_3_geode.json
 7439aa440d30dd78f5bd126e06d13ca1a4a4fd06 data/magnetization/loot_table/blocks/hematite_anvil.json
@@ -30,6 +32,7 @@ b9c62781a7c2e66db2635e2f24d37ff80d7b0042 data/magnetization/loot_table/blocks/he
 9915a4807046881e62e9de544688009ec422e473 data/magnetization/loot_table/blocks/hematite_ore.json
 8beac890faed6c2ed5546c5aca15023315ae0d67 data/magnetization/loot_table/blocks/homopolar_motor.json
 be54bb71da0b70f105ca639857baed3eb5326261 data/magnetization/loot_table/blocks/induction_pad.json
+821899a0266c1dfc72548e2c7c66a4a50f164717 data/magnetization/loot_table/blocks/ion_thruster.json
 4facbc5488cdbfea5ebb3ea75ec795db180d44e5 data/magnetization/loot_table/blocks/kinetic_coil.json
 207ddf017ef98dede5fb371ce9d573d333311397 data/magnetization/loot_table/blocks/kinetic_electromagnet.json
 7d203998b8a8883e5846bad20d75451c459a395d data/magnetization/loot_table/blocks/lithium_block.json

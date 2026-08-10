@@ -64,6 +64,7 @@
     "magnetization:g_force_cushion",
     "magnetization:solar_sail",
     "magnetization:micro_thruster",
+    "magnetization:ion_thruster",
     "magnetization:mhd_jet",
     "magnetization:fusion_thruster",
     "magnetization:railgun_emitter",
@@ -73,6 +74,8 @@
     "magnetization:tokamak_controller",
     "magnetization:diamagnetic_block",
     "magnetization:hardened_mr_fluid",
+    "magnetization:gas_exciter",
+    "magnetization:air_separator",
     "magnetization:electrolyzer",
     "magnetization:solid_gallium",
     "magnetization:raw_gallium_block"

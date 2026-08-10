@@ -71,6 +71,14 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .addStoryBoard(SCHEMATIC, machineScene("electrolyzer", "Run an Electrolyzer",
                         "Feed it water and FE; it produces hydrogen for the fusion-fuel chain.",
                         MagBlocks.ELECTROLYZER.get()));
+        blocks.forComponents(MagBlocks.GAS_EXCITER.get())
+                .addStoryBoard(SCHEMATIC, machineScene("gas_exciter", "Illuminate Noble Gas",
+                        "Feed FE to excite one connected same-gas volume; redstone can excite it directly too.",
+                        MagBlocks.GAS_EXCITER.get()));
+        blocks.forComponents(MagBlocks.AIR_SEPARATOR.get())
+                .addStoryBoard(SCHEMATIC, machineScene("air_separator", "Separate Atmospheric Gases",
+                        "Drive the rear shaft above 64 RPM. Five other faces drain independent gas tanks; sneak-use a face to reassign it.",
+                        MagBlocks.AIR_SEPARATOR.get()));
         blocks.forComponents(MagBlocks.MHD_JET.get())
                 .addStoryBoard(SCHEMATIC, machineScene("mhd_jet", "Fuel an MHD Jet",
                         "Install a magnet, point the jet with a wrench, then feed it FE and liquid lithium.",
@@ -79,6 +87,10 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .addStoryBoard(SCHEMATIC, machineScene("micro_thruster", "Fuel a Micro Thruster",
                         "Point the thruster with a wrench, fill its ferrofluid tank, and supply FE.",
                         MagBlocks.MICRO_THRUSTER.get()));
+        blocks.forComponents(MagBlocks.ION_THRUSTER.get())
+                .addStoryBoard(SCHEMATIC, machineScene("ion_thruster", "Choose an Ion Propellant",
+                        "Mount it on a ship and supply FE plus noble gas. Every gas changes thrust, speed, efficiency, and exhaust.",
+                        MagBlocks.ION_THRUSTER.get()));
         blocks.forComponents(MagBlocks.SOLAR_SAIL.get())
                 .addStoryBoard(SCHEMATIC, machineScene("solar_sail", "Use a Solar Sail",
                         "Mount panels on a ship and point them with a wrench; daylight and panel count drive thrust.",

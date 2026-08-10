@@ -12,7 +12,11 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
-/** BaseFlowingFluid variant whose gas rises instead of falling. */
+/**
+ * Directional gas fluids. {@link Source}/{@link Flowing} model gases lighter
+ * than air and climb toward ceilings; {@link DenseSource}/{@link DenseFlowing}
+ * mirror that behaviour downward for gases heavier than air.
+ */
 public final class GasFlowingFluid {
     private GasFlowingFluid() {}
 
@@ -186,6 +190,142 @@ public final class GasFlowingFluid {
                 final BlockState sideAboveState = level.getBlockState(side.above());
                 if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
                         && sideAboveState.getFluidState().isEmpty()) {
+                    final FluidState next = getFlowing(nextAmount, false);
+                    level.setBlockAndUpdate(side, next.createLegacyBlock());
+                    level.scheduleTick(side, next.getType(), next.getType().getTickDelay(level));
+                }
+            }
+        }
+    }
+
+    /** Source cell for a gas denser than air. It drifts down until supported,
+     * then spreads sideways across the floor. */
+    public static final class DenseSource extends BaseFlowingFluid.Source {
+        public DenseSource(final Properties properties) { super(properties); }
+
+        @Override
+        protected Map<Direction, FluidState> getSpread(final Level level, final BlockPos pos,
+                                                        final BlockState blockState) {
+            return Map.of(Direction.DOWN, getSource().defaultFluidState());
+        }
+
+        @Override
+        protected void spreadTo(final net.minecraft.world.level.LevelAccessor level, final BlockPos pos,
+                                 final BlockState state, final Direction direction, final FluidState target) {
+            if (direction == Direction.UP) return;
+            super.spreadTo(level, pos, state, direction, target);
+        }
+
+        @Override
+        protected boolean canBeReplacedWith(final FluidState state, final BlockGetter level,
+                                             final BlockPos pos, final Fluid fluidIn,
+                                             final Direction direction) {
+            return direction != Direction.UP;
+        }
+
+        @Override
+        protected void spread(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.isEmpty()) return;
+            if (pos.getY() <= level.getMinBuildHeight()) {
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                return;
+            }
+            final BlockPos below = pos.below();
+            final BlockState targetState = level.getBlockState(below);
+            if (targetState.getFluidState().isEmpty() && targetState.canBeReplaced()) {
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                super.spreadTo(level, below, targetState, Direction.DOWN, getSource().defaultFluidState());
+                return;
+            }
+            for (final Direction direction : Direction.Plane.HORIZONTAL) {
+                final BlockPos side = pos.relative(direction);
+                final BlockState sideState = level.getBlockState(side);
+                final BlockState sideBelowState = level.getBlockState(side.below());
+                if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
+                        && !sideBelowState.canBeReplaced()) {
+                    super.spreadTo(level, side, sideState, direction, getFlowing(7, false));
+                }
+            }
+        }
+    }
+
+    /** Flowing cell for a dense gas; vertical tails are fed from above and
+     * retract immediately when their feed disappears. */
+    public static final class DenseFlowing extends BaseFlowingFluid.Flowing {
+        public DenseFlowing(final Properties properties) { super(properties); }
+
+        @Override
+        protected Map<Direction, FluidState> getSpread(final Level level, final BlockPos pos,
+                                                        final BlockState blockState) {
+            return Map.of();
+        }
+
+        @Override
+        protected void spreadTo(final net.minecraft.world.level.LevelAccessor level, final BlockPos pos,
+                                 final BlockState state, final Direction direction, final FluidState target) {
+            if (direction == Direction.UP) return;
+            super.spreadTo(level, pos, state, direction, target);
+        }
+
+        @Override
+        protected boolean canBeReplacedWith(final FluidState state, final BlockGetter level,
+                                             final BlockPos pos, final Fluid fluidIn,
+                                             final Direction direction) {
+            return direction != Direction.UP;
+        }
+
+        @Override
+        public void tick(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.getValue(FALLING)) {
+                final FluidState feed = level.getFluidState(pos.above());
+                if (!feed.getType().isSame(this)) {
+                    BlockPos cursor = pos;
+                    while (cursor.getY() >= level.getMinBuildHeight()) {
+                        final FluidState cursorState = level.getFluidState(cursor);
+                        if (cursorState.isEmpty() || !cursorState.getType().isSame(this)
+                                || !cursorState.getValue(FALLING)) break;
+                        level.setBlockAndUpdate(cursor, Blocks.AIR.defaultBlockState());
+                        cursor = cursor.below();
+                    }
+                    return;
+                }
+                spread(level, pos, state);
+                return;
+            }
+            final FluidState below = level.getFluidState(pos.below());
+            if (!below.isEmpty() && below.getType().isSame(this)
+                    && hasHorizontalFeed(level, pos, state)) return;
+            super.tick(level, pos, state);
+        }
+
+        private boolean hasHorizontalFeed(final Level level, final BlockPos pos, final FluidState state) {
+            for (final Direction direction : Direction.Plane.HORIZONTAL) {
+                final FluidState neighbour = level.getFluidState(pos.relative(direction));
+                if (!neighbour.isEmpty() && neighbour.getType().isSame(this)
+                        && (neighbour.isSource() || neighbour.getAmount() > state.getAmount())) return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void spread(final Level level, final BlockPos pos, final FluidState state) {
+            if (state.isEmpty() || pos.getY() <= level.getMinBuildHeight()) return;
+            final BlockPos below = pos.below();
+            final BlockState belowState = level.getBlockState(below);
+            final FluidState belowFluid = belowState.getFluidState();
+            if (belowFluid.isEmpty() && belowState.canBeReplaced()) {
+                super.spreadTo(level, below, belowState, Direction.DOWN, getFlowing(8, true));
+                return;
+            }
+            if (!belowFluid.isEmpty() && belowFluid.getType().isSame(this)) return;
+            final int nextAmount = state.getAmount() - 1;
+            if (nextAmount <= 0 || belowState.canBeReplaced()) return;
+            for (final Direction direction : Direction.Plane.HORIZONTAL) {
+                final BlockPos side = pos.relative(direction);
+                final BlockState sideState = level.getBlockState(side);
+                final BlockState sideBelowState = level.getBlockState(side.below());
+                if (sideState.getFluidState().isEmpty() && (sideState.isAir() || sideState.canBeReplaced())
+                        && sideBelowState.getFluidState().isEmpty()) {
                     final FluidState next = getFlowing(nextAmount, false);
                     level.setBlockAndUpdate(side, next.createLegacyBlock());
                     level.scheduleTick(side, next.getType(), next.getType().getTickDelay(level));

@@ -82,7 +82,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // Input slot recess (tinted per kind so it reads as magnet / fuel / bucket).
         final int tint = switch (menu.kind()) {
             case TOKAMAK -> 0xFF2B2416;
-            case THRUSTER, FUSION_THRUSTER, JET -> 0xFF16242B;
+            case THRUSTER, ION_THRUSTER, FUSION_THRUSTER, JET -> 0xFF16242B;
             default -> 0xFF1B1B1B;
         };
         drawSlotRecess(g, leftPos + MachineMenu.inputX(menu.kind()), topPos + MachineMenu.INPUT_Y, tint);
@@ -108,7 +108,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         switch (menu.kind()) {
             case TOKAMAK -> { if (menu.stat1() >= 0)
                 drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.displayCurrent() / barMax, 0xFFE05A2A); }
-            case THRUSTER -> { if (menu.stat1() >= 0)
+            case THRUSTER, ION_THRUSTER -> { if (menu.stat1() >= 0)
                 drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.displayCurrent() / barMax, 0xFF3AC0E0); }
             case FUSION_THRUSTER -> { if (menu.stat1() >= 0)
                 drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.displayCurrent() / barMax, 0xFF7ADCE0); }
@@ -160,6 +160,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, menu.displayAuxiliary())));
             }
             case THRUSTER -> lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
+            case ION_THRUSTER -> {
+                lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
+                final String[] gases = {"helium", "neon", "argon", "krypton", "xenon", "radon", "external"};
+                if (menu.displayTier() >= 0) lines.add(Component.translatable("tooltip.magnetization.gui_propellant",
+                        Component.translatable("fluid_type.magnetization." + gases[Math.min(6, menu.displayTier())])));
+            }
             case FUSION_THRUSTER -> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
                 lines.add(Component.translatable("tooltip.magnetization.gui_fusion_size", Math.max(0, menu.displayAuxiliary())));
@@ -211,6 +217,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     menu.energyStored(), menu.energyMax()), mx, my);
         }
         if ((menu.kind() == MachineMenu.Kind.TOKAMAK || menu.kind() == MachineMenu.Kind.THRUSTER
+                || menu.kind() == MachineMenu.Kind.ION_THRUSTER
                 || menu.kind() == MachineMenu.Kind.FUSION_THRUSTER || menu.kind() == MachineMenu.Kind.JET)
                 && menu.displayCurrent() >= 0 && inBar(mx, my, FLUID_X)) {
             final Component t = menu.kind() == MachineMenu.Kind.TOKAMAK

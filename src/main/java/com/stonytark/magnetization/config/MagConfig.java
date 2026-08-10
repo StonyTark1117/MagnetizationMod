@@ -260,6 +260,47 @@ public final class MagConfig {
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.BooleanValue MAGNETIC_PEAKS_ENABLED;
+    public static final ModConfigSpec.IntValue GAS_EXCITER_CAPACITY;
+    public static final ModConfigSpec.IntValue GAS_EXCITER_RECEIVE;
+    public static final ModConfigSpec.IntValue GAS_EXCITER_FE_PER_TICK;
+    public static final ModConfigSpec.IntValue GAS_EXCITATION_MAX_CELLS;
+    public static final ModConfigSpec.BooleanValue RADON_RADIATION_ENABLED;
+    public static final ModConfigSpec.IntValue RADON_EXPOSURE_THRESHOLD_TICKS;
+    public static final ModConfigSpec.IntValue RADON_EXPOSURE_DECAY_PER_TICK;
+    public static final ModConfigSpec.IntValue RADON_DAMAGE_INTERVAL_TICKS;
+    public static final ModConfigSpec.DoubleValue RADON_DAMAGE_AMOUNT;
+    public static final ModConfigSpec.IntValue RADON_THRUSTER_EXPOSURE_RADIUS;
+    public static final ModConfigSpec.BooleanValue HELIUM_POCKET_GENERATION_ENABLED;
+    public static final ModConfigSpec.BooleanValue RADON_POCKET_GENERATION_ENABLED;
+    public static final ModConfigSpec.IntValue HELIUM_POCKET_RARITY;
+    public static final ModConfigSpec.IntValue HELIUM_POCKET_MIN_Y;
+    public static final ModConfigSpec.IntValue HELIUM_POCKET_MAX_Y;
+    public static final ModConfigSpec.IntValue RADON_POCKET_RARITY;
+    public static final ModConfigSpec.IntValue RADON_POCKET_MIN_Y;
+    public static final ModConfigSpec.IntValue RADON_POCKET_MAX_Y;
+    public static final ModConfigSpec.IntValue GAS_POCKET_MIN_CELLS;
+    public static final ModConfigSpec.IntValue GAS_POCKET_MAX_CELLS;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_MIN_RPM;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_MAX_RPM;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_STRESS;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_UPGRADE_STRESS;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_HELIUM_RATE_MILLI;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_NEON_RATE_MILLI;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_ARGON_RATE_MILLI;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_KRYPTON_RATE_MILLI;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_XENON_RATE_MILLI;
+    public static final ModConfigSpec.IntValue AIR_SEPARATOR_HELIUM3_WORK;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> AIR_SEPARATOR_ALLOWED_DIMENSIONS;
+    public static final ModConfigSpec.IntValue ION_THRUSTER_TANK;
+    public static final ModConfigSpec.IntValue ION_THRUSTER_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue ION_THRUSTER_FE_RECEIVE;
+    public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
+    public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_MAX_SPEED;
+    public static final ModConfigSpec.ConfigValue<List<? extends Double>> ION_THRUSTER_THRUST_MULTIPLIERS;
+    public static final ModConfigSpec.ConfigValue<List<? extends Double>> ION_THRUSTER_SPEED_MULTIPLIERS;
+    public static final ModConfigSpec.ConfigValue<List<? extends Integer>> ION_THRUSTER_FLUID_COSTS;
+    public static final ModConfigSpec.ConfigValue<List<? extends Integer>> ION_THRUSTER_FE_COSTS;
     public static final ModConfigSpec.EnumValue<com.stonytark.magnetization.worldgen.BiomeRarity> ANOMALY_BIOME_RARITY;
     public static final ModConfigSpec.DoubleValue  ANOMALY_CHAOS_STRENGTH;
 
@@ -1745,6 +1786,61 @@ public final class MagConfig {
 
         b.pop();
 
+        b.comment("Excitable noble gases, atmospheric separation, ion propulsion, and Radon safety.")
+         .translation("magnetization.configuration.nobleGases")
+         .push("nobleGases");
+        GAS_EXCITER_CAPACITY = b.defineInRange("gasExciterCapacity", 10_000, 0, 1_000_000_000);
+        GAS_EXCITER_RECEIVE = b.defineInRange("gasExciterReceive", 100, 0, 1_000_000_000);
+        GAS_EXCITER_FE_PER_TICK = b.defineInRange("gasExciterFePerTick", 20, 0, 1_000_000);
+        GAS_EXCITATION_MAX_CELLS = b.defineInRange("gasExcitationMaxCells", 4096, 1, 1_000_000);
+        RADON_RADIATION_ENABLED = b.define("radonRadiationEnabled", true);
+        RADON_EXPOSURE_THRESHOLD_TICKS = b.defineInRange("radonExposureThresholdTicks", 600, 1, 1_000_000);
+        RADON_EXPOSURE_DECAY_PER_TICK = b.defineInRange("radonExposureDecayPerTick", 2, 0, 1000);
+        RADON_DAMAGE_INTERVAL_TICKS = b.defineInRange("radonDamageIntervalTicks", 100, 1, 1_000_000);
+        RADON_DAMAGE_AMOUNT = b.defineInRange("radonDamageAmount", 1.0d, 0.0d, 1000.0d);
+        RADON_THRUSTER_EXPOSURE_RADIUS = b.defineInRange("radonThrusterExposureRadius", 4, 0, 64);
+        HELIUM_POCKET_GENERATION_ENABLED = b.define("heliumPocketGenerationEnabled", true);
+        RADON_POCKET_GENERATION_ENABLED = b.define("radonPocketGenerationEnabled", true);
+        HELIUM_POCKET_RARITY = b.defineInRange("heliumPocketRarity", 32, 1, 1_000_000);
+        HELIUM_POCKET_MIN_Y = b.defineInRange("heliumPocketMinY", -48, -2048, 2048);
+        HELIUM_POCKET_MAX_Y = b.defineInRange("heliumPocketMaxY", 16, -2048, 2048);
+        RADON_POCKET_RARITY = b.defineInRange("radonPocketRarity", 48, 1, 1_000_000);
+        RADON_POCKET_MIN_Y = b.defineInRange("radonPocketMinY", -60, -2048, 2048);
+        RADON_POCKET_MAX_Y = b.defineInRange("radonPocketMaxY", -16, -2048, 2048);
+        GAS_POCKET_MIN_CELLS = b.defineInRange("gasPocketMinCells", 2, 1, 4096);
+        GAS_POCKET_MAX_CELLS = b.defineInRange("gasPocketMaxCells", 6, 1, 4096);
+        AIR_SEPARATOR_TANK_CAPACITY = b.defineInRange("airSeparatorTankCapacity", 8000, 1, 1_000_000);
+        AIR_SEPARATOR_MIN_RPM = b.defineInRange("airSeparatorMinRpm", 64, 1, 1024);
+        AIR_SEPARATOR_MAX_RPM = b.defineInRange("airSeparatorMaxRpm", 256, 1, 1024);
+        AIR_SEPARATOR_STRESS = b.defineInRange("airSeparatorStress", 16, 0, 1024);
+        AIR_SEPARATOR_UPGRADE_STRESS = b.defineInRange("airSeparatorUpgradeStress", 8, 0, 1024);
+        // Fixed-point thousandths of a millibucket per tick at the minimum RPM.
+        AIR_SEPARATOR_HELIUM_RATE_MILLI = b.defineInRange("airSeparatorHeliumRateMilli", 500, 0, 1_000_000);
+        AIR_SEPARATOR_NEON_RATE_MILLI = b.defineInRange("airSeparatorNeonRateMilli", 1000, 0, 1_000_000);
+        AIR_SEPARATOR_ARGON_RATE_MILLI = b.defineInRange("airSeparatorArgonRateMilli", 8000, 0, 1_000_000);
+        AIR_SEPARATOR_KRYPTON_RATE_MILLI = b.defineInRange("airSeparatorKryptonRateMilli", 250, 0, 1_000_000);
+        AIR_SEPARATOR_XENON_RATE_MILLI = b.defineInRange("airSeparatorXenonRateMilli", 100, 0, 1_000_000);
+        AIR_SEPARATOR_HELIUM3_WORK = b.defineInRange("airSeparatorHelium3Work", 24_000, 1, 100_000_000);
+        AIR_SEPARATOR_ALLOWED_DIMENSIONS = b.defineListAllowEmpty("airSeparatorAllowedDimensions",
+                List.of("minecraft:overworld"), () -> "minecraft:overworld", value -> value instanceof String);
+        ION_THRUSTER_TANK = b.defineInRange("ionThrusterTank", 8000, 1, 1_000_000);
+        ION_THRUSTER_FE_CAPACITY = b.defineInRange("ionThrusterFeCapacity", 400_000, 0, 1_000_000_000);
+        ION_THRUSTER_FE_RECEIVE = b.defineInRange("ionThrusterFeReceive", 8_000, 0, 1_000_000_000);
+        ION_THRUSTER_BASE_THRUST = b.defineInRange("ionThrusterBaseThrust", 0.08d, 0.0d, 100.0d);
+        ION_THRUSTER_BASE_MAX_SPEED = b.defineInRange("ionThrusterBaseMaxSpeed", 8.0d, 0.0d, 100.0d);
+        // Order: Helium, Neon, Argon, Krypton, Xenon, Radon, external-tag fallback.
+        ION_THRUSTER_THRUST_MULTIPLIERS = b.defineListAllowEmpty("ionThrusterThrustMultipliers",
+                List.of(.55d, .80d, 1.0d, 1.30d, 1.70d, 1.90d, 1.0d), () -> 1.0d,
+                value -> value instanceof Double d && d >= 0.0d);
+        ION_THRUSTER_SPEED_MULTIPLIERS = b.defineListAllowEmpty("ionThrusterSpeedMultipliers",
+                List.of(1.40d, 1.25d, 1.0d, 1.20d, 1.30d, 1.15d, 1.0d), () -> 1.0d,
+                value -> value instanceof Double d && d >= 0.0d);
+        ION_THRUSTER_FLUID_COSTS = b.defineListAllowEmpty("ionThrusterFluidCosts",
+                List.of(2, 2, 3, 1, 1, 1, 2), () -> 1, value -> value instanceof Integer i && i >= 1);
+        ION_THRUSTER_FE_COSTS = b.defineListAllowEmpty("ionThrusterFeCosts",
+                List.of(100, 90, 80, 110, 130, 150, 100), () -> 100, value -> value instanceof Integer i && i >= 0);
+        b.pop();
+
         b.comment("Lightning Induced Remnant Magnetism (LIRM). Real-world phenomenon — a",
                   "lightning strike's transient magnetic field permanently stamps polarity onto",
                   "nearby ferromagnetic material.")
@@ -2539,6 +2635,71 @@ public final class MagConfig {
     public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
     public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
     public static boolean magneticPeaksEnabled()     { return booleanOr(MAGNETIC_PEAKS_ENABLED, false); }
+    public static int gasExciterCapacity() { return intOr(GAS_EXCITER_CAPACITY, 10_000); }
+    public static int gasExciterReceive() { return Math.min(intOr(GAS_EXCITER_RECEIVE, 100), gasExciterCapacity()); }
+    public static int gasExciterFePerTick() { return intOr(GAS_EXCITER_FE_PER_TICK, 20); }
+    public static int gasExcitationMaxCells() { return intOr(GAS_EXCITATION_MAX_CELLS, 4096); }
+    public static boolean radonRadiationEnabled() { return booleanOr(RADON_RADIATION_ENABLED, true); }
+    public static int radonExposureThresholdTicks() { return intOr(RADON_EXPOSURE_THRESHOLD_TICKS, 600); }
+    public static int radonExposureDecayPerTick() { return intOr(RADON_EXPOSURE_DECAY_PER_TICK, 2); }
+    public static int radonDamageIntervalTicks() { return intOr(RADON_DAMAGE_INTERVAL_TICKS, 100); }
+    public static double radonDamageAmount() { return doubleOr(RADON_DAMAGE_AMOUNT, 1.0d); }
+    public static int radonThrusterExposureRadius() { return intOr(RADON_THRUSTER_EXPOSURE_RADIUS, 4); }
+    public static boolean heliumPocketGenerationEnabled() { return booleanOr(HELIUM_POCKET_GENERATION_ENABLED, true); }
+    public static boolean radonPocketGenerationEnabled() { return booleanOr(RADON_POCKET_GENERATION_ENABLED, true); }
+    public static int heliumPocketRarity() { return intOr(HELIUM_POCKET_RARITY, 32); }
+    public static int heliumPocketMinY() { return intOr(HELIUM_POCKET_MIN_Y, -48); }
+    public static int heliumPocketMaxY() { return Math.max(heliumPocketMinY(), intOr(HELIUM_POCKET_MAX_Y, 16)); }
+    public static int radonPocketRarity() { return intOr(RADON_POCKET_RARITY, 48); }
+    public static int radonPocketMinY() { return intOr(RADON_POCKET_MIN_Y, -60); }
+    public static int radonPocketMaxY() { return Math.max(radonPocketMinY(), intOr(RADON_POCKET_MAX_Y, -16)); }
+    public static int gasPocketMinCells() { return intOr(GAS_POCKET_MIN_CELLS, 2); }
+    public static int gasPocketMaxCells() { return Math.max(gasPocketMinCells(), intOr(GAS_POCKET_MAX_CELLS, 6)); }
+    public static int airSeparatorTankCapacity() { return intOr(AIR_SEPARATOR_TANK_CAPACITY, 8000); }
+    public static int airSeparatorMinRpm() { return intOr(AIR_SEPARATOR_MIN_RPM, 64); }
+    public static int airSeparatorMaxRpm() { return Math.max(airSeparatorMinRpm(), intOr(AIR_SEPARATOR_MAX_RPM, 256)); }
+    public static float airSeparatorStress() { return intOr(AIR_SEPARATOR_STRESS, 16); }
+    public static float airSeparatorUpgradeStress() { return intOr(AIR_SEPARATOR_UPGRADE_STRESS, 8); }
+    public static int airSeparatorRateMilli(final int index) {
+        return switch (index) {
+            case 0 -> intOr(AIR_SEPARATOR_HELIUM_RATE_MILLI, 500);
+            case 1 -> intOr(AIR_SEPARATOR_NEON_RATE_MILLI, 1000);
+            case 2 -> intOr(AIR_SEPARATOR_ARGON_RATE_MILLI, 8000);
+            case 3 -> intOr(AIR_SEPARATOR_KRYPTON_RATE_MILLI, 250);
+            case 4 -> intOr(AIR_SEPARATOR_XENON_RATE_MILLI, 100);
+            default -> 0;
+        };
+    }
+    public static int airSeparatorHelium3Work() { return intOr(AIR_SEPARATOR_HELIUM3_WORK, 24_000); }
+    public static boolean airSeparatorAllowedIn(final net.minecraft.world.level.Level level) {
+        try { return AIR_SEPARATOR_ALLOWED_DIMENSIONS.get().contains(level.dimension().location().toString()); }
+        catch (Throwable ignored) { return level.dimension() == net.minecraft.world.level.Level.OVERWORLD; }
+    }
+    public static int ionThrusterTank() { return intOr(ION_THRUSTER_TANK, 8000); }
+    public static int ionThrusterFeCapacity() { return intOr(ION_THRUSTER_FE_CAPACITY, 400_000); }
+    public static int ionThrusterFeReceive() { return Math.min(intOr(ION_THRUSTER_FE_RECEIVE, 8_000), ionThrusterFeCapacity()); }
+    public static double ionThrusterBaseThrust() { return doubleOr(ION_THRUSTER_BASE_THRUST, 0.08d); }
+    public static double ionThrusterBaseMaxSpeed() { return doubleOr(ION_THRUSTER_BASE_MAX_SPEED, 8.0d); }
+    private static final double[] ION_THRUST_DEFAULTS = {.55d, .80d, 1.0d, 1.30d, 1.70d, 1.90d, 1.0d};
+    private static final double[] ION_SPEED_DEFAULTS = {1.40d, 1.25d, 1.0d, 1.20d, 1.30d, 1.15d, 1.0d};
+    private static final int[] ION_FLUID_DEFAULTS = {2, 2, 3, 1, 1, 1, 2};
+    private static final int[] ION_FE_DEFAULTS = {100, 90, 80, 110, 130, 150, 100};
+    public static double ionThrusterThrustMultiplier(final int profile) {
+        final int i = Math.max(0, Math.min(6, profile));
+        try { return ION_THRUSTER_THRUST_MULTIPLIERS.get().get(i); } catch (Throwable ignored) { return ION_THRUST_DEFAULTS[i]; }
+    }
+    public static double ionThrusterSpeedMultiplier(final int profile) {
+        final int i = Math.max(0, Math.min(6, profile));
+        try { return ION_THRUSTER_SPEED_MULTIPLIERS.get().get(i); } catch (Throwable ignored) { return ION_SPEED_DEFAULTS[i]; }
+    }
+    public static int ionThrusterFluidCost(final int profile) {
+        final int i = Math.max(0, Math.min(6, profile));
+        try { return ION_THRUSTER_FLUID_COSTS.get().get(i); } catch (Throwable ignored) { return ION_FLUID_DEFAULTS[i]; }
+    }
+    public static int ionThrusterFeCost(final int profile) {
+        final int i = Math.max(0, Math.min(6, profile));
+        try { return ION_THRUSTER_FE_COSTS.get().get(i); } catch (Throwable ignored) { return ION_FE_DEFAULTS[i]; }
+    }
     public static float  anvilBreakMagnetite()       { return (float) doubleOr(ANVIL_BREAK_MAGNETITE, 0.10d); }
     public static float  anvilBreakMaghemite()       { return (float) doubleOr(ANVIL_BREAK_MAGHEMITE, 0.18d); }
     public static float  anvilBreakHematite()        { return (float) doubleOr(ANVIL_BREAK_HEMATITE, 0.15d); }

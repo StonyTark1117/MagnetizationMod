@@ -29,6 +29,13 @@ public final class MagFeatures {
             REGISTER.register("meteorite_crater",
                     () -> new MeteoriteCraterFeature(NoneFeatureConfiguration.CODEC));
 
+    public static final DeferredHolder<Feature<?>, com.stonytark.magnetization.worldgen.GasPocketFeature> HELIUM_POCKET =
+            REGISTER.register("helium_pocket", () -> new com.stonytark.magnetization.worldgen.GasPocketFeature(
+                    NoneFeatureConfiguration.CODEC, MagFluids.HELIUM, true));
+    public static final DeferredHolder<Feature<?>, com.stonytark.magnetization.worldgen.GasPocketFeature> RADON_POCKET =
+            REGISTER.register("radon_pocket", () -> new com.stonytark.magnetization.worldgen.GasPocketFeature(
+                    NoneFeatureConfiguration.CODEC, MagFluids.RADON, false));
+
     // ── StructureProcessorTypes — separate registry, separate DeferredRegister ──
     public static final DeferredRegister<StructureProcessorType<?>> PROCESSOR_REGISTER =
             DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, Magnetization.MOD_ID);

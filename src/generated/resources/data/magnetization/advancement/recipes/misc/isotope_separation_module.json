@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:isotope_separation_module"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tritium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "magnetization:tritium_cell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tritium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:isotope_separation_module"
+    ]
+  }
+}

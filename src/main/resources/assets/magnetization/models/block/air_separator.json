@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/air_separator_side",
+    "down": "magnetization:block/air_separator_port",
+    "up": "magnetization:block/air_separator_port",
+    "north": "magnetization:block/air_separator_front",
+    "south": "magnetization:block/air_separator_shaft",
+    "east": "magnetization:block/air_separator_port",
+    "west": "magnetization:block/air_separator_port"
+  }
+}

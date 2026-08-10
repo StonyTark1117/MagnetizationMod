@@ -1,0 +1,10 @@
+{
+  "name": "Excitable Noble Gases",
+  "category": "magnetization:fluids",
+  "icon": "magnetization:xenon_bucket",
+  "advancement": "minecraft:recipes/root",
+  "pages": [
+    { "type": "patchouli:text", "text": "$(l)Helium$() and $(l)Neon$() rise, while Argon, Krypton, Xenon, and radioactive Radon settle. Their dormant forms are almost invisible. Adjacent redstone or a powered $(l:magnetization:machines/gas_exciter)Gas Exciter$() illuminates each gas in its own discharge colour." },
+    { "type": "patchouli:text", "text": "Radon exposure accumulates while your head is immersed or while you stand near a Radon-burning Ion Thruster. Leave the cloud to recover. Server owners can disable radiation without disabling Radon as a propellant." }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "p": {
+      "item": "magnetization:magnetic_plate"
+    },
+    "s": {
+      "item": "create:shaft"
+    },
+    "t": {
+      "item": "magnetization:tokamak_coil"
+    }
+  },
+  "pattern": [
+    "cpc",
+    "tst",
+    "cpc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:air_separator"
+  }
+}

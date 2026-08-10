@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["magnetization:helium", "magnetization:flowing_helium"]
+}

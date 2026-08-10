@@ -1,0 +1,8 @@
+{
+  "feature": "magnetization:radon_pocket",
+  "placement": [
+    { "type": "minecraft:in_square" },
+    { "type": "minecraft:height_range", "height": { "type": "minecraft:constant", "value": { "absolute": 0 } } },
+    { "type": "minecraft:biome" }
+  ]
+}

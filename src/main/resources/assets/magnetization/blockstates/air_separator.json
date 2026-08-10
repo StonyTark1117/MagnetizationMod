@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "magnetization:block/air_separator" },
+    "facing=east": { "model": "magnetization:block/air_separator", "y": 90 },
+    "facing=south": { "model": "magnetization:block/air_separator", "y": 180 },
+    "facing=west": { "model": "magnetization:block/air_separator", "y": 270 }
+  }
+}

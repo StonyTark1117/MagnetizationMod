@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["magnetization:xenon", "magnetization:flowing_xenon"]
+}

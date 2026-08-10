@@ -26,7 +26,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     public static final int BUTTON_RAILGUN_BLOCK_BREAKING = 0;
 
     /** Display flavour — drives slot tooltip + stat labels on the screen. */
-    public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
+    public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, ION_THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
         /** HUD-only kinds — no GUI menu, surface live status in WTHIT/Jade/TOP/Create goggles. */
         COIL, SAIL }
 
@@ -176,6 +176,7 @@ public final class MachineMenu extends AbstractContainerMenu {
             case TOKAMAK -> stack.is(MagItems.DEUTERIUM_CELL.get())
                     || stack.is(MagItems.TRITIUM_CELL.get()) || stack.is(MagItems.HELIUM_3_CELL.get());
             case THRUSTER -> stack.is(MagItems.FERROFLUID_BUCKET.get());
+            case ION_THRUSTER -> com.stonytark.magnetization.content.jet.IonThrusterBlockEntity.isPropellantBucket(stack);
             case FUSION_THRUSTER -> com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.isFusionFluidBucket(stack);
             case RAILGUN -> stack.is(MagItems.RAILGUN_REMOTE.get());
             case ELECTROLYZER -> stack.is(net.minecraft.world.item.Items.WATER_BUCKET);

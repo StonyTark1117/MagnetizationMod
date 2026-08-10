@@ -1,0 +1,7 @@
+{
+  "type": "magnetization:config_gated_add_features",
+  "flag": "helium_pockets",
+  "biomes": "#minecraft:is_overworld",
+  "features": "magnetization:helium_pocket",
+  "step": "underground_decoration"
+}

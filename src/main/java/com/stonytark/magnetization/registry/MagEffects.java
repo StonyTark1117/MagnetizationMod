@@ -19,6 +19,8 @@ public final class MagEffects {
 
     public static final DeferredHolder<MobEffect, MagnetizedEffect> MAGNETIZED =
             EFFECTS.register("magnetized", MagnetizedEffect::new);
+    public static final DeferredHolder<MobEffect, com.stonytark.magnetization.content.effect.RadonExposureEffect> RADON_EXPOSURE =
+            EFFECTS.register("radon_exposure", com.stonytark.magnetization.content.effect.RadonExposureEffect::new);
 
     /** 60-second Magnetized potion at amplifier 0. NeoForge auto-derives the
      *  splash, lingering, and tipped-arrow variants from this registration. */

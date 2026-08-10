@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["magnetization:argon", "magnetization:flowing_argon"]
+}

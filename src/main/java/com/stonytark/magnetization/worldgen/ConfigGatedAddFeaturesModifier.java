@@ -58,6 +58,8 @@ public record ConfigGatedAddFeaturesModifier(
                 case "magnetic_peaks" -> MagConfig.magneticPeaksEnabled();
                 case "anomaly_biome" -> MagConfig.ANOMALY_BIOME_ENABLED.get();
                 case "magnetic_gravel_in_vanilla" -> MagConfig.MAGNETIC_GRAVEL_IN_VANILLA_BIOMES.get();
+                case "helium_pockets" -> MagConfig.heliumPocketGenerationEnabled();
+                case "radon_pockets" -> MagConfig.radonPocketGenerationEnabled();
                 default -> false;
             };
         } catch (Throwable t) {

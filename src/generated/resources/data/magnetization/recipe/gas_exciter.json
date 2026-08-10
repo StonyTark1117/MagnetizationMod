@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "e": {
+      "item": "magnetization:electromagnet"
+    },
+    "g": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "rgr",
+    "cec",
+    "rgr"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:gas_exciter"
+  }
+}

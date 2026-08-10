@@ -1,0 +1,10 @@
+{
+  "name": "Air Separator",
+  "category": "magnetization:machines",
+  "icon": "magnetization:air_separator",
+  "advancement": "minecraft:recipes/root",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "Drive the rear shaft with at least 64 RPM. Five independent tanks fill at once. Each non-shaft face exposes one gas; use a bucket to collect it and sneak-use the face to reassign ports." },
+    { "type": "patchouli:text", "text": "Install an Isotope Separation Module by using it on the machine. It increases stress and slowly produces existing Helium-3 Crystals. Empty-hand use collects a finished crystal." }
+  ]
+}

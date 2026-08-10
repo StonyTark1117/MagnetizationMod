@@ -57,6 +57,15 @@ Optional integrations (auto-detected when installed):
 - **Expanded material families** — Lithium, Pyrrhotite, Hematite, and Titanomagnetite now have complete tool, armor, and horse-armor sets. Ferromagnetic Alloy, Lithium, Raw Lithium, and Raw Gallium also have compact storage blocks alongside the existing iron-oxide families.
 - **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines now consume their magnet over a strength-scaled burn time (toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
 
+## 1.4.0 feature set — Excitable noble gases
+
+- **Six ordinary noble gases** — Helium and Neon rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter turns a connected volume from nearly invisible gas into a gas-specific luminous discharge.
+- **Air Separator** — a Create-kinetic machine that simultaneously produces five atmospheric fractions into face-isolated output tanks. Sneak-use an output face to reassign ports, use a bucket on a face to collect it, and install the Isotope Separation Module for slow renewable Helium-3 crystals.
+- **Ion Thruster** — an electric Sable-ship drive with propellant-specific acceleration, cruise speed, fluid efficiency, FE cost, and exhaust. Xenon is the strongest safe propellant; Radon is stronger but exposes nearby living entities.
+- **Datapack compatibility** — external fluids can join `#magnetization:ion_thruster_propellants` and receive the neutral fallback profile. Worldgen, radiation, excitation, machine rates, and propulsion balance are configurable.
+
+The full implementation contract is in [PROPOSED_1.4.0.md](PROPOSED_1.4.0.md).
+
 ## How it works
 
 Every block in this addon either *emits a magnetic field* or *responds to one*. Fields have a polarity (NORTH or SOUTH), a strength tier (WEAK→EXTREME), and a shape (omnidirectional, directional, conical). Like polarities repel, opposite polarities attract. Forces are applied to:

@@ -49,6 +49,11 @@ public final class RecipeViewerInfo {
                     MagItems.HELIUM_3_CRYSTAL.get(), MagItems.DEUTERIUM_CELL.get(),
                     MagItems.TRITIUM_CELL.get(), MagItems.HELIUM_3_CELL.get())),
             topic("electrolyzer", 3, () -> stacks(MagItems.ELECTROLYZER.get())),
+            topic("noble_gases", 4, () -> stacks(
+                    MagItems.HELIUM_BUCKET.get(), MagItems.NEON_BUCKET.get(), MagItems.ARGON_BUCKET.get(),
+                    MagItems.KRYPTON_BUCKET.get(), MagItems.XENON_BUCKET.get(), MagItems.RADON_BUCKET.get())),
+            topic("air_separator", 4, () -> stacks(MagItems.AIR_SEPARATOR.get(), MagItems.ISOTOPE_SEPARATION_MODULE.get())),
+            topic("ion_thruster", 4, () -> stacks(MagItems.ION_THRUSTER.get())),
             topic("dipole_electromagnet", 3, () -> stacks(MagItems.DIPOLE_ELECTROMAGNET.get())),
             topic("structural_inducer", 3, () -> stacks(MagItems.STRUCTURAL_INDUCER.get())),
             topic("mhd_jet", 3, () -> stacks(MagItems.MHD_JET.get())),

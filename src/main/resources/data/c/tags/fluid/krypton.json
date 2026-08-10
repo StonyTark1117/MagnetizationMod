@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["magnetization:krypton", "magnetization:flowing_krypton"]
+}

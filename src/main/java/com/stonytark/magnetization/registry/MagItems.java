@@ -19,6 +19,12 @@ public final class MagItems {
 
     public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(Magnetization.MOD_ID);
 
+    private static DeferredItem<net.minecraft.world.item.BucketItem> gasBucket(
+            final String id, final java.util.function.Supplier<? extends net.minecraft.world.level.material.Fluid> fluid) {
+        return REGISTER.registerItem(id, p -> new net.minecraft.world.item.BucketItem(fluid.get(), p),
+                new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    }
+
     // Block items — wired to MagBlocks entries.
     public static final DeferredItem<BlockItem> ELECTROMAGNET    = REGISTER.registerSimpleBlockItem(MagBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> DIPOLE_ELECTROMAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.DIPOLE_ELECTROMAGNET);
@@ -41,6 +47,7 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> G_FORCE_CUSHION      = REGISTER.registerSimpleBlockItem(MagBlocks.G_FORCE_CUSHION);
     public static final DeferredItem<BlockItem> SOLAR_SAIL           = REGISTER.registerSimpleBlockItem(MagBlocks.SOLAR_SAIL);
     public static final DeferredItem<BlockItem> MICRO_THRUSTER       = REGISTER.registerSimpleBlockItem(MagBlocks.MICRO_THRUSTER);
+    public static final DeferredItem<BlockItem> ION_THRUSTER         = REGISTER.registerSimpleBlockItem(MagBlocks.ION_THRUSTER);
     public static final DeferredItem<BlockItem> MHD_JET              = REGISTER.registerSimpleBlockItem(MagBlocks.MHD_JET);
     public static final DeferredItem<BlockItem> FUSION_THRUSTER      = REGISTER.registerSimpleBlockItem(MagBlocks.FUSION_THRUSTER);
     public static final DeferredItem<BlockItem> RAILGUN_EMITTER      = REGISTER.registerSimpleBlockItem(MagBlocks.RAILGUN_EMITTER);
@@ -50,6 +57,8 @@ public final class MagItems {
                     com.stonytark.magnetization.content.railgun.RailgunRemoteItem::new,
                     new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> ELECTROLYZER         = REGISTER.registerSimpleBlockItem(MagBlocks.ELECTROLYZER);
+    public static final DeferredItem<BlockItem> GAS_EXCITER          = REGISTER.registerSimpleBlockItem(MagBlocks.GAS_EXCITER);
+    public static final DeferredItem<BlockItem> AIR_SEPARATOR        = REGISTER.registerSimpleBlockItem(MagBlocks.AIR_SEPARATOR);
     public static final DeferredItem<BlockItem> HOMOPOLAR_MOTOR      = REGISTER.registerSimpleBlockItem(MagBlocks.HOMOPOLAR_MOTOR);
     public static final DeferredItem<BlockItem> STRUCTURAL_INDUCER   = REGISTER.registerSimpleBlockItem(MagBlocks.STRUCTURAL_INDUCER);
     public static final DeferredItem<BlockItem> TOKAMAK_COIL         = REGISTER.registerSimpleBlockItem(MagBlocks.TOKAMAK_COIL);
@@ -133,6 +142,12 @@ public final class MagItems {
             REGISTER.registerItem("helium_3_bucket",
                     p -> new net.minecraft.world.item.BucketItem(MagFluids.HELIUM_3.get(), p),
                     new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1));
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> HELIUM_BUCKET = gasBucket("helium_bucket", MagFluids.HELIUM);
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> NEON_BUCKET = gasBucket("neon_bucket", MagFluids.NEON);
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> ARGON_BUCKET = gasBucket("argon_bucket", MagFluids.ARGON);
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> KRYPTON_BUCKET = gasBucket("krypton_bucket", MagFluids.KRYPTON);
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> XENON_BUCKET = gasBucket("xenon_bucket", MagFluids.XENON);
+    public static final DeferredItem<net.minecraft.world.item.BucketItem> RADON_BUCKET = gasBucket("radon_bucket", MagFluids.RADON);
     /** Bucket of liquid lithium — conductive working fluid for the MHD jet. */
     public static final DeferredItem<net.minecraft.world.item.BucketItem> LIQUID_LITHIUM_BUCKET =
             REGISTER.registerItem("liquid_lithium_bucket",
@@ -153,6 +168,8 @@ public final class MagItems {
     /** Helium-3 crystal — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
     public static final DeferredItem<Item> HELIUM_3_CRYSTAL =
             REGISTER.registerSimpleItem("helium_3_crystal", new Item.Properties());
+    public static final DeferredItem<Item> ISOTOPE_SEPARATION_MODULE =
+            REGISTER.registerSimpleItem("isotope_separation_module", new Item.Properties().stacksTo(1));
     /** Raw gallium — rare byproduct of mining zinc/aluminium-bearing ores; smelts to an ingot. */
     public static final DeferredItem<Item> RAW_GALLIUM =
             REGISTER.registerSimpleItem("raw_gallium", new Item.Properties());

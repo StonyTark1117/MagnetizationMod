@@ -335,6 +335,52 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | worldgen.meteoriteDecayTicks | number | 12000; 200-240000 | Ticks between a fresh meteorite's full-charge state and full inertness. Default 12000 = 10 in-game minutes. The strength tier steps EXTREME → STRONG → WEAK → inert as the timer elapses. Right-click with any ferromagnetic item to reset. |
 | COMMON | worldgen.meteoriteSaplingGrowTicks | number | 36000; 200-480000 | Ticks the Meteorite Sapling takes to mature into a fresh meteorite_core. Default 36000 = 30 in-game minutes. Adjust to taste; faster makes sapling-farming trivial, slower makes it a long-term project. |
 
+## Noble gases
+
+| Scope | Key | Type | Default / range | Description |
+|---|---|---|---|---|
+| COMMON | nobleGases.gasExciterCapacity | number | 10000; 0-1000000000 | — |
+| COMMON | nobleGases.gasExciterReceive | number | 100; 0-1000000000 | — |
+| COMMON | nobleGases.gasExciterFePerTick | number | 20; 0-1000000 | — |
+| COMMON | nobleGases.gasExcitationMaxCells | number | 4096; 1-1000000 | — |
+| COMMON | nobleGases.radonRadiationEnabled | boolean | true | — |
+| COMMON | nobleGases.radonExposureThresholdTicks | number | 600; 1-1000000 | — |
+| COMMON | nobleGases.radonExposureDecayPerTick | number | 2; 0-1000 | — |
+| COMMON | nobleGases.radonDamageIntervalTicks | number | 100; 1-1000000 | — |
+| COMMON | nobleGases.radonDamageAmount | number | 1.0; 0.0-1000.0 | — |
+| COMMON | nobleGases.radonThrusterExposureRadius | number | 4; 0-64 | — |
+| COMMON | nobleGases.heliumPocketGenerationEnabled | boolean | true | — |
+| COMMON | nobleGases.radonPocketGenerationEnabled | boolean | true | — |
+| COMMON | nobleGases.heliumPocketRarity | number | 32; 1-1000000 | — |
+| COMMON | nobleGases.heliumPocketMinY | number | -48; -2048-2048 | — |
+| COMMON | nobleGases.heliumPocketMaxY | number | 16; -2048-2048 | — |
+| COMMON | nobleGases.radonPocketRarity | number | 48; 1-1000000 | — |
+| COMMON | nobleGases.radonPocketMinY | number | -60; -2048-2048 | — |
+| COMMON | nobleGases.radonPocketMaxY | number | -16; -2048-2048 | — |
+| COMMON | nobleGases.gasPocketMinCells | number | 2; 1-4096 | — |
+| COMMON | nobleGases.gasPocketMaxCells | number | 6; 1-4096 | — |
+| COMMON | nobleGases.airSeparatorTankCapacity | number | 8000; 1-1000000 | — |
+| COMMON | nobleGases.airSeparatorMinRpm | number | 64; 1-1024 | — |
+| COMMON | nobleGases.airSeparatorMaxRpm | number | 256; 1-1024 | — |
+| COMMON | nobleGases.airSeparatorStress | number | 16; 0-1024 | — |
+| COMMON | nobleGases.airSeparatorUpgradeStress | number | 8; 0-1024 | — |
+| COMMON | nobleGases.airSeparatorHeliumRateMilli | number | 500; 0-1000000 | — |
+| COMMON | nobleGases.airSeparatorNeonRateMilli | number | 1000; 0-1000000 | — |
+| COMMON | nobleGases.airSeparatorArgonRateMilli | number | 8000; 0-1000000 | — |
+| COMMON | nobleGases.airSeparatorKryptonRateMilli | number | 250; 0-1000000 | — |
+| COMMON | nobleGases.airSeparatorXenonRateMilli | number | 100; 0-1000000 | — |
+| COMMON | nobleGases.airSeparatorHelium3Work | number | 24000; 1-100000000 | — |
+| COMMON | nobleGases.airSeparatorAllowedDimensions | list | [minecraft:overworld] | — |
+| COMMON | nobleGases.ionThrusterTank | number | 8000; 1-1000000 | — |
+| COMMON | nobleGases.ionThrusterFeCapacity | number | 400000; 0-1000000000 | — |
+| COMMON | nobleGases.ionThrusterFeReceive | number | 8000; 0-1000000000 | — |
+| COMMON | nobleGases.ionThrusterBaseThrust | number | 0.08; 0.0-100.0 | — |
+| COMMON | nobleGases.ionThrusterBaseMaxSpeed | number | 8.0; 0.0-100.0 | — |
+| COMMON | nobleGases.ionThrusterThrustMultipliers | list | [.55, .80, 1.0, 1.30, 1.70, 1.90, 1.0] | — |
+| COMMON | nobleGases.ionThrusterSpeedMultipliers | list | [1.40, 1.25, 1.0, 1.20, 1.30, 1.15, 1.0] | — |
+| COMMON | nobleGases.ionThrusterFluidCosts | list | [2, 2, 3, 1, 1, 1, 2] | — |
+| COMMON | nobleGases.ionThrusterFeCosts | list | [100, 90, 80, 110, 130, 150, 100] | — |
+
 ## Lightning
 
 | Scope | Key | Type | Default / range | Description |

@@ -135,6 +135,12 @@ public final class MagTags {
     public static final TagKey<Fluid> MHD_WORKING_FLUIDS =
             TagKey.create(Registries.FLUID, Magnetization.id("mhd_working_fluids"));
 
+    /** Gases accepted as propellant by the Ion Thruster. The six built-in
+     * noble gases have tuned profiles; datapack-added fluids use the neutral
+     * fallback profile so compatibility does not require a code hook. */
+    public static final TagKey<Fluid> ION_THRUSTER_PROPELLANTS =
+            TagKey.create(Registries.FLUID, Magnetization.id("ion_thruster_propellants"));
+
     /** Conductive metal blocks that work as Railgun rails (Lorentz-force track).
      *  Mirrors {@link #EDDY_CONDUCTORS} but kept separate so rail material is
      *  tunable independently of Lenz braking. Rails are destruction-immune. */

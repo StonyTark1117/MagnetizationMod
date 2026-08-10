@@ -26,12 +26,42 @@ def quoted_strings(value: str) -> list[str]:
     return [java_string(m.group(0)) for m in re.finditer(r'"(?:\\.|[^"\\])*"', value)]
 
 
+def split_java_args(value: str) -> list[str]:
+    """Split a Java argument list without breaking nested List.of calls."""
+    parts: list[str] = []
+    start = 0
+    depth = 0
+    quoted = False
+    escaped = False
+    for index, char in enumerate(value):
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                quoted = False
+            continue
+        if char == '"':
+            quoted = True
+        elif char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char == "," and depth == 0:
+            parts.append(value[start:index].strip())
+            start = index + 1
+    parts.append(value[start:].strip())
+    return parts
+
+
 def normalize_default(value: str) -> str:
     value = value.strip().replace("_", "")
     if value in {"true", "false"}:
         return value
-    if value.startswith("List.of"):
-        return "[]"
+    if value.startswith("List.of(") and value.endswith(")"):
+        inner = value[len("List.of("):-1]
+        return "[" + ", ".join(normalize_default(part) for part in split_java_args(inner)) + "]"
     if value.startswith('"'):
         return java_string(value)
     if re.fullmatch(r"-?(?:\d+(?:\.\d*)?|\.\d+)[dDfFlL]?", value):
@@ -70,14 +100,15 @@ def parse_spec() -> list[dict[str, str]]:
             continue
         name, builder = assignment.groups()
         chain = [line]
-        i += 1
-        while i < len(lines):
-            chain.append(lines[i])
-            # A comment string may contain a semicolon. Only the statement's
-            # trailing semicolon ends this fluent builder chain.
-            if re.search(r";\s*$", lines[i]):
-                break
+        if not re.search(r";\s*$", line):
             i += 1
+            while i < len(lines):
+                chain.append(lines[i])
+                # A comment string may contain a semicolon. Only the statement's
+                # trailing semicolon ends this fluent builder chain.
+                if re.search(r";\s*$", lines[i]):
+                    break
+                i += 1
         text = "\n".join(chain)
         define = re.search(r"\.define(InRange|Enum|ListAllowEmpty)?\((.*?)\);", text, re.S)
         if not define:
@@ -85,7 +116,7 @@ def parse_spec() -> list[dict[str, str]]:
             continue
         kind, args = define.groups()
         args = re.sub(r"\s+", " ", args).strip()
-        arg_values = [part.strip() for part in re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', args)]
+        arg_values = split_java_args(args)
         key = java_string(arg_values[0])
         if kind == "InRange":
             default = normalize_default(arg_values[1])
@@ -138,7 +169,8 @@ def render(values: list[dict[str, str]], lang: dict[str, str]) -> str:
         "",
     ]
     for section in sections:
-        title = {"guiLimits": "GUI limits"}.get(section, section.replace("_", " ").title())
+        title = {"guiLimits": "GUI limits", "nobleGases": "Noble gases"}.get(
+            section, section.replace("_", " ").title())
         out += [f"## {title}", "", "| Scope | Key | Type | Default / range | Description |", "|---|---|---|---|---|"]
         for value in (item for item in values if item["section"] == section):
             translation = value["translation"]

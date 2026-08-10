@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create:precision_mechanism"
+    },
+    {
+      "item": "magnetization:tritium_cell"
+    },
+    {
+      "item": "magnetization:tokamak_coil"
+    },
+    {
+      "item": "magnetization:tokamak_coil"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:isotope_separation_module"
+  }
+}

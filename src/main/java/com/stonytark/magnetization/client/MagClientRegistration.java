@@ -121,6 +121,19 @@ public final class MagClientRegistration {
         event.registerFluidType(gasFluid(0xFF9B72D6), // luminous violet
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
+        event.registerFluidType(excitableGasFluid(0xE6FFB38A, true),
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_TYPE.get());
+        event.registerFluidType(excitableGasFluid(0xE6FF2A16, true),
+                com.stonytark.magnetization.registry.MagFluids.NEON_TYPE.get());
+        event.registerFluidType(excitableGasFluid(0xE6B56CFF, false),
+                com.stonytark.magnetization.registry.MagFluids.ARGON_TYPE.get());
+        event.registerFluidType(excitableGasFluid(0xE6D8FFE6, false),
+                com.stonytark.magnetization.registry.MagFluids.KRYPTON_TYPE.get());
+        event.registerFluidType(excitableGasFluid(0xE64FA9FF, false),
+                com.stonytark.magnetization.registry.MagFluids.XENON_TYPE.get());
+        event.registerFluidType(excitableGasFluid(0xE66657FF, false),
+                com.stonytark.magnetization.registry.MagFluids.RADON_TYPE.get());
+
         // Liquid lithium: water textures tinted warm silvery metal.
         event.registerFluidType(new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             @Override
@@ -163,6 +176,37 @@ public final class MagClientRegistration {
                                        final com.mojang.blaze3d.vertex.VertexConsumer vertices,
                                        final net.minecraft.world.level.block.state.BlockState blockState) {
                 return com.stonytark.magnetization.client.render.CeilingGasRenderer.render(
+                        fluidState, level, pos, vertices, blockState);
+            }
+        };
+    }
+
+    private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions excitableGasFluid(
+            final int excitedTint, final boolean rises) {
+        return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
+            @Override public net.minecraft.resources.ResourceLocation getStillTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+            @Override public net.minecraft.resources.ResourceLocation getFlowingTexture() {
+                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            }
+            @Override public int getTintColor() { return 0x18FFFFFF; }
+            @Override
+            public int getTintColor(final net.minecraft.world.level.material.FluidState fluidState,
+                                    final net.minecraft.world.level.BlockAndTintGetter level,
+                                    final net.minecraft.core.BlockPos pos) {
+                final net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+                return state.hasProperty(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED)
+                        && state.getValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED)
+                        ? excitedTint : 0x18FFFFFF;
+            }
+            @Override
+            public boolean renderFluid(final net.minecraft.world.level.material.FluidState fluidState,
+                                       final net.minecraft.world.level.BlockAndTintGetter level,
+                                       final net.minecraft.core.BlockPos pos,
+                                       final com.mojang.blaze3d.vertex.VertexConsumer vertices,
+                                       final net.minecraft.world.level.block.state.BlockState blockState) {
+                return rises && com.stonytark.magnetization.client.render.CeilingGasRenderer.render(
                         fluidState, level, pos, vertices, blockState);
             }
         };

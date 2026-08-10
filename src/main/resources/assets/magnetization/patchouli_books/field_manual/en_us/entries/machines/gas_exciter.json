@@ -1,0 +1,10 @@
+{
+  "name": "Gas Exciter",
+  "category": "magnetization:machines",
+  "icon": "magnetization:gas_exciter",
+  "advancement": "minecraft:recipes/root",
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:gas_exciter", "text": "Feed FE to excite an adjacent connected volume of one noble gas. One elected exciter pays for the whole loaded network, preventing duplicate FE drain." },
+    { "type": "patchouli:crafting", "recipe": "magnetization:gas_exciter" }
+  ]
+}

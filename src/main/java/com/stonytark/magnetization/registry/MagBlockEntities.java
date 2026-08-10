@@ -116,6 +116,19 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity::new, MagBlocks.ELECTROLYZER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gas.GasExciterBlockEntity>> GAS_EXCITER =
+            REGISTER.register("gas_exciter", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.gas.GasExciterBlockEntity::new, MagBlocks.GAS_EXCITER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity>> AIR_SEPARATOR =
+            REGISTER.register("air_separator", () -> BlockEntityType.Builder
+                    .<com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity>of(
+                            (pos, state) -> new com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity(
+                                    MagBlockEntities.AIR_SEPARATOR.get(), pos, state),
+                            MagBlocks.AIR_SEPARATOR.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.induction.InductionPadBlockEntity>> INDUCTION_PAD =
             REGISTER.register("induction_pad", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.induction.InductionPadBlockEntity::new, MagBlocks.INDUCTION_PAD.get())
@@ -134,6 +147,11 @@ public final class MagBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity>> MICRO_THRUSTER =
             REGISTER.register("micro_thruster", () -> BlockEntityType.Builder
                     .of(com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity::new, MagBlocks.MICRO_THRUSTER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.IonThrusterBlockEntity>> ION_THRUSTER =
+            REGISTER.register("ion_thruster", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.jet.IonThrusterBlockEntity::new, MagBlocks.ION_THRUSTER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.jet.MhdJetBlockEntity>> MHD_JET =
