@@ -137,6 +137,7 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 - **Tagged metal armor** makes you magnetizable, including vanilla iron/chainmail/gold/netherite and the Magnetite, Ferromagnetic Alloy, Maghemite, Gallium, Lithium, Pyrrhotite, Hematite, and Titanomagnetite families. Each piece worn adds susceptibility — a full plate set is yanked hard by anchors. Mobs wearing tagged armor are pulled the same way.
 - **Magnetic Grapple** turns infrastructure into traversal. Right-click pointing at any space within 24 blocks of an active attractive field; the closest qualifying emitter pulls you toward it. Cooldown: 1 second.
 - **`/magnetization help`** lists every subcommand available to the caller's permission level with a one-line description.
+- **`/magnetization manual`** gives the running player a replacement Patchouli Field Manual. If the inventory is full, the book is dropped at the player's feet instead.
 - **`/magnetization version`** prints mod + Create + Sable + Aeronautics + NeoForge versions. Handy for bug reports.
 - **`/magnetization stats`** counts loaded emitters, live Sable ships, and entities carrying the Magnetized effect in the player's level.
 - **`/magnetization config show [filter]`** dumps live `MagConfig` values to chat. Optional substring filter (e.g. `show energy` for the FE-related knobs).

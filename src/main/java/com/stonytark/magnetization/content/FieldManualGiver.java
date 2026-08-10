@@ -26,6 +26,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class FieldManualGiver {
 
+    /** Result of trying to place a freshly constructed manual in a player's
+     * inventory. Shared by first-login delivery and the recovery command. */
+    public enum DeliveryResult {
+        INVENTORY,
+        DROPPED,
+        UNAVAILABLE
+    }
+
     /** Tag on the player's persistent NBT marking that the manual has been
      *  given. Persistent across deaths and logout/login; cleared only by
      *  manual NBT editing. */
@@ -46,16 +54,25 @@ public final class FieldManualGiver {
                 : new CompoundTag();
         if (root.getBoolean(GIVEN_FLAG)) return;
 
-        final ItemStack manual = buildFieldManual();
-        if (manual.isEmpty()) return;
-        // Try to add to inventory first; if full, drop at the player's feet so
-        // the gift isn't silently swallowed.
-        if (!player.getInventory().add(manual)) {
-            player.drop(manual, false);
-        }
+        final DeliveryResult result = giveFieldManual(player);
+        if (result == DeliveryResult.UNAVAILABLE) return;
 
         root.putBoolean(GIVEN_FLAG, true);
         persistent.put(ServerPlayer.PERSISTED_NBT_TAG, root);
+    }
+
+    /**
+     * Give a newly constructed Field Manual to {@code player}. The inventory is
+     * preferred; a full inventory drops the book at the player's feet instead
+     * of silently deleting it. Returns {@link DeliveryResult#UNAVAILABLE} when
+     * Patchouli's guide-book item or book data component cannot be resolved.
+     */
+    public static DeliveryResult giveFieldManual(final ServerPlayer player) {
+        final ItemStack manual = buildFieldManual();
+        if (manual.isEmpty()) return DeliveryResult.UNAVAILABLE;
+        if (player.getInventory().add(manual)) return DeliveryResult.INVENTORY;
+        player.drop(manual, false);
+        return DeliveryResult.DROPPED;
     }
 
     /** Construct {@code patchouli:guide_book} with the

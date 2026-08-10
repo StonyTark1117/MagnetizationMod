@@ -7,6 +7,7 @@ import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.content.FieldManualGiver;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -126,6 +127,8 @@ public final class MagCommands {
                         .executes(ctx -> printVersion(ctx.getSource())))
                 .then(Commands.literal("stats")
                         .executes(ctx -> printStats(ctx.getSource())))
+                .then(Commands.literal("manual")
+                        .executes(ctx -> giveFieldManual(ctx.getSource())))
                 .then(Commands.literal("help")
                         .executes(ctx -> printHelp(ctx.getSource())))
                 // Read-only but exposes server config — same permission as debug.
@@ -1257,6 +1260,43 @@ public final class MagCommands {
         return emitters + finalShips + finalMag;
     }
 
+    /** Give the running player a replacement Patchouli Field Manual. This is a
+     *  permission-free recovery command because the same book is already given
+     *  on first login and remains cheaply craftable. */
+    private static int giveFieldManual(final CommandSourceStack src) {
+        final ServerPlayer player;
+        try { player = src.getPlayerOrException(); }
+        catch (final CommandSyntaxException e) {
+            src.sendFailure(Component.literal("This command must be run by a player."));
+            return 0;
+        }
+
+        if (!MagConfig.patchouliCompatEnabled()) {
+            src.sendFailure(Component.literal(
+                    "The Field Manual is disabled by the server's Patchouli compatibility setting."));
+            return 0;
+        }
+        if (!ModList.get().isLoaded("patchouli")) {
+            src.sendFailure(Component.literal(
+                    "Patchouli is not installed, so the Field Manual is unavailable."));
+            return 0;
+        }
+
+        final FieldManualGiver.DeliveryResult result = FieldManualGiver.giveFieldManual(player);
+        if (result == FieldManualGiver.DeliveryResult.UNAVAILABLE) {
+            src.sendFailure(Component.literal(
+                    "Could not construct the Field Manual from the installed Patchouli version."));
+            return 0;
+        }
+
+        final boolean dropped = result == FieldManualGiver.DeliveryResult.DROPPED;
+        src.sendSuccess(() -> Component.literal(dropped
+                ? "Your inventory is full; a replacement Field Manual was dropped at your feet."
+                : "A replacement Field Manual was added to your inventory.")
+                .withStyle(ChatFormatting.GREEN), false);
+        return 1;
+    }
+
     /** Walks {@link MagConfig}'s static {@code ConfigValue} fields via reflection
      *  and prints their live values. Optional {@code filter} is a case-insensitive
      *  substring match on the field name — e.g. {@code /magnetization config show
@@ -1318,6 +1358,7 @@ public final class MagCommands {
                 new Entry("/magnetization version", "Print mod + Create + Sable + NeoForge versions.", any),
                 new Entry("/magnetization help", "Show this list.", any),
                 new Entry("/magnetization stats", "Loaded emitters / Sable ships / magnetized entity count.", any),
+                new Entry("/magnetization manual", "Give yourself a replacement Patchouli Field Manual.", any),
                 new Entry("/magnetization tp anomaly [player]", "Teleport to the nearest Magnetic Anomaly biome.", tpP),
                 new Entry("/magnetization tp petrified_forest [player]", "Teleport to the nearest Petrified Forest biome.", tpP),
                 new Entry("/magnetization config show [filter]", "Dump live config values (optional substring filter).", debugP),

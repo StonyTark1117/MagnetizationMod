@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added the permission-free **`/magnetization manual`** recovery command so players can replace a lost Patchouli Field Manual. A full inventory drops the replacement at the player's feet, and missing or disabled Patchouli support produces a clear error instead of an invalid book.
+
 ## 1.3.0 — Fusion Thruster, Railgun & the fuel overhaul
 
 A big content release: two new ship multiblocks, a real fusion-fuel chain with new fluids/items/worldgen, a powered Electrolyzer, machine rebalances, and a live status readout (WTHIT/Jade/The One Probe) on **every** Magnetization machine.
