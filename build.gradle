@@ -40,7 +40,6 @@ configurations {
     enchantmentIndustryRuntime
     enderTransmissionRuntime
     tfmgRuntime
-    largeWorldFixtureRuntime
     // Dedicated-server-only aggregate used by the large-world regression
     // reproducer. Keep it separate from localRuntime: that configuration also
     // contains client-only renderers and recipe viewers.
@@ -53,6 +52,12 @@ configurations {
                 dieselGeneratorsRuntime, copycatsRuntime,
                 enchantmentIndustryRuntime, enderTransmissionRuntime,
                 tfmgRuntime
+    }
+    // Uses the same mod set while every Magnetization compatibility boolean is
+    // disabled. This is essential: CNA's dense magnetite worldgen must exist in
+    // the saved fixture before the all-enabled reload can exercise issue #7.
+    largeWorldFixtureRuntime {
+        extendsFrom largeWorldReproRuntime
     }
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
@@ -97,7 +102,8 @@ def minimalProfileTasks = [
         'runendertransmissiongametestserver',
         'runtfmggametestserver',
         'runcuriosgametestserver',
-        'runlargeworldfixtureserver', 'runlargeworldreproserver', 'reproducelargeworldissue',
+        'runlargeworldbootstrapserver', 'runlargeworldfixtureserver',
+        'runlargeworldreproserver', 'reproducelargeworldissue',
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
         'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
@@ -550,6 +556,11 @@ neoForge {
             programArgument 'nogui'
             gameDirectory = file('run-large-world-repro')
         }
+        largeWorldBootstrapServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
         largeWorldFixtureServer {
             server()
             programArgument 'nogui'
@@ -758,7 +769,11 @@ tasks.matching { it.name == 'runServerSmoke' }.configureEach {
 // ModDev's run task otherwise replaces stdin when launched through a Gradle
 // daemon. The large-world supervisor owns this stream and uses it for Chunky
 // commands and clean server shutdowns between phases.
-tasks.matching { it.name == 'runLargeWorldFixtureServer' || it.name == 'runLargeWorldReproServer' }.configureEach {
+tasks.matching {
+    it.name == 'runLargeWorldBootstrapServer'
+            || it.name == 'runLargeWorldFixtureServer'
+            || it.name == 'runLargeWorldReproServer'
+}.configureEach {
     standardInput = System.in
 }
 
@@ -1206,9 +1221,6 @@ dependencies {
     largeWorldReproRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
     largeWorldReproRuntime("maven.modrinth:lithium:${lithium_repro_version}")
     largeWorldReproRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
-    largeWorldFixtureRuntime("maven.modrinth:chunky:${chunky_test_version}")
-    largeWorldFixtureRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
-
     // === Crash-repro deps (player's modpack StackOverflowError in
     // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
     // `#spartan_weaponry_unofficial:quivers` into both curios:back and

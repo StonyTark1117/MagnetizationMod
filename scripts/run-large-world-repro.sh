@@ -8,7 +8,7 @@ radius=${MAG_REPRO_RADIUS:-800}
 target_chunks=${MAG_REPRO_TARGET_CHUNKS:-10000}
 timeout_seconds=${MAG_REPRO_TIMEOUT_SECONDS:-3600}
 observe_seconds=${MAG_REPRO_OBSERVE_SECONDS:-180}
-shutdown_timeout_seconds=${MAG_REPRO_SHUTDOWN_TIMEOUT_SECONDS:-3600}
+shutdown_timeout_seconds=${MAG_REPRO_SHUTDOWN_TIMEOUT_SECONDS:-7200}
 neoforge_version=${MAG_REPRO_NEOFORGE_VERSION:-21.1.241}
 keep_world=${MAG_REPRO_KEEP_WORLD:-0}
 reload_fields_enabled=${MAG_REPRO_CREATE_NEW_AGE_FIELDS:-true}
@@ -50,9 +50,14 @@ stop_server() {
     # If the console path itself failed, terminate only this run profile's exact
     # VM-args process so cleanup cannot leave a background server behind.
     local game_pids
-    game_pids=$(pgrep -f '^/usr/lib/jvm/.+build/moddev/largeWorld(Fixture|Repro)ServerRunVmArgs[.]txt' || true)
+    game_pids=$(pgrep -f 'largeWorld(Bootstrap|Fixture|Repro)ServerRunVmArgs[.]txt' || true)
     if [[ -n "$game_pids" ]]; then
         kill -TERM $game_pids 2>/dev/null || true
+        sleep 2
+        local game_pid
+        for game_pid in $game_pids; do
+            kill -0 "$game_pid" 2>/dev/null && kill -KILL "$game_pid" 2>/dev/null || true
+        done
     fi
     if [[ -n ${console_fd:-} ]]; then
         eval "exec ${console_fd}>&-" || true
@@ -129,6 +134,10 @@ start_server() {
     local phase=$1
     local gradle_task=$2
     rm -f -- "$run_dir/server-input.fifo"
+    # Every readiness and watchdog decision must come from this process. Logs
+    # and crash reports have already been archived by the preceding phase.
+    rm -f -- "$run_dir/logs/latest.log"
+    rm -rf -- "$run_dir/crash-reports"
     mkfifo "$run_dir/server-input.fifo"
     exec {console_fd}<>"$run_dir/server-input.fifo"
     setsid "$repo_dir/gradlew" --no-daemon \
@@ -152,7 +161,7 @@ finish_server() {
     if kill -0 "$server_pid" 2>/dev/null; then
         echo "large-world-repro: server shutdown exceeded ${shutdown_timeout}s; terminating this profile after its save pass" >&2
         local game_pids
-        game_pids=$(pgrep -f '^/usr/lib/jvm/.+build/moddev/largeWorld(Fixture|Repro)ServerRunVmArgs[.]txt' || true)
+        game_pids=$(pgrep -f 'largeWorld(Bootstrap|Fixture|Repro)ServerRunVmArgs[.]txt' || true)
         [[ -z "$game_pids" ]] || kill -TERM $game_pids 2>/dev/null || true
         sleep 2
         [[ -z "$game_pids" ]] || kill -KILL $game_pids 2>/dev/null || true
@@ -198,6 +207,40 @@ set_compat_booleans() {
     sed -E -i "s/^([[:space:]]*createNewAgeFieldsEnabled[[:space:]]*=[[:space:]]*).*/\\1$cna_fields/" "$config"
 }
 
+verify_compat_booleans() {
+    local phase=$1
+    local expected_cna=$2
+    local expected_other=$3
+    local config="$run_dir/config/magnetization-common.toml"
+    local entries=()
+    local mismatches=()
+    local key value expected
+    while IFS='=' read -r key value; do
+        [[ -n "$key" ]] || continue
+        entries+=("$key=$value")
+        expected=$expected_other
+        [[ "$key" != createNewAgeFieldsEnabled ]] || expected=$expected_cna
+        [[ "$value" == "$expected" ]] || mismatches+=("$key=$value (expected $expected)")
+    done < <(awk '
+        /^\[compat\][[:space:]]*$/ { in_compat=1; next }
+        in_compat && /^\[/ { exit }
+        in_compat {
+            line=$0
+            gsub(/[[:space:]]/, "", line)
+            split(line, pair, "=")
+            if (pair[1] ~ /^[A-Za-z0-9_]+$/ && (pair[2] == "true" || pair[2] == "false")) {
+                print pair[1] "=" pair[2]
+            }
+        }
+    ' "$config")
+    (( ${#entries[@]} > 0 )) || fail "no [compat] booleans found for $phase verification"
+    printf '%s_compat_boolean_count=%s\n' "$phase" "${#entries[@]}" >>"$summary_file"
+    printf '%s_compat_booleans=%s\n' "$phase" "${entries[*]}" >>"$summary_file"
+    if (( ${#mismatches[@]} > 0 )); then
+        fail "$phase compatibility options were not set as requested: ${mismatches[*]}"
+    fi
+}
+
 count_chunks() {
     local region_dir="$run_dir/world/region"
     if [[ ! -d "$region_dir" ]]; then
@@ -215,6 +258,7 @@ has_watchdog_signature() {
 }
 
 verify_mods() {
+    local phase=${1:-reload}
     local log="$run_dir/logs/latest.log"
     local missing=()
     local mod_id
@@ -222,15 +266,15 @@ verify_mods() {
         grep -Fq "($mod_id)" "$log" || missing+=("$mod_id")
     done
     if (( ${#missing[@]} > 0 )); then
-        printf 'missing_mod_ids=%s\n' "${missing[*]}" >>"$summary_file"
+        printf '%s_missing_mod_ids=%s\n' "$phase" "${missing[*]}" >>"$summary_file"
         fail "dedicated server did not load expected mods: ${missing[*]}"
     fi
-    printf 'verified_mod_ids=%s\n' "${expected_mod_ids[*]}" >>"$summary_file"
+    printf '%s_verified_mod_ids=%s\n' "$phase" "${expected_mod_ids[*]}" >>"$summary_file"
 }
 
 # Bootstrap once so NeoForge writes the authoritative config schema. Its world
 # is deliberately discarded before the measured generation begins.
-start_server bootstrap runLargeWorldFixtureServer
+start_server bootstrap runLargeWorldBootstrapServer
 if ! wait_for_log 'Done \(' 300; then
     archive_runtime_files bootstrap-failed
     fail 'bootstrap server did not reach Done'
@@ -238,20 +282,19 @@ fi
 finish_server
 archive_runtime_files bootstrap
 set_compat_booleans false false
+verify_compat_booleans generation false false
 rm -rf -- "$run_dir/world"
 
-# Generate a genuinely fresh 10,000-chunk fixture with compatibility work
-# disabled. This isolates world creation from the defect under test; the
-# completed fixture is loaded below with every compatibility boolean enabled.
+# Generate a genuinely fresh 10,000-chunk fixture with the complete mod stack
+# present but compatibility work disabled. Keeping CNA installed here is
+# essential because its high-density magnetite feature supplies the emitters
+# that the all-enabled reload must index.
 start_server generation runLargeWorldFixtureServer
 if ! wait_for_log 'Done \(' 300; then
     archive_runtime_files generation-failed
     fail 'generation server did not reach Done'
 fi
-for fixture_mod in magnetization chunky mr_chunky_offline; do
-    grep -Fq "($fixture_mod)" "$run_dir/logs/latest.log" \
-        || fail "fixture server did not load expected mod: $fixture_mod"
-done
+verify_mods generation
 send_command "function chunky_offline:config/set {\"radius\":$radius,\"x\":0,\"z\":0}"
 # Chunky Offline requests cancellation of its auto-started default task before
 # applying the new radius. Confirm that cancellation, then start the selected
@@ -302,6 +345,7 @@ fi
 # The measured server load has every compatibility boolean enabled by default.
 # Setting MAG_REPRO_CREATE_NEW_AGE_FIELDS=false provides the matching control.
 set_compat_booleans "$reload_fields_enabled" true
+verify_compat_booleans reload "$reload_fields_enabled" true
 sed -E -i 's/^max-tick-time=.*/max-tick-time=60000/' "$run_dir/server.properties"
 
 # Load the complete fixture on a new dedicated-server process, then ask Chunky
@@ -309,9 +353,15 @@ sed -E -i 's/^max-tick-time=.*/max-tick-time=60000/' "$run_dir/server.properties
 start_server reload runLargeWorldReproServer
 if ! wait_for_log 'Done \(' 300; then
     archive_runtime_files reload-failed
+    if has_watchdog_signature; then
+        verify_mods reload
+        printf 'watchdog_during_reload=true\nresult=REPRODUCED_DURING_RELOAD_STARTUP\n' >>"$summary_file"
+        echo "large-world-repro: reproduced watchdog while loading the pregenerated world; evidence: $report_dir"
+        exit 0
+    fi
     fail 'reload server did not reach Done'
 fi
-verify_mods
+verify_mods reload
 send_command "function chunky_offline:config/set {\"radius\":$radius,\"x\":0,\"z\":0}"
 sleep 2
 send_command 'chunky confirm'

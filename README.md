@@ -391,8 +391,9 @@ Core release profiles plus isolated optional-mod suites make failures attributab
 `./gradlew reproduceLargeWorldIssue` runs the disposable regression scenario for
 [GitHub issue #7](https://github.com/StonyTark1117/MagnetizationMod/issues/7).
 It creates a fresh world on every attempt, uses Chunky Offline plus Chunky to
-generate at least 10,000 overworld chunks, then reloads that world with every
-server-safe optional compatibility mod and compatibility boolean enabled. The
+generate at least 10,000 overworld chunks with every server-safe optional mod
+installed and its Magnetization behavior disabled, then reloads that same
+CNA-worldgen-populated save with every compatibility boolean enabled. The
 reporter's NeoForge 21.1.241, Lithium 0.15.4, and ModernFix 5.27.20 versions are
 the defaults. Compact logs and a summary remain under
 `build/reports/large-world-repro/`; the generated world is deleted on exit.
