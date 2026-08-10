@@ -1,20 +1,23 @@
 # Magnetization 1.4.0: Excitable Noble Gases
 
-This document is both the approved feature specification and the implementation checklist for the 1.4.0 major feature set. Existing Helium-3 remains a separate fusion fuel with stable IDs and recipes.
+This document is both the approved feature specification and the implementation checklist for the 1.4.0 major feature set. Existing Hydrogen, Tritium, and Helium-3 remain fusion fuels with stable IDs and recipes while joining the visual gas system where appropriate.
 
 ## Gas system
 
 - Add ordinary Helium, Neon, Argon, Krypton, Xenon, and Radon as bucketable, nonflammable gases.
 - Helium and Neon rise and spread beneath ceilings. Argon, Krypton, Xenon, and Radon sink and spread across floors. Gas blocks have no collision.
-- Add a shared `EXCITED` state. Dormant gas is nearly transparent and dark; excited gas emits light level 15 and uses a distinct discharge color:
+- Add a shared `EXCITED` state to Hydrogen, Helium-3, and the six ordinary noble gases. Dormant excitable gas is nearly transparent and dark; excited gas emits light level 15 and uses a distinct discharge color:
+  - Hydrogen `#FF6680`
   - Helium `#FFB38A`
   - Neon `#FF2A16`
   - Argon `#B56CFF`
   - Krypton `#D8FFE6`
   - Xenon `#4FA9FF`
   - Radon `#6657FF`
+  - Helium-3 `#FFB38A`
 - Adjacent redstone or a powered Gas Exciter energizes a connected same-gas volume. Scan only loaded chunks, cap a network at 4,096 cells, and elect the lowest-position eligible exciter to pay FE once per tick.
 - Buckets never retain excitation.
+- Tritium does not require or accept excitation. Its radioactive decay produces steady cyan radioluminescence at light level 6.
 - Radon immersion accumulates exposure. At defaults, harm begins after 600 ticks, deals 1 damage per 100 ticks, and decays twice as fast in clean air. One config switch disables both gas and exhaust exposure without disabling Radon as fuel.
 
 ## Acquisition and machinery
@@ -54,5 +57,5 @@ This document is both the approved feature specification and the implementation 
 ## Compatibility guarantees
 
 - No storage blocks, tools, armor, cells, or solid forms are added for the six ordinary noble gases.
-- Existing Hydrogen, Tritium, Helium-3, and all 1.3.x IDs and processing recipes remain stable. The three existing placed gases adopt the same no-push/no-slow entity behavior as the new gas system.
+- Existing Hydrogen, Tritium, Helium-3, and all 1.3.x IDs and processing recipes remain stable. The three existing placed gases retain the same no-push/no-slow entity behavior as the new gas system; Hydrogen and Helium-3 become excitable, while Tritium remains steadily radioluminescent.
 - New worldgen affects newly generated chunks only; no retrogen is performed.

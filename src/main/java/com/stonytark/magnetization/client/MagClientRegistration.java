@@ -109,16 +109,16 @@ public final class MagClientRegistration {
             }
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
 
-        // Hydrogen: water textures tinted soft aqua to match the bucket fill.
-        event.registerFluidType(gasFluid(0xFFB9E7EB), // soft aqua
+        // Hydrogen: nearly invisible while dormant, rose-pink Balmer discharge while excited.
+        event.registerFluidType(excitableGasFluid(0xE6FF6680, true),
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
 
-        // Tritium: water textures tinted glowing cyan.
+        // Tritium: steady cyan radioluminescence; it does not need external excitation.
         event.registerFluidType(gasFluid(0xFF3FE0D0), // glowing cyan
                 com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
 
-        // Helium-3: water textures tinted luminous violet to match the crystal palette.
-        event.registerFluidType(gasFluid(0xFF9B72D6), // luminous violet
+        // Helium-3 shares ordinary helium's peach electronic discharge spectrum.
+        event.registerFluidType(excitableGasFluid(0xE6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
         event.registerFluidType(excitableGasFluid(0xE6FFB38A, true),

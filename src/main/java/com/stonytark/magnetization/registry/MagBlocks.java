@@ -458,14 +458,13 @@ public final class MagBlocks {
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
                             .mapColor(MapColor.COLOR_GRAY)));
 
-    /** Hydrogen liquid block — light, water-like, the isotope chain's first fluid. */
-    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> HYDROGEN_BLOCK =
-            REGISTER.register("hydrogen", () -> new net.minecraft.world.level.block.LiquidBlock(
+    /** Hydrogen gas — dormant until redstone or a Gas Exciter energizes it. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> HYDROGEN_BLOCK =
+            REGISTER.register("hydrogen", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
                     com.stonytark.magnetization.registry.MagFluids.HYDROGEN.get(),
-                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
-                            .mapColor(MapColor.COLOR_LIGHT_BLUE)));
+                    excitableGas(MapColor.COLOR_LIGHT_BLUE)));
 
-    /** Tritium liquid block — D-T fusion fuel, faintly glowing. */
+    /** Tritium gas — D-T fusion fuel with steady cyan radioluminescence. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> TRITIUM_BLOCK =
             REGISTER.register("tritium", () -> new net.minecraft.world.level.block.LiquidBlock(
                     com.stonytark.magnetization.registry.MagFluids.TRITIUM.get(),
@@ -473,13 +472,11 @@ public final class MagBlocks {
                             .mapColor(MapColor.COLOR_CYAN)
                             .lightLevel(s -> 6)));
 
-    /** Helium-3 liquid block — premium aneutronic fuel, luminous violet. */
-    public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> HELIUM_3_BLOCK =
-            REGISTER.register("helium_3", () -> new net.minecraft.world.level.block.LiquidBlock(
+    /** Helium-3 gas — premium aneutronic fuel with field-powered excitation. */
+    public static final DeferredBlock<com.stonytark.magnetization.content.fluid.ExcitableGasBlock> HELIUM_3_BLOCK =
+            REGISTER.register("helium_3", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
                     com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(),
-                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
-                            .mapColor(MapColor.COLOR_PURPLE)
-                            .lightLevel(s -> 4)));
+                    excitableGas(MapColor.COLOR_PURPLE)));
 
     private static BlockBehaviour.Properties excitableGas(final MapColor color) {
         return BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.WATER)
@@ -508,7 +505,7 @@ public final class MagBlocks {
             REGISTER.register("radon", () -> new com.stonytark.magnetization.content.fluid.ExcitableGasBlock(
                     com.stonytark.magnetization.registry.MagFluids.RADON.get(), excitableGas(MapColor.COLOR_PURPLE)));
 
-    /** Receive-only FE electrode that energizes an adjacent noble-gas network. */
+    /** Receive-only FE electrode that energizes an adjacent excitable-gas network. */
     public static final DeferredBlock<com.stonytark.magnetization.content.gas.GasExciterBlock> GAS_EXCITER =
             REGISTER.register("gas_exciter", () -> new com.stonytark.magnetization.content.gas.GasExciterBlock(
                     metal().lightLevel(state -> 4)));

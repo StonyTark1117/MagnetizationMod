@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Bounded, loaded-chunk-only flood fill for noble-gas excitation. */
+/** Bounded, loaded-chunk-only flood fill for connected-gas excitation. */
 public final class GasExcitation {
     private static final java.util.Map<ServerLevel, java.util.Map<BlockPos, Long>> LAST_GRACE_STEP =
             java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());

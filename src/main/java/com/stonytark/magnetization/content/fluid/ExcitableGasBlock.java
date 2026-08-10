@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FlowingFluid;
 
-/** A placed noble gas whose light/tint is derived from network excitation. */
+/** A placed gas whose light/tint is derived from network excitation. */
 public final class ExcitableGasBlock extends LiquidBlock {
     public static final BooleanProperty EXCITED = BooleanProperty.create("excited");
     public static final IntegerProperty EXCITATION_GRACE = IntegerProperty.create("excitation_grace", 0, 3);

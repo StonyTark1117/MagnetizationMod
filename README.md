@@ -59,7 +59,7 @@ Optional integrations (auto-detected when installed):
 
 ## 1.4.0 feature set — Excitable noble gases
 
-- **Six ordinary noble gases** — Helium and Neon rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter turns a connected volume from nearly invisible gas into a gas-specific luminous discharge.
+- **Excitable gases** — Hydrogen, Helium, Neon, and Helium-3 rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter turns a connected same-gas volume from nearly invisible gas into a gas-specific luminous discharge. Tritium instead radioluminesces steadily without external power.
 - **Air Separator** — a Create-kinetic machine that simultaneously produces five atmospheric fractions into face-isolated output tanks. Sneak-use an output face to reassign ports, use a bucket on a face to collect it, and install the Isotope Separation Module for slow renewable Helium-3 crystals.
 - **Ion Thruster** — an electric Sable-ship drive with propellant-specific acceleration, cruise speed, fluid efficiency, FE cost, and exhaust. Xenon is the strongest safe propellant; Radon is stronger but exposes nearby living entities.
 - **Datapack compatibility** — external fluids can join `#magnetization:ion_thruster_propellants` and receive the neutral fallback profile. Worldgen, radiation, excitation, machine rates, and propulsion balance are configurable.

@@ -67,6 +67,48 @@ public final class NobleGasGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
+    public static void fusionGasesHaveDistinctLuminescenceBehavior(final GameTestHelper helper) {
+        final BlockPos hydrogen = new BlockPos(0, 1, 1);
+        final BlockPos power = new BlockPos(1, 1, 1);
+        final BlockPos helium3 = new BlockPos(2, 1, 1);
+        final BlockPos tritium = new BlockPos(1, 2, 1);
+        helper.setBlock(hydrogen, MagFluids.HYDROGEN.get().defaultFluidState().createLegacyBlock());
+        helper.setBlock(helium3, MagFluids.HELIUM_3.get().defaultFluidState().createLegacyBlock());
+        helper.setBlock(tritium, MagFluids.TRITIUM.get().defaultFluidState().createLegacyBlock());
+
+        helper.assertTrue(MagBlocks.HYDROGEN_BLOCK.get() instanceof ExcitableGasBlock
+                        && MagBlocks.HELIUM_3_BLOCK.get() instanceof ExcitableGasBlock,
+                "Hydrogen and Helium-3 must participate in field-powered gas excitation");
+        helper.assertTrue(!isExcited(helper.getBlockState(hydrogen))
+                        && !isExcited(helper.getBlockState(helium3))
+                        && helper.getBlockState(hydrogen).getLightEmission() == 0
+                        && helper.getBlockState(helium3).getLightEmission() == 0,
+                "Dormant Hydrogen and Helium-3 must remain dark until energized");
+        helper.assertTrue(!helper.getBlockState(tritium).hasProperty(ExcitableGasBlock.EXCITED)
+                        && helper.getBlockState(tritium).getLightEmission() == 6,
+                "Tritium must radioluminesce continuously without an excitation state");
+
+        helper.setBlock(power, Blocks.REDSTONE_BLOCK);
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(hydrogen));
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(helium3));
+        helper.assertTrue(isExcited(helper.getBlockState(hydrogen))
+                        && helper.getBlockState(hydrogen).getLightEmission() == 15,
+                "Redstone did not excite Hydrogen into its luminous state");
+        helper.assertTrue(isExcited(helper.getBlockState(helium3))
+                        && helper.getBlockState(helium3).getLightEmission() == 15,
+                "Redstone did not excite Helium-3 into its luminous state");
+        helper.assertTrue(helper.getBlockState(tritium).getLightEmission() == 6,
+                "External power changed Tritium's steady radioluminescence");
+
+        tickFluidNow(helper, hydrogen);
+        tickFluidNow(helper, helium3);
+        helper.assertTrue(isExcited(helper.getBlockState(hydrogen.above()))
+                        && isExcited(helper.getBlockState(helium3.above())),
+                "An excited fusion gas lost its luminous state while rising");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
     public static void flowingGasRetainsExcitationWithoutDormantFrame(final GameTestHelper helper) {
         final BlockPos rising = new BlockPos(0, 1, 1);
         helper.setBlock(rising, excited(MagFluids.HELIUM.get().defaultFluidState().createLegacyBlock()));
