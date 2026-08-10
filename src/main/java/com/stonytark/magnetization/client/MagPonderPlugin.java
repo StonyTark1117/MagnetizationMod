@@ -73,7 +73,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                         MagBlocks.ELECTROLYZER.get()));
         blocks.forComponents(MagBlocks.GAS_EXCITER.get())
                 .addStoryBoard(SCHEMATIC, machineScene("gas_exciter", "Illuminate Noble Gas",
-                        "Feed FE to excite one connected same-gas volume; redstone can excite it directly too.",
+                        "Feed FE to excite one connected same-gas volume. A redstone signal pauses the machine; redstone can still excite gas directly.",
                         MagBlocks.GAS_EXCITER.get()));
         blocks.forComponents(MagBlocks.AIR_SEPARATOR.get())
                 .addStoryBoard(SCHEMATIC, machineScene("air_separator", "Separate Atmospheric Gases",

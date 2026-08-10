@@ -1826,7 +1826,11 @@ public final class MagConfig {
         ION_THRUSTER_TANK = b.defineInRange("ionThrusterTank", 8000, 1, 1_000_000);
         ION_THRUSTER_FE_CAPACITY = b.defineInRange("ionThrusterFeCapacity", 400_000, 0, 1_000_000_000);
         ION_THRUSTER_FE_RECEIVE = b.defineInRange("ionThrusterFeReceive", 8_000, 0, 1_000_000_000);
-        ION_THRUSTER_BASE_THRUST = b.defineInRange("ionThrusterBaseThrust", 0.08d, 0.0d, 100.0d);
+        ION_THRUSTER_BASE_THRUST = b.comment(
+                "Base velocity added per tick before the gas-specific thrust multiplier. 0.30 lets",
+                "even the weakest Helium profile move a small six-block ship while Xenon and Radon",
+                "retain their stronger acceleration.")
+                .defineInRange("ionThrusterBaseThrust", 0.30d, 0.0d, 100.0d);
         ION_THRUSTER_BASE_MAX_SPEED = b.defineInRange("ionThrusterBaseMaxSpeed", 8.0d, 0.0d, 100.0d);
         // Order: Helium, Neon, Argon, Krypton, Xenon, Radon, external-tag fallback.
         ION_THRUSTER_THRUST_MULTIPLIERS = b.defineListAllowEmpty("ionThrusterThrustMultipliers",
@@ -2678,7 +2682,7 @@ public final class MagConfig {
     public static int ionThrusterTank() { return intOr(ION_THRUSTER_TANK, 8000); }
     public static int ionThrusterFeCapacity() { return intOr(ION_THRUSTER_FE_CAPACITY, 400_000); }
     public static int ionThrusterFeReceive() { return Math.min(intOr(ION_THRUSTER_FE_RECEIVE, 8_000), ionThrusterFeCapacity()); }
-    public static double ionThrusterBaseThrust() { return doubleOr(ION_THRUSTER_BASE_THRUST, 0.08d); }
+    public static double ionThrusterBaseThrust() { return doubleOr(ION_THRUSTER_BASE_THRUST, 0.30d); }
     public static double ionThrusterBaseMaxSpeed() { return doubleOr(ION_THRUSTER_BASE_MAX_SPEED, 8.0d); }
     private static final double[] ION_THRUST_DEFAULTS = {.55d, .80d, 1.0d, 1.30d, 1.70d, 1.90d, 1.0d};
     private static final double[] ION_SPEED_DEFAULTS = {1.40d, 1.25d, 1.0d, 1.20d, 1.30d, 1.15d, 1.0d};

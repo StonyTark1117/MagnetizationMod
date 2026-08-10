@@ -374,7 +374,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | nobleGases.ionThrusterTank | number | 8000; 1-1000000 | — |
 | COMMON | nobleGases.ionThrusterFeCapacity | number | 400000; 0-1000000000 | — |
 | COMMON | nobleGases.ionThrusterFeReceive | number | 8000; 0-1000000000 | — |
-| COMMON | nobleGases.ionThrusterBaseThrust | number | 0.08; 0.0-100.0 | — |
+| COMMON | nobleGases.ionThrusterBaseThrust | number | 0.30; 0.0-100.0 | Base velocity added per tick before the gas-specific thrust multiplier. 0.30 lets even the weakest Helium profile move a small six-block ship while Xenon and Radon retain their stronger acceleration. |
 | COMMON | nobleGases.ionThrusterBaseMaxSpeed | number | 8.0; 0.0-100.0 | — |
 | COMMON | nobleGases.ionThrusterThrustMultipliers | list | [.55, .80, 1.0, 1.30, 1.70, 1.90, 1.0] | — |
 | COMMON | nobleGases.ionThrusterSpeedMultipliers | list | [1.40, 1.25, 1.0, 1.20, 1.30, 1.15, 1.0] | — |

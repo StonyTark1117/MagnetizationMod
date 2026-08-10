@@ -28,6 +28,7 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
         if (!MagConfig.wthitCompatEnabled()) return;
         registrar.body(EmitterBodyProvider.INSTANCE, Block.class);
         registrar.body(MachineBodyProvider.INSTANCE, Block.class);
+        registrar.body(GasExciterBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);
         registrar.body(CatalystBodyProvider.INSTANCE, Block.class);
         registrar.body(FerrofluidBodyProvider.INSTANCE, Block.class);

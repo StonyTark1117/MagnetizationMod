@@ -167,6 +167,52 @@ public final class ShipLifecycleGameTests {
         });
     }
 
+    /** The weakest Ion Thruster propellant must still provide useful motion to
+     * a representative six-block ship. Every other built-in profile has a
+     * larger thrust multiplier, so Helium is the balance floor for all fuels. */
+    @GameTest(template = EMPTY, timeoutTicks = 80, batch = "shipLifecycleIonThrusterMinimum")
+    public static void heliumIonThrusterMovesSixBlockShip(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final BlockPos thrusterPos = skyBase(helper, 240);
+        final List<BlockPos> blocks = new ArrayList<>();
+        blocks.add(thrusterPos);
+        for (int i = 1; i < 6; i++) blocks.add(thrusterPos.east(i));
+        final List<net.minecraft.world.level.block.state.BlockState> states = new ArrayList<>();
+        states.add(MagBlocks.ION_THRUSTER.get().defaultBlockState()
+                .setValue(DirectionalBlock.FACING, net.minecraft.core.Direction.NORTH));
+        for (int i = 1; i < 6; i++) states.add(Blocks.IRON_BLOCK.defaultBlockState());
+        place(level, blocks, states);
+
+        final var thruster = (com.stonytark.magnetization.content.jet.IonThrusterBlockEntity)
+                level.getBlockEntity(thrusterPos);
+        thruster.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                        com.stonytark.magnetization.registry.MagFluids.HELIUM.get(), 1_000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        thruster.energyBuffer().receiveEnergy(MagConfig.ionThrusterFeCapacity(), false);
+        final ServerSubLevel ship = assemble(level, thrusterPos, blocks);
+
+        helper.runAfterDelay(5L, () -> {
+            final var handle = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
+            if (handle == null || !handle.isValid()) {
+                remove(level, ship);
+                helper.fail("Six-block Ion Thruster ship has no valid rigid-body handle");
+                return;
+            }
+            final Vector3d thrustWorld = new Vector3d(0.0d, 0.0d, 1.0d);
+            ship.logicalPose().transformNormal(thrustWorld);
+            thrustWorld.normalize();
+            final double before = handle.getLinearVelocity(new Vector3d()).dot(thrustWorld);
+            helper.runAfterDelay(20L, () -> {
+                final double after = handle.getLinearVelocity(new Vector3d()).dot(thrustWorld);
+                remove(level, ship);
+                helper.assertTrue(after > before + 2.0d,
+                        "Helium Ion Thruster did not meaningfully accelerate a six-block ship; before="
+                                + before + " after=" + after);
+                helper.succeed();
+            });
+        });
+    }
+
     // RailgunHandler scans every registered emitter in the shared ServerLevel.
     // Separate batches prevent benchmark arcs and their temporary config values
     // from cross-pairing or overlapping one another.
