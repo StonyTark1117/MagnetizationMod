@@ -67,6 +67,37 @@ public final class NobleGasGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
+    public static void flowingGasRetainsExcitationWithoutDormantFrame(final GameTestHelper helper) {
+        final BlockPos rising = new BlockPos(0, 1, 1);
+        helper.setBlock(rising, excited(MagFluids.HELIUM.get().defaultFluidState().createLegacyBlock()));
+        tickFluidNow(helper, rising);
+        helper.assertTrue(isExcited(helper.getBlockState(rising.above())),
+                "Rising gas lost excitation while moving into its next cell");
+
+        final BlockPos sinking = new BlockPos(2, 2, 1);
+        helper.setBlock(sinking, excited(MagFluids.ARGON.get().defaultFluidState().createLegacyBlock()));
+        tickFluidNow(helper, sinking);
+        helper.assertTrue(isExcited(helper.getBlockState(sinking.below())),
+                "Sinking gas lost excitation while moving into its next cell");
+
+        final BlockPos adjusting = new BlockPos(1, 1, 0);
+        final var flowing = MagFluids.HELIUM_FLOWING.get().defaultFluidState()
+                .setValue(net.minecraft.world.level.material.FlowingFluid.LEVEL, 7)
+                .setValue(net.minecraft.world.level.material.FlowingFluid.FALLING, false);
+        helper.setBlock(adjusting, excited(flowing.createLegacyBlock()));
+        helper.setBlock(adjusting.above(),
+                excited(MagFluids.HELIUM.get().defaultFluidState().createLegacyBlock()));
+        helper.assertTrue(!helper.getBlockState(adjusting).getFluidState()
+                        .getValue(net.minecraft.world.level.material.FlowingFluid.FALLING),
+                "Flow adjustment precondition unexpectedly created a falling cell");
+        tickFluidNow(helper, adjusting);
+        final var adjustedState = helper.getBlockState(adjusting);
+        helper.assertTrue(isExcited(adjustedState),
+                "A flowing gas level adjustment rebuilt the block in its dormant state: " + adjustedState);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
     public static void excitationUsesOneFeOwnerAndHasGrace(final GameTestHelper helper) {
         final BlockPos gas = new BlockPos(1, 1, 1);
         final BlockPos low = new BlockPos(0, 1, 1);
@@ -199,5 +230,22 @@ public final class NobleGasGameTests {
             com.stonytark.magnetization.config.MagConfig.RADON_RADIATION_ENABLED.set(previous);
         }
         helper.succeed();
+    }
+
+    private static net.minecraft.world.level.block.state.BlockState excited(
+            final net.minecraft.world.level.block.state.BlockState state) {
+        return state.setValue(ExcitableGasBlock.EXCITED, true)
+                .setValue(ExcitableGasBlock.EXCITATION_GRACE, 3);
+    }
+
+    private static boolean isExcited(final net.minecraft.world.level.block.state.BlockState state) {
+        return state.hasProperty(ExcitableGasBlock.EXCITED)
+                && state.getValue(ExcitableGasBlock.EXCITED);
+    }
+
+    private static void tickFluidNow(final GameTestHelper helper, final BlockPos relativePos) {
+        final BlockPos absolutePos = helper.absolutePos(relativePos);
+        final var fluid = helper.getLevel().getFluidState(absolutePos);
+        if (!fluid.isEmpty()) fluid.tick(helper.getLevel(), absolutePos);
     }
 }
