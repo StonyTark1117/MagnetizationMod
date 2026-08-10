@@ -1,6 +1,6 @@
 package com.stonytark.magnetization.compat.wthit;
 
-import com.stonytark.magnetization.menu.MachineGuiData;
+import com.stonytark.magnetization.menu.MachineHudData;
 import mcp.mobius.waila.api.IBlockAccessor;
 import mcp.mobius.waila.api.IBlockComponentProvider;
 import mcp.mobius.waila.api.IPluginConfig;
@@ -20,7 +20,7 @@ public enum MachineBodyProvider implements IBlockComponentProvider {
     @Override
     public void appendBody(final ITooltip tooltip, final IBlockAccessor accessor, final IPluginConfig config) {
         final BlockEntity be = accessor.getBlockEntity();
-        if (!(be instanceof MachineGuiData data)) return;
+        if (!(be instanceof MachineHudData data)) return;
         for (final Component line : data.hudLines()) {
             tooltip.addLine(line);
         }

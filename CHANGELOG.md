@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added a dedicated **Air Separator GUI** with five live gas bars, per-gas production and output-face tooltips, clickable port reassignment, server-authoritative RPM/status/capacity readouts, and visible Isotope Separation Module and Helium-3 output slots.
+- Added compact Air Separator live status to **Create goggles, Jade, WTHIT, and The One Probe**, including RPM requirements, total gas storage, isotope progress, ready-crystal count, and explicit paused/running reasons.
+- Added a dedicated **Radon Exposure** status-effect icon so active exposure is identifiable in the HUD and inventory effect list.
+
 ## 1.3.1 — Field Manual recovery & large-world stability
 
 ### Added

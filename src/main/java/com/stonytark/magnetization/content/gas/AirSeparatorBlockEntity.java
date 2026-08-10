@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,10 +23,15 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /** Simultaneously condenses five atmospheric noble-gas fractions. */
-public final class AirSeparatorBlockEntity extends KineticBlockEntity {
+public final class AirSeparatorBlockEntity extends KineticBlockEntity
+        implements com.stonytark.magnetization.menu.MachineHudData {
     public static final int HELIUM = 0, NEON = 1, ARGON = 2, KRYPTON = 3, XENON = 4, COUNT = 5;
+    public enum OperatingStatus { DISALLOWED, NEEDS_SPEED, RUNNING, OUTPUTS_FULL }
     private final FluidTank[] tanks = new FluidTank[COUNT];
     private final long[] progressMilli = new long[COUNT];
     private final Direction[] outputs = new Direction[COUNT];
@@ -35,11 +42,11 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity {
             return stack.is(MagItems.ISOTOPE_SEPARATION_MODULE.get());
         }
         @Override public int getMaxStackSize() { return 1; }
-        @Override public void setChanged() { super.setChanged(); AirSeparatorBlockEntity.this.setChanged(); }
+        @Override public void setChanged() { super.setChanged(); AirSeparatorBlockEntity.this.inventoryChanged(); }
     };
     private final SimpleContainer crystalOutput = new SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int slot, final ItemStack stack) { return false; }
-        @Override public void setChanged() { super.setChanged(); AirSeparatorBlockEntity.this.setChanged(); }
+        @Override public void setChanged() { super.setChanged(); AirSeparatorBlockEntity.this.inventoryChanged(); }
     };
 
     public AirSeparatorBlockEntity(final net.minecraft.world.level.block.entity.BlockEntityType<?> type,
@@ -75,6 +82,11 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity {
     public SimpleContainer upgradeContainer() { return upgrade; }
     public SimpleContainer crystalOutputContainer() { return crystalOutput; }
     public net.neoforged.neoforge.items.IItemHandler itemHandler() { return automationItems; }
+
+    private void inventoryChanged() {
+        setChanged();
+        if (level != null && !level.isClientSide) notifyUpdate();
+    }
 
     private final net.neoforged.neoforge.items.IItemHandler automationItems = new net.neoforged.neoforge.items.IItemHandler() {
         @Override public int getSlots() { return 2; }
@@ -167,10 +179,101 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity {
         return target;
     }
 
+    /** Move one gas to the next physical output face, swapping with whatever
+     * currently occupies that face. Used by the dedicated GUI's port buttons. */
+    public Direction cycleGasOutput(final int gas, final int delta) {
+        if (gas < 0 || gas >= COUNT) return null;
+        syncFacing();
+        final Direction[] faces = outputFaces();
+        int currentIndex = -1;
+        for (int i = 0; i < faces.length; i++) if (faces[i] == outputs[gas]) currentIndex = i;
+        if (currentIndex < 0) return null;
+        final Direction targetFace = faces[Math.floorMod(currentIndex + delta, faces.length)];
+        final int displaced = gasForFace(targetFace);
+        if (displaced < 0) return null;
+        final Direction oldFace = outputs[gas];
+        outputs[gas] = targetFace;
+        outputs[displaced] = oldFace;
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        return targetFace;
+    }
+
     public int gasForFace(final Direction face) {
         syncFacing();
         for (int i = 0; i < COUNT; i++) if (outputs[i] == face) return i;
         return -1;
+    }
+
+    public Direction outputFace(final int gas) {
+        syncFacing();
+        return gas >= 0 && gas < COUNT ? outputs[gas] : Direction.NORTH;
+    }
+
+    public int currentRpm() { return Math.round(Math.abs(getSpeed())); }
+    public int totalStored() {
+        int total = 0;
+        for (final FluidTank tank : tanks) total += tank.getFluidAmount();
+        return total;
+    }
+    public int totalCapacity() { return Math.max(1, tanks[0].getCapacity()) * COUNT; }
+    public boolean hasUpgrade() { return upgrade.getItem(0).is(MagItems.ISOTOPE_SEPARATION_MODULE.get()); }
+    public int isotopeProgressPermille() {
+        if (!hasUpgrade()) return 0;
+        final long required = Math.max(1L, (long) MagConfig.airSeparatorHelium3Work() * 1000L);
+        return (int) Math.min(1000L, isotopeWorkMilli * 1000L / required);
+    }
+    public int currentRateMilli(final int gas) {
+        if (gas < 0 || gas >= COUNT || level == null || !MagConfig.airSeparatorAllowedIn(level)) return 0;
+        final int minRpm = MagConfig.airSeparatorMinRpm();
+        final float rpm = Math.abs(getSpeed());
+        if (rpm < minRpm || tanks[gas].getFluidAmount() >= tanks[gas].getCapacity()) return 0;
+        final float effective = Math.min(rpm, MagConfig.airSeparatorMaxRpm());
+        return Math.max(0, Math.round(MagConfig.airSeparatorRateMilli(gas) * effective / minRpm));
+    }
+    public OperatingStatus operatingStatus() {
+        if (level != null && !MagConfig.airSeparatorAllowedIn(level)) return OperatingStatus.DISALLOWED;
+        if (currentRpm() < MagConfig.airSeparatorMinRpm()) return OperatingStatus.NEEDS_SPEED;
+        boolean gasSpace = false;
+        for (final FluidTank tank : tanks) gasSpace |= tank.getFluidAmount() < tank.getCapacity();
+        if (!gasSpace && (!hasUpgrade() || !canOutputCrystal())) return OperatingStatus.OUTPUTS_FULL;
+        return OperatingStatus.RUNNING;
+    }
+
+    @Override
+    public List<Component> hudLines() {
+        final List<Component> lines = new ArrayList<>();
+        lines.add(Component.translatable("tooltip.magnetization.air_separator.rpm",
+                currentRpm(), MagConfig.airSeparatorMinRpm()).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("tooltip.magnetization.air_separator.storage",
+                totalStored(), totalCapacity()).withStyle(ChatFormatting.AQUA));
+        if (hasUpgrade()) {
+            final String percent = String.format(Locale.ROOT, "%.1f", isotopeProgressPermille() / 10.0D);
+            final int ready = crystalOutput.getItem(0).getCount();
+            lines.add(Component.translatable("tooltip.magnetization.air_separator.isotope_progress",
+                    percent, ready).withStyle(ChatFormatting.LIGHT_PURPLE));
+        } else {
+            lines.add(Component.translatable("tooltip.magnetization.air_separator.no_module")
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        }
+        lines.add(statusLine(operatingStatus()));
+        return lines;
+    }
+
+    public static Component statusLine(final OperatingStatus status) {
+        final String key = switch (status) {
+            case DISALLOWED -> "tooltip.magnetization.air_separator.status_disallowed";
+            case NEEDS_SPEED -> "tooltip.magnetization.air_separator.status_needs_speed";
+            case RUNNING -> "tooltip.magnetization.air_separator.status_running";
+            case OUTPUTS_FULL -> "tooltip.magnetization.air_separator.status_outputs_full";
+        };
+        final ChatFormatting colour = switch (status) {
+            case DISALLOWED -> ChatFormatting.RED;
+            case NEEDS_SPEED -> ChatFormatting.YELLOW;
+            case RUNNING -> ChatFormatting.GREEN;
+            case OUTPUTS_FULL -> ChatFormatting.GOLD;
+        };
+        return Component.translatable(key).withStyle(colour);
     }
 
     @Override public float calculateStressApplied() {
@@ -217,7 +320,6 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity {
         }
     }
 
-    private boolean hasUpgrade() { return upgrade.getItem(0).is(MagItems.ISOTOPE_SEPARATION_MODULE.get()); }
     private boolean canOutputCrystal() {
         final ItemStack out = crystalOutput.getItem(0);
         return out.isEmpty() || out.is(MagItems.HELIUM_3_CRYSTAL.get()) && out.getCount() < out.getMaxStackSize();
@@ -226,12 +328,20 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity {
     private void resetDefaultOutputs(final BlockState state) {
         final Direction front = state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
                 ? state.getValue(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
-        outputs[HELIUM] = Direction.UP;
-        outputs[NEON] = front.getCounterClockWise();
-        outputs[ARGON] = Direction.DOWN;
-        outputs[KRYPTON] = front.getClockWise();
-        outputs[XENON] = front;
+        final Direction[] faces = outputFaces(front);
+        for (int i = 0; i < COUNT; i++) outputs[i] = faces[i];
         lastFacing = front;
+    }
+
+    private Direction[] outputFaces() {
+        final Direction front = getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)
+                ? getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING) : Direction.NORTH;
+        return outputFaces(front);
+    }
+
+    private static Direction[] outputFaces(final Direction front) {
+        return new Direction[]{Direction.UP, front.getCounterClockWise(), Direction.DOWN,
+                front.getClockWise(), front};
     }
 
     /** Keep persisted port assignments attached to the same physical faces when

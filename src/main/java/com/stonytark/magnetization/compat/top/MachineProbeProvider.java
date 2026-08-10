@@ -1,7 +1,7 @@
 package com.stonytark.magnetization.compat.top;
 
 import com.stonytark.magnetization.Magnetization;
-import com.stonytark.magnetization.menu.MachineGuiData;
+import com.stonytark.magnetization.menu.MachineHudData;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
@@ -28,7 +28,7 @@ public enum MachineProbeProvider implements IProbeInfoProvider {
     public void addProbeInfo(final ProbeMode mode, final IProbeInfo probeInfo, final Player player,
                              final Level level, final BlockState state, final IProbeHitData data) {
         final BlockEntity be = level.getBlockEntity(data.getPos());
-        if (!(be instanceof MachineGuiData d)) return;
+        if (!(be instanceof MachineHudData d)) return;
         for (final Component line : d.hudLines()) {
             probeInfo.text(line);
         }

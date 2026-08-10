@@ -56,6 +56,30 @@ class NobleGasResourceCompletenessTest {
         resource("assets/magnetization/textures/item/isotope_separation_module.png");
         resource("data/magnetization/recipe/isotope_separation_module.json");
         assertTrue(lang.has("item.magnetization.isotope_separation_module"));
+        for (final String key : List.of(
+                "tooltip.magnetization.air_separator.rpm",
+                "tooltip.magnetization.air_separator.storage",
+                "tooltip.magnetization.air_separator.isotope_progress",
+                "tooltip.magnetization.air_separator.no_module",
+                "tooltip.magnetization.air_separator.status_disallowed",
+                "tooltip.magnetization.air_separator.status_needs_speed",
+                "tooltip.magnetization.air_separator.status_running",
+                "tooltip.magnetization.air_separator.status_outputs_full",
+                "gui.magnetization.air_separator.speed",
+                "gui.magnetization.air_separator.tank",
+                "gui.magnetization.air_separator.rate",
+                "gui.magnetization.air_separator.output_face",
+                "gui.magnetization.air_separator.port_tooltip",
+                "gui.magnetization.air_separator.upgrade_slot",
+                "gui.magnetization.air_separator.output_slot",
+                "gui.magnetization.air_separator.face_short.up",
+                "gui.magnetization.air_separator.face_short.down",
+                "gui.magnetization.air_separator.face_short.north",
+                "gui.magnetization.air_separator.face_short.south",
+                "gui.magnetization.air_separator.face_short.east",
+                "gui.magnetization.air_separator.face_short.west")) {
+            assertTrue(lang.has(key), () -> "Missing Air Separator GUI/HUD translation " + key);
+        }
     }
 
     @Test
@@ -65,6 +89,7 @@ class NobleGasResourceCompletenessTest {
             resource("data/magnetization/worldgen/placed_feature/" + gas + "_pocket.json");
             resource("data/magnetization/neoforge/biome_modifier/add_" + gas + "_pockets.json");
         }
+        resource("assets/magnetization/textures/mob_effect/radon_exposure.png");
         resource("assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/noble_gases.json");
         resource("assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/gas_exciter.json");
         resource("assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/air_separator.json");

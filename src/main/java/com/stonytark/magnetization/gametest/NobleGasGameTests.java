@@ -208,6 +208,65 @@ public final class NobleGasGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
+    public static void airSeparatorMenuSynchronizesTanksAndControlsPorts(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.AIR_SEPARATOR.get().defaultBlockState());
+        final AirSeparatorBlockEntity separator = (AirSeparatorBlockEntity) helper.getBlockEntity(pos);
+        for (int gas = 0; gas < AirSeparatorBlockEntity.COUNT; gas++) {
+            separator.tank(gas).fill(new FluidStack(new net.minecraft.world.level.material.Fluid[]{
+                    MagFluids.HELIUM.get(), MagFluids.NEON.get(), MagFluids.ARGON.get(),
+                    MagFluids.KRYPTON.get(), MagFluids.XENON.get()}[gas], 1000 + gas * 111),
+                    IFluidHandler.FluidAction.EXECUTE);
+        }
+
+        final var player = new net.minecraft.server.level.ServerPlayer(
+                helper.getLevel().getServer(), helper.getLevel(),
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "separator-menu"),
+                net.minecraft.server.level.ClientInformation.createDefault());
+        final var serverMenu = new com.stonytark.magnetization.menu.AirSeparatorMenu(1,
+                player.getInventory(), net.minecraft.world.inventory.ContainerLevelAccess.create(
+                helper.getLevel(), helper.absolutePos(pos)), helper.absolutePos(pos),
+                separator.upgradeContainer(), separator.crystalOutputContainer());
+
+        helper.assertTrue(serverMenu.clickMenuButton(player, AirSeparatorBlockEntity.HELIUM)
+                        && separator.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.WEST
+                        && separator.outputFace(AirSeparatorBlockEntity.NEON) == Direction.UP,
+                "GUI port control did not move Helium to the next face and swap Neon into its old port");
+
+        final int[][] transported = {null};
+        serverMenu.setSynchronizer(new net.minecraft.world.inventory.ContainerSynchronizer() {
+            @Override public void sendInitialData(final net.minecraft.world.inventory.AbstractContainerMenu menu,
+                                                  final net.minecraft.core.NonNullList<ItemStack> items,
+                                                  final ItemStack carried, final int[] data) {
+                transported[0] = data.clone();
+            }
+            @Override public void sendSlotChange(final net.minecraft.world.inventory.AbstractContainerMenu menu,
+                                                 final int slot, final ItemStack stack) {}
+            @Override public void sendCarriedChange(final net.minecraft.world.inventory.AbstractContainerMenu menu,
+                                                    final ItemStack stack) {}
+            @Override public void sendDataChange(final net.minecraft.world.inventory.AbstractContainerMenu menu,
+                                                 final int index, final int value) {}
+        });
+        serverMenu.broadcastFullState();
+        helper.assertTrue(transported[0] != null && transported[0].length == 32,
+                "Air Separator menu did not emit its complete 32-value process snapshot");
+
+        final var clientMenu = new com.stonytark.magnetization.menu.AirSeparatorMenu(1,
+                player.getInventory(), net.minecraft.world.inventory.ContainerLevelAccess.NULL, BlockPos.ZERO,
+                new net.minecraft.world.SimpleContainer(1), new net.minecraft.world.SimpleContainer(1));
+        for (int i = 0; i < transported[0].length; i++) clientMenu.setData(i, transported[0][i]);
+        helper.assertTrue(clientMenu.amount(AirSeparatorBlockEntity.HELIUM) == 1000
+                        && clientMenu.amount(AirSeparatorBlockEntity.XENON) == 1444
+                        && clientMenu.capacity() == separator.tank(AirSeparatorBlockEntity.HELIUM).getCapacity(),
+                "Client Air Separator GUI did not retain server-owned tank amounts or capacity");
+        helper.assertTrue(clientMenu.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.WEST
+                        && clientMenu.outputFace(AirSeparatorBlockEntity.NEON) == Direction.UP
+                        && separator.hudLines().size() >= 4,
+                "Client port display or shared goggles/Jade/WTHIT/TOP summary is incomplete");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
     public static void ionThrusterProfilesAndBucketGate(final GameTestHelper helper) {
         final net.minecraft.world.level.material.Fluid[] fluids = {MagFluids.HELIUM.get(), MagFluids.NEON.get(),
                 MagFluids.ARGON.get(), MagFluids.KRYPTON.get(), MagFluids.XENON.get(), MagFluids.RADON.get()};

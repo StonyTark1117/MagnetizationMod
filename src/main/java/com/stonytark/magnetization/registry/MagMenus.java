@@ -25,5 +25,10 @@ public final class MagMenus {
             REGISTER.register("machine",
                     () -> IMenuTypeExtension.create(com.stonytark.magnetization.menu.MachineMenu::fromNetwork));
 
+    /** Dedicated five-tank process and port-management GUI for the Air Separator. */
+    public static final DeferredHolder<MenuType<?>, MenuType<com.stonytark.magnetization.menu.AirSeparatorMenu>> AIR_SEPARATOR =
+            REGISTER.register("air_separator",
+                    () -> IMenuTypeExtension.create(com.stonytark.magnetization.menu.AirSeparatorMenu::fromNetwork));
+
     private MagMenus() {}
 }

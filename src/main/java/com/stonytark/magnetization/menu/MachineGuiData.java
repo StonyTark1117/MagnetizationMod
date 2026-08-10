@@ -1,7 +1,6 @@
 package com.stonytark.magnetization.menu;
 
 import com.stonytark.magnetization.content.MagneticMaterials;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -16,7 +15,7 @@ import java.util.List;
  * renders (energy bar + two stat lines) and the HUD providers (WTHIT/Jade/TOP/Create goggles)
  * list. A value of {@code -1} hides that readout.
  */
-public interface MachineGuiData extends IHaveGoggleInformation {
+public interface MachineGuiData extends MachineHudData {
 
     /** The 1-slot input container the menu binds (magnet / fuel cell / bucket). */
     Container guiInput();
@@ -85,6 +84,7 @@ public interface MachineGuiData extends IHaveGoggleInformation {
      *  Note: no stored-FE line here. WTHIT/Jade already draw a built-in energy
      *  bar from the {@code EnergyStorage} capability, so emitting one would
      *  double up (the well-known "two FE bars" bug). */
+    @Override
     default List<Component> hudLines() {
         final List<Component> out = new ArrayList<>();
         final ItemStack magnet = guiInput().getItem(0);
@@ -152,16 +152,6 @@ public interface MachineGuiData extends IHaveGoggleInformation {
             }
         }
         return out;
-    }
-
-    /** Keep Create goggles on the same authoritative status schema as the other
-     * machine readouts. The default is inherited by every machine BE; specialized
-     * kinetic machines may append their own extra lines in an override. */
-    @Override
-    default boolean addToGoggleTooltip(final List<Component> tooltip,
-                                       final boolean isPlayerSneaking) {
-        tooltip.addAll(hudLines());
-        return true;
     }
 
     /** Magnetic potency of the slotted material (0 = empty / not a magnet).

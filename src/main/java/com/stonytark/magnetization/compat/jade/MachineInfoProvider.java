@@ -1,7 +1,7 @@
 package com.stonytark.magnetization.compat.jade;
 
 import com.stonytark.magnetization.Magnetization;
-import com.stonytark.magnetization.menu.MachineGuiData;
+import com.stonytark.magnetization.menu.MachineHudData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,7 +24,7 @@ public enum MachineInfoProvider implements IBlockComponentProvider {
     @Override
     public void appendTooltip(final ITooltip tooltip, final BlockAccessor accessor, final IPluginConfig config) {
         final BlockEntity be = accessor.getBlockEntity();
-        if (!(be instanceof MachineGuiData data)) return;
+        if (!(be instanceof MachineHudData data)) return;
         for (final Component line : data.hudLines()) {
             tooltip.add(line);
         }

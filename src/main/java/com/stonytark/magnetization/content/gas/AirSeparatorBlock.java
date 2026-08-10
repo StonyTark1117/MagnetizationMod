@@ -90,33 +90,31 @@ public final class AirSeparatorBlock extends KineticBlock implements IBE<AirSepa
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    /** Face configuration is available in-world: sneak-click a port to cycle
-     * the gas assigned to it, or click normally to inspect its tank. */
+    /** Sneak-click a port for quick in-world reassignment; normal use opens the
+     * full process, inventory, and port-management screen. */
     @Override protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos,
                                                           final Player player, final BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer serverPlayer)
                 || !(level.getBlockEntity(pos) instanceof AirSeparatorBlockEntity be)) return InteractionResult.PASS;
         final Direction shaft = state.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite();
-        if (hit.getDirection() == shaft) {
-            serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.shaft"), true);
-            return InteractionResult.CONSUME;
-        }
-        if (!be.crystalOutputContainer().getItem(0).isEmpty() && !player.isShiftKeyDown()) {
-            final ItemStack crystal = be.takeCrystal();
-            if (!serverPlayer.addItem(crystal)) serverPlayer.drop(crystal, false);
-            return InteractionResult.CONSUME;
-        }
-        final int gas = be.gasForFace(hit.getDirection());
         if (player.isShiftKeyDown()) {
+            if (hit.getDirection() == shaft) {
+                serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.shaft"), true);
+                return InteractionResult.CONSUME;
+            }
             final int next = be.cycleFace(hit.getDirection(), 1);
             serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.port",
                     Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(next))), true);
-        } else {
-            serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.status",
-                    Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(gas)), be.tank(gas).getFluidAmount(),
-                    be.tank(gas).getCapacity()), true);
+            return InteractionResult.CONSUME;
         }
+
+        serverPlayer.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                (id, inventory, p) -> new com.stonytark.magnetization.menu.AirSeparatorMenu(id, inventory,
+                        net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        be.upgradeContainer(), be.crystalOutputContainer()),
+                Component.translatable("block.magnetization.air_separator")),
+                buffer -> com.stonytark.magnetization.menu.AirSeparatorMenu.writeOpen(buffer, pos));
         return InteractionResult.CONSUME;
     }
 
