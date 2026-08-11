@@ -193,6 +193,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.TRITIUM_CELL);
                         accept(output, MagItems.HELIUM_3_CELL);
                         accept(output, MagItems.HELIUM_3_CRYSTAL);
+                        accept(output, MagItems.AIR_FILTER);
                         accept(output, MagItems.ISOTOPE_SEPARATION_MODULE);
                         accept(output, MagItems.PYRRHOTITE_CATALYST);
                         accept(output, MagItems.ENHANCED_PYRRHOTITE_CATALYST);

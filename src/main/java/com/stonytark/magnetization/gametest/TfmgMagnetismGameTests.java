@@ -157,6 +157,7 @@ public final class TfmgMagnetismGameTests {
                 new ItemStack(MagItems.FERROMAGNETIC_INGOT.get()));
         assertIngredientAccepts(helper, recipes, "tfmg_polarize_magnet",
                 new ItemStack(MagItems.FERROMAGNETIC_INGOT.get()));
+        assertRecipePresent(helper, recipes, "air_filter_from_tfmg_plastic");
 
         final ItemStack permanentMagnet = new ItemStack(MagBlocks.PERMANENT_MAGNET.get());
         for (final String path : new String[]{

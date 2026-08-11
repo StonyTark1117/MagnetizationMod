@@ -173,7 +173,8 @@ public final class ImmersiveEngineeringGameTests {
         helper.assertTrue(MagItems.RAW_HEMATITE.get().getDefaultInstance().is(minerals),
                 "Raw Hematite is missing from the Ferrofluid mineral ingredient tag");
         for (final String path : new String[]{"immersiveengineering_mixer_ferrofluid",
-                "immersiveengineering_metal_press_magnetic_plate"}) {
+                "immersiveengineering_metal_press_magnetic_plate",
+                "air_filter_from_immersiveengineering_plastic"}) {
             final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("magnetization", path);
             helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
                     "Missing Immersive Engineering compatibility recipe " + id);

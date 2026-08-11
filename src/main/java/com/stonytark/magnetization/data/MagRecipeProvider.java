@@ -848,10 +848,15 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('t', MagItems.TOKAMAK_COIL.get())
                 .define('s', shaft)
                 .unlockedBy("has_coil", has(MagItems.TOKAMAK_COIL.get())).save(out, id("air_separator"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.AIR_FILTER.get())
+                .pattern("PP").pattern("PP")
+                .define('P', Items.PAPER)
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .save(out, id("air_filter"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.ISOTOPE_SEPARATION_MODULE.get())
                 .requires(ingr("create:precision_mechanism")).requires(MagItems.TRITIUM_CELL.get())
-                .requires(MagItems.TOKAMAK_COIL.get(), 2)
-                .unlockedBy("has_tritium", has(MagItems.TRITIUM_CELL.get()))
+                .requires(MagItems.AIR_FILTER.get(), 2)
+                .unlockedBy("has_air_filter", has(MagItems.AIR_FILTER.get()))
                 .save(out, id("isotope_separation_module"));
         // Fusion Thruster interior — a micro-thruster core wrapped in coils + titanomagnetite.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagItems.FUSION_THRUSTER.get(), 2)

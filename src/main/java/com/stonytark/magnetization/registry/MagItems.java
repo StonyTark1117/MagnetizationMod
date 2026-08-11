@@ -168,6 +168,9 @@ public final class MagItems {
     /** Helium-3 crystal — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
     public static final DeferredItem<Item> HELIUM_3_CRYSTAL =
             REGISTER.registerSimpleItem("helium_3_crystal", new Item.Properties());
+    /** Replaceable intake filter for the Air Separator's isotope upgrade. */
+    public static final DeferredItem<Item> AIR_FILTER =
+            REGISTER.registerSimpleItem("air_filter", new Item.Properties());
     public static final DeferredItem<Item> ISOTOPE_SEPARATION_MODULE =
             REGISTER.registerSimpleItem("isotope_separation_module", new Item.Properties().stacksTo(1));
     /** Raw gallium — rare byproduct of mining zinc/aluminium-bearing ores; smelts to an ingot. */

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -76,7 +77,22 @@ class NobleGasResourceCompletenessTest {
         resource("assets/magnetization/models/item/isotope_separation_module.json");
         resource("assets/magnetization/textures/item/isotope_separation_module.png");
         resource("data/magnetization/recipe/isotope_separation_module.json");
+        resource("assets/magnetization/models/item/air_filter.json");
+        resource("data/magnetization/recipe/air_filter.json");
         assertTrue(lang.has("item.magnetization.isotope_separation_module"));
+        assertTrue(lang.has("item.magnetization.air_filter"));
+        assertTrue(lang.has("tooltip.magnetization.air_filter.use"));
+        final JsonObject isotopeRecipe = json("data/magnetization/recipe/isotope_separation_module.json");
+        final String isotopeIngredients = isotopeRecipe.getAsJsonArray("ingredients").toString();
+        assertEquals(2, isotopeIngredients.split("magnetization:air_filter", -1).length - 1,
+                "Isotope module must consume two Air Filters");
+        assertFalse(isotopeIngredients.contains("magnetization:tokamak_coil"),
+                "Tokamak coils must not be required by the isotope module");
+        assertPaperFilterRecipe(json("data/magnetization/recipe/air_filter.json"));
+        assertPlasticFilterRecipe("data/magnetization/recipe/air_filter_from_immersiveengineering_plastic.json",
+                "immersiveengineering", "immersive_engineering", "c:plates/plastic");
+        assertPlasticFilterRecipe("data/magnetization/recipe/air_filter_from_tfmg_plastic.json",
+                "tfmg", "tfmg_processing", "c:ingots/plastic");
         for (final String key : List.of(
                 "tooltip.magnetization.air_separator.rpm",
                 "tooltip.magnetization.air_separator.storage",
@@ -101,6 +117,31 @@ class NobleGasResourceCompletenessTest {
                 "gui.magnetization.air_separator.face_short.west")) {
             assertTrue(lang.has(key), () -> "Missing Air Separator GUI/HUD translation " + key);
         }
+    }
+
+    private static void assertPaperFilterRecipe(final JsonObject recipe) {
+        assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
+        assertEquals(List.of("PP", "PP"), recipe.getAsJsonArray("pattern").asList().stream()
+                .map(element -> element.getAsString()).toList());
+        assertEquals("minecraft:paper", recipe.getAsJsonObject("key").getAsJsonObject("P")
+                .get("item").getAsString());
+        assertEquals("magnetization:air_filter", recipe.getAsJsonObject("result").get("id").getAsString());
+    }
+
+    private static void assertPlasticFilterRecipe(final String path, final String mod, final String feature,
+                                                   final String tag) {
+        final JsonObject recipe = json(path);
+        final String conditions = recipe.getAsJsonArray("neoforge:conditions").toString();
+        assertTrue(conditions.contains("\"modid\":\"" + mod + "\""),
+                () -> "Missing mod condition in " + path);
+        assertTrue(conditions.contains("\"feature\":\"" + feature + "\""),
+                () -> "Missing config condition in " + path);
+        assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
+        assertEquals(List.of("PP", "PP"), recipe.getAsJsonArray("pattern").asList().stream()
+                .map(element -> element.getAsString()).toList());
+        assertEquals(tag, recipe.getAsJsonObject("key").getAsJsonObject("P")
+                .get("tag").getAsString());
+        assertEquals("magnetization:air_filter", recipe.getAsJsonObject("result").get("id").getAsString());
     }
 
     @Test

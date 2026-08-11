@@ -37,6 +37,7 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "create_new_age_energising_permanent_magnet",
                 "immersiveengineering_mixer_ferrofluid",
                 "immersiveengineering_metal_press_magnetic_plate",
+                "air_filter_from_immersiveengineering_plastic",
                 "alexscaves_permanent_magnet_from_neodymium",
                 "alexscaves_azure_magnet_from_permanent_magnet",
                 "alexscaves_scarlet_magnet_from_permanent_magnet",
