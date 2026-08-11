@@ -55,7 +55,7 @@ Optional integrations (auto-detected when installed):
 - **Electrolyzer** — a cauldron-style powered machine that splits water + FE into **Hydrogen**, the entry point of the fusion-fuel ladder: **Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3**. Tritium is bred from Deuterium + Lithium; Helium-3 is enriched or found in rare deepslate/End geodes.
 - **New worldgen** — a minor **Lithium ore** (overworld + deepslate) and a rare **Helium-3 Geode** whose blocks drop **Helium-3 Crystals**. Nine crystals compact into **Solid Helium-3**, and the storage block unpacks back into nine crystals.
 - **Expanded material families** — Lithium, Pyrrhotite, Hematite, and Titanomagnetite now have complete tool, armor, and horse-armor sets. Ferromagnetic Alloy, Lithium, Raw Lithium, and Raw Gallium also have compact storage blocks alongside the existing iron-oxide families.
-- **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines now consume their magnet over a strength-scaled burn time (toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
+- **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines can consume their magnet over a strength-scaled burn time (disabled by default, toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
 
 ## 1.4.0 feature set — Excitable noble gases
 

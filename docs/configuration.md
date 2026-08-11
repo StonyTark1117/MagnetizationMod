@@ -172,7 +172,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | propulsion.railgunFeReceive | number | 64000; 0-1000000000 | Max FE accepted per tick from cables. |
 | COMMON | propulsion.railgunBreaksBlocks | boolean | true | Globally permits launched ships to smash obstructing blocks in their path (rails + emitters are immune). Each paired railgun also has its own GUI toggle. |
 | COMMON | propulsion.railgunDestroyBudgetPerTick | number | 16; 0-256 | Max blocks smashed per tick per launch. |
-| COMMON | propulsion.magnetSlotConsumesFuel | boolean | true | On (default): the Homopolar Motor + MHD Jet consume their magnet over time. Off: legacy infinite magnets. |
+| COMMON | propulsion.magnetSlotConsumesFuel | boolean | false | Off (default): magnets are permanent legacy inputs. Enable to make the Homopolar Motor + MHD Jet consume their magnet over time. |
 | COMMON | propulsion.magnetBurnTicksBase | number | 1200; 0-10000000 | Base active ticks a magnet lasts before the potency + form bonus. |
 | COMMON | propulsion.magnetBurnTicksPerPotency | number | 400; 0-1000000 | Extra burn ticks per potency point — stronger magnets last longer AND output stronger. |
 | COMMON | propulsion.magnetBurnBlockFormMultiplier | number | 9; 1-64 | Block forms (storage/raw blocks) hold ~9 units, so they burn this many times longer. |

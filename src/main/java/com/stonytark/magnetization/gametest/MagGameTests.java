@@ -1783,8 +1783,8 @@ public final class MagGameTests {
     }
 
     /**
-     * #125 (C6) — A magnet-slot machine burns its magnet down and stops; with the
-     * legacy config the magnet is never consumed. Uses a tiny burn time (config
+     * #125 (C6) — A magnet-slot machine burns its magnet down and stops when
+     * enabled; with the default-off config the magnet is never consumed. Uses a tiny burn time (config
      * mutated in an isolated batch) so it completes within the test window.
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "configMutating")
@@ -1814,7 +1814,7 @@ public final class MagGameTests {
                 // Restore defaults for the rest of the batch.
                 com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(1200);
                 com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(400);
-                com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(true);
+                com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(false);
                 helper.assertTrue(stillThere, "Legacy mode (consume off) must NOT consume the magnet");
                 helper.succeed();
             });

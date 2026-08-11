@@ -1168,7 +1168,7 @@ public final class MagConfig {
         RAILGUN_DESTROY_BUDGET_PER_TICK = b.translation("magnetization.configuration.propulsion.railgunDestroyBudgetPerTick")
                 .defineInRange("railgunDestroyBudgetPerTick", 16, 0, 256);
         MAGNET_SLOT_CONSUMES_FUEL = b.translation("magnetization.configuration.propulsion.magnetSlotConsumesFuel")
-                .define("magnetSlotConsumesFuel", true);
+                .define("magnetSlotConsumesFuel", false);
         MAGNET_BURN_TICKS_BASE = b.translation("magnetization.configuration.propulsion.magnetBurnTicksBase")
                 .defineInRange("magnetBurnTicksBase", 1200, 0, 10_000_000);
         MAGNET_BURN_TICKS_PER_POTENCY = b.translation("magnetization.configuration.propulsion.magnetBurnTicksPerPotency")
@@ -2920,7 +2920,7 @@ public final class MagConfig {
     public static int    railgunFeReceive()             { return Math.min(railgunFeReceiveRaw(), railgunFeCapacityRaw()); }
     public static boolean railgunBreaksBlocks()         { return booleanOr(RAILGUN_BREAKS_BLOCKS, true); }
     public static int    railgunDestroyBudgetPerTick()  { return intOr(RAILGUN_DESTROY_BUDGET_PER_TICK, 16); }
-    public static boolean magnetSlotConsumesFuel()       { return booleanOr(MAGNET_SLOT_CONSUMES_FUEL, true); }
+    public static boolean magnetSlotConsumesFuel()       { return booleanOr(MAGNET_SLOT_CONSUMES_FUEL, false); }
     public static int    magnetBurnTicksBase()           { return intOr(MAGNET_BURN_TICKS_BASE, 1200); }
     public static int    magnetBurnTicksPerPotency()     { return intOr(MAGNET_BURN_TICKS_PER_POTENCY, 400); }
     public static int    magnetBurnBlockFormMultiplier() { return intOr(MAGNET_BURN_BLOCK_FORM_MULTIPLIER, 9); }
