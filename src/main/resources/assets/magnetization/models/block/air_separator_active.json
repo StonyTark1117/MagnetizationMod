@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "magnetization:block/air_separator_side_active",
+    "down": "magnetization:block/air_separator_side_active",
+    "up": "magnetization:block/air_separator_side_active",
+    "north": "magnetization:block/air_separator_side_active",
+    "south": "magnetization:block/air_separator_side_active",
+    "east": "magnetization:block/air_separator_side_active",
+    "west": "magnetization:block/air_separator_side_active"
+  }
+}

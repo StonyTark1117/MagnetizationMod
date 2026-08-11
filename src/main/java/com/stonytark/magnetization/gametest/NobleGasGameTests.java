@@ -253,6 +253,28 @@ public final class NobleGasGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
+    public static void airSeparatorLitStateTracksRunningStatus(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.AIR_SEPARATOR.get().defaultBlockState());
+        final AirSeparatorBlockEntity separator = (AirSeparatorBlockEntity) helper.getBlockEntity(pos);
+        helper.startSequence()
+                // Allow Create's first kinetic attachment pass to settle before
+                // injecting the test speed into this isolated block.
+                .thenExecuteAfter(1, () -> separator.setSpeed(
+                        com.stonytark.magnetization.config.MagConfig.airSeparatorMinRpm()))
+                .thenExecuteAfter(2, () -> helper.assertTrue(
+                        helper.getBlockState(pos).getValue(
+                                net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
+                        "Air Separator must use its active visual while running"))
+                .thenExecute(() -> separator.setSpeed(0.0f))
+                .thenExecuteAfter(2, () -> helper.assertTrue(
+                        !helper.getBlockState(pos).getValue(
+                                net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
+                        "Air Separator must clear its active visual when it stops"))
+                .thenSucceed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
     public static void separatorGasesFeedIonThrusterThroughFluidCapability(final GameTestHelper helper) {
         final BlockPos pos = new BlockPos(1, 1, 1);
         helper.setBlock(pos, MagBlocks.ION_THRUSTER.get());

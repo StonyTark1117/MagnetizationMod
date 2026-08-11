@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
@@ -351,6 +352,7 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
     @Override public void tick() {
         super.tick();
         syncFacing();
+        updateLitState();
         if (level == null || level.isClientSide || !MagConfig.airSeparatorAllowedIn(level)) return;
         final float rpm = Math.abs(getSpeed());
         final int minRpm = MagConfig.airSeparatorMinRpm();
@@ -382,6 +384,19 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         if (changed) {
             setChanged();
             if (level.getGameTime() % 10L == 0L) sendData();
+        }
+    }
+
+    /** Keep the block model and light emission synchronized with the separator's
+     * actual operating state. The visual must turn off for low speed, blocked
+     * outputs, disabled dimensions, and any other non-running condition. */
+    private void updateLitState() {
+        if (level == null || level.isClientSide) return;
+        final BlockState state = getBlockState();
+        if (!state.hasProperty(BlockStateProperties.LIT)) return;
+        final boolean running = operatingStatus() == OperatingStatus.RUNNING;
+        if (state.getValue(BlockStateProperties.LIT) != running) {
+            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, running), Block.UPDATE_CLIENTS);
         }
     }
 

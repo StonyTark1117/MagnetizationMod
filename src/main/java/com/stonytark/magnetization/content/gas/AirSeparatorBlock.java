@@ -30,13 +30,15 @@ public final class AirSeparatorBlock extends KineticBlock implements IBE<AirSepa
 
     public AirSeparatorBlock(final Properties properties) {
         super(properties);
-        registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
+        registerDefaultState(getStateDefinition().any()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.LIT, false));
     }
 
     @Override protected MapCodec<? extends KineticBlock> codec() { return CODEC; }
     @Override protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(BlockStateProperties.HORIZONTAL_FACING);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT);
     }
     @Override public @Nullable BlockState getStateForPlacement(final BlockPlaceContext context) {
         return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING,

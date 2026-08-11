@@ -120,6 +120,18 @@ class NobleGasResourceCompletenessTest {
     }
 
     @Test
+    void airSeparatorHasActiveVisualVariant() {
+        resource("assets/magnetization/textures/block/air_separator_side_active.png");
+        resource("assets/magnetization/models/block/air_separator_active.json");
+        final JsonObject variants = json("assets/magnetization/blockstates/air_separator.json")
+                .getAsJsonObject("variants");
+        assertEquals("magnetization:block/air_separator_active",
+                variants.getAsJsonObject("facing=north,lit=true").get("model").getAsString());
+        assertEquals("magnetization:block/air_separator",
+                variants.getAsJsonObject("facing=north,lit=false").get("model").getAsString());
+    }
+
+    @Test
     void gasDetectorHasAnimatedAssetsAndRecipe() {
         final JsonObject lang = json("assets/magnetization/lang/en_us.json");
         resource("assets/magnetization/models/item/gas_detector.json");

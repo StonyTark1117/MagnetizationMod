@@ -1,8 +1,12 @@
 {
   "variants": {
-    "facing=north": { "model": "magnetization:block/air_separator" },
-    "facing=east": { "model": "magnetization:block/air_separator", "y": 90 },
-    "facing=south": { "model": "magnetization:block/air_separator", "y": 180 },
-    "facing=west": { "model": "magnetization:block/air_separator", "y": 270 }
+    "facing=north,lit=false": { "model": "magnetization:block/air_separator" },
+    "facing=east,lit=false": { "model": "magnetization:block/air_separator", "y": 90 },
+    "facing=south,lit=false": { "model": "magnetization:block/air_separator", "y": 180 },
+    "facing=west,lit=false": { "model": "magnetization:block/air_separator", "y": 270 },
+    "facing=north,lit=true": { "model": "magnetization:block/air_separator_active" },
+    "facing=east,lit=true": { "model": "magnetization:block/air_separator_active", "y": 90 },
+    "facing=south,lit=true": { "model": "magnetization:block/air_separator_active", "y": 180 },
+    "facing=west,lit=true": { "model": "magnetization:block/air_separator_active", "y": 270 }
   }
 }

@@ -552,7 +552,9 @@ public final class MagBlocks {
             REGISTER.register("gas_exciter", () -> new com.stonytark.magnetization.content.gas.GasExciterBlock(
                     metal().lightLevel(state -> 4)));
     public static final DeferredBlock<com.stonytark.magnetization.content.gas.AirSeparatorBlock> AIR_SEPARATOR =
-            REGISTER.register("air_separator", () -> new com.stonytark.magnetization.content.gas.AirSeparatorBlock(metal()));
+            REGISTER.register("air_separator", () -> new com.stonytark.magnetization.content.gas.AirSeparatorBlock(
+                    metal().lightLevel(state -> state.hasProperty(BlockStateProperties.LIT)
+                            && state.getValue(BlockStateProperties.LIT) ? 6 : 0)));
 
     /** Liquid lithium — conductive working fluid for the MHD jet; light silvery metal. */
     public static final DeferredBlock<net.minecraft.world.level.block.LiquidBlock> LIQUID_LITHIUM_BLOCK =
