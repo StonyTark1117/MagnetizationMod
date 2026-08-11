@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** Resource matrix gate for the 1.4 noble-gas feature set. */
 class NobleGasResourceCompletenessTest {
     private static final List<String> GASES = List.of("helium", "neon", "argon", "krypton", "xenon", "radon");
+    private static final List<String> ALL_GASES = List.of(
+            "hydrogen", "tritium", "helium_3", "helium", "neon", "argon", "krypton", "xenon", "radon");
     private static final List<String> MACHINES = List.of("gas_exciter", "air_separator", "ion_thruster");
 
     @Test
@@ -39,6 +41,25 @@ class NobleGasResourceCompletenessTest {
         }
         assertEquals(GASES.size() * 2, propellants.size(),
                 "Built-in propellant tag changed without updating the compatibility contract");
+    }
+
+    @Test
+    void allGasesHaveCommonGaseousAndIsotopeTags() {
+        final Set<String> gaseous = tagValues("data/c/tags/fluid/gaseous.json");
+        for (final String gas : ALL_GASES) {
+            assertTrue(gaseous.contains("magnetization:" + gas),
+                    () -> "Missing source gas from c:gaseous: " + gas);
+            assertTrue(gaseous.contains("magnetization:flowing_" + gas),
+                    () -> "Missing flowing gas from c:gaseous: " + gas);
+        }
+        for (final String gas : List.of("tritium", "helium_3")) {
+            assertTrue(tagValues("data/c/tags/fluid/" + gas + ".json")
+                            .contains("magnetization:" + gas),
+                    () -> "Missing common fluid tag for " + gas);
+            assertTrue(tagValues("data/c/tags/item/buckets/" + gas + ".json")
+                            .contains("magnetization:" + gas + "_bucket"),
+                    () -> "Missing common bucket tag for " + gas);
+        }
     }
 
     @Test

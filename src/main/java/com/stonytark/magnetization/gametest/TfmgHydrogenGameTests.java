@@ -30,6 +30,9 @@ public final class TfmgHydrogenGameTests {
     private static final TagKey<Fluid> TFMG_FLAMMABLE = TagKey.create(
             net.minecraft.core.registries.Registries.FLUID,
             ResourceLocation.fromNamespaceAndPath("tfmg", "flammable"));
+    private static final TagKey<Fluid> COMMON_GASEOUS = TagKey.create(
+            net.minecraft.core.registries.Registries.FLUID,
+            ResourceLocation.fromNamespaceAndPath("c", "gaseous"));
 
     private TfmgHydrogenGameTests() {}
 
@@ -53,9 +56,17 @@ public final class TfmgHydrogenGameTests {
         for (final Fluid gas : new Fluid[]{
                 MagFluids.HYDROGEN.get(), MagFluids.HYDROGEN_FLOWING.get(),
                 MagFluids.TRITIUM.get(), MagFluids.TRITIUM_FLOWING.get(),
-                MagFluids.HELIUM_3.get(), MagFluids.HELIUM_3_FLOWING.get()}) {
+                MagFluids.HELIUM_3.get(), MagFluids.HELIUM_3_FLOWING.get(),
+                MagFluids.HELIUM.get(), MagFluids.HELIUM_FLOWING.get(),
+                MagFluids.NEON.get(), MagFluids.NEON_FLOWING.get(),
+                MagFluids.ARGON.get(), MagFluids.ARGON_FLOWING.get(),
+                MagFluids.KRYPTON.get(), MagFluids.KRYPTON_FLOWING.get(),
+                MagFluids.XENON.get(), MagFluids.XENON_FLOWING.get(),
+                MagFluids.RADON.get(), MagFluids.RADON_FLOWING.get()}) {
             helper.assertTrue(gas.builtInRegistryHolder().is(TFMG_GASES),
                     BuiltInRegistries.FLUID.getKey(gas) + " is missing from tfmg:gas");
+            helper.assertTrue(gas.builtInRegistryHolder().is(COMMON_GASEOUS),
+                    BuiltInRegistries.FLUID.getKey(gas) + " is missing from c:gaseous");
         }
         helper.assertTrue(MagFluids.HYDROGEN.get().builtInRegistryHolder().is(TFMG_FLAMMABLE)
                         && MagFluids.TRITIUM.get().builtInRegistryHolder().is(TFMG_FLAMMABLE),

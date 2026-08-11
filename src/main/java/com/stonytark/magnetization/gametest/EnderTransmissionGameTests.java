@@ -133,7 +133,10 @@ public final class EnderTransmissionGameTests {
                 if (fluidInput == null || fluidOutput == null) return;
                 for (final Fluid fluid : java.util.List.of(
                         MagFluids.FERROFLUID.get(), MagFluids.HYDROGEN.get(),
-                        MagFluids.TRITIUM.get(), MagFluids.HELIUM_3.get())) {
+                        MagFluids.TRITIUM.get(), MagFluids.HELIUM_3.get(),
+                        MagFluids.HELIUM.get(), MagFluids.NEON.get(),
+                        MagFluids.ARGON.get(), MagFluids.KRYPTON.get(),
+                        MagFluids.XENON.get(), MagFluids.RADON.get())) {
                     final String name = BuiltInRegistries.FLUID.getKey(fluid).toString();
                     helper.assertTrue(fluidInput.fill(new FluidStack(fluid, 1000),
                                     IFluidHandler.FluidAction.EXECUTE) == 1000,
