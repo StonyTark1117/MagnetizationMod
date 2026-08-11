@@ -7,6 +7,7 @@ import com.stonytark.magnetization.content.fluid.GasExcitation;
 import com.stonytark.magnetization.content.fluid.GasFlowingFluid;
 import com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity;
 import com.stonytark.magnetization.content.jet.IonThrusterBlockEntity;
+import com.stonytark.magnetization.menu.AirSeparatorMenu;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagFluids;
 import com.stonytark.magnetization.registry.MagItems;
@@ -267,10 +268,18 @@ public final class NobleGasGameTests {
                 helper.getLevel(), helper.absolutePos(pos)), helper.absolutePos(pos),
                 separator.upgradeContainer(), separator.crystalOutputContainer());
 
-        helper.assertTrue(serverMenu.clickMenuButton(player, AirSeparatorBlockEntity.HELIUM)
-                        && separator.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.WEST
-                        && separator.outputFace(AirSeparatorBlockEntity.NEON) == Direction.UP,
-                "GUI port control did not move Helium to the next face and swap Neon into its old port");
+        helper.assertTrue(serverMenu.clickMenuButton(player,
+                        AirSeparatorMenu.assignOutputButton(AirSeparatorBlockEntity.HELIUM, Direction.EAST))
+                        && separator.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.EAST
+                        && separator.outputFace(AirSeparatorBlockEntity.KRYPTON) == Direction.UP,
+                "GUI face selector did not assign Helium to the requested face with a visible deterministic swap");
+        helper.assertTrue(serverMenu.clickMenuButton(player,
+                        AirSeparatorMenu.setInputButton(Direction.EAST))
+                        && separator.mechanicalFace() == Direction.EAST
+                        && helper.getBlockState(pos).getValue(
+                        net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING)
+                        == Direction.WEST,
+                "GUI face selector did not assign the mechanical input face");
 
         final int[][] transported = {null};
         serverMenu.setSynchronizer(new net.minecraft.world.inventory.ContainerSynchronizer() {
@@ -287,8 +296,8 @@ public final class NobleGasGameTests {
                                                  final int index, final int value) {}
         });
         serverMenu.broadcastFullState();
-        helper.assertTrue(transported[0] != null && transported[0].length == 32,
-                "Air Separator menu did not emit its complete 32-value process snapshot");
+        helper.assertTrue(transported[0] != null && transported[0].length == 33,
+                "Air Separator menu did not emit its complete 33-value process snapshot");
 
         final var clientMenu = new com.stonytark.magnetization.menu.AirSeparatorMenu(1,
                 player.getInventory(), net.minecraft.world.inventory.ContainerLevelAccess.NULL, BlockPos.ZERO,
@@ -298,8 +307,9 @@ public final class NobleGasGameTests {
                         && clientMenu.amount(AirSeparatorBlockEntity.XENON) == 1444
                         && clientMenu.capacity() == separator.tank(AirSeparatorBlockEntity.HELIUM).getCapacity(),
                 "Client Air Separator GUI did not retain server-owned tank amounts or capacity");
-        helper.assertTrue(clientMenu.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.WEST
-                        && clientMenu.outputFace(AirSeparatorBlockEntity.NEON) == Direction.UP
+        helper.assertTrue(clientMenu.outputFace(AirSeparatorBlockEntity.HELIUM) == Direction.NORTH
+                        && clientMenu.outputFace(AirSeparatorBlockEntity.KRYPTON) == Direction.UP
+                        && clientMenu.mechanicalFace() == Direction.EAST
                         && separator.hudLines().size() >= 4,
                 "Client port display or shared goggles/Jade/WTHIT/TOP summary is incomplete");
         helper.succeed();

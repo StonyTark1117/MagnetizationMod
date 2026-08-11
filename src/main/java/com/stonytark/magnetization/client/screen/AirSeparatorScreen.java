@@ -26,10 +26,20 @@ public final class AirSeparatorScreen extends AbstractContainerScreen<AirSeparat
     private static final int PORT_BUTTON_Y = AirSeparatorGuiLayout.PORT_BUTTON_Y;
     private static final int PORT_BUTTON_W = AirSeparatorGuiLayout.PORT_BUTTON_WIDTH;
     private static final int PORT_BUTTON_H = AirSeparatorGuiLayout.PORT_BUTTON_HEIGHT;
+    private static final int FACE_BUTTON_X = AirSeparatorGuiLayout.FACE_BUTTON_X;
+    private static final int FACE_BUTTON_Y = AirSeparatorGuiLayout.FACE_BUTTON_Y;
+    private static final int FACE_BUTTON_STRIDE = AirSeparatorGuiLayout.FACE_BUTTON_STRIDE;
+    private static final int FACE_BUTTON_W = AirSeparatorGuiLayout.FACE_BUTTON_WIDTH;
+    private static final int FACE_BUTTON_H = AirSeparatorGuiLayout.FACE_BUTTON_HEIGHT;
+    private static final int INPUT_MODE_X = AirSeparatorGuiLayout.INPUT_MODE_X;
     private static final int READOUT_Y = AirSeparatorGuiLayout.READOUT_Y;
     private static final int[] GAS_COLOURS = {0xFFFFB38A, 0xFFFF2A16, 0xFFB56CFF, 0xFFD8FFE6, 0xFF4FA9FF};
     private static final String[] GAS_SYMBOLS = {"He", "Ne", "Ar", "Kr", "Xe"};
     private final Button[] portButtons = new Button[AirSeparatorBlockEntity.COUNT];
+    private final Button[] faceButtons = new Button[AirSeparatorMenu.FACE_OPTIONS.length];
+    private Button inputModeButton;
+    private int selectedGas;
+    private boolean inputMode;
 
     public AirSeparatorScreen(final AirSeparatorMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
@@ -44,14 +54,33 @@ public final class AirSeparatorScreen extends AbstractContainerScreen<AirSeparat
         for (int gas = 0; gas < AirSeparatorBlockEntity.COUNT; gas++) {
             final int index = gas;
             final Button button = Button.builder(faceShort(menu.outputFace(gas)), ignored -> {
-                if (minecraft != null && minecraft.gameMode != null) {
-                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, index);
-                }
+                selectedGas = index;
+                inputMode = false;
+                refreshPortButtons();
             }).bounds(leftPos + TANK_X - 3 + gas * TANK_STRIDE, topPos + PORT_BUTTON_Y,
                     PORT_BUTTON_W, PORT_BUTTON_H).build();
             portButtons[gas] = addRenderableWidget(button);
         }
+        for (int index = 0; index < faceButtons.length; index++) {
+            final Direction face = AirSeparatorMenu.FACE_OPTIONS[index];
+            final Button button = Button.builder(faceShort(face), ignored -> {
+                if (minecraft == null || minecraft.gameMode == null) return;
+                final int action = inputMode
+                        ? AirSeparatorMenu.setInputButton(face)
+                        : AirSeparatorMenu.assignOutputButton(selectedGas, face);
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, action);
+            }).bounds(leftPos + FACE_BUTTON_X + index * FACE_BUTTON_STRIDE, topPos + FACE_BUTTON_Y,
+                    FACE_BUTTON_W, FACE_BUTTON_H).build();
+            faceButtons[index] = addRenderableWidget(button);
+        }
+        inputModeButton = addRenderableWidget(Button.builder(Component.translatable(
+                "gui.magnetization.air_separator.input_mode_short"), ignored -> {
+            inputMode = true;
+            refreshFaceButtons();
+        }).bounds(leftPos + INPUT_MODE_X, topPos + FACE_BUTTON_Y,
+                AirSeparatorGuiLayout.INPUT_MODE_WIDTH, FACE_BUTTON_H).build());
         refreshPortButtons();
+        refreshFaceButtons();
     }
 
     @Override
@@ -71,6 +100,32 @@ public final class AirSeparatorScreen extends AbstractContainerScreen<AirSeparat
                     Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(gas)),
                     faceName(face))));
         }
+        refreshFaceButtons();
+    }
+
+    private void refreshFaceButtons() {
+        for (int index = 0; index < faceButtons.length; index++) {
+            final Button button = faceButtons[index];
+            if (button == null) continue;
+            final Direction face = AirSeparatorMenu.FACE_OPTIONS[index];
+            final int occupant = menu.occupantAt(face);
+            final Component occupantName = occupant == -2
+                    ? Component.translatable("gui.magnetization.air_separator.mechanical_input")
+                    : occupant >= 0
+                    ? Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(occupant))
+                    : Component.translatable("gui.magnetization.air_separator.unassigned");
+            final Component action = inputMode
+                    ? Component.translatable("gui.magnetization.air_separator.assign_input")
+                    : Component.translatable("gui.magnetization.air_separator.assign_output",
+                    Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(selectedGas)));
+            button.setTooltip(Tooltip.create(Component.translatable(
+                    "gui.magnetization.air_separator.face_tooltip", faceName(face), occupantName, action)));
+        }
+        if (inputModeButton != null) {
+            inputModeButton.setTooltip(Tooltip.create(Component.translatable(
+                    "gui.magnetization.air_separator.input_mode_tooltip",
+                    faceName(menu.mechanicalFace()))));
+        }
     }
 
     @Override
@@ -79,6 +134,14 @@ public final class AirSeparatorScreen extends AbstractContainerScreen<AirSeparat
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xC0202020);
         graphics.fill(leftPos + 1, topPos + 1, leftPos + imageWidth - 1,
                 topPos + imageHeight - 1, 0xFF3A3A3A);
+
+        final int selectedX = inputMode ? INPUT_MODE_X
+                : TANK_X - 3 + selectedGas * TANK_STRIDE;
+        final int selectedY = inputMode ? FACE_BUTTON_Y : PORT_BUTTON_Y;
+        final int selectedWidth = inputMode ? AirSeparatorGuiLayout.INPUT_MODE_WIDTH : PORT_BUTTON_W;
+        graphics.fill(leftPos + selectedX - 2, topPos + selectedY - 2,
+                leftPos + selectedX + selectedWidth + 2, topPos + selectedY + FACE_BUTTON_H + 2,
+                0xFF7FD7FF);
 
         for (int gas = 0; gas < AirSeparatorBlockEntity.COUNT; gas++) {
             drawTank(graphics, gas);
@@ -133,6 +196,11 @@ public final class AirSeparatorScreen extends AbstractContainerScreen<AirSeparat
             graphics.drawString(font, GAS_SYMBOLS[gas], center - font.width(GAS_SYMBOLS[gas]) / 2,
                     AirSeparatorGuiLayout.GAS_SYMBOL_Y, GAS_COLOURS[gas], false);
         }
+        GuiTextLayout.drawClipped(graphics, font, Component.translatable(
+                        "gui.magnetization.air_separator.face_selector",
+                        inputMode ? Component.translatable("gui.magnetization.air_separator.mechanical_input")
+                                : Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(selectedGas))),
+                8, AirSeparatorGuiLayout.FACE_SELECTOR_LABEL_Y, imageWidth - 16, 0xC0C0C0);
 
         final List<Component> readouts = readoutLines();
         for (int line = 0; line < readouts.size(); line++) {

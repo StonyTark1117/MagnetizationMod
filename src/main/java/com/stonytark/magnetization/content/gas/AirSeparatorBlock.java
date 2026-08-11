@@ -75,8 +75,8 @@ public final class AirSeparatorBlock extends KineticBlock implements IBE<AirSepa
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    /** Sneak-click a port for quick in-world reassignment; normal use opens the
-     * full process, inventory, and port-management screen. */
+    /** Sneak-click a port to inspect its assignment; normal use opens the full
+     * process, inventory, and explicit face-selection screen. */
     @Override protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos,
                                                           final Player player, final BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
@@ -88,9 +88,11 @@ public final class AirSeparatorBlock extends KineticBlock implements IBE<AirSepa
                 serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.shaft"), true);
                 return InteractionResult.CONSUME;
             }
-            final int next = be.cycleFace(hit.getDirection(), 1);
+            final int gas = be.gasForFace(hit.getDirection());
             serverPlayer.displayClientMessage(Component.translatable("message.magnetization.air_separator.port",
-                    Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(next))), true);
+                    gas >= 0 ? Component.translatable(AirSeparatorBlockEntity.gasTranslationKey(gas))
+                            : Component.translatable("gui.magnetization.air_separator.unassigned"),
+                    Component.translatable("direction.minecraft." + hit.getDirection().getName())), true);
             return InteractionResult.CONSUME;
         }
 

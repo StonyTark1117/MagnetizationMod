@@ -78,6 +78,9 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
     }
 
     public FluidTank tank(final int index) { return tanks[index]; }
+    public Direction mechanicalFace() {
+        return getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite();
+    }
     public SimpleContainer upgradeContainer() { return upgrade; }
     public SimpleContainer crystalOutputContainer() { return crystalOutput; }
     public net.neoforged.neoforge.items.IItemHandler itemHandler() { return automationItems; }
@@ -206,6 +209,38 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         invalidateFluidCapabilities();
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         return target;
+    }
+
+    /** Assign a gas to an exact output face, swapping the gas currently there. */
+    public boolean assignOutputFace(final int gas, final Direction face) {
+        if (gas < 0 || gas >= COUNT || face == null) return false;
+        syncFacing();
+        if (face == mechanicalFace()) return false;
+        final Direction currentFace = outputs[gas];
+        if (currentFace == face) return false;
+        final int displaced = gasForFace(face);
+        if (displaced < 0) return false;
+        outputs[gas] = face;
+        outputs[displaced] = currentFace;
+        setChanged();
+        invalidateFluidCapabilities();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        return true;
+    }
+
+    /** Select one of the four horizontal faces as the Create mechanical input. */
+    public boolean setMechanicalFace(final Direction face) {
+        if (face == null || !face.getAxis().isHorizontal() || face == mechanicalFace()) return false;
+        if (level == null) return false;
+        syncFacing();
+        final BlockState state = getBlockState();
+        if (!state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) return false;
+        level.setBlock(worldPosition,
+                state.setValue(BlockStateProperties.HORIZONTAL_FACING, face.getOpposite()), 3);
+        syncFacing();
+        setChanged();
+        invalidateFluidCapabilities();
+        return true;
     }
 
     /** Move one gas to the next physical output face, swapping with whatever

@@ -77,7 +77,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                         MagBlocks.GAS_EXCITER.get()));
         blocks.forComponents(MagBlocks.AIR_SEPARATOR.get())
                 .addStoryBoard(SCHEMATIC, machineScene("air_separator", "Separate Atmospheric Gases",
-                        "Drive the rear shaft above 64 RPM. Five other faces drain independent gas tanks; sneak-use a face to reassign it.",
+                        "Connect rotation to the GUI-selected mechanical face above 64 RPM. Five other faces drain independent gas tanks; the GUI face map assigns exact gas and shaft faces.",
                         MagBlocks.AIR_SEPARATOR.get()));
         blocks.forComponents(MagBlocks.MHD_JET.get())
                 .addStoryBoard(SCHEMATIC, machineScene("mhd_jet", "Fuel an MHD Jet",

@@ -19,6 +19,12 @@ import net.minecraft.world.item.ItemStack;
 
 /** Dedicated two-slot, five-tank menu for the Air Separator. */
 public final class AirSeparatorMenu extends AbstractContainerMenu {
+    public static final int ASSIGN_OUTPUT_BASE = 100;
+    public static final int SET_INPUT_BASE = 200;
+    public static final Direction[] FACE_OPTIONS = {
+            Direction.UP, Direction.DOWN, Direction.NORTH,
+            Direction.SOUTH, Direction.EAST, Direction.WEST
+    };
     public static final int IMAGE_WIDTH = AirSeparatorGuiLayout.IMAGE_WIDTH;
     public static final int IMAGE_HEIGHT = AirSeparatorGuiLayout.IMAGE_HEIGHT;
     public static final int UPGRADE_X = AirSeparatorGuiLayout.UPGRADE_X;
@@ -43,6 +49,7 @@ public final class AirSeparatorMenu extends AbstractContainerMenu {
     private final DataSlot isotopeProgressPermille = DataSlot.standalone();
     private final DataSlot status = DataSlot.standalone();
     private final DataSlot[] outputFaces = dataArray(AirSeparatorBlockEntity.COUNT);
+    private final DataSlot mechanicalFace = DataSlot.standalone();
 
     public AirSeparatorMenu(final int id, final Inventory inventory, final ContainerLevelAccess access,
                             final BlockPos pos, final Container upgrade, final Container output) {
@@ -83,6 +90,7 @@ public final class AirSeparatorMenu extends AbstractContainerMenu {
         addDataSlot(isotopeProgressPermille);
         addDataSlot(status);
         for (final DataSlot face : outputFaces) addDataSlot(face);
+        addDataSlot(mechanicalFace);
         refresh();
     }
 
@@ -119,6 +127,22 @@ public final class AirSeparatorMenu extends AbstractContainerMenu {
     public Direction outputFace(final int gas) {
         return Direction.from3DDataValue(outputFaces[gas].get());
     }
+    public Direction mechanicalFace() {
+        return Direction.from3DDataValue(mechanicalFace.get());
+    }
+    public int occupantAt(final Direction face) {
+        if (face == mechanicalFace()) return -2;
+        for (int gas = 0; gas < AirSeparatorBlockEntity.COUNT; gas++) {
+            if (outputFace(gas) == face) return gas;
+        }
+        return -1;
+    }
+    public static int assignOutputButton(final int gas, final Direction face) {
+        return ASSIGN_OUTPUT_BASE + gas * 6 + face.get3DDataValue();
+    }
+    public static int setInputButton(final Direction face) {
+        return SET_INPUT_BASE + face.get3DDataValue();
+    }
 
     private void refresh() {
         access.execute((level, blockPos) -> {
@@ -128,6 +152,7 @@ public final class AirSeparatorMenu extends AbstractContainerMenu {
                 ratesMilli[gas].set(separator.currentRateMilli(gas));
                 outputFaces[gas].set(separator.outputFace(gas).get3DDataValue());
             }
+            mechanicalFace.set(separator.mechanicalFace().get3DDataValue());
             capacity.set(separator.tank(AirSeparatorBlockEntity.HELIUM).getCapacity());
             rpm.set(separator.currentRpm());
             minRpm.set(MagConfig.airSeparatorMinRpm());
@@ -145,10 +170,21 @@ public final class AirSeparatorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(final Player player, final int id) {
-        if (id < 0 || id >= AirSeparatorBlockEntity.COUNT) return false;
         return access.evaluate((level, blockPos) -> {
             if (!(level.getBlockEntity(blockPos) instanceof AirSeparatorBlockEntity separator)) return false;
-            final boolean changed = separator.cycleGasOutput(id, 1) != null;
+            final boolean changed;
+            if (id >= ASSIGN_OUTPUT_BASE && id < SET_INPUT_BASE) {
+                final int selection = id - ASSIGN_OUTPUT_BASE;
+                final int gas = selection / 6;
+                final int faceId = selection % 6;
+                changed = gas >= 0 && gas < AirSeparatorBlockEntity.COUNT
+                        && separator.assignOutputFace(gas, Direction.from3DDataValue(faceId));
+            } else if (id >= SET_INPUT_BASE && id < SET_INPUT_BASE + 6) {
+                changed = separator.setMechanicalFace(
+                        Direction.from3DDataValue(id - SET_INPUT_BASE));
+            } else {
+                return false;
+            }
             if (changed) refresh();
             return changed;
         }, false);
