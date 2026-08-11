@@ -181,10 +181,32 @@ public final class NobleGasGameTests {
         helper.assertTrue(separator.fluidHandler(Direction.UP).getFluidInTank(0).is(MagFluids.HELIUM.get())
                         && separator.fluidHandler(Direction.DOWN).getFluidInTank(0).isEmpty(),
                 "Each output face must expose only its assigned tank");
+        final var level = helper.getLevel();
+        final var heliumCapability = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                helper.absolutePos(pos), Direction.UP);
+        final var allTanksCapability = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                helper.absolutePos(pos), null);
+        helper.assertTrue(heliumCapability != null
+                        && heliumCapability.getFluidInTank(0).is(MagFluids.HELIUM.get())
+                        && heliumCapability.drain(new FluidStack(MagFluids.HELIUM.get(), 1000),
+                        IFluidHandler.FluidAction.SIMULATE).getAmount() == 1000
+                        && allTanksCapability != null
+                        && allTanksCapability.getTanks() == AirSeparatorBlockEntity.COUNT,
+                "Create fluid capability must expose the assigned gas face and the aggregate separator tanks");
         final int next = separator.cycleFace(Direction.UP, 1);
         helper.assertTrue(next == AirSeparatorBlockEntity.NEON
                         && separator.gasForFace(Direction.UP) == AirSeparatorBlockEntity.NEON,
                 "Cycling a port did not preserve the one-to-one face mapping");
+        separator.tank(AirSeparatorBlockEntity.NEON).fill(new FluidStack(MagFluids.NEON.get(), 1000),
+                IFluidHandler.FluidAction.EXECUTE);
+        final var remappedCapability = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                helper.absolutePos(pos), Direction.UP);
+        helper.assertTrue(remappedCapability != null
+                        && remappedCapability.getFluidInTank(0).is(MagFluids.NEON.get()),
+                "Changing an output assignment must invalidate Create's cached face capability");
         helper.setBlock(pos, helper.getBlockState(pos).setValue(
                 net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING,
                 Direction.EAST));
@@ -204,6 +226,23 @@ public final class NobleGasGameTests {
                         && separator.gasForFace(Direction.EAST) == AirSeparatorBlockEntity.XENON
                         && separator.upgradeContainer().getItem(0).is(MagItems.ISOTOPE_SEPARATION_MODULE.get()),
                 "Separator tanks, port assignments, or isotope upgrade did not survive NBT round-trip");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void separatorGasesFeedIonThrusterThroughFluidCapability(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.ION_THRUSTER.get());
+        final var capability = helper.getLevel().getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                helper.absolutePos(pos), Direction.NORTH);
+        helper.assertTrue(capability != null, "Ion Thruster must expose a Create-compatible fluid capability");
+        for (final var gas : new net.minecraft.world.level.material.Fluid[]{
+                MagFluids.HELIUM.get(), MagFluids.NEON.get(), MagFluids.ARGON.get(),
+                MagFluids.KRYPTON.get(), MagFluids.XENON.get()}) {
+            helper.assertTrue(capability.fill(new FluidStack(gas, 1000), IFluidHandler.FluidAction.SIMULATE) == 1000,
+                    "Ion Thruster capability rejected separator gas " + gas);
+        }
         helper.succeed();
     }
 

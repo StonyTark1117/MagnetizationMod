@@ -51,8 +51,9 @@ than another generic fluid-logistics system.
 - The Air Separator stops only an individually full output. Its rear face is the
   Create shaft; the other five faces map one-to-one to gas tanks and expose
   drain-only capabilities.
-- Sneak-use swaps a face assignment, and using a bucket on a face collects that
-  face's gas.
+- Sneak-use swaps a face assignment. Create fluid pipes connected to an assigned
+  output face extract only that face's gas; the separator is intentionally not a
+  bucket interface because it contains multiple gases.
 - The Isotope Separation Module adds stress and speed-scaled work, producing the
   existing Helium-3 Crystal into a separate output slot without adding a sixth
   fluid tank.

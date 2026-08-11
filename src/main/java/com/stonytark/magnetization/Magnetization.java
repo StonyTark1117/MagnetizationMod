@@ -210,7 +210,7 @@ public final class Magnetization {
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.ELECTROLYZER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                MagBlockEntities.AIR_SEPARATOR.get(), (be, side) -> disabled(be) || side == null ? null : be.fluidHandler(side));
+                MagBlockEntities.AIR_SEPARATOR.get(), (be, side) -> disabled(be) ? null : be.fluidHandler(side));
 
         // Item-handler caps so hoppers / Create automation can feed every item-fuel
         // machine (insert gated by each slot's canPlaceItem; only spent buckets extract

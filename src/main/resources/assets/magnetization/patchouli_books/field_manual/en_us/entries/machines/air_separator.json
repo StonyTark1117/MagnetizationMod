@@ -4,7 +4,7 @@
   "icon": "magnetization:air_separator",
   "advancement": "minecraft:recipes/root",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "Drive the rear shaft with at least 64 RPM. Five independent tanks fill at once. Use a bucket on an output face to collect that gas; sneak-use a face for quick port reassignment." },
+    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "Drive the rear shaft with at least 64 RPM. Five independent tanks fill at once. Connect Create fluid pipes to the assigned output faces to extract each gas; sneak-use a face for quick port reassignment." },
     { "type": "patchouli:text", "text": "Use the machine normally to open its GUI. It shows every tank, live production rates, RPM, operating status, and each gas's output face. Click a face button to move that gas to the next port; the displaced gas swaps into its old port. Goggles and probe HUDs show a compact live summary." },
     { "type": "patchouli:text", "text": "Place an Isotope Separation Module in the upper GUI slot (or use the item directly on the machine). It increases stress and slowly produces Helium-3 Crystals in the lower output slot, with progress shown in the GUI and hover HUD." }
   ]

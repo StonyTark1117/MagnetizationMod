@@ -13,7 +13,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -125,26 +124,19 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         return result;
     }
 
-    public ItemStack drainBucket(final Direction side) {
-        final int gas = gasForFace(side);
-        if (gas < 0 || tanks[gas].getFluidAmount() < 1000) return ItemStack.EMPTY;
-        tanks[gas].drain(1000, IFluidHandler.FluidAction.EXECUTE);
-        final ItemStack result = new ItemStack(switch (gas) {
-            case HELIUM -> MagItems.HELIUM_BUCKET.get();
-            case NEON -> MagItems.NEON_BUCKET.get();
-            case ARGON -> MagItems.ARGON_BUCKET.get();
-            case KRYPTON -> MagItems.KRYPTON_BUCKET.get();
-            case XENON -> MagItems.XENON_BUCKET.get();
-            default -> Items.BUCKET;
-        });
-        notifyUpdate();
-        return result;
-    }
-
-    /** Drain-only, face-isolated capability. */
-    public IFluidHandler fluidHandler(final Direction side) {
+    /**
+     * Exposes one output tank to a Create/NeoForge pipe on the assigned face.
+     * A null side is the non-directional form used by generic fluid tooling and
+     * exposes all five tanks without permitting insertion.
+     */
+    public IFluidHandler fluidHandler(final @org.jetbrains.annotations.Nullable Direction side) {
+        if (side == null) return allTanksFluidHandler();
         final int gas = gasForFace(side);
         if (gas < 0) return null;
+        return singleTankFluidHandler(gas);
+    }
+
+    private IFluidHandler singleTankFluidHandler(final int gas) {
         return new IFluidHandler() {
             @Override public int getTanks() { return 1; }
             @Override public FluidStack getFluidInTank(final int tank) { return tanks[gas].getFluid(); }
@@ -164,6 +156,42 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         };
     }
 
+    private IFluidHandler allTanksFluidHandler() {
+        return new IFluidHandler() {
+            @Override public int getTanks() { return COUNT; }
+            @Override public FluidStack getFluidInTank(final int tank) {
+                return tank >= 0 && tank < COUNT ? tanks[tank].getFluid() : FluidStack.EMPTY;
+            }
+            @Override public int getTankCapacity(final int tank) {
+                return tank >= 0 && tank < COUNT ? tanks[tank].getCapacity() : 0;
+            }
+            @Override public boolean isFluidValid(final int tank, final FluidStack stack) { return false; }
+            @Override public int fill(final FluidStack resource, final FluidAction action) { return 0; }
+            @Override public FluidStack drain(final FluidStack resource, final FluidAction action) {
+                if (resource.isEmpty()) return FluidStack.EMPTY;
+                for (final FluidTank tank : tanks) {
+                    if (FluidStack.isSameFluidSameComponents(tank.getFluid(), resource)) {
+                        final FluidStack drained = tank.drain(resource, action);
+                        if (action.execute() && !drained.isEmpty()) notifyUpdate();
+                        return drained;
+                    }
+                }
+                return FluidStack.EMPTY;
+            }
+            @Override public FluidStack drain(final int maxDrain, final FluidAction action) {
+                if (maxDrain <= 0) return FluidStack.EMPTY;
+                for (final FluidTank tank : tanks) {
+                    if (!tank.isEmpty()) {
+                        final FluidStack drained = tank.drain(maxDrain, action);
+                        if (action.execute() && !drained.isEmpty()) notifyUpdate();
+                        return drained;
+                    }
+                }
+                return FluidStack.EMPTY;
+            }
+        };
+    }
+
     public int cycleFace(final Direction face, final int delta) {
         syncFacing();
         final Direction shaft = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite();
@@ -175,6 +203,7 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         outputs[target] = face;
         outputs[current] = targetFace;
         setChanged();
+        invalidateFluidCapabilities();
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         return target;
     }
@@ -195,6 +224,7 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         outputs[gas] = targetFace;
         outputs[displaced] = oldFace;
         setChanged();
+        invalidateFluidCapabilities();
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         return targetFace;
     }
@@ -368,8 +398,15 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
                 outputs[i] = outputs[i].getClockWise();
             }
         }
-        if (turns > 0) setChanged();
+        if (turns > 0) {
+            setChanged();
+            invalidateFluidCapabilities();
+        }
         lastFacing = current;
+    }
+
+    private void invalidateFluidCapabilities() {
+        if (level != null) level.invalidateCapabilities(worldPosition);
     }
 
     @Override protected void write(final CompoundTag tag, final HolderLookup.Provider registries,
