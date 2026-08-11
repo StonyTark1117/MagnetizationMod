@@ -3,6 +3,7 @@ package com.stonytark.magnetization.client;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.content.item.GasDetectorScanner;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.worldgen.AnomalyBiome;
@@ -57,6 +58,8 @@ public final class CompassPropertyHooks {
             ResourceLocation.fromNamespaceAndPath("magnetization", "cosmic_angle");
     private static final ResourceLocation ORE_ANGLE =
             ResourceLocation.fromNamespaceAndPath("magnetization", "ore_angle");
+    private static final ResourceLocation GAS_ANGLE =
+            ResourceLocation.fromNamespaceAndPath("magnetization", "gas_angle");
 
     /** Search radius for the Cosmic Compass meteorite scan. Much larger than
      *  the Field Compass range — meteorites are rare worldgen, so a wider
@@ -94,6 +97,7 @@ public final class CompassPropertyHooks {
         registerFieldCompass();
         registerCosmicCompass();
         registerOreCompass();
+        registerGasDetector();
     }
 
     // ---------------- ore dowsing compass ----------------
@@ -232,6 +236,21 @@ public final class CompassPropertyHooks {
                     // Cosmic Compass is NOT scrambled by the anomaly biome —
                     // meteorite cores read clean above the flux noise.
                     return cosmicAngle(level, entity);
+                });
+    }
+
+    private static void registerGasDetector() {
+        ItemProperties.register(MagItems.GAS_DETECTOR.get(), GAS_ANGLE,
+                (stack, level, entity, seed) -> {
+                    if (MagConfig.isItemDisabled(stack) || level == null || entity == null) return 0.0f;
+                    final GasDetectorScanner.Reading reading =
+                            GasDetectorScanner.nearest(level, entity.blockPosition());
+                    if (!reading.found()) return 0.0f;
+                    final double dx = reading.position().getX() + 0.5 - entity.getX();
+                    final double dz = reading.position().getZ() + 0.5 - entity.getZ();
+                    final double bearingRad = Math.atan2(dz, dx);
+                    final double yawRad = Math.toRadians(entity.getYRot() - 90.0);
+                    return (float) Mth.positiveModulo((bearingRad - yawRad) / (Math.PI * 2.0), 1.0);
                 });
     }
 

@@ -2,6 +2,7 @@ package com.stonytark.magnetization.registry;
 
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.content.item.FieldCompassItem;
+import com.stonytark.magnetization.content.item.GasDetectorItem;
 import com.stonytark.magnetization.content.item.MagneticGrappleItem;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
@@ -428,6 +429,9 @@ public final class MagItems {
 
     public static final DeferredItem<FieldCompassItem> FIELD_COMPASS =
             REGISTER.registerItem("field_compass", FieldCompassItem::new, new Item.Properties().stacksTo(1));
+
+    public static final DeferredItem<GasDetectorItem> GAS_DETECTOR =
+            REGISTER.registerItem("gas_detector", GasDetectorItem::new, new Item.Properties().stacksTo(1));
 
     /** Ore Dowsing Compass — points at the nearest metallic ore vein; anvil-tune
      *  it onto a specific ore. Scrambles in the Anomaly biome. */

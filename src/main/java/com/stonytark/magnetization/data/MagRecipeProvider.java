@@ -179,6 +179,12 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_compass", has(Items.COMPASS))
                 .save(out, id("field_compass"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MagItems.GAS_DETECTOR.get())
+                .pattern("SPS").pattern("PCP").pattern("SPS")
+                .define('S', Items.COPPER_INGOT).define('P', magneticPlate).define('C', Items.COMPASS)
+                .unlockedBy("has_compass", has(Items.COMPASS))
+                .save(out, id("gas_detector"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, MagItems.MAGNETIC_GRAPPLE.get())
                 .pattern("PCP").pattern(" S ").pattern(" S ")
                 .define('P', Ingredient.of(C_PLATES)).define('C', core)

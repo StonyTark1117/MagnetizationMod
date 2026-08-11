@@ -6,6 +6,7 @@ import com.stonytark.magnetization.content.fluid.ExcitableGasBlock;
 import com.stonytark.magnetization.content.fluid.GasExcitation;
 import com.stonytark.magnetization.content.fluid.GasFlowingFluid;
 import com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity;
+import com.stonytark.magnetization.content.item.GasDetectorScanner;
 import com.stonytark.magnetization.content.jet.IonThrusterBlockEntity;
 import com.stonytark.magnetization.menu.AirSeparatorMenu;
 import com.stonytark.magnetization.registry.MagBlocks;
@@ -27,6 +28,27 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class NobleGasGameTests {
     private NobleGasGameTests() {}
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void gasDetectorFindsNearestGasAndFlagsRadon(final GameTestHelper helper) {
+        final BlockPos helium = new BlockPos(4, 1, 1);
+        final BlockPos radon = new BlockPos(2, 1, 1);
+        helper.setBlock(helium, MagFluids.HELIUM.get().defaultFluidState().createLegacyBlock());
+        final GasDetectorScanner.Reading heliumReading = GasDetectorScanner.nearest(
+                helper.getLevel(), helper.absolutePos(new BlockPos(1, 1, 1)));
+        helper.assertTrue(heliumReading.found() && heliumReading.fluid() == MagFluids.HELIUM.get(),
+                "Gas Detector did not identify the nearest helium source");
+        helper.assertTrue(!heliumReading.dangerous() && heliumReading.statusKey().equals("dormant"),
+                "Dormant helium reading was classified incorrectly");
+
+        helper.setBlock(radon, MagFluids.RADON.get().defaultFluidState().createLegacyBlock());
+        final GasDetectorScanner.Reading radonReading = GasDetectorScanner.nearest(
+                helper.getLevel(), helper.absolutePos(new BlockPos(1, 1, 2)));
+        helper.assertTrue(radonReading.found() && radonReading.fluid() == MagFluids.RADON.get(),
+                "Gas Detector did not retarget the nearest radon source");
+        helper.assertTrue(radonReading.dangerous(), "Radon must be reported as dangerous");
+        helper.succeed();
+    }
 
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void nobleGasDirectionCollisionAndTags(final GameTestHelper helper) {

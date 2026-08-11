@@ -48,6 +48,7 @@ public final class MagItemTooltips {
         m.put(MagItems.FERROMAGNETIC_INGOT.get(),   "tooltip.magnetization.ferromagnetic_ingot.use");
         m.put(MagItems.MAGNETIC_PLATE.get(),        "tooltip.magnetization.magnetic_plate.use");
         m.put(MagItems.FIELD_COMPASS.get(),         "tooltip.magnetization.field_compass.use");
+        m.put(MagItems.GAS_DETECTOR.get(),          "tooltip.magnetization.gas_detector.use");
         m.put(MagItems.MAGNETIC_GRAPPLE.get(),      "tooltip.magnetization.magnetic_grapple.use");
         m.put(MagItems.MAGNETITE_INGOT.get(),       "tooltip.magnetization.magnetite_ingot.use");
         m.put(MagItems.RAW_MAGNETITE.get(),         "tooltip.magnetization.raw_magnetite.use");

@@ -119,6 +119,21 @@ class NobleGasResourceCompletenessTest {
         }
     }
 
+    @Test
+    void gasDetectorHasAnimatedAssetsAndRecipe() {
+        final JsonObject lang = json("assets/magnetization/lang/en_us.json");
+        resource("assets/magnetization/models/item/gas_detector.json");
+        resource("assets/magnetization/models/item/gas_detector_00.json");
+        resource("assets/magnetization/textures/item/gas_detector_00.png");
+        resource("data/magnetization/recipe/gas_detector.json");
+        assertTrue(lang.has("item.magnetization.gas_detector"));
+        assertTrue(lang.has("tooltip.magnetization.gas_detector.use"));
+        final JsonObject model = json("assets/magnetization/models/item/gas_detector.json");
+        assertEquals(32, model.getAsJsonArray("overrides").size());
+        assertTrue(model.getAsJsonArray("overrides").get(0).getAsJsonObject()
+                .getAsJsonObject("predicate").has("magnetization:gas_angle"));
+    }
+
     private static void assertPaperFilterRecipe(final JsonObject recipe) {
         assertEquals("minecraft:crafting_shapeless", recipe.get("type").getAsString());
         assertEquals(4, recipe.getAsJsonArray("ingredients").size());

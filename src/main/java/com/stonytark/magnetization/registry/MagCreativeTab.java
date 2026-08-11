@@ -222,6 +222,7 @@ public final class MagCreativeTab {
 
                         // ── Compasses & handheld tools ──
                         accept(output, MagItems.FIELD_COMPASS);
+                        accept(output, MagItems.GAS_DETECTOR);
                         accept(output, MagItems.ORE_COMPASS);
                         accept(output, MagItems.COSMIC_COMPASS);
                         accept(output, MagItems.MAGNETIC_GRAPPLE);

@@ -1,0 +1,200 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magnetization:item/gas_detector_00"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.0
+      },
+      "model": "magnetization:item/gas_detector_00"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.03125
+      },
+      "model": "magnetization:item/gas_detector_01"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.0625
+      },
+      "model": "magnetization:item/gas_detector_02"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.09375
+      },
+      "model": "magnetization:item/gas_detector_03"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.125
+      },
+      "model": "magnetization:item/gas_detector_04"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.15625
+      },
+      "model": "magnetization:item/gas_detector_05"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.1875
+      },
+      "model": "magnetization:item/gas_detector_06"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.21875
+      },
+      "model": "magnetization:item/gas_detector_07"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.25
+      },
+      "model": "magnetization:item/gas_detector_08"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.28125
+      },
+      "model": "magnetization:item/gas_detector_09"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.3125
+      },
+      "model": "magnetization:item/gas_detector_10"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.34375
+      },
+      "model": "magnetization:item/gas_detector_11"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.375
+      },
+      "model": "magnetization:item/gas_detector_12"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.40625
+      },
+      "model": "magnetization:item/gas_detector_13"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.4375
+      },
+      "model": "magnetization:item/gas_detector_14"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.46875
+      },
+      "model": "magnetization:item/gas_detector_15"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.5
+      },
+      "model": "magnetization:item/gas_detector_16"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.53125
+      },
+      "model": "magnetization:item/gas_detector_17"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.5625
+      },
+      "model": "magnetization:item/gas_detector_18"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.59375
+      },
+      "model": "magnetization:item/gas_detector_19"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.625
+      },
+      "model": "magnetization:item/gas_detector_20"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.65625
+      },
+      "model": "magnetization:item/gas_detector_21"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.6875
+      },
+      "model": "magnetization:item/gas_detector_22"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.71875
+      },
+      "model": "magnetization:item/gas_detector_23"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.75
+      },
+      "model": "magnetization:item/gas_detector_24"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.78125
+      },
+      "model": "magnetization:item/gas_detector_25"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.8125
+      },
+      "model": "magnetization:item/gas_detector_26"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.84375
+      },
+      "model": "magnetization:item/gas_detector_27"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.875
+      },
+      "model": "magnetization:item/gas_detector_28"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.90625
+      },
+      "model": "magnetization:item/gas_detector_29"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.9375
+      },
+      "model": "magnetization:item/gas_detector_30"
+    },
+    {
+      "predicate": {
+        "magnetization:gas_angle": 0.96875
+      },
+      "model": "magnetization:item/gas_detector_31"
+    }
+  ]
+}
