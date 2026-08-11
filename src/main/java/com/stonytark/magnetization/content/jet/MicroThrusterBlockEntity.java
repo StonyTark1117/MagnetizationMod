@@ -134,9 +134,9 @@ public class MicroThrusterBlockEntity extends BlockEntity
         if (in.is(com.stonytark.magnetization.registry.MagItems.FERROFLUID_BUCKET.get()) && fillFromBucket(in)) {
             bucketSlot.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BUCKET));
         }
-        final boolean firing = host != null
-                && tank.getFluidAmount() >= com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick()
-                && energy.getEnergyStored() >= com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick();
+        final boolean firing = host != null && ThrustControl.canRun(server, getBlockPos(),
+                tank.getFluidAmount() >= com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick(),
+                energy.getEnergyStored() >= com.stonytark.magnetization.config.MagConfig.microThrusterFePerTick());
         if (firing) {
             final double mult = fluidMult();
             tank.drain(com.stonytark.magnetization.config.MagConfig.microThrusterFluidPerTick(), IFluidHandler.FluidAction.EXECUTE);

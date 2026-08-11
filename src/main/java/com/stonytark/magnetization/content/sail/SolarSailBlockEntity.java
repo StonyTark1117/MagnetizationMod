@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.sail;
 
 import com.stonytark.magnetization.physics.SableBridge;
 import com.stonytark.magnetization.registry.MagBlockEntities;
+import com.stonytark.magnetization.content.jet.ThrustControl;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -53,6 +54,10 @@ public class SolarSailBlockEntity extends BlockEntity
     @Override
     public void sable$tick(final ServerSubLevel host) {
         if (!(level instanceof ServerLevel server)) return;
+        if (!ThrustControl.passiveThrustAllowed(server, getBlockPos())) {
+            recordHud(server, 0, server.isDay(), false);
+            return;
+        }
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) { recordHud(server, 0, true, false); return; }
 
         // Day = full; night = server-config fraction (default 0.5, 0 disables).

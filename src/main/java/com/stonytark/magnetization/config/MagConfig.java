@@ -134,6 +134,7 @@ public final class MagConfig {
 
     // ── propulsion: thrusters / sail / backpack / repulsor-track / motor ──
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_TANK;
+    public static final ModConfigSpec.BooleanValue ALLOW_REDSTONE_THRUST_POWER;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_CAPACITY;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_RECEIVE;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_PER_TICK;
@@ -536,8 +537,9 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue ANOMALY_AFFECTS_EXPLORERS_COMPASS;
 
     /** Admin toggle: redstone signal counts as a valid power source for redstone-
-     *  powered emitters (Electromagnet, Anchor, Repulsor, Tractor Beam, Excavator).
-     *  Default true. Set false to force players to feed an FE source. */
+     *  powered field emitters (Electromagnet, Anchor, Repulsor, Tractor Beam,
+     *  Excavator) and Railgun Emitters. Does not control propulsion machines;
+     *  use {@code propulsion.allowRedstoneThrustPower} for those. Default true. */
     public static final ModConfigSpec.BooleanValue ALLOW_REDSTONE_POWER;
     /** Admin toggle: FE/RF energy counts as a valid power source for emitters.
      *  Default true. Set false to disable energy-driven emitters entirely. The
@@ -1065,6 +1067,12 @@ public final class MagConfig {
          .translation("magnetization.configuration.propulsion")
          .push("propulsion");
 
+        ALLOW_REDSTONE_THRUST_POWER = b
+                .comment("Allow a redstone signal to provide the power portion of FE/fuel-powered thrust machines.",
+                         "Default false: redstone is a stop/inhibit control while FE and propellant remain the",
+                         "machine's power source. When true, a redstone signal can run a machine without stored FE.")
+                .translation("magnetization.configuration.propulsion.allowRedstoneThrustPower")
+                .define("allowRedstoneThrustPower", false);
         MICRO_THRUSTER_TANK = b.translation("magnetization.configuration.propulsion.microThrusterTank")
                 .defineInRange("microThrusterTank", 8000, 1, 1_000_000);
         MICRO_THRUSTER_FE_CAPACITY = b.translation("magnetization.configuration.propulsion.microThrusterFeCapacity")
@@ -2199,8 +2207,9 @@ public final class MagConfig {
                 .defineInRange("tfmgPolarizerForceMultiplier", 1.0d, 0.0d, 100.0d);
 
         ALLOW_REDSTONE_POWER = b
-                .comment("Whether redstone signal activates the addon's redstone-powered emitters",
-                         "(Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator).",
+                .comment("Whether redstone signal activates the addon's redstone-powered field emitters",
+                         "(Electromagnet, Magnetic Anchor, Repulsor Coil, Tractor Beam, Magnetic Excavator, Railgun Emitter).",
+                         "This does not affect propulsion machines; use propulsion.allowRedstoneThrustPower for those.",
                          "Set false to force players to feed FE/RF energy — useful on hardcore-leaning",
                          "servers where infinite-redstone setups would trivialise the gameplay loop.")
                 .translation("magnetization.configuration.compat.allowRedstonePower")
@@ -2710,6 +2719,7 @@ public final class MagConfig {
     public static float  anvilBreakTitanomagnetite() { return (float) doubleOr(ANVIL_BREAK_TITANOMAGNETITE, 0.0d); }
     public static float  anvilBreakDefault()         { return (float) doubleOr(ANVIL_BREAK_DEFAULT, 0.12d); }
     public static int    microThrusterTank()        { return intOr(MICRO_THRUSTER_TANK, 8000); }
+    public static boolean allowRedstoneThrustPower(){ return booleanOr(ALLOW_REDSTONE_THRUST_POWER, false); }
     public static int    microThrusterFeCapacity()  { return microThrusterFeCapacityRaw(); }
     public static int    microThrusterFeReceive()   { return Math.min(microThrusterFeReceiveRaw(), microThrusterFeCapacityRaw()); }
     public static int    microThrusterFePerTick()   { return intOr(MICRO_THRUSTER_FE_PER_TICK, 48); }

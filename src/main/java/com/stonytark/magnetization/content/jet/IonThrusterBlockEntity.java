@@ -147,9 +147,9 @@ public final class IonThrusterBlockEntity extends BlockEntity
         if (isPropellantBucket(input) && fillFromBucket(input)) bucketSlot.setItem(0, new ItemStack(Items.BUCKET));
 
         final Propellant propellant = profile(tank.getFluid());
-        final boolean firing = host != null && !tank.isEmpty()
-                && tank.getFluidAmount() >= propellant.fluidPerTick()
-                && energy.getEnergyStored() >= propellant.fePerTick();
+        final boolean firing = host != null && ThrustControl.canRun(server, getBlockPos(),
+                !tank.isEmpty() && tank.getFluidAmount() >= propellant.fluidPerTick(),
+                energy.getEnergyStored() >= propellant.fePerTick());
         if (firing) {
             final boolean radon = tank.getFluid().getFluid() == MagFluids.RADON.get();
             tank.drain(propellant.fluidPerTick(), IFluidHandler.FluidAction.EXECUTE);

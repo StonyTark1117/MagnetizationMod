@@ -3488,6 +3488,49 @@ public final class MagGameTests {
     }
 
     /**
+     * Redstone controls thrust by default without becoming a hidden FE source;
+     * the propulsion config can explicitly restore redstone as the power source.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 20, batch = "thrustRedstoneControl")
+    public static void thrustRedstoneControlDefaultsToInhibit(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos thrust = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos signal = thrust.east();
+        final boolean prior = MagConfig.ALLOW_REDSTONE_THRUST_POWER.get();
+        final boolean priorCompat = MagConfig.ALLOW_REDSTONE_POWER.get();
+        try {
+            MagConfig.ALLOW_REDSTONE_THRUST_POWER.set(false);
+            MagConfig.ALLOW_REDSTONE_POWER.set(false);
+            helper.assertTrue(com.stonytark.magnetization.content.jet.ThrustControl.canRun(
+                            level, thrust, true, true),
+                    "An unpowered FE/propellant thrust machine should run normally");
+            level.setBlock(signal, Blocks.REDSTONE_BLOCK.defaultBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_ALL);
+            helper.assertTrue(!com.stonytark.magnetization.content.jet.ThrustControl.canRun(
+                            level, thrust, true, true),
+                    "A redstone signal should stop resource-powered thrust by default");
+
+            MagConfig.ALLOW_REDSTONE_THRUST_POWER.set(true);
+            helper.assertTrue(com.stonytark.magnetization.content.jet.ThrustControl.canRun(
+                            level, thrust, true, false),
+                    "The propulsion redstone-power setting should replace FE input even when compat redstone power is disabled");
+            MagConfig.ALLOW_REDSTONE_THRUST_POWER.set(false);
+            helper.assertTrue(!com.stonytark.magnetization.content.jet.ThrustControl.canRun(
+                            level, thrust, true, true),
+                    "The propulsion setting should control thrust independently of compat redstone power");
+            helper.assertTrue(!com.stonytark.magnetization.content.jet.ThrustControl.passiveThrustAllowed(
+                            level, thrust),
+                    "A redstone signal should stop passive thrust such as a Solar Sail");
+        } finally {
+            MagConfig.ALLOW_REDSTONE_THRUST_POWER.set(prior);
+            MagConfig.ALLOW_REDSTONE_POWER.set(priorCompat);
+            level.setBlock(signal, Blocks.AIR.defaultBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_ALL);
+        }
+        helper.succeed();
+    }
+
+    /**
      * Persistent migration framework semantics: a migration version runs once per
      * chunk, a restart-safe completion record suppresses the second attempt, and
      * an explicit version bump is allowed exactly once for that same chunk.

@@ -183,7 +183,8 @@ public class MhdJetBlockEntity extends BlockEntity
         final double mult = conductivityMult(fluidTank.getFluid().getFluid());
         final boolean hasFluid = mult > 0 && fluidTank.getFluidAmount() >= fluidCost;
         final boolean firing = t != null && host != null
-                && energy.getEnergyStored() >= (int) t[2] && hasFluid;
+                && ThrustControl.canRun(server, getBlockPos(), hasFluid,
+                energy.getEnergyStored() >= (int) t[2]);
         if (firing) {
             energy.drainInternal((int) t[2]);
             if (fluidCost > 0) fluidTank.drain(fluidCost, IFluidHandler.FluidAction.EXECUTE);

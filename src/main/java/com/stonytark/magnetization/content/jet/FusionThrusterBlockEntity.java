@@ -71,6 +71,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     private @Nullable BlockPos cachedMaster;
     private java.util.List<BlockPos> cachedInteriorList = java.util.List.of();
     private java.util.List<BlockPos> cachedFrameList = java.util.List.of();
+    private java.util.List<BlockPos> cachedControlList = java.util.List.of();
     private long lastScanTick = Long.MIN_VALUE;
     private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
     /** Fractional fuel-consumption accumulator (denser fluids drain < 1 mB/tick). */
@@ -265,6 +266,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
             cachedMaster = r.master();
             cachedInteriorList = r.interior();
             cachedFrameList = FusionThrusterPanel.framePositions(r);
+            final java.util.ArrayList<BlockPos> control = new java.util.ArrayList<>(cachedInteriorList);
+            control.addAll(cachedFrameList);
+            cachedControlList = java.util.List.copyOf(control);
             lastScanTick = server.getGameTime();
             if (!prevValid && cachedValid && cachedMaster != null
                     && getBlockPos().equals(cachedMaster)) {
@@ -340,8 +344,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
                 + (long) MagConfig.fusionThrusterFluidPerTickPerInterior() * count);
 
         final FluidStack fuel = tank.getFluid();
-        final boolean canFire = host != null && cachedValid && !fuel.isEmpty()
-                && tank.getFluidAmount() >= 1 && energy.getEnergyStored() >= feCost;
+        final boolean canFire = host != null && ThrustControl.canRun(server, cachedControlList,
+                cachedValid && !fuel.isEmpty() && tank.getFluidAmount() >= 1,
+                energy.getEnergyStored() >= feCost);
 
         firing = canFire;
         if (canFire) {
