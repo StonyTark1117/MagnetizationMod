@@ -120,11 +120,10 @@ class NobleGasResourceCompletenessTest {
     }
 
     private static void assertPaperFilterRecipe(final JsonObject recipe) {
-        assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
-        assertEquals(List.of("PP", "PP"), recipe.getAsJsonArray("pattern").asList().stream()
-                .map(element -> element.getAsString()).toList());
-        assertEquals("minecraft:paper", recipe.getAsJsonObject("key").getAsJsonObject("P")
-                .get("item").getAsString());
+        assertEquals("minecraft:crafting_shapeless", recipe.get("type").getAsString());
+        assertEquals(4, recipe.getAsJsonArray("ingredients").size());
+        recipe.getAsJsonArray("ingredients").forEach(ingredient ->
+                assertEquals("minecraft:paper", ingredient.getAsJsonObject().get("item").getAsString()));
         assertEquals("magnetization:air_filter", recipe.getAsJsonObject("result").get("id").getAsString());
     }
 
@@ -136,11 +135,10 @@ class NobleGasResourceCompletenessTest {
                 () -> "Missing mod condition in " + path);
         assertTrue(conditions.contains("\"feature\":\"" + feature + "\""),
                 () -> "Missing config condition in " + path);
-        assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
-        assertEquals(List.of("PP", "PP"), recipe.getAsJsonArray("pattern").asList().stream()
-                .map(element -> element.getAsString()).toList());
-        assertEquals(tag, recipe.getAsJsonObject("key").getAsJsonObject("P")
-                .get("tag").getAsString());
+        assertEquals("minecraft:crafting_shapeless", recipe.get("type").getAsString());
+        assertEquals(4, recipe.getAsJsonArray("ingredients").size());
+        recipe.getAsJsonArray("ingredients").forEach(ingredient ->
+                assertEquals(tag, ingredient.getAsJsonObject().get("tag").getAsString()));
         assertEquals("magnetization:air_filter", recipe.getAsJsonObject("result").get("id").getAsString());
     }
 

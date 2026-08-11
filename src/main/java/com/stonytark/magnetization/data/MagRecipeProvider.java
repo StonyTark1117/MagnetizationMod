@@ -848,9 +848,8 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('t', MagItems.TOKAMAK_COIL.get())
                 .define('s', shaft)
                 .unlockedBy("has_coil", has(MagItems.TOKAMAK_COIL.get())).save(out, id("air_separator"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.AIR_FILTER.get())
-                .pattern("PP").pattern("PP")
-                .define('P', Items.PAPER)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.AIR_FILTER.get())
+                .requires(Items.PAPER, 4)
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .save(out, id("air_filter"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, MagItems.ISOTOPE_SEPARATION_MODULE.get())

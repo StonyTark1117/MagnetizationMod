@@ -1,11 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "minecraft:crafting_shapeless",
   "neoforge:conditions": [
     { "type": "neoforge:mod_loaded", "modid": "immersiveengineering" },
     { "type": "magnetization:compat_config", "feature": "immersive_engineering" }
   ],
   "category": "misc",
-  "key": { "P": { "tag": "c:plates/plastic" } },
-  "pattern": ["PP", "PP"],
+  "ingredients": [
+    { "tag": "c:plates/plastic" },
+    { "tag": "c:plates/plastic" },
+    { "tag": "c:plates/plastic" },
+    { "tag": "c:plates/plastic" }
+  ],
   "result": { "count": 1, "id": "magnetization:air_filter" }
 }

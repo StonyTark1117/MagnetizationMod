@@ -1,4 +1,4 @@
-// 1.21.1	2026-08-11T05:55:45.593828624	Recipes
+// 1.21.1	2026-08-11T08:50:09.921907487	Recipes
 97909bfc7e48cb09e753207276631c449a1624e6 data/magnetization/advancement/recipes/building_blocks/anomaly_stone_from_blasting.json
 6345f706f3a39e203dbb77fef02feb9c2099598c data/magnetization/advancement/recipes/building_blocks/anomaly_stone_from_smelting.json
 1666e5c41b09b0d7a7747bca7de7f283be1e0e0a data/magnetization/advancement/recipes/building_blocks/anomaly_stone_slab.json
@@ -249,7 +249,7 @@ c65b3cc88490c4d3aed79fbe020ce1e85f0e6857 data/magnetization/advancement/recipes/
 1cce8fe4f8bc16b25c674bcb764a2e42558f21b9 data/magnetization/advancement/recipes/transportation/mhd_jet.json
 7563b688b9e02142c93eb18bdd750cec809d73cc data/magnetization/advancement/recipes/transportation/micro_thruster.json
 db7beb8a2539aa4c12684a47a4c41b3d5e7fc48c data/magnetization/advancement/recipes/transportation/solar_sail.json
-9d97af57051d55ca13dab20d3c705fb54c074f34 data/magnetization/recipe/air_filter.json
+f8ccf167785856ae8893c0498cd70b99bd8f3a7a data/magnetization/recipe/air_filter.json
 5372daf9b061c51689511189bbd57ac81557e5d9 data/magnetization/recipe/air_separator.json
 eeb43f2071f50f635ee8dc6cc19fce593cd03953 data/magnetization/recipe/alfven_backpack.json
 352a53464a8be2e517c43401f67b7a19b963014a data/magnetization/recipe/anomaly_stone_from_blasting.json
