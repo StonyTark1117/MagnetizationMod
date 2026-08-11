@@ -21,7 +21,8 @@ import java.util.Map;
  * the sprite. Two channels are derived from here:
  *
  * <ul>
- *   <li>a compact isotope <b>badge</b> (H / D / T / He³ / Li) drawn over the item icon
+ *   <li>a compact isotope/element <b>badge</b> (H / D / T / He / Ne / Ar / Kr / Xe / Rn)
+ *       drawn over the item icon
  *       by {@code MagFuelBadges} — text, so it survives colour-vision differences and
  *       reads identically in the inventory, JEI, REI and EMI (all three render item
  *       decorations through the vanilla item-decoration hook);</li>
@@ -52,6 +53,14 @@ public final class FusionFuelInfo {
     private static final int HELIUM3_COLOR   = 0xFFC9A7FF; // luminous lavender, matching the crystal palette
     private static final int LITHIUM_COLOR   = 0xFFE0E0E8; // silver
     private static final int GALLIUM_COLOR   = 0xFF8FB4D9; // blue-grey
+    // Noble-gas badges mirror their discharge colors from the 1.4 gas system. The
+    // glyphs remain the primary identifier; these colors are only a redundant cue.
+    private static final int HELIUM_COLOR    = 0xFFFFB38A; // peach
+    private static final int NEON_COLOR      = 0xFFFF2A16; // red-orange
+    private static final int ARGON_COLOR     = 0xFFB56CFF; // violet
+    private static final int KRYPTON_COLOR   = 0xFFD8FFE6; // pale green
+    private static final int XENON_COLOR     = 0xFF4FA9FF; // blue
+    private static final int RADON_COLOR     = 0xFF6657FF; // indigo
 
     private static @Nullable Map<Item, Badge> badges;
 
@@ -62,12 +71,24 @@ public final class FusionFuelInfo {
         final Badge t  = new Badge("T",   TRITIUM_COLOR);
         final Badge he = new Badge("He³", HELIUM3_COLOR);
         final Badge li = new Badge("Li",  LITHIUM_COLOR);
+        final Badge helium = new Badge("He", HELIUM_COLOR);
+        final Badge neon = new Badge("Ne", NEON_COLOR);
+        final Badge argon = new Badge("Ar", ARGON_COLOR);
+        final Badge krypton = new Badge("Kr", KRYPTON_COLOR);
+        final Badge xenon = new Badge("Xe", XENON_COLOR);
+        final Badge radon = new Badge("Rn", RADON_COLOR);
 
         m.put(MagItems.HYDROGEN_BUCKET.get(), h);
         m.put(MagItems.DEUTERIUM_OXIDE_BUCKET.get(), d);
         m.put(MagItems.TRITIUM_BUCKET.get(), t);
         m.put(MagItems.HELIUM_3_BUCKET.get(), he);
         m.put(MagItems.LIQUID_LITHIUM_BUCKET.get(), li);
+        m.put(MagItems.HELIUM_BUCKET.get(), helium);
+        m.put(MagItems.NEON_BUCKET.get(), neon);
+        m.put(MagItems.ARGON_BUCKET.get(), argon);
+        m.put(MagItems.KRYPTON_BUCKET.get(), krypton);
+        m.put(MagItems.XENON_BUCKET.get(), xenon);
+        m.put(MagItems.RADON_BUCKET.get(), radon);
 
         m.put(MagItems.DEUTERIUM_CELL.get(), d);
         m.put(MagItems.TRITIUM_CELL.get(), t);

@@ -11,7 +11,8 @@ import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
 import java.util.Map;
 
 /**
- * Draws the isotope/element marking (H / D / T / He³ / Li / Ga) over every fuel item icon.
+ * Draws the isotope/element marking (H / D / T / He³ / He / Ne / Ar / Kr / Xe / Rn / Li / Ga)
+ * over every fuel item icon.
  *
  * <p>Item decorations render through the same {@code renderItemDecorations} path the
  * vanilla inventory uses, so the badge shows up unchanged in the player inventory, in
