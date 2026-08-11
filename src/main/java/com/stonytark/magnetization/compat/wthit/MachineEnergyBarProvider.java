@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.compat.wthit;
 
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
+import com.stonytark.magnetization.content.gas.GasExciterBlockEntity;
 import com.stonytark.magnetization.menu.MachineGuiData;
 import mcp.mobius.waila.api.IBlockAccessor;
 import mcp.mobius.waila.api.IBlockComponentProvider;
@@ -17,7 +18,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 
 /**
  * Renders the stored-FE bar for our energy blocks (powered emitters + the
- * tokamak / MHD jet / micro-thruster) from each block's OWN client-synced
+ * Gas Exciter, tokamak / MHD jet / micro-thruster) from each block's OWN client-synced
  * buffer, so the value is always the hovered block's.
  *
  * <p>Registered at a priority above WTHIT's built-in energy renderer (500) so
@@ -63,6 +64,10 @@ public enum MachineEnergyBarProvider implements IBlockComponentProvider {
     private static long[] ownEnergy(final BlockEntity be) {
         if (be instanceof AbstractEmitterBlockEntity emitter && emitter.acceptsPowerInput()) {
             final var buffer = emitter.getEnergyBuffer();
+            return new long[]{buffer.getEnergyStored(), buffer.getMaxEnergyStored()};
+        }
+        if (be instanceof GasExciterBlockEntity exciter) {
+            final var buffer = exciter.energyBuffer();
             return new long[]{buffer.getEnergyStored(), buffer.getMaxEnergyStored()};
         }
         if (be instanceof MachineGuiData machine && machine.guiEnergyStored() >= 0) {

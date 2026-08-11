@@ -32,6 +32,8 @@ public final class GasExciterBlockEntity extends BlockEntity {
     private Fluid hudGas = Fluids.EMPTY;
     private boolean hudActive;
     private boolean hudRedstoneDisabled;
+    private long lastEnergySyncTick = Long.MIN_VALUE;
+    private int lastSyncedEnergy = -1;
 
     public GasExciterBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.GAS_EXCITER.get(), pos, state);
@@ -92,9 +94,23 @@ public final class GasExciterBlockEntity extends BlockEntity {
         final boolean active = gas != Fluids.EMPTY && !redstoneDisabled
                 && be.consumedAt == server.getGameTime();
         be.updateHudState(server, gas, active, redstoneDisabled);
+        be.syncEnergyState(server);
         if (state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT) != active) {
             server.setBlock(pos, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** Keep the client-side WTHIT energy bar tied to this exciter's own buffer. */
+    private void syncEnergyState(final ServerLevel server) {
+        final long now = server.getGameTime();
+        final int current = energy.getEnergyStored();
+        final boolean changedEnough = lastSyncedEnergy < 0
+                || Math.abs(current - lastSyncedEnergy) >= Math.max(1, energy.getMaxEnergyStored() / 100);
+        final boolean periodicDue = now - lastEnergySyncTick >= 20L;
+        if (!changedEnough && !periodicDue) return;
+        lastSyncedEnergy = current;
+        lastEnergySyncTick = now;
+        server.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     private boolean redstoneDisabledNow() {
