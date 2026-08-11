@@ -110,7 +110,7 @@ public final class MagClientRegistration {
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
 
         // Hydrogen: a faint neutral haze while dormant, rose-pink Balmer discharge while excited.
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FF6680, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66FFD0B0, 0xA6FF6680, true),
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
 
         // Tritium: steady, translucent cyan radioluminescence; it does not need external excitation.
@@ -118,20 +118,20 @@ public final class MagClientRegistration {
                 com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
 
         // Helium-3 shares ordinary helium's peach electronic discharge spectrum.
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66FFD0B0, 0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66FFD0B0, 0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FF2A16, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66FF8A70, 0xA6FF2A16, true),
                 com.stonytark.magnetization.registry.MagFluids.NEON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6B56CFF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66B56CFF, 0xA6B56CFF, false),
                 com.stonytark.magnetization.registry.MagFluids.ARGON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6D8FFE6, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x66D8FFE6, 0xA6D8FFE6, false),
                 com.stonytark.magnetization.registry.MagFluids.KRYPTON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA64FA9FF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x667AB8FF, 0xA64FA9FF, false),
                 com.stonytark.magnetization.registry.MagFluids.XENON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA66657FF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0x668A7CFF, 0xA66657FF, false),
                 com.stonytark.magnetization.registry.MagFluids.RADON_TYPE.get());
 
         // Liquid lithium: water textures tinted warm silvery metal.
@@ -182,7 +182,8 @@ public final class MagClientRegistration {
     }
 
     private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions excitableGasFluid(
-            final int dormantTint, final int excitedTint, final boolean rises) {
+            final int dormantTint, final int containerDormantTint, final int excitedTint,
+            final boolean rises) {
         return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             @Override public net.minecraft.resources.ResourceLocation getStillTexture() {
                 return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
@@ -191,6 +192,16 @@ public final class MagClientRegistration {
                 return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
             }
             @Override public int getTintColor() { return dormantTint; }
+            /**
+             * Create renders tank and pipe contents from a FluidStack, so it does
+             * not have the block state needed to select the excited tint. Keep a
+             * distinct, moderately translucent dormant tint for those containers
+             * so stored gas remains visible without becoming an opaque fill.
+             */
+            @Override
+            public int getTintColor(final net.neoforged.neoforge.fluids.FluidStack stack) {
+                return containerDormantTint;
+            }
             @Override
             public int getTintColor(final net.minecraft.world.level.material.FluidState fluidState,
                                     final net.minecraft.world.level.BlockAndTintGetter level,
