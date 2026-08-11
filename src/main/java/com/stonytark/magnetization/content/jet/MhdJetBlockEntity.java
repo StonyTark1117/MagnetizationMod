@@ -117,6 +117,12 @@ public class MhdJetBlockEntity extends BlockEntity
     @Override public int guiStat1() { return fluidTank.getFluidAmount(); }   // conductive fluid mB
     @Override public int guiStat4() { return MagConfig.mhdJetTank(); }        // bar denominator (server config)
     @Override public int guiStat2() { return burnRemaining; }                // magnet burn ticks left
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
+                && getBlockState().getValue(BlockStateProperties.LIT)
+                ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     /** {maxSpeed, dvPerTick, feCostPerTick} for the slotted magnetic material —
      *  STRONG by design, and scaling with the material's potency. A stronger

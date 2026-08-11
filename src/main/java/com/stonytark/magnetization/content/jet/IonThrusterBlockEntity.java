@@ -71,6 +71,12 @@ public final class IonThrusterBlockEntity extends BlockEntity
     @Override public int guiStat1() { return tank.getFluidAmount(); }
     @Override public int guiStat3() { return profileIndex(tank.getFluid()); }
     @Override public int guiStat4() { return MagConfig.ionThrusterTank(); }
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
+                && getBlockState().getValue(BlockStateProperties.LIT)
+                ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     public static boolean isPropellantBucket(final ItemStack stack) {
         return fluidForBucket(stack) != null;

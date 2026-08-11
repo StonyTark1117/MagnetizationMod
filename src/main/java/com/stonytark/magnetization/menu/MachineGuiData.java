@@ -80,6 +80,26 @@ public interface MachineGuiData extends MachineHudData {
         return Component.translatable(key).withStyle(colour);
     }
 
+    /**
+     * Machine-aware status formatter. The old idle text described one specific
+     * consumer (magnet + power), which made generator and fluid-only machines
+     * report requirements they do not have.
+     */
+    static Component statusLine(final MachineMenu.Kind kind, final MachineDisplayData.Status status) {
+        if (status != MachineDisplayData.Status.IDLE) return statusLine(status);
+        final String key = switch (kind) {
+            case MOTOR -> "tooltip.magnetization.machine_idle_motor";
+            case TOKAMAK -> "tooltip.magnetization.machine_idle_tokamak";
+            case JET -> "tooltip.magnetization.machine_idle_jet";
+            case THRUSTER, ION_THRUSTER, FUSION_THRUSTER -> "tooltip.magnetization.machine_idle_thruster";
+            case ELECTROLYZER -> "tooltip.magnetization.machine_idle_electrolyzer";
+            case RAILGUN -> "tooltip.magnetization.machine_idle_railgun";
+            case COIL -> "tooltip.magnetization.machine_idle_coil";
+            case SAIL -> "tooltip.magnetization.machine_idle_sail";
+        };
+        return Component.translatable(key).withStyle(ChatFormatting.YELLOW);
+    }
+
     /** Lines for the WTHIT / Jade / TOP/Create goggles tooltip — the block's own live status.
      *  Note: no stored-FE line here. WTHIT/Jade already draw a built-in energy
      *  bar from the {@code EnergyStorage} capability, so emitting one would
@@ -100,22 +120,22 @@ public interface MachineGuiData extends MachineHudData {
                     out.add(Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
                             + tiers[Math.min(2, Math.max(0, display.tier()))]).withStyle(ChatFormatting.GRAY));
                 }
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case THRUSTER, ION_THRUSTER -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, display.current())).withStyle(ChatFormatting.AQUA));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case FUSION_THRUSTER -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, display.current())).withStyle(ChatFormatting.AQUA));
                 final int interiors = Math.max(0, display.auxiliary());
                 out.add(Component.translatable("tooltip.magnetization.gui_fusion_size", interiors).withStyle(ChatFormatting.GRAY));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case ELECTROLYZER -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_water", Math.max(0, display.current())).withStyle(ChatFormatting.BLUE));
                 out.add(Component.translatable("tooltip.magnetization.gui_hydrogen", Math.max(0, display.auxiliary())).withStyle(ChatFormatting.WHITE));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case RAILGUN -> {
                 out.add(Component.translatable("tooltip.magnetization.gui_rail_length", Math.max(0, display.current())).withStyle(ChatFormatting.GRAY));
@@ -136,19 +156,19 @@ public interface MachineGuiData extends MachineHudData {
                         ? "tooltip.magnetization.gui_railgun_break_blocks_on"
                         : "tooltip.magnetization.gui_railgun_break_blocks_off")
                         .withStyle(breakBlocks ? ChatFormatting.RED : ChatFormatting.GREEN));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case MOTOR -> {
                 out.add(magnetStatusLine(magnet));
                 magnetBurnLine(display.auxiliary()).ifPresent(out::add);
                 out.add(Component.translatable("tooltip.magnetization.gui_rpm", Math.max(0, display.current())).withStyle(ChatFormatting.GRAY));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
             case JET -> {
                 out.add(magnetStatusLine(magnet));
                 magnetBurnLine(display.auxiliary()).ifPresent(out::add);
                 out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, display.current())).withStyle(ChatFormatting.AQUA));
-                out.add(statusLine(display.status()));
+                out.add(statusLine(guiKind(), display.status()));
             }
         }
         return out;

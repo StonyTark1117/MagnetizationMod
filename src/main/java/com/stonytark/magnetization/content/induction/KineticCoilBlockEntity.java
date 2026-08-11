@@ -89,7 +89,7 @@ public class KineticCoilBlockEntity extends BlockEntity
                 "tooltip.magnetization.gui_coil_emf", Math.max(0, lastGenerated))
                 .withStyle(net.minecraft.ChatFormatting.GRAY));
         out.add(net.minecraft.network.chat.Component.translatable(generating
-                ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle")
+                ? "tooltip.magnetization.machine_active" : "tooltip.magnetization.machine_idle_coil")
                 .withStyle(generating ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.YELLOW));
         return out;
     }

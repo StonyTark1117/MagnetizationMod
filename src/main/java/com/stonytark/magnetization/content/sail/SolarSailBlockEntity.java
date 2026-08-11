@@ -122,7 +122,7 @@ public class SolarSailBlockEntity extends BlockEntity
                 ? "tooltip.magnetization.gui_sail_day" : "tooltip.magnetization.gui_sail_night")
                 .withStyle(lastDay ? net.minecraft.ChatFormatting.YELLOW : net.minecraft.ChatFormatting.BLUE));
         out.add(net.minecraft.network.chat.Component.translatable(lastActive
-                ? "tooltip.magnetization.gui_sail_sailing" : "tooltip.magnetization.machine_idle")
+                ? "tooltip.magnetization.gui_sail_sailing" : "tooltip.magnetization.machine_idle_sail")
                 .withStyle(lastActive ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.YELLOW));
         return out;
     }

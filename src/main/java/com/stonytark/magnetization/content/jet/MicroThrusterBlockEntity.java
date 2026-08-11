@@ -88,6 +88,12 @@ public class MicroThrusterBlockEntity extends BlockEntity
     @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.microThrusterFeCapacity(); }
     @Override public int guiStat1() { return tank.getFluidAmount(); }
     @Override public int guiStat4() { return com.stonytark.magnetization.config.MagConfig.microThrusterTank(); }
+    @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
+                && getBlockState().getValue(BlockStateProperties.LIT)
+                ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
+    }
 
     /** Try to pour one ferrofluid bucket (1000 mB) into the tank. A magnetized
      *  bucket inserts MAGNETIZED_FERROFLUID so the player actually gets the

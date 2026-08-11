@@ -200,7 +200,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // Railgun already has a precise arc-state row; its final machine-status
         // row was duplicate information and now makes room for the toggle.
         if (menu.kind() != MachineMenu.Kind.RAILGUN) {
-            lines.add(MachineGuiData.statusLine(menu.displayStatus()));
+            lines.add(MachineGuiData.statusLine(menu.kind(), menu.displayStatus()));
         }
         return lines;
     }

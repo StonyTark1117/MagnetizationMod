@@ -3446,6 +3446,48 @@ public final class MagGameTests {
     }
 
     /**
+     * Audit #9 — GUI/HUD status requirements must describe the actual machine.
+     * Generators do not require FE input, and a thruster containing fuel/power
+     * but not mounted on a ship is not actively firing.
+     */
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    public static void machineStatusRequirementsMatchOperation(final GameTestHelper helper) {
+        final BlockPos motorPos = new BlockPos(1, 1, 1);
+        helper.setBlock(motorPos, MagBlocks.HOMOPOLAR_MOTOR.get());
+        final com.stonytark.magnetization.menu.MachineGuiData motor =
+                (com.stonytark.magnetization.menu.MachineGuiData) helper.getBlockEntity(motorPos);
+        helper.assertTrue(motor.guiEnergyStored() < 0,
+                "Homopolar Motor must not expose an FE input bar; it is a generator");
+        helper.assertTrue(motor.displayData().status()
+                        == com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE,
+                "Empty Homopolar Motor should be idle");
+        final net.minecraft.network.chat.Component motorIdle =
+                com.stonytark.magnetization.menu.MachineGuiData.statusLine(
+                        com.stonytark.magnetization.menu.MachineMenu.Kind.MOTOR,
+                        com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE);
+        helper.assertTrue(motorIdle.getContents()
+                        instanceof net.minecraft.network.chat.contents.TranslatableContents contents
+                        && contents.getKey().equals("tooltip.magnetization.machine_idle_motor"),
+                "Homopolar status must use the magnet-only idle requirement");
+
+        final BlockPos thrusterPos = new BlockPos(2, 1, 1);
+        helper.setBlock(thrusterPos, MagBlocks.MICRO_THRUSTER.get());
+        if (!(helper.getBlockEntity(thrusterPos)
+                instanceof com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity thruster)) {
+            helper.fail("no micro-thruster BE");
+            return;
+        }
+        thruster.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                MagFluids.FERROFLUID.get(), 1_000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        thruster.energyBuffer().receiveEnergy(1_000, false);
+        helper.assertTrue(thruster.displayData().status()
+                        == com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE,
+                "A fueled and powered thruster without a ship must remain idle");
+        helper.succeed();
+    }
+
+    /**
      * Persistent migration framework semantics: a migration version runs once per
      * chunk, a restart-safe completion record suppresses the second attempt, and
      * an explicit version bump is allowed exactly once for that same chunk.
