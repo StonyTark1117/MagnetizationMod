@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SSS", "SLS", "SSS"],
+  "key": { "S": { "item": "magnetization:sintered_samarium_cobalt" }, "L": { "item": "minecraft:lodestone" } },
+  "result": { "id": "magnetization:samarium_cobalt_magnet", "count": 1 }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "create:crushing",
+  "ingredients": [{ "item": "magnetization:deepslate_bastnasite_ore" }],
+  "results": [
+    { "id": "magnetization:bastnasite_concentrate", "count": 2 },
+    { "chance": 0.35, "id": "create:experience_nugget" }
+  ]
+}

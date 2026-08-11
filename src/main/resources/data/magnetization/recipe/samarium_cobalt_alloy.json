@@ -1,0 +1,10 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    { "item": "magnetization:samarium_ingot" },
+    { "item": "magnetization:cobalt_powder" },
+    { "item": "magnetization:ferromagnetic_ingot" }
+  ],
+  "results": [{ "id": "magnetization:samarium_cobalt_alloy" }]
+}

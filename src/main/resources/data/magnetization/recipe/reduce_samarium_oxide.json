@@ -1,0 +1,6 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [{ "item": "magnetization:samarium_oxide" }, { "type": "neoforge:fluid", "amount": 250, "fluid": "magnetization:hydrogen" }],
+  "results": [{ "id": "magnetization:samarium_ingot" }]
+}

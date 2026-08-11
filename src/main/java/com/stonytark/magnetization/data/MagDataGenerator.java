@@ -45,7 +45,9 @@ public final class MagDataGenerator {
         // src/main/resources/data/.../tags/: they carry other-mod IDs (Simulated,
         // IE, AC, Mekanism, TFMG, …) the registry can't know about. Do not wire
         // MagItemTagsProvider / MagEntityTypeTagsProvider for the same reason.
-        gen.addProvider(server, new MagBlockTagsProvider(out, lookup, existing));
+        final MagBlockTagsProvider blockTags = new MagBlockTagsProvider(out, lookup, existing);
+        gen.addProvider(server, blockTags);
+        gen.addProvider(server, new MagItemTagsProvider(out, lookup, blockTags.contentsGetter(), existing));
         gen.addProvider(server, new MagRecipeProvider(out, lookup));
         gen.addProvider(server, MagLootTableProvider.create(out, lookup));
         gen.addProvider(server, new MagCraterTemplateProvider(out));

@@ -130,5 +130,25 @@ public final class MagTiers {
         }
     };
 
+    /** Heat-stable samarium-cobalt alloy: above titanomagnetite, below NdFeB. */
+    public static final Tier SAMARIUM_COBALT = new Tier() {
+        @Override public int getUses() { return 1650; }
+        @Override public float getSpeed() { return 9.0f; }
+        @Override public float getAttackDamageBonus() { return 4.0f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_DIAMOND_TOOL; }
+        @Override public int getEnchantmentValue() { return 16; }
+        @Override public Ingredient getRepairIngredient() { return Ingredient.of(MagItems.SAMARIUM_COBALT_ALLOY.get()); }
+    };
+
+    /** Final NdFeB alloy tier: the strongest Magnetization equipment material. */
+    public static final Tier NEODYMIUM = new Tier() {
+        @Override public int getUses() { return 2100; }
+        @Override public float getSpeed() { return 10.0f; }
+        @Override public float getAttackDamageBonus() { return 4.5f; }
+        @Override public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_DIAMOND_TOOL; }
+        @Override public int getEnchantmentValue() { return 20; }
+        @Override public Ingredient getRepairIngredient() { return Ingredient.of(MagItems.NEODYMIUM_ALLOY.get()); }
+    };
+
     private MagTiers() {}
 }

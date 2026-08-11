@@ -1,0 +1,5 @@
+{
+  "type": "create:pressing",
+  "ingredients": [{ "item": "magnetization:samarium_cobalt_alloy" }],
+  "results": [{ "id": "magnetization:samarium_cobalt_magnet_blank" }]
+}

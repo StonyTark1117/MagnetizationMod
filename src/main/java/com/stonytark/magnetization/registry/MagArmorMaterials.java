@@ -208,6 +208,20 @@ public final class MagArmorMaterials {
                     () -> Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get()),
                     "titanomagnetite", 2.5f, 0.05f));
 
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SAMARIUM_COBALT =
+            REGISTER.register("samarium_cobalt", () -> material(
+                    3, 8, 6, 3, 11, 16,
+                    SoundEvents.ARMOR_EQUIP_DIAMOND,
+                    () -> Ingredient.of(MagItems.SAMARIUM_COBALT_ALLOY.get()),
+                    "titanomagnetite", 3.0f, 0.10f));
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> NEODYMIUM =
+            REGISTER.register("neodymium", () -> material(
+                    3, 9, 7, 3, 12, 20,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(MagItems.NEODYMIUM_ALLOY.get()),
+                    "ferromagnetic", 3.5f, 0.15f));
+
     private static ArmorMaterial material(final int helmet, final int chestplate,
                                            final int leggings, final int boots,
                                            final int body, final int enchantment,
@@ -244,6 +258,10 @@ public final class MagArmorMaterials {
     public static Holder<ArmorMaterial> hematite() { return HEMATITE; }
 
     public static Holder<ArmorMaterial> titanomagnetite() { return TITANOMAGNETITE; }
+
+    public static Holder<ArmorMaterial> samariumCobalt() { return SAMARIUM_COBALT; }
+
+    public static Holder<ArmorMaterial> neodymium() { return NEODYMIUM; }
 
     public static Holder<ArmorMaterial> mrLiquid() {
         return MR_LIQUID;

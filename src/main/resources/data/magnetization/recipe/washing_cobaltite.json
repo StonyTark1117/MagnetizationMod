@@ -1,0 +1,5 @@
+{
+  "type": "create:splashing",
+  "ingredients": [{ "item": "magnetization:cobaltite_concentrate" }],
+  "results": [{ "id": "magnetization:cobalt_powder" }]
+}

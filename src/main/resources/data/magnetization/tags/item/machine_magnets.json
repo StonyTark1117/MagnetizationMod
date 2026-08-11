@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
+    "magnetization:samarium_cobalt_alloy",
+    "magnetization:neodymium_alloy",
+    "magnetization:samarium_cobalt_magnet",
+    "magnetization:neodymium_magnet",
     {
       "id": "tfmg:magnet",
       "required": false

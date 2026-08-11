@@ -1,0 +1,5 @@
+{
+  "type": "create:pressing",
+  "ingredients": [{ "item": "magnetization:neodymium_alloy" }],
+  "results": [{ "id": "magnetization:neodymium_magnet_blank" }]
+}

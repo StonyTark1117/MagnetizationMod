@@ -1,0 +1,5 @@
+{
+  "type": "create:splashing",
+  "ingredients": [{ "item": "magnetization:monazite_concentrate" }],
+  "results": [{ "id": "magnetization:samarium_oxide" }, { "chance": 0.25, "id": "magnetization:dysprosium_oxide" }]
+}

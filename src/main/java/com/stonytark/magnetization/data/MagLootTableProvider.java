@@ -73,6 +73,9 @@ public final class MagLootTableProvider {
             dropSelf(MagBlocks.POLARITY_INVERTER.get());
             dropSelf(MagBlocks.MAGNETITE_BLOCK.get());
             dropSelf(MagBlocks.RAW_MAGNETITE_BLOCK.get());
+            dropSelf(MagBlocks.FERROMAGNETIC_BLOCK.get());
+            dropSelf(MagBlocks.SAMARIUM_COBALT_BLOCK.get());
+            dropSelf(MagBlocks.NEODYMIUM_BLOCK.get());
             // Stone behaves like vanilla stone: drop self with silk, otherwise
             // drop cobbled. createSingleItemTableWithSilkTouch handles both.
             add(MagBlocks.ANOMALY_STONE.get(), b ->
@@ -118,6 +121,14 @@ public final class MagLootTableProvider {
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
             add(MagBlocks.DEEPSLATE_LITHIUM_ORE.get(),
                     block -> createOreDrop(block, MagItems.RAW_LITHIUM.get()));
+            add(MagBlocks.BASTNASITE_ORE.get(), block -> createOreDrop(block, MagItems.BASTNASITE_CONCENTRATE.get()));
+            add(MagBlocks.DEEPSLATE_BASTNASITE_ORE.get(), block -> createOreDrop(block, MagItems.BASTNASITE_CONCENTRATE.get()));
+            add(MagBlocks.MONAZITE_ORE.get(), block -> createOreDrop(block, MagItems.MONAZITE_CONCENTRATE.get()));
+            add(MagBlocks.DEEPSLATE_MONAZITE_ORE.get(), block -> createOreDrop(block, MagItems.MONAZITE_CONCENTRATE.get()));
+            add(MagBlocks.COBALTITE_ORE.get(), block -> createOreDrop(block, MagItems.COBALTITE_CONCENTRATE.get()));
+            add(MagBlocks.DEEPSLATE_COBALTITE_ORE.get(), block -> createOreDrop(block, MagItems.COBALTITE_CONCENTRATE.get()));
+            add(MagBlocks.BORAX_ORE.get(), block -> createOreDrop(block, MagItems.BORON_DUST.get()));
+            add(MagBlocks.DEEPSLATE_BORAX_ORE.get(), block -> createOreDrop(block, MagItems.BORON_DUST.get()));
             // Helium-3 geode lining drops helium-3 crystals; Silk Touch preserves the geode.
             add(MagBlocks.HELIUM_3_GEODE.get(),
                     block -> createOreDrop(block, MagItems.HELIUM_3_CRYSTAL.get()));

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["NNN", "NLS", "NNN"],
+  "key": { "N": { "item": "magnetization:sintered_neodymium" }, "L": { "item": "minecraft:lodestone" }, "S": { "item": "magnetization:magnetic_plate" } },
+  "result": { "id": "magnetization:neodymium_magnet", "count": 1 }
+}

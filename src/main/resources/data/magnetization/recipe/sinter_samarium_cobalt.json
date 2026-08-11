@@ -1,0 +1,6 @@
+{
+  "type": "create:compacting",
+  "heat_requirement": "superheated",
+  "ingredients": [{ "item": "magnetization:samarium_cobalt_magnet_blank" }],
+  "results": [{ "id": "magnetization:sintered_samarium_cobalt" }]
+}

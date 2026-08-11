@@ -166,7 +166,10 @@ class MaterialFamilyCompletenessTest {
                 "magnetization:magnetite_ingot", "magnetization:maghemite_ingot",
                 "magnetization:ferromagnetic_ingot", "magnetization:gallium_ingot",
                 "magnetization:lithium", "magnetization:pyrrhotite_ingot",
-                "magnetization:hematite_ingot", "magnetization:titanomagnetite_ingot");
+                "magnetization:hematite_ingot", "magnetization:titanomagnetite_ingot",
+                "magnetization:neodymium_ingot", "magnetization:samarium_ingot",
+                "magnetization:cobalt_ingot", "magnetization:samarium_cobalt_alloy",
+                "magnetization:neodymium_alloy");
         final Set<String> expectedRaw = Set.of(
                 "magnetization:raw_magnetite", "magnetization:raw_maghemite",
                 "magnetization:raw_gallium", "magnetization:raw_lithium",

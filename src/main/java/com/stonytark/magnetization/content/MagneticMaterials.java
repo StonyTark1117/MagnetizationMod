@@ -37,6 +37,8 @@ public final class MagneticMaterials {
      * best form beat a stronger ore's worst form.
      */
     private static final String[][] MATERIALS = {
+            {"neodymium", "37"},
+            {"samarium_cobalt", "31"},
             {"titanomagnetite", "25"},
             {"maghemite", "13"},
             {"magnetite", "7"},
@@ -49,7 +51,11 @@ public final class MagneticMaterials {
      *  iron+magnetite alloy, a step above plain magnetite. */
     private static final java.util.Map<String, Integer> SPECIALS = java.util.Map.of(
             "magnetic_plate", 10,
-            "ferromagnetic_ingot", 16);
+            "ferromagnetic_ingot", 16,
+            "samarium_cobalt_magnet", 36,
+            "neodymium_magnet", 44,
+            "samarium_cobalt_alloy", 31,
+            "neodymium_alloy", 37);
 
     /** Potency of the stack, or 0 if it isn't an accepted magnetic material. */
     public static int potency(final ItemStack stack) {

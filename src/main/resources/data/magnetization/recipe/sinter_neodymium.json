@@ -1,0 +1,6 @@
+{
+  "type": "create:compacting",
+  "heat_requirement": "superheated",
+  "ingredients": [{ "item": "magnetization:neodymium_magnet_blank" }],
+  "results": [{ "id": "magnetization:sintered_neodymium" }]
+}

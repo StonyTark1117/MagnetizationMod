@@ -284,6 +284,12 @@ public final class MagRecipeProvider extends RecipeProvider {
 
         storageBlock(out, "ferromagnetic_block", "ferromagnetic_ingot_from_block",
                 magAlloy, ferro, MagBlocks.FERROMAGNETIC_BLOCK.get());
+        storageBlock(out, "samarium_cobalt_block", "samarium_cobalt_from_block",
+                Ingredient.of(MagItems.SAMARIUM_COBALT_ALLOY.get()), MagItems.SAMARIUM_COBALT_ALLOY.get(),
+                MagBlocks.SAMARIUM_COBALT_BLOCK.get());
+        storageBlock(out, "neodymium_block", "neodymium_alloy_from_block",
+                Ingredient.of(MagItems.NEODYMIUM_ALLOY.get()), MagItems.NEODYMIUM_ALLOY.get(),
+                MagBlocks.NEODYMIUM_BLOCK.get());
 
         // -------- craftable ore blocks (raw_magnetite + stone/deepslate) --------
 
@@ -601,6 +607,17 @@ public final class MagRecipeProvider extends RecipeProvider {
                 MagItems.TITANOMAGNETITE_LEGGINGS.get(), MagItems.TITANOMAGNETITE_BOOTS.get(), MagItems.TITANOMAGNETITE_INGOT.get());
         horseArmor(out, "titanomagnetite", Ingredient.of(MagItems.TITANOMAGNETITE_INGOT.get()),
                 MagItems.TITANOMAGNETITE_HORSE_ARMOR.get(), MagItems.TITANOMAGNETITE_INGOT.get());
+
+        equipmentSet(out, Ingredient.of(MagItems.SAMARIUM_COBALT_ALLOY.get()), "samarium_cobalt",
+                MagItems.SAMARIUM_COBALT_SWORD.get(), MagItems.SAMARIUM_COBALT_PICKAXE.get(), MagItems.SAMARIUM_COBALT_AXE.get(),
+                MagItems.SAMARIUM_COBALT_SHOVEL.get(), MagItems.SAMARIUM_COBALT_HOE.get(),
+                MagItems.SAMARIUM_COBALT_HELMET.get(), MagItems.SAMARIUM_COBALT_CHESTPLATE.get(),
+                MagItems.SAMARIUM_COBALT_LEGGINGS.get(), MagItems.SAMARIUM_COBALT_BOOTS.get(), MagItems.SAMARIUM_COBALT_ALLOY.get());
+        equipmentSet(out, Ingredient.of(MagItems.NEODYMIUM_ALLOY.get()), "neodymium",
+                MagItems.NEODYMIUM_SWORD.get(), MagItems.NEODYMIUM_PICKAXE.get(), MagItems.NEODYMIUM_AXE.get(),
+                MagItems.NEODYMIUM_SHOVEL.get(), MagItems.NEODYMIUM_HOE.get(),
+                MagItems.NEODYMIUM_HELMET.get(), MagItems.NEODYMIUM_CHESTPLATE.get(),
+                MagItems.NEODYMIUM_LEGGINGS.get(), MagItems.NEODYMIUM_BOOTS.get(), MagItems.NEODYMIUM_ALLOY.get());
 
         // -------- Gallium gear (gold-like; M = gallium_ingot) --------
         final Item gIngot = MagItems.GALLIUM_INGOT.get();

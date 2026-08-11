@@ -77,6 +77,11 @@ public final class MagBlocks {
     public static final DeferredBlock<TemporaryMagnetBlock> TEMPORARY_MAGNET =
             REGISTER.register("temporary_magnet", () -> new TemporaryMagnetBlock(metal()));
 
+    public static final DeferredBlock<PermanentMagnetBlock> SAMARIUM_COBALT_MAGNET =
+            REGISTER.register("samarium_cobalt_magnet", () -> new PermanentMagnetBlock(metal()));
+    public static final DeferredBlock<PermanentMagnetBlock> NEODYMIUM_MAGNET =
+            REGISTER.register("neodymium_magnet", () -> new PermanentMagnetBlock(metal()));
+
     public static final DeferredBlock<PolarityInverterBlock> POLARITY_INVERTER =
             REGISTER.register("polarity_inverter", () -> new PolarityInverterBlock(metal()));
 
@@ -119,6 +124,16 @@ public final class MagBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(5.5f, 7.0f)
                     .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()));
+
+    /** Storage blocks for the two engineered rare-earth magnet alloys. */
+    public static final DeferredBlock<Block> SAMARIUM_COBALT_BLOCK =
+            REGISTER.register("samarium_cobalt_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(6.0f, 8.0f).sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> NEODYMIUM_BLOCK =
+            REGISTER.register("neodymium_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(6.5f, 9.0f).sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()));
 
     /** Natural-look terrain block for the anomaly biome — stone-grey with
@@ -238,6 +253,33 @@ public final class MagBlocks {
     public static final DeferredBlock<Block> RAW_TITANOMAGNETITE_BLOCK =
             REGISTER.register("raw_titanomagnetite_block", () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(6.0f, 7.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+
+    // Rare-earth precursor minerals. These generate naturally; the elements
+    // used by the advanced magnet alloys are deliberately never native drops.
+    public static final DeferredBlock<Block> BASTNASITE_ORE =
+            REGISTER.register("bastnasite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE).strength(5.0f, 5.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> DEEPSLATE_BASTNASITE_ORE =
+            REGISTER.register("deepslate_bastnasite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE).strength(6.0f, 5.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> MONAZITE_ORE =
+            REGISTER.register("monazite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).strength(5.0f, 5.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> DEEPSLATE_MONAZITE_ORE =
+            REGISTER.register("deepslate_monazite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE).strength(6.0f, 5.0f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> COBALTITE_ORE =
+            REGISTER.register("cobaltite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLUE).strength(4.5f, 4.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> DEEPSLATE_COBALTITE_ORE =
+            REGISTER.register("deepslate_cobaltite_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE).strength(5.5f, 4.5f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> BORAX_ORE =
+            REGISTER.register("borax_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(3.5f, 3.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> DEEPSLATE_BORAX_ORE =
+            REGISTER.register("deepslate_borax_ore", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE).strength(5.0f, 3.5f).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops()));
 
     // ---- Lithium ore (1.3 fusion-fuel chain: tritium-breeding feedstock) ----
     public static final DeferredBlock<Block> LITHIUM_ORE =

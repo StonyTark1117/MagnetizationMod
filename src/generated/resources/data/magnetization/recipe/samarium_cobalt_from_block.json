@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "magnetization:samarium_cobalt_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "magnetization:samarium_cobalt_alloy"
+  }
+}

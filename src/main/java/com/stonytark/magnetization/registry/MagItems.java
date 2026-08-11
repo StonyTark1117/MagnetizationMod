@@ -69,12 +69,24 @@ public final class MagItems {
     public static final DeferredItem<BlockItem> MAGNETIC_SWITCH  = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_SWITCH);
     public static final DeferredItem<BlockItem> PERMANENT_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.PERMANENT_MAGNET);
     public static final DeferredItem<BlockItem> TEMPORARY_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.TEMPORARY_MAGNET);
+    public static final DeferredItem<BlockItem> SAMARIUM_COBALT_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.SAMARIUM_COBALT_MAGNET);
+    public static final DeferredItem<BlockItem> NEODYMIUM_MAGNET = REGISTER.registerSimpleBlockItem(MagBlocks.NEODYMIUM_MAGNET);
     public static final DeferredItem<BlockItem> POLARITY_INVERTER = REGISTER.registerSimpleBlockItem(MagBlocks.POLARITY_INVERTER);
+    public static final DeferredItem<BlockItem> BASTNASITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.BASTNASITE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_BASTNASITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_BASTNASITE_ORE);
+    public static final DeferredItem<BlockItem> MONAZITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.MONAZITE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_MONAZITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_MONAZITE_ORE);
+    public static final DeferredItem<BlockItem> COBALTITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.COBALTITE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_COBALTITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_COBALTITE_ORE);
+    public static final DeferredItem<BlockItem> BORAX_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.BORAX_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_BORAX_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_BORAX_ORE);
     public static final DeferredItem<BlockItem> MAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETITE_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_MAGNETITE_ORE = REGISTER.registerSimpleBlockItem(MagBlocks.DEEPSLATE_MAGNETITE_ORE);
     public static final DeferredItem<BlockItem> MAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> RAW_MAGNETITE_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.RAW_MAGNETITE_BLOCK);
     public static final DeferredItem<BlockItem> FERROMAGNETIC_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.FERROMAGNETIC_BLOCK);
+    public static final DeferredItem<BlockItem> SAMARIUM_COBALT_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.SAMARIUM_COBALT_BLOCK);
+    public static final DeferredItem<BlockItem> NEODYMIUM_BLOCK = REGISTER.registerSimpleBlockItem(MagBlocks.NEODYMIUM_BLOCK);
     public static final DeferredItem<BlockItem> ANOMALY_STONE = REGISTER.registerSimpleBlockItem(MagBlocks.ANOMALY_STONE);
     public static final DeferredItem<BlockItem> MAGNETIC_GRAVEL = REGISTER.registerSimpleBlockItem(MagBlocks.MAGNETIC_GRAVEL);
     public static final DeferredItem<BlockItem> COBBLED_ANOMALY_STONE = REGISTER.registerSimpleBlockItem(MagBlocks.COBBLED_ANOMALY_STONE);
@@ -166,6 +178,26 @@ public final class MagItems {
     /** Raw lithium — mined from lithium ore, smelts to the Lithium item. */
     public static final DeferredItem<Item> RAW_LITHIUM =
             REGISTER.registerSimpleItem("raw_lithium", new Item.Properties());
+    public static final DeferredItem<Item> BASTNASITE_CONCENTRATE = REGISTER.registerSimpleItem("bastnasite_concentrate", new Item.Properties());
+    public static final DeferredItem<Item> MONAZITE_CONCENTRATE = REGISTER.registerSimpleItem("monazite_concentrate", new Item.Properties());
+    public static final DeferredItem<Item> COBALTITE_CONCENTRATE = REGISTER.registerSimpleItem("cobaltite_concentrate", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_OXIDE = REGISTER.registerSimpleItem("neodymium_oxide", new Item.Properties());
+    public static final DeferredItem<Item> DYSPROSIUM_OXIDE = REGISTER.registerSimpleItem("dysprosium_oxide", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_OXIDE = REGISTER.registerSimpleItem("samarium_oxide", new Item.Properties());
+    public static final DeferredItem<Item> BORON_DUST = REGISTER.registerSimpleItem("boron_dust", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_POWDER = REGISTER.registerSimpleItem("neodymium_powder", new Item.Properties());
+    public static final DeferredItem<Item> DYSPROSIUM_POWDER = REGISTER.registerSimpleItem("dysprosium_powder", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_POWDER = REGISTER.registerSimpleItem("samarium_powder", new Item.Properties());
+    public static final DeferredItem<Item> COBALT_POWDER = REGISTER.registerSimpleItem("cobalt_powder", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_INGOT = REGISTER.registerSimpleItem("neodymium_ingot", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_INGOT = REGISTER.registerSimpleItem("samarium_ingot", new Item.Properties());
+    public static final DeferredItem<Item> COBALT_INGOT = REGISTER.registerSimpleItem("cobalt_ingot", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_COBALT_ALLOY = REGISTER.registerSimpleItem("samarium_cobalt_alloy", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_ALLOY = REGISTER.registerSimpleItem("neodymium_alloy", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_COBALT_MAGNET_BLANK = REGISTER.registerSimpleItem("samarium_cobalt_magnet_blank", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_MAGNET_BLANK = REGISTER.registerSimpleItem("neodymium_magnet_blank", new Item.Properties());
+    public static final DeferredItem<Item> SINTERED_SAMARIUM_COBALT = REGISTER.registerSimpleItem("sintered_samarium_cobalt", new Item.Properties());
+    public static final DeferredItem<Item> SINTERED_NEODYMIUM = REGISTER.registerSimpleItem("sintered_neodymium", new Item.Properties());
     /** Helium-3 crystal — dropped by helium-3 geodes; fills the He-3 bucket / crafts the cell. */
     public static final DeferredItem<Item> HELIUM_3_CRYSTAL =
             REGISTER.registerSimpleItem("helium_3_crystal", new Item.Properties());
@@ -604,6 +636,25 @@ public final class MagItems {
     public static final DeferredItem<ArmorItem> TITANOMAGNETITE_LEGGINGS = armor("titanomagnetite_leggings", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.LEGGINGS, 30);
     public static final DeferredItem<ArmorItem> TITANOMAGNETITE_BOOTS = armor("titanomagnetite_boots", MagArmorMaterials.titanomagnetite(), ArmorItem.Type.BOOTS, 30);
     public static final DeferredItem<AnimalArmorItem> TITANOMAGNETITE_HORSE_ARMOR = horseArmor("titanomagnetite_horse_armor", MagArmorMaterials.titanomagnetite());
+
+    public static final DeferredItem<SwordItem> SAMARIUM_COBALT_SWORD = sword("samarium_cobalt_sword", MagTiers.SAMARIUM_COBALT, 3.8f, -2.4f);
+    public static final DeferredItem<PickaxeItem> SAMARIUM_COBALT_PICKAXE = pickaxe("samarium_cobalt_pickaxe", MagTiers.SAMARIUM_COBALT, 1.5f, -2.8f);
+    public static final DeferredItem<AxeItem> SAMARIUM_COBALT_AXE = axe("samarium_cobalt_axe", MagTiers.SAMARIUM_COBALT, 6.5f, -3.1f);
+    public static final DeferredItem<ShovelItem> SAMARIUM_COBALT_SHOVEL = shovel("samarium_cobalt_shovel", MagTiers.SAMARIUM_COBALT, 1.5f, -3.0f);
+    public static final DeferredItem<HoeItem> SAMARIUM_COBALT_HOE = hoe("samarium_cobalt_hoe", MagTiers.SAMARIUM_COBALT, 0f, -3.0f);
+    public static final DeferredItem<ArmorItem> SAMARIUM_COBALT_HELMET = armor("samarium_cobalt_helmet", MagArmorMaterials.samariumCobalt(), ArmorItem.Type.HELMET, 34);
+    public static final DeferredItem<ArmorItem> SAMARIUM_COBALT_CHESTPLATE = armor("samarium_cobalt_chestplate", MagArmorMaterials.samariumCobalt(), ArmorItem.Type.CHESTPLATE, 34);
+    public static final DeferredItem<ArmorItem> SAMARIUM_COBALT_LEGGINGS = armor("samarium_cobalt_leggings", MagArmorMaterials.samariumCobalt(), ArmorItem.Type.LEGGINGS, 34);
+    public static final DeferredItem<ArmorItem> SAMARIUM_COBALT_BOOTS = armor("samarium_cobalt_boots", MagArmorMaterials.samariumCobalt(), ArmorItem.Type.BOOTS, 34);
+    public static final DeferredItem<SwordItem> NEODYMIUM_SWORD = sword("neodymium_sword", MagTiers.NEODYMIUM, 4.2f, -2.35f);
+    public static final DeferredItem<PickaxeItem> NEODYMIUM_PICKAXE = pickaxe("neodymium_pickaxe", MagTiers.NEODYMIUM, 1.5f, -2.7f);
+    public static final DeferredItem<AxeItem> NEODYMIUM_AXE = axe("neodymium_axe", MagTiers.NEODYMIUM, 7.0f, -3.0f);
+    public static final DeferredItem<ShovelItem> NEODYMIUM_SHOVEL = shovel("neodymium_shovel", MagTiers.NEODYMIUM, 1.5f, -2.9f);
+    public static final DeferredItem<HoeItem> NEODYMIUM_HOE = hoe("neodymium_hoe", MagTiers.NEODYMIUM, 0f, -2.8f);
+    public static final DeferredItem<ArmorItem> NEODYMIUM_HELMET = armor("neodymium_helmet", MagArmorMaterials.neodymium(), ArmorItem.Type.HELMET, 38);
+    public static final DeferredItem<ArmorItem> NEODYMIUM_CHESTPLATE = armor("neodymium_chestplate", MagArmorMaterials.neodymium(), ArmorItem.Type.CHESTPLATE, 38);
+    public static final DeferredItem<ArmorItem> NEODYMIUM_LEGGINGS = armor("neodymium_leggings", MagArmorMaterials.neodymium(), ArmorItem.Type.LEGGINGS, 38);
+    public static final DeferredItem<ArmorItem> NEODYMIUM_BOOTS = armor("neodymium_boots", MagArmorMaterials.neodymium(), ArmorItem.Type.BOOTS, 38);
 
     private static DeferredItem<SwordItem> sword(final String name, final net.minecraft.world.item.Tier tier,
                                                   final float damage, final float speed) {

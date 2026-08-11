@@ -53,7 +53,15 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
                 .add(MagItems.TITANOMAGNETITE_INGOT.get()).add(MagItems.RAW_TITANOMAGNETITE.get())
                 .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
+                .add(MagItems.SAMARIUM_COBALT_ALLOY.get()).add(MagItems.NEODYMIUM_ALLOY.get())
+                .add(MagItems.SAMARIUM_COBALT_MAGNET.get()).add(MagItems.NEODYMIUM_MAGNET.get())
                 .addOptional(ResourceLocation.withDefaultNamespace("lodestone"));
+
+        tag(MagTags.MACHINE_MAGNETS)
+                .add(MagItems.SAMARIUM_COBALT_ALLOY.get())
+                .add(MagItems.NEODYMIUM_ALLOY.get())
+                .add(MagItems.SAMARIUM_COBALT_MAGNET.get())
+                .add(MagItems.NEODYMIUM_MAGNET.get());
 
         tag(MagTags.METAL_TOOLS)
                 .add(MagItems.MAGNETITE_SWORD.get()).add(MagItems.MAGNETITE_PICKAXE.get())
@@ -72,6 +80,11 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.HEMATITE_AXE.get()).add(MagItems.HEMATITE_SHOVEL.get()).add(MagItems.HEMATITE_HOE.get())
                 .add(MagItems.TITANOMAGNETITE_SWORD.get()).add(MagItems.TITANOMAGNETITE_PICKAXE.get())
                 .add(MagItems.TITANOMAGNETITE_AXE.get()).add(MagItems.TITANOMAGNETITE_SHOVEL.get()).add(MagItems.TITANOMAGNETITE_HOE.get());
+        tag(MagTags.METAL_TOOLS)
+                .add(MagItems.SAMARIUM_COBALT_SWORD.get()).add(MagItems.SAMARIUM_COBALT_PICKAXE.get())
+                .add(MagItems.SAMARIUM_COBALT_AXE.get()).add(MagItems.SAMARIUM_COBALT_SHOVEL.get()).add(MagItems.SAMARIUM_COBALT_HOE.get())
+                .add(MagItems.NEODYMIUM_SWORD.get()).add(MagItems.NEODYMIUM_PICKAXE.get())
+                .add(MagItems.NEODYMIUM_AXE.get()).add(MagItems.NEODYMIUM_SHOVEL.get()).add(MagItems.NEODYMIUM_HOE.get());
 
         tag(MagTags.METAL_ARMOR)
                 .add(net.minecraft.world.item.Items.IRON_HELMET)
@@ -120,12 +133,18 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.TITANOMAGNETITE_HELMET.get()).add(MagItems.TITANOMAGNETITE_CHESTPLATE.get())
                 .add(MagItems.TITANOMAGNETITE_LEGGINGS.get()).add(MagItems.TITANOMAGNETITE_BOOTS.get())
                 .add(MagItems.TITANOMAGNETITE_HORSE_ARMOR.get())
+                .add(MagItems.SAMARIUM_COBALT_HELMET.get()).add(MagItems.SAMARIUM_COBALT_CHESTPLATE.get())
+                .add(MagItems.SAMARIUM_COBALT_LEGGINGS.get()).add(MagItems.SAMARIUM_COBALT_BOOTS.get())
+                .add(MagItems.NEODYMIUM_HELMET.get()).add(MagItems.NEODYMIUM_CHESTPLATE.get())
+                .add(MagItems.NEODYMIUM_LEGGINGS.get()).add(MagItems.NEODYMIUM_BOOTS.get())
                 .add(MagItems.MAGNETIC_ELYTRA.get());
 
         tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get())
                 .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.PYRRHOTITE_INGOT.get())
                 .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.TITANOMAGNETITE_INGOT.get())
                 .add(MagItems.LITHIUM.get()).add(MagItems.GALLIUM_INGOT.get());
+        tag(common("ingots")).add(MagItems.NEODYMIUM_INGOT.get()).add(MagItems.SAMARIUM_INGOT.get())
+                .add(MagItems.COBALT_INGOT.get()).add(MagItems.SAMARIUM_COBALT_ALLOY.get()).add(MagItems.NEODYMIUM_ALLOY.get());
         tag(common("plates")).add(MagItems.MAGNETIC_PLATE.get());
         tag(common("raw_materials")).add(MagItems.RAW_MAGNETITE.get())
                 .add(MagItems.RAW_MAGHEMITE.get()).add(MagItems.RAW_PYRRHOTITE.get())
@@ -137,13 +156,27 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
                 .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
                 .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
                 .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
+                .add(MagItems.SAMARIUM_COBALT_BLOCK.get()).add(MagItems.NEODYMIUM_BLOCK.get())
                 .add(MagItems.LITHIUM_BLOCK.get()).add(MagItems.RAW_LITHIUM_BLOCK.get())
                 .add(MagItems.SOLID_GALLIUM.get()).add(MagItems.RAW_GALLIUM_BLOCK.get())
                 .add(MagItems.SOLID_HELIUM_3.get());
+        tag(common("ores")).add(MagItems.BASTNASITE_ORE.get()).add(MagItems.DEEPSLATE_BASTNASITE_ORE.get())
+                .add(MagItems.MONAZITE_ORE.get()).add(MagItems.DEEPSLATE_MONAZITE_ORE.get())
+                .add(MagItems.COBALTITE_ORE.get()).add(MagItems.DEEPSLATE_COBALTITE_ORE.get())
+                .add(MagItems.BORAX_ORE.get()).add(MagItems.DEEPSLATE_BORAX_ORE.get());
         tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get())
                 .add(MagItems.MAGHEMITE_ORE.get()).add(MagItems.DEEPSLATE_MAGHEMITE_ORE.get())
                 .add(MagItems.PYRRHOTITE_ORE.get()).add(MagItems.DEEPSLATE_PYRRHOTITE_ORE.get())
                 .add(MagItems.HEMATITE_ORE.get()).add(MagItems.DEEPSLATE_HEMATITE_ORE.get())
                 .add(MagItems.TITANOMAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_TITANOMAGNETITE_ORE.get());
+        tag(common("ingots/neodymium")).add(MagItems.NEODYMIUM_INGOT.get());
+        tag(common("ingots/samarium")).add(MagItems.SAMARIUM_INGOT.get());
+        tag(common("ingots/cobalt")).add(MagItems.COBALT_INGOT.get());
+        tag(common("ingots/samarium_cobalt")).add(MagItems.SAMARIUM_COBALT_ALLOY.get());
+        tag(common("ingots/neodymium_alloy")).add(MagItems.NEODYMIUM_ALLOY.get());
+        tag(common("ores/bastnasite")).add(MagItems.BASTNASITE_ORE.get()).add(MagItems.DEEPSLATE_BASTNASITE_ORE.get());
+        tag(common("ores/monazite")).add(MagItems.MONAZITE_ORE.get()).add(MagItems.DEEPSLATE_MONAZITE_ORE.get());
+        tag(common("ores/cobaltite")).add(MagItems.COBALTITE_ORE.get()).add(MagItems.DEEPSLATE_COBALTITE_ORE.get());
+        tag(common("ores/borax")).add(MagItems.BORAX_ORE.get()).add(MagItems.DEEPSLATE_BORAX_ORE.get());
     }
 }

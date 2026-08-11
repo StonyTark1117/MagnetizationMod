@@ -1,0 +1,5 @@
+{
+  "type": "create:splashing",
+  "ingredients": [{ "item": "magnetization:bastnasite_concentrate" }],
+  "results": [{ "id": "magnetization:neodymium_oxide" }, { "chance": 0.35, "id": "magnetization:boron_dust" }]
+}

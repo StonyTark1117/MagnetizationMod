@@ -1,0 +1,7 @@
+{
+  "type": "create:crushing",
+  "ingredients": [{ "item": "magnetization:monazite_ore" }],
+  "results": [
+    { "id": "magnetization:monazite_concentrate", "count": 2 }
+  ]
+}

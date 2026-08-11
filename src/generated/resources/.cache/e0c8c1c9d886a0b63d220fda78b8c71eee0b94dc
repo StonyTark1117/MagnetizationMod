@@ -1,0 +1,19 @@
+// 1.21.1	2026-08-11T11:56:40.198155384	Tags for minecraft:item mod id magnetization
+ca97fa006872612a664166991d8b876d4bc01c19 data/c/tags/item/ingots.json
+8ddb2878f9841970dafc43854874ac524953f8d5 data/c/tags/item/ingots/cobalt.json
+eba7b731d7eedf8c4de574eecd171d75a6f8d6db data/c/tags/item/ingots/neodymium.json
+220cc95039fdac57cf0b7e2b76e720de4d0e3c35 data/c/tags/item/ingots/neodymium_alloy.json
+ceb45c1feab681b46b189c38d53c8d8507610aac data/c/tags/item/ingots/samarium.json
+f936a2ccbb3b5ae0a656feb6f43b8d77c39e8ea9 data/c/tags/item/ingots/samarium_cobalt.json
+2306924006571caa5724ff633185353086adc5cb data/c/tags/item/ores.json
+e39a3de64d8a3547b0b3f258ded9c7dd56cafce9 data/c/tags/item/ores/bastnasite.json
+4cfcd7dd62890eed640428b5cb285a34a4040ade data/c/tags/item/ores/borax.json
+2e6e0ecc3c80325dc2fad2d32b396dfb3227b687 data/c/tags/item/ores/cobaltite.json
+f8744f71bcdbb9033f5b801596682d4b78c2fadd data/c/tags/item/ores/monazite.json
+88e8446ad39a1ccd83434f0f04172f9a5d61381f data/c/tags/item/plates.json
+a9450216e3a5da289b7e631682ad2f748bb29084 data/c/tags/item/raw_materials.json
+567e5578690d826da9163cc2dcd0f488d74961d8 data/c/tags/item/storage_blocks.json
+2064a6307dc3c593c71a276c45d7a70f943f3701 data/magnetization/tags/item/ferromagnetic.json
+fb30ca4cd952218c10e4ac14df9de1ef2797a87e data/magnetization/tags/item/machine_magnets.json
+e074065484da4d685e886e8ddae1287b1d747210 data/magnetization/tags/item/metal_armor.json
+ebdc01ce058a586d4d8babb07ba5ba9e8a2c840b data/magnetization/tags/item/metal_tools.json

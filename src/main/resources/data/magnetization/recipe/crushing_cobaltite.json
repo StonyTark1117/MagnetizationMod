@@ -1,0 +1,5 @@
+{
+  "type": "create:crushing",
+  "ingredients": [{ "item": "magnetization:cobaltite_ore" }],
+  "results": [{ "id": "magnetization:cobaltite_concentrate", "count": 2 }]
+}

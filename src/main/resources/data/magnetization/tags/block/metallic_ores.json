@@ -11,6 +11,12 @@
     "magnetization:deepslate_hematite_ore",
     "magnetization:titanomagnetite_ore",
     "magnetization:deepslate_titanomagnetite_ore",
+    "magnetization:bastnasite_ore",
+    "magnetization:deepslate_bastnasite_ore",
+    "magnetization:monazite_ore",
+    "magnetization:deepslate_monazite_ore",
+    "magnetization:cobaltite_ore",
+    "magnetization:deepslate_cobaltite_ore",
     {"id": "#c:ores/iron", "required": false},
     {"id": "#c:ores/gold", "required": false},
     {"id": "#c:ores/copper", "required": false},
@@ -31,6 +37,7 @@
     {"id": "#c:ores/osmium", "required": false},
     {"id": "#c:ores/uranium", "required": false},
     {"id": "#c:ores/neodymium", "required": false},
+    {"id": "#c:ores/borax", "required": false},
     {"id": "#c:ores/lithium", "required": false},
     {"id": "tfmg:bauxite", "required": false}
   ]

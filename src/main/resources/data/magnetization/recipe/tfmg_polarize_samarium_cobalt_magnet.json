@@ -1,0 +1,13 @@
+{
+  "type": "tfmg:polarizing",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "tfmg" },
+    { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
+  ],
+  "ingredients": [
+    { "item": "magnetization:samarium_cobalt_alloy" }
+  ],
+  "results": [
+    { "id": "tfmg:magnet" }
+  ]
+}
