@@ -109,29 +109,29 @@ public final class MagClientRegistration {
             }
         }, com.stonytark.magnetization.registry.MagFluids.MIXED_GALLIUM_TYPE.get());
 
-        // Hydrogen: nearly invisible while dormant, rose-pink Balmer discharge while excited.
-        event.registerFluidType(excitableGasFluid(0xA6FF6680, true),
+        // Hydrogen: a faint neutral haze while dormant, rose-pink Balmer discharge while excited.
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FF6680, true),
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN_TYPE.get());
 
-        // Tritium: steady cyan radioluminescence; it does not need external excitation.
-        event.registerFluidType(gasFluid(0xFF3FE0D0), // glowing cyan
+        // Tritium: steady, translucent cyan radioluminescence; it does not need external excitation.
+        event.registerFluidType(gasFluid(0xA03FE0D0), // glowing cyan
                 com.stonytark.magnetization.registry.MagFluids.TRITIUM_TYPE.get());
 
         // Helium-3 shares ordinary helium's peach electronic discharge spectrum.
-        event.registerFluidType(excitableGasFluid(0xA6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3_TYPE.get());
 
-        event.registerFluidType(excitableGasFluid(0xA6FFB38A, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FFB38A, true),
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xA6FF2A16, true),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6FF2A16, true),
                 com.stonytark.magnetization.registry.MagFluids.NEON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xA6B56CFF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6B56CFF, false),
                 com.stonytark.magnetization.registry.MagFluids.ARGON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xA6D8FFE6, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA6D8FFE6, false),
                 com.stonytark.magnetization.registry.MagFluids.KRYPTON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xA64FA9FF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA64FA9FF, false),
                 com.stonytark.magnetization.registry.MagFluids.XENON_TYPE.get());
-        event.registerFluidType(excitableGasFluid(0xA66657FF, false),
+        event.registerFluidType(excitableGasFluid(0x18FFFFFF, 0xA66657FF, false),
                 com.stonytark.magnetization.registry.MagFluids.RADON_TYPE.get());
 
         // Liquid lithium: water textures tinted warm silvery metal.
@@ -182,8 +182,7 @@ public final class MagClientRegistration {
     }
 
     private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions excitableGasFluid(
-            final int excitedTint, final boolean rises) {
-        final int dormantTint = 0x08FFFFFF;
+            final int dormantTint, final int excitedTint, final boolean rises) {
         return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             @Override public net.minecraft.resources.ResourceLocation getStillTexture() {
                 return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
@@ -234,6 +233,7 @@ public final class MagClientRegistration {
         // launch, including in dev runs where setup may be replayed.
         MagPonderPlugin.register();
         event.enqueueWork(() -> {
+            registerGasRenderLayers();
             // Touch each subscriber class so its static init runs and registers with
             // ActiveEmitterScanner. Without this the wire() blocks never fire.
             ClientEmitterEffects.touch();
@@ -242,6 +242,39 @@ public final class MagClientRegistration {
             registerGunFiredProperty();
             registerArmorHardenedProperty();
         });
+    }
+
+    /**
+     * Custom fluids default to the solid chunk layer. Their tint alpha is still
+     * written into the fluid vertices, but an opaque layer discards that alpha,
+     * making every gas look like a solid water-tinted block.
+     */
+    @SuppressWarnings("deprecation")
+    private static void registerGasRenderLayers() {
+        final net.minecraft.client.renderer.RenderType translucent =
+                net.minecraft.client.renderer.RenderType.translucent();
+        for (final net.minecraft.world.level.material.Fluid fluid : new net.minecraft.world.level.material.Fluid[]{
+                com.stonytark.magnetization.registry.MagFluids.HYDROGEN.get(),
+                com.stonytark.magnetization.registry.MagFluids.HYDROGEN_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.TRITIUM.get(),
+                com.stonytark.magnetization.registry.MagFluids.TRITIUM_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(),
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_3_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.HELIUM.get(),
+                com.stonytark.magnetization.registry.MagFluids.HELIUM_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.NEON.get(),
+                com.stonytark.magnetization.registry.MagFluids.NEON_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.ARGON.get(),
+                com.stonytark.magnetization.registry.MagFluids.ARGON_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.KRYPTON.get(),
+                com.stonytark.magnetization.registry.MagFluids.KRYPTON_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.XENON.get(),
+                com.stonytark.magnetization.registry.MagFluids.XENON_FLOWING.get(),
+                com.stonytark.magnetization.registry.MagFluids.RADON.get(),
+                com.stonytark.magnetization.registry.MagFluids.RADON_FLOWING.get()
+        }) {
+            net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(fluid, translucent);
+        }
     }
 
     /** Number of ticks the muzzle stays in its glowing-model state after a shot. */
