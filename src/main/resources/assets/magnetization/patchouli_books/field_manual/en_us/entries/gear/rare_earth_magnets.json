@@ -1,0 +1,37 @@
+{
+  "name": "book.magnetization.entry.rare_earth_magnets.name",
+  "icon": "magnetization:neodymium_magnet",
+  "category": "magnetization:gear",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.rare_earth_magnets.intro"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:monazite_concentrate",
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_processing"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:samarium_cobalt_magnet",
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_gear",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:bastnasite_concentrate",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_processing"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:neodymium_magnet",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_gear",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.rare_earth_magnets.compat"
+    }
+  ]
+}

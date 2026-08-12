@@ -60,6 +60,7 @@ public record ConfigGatedAddFeaturesModifier(
                 case "magnetic_gravel_in_vanilla" -> MagConfig.MAGNETIC_GRAVEL_IN_VANILLA_BIOMES.get();
                 case "helium_pockets" -> MagConfig.heliumPocketGenerationEnabled();
                 case "radon_pockets" -> MagConfig.radonPocketGenerationEnabled();
+                case "rare_earth_ores" -> MagConfig.rareEarthOreGenerationEnabled();
                 default -> false;
             };
         } catch (Throwable t) {

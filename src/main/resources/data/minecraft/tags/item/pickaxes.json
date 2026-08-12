@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_pickaxe",
     "magnetization:hematite_pickaxe",
     "magnetization:titanomagnetite_pickaxe",
-    "magnetization:mr_fluid_pickaxe"
+    "magnetization:mr_fluid_pickaxe",
+    "magnetization:samarium_cobalt_pickaxe",
+    "magnetization:neodymium_pickaxe"
   ]
 }

@@ -91,6 +91,7 @@ class PatchouliFieldManualTest {
                 "fluids/fusion_fuels.json",
                 "fluids/lithium.json",
                 "advanced/magnet_burning.json",
+                "gear/rare_earth_magnets.json",
                 "advanced/configuration.json",
                 "advanced/compatibility.json");
         for (final String path : required) {

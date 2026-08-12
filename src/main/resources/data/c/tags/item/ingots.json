@@ -8,6 +8,11 @@
     "magnetization:hematite_ingot",
     "magnetization:titanomagnetite_ingot",
     "magnetization:lithium",
-    "magnetization:gallium_ingot"
+    "magnetization:gallium_ingot",
+    "magnetization:neodymium_ingot",
+    "magnetization:samarium_ingot",
+    "magnetization:cobalt_ingot",
+    "magnetization:samarium_cobalt_alloy",
+    "magnetization:neodymium_alloy"
   ]
 }

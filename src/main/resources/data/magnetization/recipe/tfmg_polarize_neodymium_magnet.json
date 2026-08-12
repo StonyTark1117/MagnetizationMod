@@ -5,9 +5,9 @@
     { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
   ],
   "ingredients": [
-    { "item": "magnetization:neodymium_alloy" }
+    { "item": "magnetization:sintered_neodymium" }
   ],
   "results": [
-    { "id": "tfmg:magnet" }
+    { "id": "magnetization:neodymium_magnet" }
   ]
 }

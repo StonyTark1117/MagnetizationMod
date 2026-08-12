@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#c:plates/magnetic_alloy"
+    "#c:plates/magnetic_alloy",
+    "magnetization:samarium_cobalt_plate",
+    "magnetization:neodymium_alloy_plate"
   ]
 }

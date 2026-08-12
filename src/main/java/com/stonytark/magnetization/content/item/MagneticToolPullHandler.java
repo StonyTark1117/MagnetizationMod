@@ -5,6 +5,7 @@ import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.api.EquippedArmor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,28 +60,28 @@ public final class MagneticToolPullHandler {
 
         // Throttle the per-tick entity scan for tool-carrying players (the impulse
         // below scales by the interval so average pull is unchanged). Default 1 = no
-        // change. The cheap magnetCount==0 early-out still runs every tick.
+        // change. The cheap no-magnet early-out still runs every tick.
         final int interval = pullTicks();
         if (interval > 1 && level.getGameTime() % interval != 0L) return;
 
         // Sum the polarity contributions of every magnetized metal tool the
         // player currently carries — main hand, off-hand, every armor slot
-        // (some quivers/utility belts park tools there). Each tool counts
-        // as one "magnet": +1 NORTH, -1 SOUTH, 0 if not magnetized or not in
-        // the metal_tools tag.
-        int netPolarity = 0;
-        int magnetCount = 0;
+        // (some quivers/utility belts park tools there). Ordinary tools count
+        // as one magnet; endgame NdFeB tools count as two.
+        double netPolarity = 0.0d;
+        double magnetStrength = 0.0d;
         for (final ItemStack stack : iterMagnetCarriers(player)) {
             if (MagConfig.isItemDisabled(stack)) continue;
             if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(stack, MagTags.METAL_TOOLS)) continue;
             final MagneticPolarity pol = stack.get(MagDataComponents.ARMOR_POLARITY.get());
             if (pol == null || pol == MagneticPolarity.NONE) continue;
-            netPolarity += pol.sign();
-            magnetCount++;
+            final double weight = magneticHarvestWeight(stack);
+            netPolarity += pol.sign() * weight;
+            magnetStrength += weight;
         }
-        if (magnetCount == 0 || netPolarity == 0) return;
+        if (magnetStrength == 0.0d || netPolarity == 0.0d) return;
 
-        final double radius = radiusPerTool() * magnetCount;
+        final double radius = radiusPerTool() * magnetStrength;
         final Vec3 playerPos = player.position().add(0, player.getBbHeight() * 0.5d, 0);
         final AABB box = AABB.ofSize(playerPos, 2 * radius, 2 * radius, 2 * radius);
         final List<ItemEntity> nearby = level.getEntitiesOfClass(ItemEntity.class, box,
@@ -113,5 +114,17 @@ public final class MagneticToolPullHandler {
         out.add(player.getOffhandItem());
         EquippedArmor.all(player).forEach(out::add);
         return out;
+    }
+
+    /** NdFeB tools are the progression's dedicated magnetic-harvesting tier.
+     *  Once magnetized they contribute twice the pull radius of another metal
+     *  tool, while still respecting polarity cancellation and all global tool
+     *  controls. */
+    public static double magneticHarvestWeight(final ItemStack stack) {
+        return stack.is(MagItems.NEODYMIUM_SWORD.get())
+                || stack.is(MagItems.NEODYMIUM_PICKAXE.get())
+                || stack.is(MagItems.NEODYMIUM_AXE.get())
+                || stack.is(MagItems.NEODYMIUM_SHOVEL.get())
+                || stack.is(MagItems.NEODYMIUM_HOE.get()) ? 2.0d : 1.0d;
     }
 }

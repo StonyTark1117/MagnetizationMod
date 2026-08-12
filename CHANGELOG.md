@@ -6,6 +6,13 @@
 - Added a dedicated **Air Separator GUI** with five live gas bars, per-gas production and output-face tooltips, clickable port reassignment, server-authoritative RPM/status/capacity readouts, and visible Isotope Separation Module and Helium-3 output slots.
 - Added compact Air Separator live status to **Create goggles, Jade, WTHIT, and The One Probe**, including RPM requirements, total gas storage, isotope progress, ready-crystal count, and explicit paused/running reasons.
 - Added a dedicated **Radon Exposure** status-effect icon so active exposure is identifiable in the HUD and inventory effect list.
+- Finished the **rare-earth magnet progression**: Bastnäsite, Monazite, Cobaltite, and Borax feed staged Create processing into samarium–cobalt and neodymium–iron–boron alloys, pressed plates, sintered blanks, permanent magnets, storage blocks, tools, and armor.
+- Added distinct rare-earth identities: samarium–cobalt armor reduces fire/lava damage by 20% per piece, while magnetized neodymium tools provide double personal item-pull strength and a full neodymium armor set reduces field-driven movement by 75%.
+- Added a Field Manual rare-earth guide, a dedicated rare-earth worldgen toggle, common material tags, and optional TFMG Polarizer finishing recipes.
+
+### Fixed
+- Rare-earth magnet blocks now use a valid permanent-magnet block entity and emit their intended tiers: samarium–cobalt is **MEDIUM**, neodymium is **STRONG**.
+- Replaced the rare-earth feature's placeholder vanilla ore, tool, armor, storage-block, and magnet models with dedicated textures and complete translations/tooltips.
 
 ## 1.3.1 — Field Manual recovery & large-world stability
 

@@ -1,6 +1,6 @@
 {
   "type": "create:mixing",
   "heat_requirement": "heated",
-  "ingredients": [{ "item": "magnetization:dysprosium_oxide" }, { "type": "neoforge:fluid", "amount": 250, "fluid": "magnetization:hydrogen" }],
+  "ingredients": [{ "item": "magnetization:dysprosium_oxide" }, { "type": "neoforge:single", "amount": 250, "fluid": "magnetization:hydrogen" }],
   "results": [{ "id": "magnetization:dysprosium_powder" }]
 }

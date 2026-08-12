@@ -153,7 +153,9 @@ public final class EnderTransmissionGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100)
+    // This test toggles process-global relay config and registers level-wide
+    // emitters, so keep it out of the concurrently executed default batch.
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "enderFieldRelay")
     public static void experimentalFieldRelayIsOffByDefaultAndWorksOneHop(
             final GameTestHelper helper) {
         final boolean compat = MagConfig.ENDER_TRANSMISSION_COMPAT_ENABLED.get();

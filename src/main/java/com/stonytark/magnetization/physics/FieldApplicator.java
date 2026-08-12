@@ -617,6 +617,8 @@ public final class FieldApplicator {
         double base = baseSusceptibility(e, affectsArmor);
         if (base <= 0) return 0;
         if (e instanceof LivingEntity living) {
+            base *= com.stonytark.magnetization.content.effect.RareEarthEquipmentEffects
+                    .fieldSusceptibilityMultiplier(living);
             // Magnetic elytra rail-ride: while gliding with the magnetic
             // elytra in the chest slot, fields tug the wearer harder so they
             // can surf between emitters like riding magnetic rails.

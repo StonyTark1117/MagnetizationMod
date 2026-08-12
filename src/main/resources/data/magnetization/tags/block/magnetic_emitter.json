@@ -7,6 +7,8 @@
     "magnetization:repulsor_coil",
     "magnetization:tractor_beam",
     "magnetization:permanent_magnet",
+    "magnetization:samarium_cobalt_magnet",
+    "magnetization:neodymium_magnet",
     {"id": "simulated:redstone_magnet", "required": false},
     {"id": "magnetizing:blue_block_magnet", "required": false},
     {"id": "magnetizing:red_block_magnet", "required": false},

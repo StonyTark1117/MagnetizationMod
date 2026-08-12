@@ -65,7 +65,10 @@ public final class MagBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PermanentMagnetBlockEntity>> PERMANENT_MAGNET =
             REGISTER.register("permanent_magnet", () -> BlockEntityType.Builder
-                    .of(PermanentMagnetBlockEntity::new, MagBlocks.PERMANENT_MAGNET.get())
+                    .of(PermanentMagnetBlockEntity::new,
+                            MagBlocks.PERMANENT_MAGNET.get(),
+                            MagBlocks.SAMARIUM_COBALT_MAGNET.get(),
+                            MagBlocks.NEODYMIUM_MAGNET.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TemporaryMagnetBlockEntity>> TEMPORARY_MAGNET =

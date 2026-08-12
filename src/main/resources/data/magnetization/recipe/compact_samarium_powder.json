@@ -1,0 +1,5 @@
+{
+  "type": "create:compacting",
+  "ingredients": [{ "tag": "c:dusts/samarium" }],
+  "results": [{ "id": "magnetization:samarium_ingot" }]
+}

@@ -1,0 +1,5 @@
+{
+  "type": "create:pressing",
+  "ingredients": [{ "tag": "c:ingots/samarium_cobalt" }],
+  "results": [{ "id": "magnetization:samarium_cobalt_plate" }]
+}

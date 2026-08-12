@@ -12,6 +12,8 @@
     "magnetization:raw_hematite_block",
     "magnetization:titanomagnetite_block",
     "magnetization:raw_titanomagnetite_block",
+    "magnetization:samarium_cobalt_block",
+    "magnetization:neodymium_block",
     "magnetization:lithium_block",
     "magnetization:raw_lithium_block",
     "magnetization:solid_gallium",

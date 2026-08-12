@@ -1,0 +1,5 @@
+{
+  "type": "create:pressing",
+  "ingredients": [{ "tag": "c:ingots/neodymium_alloy" }],
+  "results": [{ "id": "magnetization:neodymium_alloy_plate" }]
+}

@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_hoe",
     "magnetization:hematite_hoe",
     "magnetization:titanomagnetite_hoe",
-    "magnetization:mr_fluid_hoe"
+    "magnetization:mr_fluid_hoe",
+    "magnetization:samarium_cobalt_hoe",
+    "magnetization:neodymium_hoe"
   ]
 }

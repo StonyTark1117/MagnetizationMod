@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_leggings",
     "magnetization:hematite_leggings",
     "magnetization:titanomagnetite_leggings",
-    "magnetization:mr_liquid_leggings"
+    "magnetization:mr_liquid_leggings",
+    "magnetization:samarium_cobalt_leggings",
+    "magnetization:neodymium_leggings"
   ]
 }

@@ -327,6 +327,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | worldgen.magneticPeaksEnabled | boolean | false | If true, denser magnetite ore veins generate in mountain biomes tagged #minecraft:is_mountain. Default off — opt-in. |
+| COMMON | worldgen.rareEarthOreGenerationEnabled | boolean | true | Generate Bastnäsite, Monazite, Cobaltite, and Borax veins in new Overworld chunks. Disable before world creation when a modpack supplies the rare-earth progression through other sources. |
 | COMMON | worldgen.anomalyBiomeEnabled | boolean | false | If true, the Magnetic Anomaly biome spawns naturally and its runtime effects activate inside it (compass spin, 1.5× emitter strength, chaos field). Off = biome resource still loads (so /locate biome + /magnetization tp work) but it won't spawn naturally and effects stay inert. |
 | COMMON | worldgen.anomalyBiomeRarity | enum | EXTREMELYRARE | How rare the anomaly biome is when generating naturally. EXTREMELY_RARE (default) pins a single climate slot — you may go tens of thousands of blocks without seeing one. VERY_RARE / RARE widen the slot incrementally. COMMON is mostly for testing. |
 | COMMON | worldgen.anomalyChaosStrength | number | 1.0; 0.0-10.0 | Multiplier on the anomaly's chaos-field impulses (ships, players, items). 1.0 = default, 0 disables the chaos field while leaving compass spin + emitter bonus intact, higher values amplify. |

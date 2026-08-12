@@ -37,6 +37,8 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "create_new_age_energising_permanent_magnet",
                 "immersiveengineering_mixer_ferrofluid",
                 "immersiveengineering_metal_press_magnetic_plate",
+                "immersiveengineering_metal_press_samarium_cobalt_plate",
+                "immersiveengineering_metal_press_neodymium_alloy_plate",
                 "air_filter_from_immersiveengineering_plastic",
                 "alexscaves_permanent_magnet_from_neodymium",
                 "alexscaves_azure_magnet_from_permanent_magnet",
@@ -44,7 +46,9 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "alexscaves_levitation_rail_from_permanent_magnets",
                 "alexscaves_ferrofluid_from_ferrouslime",
                 "createaddition_electric_motor_from_permanent_magnet",
-                "createaddition_alternator_from_permanent_magnet"}) {
+                "createaddition_alternator_from_permanent_magnet",
+                "tfmg_polarize_samarium_cobalt_magnet",
+                "tfmg_polarize_neodymium_magnet"}) {
             final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("magnetization", path);
             helper.assertTrue(recipes.byKey(id).isEmpty(),
                     "Optional compatibility recipe loaded without its mod: " + id);

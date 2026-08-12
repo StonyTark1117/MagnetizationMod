@@ -1,1 +1,1 @@
-{"parent":"minecraft:block/cube_all","textures":{"all":"minecraft:block/deepslate_amethyst_ore"}}
+{"parent":"minecraft:block/cube_all","textures":{"all":"magnetization:block/deepslate_monazite_ore"}}

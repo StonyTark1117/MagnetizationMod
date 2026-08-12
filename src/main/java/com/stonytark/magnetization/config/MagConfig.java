@@ -261,6 +261,7 @@ public final class MagConfig {
 
     public static final ModConfigSpec.BooleanValue ANOMALY_BIOME_ENABLED;
     public static final ModConfigSpec.BooleanValue MAGNETIC_PEAKS_ENABLED;
+    public static final ModConfigSpec.BooleanValue RARE_EARTH_ORE_GENERATION_ENABLED;
     public static final ModConfigSpec.IntValue GAS_EXCITER_CAPACITY;
     public static final ModConfigSpec.IntValue GAS_EXCITER_RECEIVE;
     public static final ModConfigSpec.IntValue GAS_EXCITER_FE_PER_TICK;
@@ -1719,6 +1720,13 @@ public final class MagConfig {
                 .translation("magnetization.configuration.worldgen.magneticPeaksEnabled")
                 .define("magneticPeaksEnabled", false);
 
+        RARE_EARTH_ORE_GENERATION_ENABLED = b
+                .comment("Generate the Bastnasite, Monazite, Cobaltite, and Borax ores used by",
+                         "the rare-earth magnet progression. Disabling this affects only newly",
+                         "generated chunks; recipes and datapack-provided alternatives remain.")
+                .translation("magnetization.configuration.worldgen.rareEarthOreGenerationEnabled")
+                .define("rareEarthOreGenerationEnabled", true);
+
         ANOMALY_BIOME_ENABLED = b
                 .comment("If true, the anomaly biome generates naturally and its runtime effects",
                          "activate (field-compass spin, vanilla-compass spin, 1.5× emitter",
@@ -2648,6 +2656,9 @@ public final class MagConfig {
     public static double anomalyItemScanRadius()     { return doubleOr(ANOMALY_ITEM_SCAN_RADIUS, 48.0d); }
     public static double anomalyStrengthBonus()      { return doubleOr(ANOMALY_STRENGTH_BONUS, 1.5d); }
     public static boolean magneticPeaksEnabled()     { return booleanOr(MAGNETIC_PEAKS_ENABLED, false); }
+    public static boolean rareEarthOreGenerationEnabled() {
+        return booleanOr(RARE_EARTH_ORE_GENERATION_ENABLED, true);
+    }
     public static int gasExciterCapacity() { return intOr(GAS_EXCITER_CAPACITY, 10_000); }
     public static int gasExciterReceive() { return Math.min(intOr(GAS_EXCITER_RECEIVE, 100), gasExciterCapacity()); }
     public static int gasExciterFePerTick() { return intOr(GAS_EXCITER_FE_PER_TICK, 20); }

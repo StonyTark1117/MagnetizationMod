@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_axe",
     "magnetization:hematite_axe",
     "magnetization:titanomagnetite_axe",
-    "magnetization:mr_fluid_axe"
+    "magnetization:mr_fluid_axe",
+    "magnetization:samarium_cobalt_axe",
+    "magnetization:neodymium_axe"
   ]
 }

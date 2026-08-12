@@ -1,0 +1,5 @@
+{
+  "type": "create:compacting",
+  "ingredients": [{ "tag": "c:dusts/neodymium" }],
+  "results": [{ "id": "magnetization:neodymium_ingot" }]
+}

@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_chestplate",
     "magnetization:hematite_chestplate",
     "magnetization:titanomagnetite_chestplate",
-    "magnetization:mr_liquid_chestplate"
+    "magnetization:mr_liquid_chestplate",
+    "magnetization:samarium_cobalt_chestplate",
+    "magnetization:neodymium_chestplate"
   ]
 }

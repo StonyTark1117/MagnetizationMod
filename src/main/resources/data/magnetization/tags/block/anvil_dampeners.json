@@ -13,6 +13,10 @@
     "magnetization:raw_titanomagnetite_block",
     "magnetization:lodestone_core",
     "magnetization:permanent_magnet",
+    "magnetization:samarium_cobalt_block",
+    "magnetization:neodymium_block",
+    "magnetization:samarium_cobalt_magnet",
+    "magnetization:neodymium_magnet",
     "magnetization:temporary_magnet",
     "magnetization:electromagnet",
     "magnetization:magnetic_anchor"

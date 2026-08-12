@@ -55,6 +55,8 @@ Optional integrations (auto-detected when installed):
 - **Electrolyzer** — a cauldron-style powered machine that splits water + FE into **Hydrogen**, the entry point of the fusion-fuel ladder: **Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3**. Tritium is bred from Deuterium + Lithium; Helium-3 is enriched or found in rare deepslate/End geodes.
 - **New worldgen** — a minor **Lithium ore** (overworld + deepslate) and a rare **Helium-3 Geode** whose blocks drop **Helium-3 Crystals**. Nine crystals compact into **Solid Helium-3**, and the storage block unpacks back into nine crystals.
 - **Expanded material families** — Lithium, Pyrrhotite, Hematite, and Titanomagnetite now have complete tool, armor, and horse-armor sets. Ferromagnetic Alloy, Lithium, Raw Lithium, and Raw Gallium also have compact storage blocks alongside the existing iron-oxide families.
+- **Rare-earth magnet progression** — Bastnäsite, Monazite, Cobaltite, and Borax pass through crushing, washing, chemical reduction, alloy mixing, plate pressing, blanking, and sintering to produce heat-stable **Samarium–Cobalt** magnets and maximum-strength **Neodymium–Iron–Boron** magnets.
+- **Rare-earth equipment** — Samarium–Cobalt armor reduces fire/lava damage by 20% per piece. Magnetized Neodymium tools provide double personal harvesting pull, and a complete Neodymium armor set reduces field-driven movement by 75%.
 - **Machine rebalance** — the Tokamak now burns three fuel-cell tiers; the MHD Jet needs a conductive working fluid (gallium/mixed gallium/liquid lithium); the Micro-Thruster accepts magnetized ferrofluid; and magnet-slot machines can consume their magnet over a strength-scaled burn time (disabled by default, toggleable). Every fuel-burning machine accepts hopper/pipe fuel intake.
 
 ## 1.4.0 feature set — Excitable noble gases
@@ -297,6 +299,7 @@ proportionally, so both keep working as usual.
 | Key | Default | Description |
 |-----|---------|-------------|
 | `worldgen.magneticPeaksEnabled` | false | If true, denser magnetite veins generate in `#minecraft:is_mountain` biomes. |
+| `worldgen.rareEarthOreGenerationEnabled` | true | Generate Bastnäsite, Monazite, Cobaltite, and Borax in new Overworld chunks. Disable before world creation when a pack supplies those materials another way. |
 | `worldgen.anomalyBiomeEnabled` | false | Default off — opt-in. When true, the Magnetic Anomaly biome registers a TerraBlender region (so it spawns naturally) **and** its runtime effects activate inside it (vanilla-compass spin, field-compass scramble, 1.5× emitter strength, random chaos field). When false the biome JSON still loads, so `/locate biome magnetization:anomaly` and `/magnetization tp anomaly` still work — but it won't spawn on its own and effects are inert. |
 | `worldgen.anomalyChaosStrength` | 1.0 | Multiplier on the anomaly's chaos-field impulses (ships, players, items). 0 = compass spin + emitter bonus only, no kinetic chaos. Range 0.0–10.0. |
 | `worldgen.petrifiedForestEnabled` | false | Default off — opt-in. When true, the Petrified Forest biome registers a TerraBlender region so it spawns naturally. Turning it off only blocks natural generation; `/locate biome` and `/magnetization tp petrified_forest` still work. |

@@ -16,6 +16,8 @@
     "magnetization:raw_lithium_block",
     "magnetization:solid_gallium",
     "magnetization:raw_gallium_block",
-    "magnetization:solid_helium_3"
+    "magnetization:solid_helium_3",
+    "magnetization:samarium_cobalt_block",
+    "magnetization:neodymium_block"
   ]
 }

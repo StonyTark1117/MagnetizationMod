@@ -10,6 +10,8 @@
     "magnetization:hematite_boots",
     "magnetization:titanomagnetite_boots",
     "magnetization:mr_liquid_boots",
-    "magnetization:magnetoresistive_boots"
+    "magnetization:magnetoresistive_boots",
+    "magnetization:samarium_cobalt_boots",
+    "magnetization:neodymium_boots"
   ]
 }

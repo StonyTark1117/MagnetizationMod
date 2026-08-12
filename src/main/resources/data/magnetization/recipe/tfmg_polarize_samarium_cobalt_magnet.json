@@ -5,9 +5,9 @@
     { "type": "magnetization:compat_config", "feature": "tfmg_processing" }
   ],
   "ingredients": [
-    { "item": "magnetization:samarium_cobalt_alloy" }
+    { "item": "magnetization:sintered_samarium_cobalt" }
   ],
   "results": [
-    { "id": "tfmg:magnet" }
+    { "id": "magnetization:samarium_cobalt_magnet" }
   ]
 }

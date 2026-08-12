@@ -1,1 +1,1 @@
-{"type":"neoforge:add_features","biomes":"#minecraft:is_overworld","features":"magnetization:ore_bastnasite","step":"underground_ores"}
+{"type":"magnetization:config_gated_add_features","flag":"rare_earth_ores","biomes":"#minecraft:is_overworld","features":"magnetization:ore_bastnasite","step":"underground_ores"}

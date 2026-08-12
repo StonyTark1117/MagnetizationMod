@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_helmet",
     "magnetization:hematite_helmet",
     "magnetization:titanomagnetite_helmet",
-    "magnetization:mr_liquid_helmet"
+    "magnetization:mr_liquid_helmet",
+    "magnetization:samarium_cobalt_helmet",
+    "magnetization:neodymium_helmet"
   ]
 }

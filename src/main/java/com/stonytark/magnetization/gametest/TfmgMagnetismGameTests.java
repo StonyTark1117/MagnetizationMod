@@ -157,6 +157,10 @@ public final class TfmgMagnetismGameTests {
                 new ItemStack(MagItems.FERROMAGNETIC_INGOT.get()));
         assertIngredientAccepts(helper, recipes, "tfmg_polarize_magnet",
                 new ItemStack(MagItems.FERROMAGNETIC_INGOT.get()));
+        assertIngredientAccepts(helper, recipes, "tfmg_polarize_samarium_cobalt_magnet",
+                new ItemStack(MagItems.SINTERED_SAMARIUM_COBALT.get()));
+        assertIngredientAccepts(helper, recipes, "tfmg_polarize_neodymium_magnet",
+                new ItemStack(MagItems.SINTERED_NEODYMIUM.get()));
         assertRecipePresent(helper, recipes, "air_filter_from_tfmg_plastic");
 
         final ItemStack permanentMagnet = new ItemStack(MagBlocks.PERMANENT_MAGNET.get());

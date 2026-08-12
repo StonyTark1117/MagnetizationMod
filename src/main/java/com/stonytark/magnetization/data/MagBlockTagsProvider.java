@@ -98,6 +98,8 @@ public final class MagBlockTagsProvider extends BlockTagsProvider {
                 .add(MagBlocks.MONAZITE_ORE.get()).add(MagBlocks.DEEPSLATE_MONAZITE_ORE.get())
                 .add(MagBlocks.COBALTITE_ORE.get()).add(MagBlocks.DEEPSLATE_COBALTITE_ORE.get())
                 .add(MagBlocks.BORAX_ORE.get()).add(MagBlocks.DEEPSLATE_BORAX_ORE.get())
+                .add(MagBlocks.SAMARIUM_COBALT_BLOCK.get()).add(MagBlocks.NEODYMIUM_BLOCK.get())
+                .add(MagBlocks.SAMARIUM_COBALT_MAGNET.get()).add(MagBlocks.NEODYMIUM_MAGNET.get())
                 .add(MagBlocks.LITHIUM_BLOCK.get())
                 .add(MagBlocks.METEORITE_CORE.get())
                 .add(MagBlocks.PYRRHOTITE_CATALYST.get())

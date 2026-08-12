@@ -496,9 +496,17 @@ public final class ReleaseCoverageGameTests {
         final var petrifiedTrees = net.minecraft.resources.ResourceKey.create(
                 net.minecraft.core.registries.Registries.PLACED_FEATURE,
                 Magnetization.id("petrified_forest_trees"));
+        final var rareEarthOres = java.util.List.of("ore_bastnasite", "ore_monazite", "ore_cobaltite", "ore_borax")
+                .stream().map(path -> net.minecraft.resources.ResourceKey.create(
+                        net.minecraft.core.registries.Registries.PLACED_FEATURE, Magnetization.id(path))).toList();
 
         helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.PLAINS, lithium),
                 "Lithium ore was not injected into an Overworld biome");
+        for (final var rareEarthOre : rareEarthOres) {
+            helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.PLAINS,
+                            rareEarthOre),
+                    "Rare-earth ore was not injected into an Overworld biome: " + rareEarthOre.location());
+        }
         helper.assertTrue(biomeHasPlacedFeature(registries, net.minecraft.world.level.biome.Biomes.PLAINS,
                         heliumOverworld),
                 "Helium-3 geodes were not injected into an Overworld biome");

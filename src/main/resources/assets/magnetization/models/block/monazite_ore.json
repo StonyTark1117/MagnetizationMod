@@ -1,1 +1,1 @@
-{"parent":"minecraft:block/cube_all","textures":{"all":"minecraft:block/amethyst_block"}}
+{"parent":"minecraft:block/cube_all","textures":{"all":"magnetization:block/monazite_ore"}}

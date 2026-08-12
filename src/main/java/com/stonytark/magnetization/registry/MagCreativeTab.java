@@ -78,6 +78,8 @@ public final class MagCreativeTab {
                         accept(output, MagItems.COBALT_INGOT);
                         accept(output, MagItems.SAMARIUM_COBALT_ALLOY);
                         accept(output, MagItems.NEODYMIUM_ALLOY);
+                        accept(output, MagItems.SAMARIUM_COBALT_PLATE);
+                        accept(output, MagItems.NEODYMIUM_ALLOY_PLATE);
                         accept(output, MagItems.SAMARIUM_COBALT_MAGNET_BLANK);
                         accept(output, MagItems.NEODYMIUM_MAGNET_BLANK);
                         accept(output, MagItems.SINTERED_SAMARIUM_COBALT);

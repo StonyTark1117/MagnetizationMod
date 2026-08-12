@@ -2,10 +2,10 @@
   "type": "create:mixing",
   "heat_requirement": "superheated",
   "ingredients": [
-    { "item": "magnetization:neodymium_ingot" },
+    { "tag": "c:ingots/neodymium" },
     { "item": "magnetization:ferromagnetic_ingot" },
-    { "item": "magnetization:boron_dust" },
-    { "item": "magnetization:dysprosium_powder" }
+    { "tag": "c:dusts/boron" },
+    { "tag": "c:dusts/dysprosium" }
   ],
   "results": [{ "id": "magnetization:neodymium_alloy" }]
 }

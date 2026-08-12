@@ -1,1 +1,1 @@
-{"parent":"magnetization:block/permanent_magnet_south"}
+{"parent":"minecraft:block/cube_bottom_top","textures":{"top":"magnetization:block/neodymium_magnet_top_south","bottom":"magnetization:block/neodymium_magnet_bottom","side":"magnetization:block/neodymium_magnet_side"}}

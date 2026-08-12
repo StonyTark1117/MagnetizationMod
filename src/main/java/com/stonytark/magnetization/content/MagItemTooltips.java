@@ -103,6 +103,11 @@ public final class MagItemTooltips {
                 MagItems.TITANOMAGNETITE_SWORD.get(), MagItems.TITANOMAGNETITE_PICKAXE.get(),
                 MagItems.TITANOMAGNETITE_AXE.get(), MagItems.TITANOMAGNETITE_SHOVEL.get(),
                 MagItems.TITANOMAGNETITE_HOE.get(),
+                MagItems.SAMARIUM_COBALT_SWORD.get(), MagItems.SAMARIUM_COBALT_PICKAXE.get(),
+                MagItems.SAMARIUM_COBALT_AXE.get(), MagItems.SAMARIUM_COBALT_SHOVEL.get(),
+                MagItems.SAMARIUM_COBALT_HOE.get(), MagItems.NEODYMIUM_SWORD.get(),
+                MagItems.NEODYMIUM_PICKAXE.get(), MagItems.NEODYMIUM_AXE.get(),
+                MagItems.NEODYMIUM_SHOVEL.get(), MagItems.NEODYMIUM_HOE.get(),
         }) m.put(t, "tooltip.magnetization.metal_tool.use");
         for (final var a : new Item[]{
                 MagItems.MAGHEMITE_HELMET.get(), MagItems.MAGHEMITE_CHESTPLATE.get(),
@@ -122,6 +127,14 @@ public final class MagItemTooltips {
                 MagItems.TITANOMAGNETITE_HELMET.get(), MagItems.TITANOMAGNETITE_CHESTPLATE.get(),
                 MagItems.TITANOMAGNETITE_LEGGINGS.get(), MagItems.TITANOMAGNETITE_BOOTS.get(),
         }) m.put(a, "tooltip.magnetization.metal_armor.use");
+        for (final var a : new Item[]{
+                MagItems.SAMARIUM_COBALT_HELMET.get(), MagItems.SAMARIUM_COBALT_CHESTPLATE.get(),
+                MagItems.SAMARIUM_COBALT_LEGGINGS.get(), MagItems.SAMARIUM_COBALT_BOOTS.get(),
+        }) m.put(a, "tooltip.magnetization.samarium_cobalt_armor.use");
+        for (final var a : new Item[]{
+                MagItems.NEODYMIUM_HELMET.get(), MagItems.NEODYMIUM_CHESTPLATE.get(),
+                MagItems.NEODYMIUM_LEGGINGS.get(), MagItems.NEODYMIUM_BOOTS.get(),
+        }) m.put(a, "tooltip.magnetization.neodymium_armor.use");
         for (final var h : new Item[]{
                 MagItems.MAGHEMITE_HORSE_ARMOR.get(),
                 MagItems.MAGNETITE_HORSE_ARMOR.get(),
@@ -188,6 +201,29 @@ public final class MagItemTooltips {
                 MagItems.HELIUM_3_CRYSTAL.get(), MagItems.HELIUM_3_CELL.get(),
                 MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
         }) m.put(i, "tooltip.magnetization.material.use");
+        for (final var i : new Item[]{
+                MagItems.BASTNASITE_ORE.get(), MagItems.DEEPSLATE_BASTNASITE_ORE.get(),
+                MagItems.MONAZITE_ORE.get(), MagItems.DEEPSLATE_MONAZITE_ORE.get(),
+                MagItems.COBALTITE_ORE.get(), MagItems.DEEPSLATE_COBALTITE_ORE.get(),
+                MagItems.BORAX_ORE.get(), MagItems.DEEPSLATE_BORAX_ORE.get(),
+        }) m.put(i, "tooltip.magnetization.rare_earth_ore.use");
+        for (final var i : new Item[]{
+                MagItems.BASTNASITE_CONCENTRATE.get(), MagItems.MONAZITE_CONCENTRATE.get(),
+                MagItems.COBALTITE_CONCENTRATE.get(), MagItems.NEODYMIUM_OXIDE.get(),
+                MagItems.DYSPROSIUM_OXIDE.get(), MagItems.SAMARIUM_OXIDE.get(),
+                MagItems.BORON_DUST.get(), MagItems.NEODYMIUM_POWDER.get(),
+                MagItems.DYSPROSIUM_POWDER.get(), MagItems.SAMARIUM_POWDER.get(),
+                MagItems.COBALT_POWDER.get(), MagItems.NEODYMIUM_INGOT.get(),
+                MagItems.SAMARIUM_INGOT.get(), MagItems.COBALT_INGOT.get(),
+                MagItems.SAMARIUM_COBALT_ALLOY.get(), MagItems.NEODYMIUM_ALLOY.get(),
+                MagItems.SAMARIUM_COBALT_PLATE.get(), MagItems.NEODYMIUM_ALLOY_PLATE.get(),
+                MagItems.SAMARIUM_COBALT_MAGNET_BLANK.get(), MagItems.NEODYMIUM_MAGNET_BLANK.get(),
+                MagItems.SINTERED_SAMARIUM_COBALT.get(), MagItems.SINTERED_NEODYMIUM.get(),
+        }) m.put(i, "tooltip.magnetization.rare_earth_material.use");
+        m.put(MagItems.SAMARIUM_COBALT_BLOCK.get(), "tooltip.magnetization.rare_earth_storage.use");
+        m.put(MagItems.NEODYMIUM_BLOCK.get(), "tooltip.magnetization.rare_earth_storage.use");
+        m.put(MagItems.SAMARIUM_COBALT_MAGNET.get(), "tooltip.magnetization.samarium_cobalt_magnet.use");
+        m.put(MagItems.NEODYMIUM_MAGNET.get(), "tooltip.magnetization.neodymium_magnet.use");
         for (final var i : new Item[]{
                 MagItems.MR_FLUID_SWORD.get(), MagItems.MR_FLUID_PICKAXE.get(),
                 MagItems.MR_FLUID_AXE.get(), MagItems.MR_FLUID_SHOVEL.get(),

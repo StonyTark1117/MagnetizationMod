@@ -1,1 +1,1 @@
-{ "parent": "minecraft:block/cube_all", "textures": { "all": "magnetization:block/ferromagnetic_block" } }
+{"parent":"minecraft:block/cube_all","textures":{"all":"magnetization:block/neodymium_block"}}

@@ -30,6 +30,7 @@ public final class TfmgCompatibilityAbsentGameTests {
             for (final String path : new String[]{
                     "tfmg_ferrofluid_from_lubrication_oil", "tfmg_cast_solid_gallium", "tfmg_cast_lithium",
                     "tfmg_press_magnetic_alloy_sheet", "tfmg_polarize_magnet",
+                    "tfmg_polarize_samarium_cobalt_magnet", "tfmg_polarize_neodymium_magnet",
                     "air_filter_from_tfmg_plastic",
                     "tfmg_transformer_from_magnetic_plate", "tfmg_laminated_magnetic_alloy_block_from_plates",
                     "tfmg_voltmeter_from_permanent_magnet", "tfmg_electric_pump_from_permanent_magnets",

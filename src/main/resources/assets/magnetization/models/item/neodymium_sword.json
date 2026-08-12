@@ -1,1 +1,1 @@
-{"parent":"minecraft:item/handheld","textures":{"layer0":"minecraft:item/iron_pickaxe"}}
+{"parent":"minecraft:item/handheld","textures":{"layer0":"magnetization:item/neodymium_sword"}}

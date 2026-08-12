@@ -31,13 +31,18 @@ public final class MaterialFamilyGameTests {
     private static final String EMPTY_TEMPLATE = "empty";
     private static final List<String> SOLID_MATERIALS = List.of(
             "magnetite", "maghemite", "ferromagnetic", "gallium",
+            "lithium", "pyrrhotite", "hematite", "titanomagnetite",
+            "samarium_cobalt", "neodymium");
+    private static final java.util.Set<String> HORSE_ARMOR_MATERIALS = java.util.Set.of(
+            "magnetite", "maghemite", "ferromagnetic", "gallium",
             "lithium", "pyrrhotite", "hematite", "titanomagnetite");
     private static final List<String> STORAGE_BLOCKS = List.of(
             "magnetite_block", "raw_magnetite_block", "maghemite_block", "raw_maghemite_block",
             "ferromagnetic_block", "pyrrhotite_block", "raw_pyrrhotite_block",
             "hematite_block", "raw_hematite_block", "titanomagnetite_block",
             "raw_titanomagnetite_block", "lithium_block", "raw_lithium_block",
-            "solid_gallium", "raw_gallium_block", "solid_helium_3");
+            "solid_gallium", "raw_gallium_block", "samarium_cobalt_block",
+            "neodymium_block", "solid_helium_3");
     private static final List<String> STORAGE_RECIPES = List.of(
             "magnetite_block", "magnetite_ingot_from_block",
             "raw_magnetite_block", "raw_magnetite_from_block",
@@ -54,6 +59,8 @@ public final class MaterialFamilyGameTests {
             "raw_lithium_block", "raw_lithium_from_block",
             "solid_gallium", "gallium_ingot_from_block",
             "raw_gallium_block", "raw_gallium_from_block",
+            "samarium_cobalt_block", "samarium_cobalt_from_block",
+            "neodymium_block", "neodymium_alloy_from_block",
             "solid_helium_3", "helium_3_crystal_from_block");
 
     private MaterialFamilyGameTests() {}
@@ -83,6 +90,7 @@ public final class MaterialFamilyGameTests {
         for (final String material : SOLID_MATERIALS) {
             for (final String part : List.of("sword", "pickaxe", "axe", "shovel", "hoe",
                     "helmet", "chestplate", "leggings", "boots", "horse_armor")) {
+                if (part.equals("horse_armor") && !HORSE_ARMOR_MATERIALS.contains(material)) continue;
                 final String id = material + "_" + part;
                 final ResourceLocation key = Magnetization.id(id);
                 final Item item = BuiltInRegistries.ITEM.get(key);

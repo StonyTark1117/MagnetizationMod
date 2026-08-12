@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_sword",
     "magnetization:hematite_sword",
     "magnetization:titanomagnetite_sword",
-    "magnetization:mr_fluid_sword"
+    "magnetization:mr_fluid_sword",
+    "magnetization:samarium_cobalt_sword",
+    "magnetization:neodymium_sword"
   ]
 }

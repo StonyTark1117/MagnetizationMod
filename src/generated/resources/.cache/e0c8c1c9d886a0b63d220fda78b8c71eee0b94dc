@@ -1,19 +1,26 @@
-// 1.21.1	2026-08-11T11:56:40.198155384	Tags for minecraft:item mod id magnetization
-ca97fa006872612a664166991d8b876d4bc01c19 data/c/tags/item/ingots.json
+// 1.21.1	2026-08-11T14:22:01.704432733	Tags for minecraft:item mod id magnetization
+c2493e61f04c6d3d98cf8fc7a2ee78f692e71ff5 data/c/tags/item/concentrates.json
+b5713bc06e006b6992785440986a20d19b341cd2 data/c/tags/item/concentrates/bastnasite.json
+d667478134246754752732b95f1ea09c5804932c data/c/tags/item/concentrates/cobaltite.json
+ef2275e9776747d1db5a0d512e38cb340dfa93f4 data/c/tags/item/concentrates/monazite.json
+5675e9c68b8817b81509d68c0d1064041c73d7bf data/c/tags/item/dusts.json
+b462860a17c912d78ee4f4016d695478f55cdf9c data/c/tags/item/dusts/boron.json
+4596e430c898e9dbbfe66c689fa9e9c1ead541f1 data/c/tags/item/dusts/cobalt.json
+07d0121e684eaece07a6c1b591e1235df0bc655f data/c/tags/item/dusts/dysprosium.json
+238e75693cb1e1cb3e4c6da090495b3684d0c05b data/c/tags/item/dusts/neodymium.json
+c7ed3629da452a275e20c6360192458d119c33b4 data/c/tags/item/dusts/samarium.json
 8ddb2878f9841970dafc43854874ac524953f8d5 data/c/tags/item/ingots/cobalt.json
 eba7b731d7eedf8c4de574eecd171d75a6f8d6db data/c/tags/item/ingots/neodymium.json
 220cc95039fdac57cf0b7e2b76e720de4d0e3c35 data/c/tags/item/ingots/neodymium_alloy.json
 ceb45c1feab681b46b189c38d53c8d8507610aac data/c/tags/item/ingots/samarium.json
 f936a2ccbb3b5ae0a656feb6f43b8d77c39e8ea9 data/c/tags/item/ingots/samarium_cobalt.json
-2306924006571caa5724ff633185353086adc5cb data/c/tags/item/ores.json
 e39a3de64d8a3547b0b3f258ded9c7dd56cafce9 data/c/tags/item/ores/bastnasite.json
 4cfcd7dd62890eed640428b5cb285a34a4040ade data/c/tags/item/ores/borax.json
 2e6e0ecc3c80325dc2fad2d32b396dfb3227b687 data/c/tags/item/ores/cobaltite.json
 f8744f71bcdbb9033f5b801596682d4b78c2fadd data/c/tags/item/ores/monazite.json
-88e8446ad39a1ccd83434f0f04172f9a5d61381f data/c/tags/item/plates.json
-a9450216e3a5da289b7e631682ad2f748bb29084 data/c/tags/item/raw_materials.json
-567e5578690d826da9163cc2dcd0f488d74961d8 data/c/tags/item/storage_blocks.json
-2064a6307dc3c593c71a276c45d7a70f943f3701 data/magnetization/tags/item/ferromagnetic.json
-fb30ca4cd952218c10e4ac14df9de1ef2797a87e data/magnetization/tags/item/machine_magnets.json
-e074065484da4d685e886e8ddae1287b1d747210 data/magnetization/tags/item/metal_armor.json
-ebdc01ce058a586d4d8babb07ba5ba9e8a2c840b data/magnetization/tags/item/metal_tools.json
+91074e3d536eac4e9a6bfc6a29291ce5198caf6c data/c/tags/item/oxides.json
+3fb0f07478db193506ebd6123c49362c98cdeba2 data/c/tags/item/oxides/dysprosium.json
+590d13513c87be2b94ee9d36fc96aaca2fe28095 data/c/tags/item/oxides/neodymium.json
+c0cb6e8382420a22eb50ed72fe347450df122178 data/c/tags/item/oxides/samarium.json
+486e550ed58d104010ee35941151232993a4b4df data/c/tags/item/plates/neodymium_alloy.json
+91455114e1d11799ac123e786cbde7d7032ba159 data/c/tags/item/plates/samarium_cobalt.json

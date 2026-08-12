@@ -9,6 +9,8 @@
     "magnetization:pyrrhotite_shovel",
     "magnetization:hematite_shovel",
     "magnetization:titanomagnetite_shovel",
-    "magnetization:mr_fluid_shovel"
+    "magnetization:mr_fluid_shovel",
+    "magnetization:samarium_cobalt_shovel",
+    "magnetization:neodymium_shovel"
   ]
 }

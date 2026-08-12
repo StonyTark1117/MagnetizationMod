@@ -19,6 +19,10 @@ class MaterialFamilyCompletenessTest {
 
     private static final List<String> SOLID_EQUIPMENT_MATERIALS = List.of(
             "magnetite", "maghemite", "ferromagnetic", "gallium",
+            "lithium", "pyrrhotite", "hematite", "titanomagnetite",
+            "samarium_cobalt", "neodymium");
+    private static final Set<String> HORSE_ARMOR_MATERIALS = Set.of(
+            "magnetite", "maghemite", "ferromagnetic", "gallium",
             "lithium", "pyrrhotite", "hematite", "titanomagnetite");
     private static final List<String> TOOLS = List.of(
             "sword", "pickaxe", "axe", "shovel", "hoe");
@@ -48,6 +52,8 @@ class MaterialFamilyCompletenessTest {
             new StorageFamily("raw_lithium_block", "raw_lithium_block", "raw_lithium_from_block", "raw_lithium"),
             new StorageFamily("solid_gallium", "solid_gallium", "gallium_ingot_from_block", "gallium"),
             new StorageFamily("raw_gallium_block", "raw_gallium_block", "raw_gallium_from_block", "raw_gallium"),
+            new StorageFamily("samarium_cobalt_block", "samarium_cobalt_block", "samarium_cobalt_from_block", "samarium_cobalt"),
+            new StorageFamily("neodymium_block", "neodymium_block", "neodymium_alloy_from_block", "neodymium_alloy"),
             new StorageFamily("solid_helium_3", "solid_helium_3", "helium_3_crystal_from_block", "helium_3"));
 
     @Test
@@ -57,6 +63,7 @@ class MaterialFamilyCompletenessTest {
         final Set<String> metalTools = tagValues("data/magnetization/tags/item/metal_tools.json");
         for (final String material : SOLID_EQUIPMENT_MATERIALS) {
             for (final String part : EQUIPMENT) {
+                if (part.equals("horse_armor") && !HORSE_ARMOR_MATERIALS.contains(material)) continue;
                 final String id = material + "_" + part;
                 resource("assets/magnetization/models/item/" + id + ".json");
                 resource("assets/magnetization/textures/item/" + id + ".png");
@@ -71,6 +78,7 @@ class MaterialFamilyCompletenessTest {
                         () -> id + " must participate in vanilla tool-category and enchantment mechanics");
             }
             for (final String part : ARMOR) {
+                if (part.equals("horse_armor") && !HORSE_ARMOR_MATERIALS.contains(material)) continue;
                 final String id = "magnetization:" + material + "_" + part;
                 assertTrue(metalArmor.contains(id), () -> id + " must participate in metal-armor mechanics");
                 if (!part.equals("horse_armor")) {
@@ -80,7 +88,9 @@ class MaterialFamilyCompletenessTest {
             }
             resource("assets/magnetization/textures/models/armor/" + material + "_layer_1.png");
             resource("assets/magnetization/textures/models/armor/" + material + "_layer_2.png");
-            resource("assets/magnetization/textures/entity/horse/armor/horse_armor_" + material + ".png");
+            if (HORSE_ARMOR_MATERIALS.contains(material)) {
+                resource("assets/magnetization/textures/entity/horse/armor/horse_armor_" + material + ".png");
+            }
         }
     }
 

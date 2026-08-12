@@ -4,6 +4,7 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.content.AbstractEmitterBlockEntity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
+import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -27,8 +28,17 @@ public class PermanentMagnetBlockEntity extends AbstractEmitterBlockEntity {
                 Vec3.atCenterOf(getBlockPos()),
                 new Vec3(0, 1, 0),
                 state.getValue(PermanentMagnetBlock.POLARITY),
-                MagneticStrength.WEAK,
+                materialStrength(state),
                 MagneticField.Shape.OMNIDIRECTIONAL
         );
+    }
+
+    /** Engineered rare-earth magnets use the existing strength ladder instead
+     *  of registering a parallel emitter type: base permanent magnets are WEAK,
+     *  heat-stable SmCo is MEDIUM, and endgame NdFeB is STRONG. */
+    static MagneticStrength materialStrength(final BlockState state) {
+        if (state.is(MagBlocks.NEODYMIUM_MAGNET.get())) return MagneticStrength.STRONG;
+        if (state.is(MagBlocks.SAMARIUM_COBALT_MAGNET.get())) return MagneticStrength.MEDIUM;
+        return MagneticStrength.WEAK;
     }
 }

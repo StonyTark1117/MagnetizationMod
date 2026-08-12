@@ -3,7 +3,23 @@
   "values": [
     "magnetization:magnetite_ore",
     "magnetization:deepslate_magnetite_ore",
+    "magnetization:maghemite_ore",
+    "magnetization:deepslate_maghemite_ore",
+    "magnetization:pyrrhotite_ore",
+    "magnetization:deepslate_pyrrhotite_ore",
+    "magnetization:hematite_ore",
+    "magnetization:deepslate_hematite_ore",
+    "magnetization:titanomagnetite_ore",
+    "magnetization:deepslate_titanomagnetite_ore",
     "magnetization:lithium_ore",
-    "magnetization:deepslate_lithium_ore"
+    "magnetization:deepslate_lithium_ore",
+    "magnetization:bastnasite_ore",
+    "magnetization:deepslate_bastnasite_ore",
+    "magnetization:monazite_ore",
+    "magnetization:deepslate_monazite_ore",
+    "magnetization:cobaltite_ore",
+    "magnetization:deepslate_cobaltite_ore",
+    "magnetization:borax_ore",
+    "magnetization:deepslate_borax_ore"
   ]
 }

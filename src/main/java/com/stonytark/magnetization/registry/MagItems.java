@@ -194,6 +194,8 @@ public final class MagItems {
     public static final DeferredItem<Item> COBALT_INGOT = REGISTER.registerSimpleItem("cobalt_ingot", new Item.Properties());
     public static final DeferredItem<Item> SAMARIUM_COBALT_ALLOY = REGISTER.registerSimpleItem("samarium_cobalt_alloy", new Item.Properties());
     public static final DeferredItem<Item> NEODYMIUM_ALLOY = REGISTER.registerSimpleItem("neodymium_alloy", new Item.Properties());
+    public static final DeferredItem<Item> SAMARIUM_COBALT_PLATE = REGISTER.registerSimpleItem("samarium_cobalt_plate", new Item.Properties());
+    public static final DeferredItem<Item> NEODYMIUM_ALLOY_PLATE = REGISTER.registerSimpleItem("neodymium_alloy_plate", new Item.Properties());
     public static final DeferredItem<Item> SAMARIUM_COBALT_MAGNET_BLANK = REGISTER.registerSimpleItem("samarium_cobalt_magnet_blank", new Item.Properties());
     public static final DeferredItem<Item> NEODYMIUM_MAGNET_BLANK = REGISTER.registerSimpleItem("neodymium_magnet_blank", new Item.Properties());
     public static final DeferredItem<Item> SINTERED_SAMARIUM_COBALT = REGISTER.registerSimpleItem("sintered_samarium_cobalt", new Item.Properties());

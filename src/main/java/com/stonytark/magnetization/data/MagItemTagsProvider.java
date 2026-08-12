@@ -1,7 +1,6 @@
 package com.stonytark.magnetization.data;
 
 import com.stonytark.magnetization.Magnetization;
-import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -34,141 +33,29 @@ public final class MagItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
-        tag(MagTags.FERROMAGNETIC_ITEMS)
-                .add(MagItems.FERROMAGNETIC_INGOT.get())
-                .add(MagItems.FERROMAGNETIC_BLOCK.get())
-                .add(MagItems.MAGNETIC_PLATE.get())
-                .add(MagItems.LODESTONE_CORE.get())
-                .add(MagItems.MAGNETITE_INGOT.get())
-                .add(MagItems.RAW_MAGNETITE.get())
-                .add(MagItems.MAGNETITE_BLOCK.get())
-                .add(MagItems.RAW_MAGNETITE_BLOCK.get())
-                // Iron-oxide family — all ferromagnetic (even hematite ingot,
-                // which acts as a polarity modifier rather than a pure source).
-                .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.RAW_MAGHEMITE.get())
-                .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
-                .add(MagItems.PYRRHOTITE_INGOT.get()).add(MagItems.RAW_PYRRHOTITE.get())
-                .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
-                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.RAW_HEMATITE.get())
-                .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
-                .add(MagItems.TITANOMAGNETITE_INGOT.get()).add(MagItems.RAW_TITANOMAGNETITE.get())
-                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
-                .add(MagItems.SAMARIUM_COBALT_ALLOY.get()).add(MagItems.NEODYMIUM_ALLOY.get())
-                .add(MagItems.SAMARIUM_COBALT_MAGNET.get()).add(MagItems.NEODYMIUM_MAGNET.get())
-                .addOptional(ResourceLocation.withDefaultNamespace("lodestone"));
-
-        tag(MagTags.MACHINE_MAGNETS)
-                .add(MagItems.SAMARIUM_COBALT_ALLOY.get())
-                .add(MagItems.NEODYMIUM_ALLOY.get())
-                .add(MagItems.SAMARIUM_COBALT_MAGNET.get())
-                .add(MagItems.NEODYMIUM_MAGNET.get());
-
-        tag(MagTags.METAL_TOOLS)
-                .add(MagItems.MAGNETITE_SWORD.get()).add(MagItems.MAGNETITE_PICKAXE.get())
-                .add(MagItems.MAGNETITE_AXE.get()).add(MagItems.MAGNETITE_SHOVEL.get()).add(MagItems.MAGNETITE_HOE.get())
-                .add(MagItems.MAGHEMITE_SWORD.get()).add(MagItems.MAGHEMITE_PICKAXE.get())
-                .add(MagItems.MAGHEMITE_AXE.get()).add(MagItems.MAGHEMITE_SHOVEL.get()).add(MagItems.MAGHEMITE_HOE.get())
-                .add(MagItems.FERROMAGNETIC_SWORD.get()).add(MagItems.FERROMAGNETIC_PICKAXE.get())
-                .add(MagItems.FERROMAGNETIC_AXE.get()).add(MagItems.FERROMAGNETIC_SHOVEL.get()).add(MagItems.FERROMAGNETIC_HOE.get())
-                .add(MagItems.GALLIUM_SWORD.get()).add(MagItems.GALLIUM_PICKAXE.get())
-                .add(MagItems.GALLIUM_AXE.get()).add(MagItems.GALLIUM_SHOVEL.get()).add(MagItems.GALLIUM_HOE.get())
-                .add(MagItems.LITHIUM_SWORD.get()).add(MagItems.LITHIUM_PICKAXE.get())
-                .add(MagItems.LITHIUM_AXE.get()).add(MagItems.LITHIUM_SHOVEL.get()).add(MagItems.LITHIUM_HOE.get())
-                .add(MagItems.PYRRHOTITE_SWORD.get()).add(MagItems.PYRRHOTITE_PICKAXE.get())
-                .add(MagItems.PYRRHOTITE_AXE.get()).add(MagItems.PYRRHOTITE_SHOVEL.get()).add(MagItems.PYRRHOTITE_HOE.get())
-                .add(MagItems.HEMATITE_SWORD.get()).add(MagItems.HEMATITE_PICKAXE.get())
-                .add(MagItems.HEMATITE_AXE.get()).add(MagItems.HEMATITE_SHOVEL.get()).add(MagItems.HEMATITE_HOE.get())
-                .add(MagItems.TITANOMAGNETITE_SWORD.get()).add(MagItems.TITANOMAGNETITE_PICKAXE.get())
-                .add(MagItems.TITANOMAGNETITE_AXE.get()).add(MagItems.TITANOMAGNETITE_SHOVEL.get()).add(MagItems.TITANOMAGNETITE_HOE.get());
-        tag(MagTags.METAL_TOOLS)
-                .add(MagItems.SAMARIUM_COBALT_SWORD.get()).add(MagItems.SAMARIUM_COBALT_PICKAXE.get())
-                .add(MagItems.SAMARIUM_COBALT_AXE.get()).add(MagItems.SAMARIUM_COBALT_SHOVEL.get()).add(MagItems.SAMARIUM_COBALT_HOE.get())
-                .add(MagItems.NEODYMIUM_SWORD.get()).add(MagItems.NEODYMIUM_PICKAXE.get())
-                .add(MagItems.NEODYMIUM_AXE.get()).add(MagItems.NEODYMIUM_SHOVEL.get()).add(MagItems.NEODYMIUM_HOE.get());
-
-        tag(MagTags.METAL_ARMOR)
-                .add(net.minecraft.world.item.Items.IRON_HELMET)
-                .add(net.minecraft.world.item.Items.IRON_CHESTPLATE)
-                .add(net.minecraft.world.item.Items.IRON_LEGGINGS)
-                .add(net.minecraft.world.item.Items.IRON_BOOTS)
-                .add(net.minecraft.world.item.Items.CHAINMAIL_HELMET)
-                .add(net.minecraft.world.item.Items.CHAINMAIL_CHESTPLATE)
-                .add(net.minecraft.world.item.Items.CHAINMAIL_LEGGINGS)
-                .add(net.minecraft.world.item.Items.CHAINMAIL_BOOTS)
-                .add(net.minecraft.world.item.Items.GOLDEN_HELMET)
-                .add(net.minecraft.world.item.Items.GOLDEN_CHESTPLATE)
-                .add(net.minecraft.world.item.Items.GOLDEN_LEGGINGS)
-                .add(net.minecraft.world.item.Items.GOLDEN_BOOTS)
-                .add(net.minecraft.world.item.Items.NETHERITE_HELMET)
-                .add(net.minecraft.world.item.Items.NETHERITE_CHESTPLATE)
-                .add(net.minecraft.world.item.Items.NETHERITE_LEGGINGS)
-                .add(net.minecraft.world.item.Items.NETHERITE_BOOTS)
-                .add(MagItems.MAGNETITE_HELMET.get())
-                .add(MagItems.MAGNETITE_CHESTPLATE.get())
-                .add(MagItems.MAGNETITE_LEGGINGS.get())
-                .add(MagItems.MAGNETITE_BOOTS.get())
-                .add(MagItems.FERROMAGNETIC_HELMET.get())
-                .add(MagItems.FERROMAGNETIC_CHESTPLATE.get())
-                .add(MagItems.FERROMAGNETIC_LEGGINGS.get())
-                .add(MagItems.FERROMAGNETIC_BOOTS.get())
-                .add(MagItems.MAGNETITE_HORSE_ARMOR.get())
-                .add(MagItems.FERROMAGNETIC_HORSE_ARMOR.get())
-                .add(MagItems.MAGHEMITE_HELMET.get())
-                .add(MagItems.MAGHEMITE_CHESTPLATE.get())
-                .add(MagItems.MAGHEMITE_LEGGINGS.get())
-                .add(MagItems.MAGHEMITE_BOOTS.get())
-                .add(MagItems.MAGHEMITE_HORSE_ARMOR.get())
-                .add(MagItems.GALLIUM_HELMET.get()).add(MagItems.GALLIUM_CHESTPLATE.get())
-                .add(MagItems.GALLIUM_LEGGINGS.get()).add(MagItems.GALLIUM_BOOTS.get())
-                .add(MagItems.GALLIUM_HORSE_ARMOR.get())
-                .add(MagItems.LITHIUM_HELMET.get()).add(MagItems.LITHIUM_CHESTPLATE.get())
-                .add(MagItems.LITHIUM_LEGGINGS.get()).add(MagItems.LITHIUM_BOOTS.get())
-                .add(MagItems.LITHIUM_HORSE_ARMOR.get())
-                .add(MagItems.PYRRHOTITE_HELMET.get()).add(MagItems.PYRRHOTITE_CHESTPLATE.get())
-                .add(MagItems.PYRRHOTITE_LEGGINGS.get()).add(MagItems.PYRRHOTITE_BOOTS.get())
-                .add(MagItems.PYRRHOTITE_HORSE_ARMOR.get())
-                .add(MagItems.HEMATITE_HELMET.get()).add(MagItems.HEMATITE_CHESTPLATE.get())
-                .add(MagItems.HEMATITE_LEGGINGS.get()).add(MagItems.HEMATITE_BOOTS.get())
-                .add(MagItems.HEMATITE_HORSE_ARMOR.get())
-                .add(MagItems.TITANOMAGNETITE_HELMET.get()).add(MagItems.TITANOMAGNETITE_CHESTPLATE.get())
-                .add(MagItems.TITANOMAGNETITE_LEGGINGS.get()).add(MagItems.TITANOMAGNETITE_BOOTS.get())
-                .add(MagItems.TITANOMAGNETITE_HORSE_ARMOR.get())
-                .add(MagItems.SAMARIUM_COBALT_HELMET.get()).add(MagItems.SAMARIUM_COBALT_CHESTPLATE.get())
-                .add(MagItems.SAMARIUM_COBALT_LEGGINGS.get()).add(MagItems.SAMARIUM_COBALT_BOOTS.get())
-                .add(MagItems.NEODYMIUM_HELMET.get()).add(MagItems.NEODYMIUM_CHESTPLATE.get())
-                .add(MagItems.NEODYMIUM_LEGGINGS.get()).add(MagItems.NEODYMIUM_BOOTS.get())
-                .add(MagItems.MAGNETIC_ELYTRA.get());
-
-        tag(common("ingots")).add(MagItems.FERROMAGNETIC_INGOT.get()).add(MagItems.MAGNETITE_INGOT.get())
-                .add(MagItems.MAGHEMITE_INGOT.get()).add(MagItems.PYRRHOTITE_INGOT.get())
-                .add(MagItems.HEMATITE_INGOT.get()).add(MagItems.TITANOMAGNETITE_INGOT.get())
-                .add(MagItems.LITHIUM.get()).add(MagItems.GALLIUM_INGOT.get());
-        tag(common("ingots")).add(MagItems.NEODYMIUM_INGOT.get()).add(MagItems.SAMARIUM_INGOT.get())
-                .add(MagItems.COBALT_INGOT.get()).add(MagItems.SAMARIUM_COBALT_ALLOY.get()).add(MagItems.NEODYMIUM_ALLOY.get());
-        tag(common("plates")).add(MagItems.MAGNETIC_PLATE.get());
-        tag(common("raw_materials")).add(MagItems.RAW_MAGNETITE.get())
-                .add(MagItems.RAW_MAGHEMITE.get()).add(MagItems.RAW_PYRRHOTITE.get())
-                .add(MagItems.RAW_HEMATITE.get()).add(MagItems.RAW_TITANOMAGNETITE.get())
-                .add(MagItems.RAW_LITHIUM.get()).add(MagItems.RAW_GALLIUM.get());
-        tag(common("storage_blocks")).add(MagItems.MAGNETITE_BLOCK.get()).add(MagItems.RAW_MAGNETITE_BLOCK.get())
-                .add(MagItems.FERROMAGNETIC_BLOCK.get())
-                .add(MagItems.MAGHEMITE_BLOCK.get()).add(MagItems.RAW_MAGHEMITE_BLOCK.get())
-                .add(MagItems.PYRRHOTITE_BLOCK.get()).add(MagItems.RAW_PYRRHOTITE_BLOCK.get())
-                .add(MagItems.HEMATITE_BLOCK.get()).add(MagItems.RAW_HEMATITE_BLOCK.get())
-                .add(MagItems.TITANOMAGNETITE_BLOCK.get()).add(MagItems.RAW_TITANOMAGNETITE_BLOCK.get())
-                .add(MagItems.SAMARIUM_COBALT_BLOCK.get()).add(MagItems.NEODYMIUM_BLOCK.get())
-                .add(MagItems.LITHIUM_BLOCK.get()).add(MagItems.RAW_LITHIUM_BLOCK.get())
-                .add(MagItems.SOLID_GALLIUM.get()).add(MagItems.RAW_GALLIUM_BLOCK.get())
-                .add(MagItems.SOLID_HELIUM_3.get());
-        tag(common("ores")).add(MagItems.BASTNASITE_ORE.get()).add(MagItems.DEEPSLATE_BASTNASITE_ORE.get())
-                .add(MagItems.MONAZITE_ORE.get()).add(MagItems.DEEPSLATE_MONAZITE_ORE.get())
-                .add(MagItems.COBALTITE_ORE.get()).add(MagItems.DEEPSLATE_COBALTITE_ORE.get())
-                .add(MagItems.BORAX_ORE.get()).add(MagItems.DEEPSLATE_BORAX_ORE.get());
-        tag(common("ores")).add(MagItems.MAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_MAGNETITE_ORE.get())
-                .add(MagItems.MAGHEMITE_ORE.get()).add(MagItems.DEEPSLATE_MAGHEMITE_ORE.get())
-                .add(MagItems.PYRRHOTITE_ORE.get()).add(MagItems.DEEPSLATE_PYRRHOTITE_ORE.get())
-                .add(MagItems.HEMATITE_ORE.get()).add(MagItems.DEEPSLATE_HEMATITE_ORE.get())
-                .add(MagItems.TITANOMAGNETITE_ORE.get()).add(MagItems.DEEPSLATE_TITANOMAGNETITE_ORE.get());
+        // Cross-mod Magnetization tags remain hand-written in main resources;
+        // this provider owns only common material tags. Generating both copies
+        // makes sourcesJar ambiguous and can silently discard optional entries.
+        tag(common("plates/samarium_cobalt")).add(MagItems.SAMARIUM_COBALT_PLATE.get());
+        tag(common("plates/neodymium_alloy")).add(MagItems.NEODYMIUM_ALLOY_PLATE.get());
+        tag(common("dusts")).add(MagItems.BORON_DUST.get()).add(MagItems.NEODYMIUM_POWDER.get())
+                .add(MagItems.DYSPROSIUM_POWDER.get()).add(MagItems.SAMARIUM_POWDER.get())
+                .add(MagItems.COBALT_POWDER.get());
+        tag(common("dusts/boron")).add(MagItems.BORON_DUST.get());
+        tag(common("dusts/neodymium")).add(MagItems.NEODYMIUM_POWDER.get());
+        tag(common("dusts/dysprosium")).add(MagItems.DYSPROSIUM_POWDER.get());
+        tag(common("dusts/samarium")).add(MagItems.SAMARIUM_POWDER.get());
+        tag(common("dusts/cobalt")).add(MagItems.COBALT_POWDER.get());
+        tag(common("oxides")).add(MagItems.NEODYMIUM_OXIDE.get()).add(MagItems.DYSPROSIUM_OXIDE.get())
+                .add(MagItems.SAMARIUM_OXIDE.get());
+        tag(common("oxides/neodymium")).add(MagItems.NEODYMIUM_OXIDE.get());
+        tag(common("oxides/dysprosium")).add(MagItems.DYSPROSIUM_OXIDE.get());
+        tag(common("oxides/samarium")).add(MagItems.SAMARIUM_OXIDE.get());
+        tag(common("concentrates")).add(MagItems.BASTNASITE_CONCENTRATE.get())
+                .add(MagItems.MONAZITE_CONCENTRATE.get()).add(MagItems.COBALTITE_CONCENTRATE.get());
+        tag(common("concentrates/bastnasite")).add(MagItems.BASTNASITE_CONCENTRATE.get());
+        tag(common("concentrates/monazite")).add(MagItems.MONAZITE_CONCENTRATE.get());
+        tag(common("concentrates/cobaltite")).add(MagItems.COBALTITE_CONCENTRATE.get());
         tag(common("ingots/neodymium")).add(MagItems.NEODYMIUM_INGOT.get());
         tag(common("ingots/samarium")).add(MagItems.SAMARIUM_INGOT.get());
         tag(common("ingots/cobalt")).add(MagItems.COBALT_INGOT.get());
