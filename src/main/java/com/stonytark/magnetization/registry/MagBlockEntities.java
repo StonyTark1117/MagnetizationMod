@@ -124,6 +124,16 @@ public final class MagBlockEntities {
                     .of(com.stonytark.magnetization.content.gas.GasExciterBlockEntity::new, MagBlocks.GAS_EXCITER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gas.GasVentBlockEntity>> GAS_VENT =
+            REGISTER.register("gas_vent", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.gas.GasVentBlockEntity::new, MagBlocks.GAS_VENT.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity>> PROXY_GAS_CLOUD =
+            REGISTER.register("proxy_gas_cloud", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity::new, MagBlocks.PROXY_GAS_CLOUD.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity>> AIR_SEPARATOR =
             REGISTER.register("air_separator", () -> BlockEntityType.Builder
                     .<com.stonytark.magnetization.content.gas.AirSeparatorBlockEntity>of(

@@ -3,6 +3,10 @@ package com.stonytark.magnetization.gametest;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
+import com.stonytark.magnetization.content.gas.GasExcitationProfiles;
+import com.stonytark.magnetization.content.gas.GasExciterBlockEntity;
+import com.stonytark.magnetization.content.gas.GasVentBlockEntity;
+import com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagFluids;
 import com.stonytark.magnetization.registry.MagItems;
@@ -17,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -109,6 +114,97 @@ public final class TfmgHydrogenGameTests {
                         && processing.getFluidIngredients().stream()
                         .anyMatch(i -> i.test(new FluidStack(MagFluids.HYDROGEN.get(), 1000))),
                 "Magnetization hydrogen should satisfy the TFMG Hydrogen Tank filling recipe");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void everyTfmgVirtualGasHasAnExcitationProfile(final GameTestHelper helper) {
+        for (final String name : new String[]{"lpg", "butane", "propane", "hydrogen", "furnace_gas",
+                "ethylene", "propylene", "neon", "carbon_dioxide", "air", "hot_air"}) {
+            helper.assertTrue(GasExcitationProfiles.supports(fluid("tfmg", name)),
+                    "Missing Gas Vent profile for tfmg:" + name);
+            helper.assertTrue(GasExcitationProfiles.supports(fluid("tfmg", "flowing_" + name)),
+                    "Missing Gas Vent profile for tfmg:flowing_" + name);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void everyTfmgVirtualGasPassesThroughTheVentWithoutIdentityLoss(
+            final GameTestHelper helper) {
+        final BlockPos ventPos = new BlockPos(1, 1, 1);
+        final BlockPos cloudPos = new BlockPos(2, 1, 1);
+        helper.setBlock(ventPos, MagBlocks.GAS_VENT.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
+                        net.minecraft.core.Direction.EAST));
+        final GasVentBlockEntity vent = (GasVentBlockEntity) helper.getBlockEntity(ventPos);
+        final var level = helper.getLevel();
+        final BlockPos absoluteVent = helper.absolutePos(ventPos);
+
+        for (final String name : new String[]{"lpg", "butane", "propane", "hydrogen", "furnace_gas",
+                "ethylene", "propylene", "neon", "carbon_dioxide", "air", "hot_air"}) {
+            for (final String path : new String[]{name, "flowing_" + name}) {
+                final Fluid original = fluid("tfmg", path);
+                helper.assertTrue(vent.fluidHandler().fill(new FluidStack(original, 1000),
+                                IFluidHandler.FluidAction.EXECUTE) == 1000,
+                        "Gas Vent rejected profiled fluid tfmg:" + path);
+                GasVentBlockEntity.serverTick(level, absoluteVent, level.getBlockState(absoluteVent), vent);
+                helper.assertTrue(helper.getBlockEntity(cloudPos) instanceof ProxyGasCloudBlockEntity cloud
+                                && cloud.isSource() && cloud.fluid() == original,
+                        "Gas Vent changed or lost tfmg:" + path + " identity");
+                final ProxyGasCloudBlockEntity cloud = (ProxyGasCloudBlockEntity) helper.getBlockEntity(cloudPos);
+                final FluidStack recovered = cloud.fluidHandler().drain(1000,
+                        IFluidHandler.FluidAction.EXECUTE);
+                helper.assertTrue(recovered.getFluid() == original && recovered.getAmount() == 1000,
+                        "Gas source recovery changed tfmg:" + path + " identity or amount");
+                helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.AIR, cloudPos);
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void gasVentPreservesTfmgIdentityAndExcitesThroughRearMachine(final GameTestHelper helper) {
+        final BlockPos exciterPos = new BlockPos(0, 1, 1);
+        final BlockPos ventPos = new BlockPos(1, 1, 1);
+        final BlockPos cloudPos = new BlockPos(2, 1, 1);
+        helper.setBlock(exciterPos, MagBlocks.GAS_EXCITER.get());
+        helper.setBlock(ventPos, MagBlocks.GAS_VENT.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,
+                        net.minecraft.core.Direction.EAST));
+        final GasVentBlockEntity vent = (GasVentBlockEntity) helper.getBlockEntity(ventPos);
+        final Fluid tfmgHydrogen = fluid("tfmg", "hydrogen");
+        helper.assertTrue(vent.fluidHandler().fill(new FluidStack(tfmgHydrogen, 1000),
+                IFluidHandler.FluidAction.EXECUTE) == 1000, "Gas Vent rejected profiled TFMG hydrogen");
+
+        final var level = helper.getLevel();
+        final BlockPos absoluteVent = helper.absolutePos(ventPos);
+        helper.assertTrue(vent.outputPos().equals(helper.absolutePos(cloudPos)),
+                "Gas Vent output did not face the expected test cell: " + vent.outputPos());
+        helper.assertTrue(level.getBlockState(vent.outputPos()).isAir()
+                        || level.getBlockState(vent.outputPos()).canBeReplaced(),
+                "Gas Vent output test cell was not replaceable: " + level.getBlockState(vent.outputPos()));
+        GasVentBlockEntity.serverTick(level, absoluteVent, level.getBlockState(absoluteVent), vent);
+        helper.assertTrue(level.getBlockState(helper.absolutePos(cloudPos)).is(MagBlocks.PROXY_GAS_CLOUD.get()),
+                "Gas Vent did not place a proxy source block despite a full valid tank");
+        final ProxyGasCloudBlockEntity cloud = (ProxyGasCloudBlockEntity) helper.getBlockEntity(cloudPos);
+        helper.assertTrue(cloud.isSource() && cloud.fluid() == tfmgHydrogen,
+                "Gas Vent did not preserve the TFMG fluid identity in its source cloud");
+
+        final GasExciterBlockEntity exciter = (GasExciterBlockEntity) helper.getBlockEntity(exciterPos);
+        exciter.energyBuffer().receiveEnergy(100, false);
+        final BlockPos absoluteExciter = helper.absolutePos(exciterPos);
+        GasExciterBlockEntity.serverTick(level, absoluteExciter, level.getBlockState(absoluteExciter), exciter);
+        helper.assertTrue(cloud.isExcited() && exciter.hudGas() == tfmgHydrogen,
+                "Rear-mounted Gas Exciter did not energize or identify the vented TFMG cloud");
+
+        ProxyGasCloudBlockEntity.serverTick(level, helper.absolutePos(cloudPos),
+                level.getBlockState(helper.absolutePos(cloudPos)), cloud);
+        helper.assertTrue(helper.getBlockEntity(new BlockPos(2, 2, 1)) instanceof ProxyGasCloudBlockEntity,
+                "TFMG hydrogen profile did not rise away from the source");
+        final FluidStack recovered = cloud.fluidHandler().drain(1000, IFluidHandler.FluidAction.EXECUTE);
+        helper.assertTrue(recovered.getFluid() == tfmgHydrogen && recovered.getAmount() == 1000,
+                "Recovered cloud changed TFMG identity or amount");
         helper.succeed();
     }
 

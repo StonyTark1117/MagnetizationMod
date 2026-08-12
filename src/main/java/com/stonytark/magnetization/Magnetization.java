@@ -74,6 +74,7 @@ public final class Magnetization {
         modBus.addListener(Magnetization::onConfigReloading);
         modBus.addListener(com.stonytark.magnetization.network.CommonConfigSync::onConfigReload);
         NeoForge.EVENT_BUS.addListener(MagCommands::onRegister);
+        NeoForge.EVENT_BUS.addListener(Magnetization::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
         NeoForge.EVENT_BUS.addListener(Magnetization::onServerStopped);
 
@@ -106,6 +107,10 @@ public final class Magnetization {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             com.stonytark.magnetization.client.MagClientConfig.registerConfigScreen(modContainer);
         }
+    }
+
+    private static void onAddReloadListeners(final net.neoforged.neoforge.event.AddReloadListenerEvent event) {
+        event.addListener(new com.stonytark.magnetization.content.gas.GasExcitationProfiles(event));
     }
 
     /**
@@ -211,6 +216,10 @@ public final class Magnetization {
                 MagBlockEntities.ELECTROLYZER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.AIR_SEPARATOR.get(), (be, side) -> disabled(be) ? null : be.fluidHandler(side));
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.GAS_VENT.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.PROXY_GAS_CLOUD.get(), (be, side) -> be.isSource() ? be.fluidHandler() : null);
 
         // Item-handler caps so hoppers / Create automation can feed every item-fuel
         // machine (insert gated by each slot's canPlaceItem; only spent buckets extract

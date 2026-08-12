@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_bars": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:iron_bars"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "magnetization:gas_vent"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_bars"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magnetization:gas_vent"
+    ]
+  }
+}

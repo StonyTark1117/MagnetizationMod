@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "create:copper_casing"
+    },
+    "i": {
+      "item": "minecraft:iron_bars"
+    },
+    "p": {
+      "item": "create:fluid_pipe"
+    },
+    "s": {
+      "item": "create:copper_sheet"
+    }
+  },
+  "pattern": [
+    " p ",
+    "scs",
+    " i "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetization:gas_vent"
+  }
+}

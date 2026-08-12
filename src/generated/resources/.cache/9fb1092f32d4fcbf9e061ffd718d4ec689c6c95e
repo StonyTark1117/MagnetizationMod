@@ -1,4 +1,4 @@
-// 1.21.1	2026-08-11T11:52:44.987931394	Recipes
+// 1.21.1	2026-08-12T10:22:45.340060777	Recipes
 97909bfc7e48cb09e753207276631c449a1624e6 data/magnetization/advancement/recipes/building_blocks/anomaly_stone_from_blasting.json
 6345f706f3a39e203dbb77fef02feb9c2099598c data/magnetization/advancement/recipes/building_blocks/anomaly_stone_from_smelting.json
 1666e5c41b09b0d7a7747bca7de7f283be1e0e0a data/magnetization/advancement/recipes/building_blocks/anomaly_stone_slab.json
@@ -128,6 +128,7 @@ caa4b9c621b38257846ffc53bd929f88eead1e54 data/magnetization/advancement/recipes/
 e0b60117334b7775fb2222472f4a1cd4c3b6f3ad data/magnetization/advancement/recipes/misc/gallium_ingot_from_smelting_raw_gallium.json
 14db464adc068002d4ec7a935df2a60914523669 data/magnetization/advancement/recipes/misc/gallium_ingot_from_smelting_zinc.json
 40a5285aa011fd28a7ac6fe88f9b13f9738ba862 data/magnetization/advancement/recipes/misc/gas_exciter.json
+26b9077c8da93e692cef9a619cd1771c5dcf23e7 data/magnetization/advancement/recipes/misc/gas_vent.json
 2239594e21960e6ec0ad1a48f748a6146f393546 data/magnetization/advancement/recipes/misc/gray_dye_from_mr_fluid.json
 fcc78eb139ac77f7530d4817ccd7124977b0ece4 data/magnetization/advancement/recipes/misc/helium_3_bucket_from_cell.json
 bf51651ef0fd611ecf9c5340c358470523cc8c8c data/magnetization/advancement/recipes/misc/helium_3_bucket_from_crystal.json
@@ -345,6 +346,7 @@ e8d5589c84f1e717c53046402625d8890b195b1e data/magnetization/recipe/gallium_ingot
 9785ea464d3d0176f2c4d8a5aaaea5eeba660dd6 data/magnetization/recipe/gallium_sword.json
 85ee07aaf97b221711e6c53922d329408f63f866 data/magnetization/recipe/gas_detector.json
 b051ae3225509ebc8e748a928ea4b01deb191090 data/magnetization/recipe/gas_exciter.json
+b86d55caa38807962f162312c8b3a237a8847b20 data/magnetization/recipe/gas_vent.json
 de1fd4b9057eead44cab5e835719734295766267 data/magnetization/recipe/gray_dye_from_mr_fluid.json
 1837cff7150e0d22cf506cc8161680c8bd5569c0 data/magnetization/recipe/gyrostabilizer.json
 6575a904384b4c8b007c41022c20e077eefe4c82 data/magnetization/recipe/helium_3_bucket_from_cell.json

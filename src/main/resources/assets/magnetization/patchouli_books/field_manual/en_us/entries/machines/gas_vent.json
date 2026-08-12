@@ -1,0 +1,11 @@
+{
+  "name": "book.magnetization.entry.gas_vent.name",
+  "category": "magnetization:machines",
+  "icon": "magnetization:gas_vent",
+  "sortnum": 35,
+  "pages": [
+    { "type": "patchouli:spotlight", "item": "magnetization:gas_vent", "text": "book.magnetization.entry.gas_vent.spotlight" },
+    { "type": "patchouli:crafting", "recipe": "magnetization:gas_vent", "text": "book.magnetization.entry.gas_vent.crafting" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.gas_vent.cloud.title", "text": "book.magnetization.entry.gas_vent.cloud.text" }
+  ]
+}

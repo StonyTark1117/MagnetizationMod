@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "create:block/copper_casing",
+    "down": "create:block/copper_casing",
+    "up": "create:block/copper_casing",
+    "east": "create:block/copper_casing",
+    "west": "create:block/copper_casing",
+    "south": "create:block/copper_casing",
+    "north": "magnetization:block/gas_vent_front"
+  }
+}

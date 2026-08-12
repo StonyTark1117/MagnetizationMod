@@ -167,6 +167,7 @@ public final class MagItemTooltips {
         m.put(MagItems.FUSION_THRUSTER.get(),          "tooltip.magnetization.fusion_thruster.use");
         m.put(MagItems.RAILGUN_EMITTER.get(),          "tooltip.magnetization.railgun_emitter.use");
         m.put(MagItems.ELECTROLYZER.get(),             "tooltip.magnetization.electrolyzer.use");
+        m.put(MagItems.GAS_VENT.get(),                 "tooltip.magnetization.gas_vent.use");
         m.put(MagItems.HOMOPOLAR_MOTOR.get(),          "tooltip.magnetization.homopolar_motor.use");
         m.put(MagItems.STRUCTURAL_INDUCER.get(),       "tooltip.magnetization.structural_inducer.use");
         m.put(MagItems.TOKAMAK_CONTROLLER.get(),       "tooltip.magnetization.tokamak_controller.use");

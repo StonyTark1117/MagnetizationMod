@@ -28,7 +28,7 @@ Optional integrations (auto-detected when installed):
 - [Create: Cosmonautics](https://www.curseforge.com/minecraft/mc-mods/create-cosmonautics) — Magnetization Hydrogen is accepted through Cosmonautics' `rocketnautics:rocket_fuel` contract, its Magnetic Stabilizer contributes ferromagnetic ship susceptibility, and heat-stable Samarium-Cobalt alternatives cover the stabilizer, RCS/vector guidance, and both rocket-thruster tiers. `compat.cosmonauticsCompatEnabled` is the master above the recipe toggle; fluid/material tags remain datapack-controlled. Verified against published 26.08.307 (runtime mod ID `rocketnautics`).
 - [Create Crafts & Additions](https://www.curseforge.com/minecraft/mc-mods/createaddition) — a powered Tesla Coil emits a field scaled by live FE charge and its damage triggers LIRM. Electric machines, accumulators, connectors, and metal parts receive magnetic/conductive roles; Permanent Magnet motor/alternator recipes bridge progression; standard FE sources continue to power Magnetization machines. Independently configurable and verified against 1.6.0.
 - [Immersive Engineering](https://modrinth.com/mod/immersiveengineering) — powered Electromagnets emit continuous charge-scaled fields, Tesla Coils emit pulsed fields, and Railgun Shots react to nearby fields. IE Mixer and Metal Press recipes produce Ferrofluid and Magnetic Plates; electrical machines receive eddy-current parity. Magnetization rods and ingots were evaluated as Railgun ammunition but are deliberately not registered: IE's projectile API is a global, non-reloadable runtime list, so it cannot honor this integration's live config controls cleanly and would create an intrusive balance change. Independently configurable and verified against 12.4.2-194.
-- [Create: The Factory Must Grow](https://www.curseforge.com/minecraft/mc-mods/create-the-factory-must-grow) — Hydrogen, Lithium, magnetic alloy ingots/plates, magnets, electrical machinery, and industrial fluids interoperate in both directions. TFMG magnets drive Magnetization's magnet-slot machines; molten steel drives the MHD Jet; lubricant/casting/steelmaking/component recipes bridge both progression trees. `compat.tfmgCompatEnabled` is the master above the recipe, magnetic-fuel, and opt-in Polarizer controls. Verified against published 1.2.0.
+- [Create: The Factory Must Grow](https://www.curseforge.com/minecraft/mc-mods/create-the-factory-must-grow) — Hydrogen, Lithium, magnetic alloy ingots/plates, magnets, electrical machinery, and industrial fluids interoperate in both directions. All eleven TFMG virtual gases can be routed through a Gas Vent into buoyant, recoverable clouds for redstone or Gas Exciter illumination. TFMG magnets drive Magnetization's magnet-slot machines; molten steel drives the MHD Jet; lubricant/casting/steelmaking/component recipes bridge both progression trees. `compat.tfmgCompatEnabled` is the master above the recipe, gas-excitation, magnetic-fuel, and opt-in Polarizer controls. Verified against published 1.2.0.
 - [Create: Tracks](https://www.curseforge.com/minecraft/mc-mods/create-tracks) — Track Mounts and all suspension/drive-wheel variants contribute to magnetic susceptibility. Tracked vehicles react as complete Sable craft, and the Structural Inducer preserves initialized Track Mount block entities when lifting a grounded vehicle. Verified against Tracks 1.0.1 with its required Offroad 1.3.0 runtime.
 - [Create: Steam 'n' Rails NeoForge](https://www.curseforge.com/minecraft/mc-mods/steam-n-rails-neoforge) — magnetic force is projected along the rail and applied once to the shared train, so coupled cars accelerate or brake together without leaving the track graph. Locometal and mechanical train parts receive material parity, assembled trains remain outside Structural Inducer block capture, and the track coupler gains a Magnetization Ponder scene. `compat.steamNRailsCompatEnabled` gates all behavior and documentation hooks. Verified against 0.2.1.
 - [Create: Diesel Generators](https://www.curseforge.com/minecraft/mc-mods/create-diesel-generators) — compact, modular, and huge engines retain their native Create kinetic/goggle behavior and their structural metal contributes ship susceptibility and eddy-current conduction. Chemical sprayers and turrets loaded with Ferrofluid apply Magnetized. Tanks, fermenters, barrels, fuel blocks, and encased pipes remain excluded. Independently configurable and verified against 1.21.1-1.3.15.
@@ -62,10 +62,24 @@ Optional integrations (auto-detected when installed):
 
 ## 1.4.0 feature set — Excitable noble gases
 
-- **Excitable gases** — Hydrogen, Helium, Neon, and Helium-3 rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter turns a connected same-gas volume from nearly invisible gas into a gas-specific luminous discharge. Tritium instead radioluminesces steadily without external power.
+- **Excitable gases** — Hydrogen, Helium, Neon, and Helium-3 rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter turns a connected same-gas volume from nearly invisible gas into a gas-specific luminous discharge. A directional Gas Vent gives data-profiled virtual gases from optional addons the same recoverable world-cloud path. Tritium instead radioluminesces steadily without external power.
 - **Air Separator** — a Create-kinetic machine that simultaneously produces five atmospheric fractions into face-isolated output tanks. Its GUI has an explicit face map: select a gas or the mechanical input, then click the exact face to assign; no blind cycling is required. Connect Create fluid pipes to the assigned faces to extract the individual gases.
 - **Ion Thruster** — an electric Sable-ship drive with propellant-specific acceleration, cruise speed, fluid efficiency, FE cost, and exhaust. Xenon is the strongest safe propellant; Radon is stronger but exposes nearby living entities.
 - **Datapack compatibility** — external fluids can join `#magnetization:ion_thruster_propellants` and receive the neutral fallback profile. Worldgen, radiation, excitation, machine rates, and propulsion balance are configurable.
+
+Addon and modpack authors can make a non-placeable fluid ventable by adding
+`data/<namespace>/magnetization/gas_excitation_profiles/<name>.json`:
+
+```json
+{
+  "fluids": ["example:gas", "example:flowing_gas"],
+  "buoyancy": "rise",
+  "dormant_argb": "30D0F2F5",
+  "excited_argb": "FFFF6FAE"
+}
+```
+
+`buoyancy` accepts `rise`, `sink`, or `neutral`; colors are eight-digit ARGB. Standard `neoforge:conditions` are supported, so profiles can remain fully optional. Duplicate fluid claims and references to missing fluids fail data reload with the profile ID named in the error.
 
 The full implementation contract is in [PROPOSED_1.4.0.md](PROPOSED_1.4.0.md).
 

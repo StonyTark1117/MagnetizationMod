@@ -9,6 +9,7 @@
 - Finished the **rare-earth magnet progression**: Bastnäsite, Monazite, Cobaltite, and Borax feed staged Create processing into samarium–cobalt and neodymium–iron–boron alloys, pressed plates, sintered blanks, permanent magnets, storage blocks, tools, and armor.
 - Added distinct rare-earth identities: samarium–cobalt armor reduces fire/lava damage by 20% per piece, while magnetized neodymium tools provide double personal item-pull strength and a full neodymium armor set reduces field-driven movement by 75%.
 - Added a Field Manual rare-earth guide, a dedicated rare-earth worldgen toggle, common material tags, and optional TFMG Polarizer finishing recipes.
+- Added a data-driven Gas Vent compatibility API and profiles for all eleven TFMG virtual gases, including buoyant recoverable clouds and Gas Exciter support.
 
 ### Fixed
 - Rare-earth magnet blocks now use a valid permanent-magnet block entity and emit their intended tiers: samarium–cobalt is **MEDIUM**, neodymium is **STRONG**.

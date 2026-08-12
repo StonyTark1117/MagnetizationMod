@@ -1,0 +1,69 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "magnetization:block/proxy_gas_cloud",
+    "cloud": "magnetization:block/proxy_gas_cloud"
+  },
+  "elements": [
+    {
+      "from": [2, 4, 2],
+      "to": [14, 12, 14],
+      "faces": {
+        "down": { "texture": "#cloud", "tintindex": 0 },
+        "up": { "texture": "#cloud", "tintindex": 0 },
+        "north": { "texture": "#cloud", "tintindex": 0 },
+        "south": { "texture": "#cloud", "tintindex": 0 },
+        "west": { "texture": "#cloud", "tintindex": 0 },
+        "east": { "texture": "#cloud", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [0, 5, 4],
+      "to": [7, 11, 12],
+      "faces": {
+        "down": { "texture": "#cloud", "tintindex": 0 },
+        "up": { "texture": "#cloud", "tintindex": 0 },
+        "north": { "texture": "#cloud", "tintindex": 0 },
+        "south": { "texture": "#cloud", "tintindex": 0 },
+        "west": { "texture": "#cloud", "tintindex": 0 },
+        "east": { "texture": "#cloud", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [9, 3, 5],
+      "to": [16, 10, 13],
+      "faces": {
+        "down": { "texture": "#cloud", "tintindex": 0 },
+        "up": { "texture": "#cloud", "tintindex": 0 },
+        "north": { "texture": "#cloud", "tintindex": 0 },
+        "south": { "texture": "#cloud", "tintindex": 0 },
+        "west": { "texture": "#cloud", "tintindex": 0 },
+        "east": { "texture": "#cloud", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [5, 9, 3],
+      "to": [12, 15, 11],
+      "faces": {
+        "down": { "texture": "#cloud", "tintindex": 0 },
+        "up": { "texture": "#cloud", "tintindex": 0 },
+        "north": { "texture": "#cloud", "tintindex": 0 },
+        "south": { "texture": "#cloud", "tintindex": 0 },
+        "west": { "texture": "#cloud", "tintindex": 0 },
+        "east": { "texture": "#cloud", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [4, 2, 0],
+      "to": [11, 9, 7],
+      "faces": {
+        "down": { "texture": "#cloud", "tintindex": 0 },
+        "up": { "texture": "#cloud", "tintindex": 0 },
+        "north": { "texture": "#cloud", "tintindex": 0 },
+        "south": { "texture": "#cloud", "tintindex": 0 },
+        "west": { "texture": "#cloud", "tintindex": 0 },
+        "east": { "texture": "#cloud", "tintindex": 0 }
+      }
+    }
+  ]
+}

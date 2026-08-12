@@ -3,6 +3,7 @@ package com.stonytark.magnetization.gametest;
 import com.stonytark.magnetization.compat.ExternalFieldCompat;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.data.CompatConfigCondition;
+import com.stonytark.magnetization.content.gas.GasExcitationProfiles;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +32,8 @@ public final class OptionalCompatibilityAbsentGameTests {
         }
         helper.assertTrue(!ExternalFieldCompat.isKnownEmitter(Blocks.AIR.defaultBlockState()),
                 "External emitter adapter matched a vanilla air block");
+        helper.assertTrue(GasExcitationProfiles.size() == 0,
+                "Conditional gas profiles loaded even though their optional provider is absent");
         final var recipes = helper.getLevel().getServer().getRecipeManager();
         for (final String path : new String[]{
                 "create_new_age_basic_motor_from_permanent_magnet",
@@ -98,9 +101,13 @@ public final class OptionalCompatibilityAbsentGameTests {
                             && !MagConfig.steamRailsFieldReaction(),
                     "Transport compatibility master did not cascade to its behavior toggles");
             helper.assertTrue(!MagConfig.tfmgProcessingRecipesEnabled()
+                            && !MagConfig.tfmgGasExcitationEnabled()
                             && !MagConfig.tfmgSteelmakingRecipesEnabled()
                             && !MagConfig.tfmgPolarizerFieldEnabled(),
                     "TFMG master did not cascade to recipes and Polarizer fields");
+            helper.assertTrue(!new CompatConfigCondition(CompatConfigCondition.Feature.TFMG_GAS_EXCITATION)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY),
+                    "TFMG gas-excitation condition ignored the package master");
             helper.assertTrue(!MagConfig.cosmonauticsRecipesEnabled()
                             && !new CompatConfigCondition(CompatConfigCondition.Feature.COSMONAUTICS)
                             .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY),

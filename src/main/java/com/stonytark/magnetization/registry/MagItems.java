@@ -59,6 +59,7 @@ public final class MagItems {
                     new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> ELECTROLYZER         = REGISTER.registerSimpleBlockItem(MagBlocks.ELECTROLYZER);
     public static final DeferredItem<BlockItem> GAS_EXCITER          = REGISTER.registerSimpleBlockItem(MagBlocks.GAS_EXCITER);
+    public static final DeferredItem<BlockItem> GAS_VENT             = REGISTER.registerSimpleBlockItem(MagBlocks.GAS_VENT);
     public static final DeferredItem<BlockItem> AIR_SEPARATOR        = REGISTER.registerSimpleBlockItem(MagBlocks.AIR_SEPARATOR);
     public static final DeferredItem<BlockItem> HOMOPOLAR_MOTOR      = REGISTER.registerSimpleBlockItem(MagBlocks.HOMOPOLAR_MOTOR);
     public static final DeferredItem<BlockItem> STRUCTURAL_INDUCER   = REGISTER.registerSimpleBlockItem(MagBlocks.STRUCTURAL_INDUCER);

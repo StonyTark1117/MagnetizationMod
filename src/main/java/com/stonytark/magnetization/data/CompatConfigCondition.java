@@ -13,6 +13,7 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
 
     public enum Feature {
         TFMG_COMPAT("tfmg_compat"),
+        TFMG_GAS_EXCITATION("tfmg_gas_excitation"),
         TFMG_PROCESSING("tfmg_processing"),
         TFMG_STEELMAKING("tfmg_steelmaking"),
         PATCHOULI("patchouli"),
@@ -54,6 +55,7 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
     public boolean test(final IContext context) {
         return switch (feature) {
             case TFMG_COMPAT -> MagConfig.tfmgCompatEnabled();
+            case TFMG_GAS_EXCITATION -> MagConfig.tfmgGasExcitationEnabled();
             case TFMG_PROCESSING -> MagConfig.tfmgProcessingRecipesEnabled();
             case TFMG_STEELMAKING -> MagConfig.tfmgSteelmakingRecipesEnabled();
             case PATCHOULI -> MagConfig.patchouliCompatEnabled();

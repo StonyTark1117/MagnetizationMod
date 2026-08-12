@@ -483,6 +483,7 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue COPYCATS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue CURIOS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue TFMG_GAS_EXCITATION_ENABLED;
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue STEAM_N_RAILS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue PATCHOULI_COMPAT_ENABLED;
@@ -2202,6 +2203,13 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.tfmgProcessingRecipesEnabled")
                 .define("tfmgProcessingRecipesEnabled", true);
 
+        TFMG_GAS_EXCITATION_ENABLED = b
+                .comment("Allow TFMG virtual gases to be released through a Gas Vent and excited",
+                         "as persistent proxy clouds. Requires the TFMG compatibility master switch.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.tfmgGasExcitationEnabled")
+                .define("tfmgGasExcitationEnabled", true);
+
         TFMG_STEELMAKING_RECIPES_ENABLED = b
                 .comment("Load conservative TFMG Industrial Blast Furnace recipes for Raw Magnetite",
                          "and Raw Hematite. Each input yields one ingot-equivalent of molten steel plus",
@@ -2907,6 +2915,9 @@ public final class MagConfig {
     }
     public static boolean tfmgProcessingRecipesEnabled() {
         return tfmgCompatEnabled() && booleanOr(TFMG_PROCESSING_RECIPES_ENABLED, true);
+    }
+    public static boolean tfmgGasExcitationEnabled() {
+        return tfmgCompatEnabled() && booleanOr(TFMG_GAS_EXCITATION_ENABLED, true);
     }
     public static boolean tfmgSteelmakingRecipesEnabled() {
         return tfmgCompatEnabled() && booleanOr(TFMG_STEELMAKING_RECIPES_ENABLED, true);

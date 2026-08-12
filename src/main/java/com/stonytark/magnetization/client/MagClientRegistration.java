@@ -264,6 +264,8 @@ public final class MagClientRegistration {
     private static void registerGasRenderLayers() {
         final net.minecraft.client.renderer.RenderType translucent =
                 net.minecraft.client.renderer.RenderType.translucent();
+        net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                com.stonytark.magnetization.registry.MagBlocks.PROXY_GAS_CLOUD.get(), translucent);
         for (final net.minecraft.world.level.material.Fluid fluid : new net.minecraft.world.level.material.Fluid[]{
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN.get(),
                 com.stonytark.magnetization.registry.MagFluids.HYDROGEN_FLOWING.get(),
@@ -363,6 +365,17 @@ public final class MagClientRegistration {
             if (dyed == null) return 0xFFFFFFFF;
             return 0xFF000000 | (dyed.rgb() & 0x00FFFFFF);
         }, com.stonytark.magnetization.registry.MagItems.MAGNETIC_ELYTRA.get());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterBlockColors(final net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tintIndex) -> {
+            if (level != null && pos != null
+                    && level.getBlockEntity(pos) instanceof com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity cloud) {
+                return cloud.tint();
+            }
+            return 0x30FFFFFF;
+        }, com.stonytark.magnetization.registry.MagBlocks.PROXY_GAS_CLOUD.get());
     }
 
     /** Adds a {@link MagneticElytraLayer} to every humanoid renderer so the

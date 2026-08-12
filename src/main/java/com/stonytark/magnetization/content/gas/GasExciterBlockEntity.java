@@ -1,7 +1,6 @@
 package com.stonytark.magnetization.content.gas;
 
 import com.stonytark.magnetization.config.MagConfig;
-import com.stonytark.magnetization.content.fluid.ExcitableGasBlock;
 import com.stonytark.magnetization.content.fluid.GasExcitation;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.energy.EnergyStorage;
@@ -81,11 +79,17 @@ public final class GasExciterBlockEntity extends BlockEntity {
         Fluid gas = Fluids.EMPTY;
         for (final Direction direction : Direction.values()) {
             final BlockPos gasPos = pos.relative(direction);
-            if (server.getBlockState(gasPos).getBlock() instanceof ExcitableGasBlock) {
-                final Fluid adjacent = server.getFluidState(gasPos).getType();
-                if (gas == Fluids.EMPTY) gas = adjacent instanceof FlowingFluid flowing
-                        ? flowing.getSource() : adjacent;
+            final Fluid adjacent = GasExcitation.fluidAt(server, gasPos);
+            if (adjacent != Fluids.EMPTY) {
+                if (gas == Fluids.EMPTY) gas = adjacent;
                 GasExcitation.recompute(server, gasPos);
+            } else if (server.getBlockEntity(gasPos) instanceof GasVentBlockEntity vent) {
+                final BlockPos output = vent.outputPos();
+                final Fluid vented = GasExcitation.fluidAt(server, output);
+                if (vented != Fluids.EMPTY) {
+                    if (gas == Fluids.EMPTY) gas = vented;
+                    GasExcitation.recompute(server, output);
+                }
             }
         }
         final boolean redstoneDisabled = be.redstoneDisabledNow();

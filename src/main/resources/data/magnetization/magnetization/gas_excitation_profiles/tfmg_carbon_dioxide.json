@@ -1,0 +1,1 @@
+{"neoforge:conditions":[{"type":"neoforge:mod_loaded","modid":"tfmg"},{"type":"magnetization:compat_config","feature":"tfmg_gas_excitation"}],"fluids":["tfmg:carbon_dioxide","tfmg:flowing_carbon_dioxide"],"buoyancy":"sink","dormant_argb":"30525252","excited_argb":"FF8F7CFF"}

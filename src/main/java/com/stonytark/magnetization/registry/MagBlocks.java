@@ -551,6 +551,13 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.gas.GasExciterBlock> GAS_EXCITER =
             REGISTER.register("gas_exciter", () -> new com.stonytark.magnetization.content.gas.GasExciterBlock(
                     metal().lightLevel(state -> 4)));
+    public static final DeferredBlock<com.stonytark.magnetization.content.gas.GasVentBlock> GAS_VENT =
+            REGISTER.register("gas_vent", () -> new com.stonytark.magnetization.content.gas.GasVentBlock(metal()));
+    public static final DeferredBlock<com.stonytark.magnetization.content.gas.ProxyGasCloudBlock> PROXY_GAS_CLOUD =
+            REGISTER.register("proxy_gas_cloud", () -> new com.stonytark.magnetization.content.gas.ProxyGasCloudBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.NONE).replaceable().noCollission().noLootTable()
+                            .strength(0.0F).lightLevel(state -> state.getValue(
+                                    com.stonytark.magnetization.content.gas.ProxyGasCloudBlock.EXCITED) ? 15 : 0)));
     public static final DeferredBlock<com.stonytark.magnetization.content.gas.AirSeparatorBlock> AIR_SEPARATOR =
             REGISTER.register("air_separator", () -> new com.stonytark.magnetization.content.gas.AirSeparatorBlock(
                     metal().lightLevel(state -> state.hasProperty(BlockStateProperties.LIT)

@@ -307,6 +307,7 @@ public final class MagCreativeTab {
                         accept(output, MagItems.TOKAMAK_COIL);
                         accept(output, MagItems.ELECTROLYZER);
                         accept(output, MagItems.GAS_EXCITER);
+                        accept(output, MagItems.GAS_VENT);
                         accept(output, MagItems.AIR_SEPARATOR);
                         accept(output, MagItems.G_FORCE_CUSHION);
 

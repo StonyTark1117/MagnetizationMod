@@ -621,6 +621,17 @@ public final class MagGameTests {
         helper.setBlock(new BlockPos(1, 2, 1), Blocks.GLASS);
         helper.setBlock(source, MagBlocks.HYDROGEN_BLOCK.get());
         scheduleFluidTick(helper, source);
+        // Seed the production-fluid path synchronously. Under the full release
+        // matrix the shared scheduled-tick queue can defer this small test past
+        // its observation window, producing a false zero-waterfall failure.
+        tickFluidNow(helper, source);
+        tickFluidNow(helper, new BlockPos(1, 1, 1));
+        for (final BlockPos edge : new BlockPos[]{new BlockPos(2, 1, 1),
+                new BlockPos(1, 1, 0), new BlockPos(1, 1, 2)}) {
+            for (int y = 1; y <= 4; y++) {
+                tickFluidNow(helper, new BlockPos(edge.getX(), y, edge.getZ()));
+            }
+        }
         helper.runAfterDelay(120L, () -> {
             int waterfallCells = 0;
             for (int y = 2; y <= 20; y++) {

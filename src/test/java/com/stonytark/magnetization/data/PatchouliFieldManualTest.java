@@ -100,6 +100,7 @@ class PatchouliFieldManualTest {
                 "machines/electrolyzer.json",
                 "machines/air_separator.json",
                 "machines/gas_exciter.json",
+                "machines/gas_vent.json",
                 "machines/automation.json",
                 "fluids/fusion_fuels.json",
                 "fluids/lithium.json",
@@ -126,6 +127,7 @@ class PatchouliFieldManualTest {
                 "magnetization:air_filter",
                 "magnetization:isotope_separation_module",
                 "magnetization:gas_exciter",
+                "magnetization:gas_vent",
                 "magnetization:ion_thruster")) {
             assertTrue(strings.contains(required), () -> "Field Manual does not document " + required);
         }

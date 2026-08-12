@@ -865,6 +865,14 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('r', Items.REDSTONE).define('g', Items.GLOWSTONE_DUST)
                 .define('c', Items.COPPER_INGOT).define('e', MagItems.ELECTROMAGNET.get())
                 .unlockedBy("has_electromagnet", has(MagItems.ELECTROMAGNET.get())).save(out, id("gas_exciter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.GAS_VENT.get())
+                .pattern(" p ").pattern("scs").pattern(" i ")
+                .define('s', ingr("create:copper_sheet"))
+                .define('p', ingr("create:fluid_pipe"))
+                .define('c', ingr("create:copper_casing"))
+                .define('i', Items.IRON_BARS)
+                .unlockedBy("has_iron_bars", has(Items.IRON_BARS))
+                .save(out, id("gas_vent"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.AIR_SEPARATOR.get())
                 .pattern("cpc").pattern("tst").pattern("cpc")
                 .define('c', Items.COPPER_INGOT).define('p', MagItems.MAGNETIC_PLATE.get())

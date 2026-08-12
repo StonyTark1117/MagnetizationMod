@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "excited=false": { "model": "magnetization:block/proxy_gas_cloud" },
+    "excited=true": { "model": "magnetization:block/proxy_gas_cloud" }
+  }
+}

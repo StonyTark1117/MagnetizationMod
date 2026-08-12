@@ -1,0 +1,1 @@
+{"neoforge:conditions":[{"type":"neoforge:mod_loaded","modid":"tfmg"},{"type":"magnetization:compat_config","feature":"tfmg_gas_excitation"}],"fluids":["tfmg:propylene","tfmg:flowing_propylene"],"buoyancy":"sink","dormant_argb":"30C0D1B4","excited_argb":"FF78C8FF"}

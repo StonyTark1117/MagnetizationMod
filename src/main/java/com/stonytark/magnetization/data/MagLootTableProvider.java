@@ -203,7 +203,8 @@ public final class MagLootTableProvider {
          *  BlockItem) and the hardened MR fluid (registered with noLootTable()). */
         private static boolean lootless(final Block b) {
             return b instanceof net.minecraft.world.level.block.LiquidBlock
-                    || b == MagBlocks.HARDENED_MR_FLUID.get();
+                    || b == MagBlocks.HARDENED_MR_FLUID.get()
+                    || b == MagBlocks.PROXY_GAS_CLOUD.get();
         }
 
         // Registry-driven: every registered block except the intentionally-lootless

@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.item;
 
 import com.stonytark.magnetization.content.fluid.ExcitableGasBlock;
+import com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity;
 import com.stonytark.magnetization.registry.MagFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -51,15 +52,22 @@ public final class GasDetectorScanner {
                     if (x * x + y * y + z * z > rangeSqr) continue;
                     cursor.set(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
                     if (!level.hasChunkAt(cursor)) continue;
-                    final FluidState fluidState = level.getFluidState(cursor);
-                    if (!fluidState.is(GASEOUS)) continue;
-
-                    final Fluid source = sourceOf(fluidState.getType());
+                    final Fluid source;
+                    final boolean excited;
+                    if (level.getBlockEntity(cursor) instanceof ProxyGasCloudBlockEntity cloud) {
+                        source = cloud.fluid();
+                        excited = cloud.isExcited();
+                    } else {
+                        final FluidState fluidState = level.getFluidState(cursor);
+                        if (!fluidState.is(GASEOUS)) continue;
+                        source = sourceOf(fluidState.getType());
+                        excited = isExcited(level.getBlockState(cursor));
+                    }
                     final double distance = cursor.distSqr(origin);
                     if (distance >= bestDistance) continue;
                     bestPos = cursor.immutable();
                     bestFluid = source;
-                    bestExcited = isExcited(level.getBlockState(cursor));
+                    bestExcited = excited;
                     bestDistance = distance;
                 }
             }

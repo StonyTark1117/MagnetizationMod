@@ -1,0 +1,1 @@
+{"neoforge:conditions":[{"type":"neoforge:mod_loaded","modid":"tfmg"},{"type":"magnetization:compat_config","feature":"tfmg_gas_excitation"}],"fluids":["tfmg:air","tfmg:flowing_air"],"buoyancy":"neutral","dormant_argb":"30DFE6E5","excited_argb":"FFA97BFF"}

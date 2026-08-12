@@ -75,6 +75,10 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .addStoryBoard(SCHEMATIC, machineScene("gas_exciter", "Illuminate Noble Gas",
                         "Feed FE to excite one connected same-gas volume. A redstone signal pauses the machine; redstone can still excite gas directly.",
                         MagBlocks.GAS_EXCITER.get()));
+        blocks.forComponents(MagBlocks.GAS_VENT.get())
+                .addStoryBoard(SCHEMATIC, machineScene("gas_vent", "Vent a Compatibility Gas",
+                        "Pipe one bucket of a profiled gas into the vent. Its cloud keeps the original fluid identity, follows its buoyancy, can be excited, and can be recovered from the source cell.",
+                        MagBlocks.GAS_VENT.get()));
         blocks.forComponents(MagBlocks.AIR_SEPARATOR.get())
                 .addStoryBoard(SCHEMATIC, machineScene("air_separator", "Separate Atmospheric Gases",
                         "Connect rotation to the GUI-selected mechanical face above 64 RPM. Five other faces drain independent gas tanks; the GUI face map assigns exact gas and shaft faces.",
