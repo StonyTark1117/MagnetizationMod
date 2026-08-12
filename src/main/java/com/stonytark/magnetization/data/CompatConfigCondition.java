@@ -20,6 +20,7 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         PATCHOULI_MANUAL_IRON("patchouli_manual_iron"),
         PATCHOULI_MANUAL_LODESTONE("patchouli_manual_lodestone"),
         CREATE_NEW_AGE("create_new_age"),
+        COSMONAUTICS("cosmonautics"),
         IMMERSIVE_ENGINEERING("immersive_engineering"),
         ALEXSCAVES("alexscaves"),
         CREATE_ADDITION("create_addition"),
@@ -60,6 +61,7 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
             case PATCHOULI_MANUAL_IRON -> MagConfig.fieldManualIronRecipeEnabled();
             case PATCHOULI_MANUAL_LODESTONE -> MagConfig.fieldManualLodestoneRecipeEnabled();
             case CREATE_NEW_AGE -> MagConfig.createNewAgeRecipesEnabled();
+            case COSMONAUTICS -> MagConfig.cosmonauticsRecipesEnabled();
             case IMMERSIVE_ENGINEERING -> MagConfig.immersiveEngineeringRecipesEnabled();
             case ALEXSCAVES -> MagConfig.alexsCavesRecipesEnabled();
             case CREATE_ADDITION -> MagConfig.createAdditionRecipesEnabled();

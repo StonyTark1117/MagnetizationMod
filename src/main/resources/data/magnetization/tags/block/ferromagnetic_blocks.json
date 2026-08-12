@@ -104,6 +104,7 @@
     {"id": "twilightforest:fiery_block", "required": false},
     {"id": "#create_new_age:magnet", "required": false},
     {"id": "create_new_age:generator_coil", "required": false},
+    {"id": "rocketnautics:magnetic_stabilizer", "required": false},
     {"id": "createaddition:electric_motor", "required": false},
     {"id": "createaddition:alternator", "required": false},
     {"id": "createaddition:rolling_mill", "required": false},

@@ -24,7 +24,8 @@ public final class OptionalCompatibilityAbsentGameTests {
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void optionalAdaptersAndRecipesStayAbsent(final GameTestHelper helper) {
         for (final String mod : new String[]{"create_new_age", "immersiveengineering", "alexscaves",
-                "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission"}) {
+                "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission",
+                "rocketnautics"}) {
             helper.assertTrue(!ModList.get().isLoaded(mod),
                     "Minimal absent-mod profile unexpectedly contains " + mod);
         }
@@ -35,6 +36,11 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "create_new_age_basic_motor_from_permanent_magnet",
                 "create_new_age_generator_coil_from_permanent_magnets",
                 "create_new_age_energising_permanent_magnet",
+                "cosmonautics_magnetic_stabilizer_from_samarium_cobalt",
+                "cosmonautics_rcs_thruster_from_samarium_cobalt",
+                "cosmonautics_vector_thruster_from_samarium_cobalt",
+                "cosmonautics_rocket_thruster_from_samarium_cobalt",
+                "cosmonautics_booster_thruster_from_samarium_cobalt",
                 "immersiveengineering_mixer_ferrofluid",
                 "immersiveengineering_metal_press_magnetic_plate",
                 "immersiveengineering_metal_press_samarium_cobalt_plate",
@@ -66,6 +72,7 @@ public final class OptionalCompatibilityAbsentGameTests {
                 MagConfig.COPYCATS_COMPAT_ENABLED,
                 MagConfig.CURIOS_COMPAT_ENABLED,
                 MagConfig.TFMG_COMPAT_ENABLED,
+                MagConfig.COSMONAUTICS_COMPAT_ENABLED,
                 MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED,
                 MagConfig.STEAM_N_RAILS_COMPAT_ENABLED,
                 MagConfig.PATCHOULI_COMPAT_ENABLED,
@@ -94,6 +101,10 @@ public final class OptionalCompatibilityAbsentGameTests {
                             && !MagConfig.tfmgSteelmakingRecipesEnabled()
                             && !MagConfig.tfmgPolarizerFieldEnabled(),
                     "TFMG master did not cascade to recipes and Polarizer fields");
+            helper.assertTrue(!MagConfig.cosmonauticsRecipesEnabled()
+                            && !new CompatConfigCondition(CompatConfigCondition.Feature.COSMONAUTICS)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY),
+                    "Cosmonautics master did not cascade to its recipe condition");
             helper.assertTrue(!new CompatConfigCondition(CompatConfigCondition.Feature.TFMG_COMPAT)
                             .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
                             && !new CompatConfigCondition(CompatConfigCondition.Feature.PATCHOULI)

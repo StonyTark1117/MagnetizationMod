@@ -457,6 +457,8 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue CREATE_NEW_AGE_FIELDS_ENABLED;
     public static final ModConfigSpec.BooleanValue CREATE_NEW_AGE_RECIPES_ENABLED;
     public static final ModConfigSpec.DoubleValue CREATE_NEW_AGE_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue COSMONAUTICS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COSMONAUTICS_RECIPES_ENABLED;
     public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_FIELDS_ENABLED;
     public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_RECIPES_ENABLED;
@@ -1974,6 +1976,18 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.createNewAgeFieldForceMultiplier")
                 .defineInRange("createNewAgeFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
 
+        COSMONAUTICS_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's Create: Cosmonautics interoperability.",
+                         "Static material and fluid tags remain datapack-controlled; this gate owns",
+                         "Magnetization's supplemental spacecraft recipes.")
+                .translation("magnetization.configuration.compat.cosmonauticsCompatEnabled")
+                .define("cosmonauticsCompatEnabled", true);
+        COSMONAUTICS_RECIPES_ENABLED = b
+                .comment("Load supplemental Cosmonautics guidance and propulsion recipes using",
+                         "heat-stable Samarium-Cobalt magnets. Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.cosmonauticsRecipesEnabled")
+                .define("cosmonauticsRecipesEnabled", true);
+
         IMMERSIVE_ENGINEERING_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's Immersive Engineering integration.")
                 .translation("magnetization.configuration.compat.immersiveEngineeringCompatEnabled")
@@ -2787,6 +2801,12 @@ public final class MagConfig {
     }
     public static double createNewAgeFieldForceMultiplier() {
         return doubleOr(CREATE_NEW_AGE_FIELD_FORCE_MULTIPLIER, 1.0d);
+    }
+    public static boolean cosmonauticsCompatEnabled() {
+        return booleanOr(COSMONAUTICS_COMPAT_ENABLED, true);
+    }
+    public static boolean cosmonauticsRecipesEnabled() {
+        return cosmonauticsCompatEnabled() && booleanOr(COSMONAUTICS_RECIPES_ENABLED, true);
     }
     public static boolean immersiveEngineeringCompatEnabled() {
         return booleanOr(IMMERSIVE_ENGINEERING_COMPAT_ENABLED, true);

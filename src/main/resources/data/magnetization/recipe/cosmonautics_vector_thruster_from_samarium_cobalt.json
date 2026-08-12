@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "rocketnautics" },
+    { "type": "magnetization:compat_config", "feature": "cosmonautics" }
+  ],
+  "ingredients": [
+    { "item": "rocketnautics:rocket_thruster" },
+    { "item": "magnetization:samarium_cobalt_magnet" }
+  ],
+  "result": { "id": "rocketnautics:vector_thruster", "count": 1 }
+}

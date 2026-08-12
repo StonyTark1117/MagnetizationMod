@@ -1,0 +1,20 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "rocketnautics" },
+    { "type": "magnetization:compat_config", "feature": "cosmonautics" }
+  ],
+  "pattern": ["AMA", " C ", "DED", "DFD"],
+  "key": {
+    "A": { "tag": "c:plates/iron" },
+    "C": { "tag": "c:plates/titanium" },
+    "D": { "tag": "c:plates/obsidian" },
+    "E": { "item": "rocketnautics:titanium_nozzle" },
+    "F": { "tag": "c:ingots/titanium" },
+    "M": { "item": "magnetization:samarium_cobalt_magnet" }
+  },
+  "result": { "id": "rocketnautics:rocket_thruster", "count": 1 },
+  "show_notification": false
+}

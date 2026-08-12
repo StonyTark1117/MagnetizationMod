@@ -20,6 +20,7 @@ run_profile 'Immersive Aeronautics compatibility profile' smokeImmersiveAeronaut
 run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoastersGameTest
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 run_profile 'Create: New Age compatibility profile' smokeCreateNewAgeGameTest
+run_profile 'Create: Cosmonautics compatibility profile' smokeCosmonauticsGameTest
 run_profile 'Create Crafts & Additions compatibility profile' smokeCreateAdditionGameTest
 run_profile 'Immersive Engineering compatibility profile' smokeImmersiveEngineeringGameTest
 run_profile "Alex's Caves compatibility profile" smokeAlexsCavesGameTest

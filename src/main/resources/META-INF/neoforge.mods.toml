@@ -25,6 +25,11 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[mixins]]
 config = "magnetization.tfmg.mixins.json"
 
+# Optional guard for Cosmonautics' Deep Space observer on server lifecycles
+# where that dimension is absent (notably NeoForge GameTest servers).
+[[mixins]]
+config = "magnetization.cosmonautics.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
@@ -125,6 +130,16 @@ side = "BOTH"
 modId = "createaddition"
 type = "optional"
 versionRange = "[1.6.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Create: Cosmonautics — heat-stable SmCo spacecraft recipes, a ferromagnetic
+# Magnetic Stabilizer, and Hydrogen rocket-fuel interoperability. Runtime mod id
+# is rocketnautics; the implementation remains entirely optional and data-driven.
+[[dependencies.${mod_id}]]
+modId = "rocketnautics"
+type = "optional"
+versionRange = "[26.08.307,)"
 ordering = "AFTER"
 side = "BOTH"
 

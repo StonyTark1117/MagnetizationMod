@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "rocketnautics" },
+    { "type": "magnetization:compat_config", "feature": "cosmonautics" }
+  ],
+  "pattern": ["M", "B", "C"],
+  "key": {
+    "B": { "item": "create:andesite_alloy" },
+    "C": { "tag": "c:plates/titanium" },
+    "M": { "item": "magnetization:samarium_cobalt_magnet" }
+  },
+  "result": { "id": "rocketnautics:rcs_thruster", "count": 1 }
+}

@@ -30,6 +30,7 @@ configurations {
     simulatedCoastersRuntime
     createBigCannonsRuntime
     createNewAgeRuntime
+    cosmonauticsRuntime
     createAdditionRuntime
     immersiveEngineeringRuntime
     alexsCavesRuntime
@@ -91,6 +92,7 @@ def minimalProfileTasks = [
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
+        'runcosmonauticsgametestserver',
         'runcreateadditiongametestserver',
         'runimmersiveengineeringgametestserver',
         'runalexscavesgametestserver',
@@ -107,6 +109,7 @@ def minimalProfileTasks = [
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
         'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
+        'smokecosmonauticsgametest',
         'smokeimmersiveengineeringgametest', 'smokealexscavesgametest',
         'smokecreatetracksgametest', 'smokesteamrailsgametest',
         'smokedieselgeneratorsgametest', 'smokecopycatsgametest',
@@ -150,6 +153,9 @@ def wantsCreateBigCannonsTests = lowered.any {
 }
 def wantsCreateNewAgeTests = lowered.any {
     it.endsWith('runcreatenewagegametestserver') || it.endsWith('smokecreatenewagegametest')
+}
+def wantsCosmonauticsTests = lowered.any {
+    it.endsWith('runcosmonauticsgametestserver') || it.endsWith('smokecosmonauticsgametest')
 }
 def wantsCreateAdditionTests = lowered.any {
     it.endsWith('runcreateadditiongametestserver') || it.endsWith('smokecreateadditiongametest')
@@ -199,6 +205,7 @@ def wantsMinimalVerification = lowered.any {
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
+                            wantsCosmonauticsTests,
                             wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
                             wantsCreateTracksTests, wantsSteamRailsTests,
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
@@ -221,6 +228,9 @@ if (wantsCreateBigCannonsTests) {
 }
 if (wantsCreateNewAgeTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createNewAgeRuntime }
+}
+if (wantsCosmonauticsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.cosmonauticsRuntime }
 }
 if (wantsCreateAdditionTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createAdditionRuntime }
@@ -353,6 +363,7 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
         || it.name == 'runCreateBigCannonsGameTestServer'
+        || it.name == 'runCosmonauticsGameTestServer'
         || it.name == 'runSteamRailsGameTestServer'
         || it.name == 'runDieselGeneratorsGameTestServer'
         || it.name == 'runCopycatsGameTestServer'
@@ -380,6 +391,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersGameTestServer'
                 ? 'run-simulated-coasters-gametest/world/session.lock'
+                : it.name == 'runCosmonauticsGameTestServer'
+                ? 'run-cosmonautics-gametest/world/session.lock'
                 : it.name == 'runCreateBigCannonsGameTestServer'
                 ? 'run-createbigcannons-gametest/world/session.lock'
                 : it.name == 'runSteamRailsGameTestServer'
@@ -451,6 +464,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_create_new_age/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_cosmonautics/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createaddition/structure'
@@ -609,6 +625,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-create-new-age-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_new_age'
+        }
+        cosmonauticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-cosmonautics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_cosmonautics'
         }
         createAdditionGameTestServer {
             type = 'gameTestServer'
@@ -878,6 +899,13 @@ tasks.register('smokeCreateNewAgeGameTest', Exec) {
             'run-create-new-age-gametest', '300'
 }
 
+tasks.register('smokeCosmonauticsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: Cosmonautics recipe, material, fuel, and dimension compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCosmonauticsGameTestServer',
+            'run-cosmonautics-gametest', '300'
+}
+
 tasks.register('smokeCreateAdditionGameTest', Exec) {
     group = 'verification'
     description = 'Supervises Create Crafts & Additions FE, kinetic, tag, and goggles compatibility.'
@@ -1025,6 +1053,11 @@ dependencies {
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+
+    // Create: Cosmonautics is optional. Its exact published jar is loaded only
+    // in the isolated compatibility suite; the production integration is
+    // registry/tag/recipe based and has no hard linkage to addon classes.
+    cosmonauticsRuntime("curse.maven:create-cosmonautics-1595491:${cosmonautics_test_file}") { transitive = false }
 
     compileOnly("maven.modrinth:createaddition:${createaddition_test_version}")
     createAdditionRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
