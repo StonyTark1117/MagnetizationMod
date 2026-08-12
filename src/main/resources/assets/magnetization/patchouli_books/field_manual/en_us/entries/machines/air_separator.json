@@ -1,11 +1,13 @@
 {
-  "name": "Air Separator",
+  "name": "book.magnetization.entry.air_separator.name",
   "category": "magnetization:machines",
   "icon": "magnetization:air_separator",
   "advancement": "minecraft:recipes/root",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "Connect Create rotation to the mechanical input face selected in the GUI. Five independent tanks fill at once. Connect Create fluid pipes to the assigned output faces to extract each gas." },
-    { "type": "patchouli:text", "text": "Use the machine normally to open its GUI. Select a gas tank, then click the exact face you want in the face map. Select Mechanical Input to choose a new horizontal shaft face. If a selected output face is occupied, the GUI clearly swaps the two assignments; nothing changes by hidden rotation." },
-    { "type": "patchouli:text", "text": "Place an Isotope Separation Module in the upper GUI slot (or use the item directly on the machine). It increases stress and slowly produces Helium-3 Crystals in the lower output slot, with progress shown in the GUI and hover HUD." }
+    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "book.magnetization.entry.air_separator.operation", "link_recipe": true },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.air_separator.ports.title", "text": "book.magnetization.entry.air_separator.ports.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.air_separator.isotopes.title", "text": "book.magnetization.entry.air_separator.isotopes.text" },
+    { "type": "patchouli:crafting", "title": "book.magnetization.entry.air_separator.filter.title", "text": "book.magnetization.entry.air_separator.filter.text", "recipe": "magnetization:air_filter" },
+    { "type": "patchouli:crafting", "title": "book.magnetization.entry.air_separator.module.title", "text": "book.magnetization.entry.air_separator.module.text", "recipe": "magnetization:isotope_separation_module" }
   ]
 }

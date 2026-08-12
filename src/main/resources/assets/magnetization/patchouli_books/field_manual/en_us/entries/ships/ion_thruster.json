@@ -1,10 +1,12 @@
 {
-  "name": "Ion Thruster",
-  "category": "magnetization:ships",
+  "name": "book.magnetization.entry.ion_thruster.name",
+  "category": "magnetization:propulsion",
   "icon": "magnetization:ion_thruster",
   "advancement": "minecraft:recipes/root",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:ion_thruster", "text": "A ship-only electric drive. Feed FE and a noble gas by bucket or pipe. Helium favors cruise speed, Argon economy, Xenon safe performance, and Radon maximum thrust with radiation risk." },
+    { "type": "patchouli:spotlight", "item": "magnetization:ion_thruster", "text": "book.magnetization.entry.ion_thruster.operation" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.ion_thruster.profiles.title", "text": "book.magnetization.entry.ion_thruster.profiles.text" },
+    { "type": "patchouli:text", "title": "book.magnetization.entry.ion_thruster.scaling.title", "text": "book.magnetization.entry.ion_thruster.scaling.text" },
     { "type": "patchouli:crafting", "recipe": "magnetization:ion_thruster" }
   ]
 }

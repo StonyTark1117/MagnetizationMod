@@ -1,0 +1,18 @@
+{
+  "name": "book.magnetization.entry.thrust_controls.name",
+  "category": "magnetization:propulsion",
+  "icon": "minecraft:redstone_torch",
+  "advancement": "minecraft:recipes/root",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.thrust_controls.resource.title",
+      "text": "book.magnetization.entry.thrust_controls.resource.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.thrust_controls.passive.title",
+      "text": "book.magnetization.entry.thrust_controls.passive.text"
+    }
+  ]
+}

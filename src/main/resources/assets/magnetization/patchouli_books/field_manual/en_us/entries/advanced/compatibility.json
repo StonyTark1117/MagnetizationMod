@@ -27,6 +27,11 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.overlays.title",
       "text": "book.magnetization.entry.compatibility.overlays.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.controls.title",
+      "text": "book.magnetization.entry.compatibility.controls.text"
     }
   ]
 }

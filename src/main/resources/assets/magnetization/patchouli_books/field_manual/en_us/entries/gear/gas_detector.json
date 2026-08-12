@@ -1,0 +1,19 @@
+{
+  "name": "book.magnetization.entry.gas_detector.name",
+  "category": "magnetization:gear",
+  "icon": "magnetization:gas_detector",
+  "advancement": "minecraft:recipes/root",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:gas_detector",
+      "text": "book.magnetization.entry.gas_detector.operation",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.gas_detector.readout.title",
+      "text": "book.magnetization.entry.gas_detector.readout.text"
+    }
+  ]
+}

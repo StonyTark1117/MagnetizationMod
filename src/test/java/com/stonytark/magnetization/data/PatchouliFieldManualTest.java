@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,6 +56,14 @@ class PatchouliFieldManualTest {
     }
 
     @Test
+    void everyReaderFacingFieldUsesBookTranslations() throws IOException {
+        final JsonObject translations = parse(EN_US).getAsJsonObject();
+        for (final Path definition : definitionFiles()) {
+            assertLocalizedFields(parse(definition), definition, translations);
+        }
+    }
+
+    @Test
     void everyLocalItemAndRecipeReferenceResolves() throws IOException {
         for (final Path entry : entryFiles()) {
             final Set<String> itemRefs = new HashSet<>();
@@ -85,18 +94,65 @@ class PatchouliFieldManualTest {
         final List<String> required = List.of(
                 "emitters/dipole_electromagnet.json",
                 "ships/fusion_thruster.json",
+                "ships/ion_thruster.json",
                 "ships/railgun.json",
+                "ships/thrust_controls.json",
                 "machines/electrolyzer.json",
+                "machines/air_separator.json",
+                "machines/gas_exciter.json",
                 "machines/automation.json",
                 "fluids/fusion_fuels.json",
                 "fluids/lithium.json",
+                "fluids/noble_gases.json",
                 "advanced/magnet_burning.json",
+                "gear/gas_detector.json",
                 "gear/rare_earth_magnets.json",
                 "advanced/configuration.json",
                 "advanced/compatibility.json");
         for (final String path : required) {
             assertTrue(Files.isRegularFile(BOOK.resolve("entries").resolve(path)),
                     () -> "Field Manual is missing release-critical entry " + path);
+        }
+    }
+
+    @Test
+    void newGasSystemsAndTheirRecipesRemainDocumented() throws IOException {
+        final Set<String> strings = new HashSet<>();
+        for (final Path entry : entryFiles()) collectStrings(parse(entry), strings);
+
+        for (final String required : List.of(
+                "magnetization:gas_detector",
+                "magnetization:air_separator",
+                "magnetization:air_filter",
+                "magnetization:isotope_separation_module",
+                "magnetization:gas_exciter",
+                "magnetization:ion_thruster")) {
+            assertTrue(strings.contains(required), () -> "Field Manual does not document " + required);
+        }
+
+        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 4,
+                "Field Manual version must advance when its gas-system documentation changes");
+    }
+
+    @Test
+    void everyLocalManualLinkResolves() throws IOException {
+        final Set<String> entryIds = new HashSet<>();
+        for (final Path entry : entryFiles()) {
+            final String relative = BOOK.resolve("entries").relativize(entry).toString().replace('\\', '/');
+            entryIds.add("magnetization:" + relative.substring(0, relative.length() - ".json".length()));
+        }
+
+        final Set<String> strings = new HashSet<>();
+        for (final Path definition : definitionFiles()) collectStrings(parse(definition), strings);
+        collectStrings(parse(EN_US), strings);
+
+        final Pattern link = Pattern.compile("\\$\\(l:(magnetization:[^)#]+)(?:#[^)]+)?\\)");
+        for (final String value : strings) {
+            final var matcher = link.matcher(value);
+            while (matcher.find()) {
+                final String target = matcher.group(1);
+                assertTrue(entryIds.contains(target), () -> "Field Manual link targets missing entry " + target);
+            }
         }
     }
 
@@ -167,6 +223,31 @@ class PatchouliFieldManualTest {
     private static String stem(final Path path) {
         final String name = path.getFileName().toString();
         return name.substring(0, name.length() - ".json".length());
+    }
+
+    private static void assertLocalizedFields(final JsonElement element, final Path definition,
+                                              final JsonObject translations) {
+        if (element.isJsonArray()) {
+            element.getAsJsonArray().forEach(child -> assertLocalizedFields(child, definition, translations));
+            return;
+        }
+        if (!element.isJsonObject()) return;
+
+        for (final var field : element.getAsJsonObject().entrySet()) {
+            if (Set.of("name", "title", "text", "description", "landing_text", "subtitle")
+                    .contains(field.getKey())
+                    && field.getValue().isJsonPrimitive()
+                    && field.getValue().getAsJsonPrimitive().isString()) {
+                final String value = field.getValue().getAsString();
+                if (!value.isEmpty()) {
+                    assertTrue(value.startsWith("book.magnetization."),
+                            () -> definition + " contains non-localized " + field.getKey() + ": " + value);
+                    assertTrue(translations.has(value),
+                            () -> definition + " references missing translation " + value);
+                }
+            }
+            assertLocalizedFields(field.getValue(), definition, translations);
+        }
     }
 
     private static void collectStrings(final JsonElement element, final Set<String> out) {
