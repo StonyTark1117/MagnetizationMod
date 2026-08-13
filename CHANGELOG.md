@@ -24,6 +24,8 @@
 
 ### Changed
 - Magnet consumption in the Homopolar Motor and MHD Jet now defaults to **off**; packs can still opt into strength-scaled magnet burn times with `propulsion.magnetSlotConsumesFuel`.
+- Expanded the Patchouli Field Manual's rare-earth chapter from a brief overview into the complete four-ore, concentrate, reduction, alloy, blank, sintering, and magnet progression; corrected its Gas Vent and configurable Air Separator guidance and identified JER as a JEI add-on.
+- Reworked Ponder registration around a synchronized scene catalog, added dedicated animated scenes for Gas Excitation, Gas Vent routing, Air Separator face assignment, Ion Thruster propellants, and both rare-earth magnet tiers, and added automated scene-target drift coverage.
 
 ### Fixed
 - Synchronized JER with all ten ore families and every other natural resource, including geodes, gas pockets, magnetic gravel, anomaly lodestone clusters, meteorites, and petrified wood; its automated catalog test now detects worldgen, distribution, variant, or loot drift.

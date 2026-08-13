@@ -9,8 +9,43 @@
     },
     {
       "type": "patchouli:spotlight",
+      "item": "magnetization:bastnasite_ore",
+      "text": "book.magnetization.entry.rare_earth_magnets.bastnasite_source"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:monazite_ore",
+      "text": "book.magnetization.entry.rare_earth_magnets.monazite_source"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:cobaltite_ore",
+      "text": "book.magnetization.entry.rare_earth_magnets.cobaltite_source"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:borax_ore",
+      "text": "book.magnetization.entry.rare_earth_magnets.borax_source"
+    },
+    {
+      "type": "patchouli:spotlight",
       "item": "magnetization:monazite_concentrate",
       "text": "book.magnetization.entry.rare_earth_magnets.smco_processing"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:cobaltite_concentrate",
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_cobalt"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:samarium_cobalt_magnet_blank",
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_blank"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:sintered_samarium_cobalt",
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_sintered"
     },
     {
       "type": "patchouli:spotlight",
@@ -22,6 +57,26 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:bastnasite_concentrate",
       "text": "book.magnetization.entry.rare_earth_magnets.nd_processing"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:dysprosium_oxide",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_additives"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:boron_dust",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_boron"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:neodymium_magnet_blank",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_blank"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:sintered_neodymium",
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_sintered"
     },
     {
       "type": "patchouli:spotlight",

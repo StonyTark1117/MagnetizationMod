@@ -132,8 +132,40 @@ class PatchouliFieldManualTest {
             assertTrue(strings.contains(required), () -> "Field Manual does not document " + required);
         }
 
-        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 4,
-                "Field Manual version must advance when its gas-system documentation changes");
+        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 5,
+                "Field Manual version must include the current 1.4 documentation revision");
+    }
+
+    @Test
+    void completeRareEarthProgressionRemainsDocumented() throws IOException {
+        final Path entry = BOOK.resolve("entries/gear/rare_earth_magnets.json");
+        final Set<String> items = new HashSet<>();
+        collectNamedStrings(parse(entry), "item", items);
+        assertTrue(items.containsAll(Set.of(
+                "magnetization:bastnasite_ore",
+                "magnetization:monazite_ore",
+                "magnetization:cobaltite_ore",
+                "magnetization:borax_ore",
+                "magnetization:bastnasite_concentrate",
+                "magnetization:monazite_concentrate",
+                "magnetization:cobaltite_concentrate",
+                "magnetization:dysprosium_oxide",
+                "magnetization:boron_dust",
+                "magnetization:samarium_cobalt_magnet_blank",
+                "magnetization:sintered_samarium_cobalt",
+                "magnetization:samarium_cobalt_magnet",
+                "magnetization:neodymium_magnet_blank",
+                "magnetization:sintered_neodymium",
+                "magnetization:neodymium_magnet"
+        )), "Field Manual omits a rare-earth source or required magnet-processing stage");
+
+        final JsonObject translations = parse(EN_US).getAsJsonObject();
+        final String viewers = translations.get("book.magnetization.entry.compatibility.overlays.text").getAsString();
+        assertTrue(viewers.contains("Just Enough Resources, a JEI add-on"),
+                "Field Manual must describe JER as a JEI add-on");
+        assertTrue(viewers.contains("Ponder"), "Field Manual must identify its animated Ponder guidance");
+        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 5,
+                "Field Manual version must advance for complete rare-earth and Ponder guidance");
     }
 
     @Test
