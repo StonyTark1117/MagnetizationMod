@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -124,6 +125,23 @@ class RareEarthResourceCompletenessTest {
     }
 
     @Test
+    void rareEarthBlockAndItemOreTagsStayInParity() throws IOException {
+        for (final String ore : List.of("bastnasite", "monazite", "cobaltite", "borax")) {
+            final Set<String> expected = Set.of(
+                    "magnetization:" + ore + "_ore",
+                    "magnetization:deepslate_" + ore + "_ore");
+            assertEquals(expected, tagValues("data/c/tags/block/ores/" + ore + ".json"),
+                    () -> "Common block ore tag drifted for " + ore);
+            assertEquals(expected, tagValues("data/c/tags/item/ores/" + ore + ".json"),
+                    () -> "Common item ore tag drifted for " + ore);
+        }
+
+        final Set<String> metallicOres = tagValues("data/magnetization/tags/block/metallic_ores.json");
+        assertTrue(metallicOres.contains("#c:ores/borax"),
+                "metallic_ores must include the common Borax block tag used by the compass and excavation bridge");
+    }
+
+    @Test
     void optionalIndustrialRecipesRemainConditionedAndProduceNativeParts() throws IOException {
         assertTfmgRecipe("tfmg_polarize_samarium_cobalt_magnet",
                 "magnetization:sintered_samarium_cobalt", "magnetization:samarium_cobalt_magnet");
@@ -196,6 +214,14 @@ class RareEarthResourceCompletenessTest {
 
     private static JsonObject json(final String relative) throws IOException {
         return JsonParser.parseString(resourceText(relative)).getAsJsonObject();
+    }
+
+    private static Set<String> tagValues(final String relative) throws IOException {
+        return json(relative).getAsJsonArray("values").asList().stream()
+                .map(element -> element.isJsonPrimitive()
+                        ? element.getAsString()
+                        : element.getAsJsonObject().get("id").getAsString())
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     private static String resourceText(final String relative) throws IOException {

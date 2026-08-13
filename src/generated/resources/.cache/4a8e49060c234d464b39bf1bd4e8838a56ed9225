@@ -1,4 +1,8 @@
-// 1.21.1	2026-08-12T10:22:45.337996605	Tags for minecraft:block mod id magnetization
+// 1.21.1	2026-08-13T14:10:13.15209217	Tags for minecraft:block mod id magnetization
+e39a3de64d8a3547b0b3f258ded9c7dd56cafce9 data/c/tags/block/ores/bastnasite.json
+4cfcd7dd62890eed640428b5cb285a34a4040ade data/c/tags/block/ores/borax.json
+2e6e0ecc3c80325dc2fad2d32b396dfb3227b687 data/c/tags/block/ores/cobaltite.json
+f8744f71bcdbb9033f5b801596682d4b78c2fadd data/c/tags/block/ores/monazite.json
 7969c22f2eb5e017b85fc547d85c8ea1c9cea2e3 data/minecraft/tags/block/mineable/axe.json
 e511292c87573dcd6d0baebe26c220e0543bee58 data/minecraft/tags/block/mineable/pickaxe.json
 e25bd4cd0fabca6c453b4018f02826c45bfd6c19 data/minecraft/tags/block/mineable/shovel.json

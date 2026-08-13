@@ -35,6 +35,17 @@ public final class RecipeViewerInfo {
                     MagItems.RAW_HEMATITE.get(), MagItems.HEMATITE_ORE.get(), MagItems.DEEPSLATE_HEMATITE_ORE.get(),
                     MagItems.RAW_TITANOMAGNETITE.get(), MagItems.TITANOMAGNETITE_ORE.get(),
                     MagItems.DEEPSLATE_TITANOMAGNETITE_ORE.get())),
+            topic("rare_earth_progression", 5, () -> stacks(
+                    MagItems.BASTNASITE_ORE.get(), MagItems.DEEPSLATE_BASTNASITE_ORE.get(),
+                    MagItems.MONAZITE_ORE.get(), MagItems.DEEPSLATE_MONAZITE_ORE.get(),
+                    MagItems.COBALTITE_ORE.get(), MagItems.DEEPSLATE_COBALTITE_ORE.get(),
+                    MagItems.BORAX_ORE.get(), MagItems.DEEPSLATE_BORAX_ORE.get(),
+                    MagItems.BASTNASITE_CONCENTRATE.get(), MagItems.MONAZITE_CONCENTRATE.get(),
+                    MagItems.COBALTITE_CONCENTRATE.get(), MagItems.BORON_DUST.get(),
+                    MagItems.SAMARIUM_COBALT_ALLOY.get(), MagItems.NEODYMIUM_ALLOY.get(),
+                    MagItems.SAMARIUM_COBALT_MAGNET_BLANK.get(), MagItems.NEODYMIUM_MAGNET_BLANK.get(),
+                    MagItems.SINTERED_SAMARIUM_COBALT.get(), MagItems.SINTERED_NEODYMIUM.get(),
+                    MagItems.SAMARIUM_COBALT_MAGNET.get(), MagItems.NEODYMIUM_MAGNET.get())),
             topic("lithium", 3, () -> stacks(
                     MagItems.RAW_LITHIUM.get(), MagItems.LITHIUM_ORE.get(),
                     MagItems.DEEPSLATE_LITHIUM_ORE.get(), MagItems.LITHIUM.get(),

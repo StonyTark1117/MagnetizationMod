@@ -48,6 +48,13 @@ public final class OreExcavationGameTests {
 
             helper.assertTrue(state.is(MagTags.ORE_EXCAVATION_BLOCKS),
                     "Magnetite ore is missing from the Ore Excavation compatibility tag");
+            helper.assertTrue(MagBlocks.BORAX_ORE.get().defaultBlockState().is(MagTags.METALLIC_ORES)
+                            && MagBlocks.DEEPSLATE_BORAX_ORE.get().defaultBlockState().is(MagTags.METALLIC_ORES),
+                    "Borax block variants are missing from the metallic-ores tag");
+            helper.assertTrue(MagBlocks.BORAX_ORE.get().defaultBlockState().is(MagTags.ORE_EXCAVATION_BLOCKS)
+                            && MagBlocks.DEEPSLATE_BORAX_ORE.get().defaultBlockState()
+                            .is(MagTags.ORE_EXCAVATION_BLOCKS),
+                    "Borax block variants are missing from the Ore Excavation compatibility tag");
             final java.lang.reflect.Field blockGroup = agentClass.getField("blockGroup");
             final java.util.Set<?> groups = (java.util.Set<?>) blockGroup.get(agent);
             final java.lang.reflect.Method checkMatch = Class.forName(
@@ -59,6 +66,9 @@ public final class OreExcavationGameTests {
             helper.assertTrue(groups.stream().anyMatch(entry -> invokesMatch(checkMatch, entry,
                             MagBlocks.HELIUM_3_GEODE.get().defaultBlockState())),
                     "Ore Excavation agent did not receive the Helium-3 geode group");
+            helper.assertTrue(groups.stream().anyMatch(entry -> invokesMatch(checkMatch, entry,
+                            MagBlocks.BORAX_ORE.get().defaultBlockState())),
+                    "Ore Excavation agent did not receive the Borax ore group");
             helper.succeed();
         } catch (ReflectiveOperationException exception) {
             helper.fail("Ore Excavation compatibility API changed: " + exception);

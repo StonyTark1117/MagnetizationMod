@@ -44,7 +44,8 @@ public final class MagDataGenerator {
         // ferromagnetic_blocks, metallic_ores, …) stay HAND-WRITTEN under
         // src/main/resources/data/.../tags/: they carry other-mod IDs (Simulated,
         // IE, AC, Mekanism, TFMG, …) the registry can't know about. Do not wire
-        // MagItemTagsProvider / MagEntityTypeTagsProvider for the same reason.
+        // MagEntityTypeTagsProvider for the same reason. The block/item providers
+        // do own self-contained `c:` material tags for Magnetization content.
         final MagBlockTagsProvider blockTags = new MagBlockTagsProvider(out, lookup, existing);
         gen.addProvider(server, blockTags);
         gen.addProvider(server, new MagItemTagsProvider(out, lookup, blockTags.contentsGetter(), existing));

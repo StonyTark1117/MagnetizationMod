@@ -3,8 +3,11 @@ package com.stonytark.magnetization.data;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.registry.MagBlocks;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
@@ -27,7 +30,8 @@ import java.util.concurrent.CompletableFuture;
  * meteorite sapling (skipped), magnetic gravel (shovel) or petrified wood (axe).
  * Any future block is therefore picked up without a manual edit.
  *
- * <p>Only the self-contained vanilla tool tags are generated here. The
+ * <p>The self-contained vanilla tool tags and Magnetization's own common
+ * rare-earth ore tags are generated here. The remaining
  * cross-mod {@code magnetization:*} block tags (magnetic_emitter,
  * ferromagnetic_blocks, metallic_ores, …) stay hand-written because they carry
  * other-mod IDs the registry can't know about. The harvest-tier tags
@@ -43,11 +47,27 @@ public final class MagBlockTagsProvider extends BlockTagsProvider {
         super(output, lookupProvider, Magnetization.MOD_ID, existingFileHelper);
     }
 
+    private static TagKey<Block> common(final String path) {
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", path));
+    }
+
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         final var pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
         final var shovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
         final var axe = tag(BlockTags.MINEABLE_WITH_AXE);
+
+        // Keep block and item common ore tags in parity. These tags are also
+        // consumed indirectly by metallic_ores, the Ore Dowsing Compass, and
+        // the optional Ore Excavation bridge.
+        tag(common("ores/bastnasite"))
+                .add(MagBlocks.BASTNASITE_ORE.get(), MagBlocks.DEEPSLATE_BASTNASITE_ORE.get());
+        tag(common("ores/monazite"))
+                .add(MagBlocks.MONAZITE_ORE.get(), MagBlocks.DEEPSLATE_MONAZITE_ORE.get());
+        tag(common("ores/cobaltite"))
+                .add(MagBlocks.COBALTITE_ORE.get(), MagBlocks.DEEPSLATE_COBALTITE_ORE.get());
+        tag(common("ores/borax"))
+                .add(MagBlocks.BORAX_ORE.get(), MagBlocks.DEEPSLATE_BORAX_ORE.get());
 
         for (final var entry : MagBlocks.REGISTER.getEntries()) {
             final Block block = entry.get();

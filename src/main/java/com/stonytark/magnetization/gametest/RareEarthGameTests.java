@@ -3,6 +3,7 @@ package com.stonytark.magnetization.gametest;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.compat.RecipeViewerInfo;
 import com.stonytark.magnetization.content.MagneticMaterials;
 import com.stonytark.magnetization.content.effect.RareEarthEquipmentEffects;
 import com.stonytark.magnetization.content.item.MagneticToolPullHandler;
@@ -11,6 +12,7 @@ import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,6 +21,9 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /** Runtime contracts for the two engineered rare-earth progression tiers. */
 @GameTestHolder(Magnetization.MOD_ID)
@@ -71,6 +76,31 @@ public final class RareEarthGameTests {
         wearer.setItemSlot(EquipmentSlot.FEET, ItemStack.EMPTY);
         helper.assertTrue(RareEarthEquipmentEffects.fieldSusceptibilityMultiplier(wearer) == 1.0d,
                 "A partial neodymium set must not activate Magnetic Anchoring");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void recipeViewersExposeTheCompleteRareEarthProgression(final GameTestHelper helper) {
+        final var topic = RecipeViewerInfo.topics().stream()
+                .filter(candidate -> candidate.id().getPath().equals("info/rare_earth_progression"))
+                .findFirst().orElseThrow(() -> new AssertionError("Missing rare-earth recipe-viewer topic"));
+        final Set<String> actual = topic.resolveStacks().stream()
+                .map(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
+                .collect(Collectors.toUnmodifiableSet());
+        final Set<String> required = Set.of(
+                "magnetization:bastnasite_ore", "magnetization:deepslate_bastnasite_ore",
+                "magnetization:monazite_ore", "magnetization:deepslate_monazite_ore",
+                "magnetization:cobaltite_ore", "magnetization:deepslate_cobaltite_ore",
+                "magnetization:borax_ore", "magnetization:deepslate_borax_ore",
+                "magnetization:bastnasite_concentrate", "magnetization:monazite_concentrate",
+                "magnetization:cobaltite_concentrate", "magnetization:boron_dust",
+                "magnetization:samarium_cobalt_alloy", "magnetization:neodymium_alloy",
+                "magnetization:samarium_cobalt_magnet_blank", "magnetization:neodymium_magnet_blank",
+                "magnetization:sintered_samarium_cobalt", "magnetization:sintered_neodymium",
+                "magnetization:samarium_cobalt_magnet", "magnetization:neodymium_magnet");
+        helper.assertTrue(actual.containsAll(required),
+                "Rare-earth recipe-viewer topic is missing progression stacks: "
+                        + required.stream().filter(id -> !actual.contains(id)).sorted().toList());
         helper.succeed();
     }
 

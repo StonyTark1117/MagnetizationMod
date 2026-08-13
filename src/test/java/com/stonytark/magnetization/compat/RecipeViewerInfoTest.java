@@ -22,6 +22,7 @@ class RecipeViewerInfoTest {
             "magnetization:info/excavator_targets",
             "magnetization:info/magnetite",
             "magnetization:info/iron_oxide_ores",
+            "magnetization:info/rare_earth_progression",
             "magnetization:info/lithium",
             "magnetization:info/gallium",
             "magnetization:info/fusion_fuels",
