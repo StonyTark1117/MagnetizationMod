@@ -1,7 +1,9 @@
 package com.stonytark.magnetization.content.item;
 
+import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.content.fluid.ExcitableGasBlock;
 import com.stonytark.magnetization.content.gas.ProxyGasCloudBlockEntity;
+import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -12,30 +14,50 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /** Finds and classifies the nearest gaseous fluid around a handheld detector. */
+@EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class GasDetectorScanner {
     public static final int RANGE = 24;
     private static final int CACHE_TICKS = 5;
+    private static final int MAX_CACHE_ENTRIES = 64;
     private static final TagKey<Fluid> GASEOUS = TagKey.create(Registries.FLUID,
             ResourceLocation.fromNamespaceAndPath("c", "gaseous"));
-    private static final Map<CacheKey, CachedReading> CACHE = new HashMap<>();
+    private static final Map<Level, BoundedTickCache<BlockPos, Reading>> LEVEL_CACHES = new WeakHashMap<>();
 
     private GasDetectorScanner() {}
 
+    @SubscribeEvent
+    public static void onLevelUnload(final LevelEvent.Unload event) {
+        if (event.getLevel() instanceof Level level) {
+            synchronized (LEVEL_CACHES) {
+                LEVEL_CACHES.remove(level);
+            }
+        }
+    }
+
     public static @Nullable Reading nearest(final Level level, final BlockPos origin) {
-        final CacheKey key = new CacheKey(level, origin.immutable(), level.getGameTime() / CACHE_TICKS);
-        final CachedReading cached = CACHE.get(key);
-        if (cached != null) return cached.reading();
+        final long tickBucket = level.getGameTime() / CACHE_TICKS;
+        final BoundedTickCache<BlockPos, Reading> cache = cacheFor(level);
+        final BlockPos key = origin.immutable();
+        final Reading cached = cache.get(key, tickBucket);
+        if (cached != null) return cached;
 
         final Reading reading = scan(level, origin);
-        CACHE.put(key, new CachedReading(reading));
-        if (CACHE.size() > 32) CACHE.keySet().removeIf(existing -> existing.level() != level);
-        return reading;
+        return cache.putIfNewer(key, tickBucket, reading);
+    }
+
+    private static BoundedTickCache<BlockPos, Reading> cacheFor(final Level level) {
+        synchronized (LEVEL_CACHES) {
+            return LEVEL_CACHES.computeIfAbsent(level, ignored -> new BoundedTickCache<>(MAX_CACHE_ENTRIES));
+        }
     }
 
     private static Reading scan(final Level level, final BlockPos origin) {
@@ -47,21 +69,26 @@ public final class GasDetectorScanner {
         double bestDistance = Double.MAX_VALUE;
 
         for (int x = -RANGE; x <= RANGE; x++) {
-            for (int y = -RANGE; y <= RANGE; y++) {
-                for (int z = -RANGE; z <= RANGE; z++) {
-                    if (x * x + y * y + z * z > rangeSqr) continue;
+            for (int z = -RANGE; z <= RANGE; z++) {
+                final int horizontalDistance = x * x + z * z;
+                if (horizontalDistance > rangeSqr) continue;
+                cursor.set(origin.getX() + x, origin.getY(), origin.getZ() + z);
+                if (!level.hasChunkAt(cursor)) continue;
+                final int verticalRange = (int) Math.sqrt(rangeSqr - horizontalDistance);
+                for (int y = -verticalRange; y <= verticalRange; y++) {
                     cursor.set(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
-                    if (!level.hasChunkAt(cursor)) continue;
                     final Fluid source;
                     final boolean excited;
-                    if (level.getBlockEntity(cursor) instanceof ProxyGasCloudBlockEntity cloud) {
+                    final BlockState state = level.getBlockState(cursor);
+                    if (state.is(MagBlocks.PROXY_GAS_CLOUD.get())
+                            && level.getBlockEntity(cursor) instanceof ProxyGasCloudBlockEntity cloud) {
                         source = cloud.fluid();
                         excited = cloud.isExcited();
                     } else {
-                        final FluidState fluidState = level.getFluidState(cursor);
+                        final FluidState fluidState = state.getFluidState();
                         if (!fluidState.is(GASEOUS)) continue;
                         source = sourceOf(fluidState.getType());
-                        excited = isExcited(level.getBlockState(cursor));
+                        excited = isExcited(state);
                     }
                     final double distance = cursor.distSqr(origin);
                     if (distance >= bestDistance) continue;
@@ -102,7 +129,4 @@ public final class GasDetectorScanner {
                     : (excited ? "excited" : "dormant");
         }
     }
-
-    private record CacheKey(Level level, BlockPos origin, long tickBucket) {}
-    private record CachedReading(Reading reading) {}
 }
