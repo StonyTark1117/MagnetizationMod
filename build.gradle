@@ -444,6 +444,11 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
 // Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
 // because the toml is loaded literally from build/resources/main with no expansion.
 processResources {
+    // NeoForge's data generator stores incremental hashes beside generated
+    // resources. They are build metadata, not runtime assets, and must never be
+    // copied into the distributable jar.
+    exclude '.cache/**'
+
     // src/main/resources can override src/generated/resources for hand-written
     // files that supersede the data-generator output (e.g. loot tables that
     // need minecraft:copy_components which the standard dropSelf builder
@@ -1015,6 +1020,13 @@ tasks.register('smokeTfmgGameTest', Exec) {
             'run-tfmg-gametest', '300'
 }
 
+tasks.register('smokeOreExcavationGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Ore Excavation event and Magnetization deposit compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runOreExcavationGameTestServer',
+            'run-ore-excavation-gametest', '300'
+}
+
 tasks.register('smokeCreateOreExcavationGameTest', Exec) {
     group = 'verification'
     description = 'Supervises Create Ore Excavation infinite Magnetization vein recipes.'
@@ -1342,6 +1354,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 jar {
+    from(rootProject.file('LICENSE'))
     manifest {
         attributes([
             'Specification-Title'     : mod_id,
@@ -1353,4 +1366,46 @@ jar {
             'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+}
+
+tasks.register('verifyReleaseJar') {
+    group = 'verification'
+    description = 'Fails when the distributable jar is missing metadata or contains local/build-only files.'
+    dependsOn tasks.named('jar')
+    doLast {
+        final File archive = tasks.named('jar').get().archiveFile.get().asFile
+        final List<String> leaked = []
+        final List<String> missing = []
+        final java.util.zip.ZipFile zip = new java.util.zip.ZipFile(archive)
+        try {
+            ['LICENSE', 'META-INF/MANIFEST.MF', 'META-INF/neoforge.mods.toml',
+             'pack.mcmeta', 'logo.png'].each { required ->
+                if (zip.getEntry(required) == null) missing << required
+            }
+            zip.entries().each { entry ->
+                final String name = entry.name
+                if (name.startsWith('.cache/') || name.contains('/.cache/')
+                        || name.startsWith('.gradle/') || name.contains('/.gradle/')
+                        || name == '.DS_Store' || name.endsWith('/.DS_Store')
+                        || name == 'Thumbs.db' || name.endsWith('/Thumbs.db')) {
+                    leaked << name
+                }
+            }
+        } finally {
+            zip.close()
+        }
+        if (!missing.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: ${archive} is missing required release files: ${missing}")
+        }
+        if (!leaked.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: build-only files leaked into ${archive}: ${leaked}")
+        }
+        logger.lifecycle("verifyReleaseJar: ${archive.name} contains required metadata and no build-only cache or OS files.")
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('verifyReleaseJar')
 }

@@ -209,6 +209,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | machines.tokamakFeCapacity | number | 4000000; 0-1000000000 | Internal FE buffer of the Tokamak Controller. |
+| COMMON | machines.tokamakMaxEdge | number | 15; 3-63 | Largest odd square ring edge accepted by the reactor. 15 permits 3x3 through 15x15 rings; larger rings linearly increase FE capacity and output. |
 | COMMON | machines.tokamakGenPerTick | number | 2000; 0-1000000 | FE generated per tick while fusing. |
 | COMMON | machines.tokamakOutputRate | number | 16000; 0-1000000000 | Max FE pushed to neighbours per tick. |
 | COMMON | machines.tokamakBurnTicksPerCell | number | 4800; 1-1000000000 | How many ticks one Deuterium (D-D) Cell fuses. |
@@ -327,7 +328,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | worldgen.magneticPeaksEnabled | boolean | false | If true, denser magnetite ore veins generate in mountain biomes tagged #minecraft:is_mountain. Default off — opt-in. |
-| COMMON | worldgen.rareEarthOreGenerationEnabled | boolean | true | Generate Bastnäsite, Monazite, Cobaltite, and Borax veins in new Overworld chunks. Disable before world creation when a modpack supplies the rare-earth progression through other sources. |
+| COMMON | worldgen.rareEarthOreGenerationEnabled | boolean | true | Generate Bastnäsite, Monazite, Cobaltite, and Borax veins in new Overworld chunks. Disable before creating a world to use only imported or recipe-provided materials. |
 | COMMON | worldgen.anomalyBiomeEnabled | boolean | false | If true, the Magnetic Anomaly biome spawns naturally and its runtime effects activate inside it (compass spin, 1.5× emitter strength, chaos field). Off = biome resource still loads (so /locate biome + /magnetization tp work) but it won't spawn naturally and effects stay inert. |
 | COMMON | worldgen.anomalyBiomeRarity | enum | EXTREMELYRARE | How rare the anomaly biome is when generating naturally. EXTREMELY_RARE (default) pins a single climate slot — you may go tens of thousands of blocks without seeing one. VERY_RARE / RARE widen the slot incrementally. COMMON is mostly for testing. |
 | COMMON | worldgen.anomalyChaosStrength | number | 1.0; 0.0-10.0 | Multiplier on the anomaly's chaos-field impulses (ships, players, items). 1.0 = default, 0 disables the chaos field while leaving compass spin + emitter bonus intact, higher values amplify. |
@@ -416,6 +417,8 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.createNewAgeFieldsEnabled | boolean | true | Make New Age magnet blocks emit real fields using their native 1/2/4/8/24 strength ladder. Redstone reverses the presented pole. |
 | COMMON | compat.createNewAgeRecipesEnabled | boolean | true | Load Permanent Magnet motor and generator-coil alternatives plus Energiser magnet production. Takes effect on data reload. |
 | COMMON | compat.createNewAgeFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by Create: New Age magnet blocks; 0 is a soft disable. |
+| COMMON | compat.cosmonauticsCompatEnabled | boolean | true | Master switch for Magnetization's supplemental Create: Cosmonautics spacecraft recipes. |
+| COMMON | compat.cosmonauticsRecipesEnabled | boolean | true | Load heat-stable Samarium-Cobalt alternatives for Cosmonautics guidance, stabilization, and rocket propulsion. Takes effect on data reload. |
 | COMMON | compat.immersiveEngineeringCompatEnabled | boolean | true | Master switch for Magnetization's Immersive Engineering runtime and supplemental recipe integration. |
 | COMMON | compat.immersiveEngineeringFieldsEnabled | boolean | true | Make powered IE Electromagnets emit continuous charge-scaled fields and Tesla Coils emit pulsed fields. |
 | COMMON | compat.immersiveEngineeringRecipesEnabled | boolean | true | Load IE Mixer Ferrofluid and Metal Press Magnetic Plate routes. Takes effect on data reload. |
@@ -430,6 +433,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.createAdditionRecipesEnabled | boolean | true | Load Permanent Magnet alternatives for the Electric Motor and Alternator. Takes effect on data reload. |
 | COMMON | compat.createAdditionFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by Crafts & Additions Tesla Coils; 0 is a soft disable. |
 | COMMON | compat.createBigCannonsCompatEnabled | boolean | true | Master switch for Create: Big Cannons projectile runtime compatibility. Datapack material tags remain available independently. |
+| COMMON | compat.oreExcavationCompatEnabled | boolean | true | Allow Ore Excavation to bulk-excavate Magnetization ores and Helium-3 geodes while preserving Ore Excavation's own limits and blacklists. |
 | COMMON | compat.dieselGeneratorsCompatEnabled | boolean | true | Master switch for Create: Diesel Generators runtime compatibility. |
 | COMMON | compat.dieselGeneratorsFerrofluidSprayEnabled | boolean | true | Make chemical sprayer and turret projectiles carrying Ferrofluid apply Magnetized for ten seconds. |
 | COMMON | compat.enderTransmissionCompatEnabled | boolean | true | Master switch for Create: Ender Transmission compatibility and its optional field relay. |
@@ -459,6 +463,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.externalMachineMagnetsEnabled | boolean | true | Allow foreign items in #magnetization:machine_magnets, including TFMG magnets and magnetic alloy forms, to drive the Homopolar Motor and MHD Jet. |
 | COMMON | compat.externalMachineMagnetPotency | number | 16; 1-1000 | Potency assigned to foreign machine magnets. The default 16 matches Magnetization's Ferromagnetic Ingot. |
 | COMMON | compat.tfmgProcessingRecipesEnabled | boolean | true | Load lubricant Ferrofluid, casting, plate/sheet, polarizing, and Permanent Magnet component recipes when TFMG is installed. Takes effect on data reload. |
+| COMMON | compat.tfmgGasExcitationEnabled | boolean | true | Allow TFMG virtual gases to enter Gas Vents and form recoverable clouds that redstone or a Gas Exciter can energize. Takes effect on data reload. |
 | COMMON | compat.tfmgSteelmakingRecipesEnabled | boolean | true | Load conservative TFMG Industrial Blast Furnace routes for Raw Magnetite and Raw Hematite. Takes effect on data reload. |
 | COMMON | compat.tfmgPolarizerFieldEnabled | boolean | false | Opt in to a real Magnetization field from powered TFMG Polarizers. Disabled by default because the adapter depends on TFMG internals and changes nearby physics. |
 | COMMON | compat.tfmgPolarizerVoltageForExtreme | number | 500; 1-1000000 | TFMG voltage mapped to the EXTREME field tier; lower positive voltages scale geometrically upward from WEAK. |

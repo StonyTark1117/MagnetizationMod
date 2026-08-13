@@ -53,7 +53,7 @@ public final class CreateNewAgeGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "cnaNativeField")
     public static void nativeMagnetStrengthDrivesFieldsAndMachinePotency(final GameTestHelper helper) {
         final boolean compat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
         final boolean fields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
@@ -106,7 +106,7 @@ public final class CreateNewAgeGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "cnaDisabledFieldIndex")
     public static void disabledFieldsAreNotIndexed(final GameTestHelper helper) {
         final boolean compat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
         final boolean fields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
@@ -148,7 +148,7 @@ public final class CreateNewAgeGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 60)
+    @GameTest(template = "empty", timeoutTicks = 60, batch = "cnaScheduler")
     public static void externalFieldSchedulerIsTargetLocalAndBudgeted(final GameTestHelper helper) {
         final boolean compat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
         final boolean fields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
@@ -170,6 +170,12 @@ public final class CreateNewAgeGameTests {
             helper.setBlock(second, block("create_new_age", "magnetite_block"));
             level.addFreshEntity(target);
             ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(helper.absolutePos(first)));
+            for (int tick = 1; tick < 8; tick++) {
+                helper.runAfterDelay(tick, () -> {
+                    target.setPos(targetPos.getX() + 0.5d, targetPos.getY() + 0.5d, targetPos.getZ() + 0.5d);
+                    target.setDeltaMovement(Vec3.ZERO);
+                });
+            }
             helper.runAfterDelay(8, () -> {
                 try {
                     helper.assertTrue(ExternalEmitterTracker.lastCandidateCount(level) >= 2,

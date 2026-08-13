@@ -3,13 +3,26 @@
 ## Unreleased
 
 ### Added
+- Added six noble gases with density-aware flow, gas-specific excitation colors, configurable Helium/Radon cave pockets, Radon exposure, and steady Tritium radioluminescence. Hydrogen and Helium-3 now participate in the same powered excitation system.
+- Added the **Gas Exciter**, a redstone/FE-powered machine that illuminates connected gas networks without loading chunks or charging multiple exciters for the same network.
+- Added the Create-powered **Air Separator**, which produces five independently piped atmospheric fractions and can enrich Helium-3 Crystals with an Isotope Separation Module.
+- Added the ship-only **Ion Thruster** with per-propellant thrust, speed, fluid, FE, and Radon-exhaust behavior plus a datapack tag for external propellants.
+- Added unified redstone control for the Micro, Fusion, Ion, and MHD thrusters plus the Solar Sail: signals stop thrust by default, with an opt-in setting that lets redstone replace the machines' FE requirement.
+- Added an **Air Filter** component and a handheld **Gas Detector** with nearby gas, excitation, exposure, and safe-distance HUD readouts.
 - Added a dedicated **Air Separator GUI** with five live gas bars, per-gas production and output-face tooltips, clickable port reassignment, server-authoritative RPM/status/capacity readouts, and visible Isotope Separation Module and Helium-3 output slots.
 - Added compact Air Separator live status to **Create goggles, Jade, WTHIT, and The One Probe**, including RPM requirements, total gas storage, isotope progress, ready-crystal count, and explicit paused/running reasons.
 - Added a dedicated **Radon Exposure** status-effect icon so active exposure is identifiable in the HUD and inventory effect list.
 - Finished the **rare-earth magnet progression**: Bastnäsite, Monazite, Cobaltite, and Borax feed staged Create processing into samarium–cobalt and neodymium–iron–boron alloys, pressed plates, sintered blanks, permanent magnets, storage blocks, tools, and armor.
 - Added distinct rare-earth identities: samarium–cobalt armor reduces fire/lava damage by 20% per piece, while magnetized neodymium tools provide double personal item-pull strength and a full neodymium armor set reduces field-driven movement by 75%.
 - Added a Field Manual rare-earth guide, a dedicated rare-earth worldgen toggle, common material tags, and optional TFMG Polarizer finishing recipes.
+- Expanded the Field Manual with noble-gas, Gas Exciter, Air Separator, Gas Detector, Ion Thruster, thrust-control, and optional-compatibility guidance.
 - Added a data-driven Gas Vent compatibility API and profiles for all eleven TFMG virtual gases, including buoyant recoverable clouds and Gas Exciter support.
+- Added optional **Create: Cosmonautics** recipes and material/fuel tags for heat-stable samarium-cobalt spacecraft components.
+- Added optional **Ore Excavation** deposit grouping and **Create Ore Excavation** infinite-vein recipes for Magnetization ores and Helium-3 geodes.
+- Expanded the **Tokamak** from its fixed 3x3 ring into configurable odd-edged square rings up to 15x15 by default, with FE capacity, generation, and output scaling linearly with ring size.
+
+### Changed
+- Magnet consumption in the Homopolar Motor and MHD Jet now defaults to **off**; packs can still opt into strength-scaled magnet burn times with `propulsion.magnetSlotConsumesFuel`.
 
 ### Fixed
 - Rare-earth magnet blocks now use a valid permanent-magnet block entity and emit their intended tiers: samarium–cobalt is **MEDIUM**, neodymium is **STRONG**.
