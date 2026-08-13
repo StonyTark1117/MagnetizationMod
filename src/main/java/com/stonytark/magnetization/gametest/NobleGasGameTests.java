@@ -90,6 +90,39 @@ public final class NobleGasGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 40)
+    public static void sameTickGasMemoInvalidatesAndGraceAdvancesOnce(final GameTestHelper helper) {
+        final BlockPos first = new BlockPos(1, 1, 1);
+        final BlockPos second = new BlockPos(1, 2, 1);
+        final BlockPos power = new BlockPos(2, 2, 1);
+        helper.setBlock(first, MagFluids.NEON.get().defaultFluidState().createLegacyBlock());
+        helper.setBlock(second, MagFluids.NEON.get().defaultFluidState().createLegacyBlock());
+
+        // The first dormant pass memoizes this component for the current tick.
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(first));
+        helper.assertTrue(!isExcited(helper.getBlockState(first)),
+                "Unpowered gas unexpectedly started excited");
+
+        // A same-tick neighbor mutation must clear the memo so the next seed sees
+        // the new signal instead of returning from the duplicate-work fast path.
+        helper.setBlock(power, Blocks.REDSTONE_BLOCK);
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(second));
+        helper.assertTrue(isExcited(helper.getBlockState(first))
+                        && isExcited(helper.getBlockState(second)),
+                "Same-tick topology/redstone invalidation left the component stale");
+
+        // Removing power invalidates once more. The first pass advances grace
+        // from 3 to 2; a second seed in the same component must be deduplicated
+        // rather than consuming another grace step.
+        helper.setBlock(power, Blocks.AIR);
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(first));
+        GasExcitation.recompute(helper.getLevel(), helper.absolutePos(second));
+        helper.assertTrue(helper.getBlockState(first).getValue(ExcitableGasBlock.EXCITATION_GRACE) == 2
+                        && helper.getBlockState(second).getValue(ExcitableGasBlock.EXCITATION_GRACE) == 2,
+                "Duplicate same-tick seeds advanced gas grace more than once");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
     public static void fusionGasesHaveDistinctLuminescenceBehavior(final GameTestHelper helper) {
         final BlockPos hydrogen = new BlockPos(0, 1, 1);
         final BlockPos power = new BlockPos(1, 1, 1);

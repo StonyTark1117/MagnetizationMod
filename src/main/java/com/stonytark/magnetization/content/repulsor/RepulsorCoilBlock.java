@@ -124,6 +124,7 @@ public final class RepulsorCoilBlock extends DirectionalBlock implements EntityB
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof RepulsorCoilBlockEntity repulsor) {
+            repulsor.invalidateInventorySink();
             repulsor.setRedstoneLevel(signal);
         }
     }

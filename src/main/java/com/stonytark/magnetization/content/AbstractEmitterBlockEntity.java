@@ -793,8 +793,16 @@ public abstract class AbstractEmitterBlockEntity extends BlockEntity
 
     @Override
     public void setRemoved() {
-        if (level != null) EmitterRegistry.unregister(level, getBlockPos());
+        if (level != null) {
+            EmitterRegistry.unregister(level, getBlockPos());
+            if (level instanceof ServerLevel server) InventorySink.invalidate(server, getBlockPos());
+        }
         super.setRemoved();
+    }
+
+    /** Notify the intake cache when a neighboring block or capability may change. */
+    public void invalidateInventorySink() {
+        if (level instanceof ServerLevel server) InventorySink.invalidate(server, getBlockPos());
     }
 
     @Override

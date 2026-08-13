@@ -643,6 +643,12 @@ neoForge {
             server()
             programArgument 'nogui'
             gameDirectory = file('run-performance-stress')
+            if (project.hasProperty('stressJfrFile')) {
+                jvmArgument "-XX:StartFlightRecording=filename=${project.property('stressJfrFile')},settings=profile,dumponexit=true"
+            }
+            if (project.hasProperty('stressPerformanceDiagnostics')) {
+                systemProperty 'magnetization.performanceDiagnostics', 'true'
+            }
         }
         // Headless test runner — invoke via `./gradlew runGameTestServer`.
         // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience

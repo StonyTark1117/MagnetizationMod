@@ -48,6 +48,34 @@ public final class ProxyGasCloudBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
+                           final BlockState oldState, final boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level instanceof net.minecraft.server.level.ServerLevel server && !state.is(oldState.getBlock())) {
+            com.stonytark.magnetization.content.fluid.GasExcitation.invalidate(server);
+        }
+    }
+
+    @Override
+    protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos,
+                                   final Block neighbour, final BlockPos neighbourPos,
+                                   final boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighbour, neighbourPos, movedByPiston);
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            com.stonytark.magnetization.content.fluid.GasExcitation.invalidate(server);
+        }
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean movedByPiston) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server && !state.is(newState.getBlock())) {
+            com.stonytark.magnetization.content.fluid.GasExcitation.invalidate(server);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
                                               final BlockPos pos, final Player player, final InteractionHand hand,
                                               final BlockHitResult hit) {

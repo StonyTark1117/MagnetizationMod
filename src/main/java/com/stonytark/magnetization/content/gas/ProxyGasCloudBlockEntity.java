@@ -53,6 +53,7 @@ public final class ProxyGasCloudBlockEntity extends BlockEntity implements Machi
     public int tint() { return isExcited() ? excitedArgb : dormantArgb; }
 
     public void configureSource(final Fluid gas, final GasExcitationProfile profile, final Direction ventFacing) {
+        invalidateExcitationCache();
         fluid = gas;
         buoyancy = profile.buoyancy();
         dormantArgb = profile.dormantArgb();
@@ -68,6 +69,7 @@ public final class ProxyGasCloudBlockEntity extends BlockEntity implements Machi
     }
 
     private void configureFlow(final ProxyGasCloudBlockEntity parent) {
+        invalidateExcitationCache();
         fluid = parent.fluid;
         buoyancy = parent.buoyancy;
         dormantArgb = parent.dormantArgb;
@@ -119,6 +121,10 @@ public final class ProxyGasCloudBlockEntity extends BlockEntity implements Machi
         if (!level.getBlockState(next).isAir() && !level.getBlockState(next).canBeReplaced()) return;
         level.setBlock(next, MagBlocks.PROXY_GAS_CLOUD.get().defaultBlockState(), Block.UPDATE_ALL);
         if (level.getBlockEntity(next) instanceof ProxyGasCloudBlockEntity child) child.configureFlow(this);
+    }
+
+    private void invalidateExcitationCache() {
+        if (level instanceof ServerLevel server) GasExcitation.invalidate(server);
     }
 
     public IFluidHandler fluidHandler() {

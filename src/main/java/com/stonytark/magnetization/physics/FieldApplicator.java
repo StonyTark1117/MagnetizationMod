@@ -33,8 +33,12 @@ import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -54,6 +58,8 @@ public final class FieldApplicator {
 
     private static final Logger DEBUG_LOG = LoggerFactory.getLogger("magnetization/FieldApplicator");
     private static long lastDebugTick = -1L;
+    private static final Map<ServerLevel, TargetTickCache> TARGET_CACHES =
+            Collections.synchronizedMap(new WeakHashMap<>());
 
     /** Susceptibility added per worn metal armor piece (#magnetization:metal_armor). */
     public static final double PER_ARMOR_SUSCEPTIBILITY = 0.4d;
@@ -488,7 +494,10 @@ public final class FieldApplicator {
      * ordinary animals in loaded chunks from waking thousands of worldgen magnets.
      */
     public static boolean isMagnetizableTarget(final Entity entity) {
-        return isMagnetizable(entity, true, true);
+        if (entity.level() instanceof ServerLevel level) {
+            return targetSnapshot(targetCache(level), level, entity, true, true).magnetizable();
+        }
+        return isMagnetizableUncached(entity, true, true);
     }
 
     private static void applyToEntities(final ServerLevel level, final MagneticField field,
@@ -499,7 +508,10 @@ public final class FieldApplicator {
         MagSteamRailsCompat.applyToTrains(level, field);
         final double r = field.range();
         final AABB box = AABB.ofSize(field.origin(), 2 * r, 2 * r, 2 * r);
-        final List<Entity> nearby = level.getEntities((Entity) null, box, e -> isMagnetizable(e, affectsArmor, affectsItems));
+        final TargetTickCache targetCache = targetCache(level);
+        final List<Entity> nearby = level.getEntities((Entity) null, box,
+                entity -> targetSnapshot(targetCache, level, entity, affectsArmor, affectsItems).magnetizable());
+        PerformanceDiagnostics.recordFieldQuery(level, nearby.size());
         if (nearby.isEmpty()) return;
 
         // Per-emitter-tick constants — pulled out of the per-entity loop so we
@@ -508,45 +520,48 @@ public final class FieldApplicator {
         final double cosHalfAngle = conicalHalfAngleCos();
         final double velScale = entityVelocityScale();
         final double rSqr = r * r;
+        final PreparedField prepared = new PreparedField(field, globalScalar, cosHalfAngle, velScale, rSqr);
 
         for (Entity entity : nearby) {
-            final Vec3 entityPos = entity.position().add(0, entity.getBbHeight() * 0.5d, 0);
-            if (entityPos.distanceToSqr(field.origin()) > rSqr) continue;
-
-            // Diamagnetic items are repelled by BOTH poles — pushed away from the
-            // source regardless of field polarity. The field weakens with distance,
-            // so the repulsion balances gravity at a stable hover height; we also
-            // damp existing velocity each tick to settle the float instead of bob.
-            if (entity instanceof net.minecraft.world.entity.item.ItemEntity di
-                    && di.getItem().is(MagTags.DIAMAGNETIC_ITEMS)) {
-                final double mag = forceAtPrecomputed(field, entityPos, globalScalar, cosHalfAngle).length();
-                if (mag > 1.0e-6) {
-                    Vec3 away = entityPos.subtract(field.origin());
-                    away = away.lengthSqr() < 1.0e-6 ? new Vec3(0, 1, 0) : away.normalize();
-                    final Vec3 impulse = away.scale(mag * DIAMAGNETIC_SUSCEPTIBILITY * velScale);
-                    entity.setDeltaMovement(entity.getDeltaMovement().scale(0.55).add(impulse));
-                    entity.hurtMarked = true;
-                }
-                continue;
-            }
-
-            final double susceptibility = susceptibilityOf(entity, affectsArmor);
-            if (susceptibility <= 0) continue;
-
-            // Like polarities repel, unlike attract. Entity NORTH (default) preserves
-            // forceAt's sign; SOUTH flips it; NONE produces no force regardless of susceptibility.
-            final MagneticPolarity entityPol = polarityOf(entity);
-            if (entityPol == MagneticPolarity.NONE) continue;
-            final double polaritySign = entityPol == MagneticPolarity.SOUTH ? -1.0d : 1.0d;
-
-            final Vec3 impulse = forceAtPrecomputed(field, entityPos, globalScalar, cosHalfAngle)
-                    .scale(susceptibility * polaritySign);
-            entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(velScale)));
-            entity.hurtMarked = true;
+            final TargetSnapshot target = targetSnapshot(targetCache, level, entity, affectsArmor, affectsItems);
+            applyPreparedToEntity(entity, target, prepared);
         }
     }
 
-    private static boolean isMagnetizable(final Entity e, final boolean affectsArmor, final boolean affectsItems) {
+    private static void applyPreparedToEntity(final Entity entity, final TargetSnapshot target,
+                                              final PreparedField prepared) {
+        final MagneticField field = prepared.field();
+        final Vec3 entityPos = entity.position().add(0, entity.getBbHeight() * 0.5d, 0);
+        if (entityPos.distanceToSqr(field.origin()) > prepared.rangeSqr()) return;
+
+        // Diamagnetic items are repelled by BOTH poles — pushed away from the
+        // source regardless of field polarity. The field weakens with distance,
+        // so the repulsion balances gravity at a stable hover height; we also
+        // damp existing velocity each tick to settle the float instead of bob.
+        if (target.diamagnetic()) {
+            final double mag = forceAtPrecomputed(field, entityPos,
+                    prepared.globalScalar(), prepared.cosHalfAngle()).length();
+            if (mag > 1.0e-6) {
+                Vec3 away = entityPos.subtract(field.origin());
+                away = away.lengthSqr() < 1.0e-6 ? new Vec3(0, 1, 0) : away.normalize();
+                final Vec3 impulse = away.scale(mag * DIAMAGNETIC_SUSCEPTIBILITY * prepared.velocityScale());
+                entity.setDeltaMovement(entity.getDeltaMovement().scale(0.55).add(impulse));
+                entity.hurtMarked = true;
+            }
+            return;
+        }
+
+        if (target.susceptibility() <= 0 || target.polarity() == MagneticPolarity.NONE) return;
+        final double polaritySign = target.polarity() == MagneticPolarity.SOUTH ? -1.0d : 1.0d;
+        final Vec3 impulse = forceAtPrecomputed(field, entityPos,
+                prepared.globalScalar(), prepared.cosHalfAngle())
+                .scale(target.susceptibility() * polaritySign);
+        entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(prepared.velocityScale())));
+        entity.hurtMarked = true;
+    }
+
+    private static boolean isMagnetizableUncached(final Entity e, final boolean affectsArmor,
+                                                   final boolean affectsItems) {
         // Cross-mod opt-out: respect Magnetizing's unmoveable list so admin/server
         // owners only need to curate one tag for both mods. Checked first because
         // it's a hard veto.
@@ -603,6 +618,50 @@ public final class FieldApplicator {
             }
         }
         return false;
+    }
+
+    private static TargetTickCache targetCache(final ServerLevel level) {
+        final TargetTickCache cache = TARGET_CACHES.computeIfAbsent(level, ignored -> new TargetTickCache());
+        final long now = level.getGameTime();
+        final boolean cbcProjectilesEnabled = ModList.get().isLoaded(MagCreateBigCannonsCompat.MOD_ID)
+                && MagConfig.createBigCannonsCompatEnabled()
+                && MagConfig.CREATE_BIG_CANNONS_PROJECTILE_REACTION.get();
+        final boolean ieRailgunReactionEnabled = MagConfig.immersiveEngineeringRailgunReaction();
+        if (cache.gameTime != now
+                || cache.cbcProjectilesEnabled != cbcProjectilesEnabled
+                || cache.ieRailgunReactionEnabled != ieRailgunReactionEnabled) {
+            cache.gameTime = now;
+            cache.cbcProjectilesEnabled = cbcProjectilesEnabled;
+            cache.ieRailgunReactionEnabled = ieRailgunReactionEnabled;
+            for (final Int2ObjectOpenHashMap<TargetSnapshot> variants : cache.variants) variants.clear();
+        }
+        return cache;
+    }
+
+    private static TargetSnapshot targetSnapshot(final TargetTickCache cache, final ServerLevel level,
+                                                 final Entity entity, final boolean affectsArmor,
+                                                 final boolean affectsItems) {
+        final int variant = (affectsArmor ? 2 : 0) | (affectsItems ? 1 : 0);
+        final Int2ObjectOpenHashMap<TargetSnapshot> snapshots = cache.variants[variant];
+        TargetSnapshot snapshot = snapshots.get(entity.getId());
+        if (snapshot != null) return snapshot;
+
+        final boolean magnetizable = isMagnetizableUncached(entity, affectsArmor, affectsItems);
+        final boolean diamagnetic = magnetizable && entity instanceof ItemEntity item
+                && item.getItem().is(MagTags.DIAMAGNETIC_ITEMS);
+        snapshot = magnetizable
+                ? new TargetSnapshot(true, diamagnetic,
+                        diamagnetic ? DIAMAGNETIC_SUSCEPTIBILITY : susceptibilityOf(entity, affectsArmor),
+                        diamagnetic ? MagneticPolarity.NONE : polarityOf(entity))
+                : TargetSnapshot.NOT_MAGNETIZABLE;
+        snapshots.put(entity.getId(), snapshot);
+        PerformanceDiagnostics.recordTargetClassification(level);
+        return snapshot;
+    }
+
+    /** Drop entity snapshots before a dimension object can be reused or retained. */
+    public static void onLevelUnload(final ServerLevel level) {
+        TARGET_CACHES.remove(level);
     }
 
     /** The magnetic elytra reacts to fields even when {@code armorReactsToFields}
@@ -716,6 +775,27 @@ public final class FieldApplicator {
         // Default convention: untagged entities present a NORTH face, so a SOUTH
         // emitter pulls them and a NORTH emitter pushes them.
         return MagneticPolarity.NORTH;
+    }
+
+    private record TargetSnapshot(boolean magnetizable, boolean diamagnetic,
+                                  double susceptibility, MagneticPolarity polarity) {
+        private static final TargetSnapshot NOT_MAGNETIZABLE =
+                new TargetSnapshot(false, false, 0.0d, MagneticPolarity.NONE);
+    }
+
+    private record PreparedField(MagneticField field, double globalScalar,
+                                 double cosHalfAngle, double velocityScale, double rangeSqr) {}
+
+    @SuppressWarnings("unchecked")
+    private static final class TargetTickCache {
+        private long gameTime = Long.MIN_VALUE;
+        private boolean cbcProjectilesEnabled;
+        private boolean ieRailgunReactionEnabled;
+        private final Int2ObjectOpenHashMap<TargetSnapshot>[] variants = new Int2ObjectOpenHashMap[4];
+
+        private TargetTickCache() {
+            for (int i = 0; i < variants.length; i++) variants[i] = new Int2ObjectOpenHashMap<>();
+        }
     }
 
     /** One ship sample's force. Normal ships use the polarity-encoded force

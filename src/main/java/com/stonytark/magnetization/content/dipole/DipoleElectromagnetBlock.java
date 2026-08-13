@@ -125,6 +125,7 @@ public final class DipoleElectromagnetBlock extends DirectionalBlock implements 
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof DipoleElectromagnetBlockEntity dipole) {
+            dipole.invalidateInventorySink();
             dipole.setRedstoneLevel(signal);
         }
     }

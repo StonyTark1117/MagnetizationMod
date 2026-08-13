@@ -42,4 +42,32 @@ public final class GasExciterBlock extends BaseEntityBlock {
         if (level.isClientSide || type != MagBlockEntities.GAS_EXCITER.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<GasExciterBlockEntity>) GasExciterBlockEntity::serverTick;
     }
+
+    @Override
+    protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
+                           final BlockState oldState, final boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        invalidate(level);
+    }
+
+    @Override
+    protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos,
+                                   final Block neighbour, final BlockPos neighbourPos,
+                                   final boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighbour, neighbourPos, movedByPiston);
+        invalidate(level);
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) invalidate(level);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    private static void invalidate(final Level level) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            com.stonytark.magnetization.content.fluid.GasExcitation.invalidate(server);
+        }
+    }
 }

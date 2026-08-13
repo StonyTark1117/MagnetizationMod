@@ -97,6 +97,7 @@ public final class ElectromagnetBlock extends Block implements EntityBlock {
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof ElectromagnetBlockEntity emag) {
+            emag.invalidateInventorySink();
             emag.setRedstoneLevel(signal);
         }
     }

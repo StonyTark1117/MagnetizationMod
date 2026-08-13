@@ -78,6 +78,10 @@ public final class Magnetization {
         NeoForge.EVENT_BUS.addListener(Magnetization::onLevelUnload);
         NeoForge.EVENT_BUS.addListener(Magnetization::onServerStopped);
 
+        if (ModList.get().isLoaded("railways")) {
+            com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.wire(NeoForge.EVENT_BUS);
+        }
+
         // Curios — register the Field Compass and Magnetic Grapple as curios
         // so they work from a charm slot. Guarded so the Curios imports don't
         // resolve when Curios isn't installed.
@@ -293,6 +297,13 @@ public final class Magnetization {
     private static void onLevelUnload(final net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
         if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel server) {
             com.stonytark.magnetization.physics.ShipMagneticRegistry.onLevelUnload(server);
+            com.stonytark.magnetization.content.fluid.GasExcitation.onLevelUnload(server);
+            com.stonytark.magnetization.physics.FieldApplicator.onLevelUnload(server);
+            com.stonytark.magnetization.physics.InventorySink.onLevelUnload(server);
+            com.stonytark.magnetization.physics.PerformanceDiagnostics.onLevelUnload(server);
+            if (ModList.get().isLoaded("railways")) {
+                com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.onLevelUnload(server);
+            }
         }
     }
 

@@ -151,6 +151,7 @@ public final class MagneticExcavatorBlock extends DirectionalBlock implements En
         final boolean nowExternal = externalLevel > 0;
         final BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof MagneticExcavatorBlockEntity excavator) {
+            excavator.invalidateInventorySink();
             // BE owns block-state POWERED: it's the OR of external signal +
             // internal redstone fuel, so the BE has to compute the union and
             // push the result to the world. Just hand it the external level.

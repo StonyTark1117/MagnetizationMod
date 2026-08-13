@@ -26,6 +26,7 @@ The disposable world is removed after the run. Set `MAG_STRESS_KEEP_WORLD=1` to 
 MAG_STRESS_PROFILE=quick ./gradlew performanceStress
 MAG_STRESS_PROFILE=full ./gradlew performanceStress
 MAG_STRESS_GRID=12 MAG_STRESS_SAMPLES=7 ./gradlew performanceStress
+MAG_STRESS_JFR=1 MAG_STRESS_SCENARIOS=empty_start,block_item_control,active_emitters,gas_volume,empty_end ./gradlew performanceStress
 ```
 
 | Profile | Grid | Instances | Global warmup | Scenario warmup | Samples | Ticks/sample |
@@ -35,6 +36,8 @@ MAG_STRESS_GRID=12 MAG_STRESS_SAMPLES=7 ./gradlew performanceStress
 | `full` | 16x16 | 256 | 4,000 | 800 | 7 | 2,400 |
 
 Available overrides are `MAG_STRESS_GRID`, `MAG_STRESS_GLOBAL_WARMUP_TICKS`, `MAG_STRESS_WARMUP_TICKS`, `MAG_STRESS_SAMPLE_TICKS`, `MAG_STRESS_SAMPLES`, `MAG_STRESS_TIMEOUT_SECONDS`, `MAG_STRESS_SHUTDOWN_TIMEOUT_SECONDS`, `MAG_STRESS_CV_THRESHOLD_PCT`, `MAG_STRESS_DRIFT_THRESHOLD_PCT`, and `MAG_STRESS_ABSOLUTE_NOISE_FLOOR_MSPT`.
+
+Set `MAG_STRESS_JFR=1` to archive a profile-settings Java Flight Recording as `server.jfr` in the report directory. This also enables the internal `MAG_PERF` counters in `latest.log`; use `MAG_STRESS_DIAGNOSTICS=1` to collect those counters without JFR. Profiled runs are attribution evidence and should not be compared directly with ordinary timing runs because the recorder adds overhead.
 
 `MAG_STRESS_SCENARIOS` accepts a comma-separated subset, but it must include `empty_start` and `empty_end`. The fixed default order is intentional: it detects run-long JIT, thermal, or host-load drift.
 

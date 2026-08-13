@@ -121,6 +121,7 @@ public final class TractorBeamBlock extends DirectionalBlock implements EntityBl
             level.setBlock(pos, state.setValue(BlockStateProperties.POWERED, nowPowered), Block.UPDATE_CLIENTS);
         }
         if (level.getBlockEntity(pos) instanceof TractorBeamBlockEntity beam) {
+            beam.invalidateInventorySink();
             beam.setRedstoneLevel(signal);
         }
     }

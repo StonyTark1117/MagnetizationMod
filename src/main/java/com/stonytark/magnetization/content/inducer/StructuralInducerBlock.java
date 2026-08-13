@@ -121,6 +121,7 @@ public final class StructuralInducerBlock extends DirectionalBlock implements En
 
     private static void applyExternalSignal(final Level level, final BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof StructuralInducerBlockEntity be) {
+            be.invalidateInventorySink();
             // Analog level; `> 0` matches the old hasNeighborSignal behaviour exactly.
             be.setExternalSignal(level.getBestNeighborSignal(pos));
         }

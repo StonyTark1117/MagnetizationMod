@@ -164,7 +164,10 @@ public final class GasExciterBlockEntity extends BlockEntity {
         Buffer(final int capacity, final int receive) { super(capacity, receive, 0); }
         @Override public int receiveEnergy(final int amount, final boolean simulate) {
             final int accepted = super.receiveEnergy(amount, simulate);
-            if (!simulate && accepted > 0) GasExciterBlockEntity.this.setChanged();
+            if (!simulate && accepted > 0) {
+                GasExciterBlockEntity.this.setChanged();
+                if (level instanceof ServerLevel server) GasExcitation.invalidate(server);
+            }
             return accepted;
         }
         void drain(final int amount) { energy = Math.max(0, energy - amount); }

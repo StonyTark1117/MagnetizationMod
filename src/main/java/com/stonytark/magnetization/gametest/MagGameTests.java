@@ -2433,6 +2433,42 @@ public final class MagGameTests {
         });
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void overlappingFieldsPreserveForceAndRefreshTargetsNextTick(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final BlockPos abs = helper.absolutePos(new BlockPos(1, 1, 1));
+        final net.minecraft.world.entity.item.ItemEntity drop =
+                new net.minecraft.world.entity.item.ItemEntity(level,
+                        abs.getX() + 0.5, abs.getY() + 0.5, abs.getZ() + 0.5,
+                        new net.minecraft.world.item.ItemStack(
+                                com.stonytark.magnetization.registry.MagItems.FERROMAGNETIC_INGOT.get()));
+        drop.setNoGravity(true);
+        level.addFreshEntity(drop);
+        final com.stonytark.magnetization.api.MagneticField field =
+                strongOreBreakField(helper, new BlockPos(4, 1, 1));
+
+        helper.startSequence()
+                .thenExecuteAfter(3, () -> {
+                    drop.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                    com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+                    final net.minecraft.world.phys.Vec3 once = drop.getDeltaMovement();
+                    com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+                    final net.minecraft.world.phys.Vec3 twice = drop.getDeltaMovement();
+                    helper.assertTrue(once.lengthSqr() > 1.0e-6
+                                    && twice.subtract(once.scale(2.0d)).lengthSqr() < 1.0e-12,
+                            "Cached target classification changed cumulative overlapping-field force");
+                    drop.setItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIRT));
+                })
+                .thenExecuteAfter(1, () -> {
+                    drop.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                    com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+                    helper.assertTrue(drop.getDeltaMovement().equals(net.minecraft.world.phys.Vec3.ZERO),
+                            "Target classification did not refresh after the item changed on the next tick");
+                    drop.discard();
+                })
+                .thenSucceed();
+    }
+
     /** A STRONG omnidirectional field centred at {@code rel} (range 16) — stands in for the
      *  ore-break residual so the {@code affectsArmor}/{@code affectsItems} flags can be driven
      *  directly. SOUTH polarity attracts a default-NORTH target toward the origin. */

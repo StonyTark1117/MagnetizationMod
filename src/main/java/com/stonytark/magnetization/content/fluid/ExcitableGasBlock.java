@@ -31,7 +31,10 @@ public final class ExcitableGasBlock extends LiquidBlock {
     protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
                            final BlockState oldState, final boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
-        if (!level.isClientSide) level.scheduleTick(pos, this, 1);
+        if (level instanceof ServerLevel server) {
+            GasExcitation.invalidate(server);
+            level.scheduleTick(pos, this, 1);
+        }
     }
 
     @Override
@@ -39,9 +42,21 @@ public final class ExcitableGasBlock extends LiquidBlock {
                                    final net.minecraft.world.level.block.Block neighbour,
                                    final BlockPos neighbourPos, final boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighbour, neighbourPos, movedByPiston);
+        if (level instanceof ServerLevel server) {
+            GasExcitation.invalidate(server);
+        }
         if (!level.isClientSide && !level.getBlockTicks().hasScheduledTick(pos, this)) {
             level.scheduleTick(pos, this, 1);
         }
+    }
+
+    @Override
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
+                            final BlockState newState, final boolean movedByPiston) {
+        if (level instanceof ServerLevel server && !state.is(newState.getBlock())) {
+            GasExcitation.invalidate(server);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

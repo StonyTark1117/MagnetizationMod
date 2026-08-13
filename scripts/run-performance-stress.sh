@@ -8,6 +8,8 @@ profile=${MAG_STRESS_PROFILE:-standard}
 timeout_seconds=${MAG_STRESS_TIMEOUT_SECONDS:-600}
 shutdown_timeout_seconds=${MAG_STRESS_SHUTDOWN_TIMEOUT_SECONDS:-90}
 keep_world=${MAG_STRESS_KEEP_WORLD:-0}
+jfr_enabled=${MAG_STRESS_JFR:-0}
+diagnostics_enabled=${MAG_STRESS_DIAGNOSTICS:-$jfr_enabled}
 neoforge_version=${MAG_STRESS_NEOFORGE_VERSION:-21.1.241}
 stability_cv_threshold_pct=${MAG_STRESS_CV_THRESHOLD_PCT:-10}
 empty_drift_threshold_pct=${MAG_STRESS_DRIFT_THRESHOLD_PCT:-10}
@@ -136,6 +138,8 @@ for value in "$grid_size" "$global_warmup_ticks" "$warmup_ticks" "$sample_ticks"
 done
 (( grid_size <= 20 )) || fail 'MAG_STRESS_GRID cannot exceed 20'
 [[ "$keep_world" == 0 || "$keep_world" == 1 ]] || fail 'MAG_STRESS_KEEP_WORLD must be 0 or 1'
+[[ "$jfr_enabled" == 0 || "$jfr_enabled" == 1 ]] || fail 'MAG_STRESS_JFR must be 0 or 1'
+[[ "$diagnostics_enabled" == 0 || "$diagnostics_enabled" == 1 ]] || fail 'MAG_STRESS_DIAGNOSTICS must be 0 or 1'
 (( ${#scenarios[@]} >= 2 )) || fail 'at least empty_start and empty_end scenarios are required'
 [[ " ${scenarios[*]} " == *" empty_start "* && " ${scenarios[*]} " == *" empty_end "* ]] \
     || fail 'the scenario list must contain empty_start and empty_end'
@@ -203,13 +207,23 @@ metadata = {
     "stability_cv_threshold_pct": float("$stability_cv_threshold_pct"),
     "empty_drift_threshold_pct": float("$empty_drift_threshold_pct"),
     "absolute_noise_floor_mspt": float("$absolute_noise_floor_mspt"),
+    "jfr_enabled": "$jfr_enabled" == "1",
+    "performance_diagnostics_enabled": "$diagnostics_enabled" == "1",
 }
 destination.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
 PY
 
 mkfifo "$run_dir/server-input.fifo"
 exec {console_fd}<>"$run_dir/server-input.fifo"
-setsid "$repo_dir/gradlew" --no-daemon "-Pneoforge_version=$neoforge_version" runStressServer \
+gradle_profile_args=()
+if [[ "$jfr_enabled" == 1 ]]; then
+    gradle_profile_args+=("-PstressJfrFile=$report_dir/server.jfr")
+fi
+if [[ "$diagnostics_enabled" == 1 ]]; then
+    gradle_profile_args+=("-PstressPerformanceDiagnostics=true")
+fi
+setsid "$repo_dir/gradlew" --no-daemon "-Pneoforge_version=$neoforge_version" \
+    "${gradle_profile_args[@]}" runStressServer \
     <"$run_dir/server-input.fifo" >"$report_dir/gradle.log" 2>&1 &
 server_pid=$!
 echo "performance-stress: starting $profile server (pid $server_pid); report $report_dir"
