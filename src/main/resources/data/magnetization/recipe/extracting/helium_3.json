@@ -1,0 +1,13 @@
+{
+  "type": "createoreexcavation:extracting",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "createoreexcavation" },
+    { "type": "magnetization:compat_config", "feature": "ore_excavation" }
+  ],
+  "drill": { "tag": "createoreexcavation:drills" },
+  "output": { "amount": 1000, "id": "magnetization:helium_3" },
+  "priority": 0,
+  "stress": 256,
+  "ticks": 100,
+  "veinId": "magnetization:ore_vein_type/helium_3"
+}

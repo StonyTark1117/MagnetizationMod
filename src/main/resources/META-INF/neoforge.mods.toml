@@ -115,6 +115,26 @@ versionRange = "[5.11.7,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Ore Excavation — optional bulk extraction for Magnetization ore deposits and
+# Helium-3 geodes. The runtime bridge is event-based and preserves its own
+# configured tool, blacklist, range, and excavation limits.
+[[dependencies.${mod_id}]]
+modId = "oreexcavation"
+type = "optional"
+versionRange = "[1.16.43,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Create Ore Excavation — optional infinite ore-vein recipes for Magnetization
+# resources. The recipe entries are condition-gated and do not load without the
+# addon or when the shared Ore Excavation compatibility setting is disabled.
+[[dependencies.${mod_id}]]
+modId = "createoreexcavation"
+type = "optional"
+versionRange = "[1.6.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
 # Create: New Age — its authoritative magnet tag contributes ship magnetism;
 # coils and conductive wire blocks participate in field/Lenz interactions.
 [[dependencies.${mod_id}]]

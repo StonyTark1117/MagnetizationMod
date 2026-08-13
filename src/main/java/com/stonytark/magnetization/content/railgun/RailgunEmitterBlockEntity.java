@@ -185,7 +185,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level != null && !level.isClientSide) RailgunRegistry.register(level, getBlockPos());
+        if (level != null && !level.isClientSide) RailgunRegistry.register(level, this);
     }
 
     @Override

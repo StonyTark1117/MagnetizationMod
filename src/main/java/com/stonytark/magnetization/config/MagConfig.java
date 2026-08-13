@@ -217,6 +217,7 @@ public final class MagConfig {
 
     // ── machines: tokamak / induction pad / sensor / item frame / temporary magnet ──
     public static final ModConfigSpec.IntValue    TOKAMAK_FE_CAPACITY;
+    public static final ModConfigSpec.IntValue    TOKAMAK_MAX_EDGE;
     public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK;
     public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE;
     public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_PER_CELL;
@@ -473,6 +474,7 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue CREATE_ADDITION_RECIPES_ENABLED;
     public static final ModConfigSpec.DoubleValue CREATE_ADDITION_FIELD_FORCE_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue ORE_EXCAVATION_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_FERROFLUID_SPRAY_ENABLED;
     public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_COMPAT_ENABLED;
@@ -1248,6 +1250,8 @@ public final class MagConfig {
 
         TOKAMAK_FE_CAPACITY = b.translation("magnetization.configuration.machines.tokamakFeCapacity")
                 .defineInRange("tokamakFeCapacity", 4_000_000, 0, 1_000_000_000);
+        TOKAMAK_MAX_EDGE = b.translation("magnetization.configuration.machines.tokamakMaxEdge")
+                .defineInRange("tokamakMaxEdge", 15, 3, 63);
         TOKAMAK_GEN_PER_TICK = b.translation("magnetization.configuration.machines.tokamakGenPerTick")
                 .defineInRange("tokamakGenPerTick", 2000, 0, 1_000_000);
         TOKAMAK_OUTPUT_RATE = b.translation("magnetization.configuration.machines.tokamakOutputRate")
@@ -2052,6 +2056,12 @@ public final class MagConfig {
                 .comment("Master switch for Create: Big Cannons projectile runtime compatibility.")
                 .translation("magnetization.configuration.compat.createBigCannonsCompatEnabled")
                 .define("createBigCannonsCompatEnabled", true);
+        ORE_EXCAVATION_COMPAT_ENABLED = b
+                .comment("Allow Ore Excavation to bulk-excavate Magnetization ore deposits and Helium-3 geodes.",
+                         "The optional bridge only adds Magnetization's own ore tag to an excavation;",
+                         "it does not change Ore Excavation's configured limits, tools, or blacklist.")
+                .translation("magnetization.configuration.compat.oreExcavationCompatEnabled")
+                .define("oreExcavationCompatEnabled", true);
         DIESEL_GENERATORS_COMPAT_ENABLED = b
                 .comment("Master switch for Create: Diesel Generators compatibility.")
                 .translation("magnetization.configuration.compat.dieselGeneratorsCompatEnabled")
@@ -2997,6 +3007,10 @@ public final class MagConfig {
 
     // ── machines: tokamak / induction pad / sensor / item frame / temporary magnet ──
     public static int    tokamakFeCapacity()        { return intOr(TOKAMAK_FE_CAPACITY, 4_000_000); }
+    public static int    tokamakMaxEdge() {
+        final int configured = Math.max(3, intOr(TOKAMAK_MAX_EDGE, 15));
+        return configured % 2 == 0 ? configured - 1 : configured;
+    }
     public static int    tokamakGenPerTick()        { return intOr(TOKAMAK_GEN_PER_TICK, 2000); }
     public static int    tokamakOutputRate()        { return intOr(TOKAMAK_OUTPUT_RATE, 16000); }
     public static int    tokamakBurnTicksPerCell()  { return intOr(TOKAMAK_BURN_TICKS_PER_CELL, 4800); }

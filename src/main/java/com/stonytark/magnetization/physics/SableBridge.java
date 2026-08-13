@@ -58,6 +58,14 @@ public final class SableBridge {
         return sub instanceof ServerSubLevel server ? server : null;
     }
 
+    /** Resolve the Sable owner from a block entity itself. This is important for
+     * plot-local block positions, which cannot always be looked up as ordinary
+     * outer-world coordinates. */
+    public static @Nullable ServerSubLevel subLevelOf(final net.minecraft.world.level.block.entity.BlockEntity blockEntity) {
+        final SubLevel sub = Sable.HELPER.getContaining(blockEntity);
+        return sub instanceof ServerSubLevel server ? server : null;
+    }
+
     /**
      * Collect the UUIDs of every sub-level connected to {@code host} through the
      * Sable assembly graph — i.e. every part of the same Create: Aeronautics craft,

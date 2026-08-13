@@ -1,0 +1,13 @@
+{
+  "type": "createoreexcavation:drilling",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "createoreexcavation" },
+    { "type": "magnetization:compat_config", "feature": "ore_excavation" }
+  ],
+  "drill": { "tag": "createoreexcavation:drills" },
+  "output": [{ "id": "magnetization:raw_lithium" }],
+  "priority": 0,
+  "stress": 256,
+  "ticks": 700,
+  "veinId": "magnetization:ore_vein_type/lithium"
+}

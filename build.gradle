@@ -41,6 +41,8 @@ configurations {
     enchantmentIndustryRuntime
     enderTransmissionRuntime
     tfmgRuntime
+    oreExcavationRuntime
+    createOreExcavationRuntime
     // Dedicated-server-only aggregate used by the large-world regression
     // reproducer. Keep it separate from localRuntime: that configuration also
     // contains client-only renderers and recipe viewers.
@@ -103,6 +105,8 @@ def minimalProfileTasks = [
         'runenchantmentindustrygametestserver',
         'runendertransmissiongametestserver',
         'runtfmggametestserver',
+        'runoreexcavationgametestserver',
+        'runcreateoreexcavationgametestserver',
         'runcuriosgametestserver',
         'runlargeworldbootstrapserver', 'runlargeworldfixtureserver',
         'runlargeworldreproserver', 'reproducelargeworldissue',
@@ -114,7 +118,7 @@ def minimalProfileTasks = [
         'smokecreatetracksgametest', 'smokesteamrailsgametest',
         'smokedieselgeneratorsgametest', 'smokecopycatsgametest',
         'smokeenchantmentindustrygametest', 'smokeendertransmissiongametest',
-        'smoketfmggametest', 'smokecuriosgametest', 'smokeoptionalcompatibilityabsentgametest',
+        'smoketfmggametest', 'smokeoreexcavationgametest', 'smokecreateoreexcavationgametest', 'smokecuriosgametest', 'smokeoptionalcompatibilityabsentgametest',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
 ]
@@ -187,6 +191,12 @@ def wantsEnderTransmissionTests = lowered.any {
 def wantsTfmgTests = lowered.any {
     it.endsWith('runtfmggametestserver') || it.endsWith('smoketfmggametest')
 }
+def wantsOreExcavationTests = lowered.any {
+    it.endsWith('runoreexcavationgametestserver') || it.endsWith('smokeoreexcavationgametest')
+}
+def wantsCreateOreExcavationTests = lowered.any {
+    it.endsWith('runcreateoreexcavationgametestserver') || it.endsWith('smokecreateoreexcavationgametest')
+}
 def wantsLargeWorldRepro = lowered.any {
     it.endsWith('runlargeworldreproserver')
 }
@@ -209,7 +219,8 @@ def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTest
                             wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
                             wantsCreateTracksTests, wantsSteamRailsTests,
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
-                            wantsEnderTransmissionTests, wantsTfmgTests,
+                            wantsEnderTransmissionTests, wantsTfmgTests, wantsOreExcavationTests,
+                            wantsCreateOreExcavationTests,
                             wantsLargeWorldFixture, wantsLargeWorldRepro]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
@@ -261,6 +272,12 @@ if (wantsEnderTransmissionTests) {
 }
 if (wantsTfmgTests) {
     configurations.runtimeClasspath { extendsFrom configurations.tfmgRuntime }
+}
+if (wantsOreExcavationTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.oreExcavationRuntime }
+}
+if (wantsCreateOreExcavationTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createOreExcavationRuntime }
 }
 if (wantsLargeWorldRepro) {
     configurations.runtimeClasspath { extendsFrom configurations.largeWorldReproRuntime }
@@ -370,6 +387,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
         || it.name == 'runEnchantmentIndustryGameTestServer'
         || it.name == 'runEnderTransmissionGameTestServer'
         || it.name == 'runTfmgGameTestServer'
+        || it.name == 'runOreExcavationGameTestServer'
+        || it.name == 'runCreateOreExcavationGameTestServer'
         || it.name == 'runCuriosGameTestServer' }.configureEach {
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
@@ -407,6 +426,10 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-ender-transmission-gametest/world/session.lock'
                 : it.name == 'runTfmgGameTestServer'
                 ? 'run-tfmg-gametest/world/session.lock'
+                : it.name == 'runOreExcavationGameTestServer'
+                ? 'run-ore-excavation-gametest/world/session.lock'
+                : it.name == 'runCreateOreExcavationGameTestServer'
+                ? 'run-create-ore-excavation-gametest/world/session.lock'
                 : it.name == 'runCuriosGameTestServer'
                 ? 'run-curios-gametest/world/session.lock'
                 : 'run/world/session.lock')
@@ -500,6 +523,12 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_curios/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ore_excavation/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_create_ore_excavation/structure'
     }
 }
 
@@ -680,6 +709,16 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-tfmg-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_tfmg'
+        }
+        oreExcavationGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ore-excavation-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ore_excavation'
+        }
+        createOreExcavationGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-create-ore-excavation-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_ore_excavation'
         }
         curiosGameTestServer {
             type = 'gameTestServer'
@@ -976,6 +1015,13 @@ tasks.register('smokeTfmgGameTest', Exec) {
             'run-tfmg-gametest', '300'
 }
 
+tasks.register('smokeCreateOreExcavationGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create Ore Excavation infinite Magnetization vein recipes.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateOreExcavationGameTestServer',
+            'run-create-ore-excavation-gametest', '300'
+}
+
 tasks.register('smokeCuriosGameTest', Exec) {
     group = 'verification'
     description = 'Supervises Curios equipment activation and master-disable compatibility.'
@@ -1085,6 +1131,11 @@ dependencies {
 
     compileOnly("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
     enderTransmissionRuntime("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
+
+    // Ore Excavation is optional. Compile against its public excavation-start
+    // event and load the real jar only in the isolated compatibility suite.
+    compileOnly("curse.maven:ore-excavation-250898:${ore_excavation_test_file}") { transitive = false }
+    oreExcavationRuntime("curse.maven:ore-excavation-250898:${ore_excavation_test_file}") { transitive = false }
 
     // Create: Big Cannons and its projectile library are optional. Keep both
     // artifacts out of normal client/server/build classpaths; this isolated
@@ -1242,6 +1293,11 @@ dependencies {
     // client pack and an isolated GameTest runtime; neither configuration ships.
     localRuntime("maven.modrinth:create-tfmg:uDi14nbt")
     tfmgRuntime("maven.modrinth:create-tfmg:uDi14nbt")
+
+    // Create Ore Excavation — isolated recipe/data compatibility profile.
+    createOreExcavationRuntime("curse.maven:create-ore-excavation-649832:${create_ore_excavation_test_file}") {
+        transitive = false
+    }
 
     // Full dedicated-server compatibility stack for the large-world issue #7
     // reproducer. Gameplay integrations are inherited from the isolated

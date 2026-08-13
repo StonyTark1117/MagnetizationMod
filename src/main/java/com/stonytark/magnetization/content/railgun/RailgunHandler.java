@@ -121,9 +121,12 @@ public final class RailgunHandler {
 
         for (final BlockPos pos : snapshot) {
             if (processed.contains(pos)) continue;
-            if (!(server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity be)) continue;
+            final RailgunEmitterBlockEntity be = server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity found
+                    ? found : RailgunRegistry.find(server, pos);
+            if (be == null) continue;
             try {
-                processEmitter(server, container, snapshot, processed, pos, be);
+                processEmitter(server, container, snapshot, processed, pos, be,
+                        SableBridge.subLevelOf(be));
             } catch (final RuntimeException ex) {
                 // Sable's sub-level queries can transiently throw while a ship is
                 // mid-assembly/teleport/removal in the channel (e.g. "No sub-level
@@ -203,7 +206,8 @@ public final class RailgunHandler {
      *  isolate per-emitter Sable query failures without aborting the tick. */
     private static void processEmitter(final ServerLevel server, final @Nullable ServerSubLevelContainer container,
                                        final Set<BlockPos> snapshot, final Set<BlockPos> processed,
-                                       final BlockPos pos, final RailgunEmitterBlockEntity be) {
+                                       final BlockPos pos, final RailgunEmitterBlockEntity be,
+                                       final @Nullable ServerSubLevel owner) {
         final BlockState state = be.getBlockState();
         if (MagConfig.isBlockDisabled(state)) {
             be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
@@ -218,11 +222,13 @@ public final class RailgunHandler {
         if (l1 < MagConfig.railgunMinLength()) return;
 
         // Pairing: find parallel siblings; >1 → arc dissipated.
-        final SiblingResult sib = findSibling(server, pos, facing, snapshot);
+        final SiblingResult sib = findSibling(server, pos, facing, snapshot, owner);
         if (sib.dissipated) { processed.add(pos); be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE); return; }
         if (sib.pos == null) return;     // no pair yet — wait
         if (processed.contains(sib.pos)) return;     // partner already claimed by another arc this tick
-        if (!(server.getBlockEntity(sib.pos) instanceof RailgunEmitterBlockEntity sibBe)) return;
+        final RailgunEmitterBlockEntity sibBe = server.getBlockEntity(sib.pos) instanceof RailgunEmitterBlockEntity found
+                ? found : RailgunRegistry.find(server, sib.pos);
+        if (sibBe == null) return;
 
         processed.add(pos);
         processed.add(sib.pos);
@@ -257,17 +263,19 @@ public final class RailgunHandler {
         }
 
         if (effL >= MagConfig.railgunMinLength()) {
+            final Vec3 masterCenter = worldCenter(owner, masterPos);
             for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
-                if (player.distanceToSqr(masterPos.getX() + 0.5, masterPos.getY() + 0.5,
-                        masterPos.getZ() + 0.5) <= 16.0 * 16.0) {
+                if (player.distanceToSqr(masterCenter.x, masterCenter.y, masterCenter.z)
+                        <= 16.0 * 16.0) {
                     com.stonytark.magnetization.registry.MagTriggers.RAILGUN_COMPLETED
                             .get().trigger(player);
                 }
             }
         }
-        final AABB channel = channelBox(masterPos, otherPos, facing, effL);
+        final Vec3 axis = worldAxis(owner, facing);
+        final AABB channel = channelBox(masterPos, otherPos, facing, effL, owner);
 
-        processArc(server, container, master, other, channel, facing, effL, manual, breakBlocks,
+        processArc(server, container, master, other, channel, axis, owner, effL, manual, breakBlocks,
                 ArcKey.of(masterPos, otherPos));
 
         // Mirror to the display sibling.
@@ -276,7 +284,8 @@ public final class RailgunHandler {
 
     private static void processArc(final ServerLevel server, final @Nullable ServerSubLevelContainer container,
                                    final RailgunEmitterBlockEntity master, final RailgunEmitterBlockEntity other,
-                                   final AABB channel, final Direction facing, final int effL, final boolean manual,
+                                   final AABB channel, final Vec3 axis, final @Nullable ServerSubLevel owner,
+                                   final int effL, final boolean manual,
                                    final boolean breakBlocks, final ArcKey arc) {
         final boolean hasTarget = anyShipInChannel(container, server, channel) || anyEntityInChannel(server, channel);
         switch (master.arcState()) {
@@ -284,13 +293,13 @@ public final class RailgunHandler {
                 if (hasTarget) {
                     if (manual) {
                         master.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
-                        trapTargets(container, server, channel, facing, effL, true, arc);
+                        trapTargets(container, server, channel, axis, true, arc);
                     }
                     else if (MagConfig.railgunAutoFire()) {
                         releaseHolds(server, arc);
                         master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                         master.setLaunchTicks(0);
-                        triggerRailgunFire(server, master.getBlockPos());
+                        triggerRailgunFire(server, master.getBlockPos(), owner);
                     }
                 }
             }
@@ -301,12 +310,12 @@ public final class RailgunHandler {
                     break;
                 }
                 master.drawPower(MagConfig.railgunHoldFeCost());
-                trapTargets(container, server, channel, facing, effL, true, arc);   // hold: damp forward too
+                trapTargets(container, server, channel, axis, true, arc);   // hold: damp forward too
                 if (master.consumeFireRequest() || other.consumeFireRequest()) {
                     releaseHolds(server, arc);
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
                     master.setLaunchTicks(0);
-                    triggerRailgunFire(server, master.getBlockPos());
+                    triggerRailgunFire(server, master.getBlockPos(), owner);
                 }
             }
             case LAUNCHING -> {
@@ -316,7 +325,7 @@ public final class RailgunHandler {
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.COOLDOWN);
                     master.setCooldownTicks(MagConfig.railgunCooldownTicks());
                 } else {
-                    accelerateTargets(container, server, channel, facing, effL, breakBlocks, arc);
+                    accelerateTargets(container, server, channel, axis, effL, breakBlocks, arc);
                     master.setLaunchTicks(master.launchTicks() + 1);
                 }
             }
@@ -327,9 +336,11 @@ public final class RailgunHandler {
         }
     }
 
-    private static void triggerRailgunFire(final ServerLevel server, final BlockPos pos) {
+    private static void triggerRailgunFire(final ServerLevel server, final BlockPos pos,
+                                           final @Nullable ServerSubLevel owner) {
+        final Vec3 center = worldCenter(owner, pos);
         for (final net.minecraft.server.level.ServerPlayer player : server.players()) {
-            if (player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 16.0 * 16.0) {
+            if (player.distanceToSqr(center.x, center.y, center.z) <= 16.0 * 16.0) {
                 com.stonytark.magnetization.registry.MagTriggers.RAILGUN_FIRED.get().trigger(player);
             }
         }
@@ -365,13 +376,14 @@ public final class RailgunHandler {
      *  ALSO re-count from the chosen partner's perspective and dissipate if EITHER
      *  side sees more than one qualifying rail. */
     private static SiblingResult findSibling(final ServerLevel level, final BlockPos pos,
-                                             final Direction facing, final Set<BlockPos> snapshot) {
+                                             final Direction facing, final Set<BlockPos> snapshot,
+                                             final @Nullable ServerSubLevel owner) {
         final int[] count = {0};
-        final BlockPos found = scanSiblings(level, pos, facing, snapshot, count);
+        final BlockPos found = scanSiblings(level, pos, facing, snapshot, owner, count);
         if (count[0] > 1) return new SiblingResult(null, true);   // 3+ rails → dissipate
         if (found != null) {
             final int[] partnerCount = {0};
-            scanSiblings(level, found, facing, snapshot, partnerCount);
+            scanSiblings(level, found, facing, snapshot, owner, partnerCount);
             if (partnerCount[0] > 1) return new SiblingResult(null, true);   // partner is the middle of 3+
         }
         return new SiblingResult(found, false);
@@ -381,13 +393,17 @@ public final class RailgunHandler {
      *  and writes the total into {@code countOut[0]}. */
     private static @Nullable BlockPos scanSiblings(final ServerLevel level, final BlockPos pos,
                                                    final Direction facing, final Set<BlockPos> snapshot,
+                                                   final @Nullable ServerSubLevel owner,
                                                    final int[] countOut) {
         BlockPos found = null;
         int count = 0;
         final int maxGap = MagConfig.railgunMaxGap();
         for (final BlockPos other : snapshot) {
             if (other.equals(pos)) continue;
-            if (!(level.getBlockEntity(other) instanceof RailgunEmitterBlockEntity)) continue;
+            final RailgunEmitterBlockEntity otherEmitter = level.getBlockEntity(other) instanceof RailgunEmitterBlockEntity foundEmitter
+                    ? foundEmitter : RailgunRegistry.find(level, other);
+            if (otherEmitter == null) continue;
+            if (SableBridge.subLevelOf(otherEmitter) != owner) continue;
             final BlockState s = level.getBlockState(other);
             if (MagConfig.isBlockDisabled(s)) continue;
             if (!s.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)
@@ -411,7 +427,8 @@ public final class RailgunHandler {
 
     /** World AABB of the channel: effL blocks along FACING from the emitter line,
      *  spanning the gap between the two rails, ±halfThickness on the third axis. */
-    private static AABB channelBox(final BlockPos master, final BlockPos other, final Direction facing, final int effL) {
+    private static AABB channelBox(final BlockPos master, final BlockPos other, final Direction facing,
+                                   final int effL, final @Nullable ServerSubLevel owner) {
         final int ht = MagConfig.railgunChannelHalfThickness();
         // Start from the union of the two emitter cells.
         int minX = Math.min(master.getX(), other.getX());
@@ -430,7 +447,33 @@ public final class RailgunHandler {
         if (facing.getAxis() != Direction.Axis.X && gapAxis != Direction.Axis.X) { minX -= ht; maxX += ht; }
         if (facing.getAxis() != Direction.Axis.Y && gapAxis != Direction.Axis.Y) { minY -= ht; maxY += ht; }
         if (facing.getAxis() != Direction.Axis.Z && gapAxis != Direction.Axis.Z) { minZ -= ht; maxZ += ht; }
-        return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
+        final AABB local = new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
+        return owner == null ? local : transformBox(owner, local);
+    }
+
+    private static Vec3 worldCenter(final @Nullable ServerSubLevel owner, final BlockPos pos) {
+        final Vec3 local = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        return owner == null ? local : owner.logicalPose().transformPosition(local);
+    }
+
+    private static Vec3 worldAxis(final @Nullable ServerSubLevel owner, final Direction facing) {
+        final Vec3 local = Vec3.atLowerCornerOf(facing.getNormal());
+        return owner == null ? local : owner.logicalPose().transformNormal(local).normalize();
+    }
+
+    /** Transform all eight local channel corners into world space. */
+    private static AABB transformBox(final ServerSubLevel owner, final AABB local) {
+        double minX = Double.POSITIVE_INFINITY, minY = Double.POSITIVE_INFINITY, minZ = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY, maxZ = Double.NEGATIVE_INFINITY;
+        for (int x = 0; x < 2; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
+            final Vec3 point = owner.logicalPose().transformPosition(new Vec3(
+                    x == 0 ? local.minX : local.maxX,
+                    y == 0 ? local.minY : local.maxY,
+                    z == 0 ? local.minZ : local.maxZ));
+            minX = Math.min(minX, point.x); minY = Math.min(minY, point.y); minZ = Math.min(minZ, point.z);
+            maxX = Math.max(maxX, point.x); maxY = Math.max(maxY, point.y); maxZ = Math.max(maxZ, point.z);
+        }
+        return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     private static Direction.Axis gapAxis(final BlockPos a, final BlockPos b, final Direction facing) {
@@ -477,9 +520,8 @@ public final class RailgunHandler {
     /** Hold a target on the rail: damp lateral motion fully, and (if {@code dampForward})
      *  bleed forward speed toward the breech so it parks for boarding. */
     private static void trapTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
-                                    final AABB channel, final Direction facing, final int effL,
+                                    final AABB channel, final Vec3 axis,
                                     final boolean dampForward, final ArcKey arc) {
-        final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
         final double lat = MagConfig.railgunLateralDamp();
         if (container != null) {
             for (final SubLevel sub : container.queryIntersecting(sable(channel))) {
@@ -542,14 +584,16 @@ public final class RailgunHandler {
     /** Apply the GUI's block-breaking switch to the whole resolved arc. */
     public static boolean setArcBlockBreaking(final ServerLevel server, final BlockPos emitter,
                                               final boolean enabled) {
-        if (!(server.getBlockEntity(emitter) instanceof RailgunEmitterBlockEntity be)) return false;
+        final RailgunEmitterBlockEntity be = registeredEmitter(server, emitter);
+        if (be == null) return false;
         be.setBreakBlocks(enabled);
         final BlockState state = be.getBlockState();
         if (!state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) return true;
         final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
-        final SiblingResult sibling = findSibling(server, emitter, facing, RailgunRegistry.snapshot(server));
-        if (!sibling.dissipated && sibling.pos != null
-                && server.getBlockEntity(sibling.pos) instanceof RailgunEmitterBlockEntity other) {
+        final SiblingResult sibling = findSibling(server, emitter, facing,
+                RailgunRegistry.snapshot(server), SableBridge.subLevelOf(be));
+        final RailgunEmitterBlockEntity other = sibling.pos == null ? null : registeredEmitter(server, sibling.pos);
+        if (!sibling.dissipated && other != null) {
             other.setBreakBlocks(enabled);
         }
         updateLaunchedShipsForEmitter(server, emitter, enabled);
@@ -559,7 +603,8 @@ public final class RailgunHandler {
     /** Explicit remote unpairing is arc-wide, regardless of which emitter owns
      * the live state or which control the remote was originally inserted into. */
     public static void unpairArc(final ServerLevel server, final BlockPos emitter) {
-        if (!(server.getBlockEntity(emitter) instanceof RailgunEmitterBlockEntity be)) return;
+        final RailgunEmitterBlockEntity be = registeredEmitter(server, emitter);
+        if (be == null) return;
         be.setManualMode(false);
         if (be.arcState() == RailgunEmitterBlockEntity.ArcState.HOLDING) {
             be.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
@@ -567,9 +612,10 @@ public final class RailgunHandler {
         final BlockState state = be.getBlockState();
         if (state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) {
             final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
-            final SiblingResult sibling = findSibling(server, emitter, facing, RailgunRegistry.snapshot(server));
-            if (!sibling.dissipated && sibling.pos != null
-                    && server.getBlockEntity(sibling.pos) instanceof RailgunEmitterBlockEntity other) {
+            final SiblingResult sibling = findSibling(server, emitter, facing,
+                    RailgunRegistry.snapshot(server), SableBridge.subLevelOf(be));
+            final RailgunEmitterBlockEntity other = sibling.pos == null ? null : registeredEmitter(server, sibling.pos);
+            if (!sibling.dissipated && other != null) {
                 other.setManualMode(false);
                 if (other.arcState() == RailgunEmitterBlockEntity.ArcState.HOLDING) {
                     other.setArcState(RailgunEmitterBlockEntity.ArcState.IDLE);
@@ -579,10 +625,16 @@ public final class RailgunHandler {
         releaseHoldsForEmitter(server, emitter);
     }
 
+    private static @Nullable RailgunEmitterBlockEntity registeredEmitter(final ServerLevel server,
+                                                                          final BlockPos pos) {
+        return server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity be
+                ? be : RailgunRegistry.find(server, pos);
+    }
+
     private static void accelerateTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
-                                          final AABB channel, final Direction facing, final int effL,
+                                          final AABB channel, final Vec3 axis, final int effL,
                                           final boolean breakBlocks, final ArcKey arc) {
-        final Vec3 axis = Vec3.atLowerCornerOf(facing.getNormal());
+        final Direction facing = axisToDirection(axis);
         final double magnitude = MagConfig.railgunForceBase() * Math.pow(effL, MagConfig.railgunForceExponent());
         final double shipMagnitude = magnitude * SHIP_LAUNCH_FORCE_CALIBRATION;
         final double lat = MagConfig.railgunLateralDamp();
@@ -649,6 +701,13 @@ public final class RailgunHandler {
             e.setDeltaMovement(nv);
             e.hurtMarked = true;
         }
+    }
+
+    private static Direction axisToDirection(final Vec3 axis) {
+        final double ax = Math.abs(axis.x), ay = Math.abs(axis.y), az = Math.abs(axis.z);
+        if (ax >= ay && ax >= az) return axis.x >= 0.0 ? Direction.EAST : Direction.WEST;
+        if (ay >= ax && ay >= az) return axis.y >= 0.0 ? Direction.UP : Direction.DOWN;
+        return axis.z >= 0.0 ? Direction.SOUTH : Direction.NORTH;
     }
 
     /** Continue launch protection after a ship leaves the arc's channel.

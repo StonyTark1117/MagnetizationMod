@@ -17,16 +17,25 @@ import java.util.WeakHashMap;
  */
 public final class RailgunRegistry {
 
-    private static final WeakHashMap<Level, Set<BlockPos>> ACTIVE_BY_LEVEL = new WeakHashMap<>();
+    private static final WeakHashMap<Level, java.util.Map<BlockPos, RailgunEmitterBlockEntity>> ACTIVE_BY_LEVEL = new WeakHashMap<>();
 
     private RailgunRegistry() {}
 
     public static synchronized void register(final Level level, final BlockPos pos) {
-        ACTIVE_BY_LEVEL.computeIfAbsent(level, l -> new HashSet<>()).add(pos.immutable());
+        // Kept for source compatibility with older integrations; normal emitters
+        // use the BE overload so Sable plot emitters can be resolved even when a
+        // vanilla level lookup does not see their plot-local block position.
+        ACTIVE_BY_LEVEL.computeIfAbsent(level, l -> new java.util.HashMap<>())
+                .put(pos.immutable(), null);
+    }
+
+    public static synchronized void register(final Level level, final RailgunEmitterBlockEntity emitter) {
+        ACTIVE_BY_LEVEL.computeIfAbsent(level, l -> new java.util.HashMap<>())
+                .put(emitter.getBlockPos().immutable(), emitter);
     }
 
     public static synchronized void unregister(final Level level, final BlockPos pos) {
-        final Set<BlockPos> set = ACTIVE_BY_LEVEL.get(level);
+        final java.util.Map<BlockPos, RailgunEmitterBlockEntity> set = ACTIVE_BY_LEVEL.get(level);
         if (set == null) return;
         set.remove(pos);
         if (set.isEmpty()) ACTIVE_BY_LEVEL.remove(level);
@@ -34,7 +43,7 @@ public final class RailgunRegistry {
 
     public static int size(final Level level) {
         synchronized (RailgunRegistry.class) {
-            final Set<BlockPos> set = ACTIVE_BY_LEVEL.get(level);
+            final java.util.Map<BlockPos, RailgunEmitterBlockEntity> set = ACTIVE_BY_LEVEL.get(level);
             return set == null ? 0 : set.size();
         }
     }
@@ -42,8 +51,16 @@ public final class RailgunRegistry {
     /** Read-only snapshot of all emitter positions for the level. */
     public static Set<BlockPos> snapshot(final Level level) {
         synchronized (RailgunRegistry.class) {
-            final Set<BlockPos> set = ACTIVE_BY_LEVEL.get(level);
-            return set == null ? Collections.emptySet() : new HashSet<>(set);
+            final java.util.Map<BlockPos, RailgunEmitterBlockEntity> set = ACTIVE_BY_LEVEL.get(level);
+            return set == null ? Collections.emptySet() : new HashSet<>(set.keySet());
+        }
+    }
+
+    /** Resolve an emitter from the registration snapshot, including Sable plots. */
+    public static RailgunEmitterBlockEntity find(final Level level, final BlockPos pos) {
+        synchronized (RailgunRegistry.class) {
+            final java.util.Map<BlockPos, RailgunEmitterBlockEntity> set = ACTIVE_BY_LEVEL.get(level);
+            return set == null ? null : set.get(pos);
         }
     }
 }

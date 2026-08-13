@@ -25,7 +25,8 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         IMMERSIVE_ENGINEERING("immersive_engineering"),
         ALEXSCAVES("alexscaves"),
         CREATE_ADDITION("create_addition"),
-        PLANT_OIL_FERROFLUID("plant_oil_ferrofluid");
+        PLANT_OIL_FERROFLUID("plant_oil_ferrofluid"),
+        ORE_EXCAVATION("ore_excavation");
 
         private final String serializedName;
 
@@ -68,6 +69,7 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
             case ALEXSCAVES -> MagConfig.alexsCavesRecipesEnabled();
             case CREATE_ADDITION -> MagConfig.createAdditionRecipesEnabled();
             case PLANT_OIL_FERROFLUID -> MagConfig.plantOilFerrofluidRecipeEnabled();
+            case ORE_EXCAVATION -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get();
         };
     }
 

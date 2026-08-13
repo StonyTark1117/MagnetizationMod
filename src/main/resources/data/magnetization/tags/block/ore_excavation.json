@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#magnetization:metallic_ores",
+    "magnetization:helium_3_geode",
+    "magnetization:magnetic_gravel"
+  ]
+}

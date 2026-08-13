@@ -18,11 +18,11 @@ import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
- * Tokamak fusion reactor controller. When ringed by Tokamak Coils (the 8
- * blocks around it in its own layer form the confinement torus) and loaded with
- * deuterium fuel, it fuses and generates a large, steady FE output that it
- * pushes to adjacent machines/cables. Fuel is loaded by right-clicking with a
- * Deuterium Cell.
+ * Tokamak fusion reactor controller. When ringed by a complete square perimeter
+ * of Tokamak Coils (3x3 minimum; larger odd rings are supported) and loaded
+ * with deuterium fuel, it fuses and generates a large, steady FE output that it
+ * pushes to adjacent machines/cables. Larger rings scale the reactor linearly.
+ * Fuel is loaded by right-clicking with a Deuterium Cell.
  */
 public class TokamakControllerBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData {
@@ -97,7 +97,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
         return com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK;
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
-    @Override public int guiEnergyMax() { return com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(); }
+    @Override public int guiEnergyMax() {
+        return scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), ringMultiplier());
+    }
     @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
     @Override public int guiStat2() { return lastOutput; }        // FE/tick out
     @Override public int guiStat3() { return currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
@@ -126,8 +128,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
                                   final TokamakControllerBlockEntity be) {
         if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
-        be.energy.resize(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
-                com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3());
+        final int multiplier = ringMultiplier(level, pos);
+        be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
+                scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
         // gen/output use that tier's rates (mixing tiers cleanly, one cell at a time).
         if (be.burnTime <= 0) {
@@ -143,30 +146,43 @@ public class TokamakControllerBlockEntity extends BlockEntity
         }
         final boolean fusing = be.burnTime > 0 && isRingFormed(level, pos);
         if (fusing) {
-            be.energy.generate(tierGenPerTick(be.currentTier));
+            be.energy.generate(scaled(tierGenPerTick(be.currentTier), multiplier));
             be.burnTime--;
             be.setChanged();
         }
         if (state.getValue(BlockStateProperties.LIT) != fusing) {
             level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
         }
-        be.lastOutput = pushEnergy(server, pos, be.energy, tierOutputRate(be.currentTier));
+        be.lastOutput = pushEnergy(server, pos, be.energy,
+                scaled(tierOutputRate(be.currentTier), multiplier));
         if (server.getGameTime() % 10L == 0L && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
     }
 
-    /** The 8 blocks around the controller in its own layer must all be Tokamak Coils. */
+    /** The largest complete odd-edged Tokamak coil ring up to the configured limit. */
     public static boolean isRingFormed(final Level level, final BlockPos pos) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
-                if (!level.getBlockState(pos.offset(dx, 0, dz)).is(MagBlocks.TOKAMAK_COIL.get())) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return TokamakRingPreview.preview(level, pos).valid();
+    }
+
+    /** The completed ring edge, or 0 while no minimum ring is formed. */
+    public static int ringEdge(final Level level, final BlockPos pos) {
+        final TokamakRingPreview.Preview preview = TokamakRingPreview.preview(level, pos);
+        return preview.valid() ? preview.edge() : 0;
+    }
+
+    /** Linear performance scale: 3x3 = 1, 5x5 = 3, 7x7 = 5, etc. */
+    public static int ringMultiplier(final Level level, final BlockPos pos) {
+        return Math.max(1, ringEdge(level, pos) - 2);
+    }
+
+    private int ringMultiplier() {
+        return level == null ? 1 : ringMultiplier(level, getBlockPos());
+    }
+
+    private static int scaled(final int base, final int multiplier) {
+        return (int) Math.min(Integer.MAX_VALUE,
+                Math.max(0L, (long) Math.max(0, base) * Math.max(1, multiplier)));
     }
 
     /** Push to neighbours; returns total FE moved this tick (the GUI's output readout). */

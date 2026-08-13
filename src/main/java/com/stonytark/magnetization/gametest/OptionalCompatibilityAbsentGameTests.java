@@ -26,7 +26,7 @@ public final class OptionalCompatibilityAbsentGameTests {
     public static void optionalAdaptersAndRecipesStayAbsent(final GameTestHelper helper) {
         for (final String mod : new String[]{"create_new_age", "immersiveengineering", "alexscaves",
                 "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission",
-                "rocketnautics"}) {
+                "rocketnautics", "oreexcavation"}) {
             helper.assertTrue(!ModList.get().isLoaded(mod),
                     "Minimal absent-mod profile unexpectedly contains " + mod);
         }
@@ -85,7 +85,8 @@ public final class OptionalCompatibilityAbsentGameTests {
                 MagConfig.THE_ONE_PROBE_COMPAT_ENABLED,
                 MagConfig.JEI_COMPAT_ENABLED,
                 MagConfig.REI_COMPAT_ENABLED,
-                MagConfig.EMI_COMPAT_ENABLED}) {
+                MagConfig.EMI_COMPAT_ENABLED,
+                MagConfig.ORE_EXCAVATION_COMPAT_ENABLED}) {
             originals.put(value, value.get());
         }
         try {
@@ -119,7 +120,8 @@ public final class OptionalCompatibilityAbsentGameTests {
                     "Recipe master condition remained enabled");
             helper.assertTrue(!MagConfig.jadeCompatEnabled() && !MagConfig.wthitCompatEnabled()
                             && !MagConfig.theOneProbeCompatEnabled() && !MagConfig.jeiCompatEnabled()
-                            && !MagConfig.reiCompatEnabled() && !MagConfig.emiCompatEnabled(),
+                            && !MagConfig.reiCompatEnabled() && !MagConfig.emiCompatEnabled()
+                            && !MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get(),
                     "HUD or recipe-viewer master remained enabled");
             helper.succeed();
         } finally {

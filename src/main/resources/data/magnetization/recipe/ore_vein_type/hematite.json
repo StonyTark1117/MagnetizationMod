@@ -1,0 +1,15 @@
+{
+  "type": "createoreexcavation:vein",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "createoreexcavation" },
+    { "type": "magnetization:compat_config", "feature": "ore_excavation" }
+  ],
+  "amountMultiplierMax": 22.0,
+  "amountMultiplierMin": 8.0,
+  "biomeWhitelist": "minecraft:is_overworld",
+  "finite": "never",
+  "icon": { "count": 1, "id": "magnetization:hematite_ore" },
+  "name": "{\"translate\":\"block.magnetization.hematite_ore\"}",
+  "placement": { "salt": 148227, "separation": 8, "spacing": 152 },
+  "priority": 0
+}

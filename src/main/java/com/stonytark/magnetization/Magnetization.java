@@ -100,6 +100,16 @@ public final class Magnetization {
             com.stonytark.magnetization.compat.aeroportals.MagAeroPortalsCompat.wire(NeoForge.EVENT_BUS);
         }
 
+        // Ore Excavation posts a start event after constructing its material
+        // group.  Add our ore/geode tag there so its configured veinminer can
+        // reach Magnetization deposits without becoming a hard dependency.
+        // Config values are not populated until after mod construction. The
+        // listener applies the config gate when Ore Excavation posts its first
+        // excavation event, so this optional API is still wired safely here.
+        if (ModList.get().isLoaded("oreexcavation")) {
+            com.stonytark.magnetization.compat.oreexcavation.MagOreExcavationCompat.wire(NeoForge.EVENT_BUS);
+        }
+
         // Client-only: light up the "Config" button on the Mods list with NeoForge's
         // built-in auto-generated config screen. The guard keeps the client-side
         // ConfigurationScreen / IConfigScreenFactory classes from being touched

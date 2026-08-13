@@ -118,6 +118,15 @@ public final class MagTags {
     public static final TagKey<Block> METALLIC_ORES =
             TagKey.create(Registries.BLOCK, Magnetization.id("metallic_ores"));
 
+    /**
+     * Ore-like blocks that Ore Excavation may treat as one material vein when
+     * that optional mod is installed.  This is deliberately narrower than the
+     * general ferromagnetic tag: storage blocks and machine casings should not
+     * become veinminer targets just because they are magnetic.
+     */
+    public static final TagKey<Block> ORE_EXCAVATION_BLOCKS =
+            TagKey.create(Registries.BLOCK, Magnetization.id("ore_excavation"));
+
     /** Magnetic blocks that, placed next to an anvil, dampen it — the magnetic
      *  field steadies the impact, so the anvil doesn't degrade and its clang is
      *  deadened. Curated to our magnet blocks; extend by appending. */

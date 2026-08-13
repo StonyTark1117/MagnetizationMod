@@ -173,14 +173,16 @@ public class RailgunRemoteItem extends Item {
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.success(stack);
         }
-        if (!server.isLoaded(pos)) {
+        if (!server.isLoaded(pos) && RailgunRegistry.find(server, pos) == null) {
             player.displayClientMessage(Component.translatable(
                             "item.magnetization.railgun_remote.not_loaded",
                             pos.getX(), pos.getY(), pos.getZ())
                     .withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.success(stack);
         }
-        if (!(server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity be)) {
+        final RailgunEmitterBlockEntity be = server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity found
+                ? found : RailgunRegistry.find(server, pos);
+        if (be == null) {
             player.displayClientMessage(Component.translatable(
                             "item.magnetization.railgun_remote.missing",
                             pos.getX(), pos.getY(), pos.getZ())
@@ -196,8 +198,10 @@ public class RailgunRemoteItem extends Item {
     /** @return the bound emitter if it is in this level and its chunk is loaded, else {@code null}. */
     private static @Nullable RailgunEmitterBlockEntity reachableEmitter(
             final ServerLevel server, final ResourceKey<Level> dim, final BlockPos pos) {
-        if (!server.dimension().equals(dim) || !server.isLoaded(pos)) return null;
-        return server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity be ? be : null;
+        if (!server.dimension().equals(dim)) return null;
+        if (!server.isLoaded(pos)) return RailgunRegistry.find(server, pos);
+        return server.getBlockEntity(pos) instanceof RailgunEmitterBlockEntity be
+                ? be : RailgunRegistry.find(server, pos);
     }
 
     private static void feedback(final Player player, final String key, final ChatFormatting style) {

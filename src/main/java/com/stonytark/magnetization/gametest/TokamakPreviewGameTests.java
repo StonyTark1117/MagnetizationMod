@@ -39,4 +39,25 @@ public final class TokamakPreviewGameTests {
                 "Preview should mark the missing Tokamak coil at " + missing);
         helper.succeed();
     }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "tokamakPreview")
+    public static void tokamakPreviewAcceptsExpandedRing(final GameTestHelper helper) {
+        final BlockPos controller = new BlockPos(5, 1, 5);
+        helper.setBlock(controller, MagBlocks.TOKAMAK_CONTROLLER.get());
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (Math.abs(dx) == 2 || Math.abs(dz) == 2) {
+                    helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
+                }
+            }
+        }
+
+        final var preview = TokamakRingPreview.preview(helper.getLevel(), helper.absolutePos(controller), 7);
+        helper.assertTrue(preview.valid() && preview.edge() == 5 && preview.coilCount() == 16,
+                "A complete 5x5 Tokamak perimeter should be accepted as an expanded ring");
+        helper.assertTrue(com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
+                        .ringMultiplier(helper.getLevel(), helper.absolutePos(controller)) == 3,
+                "Expanded Tokamak ring did not receive its expected 3x performance scale");
+        helper.succeed();
+    }
 }
