@@ -29,6 +29,8 @@
 - Synchronized JER with all ten ore families and every other natural resource, including geodes, gas pockets, magnetic gravel, anomaly lodestone clusters, meteorites, and petrified wood; its automated catalog test now detects worldgen, distribution, variant, or loot drift.
 - Added matching common block ore tags for Bastnäsite, Monazite, Cobaltite, and Borax so the Ore Dowsing Compass and Ore Excavation include every 1.4 rare-earth ore.
 - Added a shared JEI/REI/EMI rare-earth progression topic covering the four source ores, concentrates, alloys, blanks, sintered intermediates, and finished magnets.
+- Updated the reproducible manual-playtest worlds for 1.4 with Gas Exciter/Vent, Air Separator, Ion Thruster, and rare-earth progression stations plus matching survival inputs and automated captures.
+- Added the six missing noble-gas block names used by block-level inspection overlays and corrected stale JER metadata documentation.
 - Rare-earth magnet blocks now use a valid permanent-magnet block entity and emit their intended tiers: samarium–cobalt is **MEDIUM**, neodymium is **STRONG**.
 - Replaced the rare-earth feature's placeholder vanilla ore, tool, armor, storage-block, and magnet models with dedicated textures and complete translations/tooltips.
 - Bounded and synchronized the handheld Gas Detector's scan cache, replacing time buckets in cache keys with in-place refreshed readings, a 64-origin per-level LRU cap, weak level ownership, and immediate world-unload eviction. Its range scan now skips unloaded columns and avoids block-entity lookups for ordinary blocks.

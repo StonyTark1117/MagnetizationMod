@@ -343,7 +343,7 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 
 `./gradlew runClient` starts an in-development client; `./gradlew runServer` starts a hands-on dedicated server. `./gradlew runData` regenerates recipes, loot tables, vanilla mining tags, and crater structure templates; compatibility tags and other curated data remain hand-authored.
 
-### Prepared 1.3.0 playtest worlds
+### Prepared 1.4.0 playtest worlds
 
 Two isolated client profiles keep persistent, disposable saves under
 `run-playtest-lab/` and `run-playtest-survival/`:
@@ -360,12 +360,14 @@ launches reopen the persistent save without rebuilding over your observations.
 - **Test Lab:** Creative mode, a complete Magnetization item chest bank, a focused
   inventory kit, texture/material gallery, Electrolyzer rejection and output-stall
   stations, formed Tokamak and Fusion structures, a powered Railgun, all Dipole
-  facings, Gallium/Golem inspection, an automation bench, and marked ship/portal
-  lanes with their supplies.
+  facings, Gas Exciter/Vent and noble-gas inspection, Air Separator and Ion Thruster
+  stations, a complete rare-earth source-to-magnet gallery, Gallium/Golem inspection,
+  an automation bench, and marked ship/portal lanes with their supplies.
 - **Survival Progression:** Survival mode, crafting/smelting infrastructure, empty
   progression machines, formed Tokamak/Fusion structures, and raw inputs for the
-  Water → Hydrogen → Deuterium → Tritium → Helium-3 chain. Finished isotope fuels
-  are intentionally not supplied, so advancement and recipe progression remain real.
+  Water → Hydrogen → Deuterium → Tritium → Helium-3 chain plus all four raw rare-earth
+  precursor ores. Finished isotope fuels, concentrates, alloys, and magnets are
+  intentionally not supplied, so advancement and recipe progression remain real.
 
 The commands below exist only in these playtest profiles (permission level 2):
 

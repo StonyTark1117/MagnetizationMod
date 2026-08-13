@@ -108,7 +108,7 @@ open_or_create_world() {
   local deadline=$((SECONDS + 180))
   while (( SECONDS < deadline )); do
     [[ -f "$repo_dir/$game_dir/logs/latest.log" ]] &&
-      if rg -q 'Magnetization 1\.3\.0 .* staged at|joined the game' "$repo_dir/$game_dir/logs/latest.log"; then
+      if rg -q 'Magnetization [0-9]+\.[0-9]+\.[0-9]+ .* staged at|joined the game' "$repo_dir/$game_dir/logs/latest.log"; then
         sleep 8
         return 0
       fi

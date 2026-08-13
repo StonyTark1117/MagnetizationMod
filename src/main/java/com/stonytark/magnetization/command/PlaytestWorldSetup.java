@@ -42,15 +42,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/** Reproducible, development-only 1.3.0 manual-playtest worlds. */
+/** Reproducible, development-only 1.4.0 manual-playtest worlds. */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class PlaytestWorldSetup {
     private static final String ENABLED_PROPERTY = "magnetization.playtest";
     private static final String PRESET_PROPERTY = "magnetization.playtestPreset";
     private static final String ROOT_TAG = "magnetization:playtest_setup";
-    private static final int VERSION = 1;
+    // Bump whenever the staged footprint changes so existing disposable saves
+    // are rebuilt on the next login instead of silently retaining an old lab.
+    private static final int VERSION = 2;
     private static final int LAB_X = 64;
-    private static final int LAB_Z = 48;
+    private static final int LAB_Z = 64;
 
     private PlaytestWorldSetup() {}
 
@@ -95,7 +97,11 @@ public final class PlaytestWorldSetup {
             Map.entry("automation", new BlockPos(4, 2, 35)),
             Map.entry("gallium", new BlockPos(16, 2, 35)),
             Map.entry("ship", new BlockPos(32, 2, 40)),
-            Map.entry("portal", new BlockPos(51, 2, 40)));
+            Map.entry("portal", new BlockPos(51, 2, 40)),
+            Map.entry("gas_excitation", new BlockPos(8, 2, 56)),
+            Map.entry("air_separator", new BlockPos(21, 2, 56)),
+            Map.entry("ion_thruster", new BlockPos(33, 2, 56)),
+            Map.entry("rare_earth", new BlockPos(51, 2, 58)));
 
     @SubscribeEvent
     public static void onLogin(final PlayerEvent.PlayerLoggedInEvent event) {
@@ -136,7 +142,9 @@ public final class PlaytestWorldSetup {
         player.getFoodData().setFoodLevel(20);
         level.setDayTime(6000L);
         level.setWeatherParameters(0, 120000, false, false);
-        player.sendSystemMessage(Component.literal("Magnetization 1.3.0 " + preset.display
+        final String version = net.neoforged.fml.ModList.get().getModContainerById(Magnetization.MOD_ID)
+                .map(container -> container.getModInfo().getVersion().toString()).orElse("development");
+        player.sendSystemMessage(Component.literal("Magnetization " + version + " " + preset.display
                 + " staged at " + pos(anchor) + ". Use /magnetization playtest " + preset.id
                 + " reset to rebuild it."));
     }
@@ -348,7 +356,7 @@ public final class PlaytestWorldSetup {
     }
 
     private static void buildLab(final ServerLevel level, final BlockPos a) {
-        label(level, a.offset(2, 0, 2), "1.3.0 TEST LAB", "Reset: /magnetization", "playtest lab reset", "Stations ->");
+        label(level, a.offset(2, 0, 2), "1.4.0 TEST LAB", "Reset: /magnetization", "playtest lab reset", "Stations ->");
         buildGallery(level, a.offset(2, 0, 5));
         buildAllItemsStorage(level, a.offset(2, 0, 10));
 
@@ -415,6 +423,50 @@ public final class PlaytestWorldSetup {
         stockChest(level, a.offset(44, 1, 31), List.of(stack(Items.OBSIDIAN, 64), stack(Items.FLINT_AND_STEEL, 2),
                 stack(MagItems.RAILGUN_EMITTER.get(), 8), stack(MagItems.RAILGUN_REMOTE.get(), 8),
                 stack(MagItems.POLARITY_INVERTER.get(), 8), stack(MagItems.MAGNETITE_BLOCK.get(), 32)));
+
+        label(level, a.offset(2, 0, 48), "GAS EXCITATION", "Dormant + lit gases", "Detector + vent", "Supplies in chest");
+        set(level, a.offset(2, 0, 51), MagBlocks.GAS_EXCITER.get());
+        set(level, a.offset(2, -1, 51), Blocks.REDSTONE_BLOCK);
+        final List<Block> gases = List.of(MagBlocks.HELIUM_BLOCK.get(), MagBlocks.NEON_BLOCK.get(),
+                MagBlocks.ARGON_BLOCK.get(), MagBlocks.KRYPTON_BLOCK.get(), MagBlocks.XENON_BLOCK.get(),
+                MagBlocks.RADON_BLOCK.get());
+        for (int gas = 0; gas < gases.size(); gas++) set(level, a.offset(3 + gas * 2, 0, 51), gases.get(gas));
+        set(level, a.offset(15, 0, 51), MagBlocks.GAS_VENT.get());
+        stockChest(level, a.offset(8, 0, 54), List.of(stack(MagItems.GAS_DETECTOR.get(), 2),
+                stack(MagItems.HELIUM_BUCKET.get(), 4), stack(MagItems.NEON_BUCKET.get(), 4),
+                stack(MagItems.ARGON_BUCKET.get(), 4), stack(MagItems.KRYPTON_BUCKET.get(), 4),
+                stack(MagItems.XENON_BUCKET.get(), 4), stack(MagItems.RADON_BUCKET.get(), 4)));
+
+        label(level, a.offset(18, 0, 48), "AIR SEPARATOR", "Five output tanks", "Assign every face", "Module + filters");
+        set(level, a.offset(20, 0, 51), MagBlocks.AIR_SEPARATOR.get());
+        stockChest(level, a.offset(22, 0, 51), List.of(stack(MagItems.ISOTOPE_SEPARATION_MODULE.get(), 4),
+                stack(MagItems.AIR_FILTER.get(), 16), stack(MagItems.HELIUM_3_CRYSTAL.get(), 16),
+                stack(Items.BUCKET, 16)));
+
+        label(level, a.offset(29, 0, 48), "ION THRUSTER", "Ship-only drive", "Gas profiles + exhaust", "Propellants in chest");
+        set(level, a.offset(31, 0, 51), MagBlocks.ION_THRUSTER.get());
+        stockChest(level, a.offset(34, 0, 51), List.of(stack(MagItems.HELIUM_BUCKET.get(), 4),
+                stack(MagItems.NEON_BUCKET.get(), 4), stack(MagItems.ARGON_BUCKET.get(), 4),
+                stack(MagItems.KRYPTON_BUCKET.get(), 4), stack(MagItems.XENON_BUCKET.get(), 4),
+                stack(MagItems.RADON_BUCKET.get(), 4), stack(Items.REDSTONE_BLOCK, 8)));
+
+        label(level, a.offset(40, 0, 48), "RARE EARTH", "Four precursor ores", "SmCo -> NdFeB", "Chains in chests");
+        final List<Block> rareEarthBlocks = List.of(
+                MagBlocks.BASTNASITE_ORE.get(), MagBlocks.DEEPSLATE_BASTNASITE_ORE.get(),
+                MagBlocks.MONAZITE_ORE.get(), MagBlocks.DEEPSLATE_MONAZITE_ORE.get(),
+                MagBlocks.COBALTITE_ORE.get(), MagBlocks.DEEPSLATE_COBALTITE_ORE.get(),
+                MagBlocks.BORAX_ORE.get(), MagBlocks.DEEPSLATE_BORAX_ORE.get(),
+                MagBlocks.SAMARIUM_COBALT_BLOCK.get(), MagBlocks.NEODYMIUM_BLOCK.get(),
+                MagBlocks.SAMARIUM_COBALT_MAGNET.get(), MagBlocks.NEODYMIUM_MAGNET.get());
+        for (int block = 0; block < rareEarthBlocks.size(); block++) {
+            set(level, a.offset(40 + (block % 6) * 3, 0, 51 + (block / 6) * 3), rareEarthBlocks.get(block));
+        }
+        stockChest(level, a.offset(58, 0, 54), List.of(
+                stack(MagItems.BASTNASITE_CONCENTRATE.get(), 16), stack(MagItems.MONAZITE_CONCENTRATE.get(), 16),
+                stack(MagItems.COBALTITE_CONCENTRATE.get(), 16), stack(MagItems.BORON_DUST.get(), 16),
+                stack(MagItems.SAMARIUM_COBALT_ALLOY.get(), 16), stack(MagItems.NEODYMIUM_ALLOY.get(), 16),
+                stack(MagItems.SAMARIUM_COBALT_MAGNET_BLANK.get(), 8), stack(MagItems.NEODYMIUM_MAGNET_BLANK.get(), 8),
+                stack(MagItems.SINTERED_SAMARIUM_COBALT.get(), 8), stack(MagItems.SINTERED_NEODYMIUM.get(), 8)));
     }
 
     private static void buildSurvival(final ServerLevel level, final BlockPos a) {
@@ -433,14 +485,18 @@ public final class PlaytestWorldSetup {
         stockChest(level, a.offset(2, 1, 9), List.of(stack(Items.IRON_INGOT, 64), stack(Items.COPPER_INGOT, 64),
                 stack(Items.REDSTONE, 64), stack(Items.QUARTZ, 32), stack(Items.COAL, 64),
                 stack(MagItems.RAW_MAGNETITE.get(), 64), stack(MagItems.RAW_LITHIUM.get(), 64),
-                stack(MagItems.RAW_GALLIUM.get(), 32), stack(MagItems.HELIUM_3_CRYSTAL.get(), 16)));
+                stack(MagItems.RAW_GALLIUM.get(), 32), stack(MagItems.HELIUM_3_CRYSTAL.get(), 16),
+                stack(MagItems.BASTNASITE_ORE.get(), 32), stack(MagItems.MONAZITE_ORE.get(), 32),
+                stack(MagItems.COBALTITE_ORE.get(), 32), stack(MagItems.BORAX_ORE.get(), 32)));
         stockChest(level, a.offset(4, 1, 9), List.of(stack(Items.BUCKET, 16), stack(Items.WATER_BUCKET, 16),
                 stack(Items.GLASS_BOTTLE, 32), stack(Items.CHEST, 8), stack(Items.HOPPER, 8),
                 stack(Items.COPPER_BLOCK, 32), stack(Items.IRON_BLOCK, 32)));
         stockChest(level, a.offset(6, 1, 9), List.of(stack(MagItems.ELECTROLYZER.get(), 2),
                 stack(MagItems.TOKAMAK_CONTROLLER.get(), 2), stack(MagItems.TOKAMAK_COIL.get(), 64),
                 stack(MagItems.FUSION_THRUSTER.get(), 16), stack(MagItems.MHD_JET.get(), 4),
-                stack(MagItems.MICRO_THRUSTER.get(), 4)));
+                stack(MagItems.MICRO_THRUSTER.get(), 4), stack(MagItems.GAS_EXCITER.get(), 2),
+                stack(MagItems.GAS_VENT.get(), 2), stack(MagItems.AIR_SEPARATOR.get(), 2),
+                stack(MagItems.ION_THRUSTER.get(), 2)));
     }
 
     private static void buildGallery(final ServerLevel level, final BlockPos origin) {
@@ -450,8 +506,13 @@ public final class PlaytestWorldSetup {
                 MagBlocks.SOLID_GALLIUM.get(), MagBlocks.MAGNETITE_BLOCK.get(),
                 MagBlocks.HEMATITE_BLOCK.get(), MagBlocks.PYRRHOTITE_BLOCK.get(), MagBlocks.TITANOMAGNETITE_BLOCK.get(),
                 MagBlocks.ELECTROLYZER.get(), MagBlocks.TOKAMAK_CONTROLLER.get(), MagBlocks.FUSION_THRUSTER.get(),
-                MagBlocks.RAILGUN_EMITTER.get(), MagBlocks.DIPOLE_ELECTROMAGNET.get(), MagBlocks.MHD_JET.get());
-        for (int i = 0; i < blocks.size(); i++) set(level, origin.offset(8 + i * 2, 0, 0), blocks.get(i));
+                MagBlocks.RAILGUN_EMITTER.get(), MagBlocks.DIPOLE_ELECTROMAGNET.get(), MagBlocks.MHD_JET.get(),
+                MagBlocks.GAS_EXCITER.get(), MagBlocks.GAS_VENT.get(), MagBlocks.AIR_SEPARATOR.get(),
+                MagBlocks.ION_THRUSTER.get(), MagBlocks.SAMARIUM_COBALT_BLOCK.get(), MagBlocks.NEODYMIUM_BLOCK.get(),
+                MagBlocks.SAMARIUM_COBALT_MAGNET.get(), MagBlocks.NEODYMIUM_MAGNET.get());
+        for (int i = 0; i < blocks.size(); i++) {
+            set(level, origin.offset(8 + (i % 24) * 2, 0, (i / 24) * 2), blocks.get(i));
+        }
     }
 
     private static void buildAllItemsStorage(final ServerLevel level, final BlockPos origin) {
@@ -505,7 +566,10 @@ public final class PlaytestWorldSetup {
                 stack(MagItems.ELECTROLYZER.get(), 8), stack(MagItems.TOKAMAK_CONTROLLER.get(), 8),
                 stack(MagItems.TOKAMAK_COIL.get(), 64), stack(MagItems.FUSION_THRUSTER.get(), 32),
                 stack(MagItems.RAILGUN_EMITTER.get(), 16), stack(MagItems.MHD_JET.get(), 8),
-                stack(MagItems.MICRO_THRUSTER.get(), 8), stack(Items.COPPER_BLOCK, 64),
+                stack(MagItems.MICRO_THRUSTER.get(), 8), stack(MagItems.GAS_DETECTOR.get(), 1),
+                stack(MagItems.GAS_EXCITER.get(), 8), stack(MagItems.GAS_VENT.get(), 8),
+                stack(MagItems.AIR_SEPARATOR.get(), 8), stack(MagItems.ION_THRUSTER.get(), 8),
+                stack(MagItems.NEODYMIUM_MAGNET.get(), 8), stack(Items.COPPER_BLOCK, 64),
                 stack(Items.IRON_BLOCK, 64), stack(Items.REDSTONE_BLOCK, 32), stack(Items.WATER_BUCKET, 8));
     }
 

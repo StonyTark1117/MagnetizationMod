@@ -33,6 +33,7 @@ class NobleGasResourceCompletenessTest {
             resource("assets/magnetization/models/item/" + gas + "_bucket.json");
             resource("assets/magnetization/textures/item/" + gas + "_fill.png");
             assertTrue(lang.has("fluid_type.magnetization." + gas), () -> "Missing fluid translation for " + gas);
+            assertTrue(lang.has("block.magnetization." + gas), () -> "Missing gas block translation for " + gas);
             assertTrue(lang.has("item.magnetization." + gas + "_bucket"), () -> "Missing bucket translation for " + gas);
             assertTrue(tagValues("data/c/tags/fluid/" + gas + ".json").contains("magnetization:" + gas));
             assertTrue(tagValues("data/c/tags/item/buckets/" + gas + ".json")

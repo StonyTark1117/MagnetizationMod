@@ -8,10 +8,11 @@ The implemented 1.4 scope intentionally does not add Xenotime. Bastnäsite,
 Monazite, Cobaltite, and Borax are the complete precursor set for this release;
 Xenotime was an obsolete carry-over from an earlier draft, not existing content.
 
-Create: Aeronautics support in 1.4 remains the existing optional ship, field,
-and Sable runtime integration. Supplemental Aeronautics recipes are not a 1.4
-deliverable. Create: Cosmonautics does expose stable spacecraft components in
-the targeted runtime, so its guarded Samarium-Cobalt recipes remain in scope.
+Create: Aeronautics support in 1.4 remains the existing core ship, field, and
+Sable runtime integration. Aeronautics is still a required platform dependency;
+supplemental Aeronautics recipes are not a 1.4 deliverable. Create: Cosmonautics
+does expose stable spacecraft components in the targeted runtime, so its guarded
+Samarium-Cobalt recipes remain in scope.
 
 ## Magnet Progression
 
@@ -128,8 +129,8 @@ Base functionality:
 
 Create: Aeronautics integration:
 
-- Retain Magnetization's existing optional Aeronautics/Sable ship, field, and
-  physics integration without introducing a hard dependency.
+- Retain Magnetization's existing Aeronautics/Sable ship, field, and physics
+  integration as part of the mod's required core platform.
 
 - Do not add or advertise supplemental Aeronautics recipes in 1.4. Recipe
   compatibility can be reconsidered for a later release if the targeted addon
@@ -216,7 +217,7 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - Create processing recipes and optional TFMG/Immersive Engineering alternatives.
 
-- Existing optional Aeronautics runtime compatibility and guarded Cosmonautics recipe compatibility.
+- Existing core Aeronautics runtime integration and guarded Cosmonautics recipe compatibility.
 
 - Common tags for Samarium, Cobalt, SmCo Alloy, rare-earth concentrates, oxides, powders, plates, ingots, storage blocks, and machine magnets.
 
@@ -242,7 +243,8 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - TFMG, Immersive Engineering, and Cosmonautics compatibility recipes load only when their mods are present.
 
-- Aeronautics runtime integration remains optional and introduces no hard dependency.
+- Aeronautics runtime integration remains part of the required core platform;
+  no new supplemental recipe dependency is introduced.
 
 - Optional compatibility absence tests confirm no hard dependencies were introduced.
 
@@ -264,5 +266,5 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - No new machine is required for either rare-earth branch.
 
-- Create: Aeronautics runtime integration and Cosmonautics recipe/tag integration remain optional, not hard dependencies.
-
+- Create: Aeronautics remains a core dependency; Cosmonautics recipe/tag
+  integration remains optional and introduces no hard dependency.

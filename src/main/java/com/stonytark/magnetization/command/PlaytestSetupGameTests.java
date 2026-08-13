@@ -37,6 +37,16 @@ public final class PlaytestSetupGameTests {
                 "Lab must stage a powered Railgun lane");
         helper.assertTrue(level.getBlockState(anchor.offset(48, 0, 18)).is(MagBlocks.DIPOLE_ELECTROMAGNET.get()),
                 "Lab must stage the Dipole orientation row");
+        helper.assertTrue(level.getBlockState(anchor.offset(2, 0, 51)).is(MagBlocks.GAS_EXCITER.get())
+                        && level.getBlockState(anchor.offset(3, 0, 51)).is(MagBlocks.HELIUM_BLOCK.get()),
+                "Lab must stage the 1.4 gas-excitation station");
+        helper.assertTrue(level.getBlockState(anchor.offset(20, 0, 51)).is(MagBlocks.AIR_SEPARATOR.get()),
+                "Lab must stage the 1.4 Air Separator station");
+        helper.assertTrue(level.getBlockState(anchor.offset(31, 0, 51)).is(MagBlocks.ION_THRUSTER.get()),
+                "Lab must stage the 1.4 Ion Thruster station");
+        helper.assertTrue(level.getBlockState(anchor.offset(40, 0, 51)).is(MagBlocks.BASTNASITE_ORE.get())
+                        && level.getBlockState(anchor.offset(55, 0, 54)).is(MagBlocks.NEODYMIUM_MAGNET.get()),
+                "Lab must stage the 1.4 rare-earth source and finished-magnet gallery");
         helper.assertTrue(level.getBlockEntity(anchor.offset(2, 0, 10)) instanceof ChestBlockEntity allItems
                         && !allItems.isEmpty(),
                 "Lab must stage its all-items chest bank");
@@ -51,6 +61,12 @@ public final class PlaytestSetupGameTests {
                 "Survival preset must stage a formed Tokamak");
         helper.assertTrue(level.getBlockEntity(anchor.offset(2, 1, 9)) instanceof ChestBlockEntity rawInputs
                         && contains(rawInputs, MagItems.RAW_LITHIUM.get())
+                        && contains(rawInputs, MagItems.BASTNASITE_ORE.get())
+                        && contains(rawInputs, MagItems.MONAZITE_ORE.get())
+                        && contains(rawInputs, MagItems.COBALTITE_ORE.get())
+                        && contains(rawInputs, MagItems.BORAX_ORE.get())
+                        && !contains(rawInputs, MagItems.SAMARIUM_COBALT_ALLOY.get())
+                        && !contains(rawInputs, MagItems.NEODYMIUM_ALLOY.get())
                         && !contains(rawInputs, MagItems.TRITIUM_CELL.get())
                         && !contains(rawInputs, MagItems.HELIUM_3_CELL.get()),
                 "Survival supplies must contain raw lithium but no finished isotope fuel");

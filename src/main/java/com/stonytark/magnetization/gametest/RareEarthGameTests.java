@@ -7,6 +7,8 @@ import com.stonytark.magnetization.compat.RecipeViewerInfo;
 import com.stonytark.magnetization.content.MagneticMaterials;
 import com.stonytark.magnetization.content.effect.RareEarthEquipmentEffects;
 import com.stonytark.magnetization.content.item.MagneticToolPullHandler;
+import com.stonytark.magnetization.content.jet.MhdJetBlockEntity;
+import com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity;
 import com.stonytark.magnetization.content.permanent.PermanentMagnetBlockEntity;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagBlocks;
@@ -76,6 +78,40 @@ public final class RareEarthGameTests {
         wearer.setItemSlot(EquipmentSlot.FEET, ItemStack.EMPTY);
         helper.assertTrue(RareEarthEquipmentEffects.fieldSusceptibilityMultiplier(wearer) == 1.0d,
                 "A partial neodymium set must not activate Magnetic Anchoring");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void samariumCobaltWorksInBothMagnetSlotMachines(final GameTestHelper helper) {
+        final BlockPos motorPos = new BlockPos(0, 1, 0);
+        helper.setBlock(motorPos, MagBlocks.HOMOPOLAR_MOTOR.get());
+        final var motorEntity = helper.getBlockEntity(motorPos);
+        helper.assertTrue(motorEntity instanceof HomopolarMotorBlockEntity,
+                "Homopolar Motor block entity was not created");
+        if (!(motorEntity instanceof HomopolarMotorBlockEntity motor)) return;
+
+        final ItemStack motorMagnet = new ItemStack(MagItems.SAMARIUM_COBALT_MAGNET.get());
+        helper.assertTrue(motor.magnetContainer().canPlaceItem(0, motorMagnet),
+                "Samarium-cobalt magnet must be accepted by the Homopolar Motor");
+        motor.magnetContainer().setItem(0, motorMagnet);
+        helper.assertTrue(motor.getMagnet().is(MagItems.SAMARIUM_COBALT_MAGNET.get())
+                        && HomopolarMotorBlockEntity.speedFor(motor.getMagnet()) > 0,
+                "Samarium-cobalt magnet must drive the Homopolar Motor");
+
+        final BlockPos jetPos = new BlockPos(2, 1, 0);
+        helper.setBlock(jetPos, MagBlocks.MHD_JET.get());
+        final var jetEntity = helper.getBlockEntity(jetPos);
+        helper.assertTrue(jetEntity instanceof MhdJetBlockEntity,
+                "MHD Jet block entity was not created");
+        if (!(jetEntity instanceof MhdJetBlockEntity jet)) return;
+
+        final ItemStack jetMagnet = new ItemStack(MagItems.SAMARIUM_COBALT_MAGNET.get());
+        helper.assertTrue(jet.magnetContainer().canPlaceItem(0, jetMagnet),
+                "Samarium-cobalt magnet must be accepted by the MHD Jet");
+        jet.magnetContainer().setItem(0, jetMagnet);
+        helper.assertTrue(jet.getMagnet().is(MagItems.SAMARIUM_COBALT_MAGNET.get())
+                        && MhdJetBlockEntity.isMagnet(jet.getMagnet()),
+                "Samarium-cobalt magnet must activate the MHD Jet magnet tier");
         helper.succeed();
     }
 
