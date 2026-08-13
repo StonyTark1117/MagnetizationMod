@@ -62,6 +62,19 @@ configurations {
     largeWorldFixtureRuntime {
         extendsFrom largeWorldReproRuntime
     }
+    // Dedicated-server benchmark pack. It deliberately mirrors the broad
+    // server-safe compatibility stack used by large Create modpacks while
+    // remaining isolated from client-only localRuntime dependencies and the
+    // large-world reproducer's automatically active Chunky tooling.
+    stressRuntime {
+        extendsFrom simulatedCoastersRuntime, createBigCannonsRuntime,
+                createNewAgeRuntime, cosmonauticsRuntime,
+                createAdditionRuntime, immersiveEngineeringRuntime,
+                alexsCavesRuntime, createTracksRuntime, steamRailsRuntime,
+                dieselGeneratorsRuntime, copycatsRuntime,
+                enchantmentIndustryRuntime, enderTransmissionRuntime,
+                tfmgRuntime, oreExcavationRuntime, createOreExcavationRuntime
+    }
     // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
     // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
     // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
@@ -110,6 +123,7 @@ def minimalProfileTasks = [
         'runcuriosgametestserver',
         'runlargeworldbootstrapserver', 'runlargeworldfixtureserver',
         'runlargeworldreproserver', 'reproducelargeworldissue',
+        'runstressserver', 'performancestress',
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
         'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
@@ -203,6 +217,9 @@ def wantsLargeWorldRepro = lowered.any {
 def wantsLargeWorldFixture = lowered.any {
     it.endsWith('runlargeworldfixtureserver')
 }
+def wantsStressBenchmark = lowered.any {
+    it.endsWith('runstressserver') || it.endsWith('performancestress')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -221,7 +238,7 @@ def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTest
                             wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
                             wantsEnderTransmissionTests, wantsTfmgTests, wantsOreExcavationTests,
                             wantsCreateOreExcavationTests,
-                            wantsLargeWorldFixture, wantsLargeWorldRepro]
+                            wantsLargeWorldFixture, wantsLargeWorldRepro, wantsStressBenchmark]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -284,6 +301,9 @@ if (wantsLargeWorldRepro) {
 }
 if (wantsLargeWorldFixture) {
     configurations.runtimeClasspath { extendsFrom configurations.largeWorldFixtureRuntime }
+}
+if (wantsStressBenchmark) {
+    configurations.runtimeClasspath { extendsFrom configurations.stressRuntime }
 }
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
@@ -616,6 +636,14 @@ neoForge {
             programArgument 'nogui'
             gameDirectory = file('run-large-world-repro')
         }
+        // Disposable, console-driven performance harness. Scenario content is
+        // generated into the world datapack by scripts/run-performance-stress.sh;
+        // none of it is compiled into or shipped with the mod.
+        stressServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-performance-stress')
+        }
         // Headless test runner — invoke via `./gradlew runGameTestServer`.
         // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience
         // method (only client/server/data), so set the run type manually.
@@ -838,6 +866,7 @@ tasks.matching {
     it.name == 'runLargeWorldBootstrapServer'
             || it.name == 'runLargeWorldFixtureServer'
             || it.name == 'runLargeWorldReproServer'
+            || it.name == 'runStressServer'
 }.configureEach {
     standardInput = System.in
 }
@@ -1070,6 +1099,12 @@ tasks.register('reproduceLargeWorldIssue', Exec) {
     group = 'verification'
     description = 'Generate a fresh 2,000-chunk world and verify the GitHub issue #7 fix on a full server compat stack.'
     commandLine 'bash', 'scripts/run-large-world-repro.sh'
+}
+
+tasks.register('performanceStress', Exec) {
+    group = 'verification'
+    description = 'Runs reproducible server-tick stress scenarios and writes JSON/CSV benchmark reports.'
+    commandLine 'bash', 'scripts/run-performance-stress.sh'
 }
 
 dependencies {
@@ -1322,6 +1357,13 @@ dependencies {
     largeWorldReproRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
     largeWorldReproRuntime("maven.modrinth:lithium:${lithium_repro_version}")
     largeWorldReproRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
+    // Benchmark support mods intentionally omit Chunky and Chunky Offline:
+    // their background generation would contaminate tick-sprint measurements.
+    stressRuntime("maven.modrinth:curios:${curios_version}")
+    stressRuntime("maven.modrinth:patchouli:${patchouli_version}")
+    stressRuntime("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+    stressRuntime("maven.modrinth:lithium:${lithium_repro_version}")
+    stressRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
     // === Crash-repro deps (player's modpack StackOverflowError in
     // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
     // `#spartan_weaponry_unofficial:quivers` into both curios:back and
