@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.143'
 }
 
 group = mod_group
@@ -308,12 +308,12 @@ if (wantsStressBenchmark) {
 
 // CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
 // 1.115.1. The dev test mod create-new-age 1.2.0 enforces computercraft >=1.116.2
-// (optional, but range-checked when present), so force CC up to a 1.21.1 build that
-// satisfies it. CC is only an optional integration for every mod here, so this
-// doesn't affect aeronautics/simulated behaviour.
+// (optional, but range-checked when present), so force CC to the current 1.21.1
+// build. CC is only an optional integration for every mod here, so this doesn't
+// affect aeronautics/simulated behaviour.
 configurations.all {
     resolutionStrategy {
-        force 'cc.tweaked:cc-tweaked-1.21.1-forge:1.116.2'
+        force 'cc.tweaked:cc-tweaked-1.21.1-forge:1.120.2'
         // Curios arrives as a Maven transitive of aeronautics + simulated at 9.2.2,
         // but neoforge.mods.toml declares `curios [9.5.1,)`. FML enforces an OPTIONAL
         // dependency's range whenever that mod IS present, so 9.2.2 on the classpath
@@ -651,7 +651,7 @@ neoForge {
             }
         }
         // Headless test runner — invoke via `./gradlew runGameTestServer`.
-        // moddev 2.0.141 doesn't expose a `gameTestServer()` convenience
+        // moddev 2.0.143 doesn't expose a `gameTestServer()` convenience
         // method (only client/server/data), so set the run type manually.
         // The `neoforge.enabledGameTestNamespaces` system property (set in
         // configureEach above) gates which mods' tests get registered.
@@ -766,7 +766,7 @@ neoForge {
         }
         data {
             data()
-            // moddev 2.0.141 + NeoForge 21.1.230 doesn't automatically wire our
+            // moddev 2.0.143 + NeoForge 21.1.248 doesn't automatically wire our
             // mod into the data-gatherer's mod list — the GatherDataEvent fires
             // with an empty mod set otherwise. Passing --mod explicitly works
             // around it. Also pass --existing so the providers see our
@@ -1220,9 +1220,9 @@ dependencies {
     // BlameJared's maven (api-only artifact), which is published with NeoForge-
     // compatible mappings; the Modrinth mirror has classpath baggage that pulls
     // Yarn intermediary stubs.
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.43.0.394")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.44.0.401")
     // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
-    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.43.0.394")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.44.0.401")
 
     // REI — alternative recipe browser. Soft-dep; plugin discovered through
     // REI's @REIPluginClient annotation scanner.
@@ -1309,8 +1309,8 @@ dependencies {
     // `compat.CompatSodiumFluidRendererMixin` (@Inject require=1) matches 0 targets
     // against Sodium 0.8 and hard-crashes the client at world load. Bumped to a
     // Sodium-0.8-aware build. If you bump Sodium again, bump these to match.
-    localRuntime("maven.modrinth:supplementaries:qvhtxmU6") // 1.21.1-3.8.8
-    localRuntime("maven.modrinth:moonlight:in1fCzCm") // 1.21.1-3.3.2, Supplementaries hard dep
+    localRuntime("maven.modrinth:supplementaries:ZHJvgW8G") // 1.21.1-3.8.9
+    localRuntime("maven.modrinth:moonlight:Gh4IJiwq") // 1.21.1-3.3.3, Supplementaries hard dep
     // Sodium — the renderer most users run. localRuntime so we validate our
     // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
     // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
@@ -1330,8 +1330,8 @@ dependencies {
     // upstream mod fixes it; tag coverage remains in place either way.
     // localRuntime("maven.modrinth:aether:K5X5qMwG")
     // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
-    localRuntime("maven.modrinth:sophisticated-storage:g3RpAmpe") // 1.21.1-1.5.85.2060
-    localRuntime("maven.modrinth:sophisticated-core:JoVN8649") // 1.21.1-1.4.82.2230, Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:sophisticated-storage:r5eqHpxi") // 1.21.1-1.5.85.2077
+    localRuntime("maven.modrinth:sophisticated-core:fNqyH4kb") // 1.21.1-1.4.86.2259, Sophisticated Storage hard dep
     localRuntime("maven.modrinth:immersive-aircraft:RkWu0N4D") // 1.4.6+1.21.1
     // create-new-age 1.2.0 declares an OPTIONAL computercraft dep with range
     // [1.116.2,); NeoForge still enforces that range when CC is present. CC:Tweaked
@@ -1383,7 +1383,7 @@ dependencies {
     localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // accessories-compat-layer hard dep
     localRuntime("maven.modrinth:spartan-weaponry-unofficial:I7KW38kf") // 1.21.1-1.2.2
 
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
