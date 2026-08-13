@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 — Noble gases & rare-earth progression
 
 ### Added
 - Added six noble gases with density-aware flow, gas-specific excitation colors, configurable Helium/Radon cave pockets, Radon exposure, and steady Tritium radioluminescence. Hydrogen and Helium-3 now participate in the same powered excitation system.
