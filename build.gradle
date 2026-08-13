@@ -28,6 +28,9 @@ configurations {
     aeroportalsRuntime
     immersiveAeronauticsRuntime
     simulatedCoastersRuntime
+    simulatedCoastersTrackStylesRuntime {
+        extendsFrom simulatedCoastersRuntime
+    }
     createBigCannonsRuntime
     createNewAgeRuntime
     cosmonauticsRuntime
@@ -105,6 +108,7 @@ def minimalProfileTasks = [
         'runserver', 'rungametestserver', 'runoptionalcompatibilityabsentgametestserver',
         'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
+        'runsimulatedcoasterstrackstylesgametestserver', 'runsimulatedcoasterstrackstylesclient',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
         'runcosmonauticsgametestserver',
@@ -125,7 +129,8 @@ def minimalProfileTasks = [
         'runlargeworldreproserver', 'reproducelargeworldissue',
         'runstressserver', 'performancestress',
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
-        'smokesimulatedcoastersgametest', 'smokecreatebigcannonsgametest',
+        'smokesimulatedcoastersgametest', 'smokesimulatedcoasterstrackstylesgametest',
+        'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
         'smokecosmonauticsgametest',
         'smokeimmersiveengineeringgametest', 'smokealexscavesgametest',
@@ -165,6 +170,11 @@ def wantsImmersiveAeronauticsTests = lowered.any {
 }
 def wantsSimulatedCoastersTests = lowered.any {
     it.endsWith('runsimulatedcoastersgametestserver') || it.endsWith('smokesimulatedcoastersgametest')
+}
+def wantsSimulatedCoastersTrackStylesTests = lowered.any {
+    it.endsWith('runsimulatedcoasterstrackstylesgametestserver')
+            || it.endsWith('smokesimulatedcoasterstrackstylesgametest')
+            || it.endsWith('runsimulatedcoasterstrackstylesclient')
 }
 def wantsCreateBigCannonsTests = lowered.any {
     it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
@@ -231,7 +241,8 @@ def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
-                            wantsSimulatedCoastersTests, wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
+                            wantsSimulatedCoastersTests, wantsSimulatedCoastersTrackStylesTests,
+                            wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
                             wantsCosmonauticsTests,
                             wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
                             wantsCreateTracksTests, wantsSteamRailsTests,
@@ -250,6 +261,9 @@ if (wantsImmersiveAeronauticsTests) {
 }
 if (wantsSimulatedCoastersTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersRuntime }
+}
+if (wantsSimulatedCoastersTrackStylesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersTrackStylesRuntime }
 }
 if (wantsCreateBigCannonsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createBigCannonsRuntime }
@@ -399,6 +413,7 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
+        || it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
         || it.name == 'runCreateBigCannonsGameTestServer'
         || it.name == 'runCosmonauticsGameTestServer'
         || it.name == 'runSteamRailsGameTestServer'
@@ -430,6 +445,8 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersGameTestServer'
                 ? 'run-simulated-coasters-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
+                ? 'run-simulated-coasters-track-styles-gametest/world/session.lock'
                 : it.name == 'runCosmonauticsGameTestServer'
                 ? 'run-cosmonautics-gametest/world/session.lock'
                 : it.name == 'runCreateBigCannonsGameTestServer'
@@ -506,6 +523,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulatedcoasters/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters_track_styles/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createbigcannons/structure'
@@ -598,6 +618,10 @@ neoForge {
         // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
         // compat pack?", which is the question every player report starts with.
         clientMinimal { client(); gameDirectory = file('run-smoke-client') }
+        simulatedCoastersTrackStylesClient {
+            client()
+            gameDirectory = file('run-simulated-coasters-track-styles-client')
+        }
         // Persistent, disposable manual-playtest worlds. Create one normal world
         // in each game directory on first launch; the preset stages itself on the
         // first player login and remains resettable through /magnetization playtest.
@@ -683,6 +707,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-simulated-coasters-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters'
+        }
+        simulatedCoastersTrackStylesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-track-styles-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters_track_styles'
         }
         createBigCannonsGameTestServer {
             type = 'gameTestServer'
@@ -964,6 +993,13 @@ tasks.register('smokeSimulatedCoastersGameTest', Exec) {
             'run-simulated-coasters-gametest', '300'
 }
 
+tasks.register('smokeSimulatedCoastersTrackStylesGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Coasters magnetic compatibility with the optional Track Styles addon loaded.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersTrackStylesGameTestServer',
+            'run-simulated-coasters-track-styles-gametest', '300'
+}
+
 tasks.register('smokeCreateBigCannonsGameTest', Exec) {
     group = 'verification'
     description = 'Supervises the optional Create: Big Cannons projectile-field compatibility GameTest runtime.'
@@ -1149,6 +1185,14 @@ dependencies {
     // resolver and load the real release only in the dedicated compatibility suite.
     compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
     simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+    // Track Styles is a presentation-layer Coasters addon. It does not add a
+    // new vehicle type, so Magnetization's cart behavior remains owned by the
+    // core Coasters bridge. Load the published addon in a combined isolated
+    // profile to catch mixin/anchor-metadata regressions without shipping it.
+    simulatedCoastersTrackStylesRuntime(
+            "curse.maven:coasters-simulated-track-styles-1642719:${simulated_coasters_track_styles_test_file}") {
+        transitive = false
+    }
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }

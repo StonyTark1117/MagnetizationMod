@@ -105,6 +105,16 @@ versionRange = "[0.1.4,)"
 ordering = "AFTER"
 side = "BOTH"
 
+# Coasters Simulated: Track Styles — optional presentation-layer addon. Its
+# custom anchor style/color metadata remains compatible with Magnetization's
+# cart-field and Structural Inducer behavior; it adds no separate vehicle type.
+[[dependencies.${mod_id}]]
+modId = "coasterssimulatedextratypes"
+type = "optional"
+versionRange = "[1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
 # Create: Big Cannons — optional magnetic response for launched shells, rounds,
 # and projectile bursts. The integration is registry-ID based, so the main jar
 # remains loadable without CBC or Ritchie's Projectile Library.
