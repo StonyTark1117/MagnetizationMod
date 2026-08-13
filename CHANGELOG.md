@@ -29,6 +29,7 @@
 - Replaced the rare-earth feature's placeholder vanilla ore, tool, armor, storage-block, and magnet models with dedicated textures and complete translations/tooltips.
 - Bounded and synchronized the handheld Gas Detector's scan cache, replacing time buckets in cache keys with in-place refreshed readings, a 64-origin per-level LRU cap, weak level ownership, and immediate world-unload eviction. Its range scan now skips unloaded columns and avoids block-entity lookups for ordinary blocks.
 - Completed central inventory-use tooltip coverage for all 277 registered items.
+- Added comments, translation metadata, translated labels/tooltips, and generated-reference descriptions for every noble-gas configuration option.
 
 ## 1.3.1 — Field Manual recovery & large-world stability
 

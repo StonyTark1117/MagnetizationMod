@@ -181,6 +181,25 @@ def render(values: list[dict[str, str]], lang: dict[str, str]) -> str:
     return "\n".join(out)
 
 
+def validate_fully_documented_sections(values: list[dict[str, str]], lang: dict[str, str]) -> None:
+    """Keep release-critical config groups complete in TOML, config UIs, and docs."""
+    for section in ("nobleGases",):
+        for value in (item for item in values if item["section"] == section):
+            missing: list[str] = []
+            if not value["comment"]:
+                missing.append("comment")
+            translation = value["translation"]
+            if not translation:
+                missing.append("translation metadata")
+            else:
+                if translation not in lang:
+                    missing.append("translation label")
+                if f"{translation}.tooltip" not in lang:
+                    missing.append("translation tooltip")
+            if missing:
+                raise SystemExit(f"{value['path']} is missing {', '.join(missing)}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="fail when the generated file is stale")
@@ -189,6 +208,7 @@ def main() -> int:
     lang = json.loads(LANG.read_text())
     if not values:
         raise SystemExit("No config values found")
+    validate_fully_documented_sections(values, lang)
     output = render(values, lang)
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != output:

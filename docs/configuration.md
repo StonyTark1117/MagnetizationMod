@@ -342,47 +342,47 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
-| COMMON | nobleGases.gasExciterCapacity | number | 10000; 0-1000000000 | — |
-| COMMON | nobleGases.gasExciterReceive | number | 100; 0-1000000000 | — |
-| COMMON | nobleGases.gasExciterFePerTick | number | 20; 0-1000000 | — |
-| COMMON | nobleGases.gasExcitationMaxCells | number | 4096; 1-1000000 | — |
-| COMMON | nobleGases.radonRadiationEnabled | boolean | true | — |
-| COMMON | nobleGases.radonExposureThresholdTicks | number | 600; 1-1000000 | — |
-| COMMON | nobleGases.radonExposureDecayPerTick | number | 2; 0-1000 | — |
-| COMMON | nobleGases.radonDamageIntervalTicks | number | 100; 1-1000000 | — |
-| COMMON | nobleGases.radonDamageAmount | number | 1.0; 0.0-1000.0 | — |
-| COMMON | nobleGases.radonThrusterExposureRadius | number | 4; 0-64 | — |
-| COMMON | nobleGases.heliumPocketGenerationEnabled | boolean | true | — |
-| COMMON | nobleGases.radonPocketGenerationEnabled | boolean | true | — |
-| COMMON | nobleGases.heliumPocketRarity | number | 32; 1-1000000 | — |
-| COMMON | nobleGases.heliumPocketMinY | number | -48; -2048-2048 | — |
-| COMMON | nobleGases.heliumPocketMaxY | number | 16; -2048-2048 | — |
-| COMMON | nobleGases.radonPocketRarity | number | 48; 1-1000000 | — |
-| COMMON | nobleGases.radonPocketMinY | number | -60; -2048-2048 | — |
-| COMMON | nobleGases.radonPocketMaxY | number | -16; -2048-2048 | — |
-| COMMON | nobleGases.gasPocketMinCells | number | 2; 1-4096 | — |
-| COMMON | nobleGases.gasPocketMaxCells | number | 6; 1-4096 | — |
-| COMMON | nobleGases.airSeparatorTankCapacity | number | 8000; 1-1000000 | — |
-| COMMON | nobleGases.airSeparatorMinRpm | number | 64; 1-1024 | — |
-| COMMON | nobleGases.airSeparatorMaxRpm | number | 256; 1-1024 | — |
-| COMMON | nobleGases.airSeparatorStress | number | 16; 0-1024 | — |
-| COMMON | nobleGases.airSeparatorUpgradeStress | number | 8; 0-1024 | — |
-| COMMON | nobleGases.airSeparatorHeliumRateMilli | number | 500; 0-1000000 | — |
-| COMMON | nobleGases.airSeparatorNeonRateMilli | number | 1000; 0-1000000 | — |
-| COMMON | nobleGases.airSeparatorArgonRateMilli | number | 8000; 0-1000000 | — |
-| COMMON | nobleGases.airSeparatorKryptonRateMilli | number | 250; 0-1000000 | — |
-| COMMON | nobleGases.airSeparatorXenonRateMilli | number | 100; 0-1000000 | — |
-| COMMON | nobleGases.airSeparatorHelium3Work | number | 24000; 1-100000000 | — |
-| COMMON | nobleGases.airSeparatorAllowedDimensions | list | [minecraft:overworld] | — |
-| COMMON | nobleGases.ionThrusterTank | number | 8000; 1-1000000 | — |
-| COMMON | nobleGases.ionThrusterFeCapacity | number | 400000; 0-1000000000 | — |
-| COMMON | nobleGases.ionThrusterFeReceive | number | 8000; 0-1000000000 | — |
-| COMMON | nobleGases.ionThrusterBaseThrust | number | 0.30; 0.0-100.0 | Base velocity added per tick before the gas-specific thrust multiplier. 0.30 lets even the weakest Helium profile move a small six-block ship while Xenon and Radon retain their stronger acceleration. |
-| COMMON | nobleGases.ionThrusterBaseMaxSpeed | number | 8.0; 0.0-100.0 | — |
-| COMMON | nobleGases.ionThrusterThrustMultipliers | list | [.55, .80, 1.0, 1.30, 1.70, 1.90, 1.0] | — |
-| COMMON | nobleGases.ionThrusterSpeedMultipliers | list | [1.40, 1.25, 1.0, 1.20, 1.30, 1.15, 1.0] | — |
-| COMMON | nobleGases.ionThrusterFluidCosts | list | [2, 2, 3, 1, 1, 1, 2] | — |
-| COMMON | nobleGases.ionThrusterFeCosts | list | [100, 90, 80, 110, 130, 150, 100] | — |
+| COMMON | nobleGases.gasExciterCapacity | number | 10000; 0-1000000000 | Internal FE capacity of each Gas Exciter. |
+| COMMON | nobleGases.gasExciterReceive | number | 100; 0-1000000000 | Maximum FE a Gas Exciter can receive per tick, capped by its capacity. |
+| COMMON | nobleGases.gasExciterFePerTick | number | 20; 0-1000000 | FE consumed each tick while a Gas Exciter keeps an attached gas network excited. |
+| COMMON | nobleGases.gasExcitationMaxCells | number | 4096; 1-1000000 | Safety cap on gas cells visited by one excitation flood-fill. |
+| COMMON | nobleGases.radonRadiationEnabled | boolean | true | Enable accumulated Radon exposure, damage, and Ion Thruster exhaust exposure. |
+| COMMON | nobleGases.radonExposureThresholdTicks | number | 600; 1-1000000 | Exposure ticks accumulated before Radon begins dealing damage. |
+| COMMON | nobleGases.radonExposureDecayPerTick | number | 2; 0-1000 | Accumulated Radon exposure removed per safe tick; 0 disables natural decay. |
+| COMMON | nobleGases.radonDamageIntervalTicks | number | 100; 1-1000000 | Additional exposure ticks between damage pulses after the threshold is reached. |
+| COMMON | nobleGases.radonDamageAmount | number | 1.0; 0.0-1000.0 | Magic damage dealt by each Radon exposure pulse, in half-hearts. |
+| COMMON | nobleGases.radonThrusterExposureRadius | number | 4; 0-64 | Radius in blocks around active Radon Ion Thruster exhaust that accumulates exposure. |
+| COMMON | nobleGases.heliumPocketGenerationEnabled | boolean | true | Generate underground Helium gas pockets in newly generated Overworld chunks. |
+| COMMON | nobleGases.radonPocketGenerationEnabled | boolean | true | Generate underground Radon gas pockets in newly generated Overworld chunks. |
+| COMMON | nobleGases.heliumPocketRarity | number | 32; 1-1000000 | Average chunk spacing control for Helium pocket placement; higher is rarer. |
+| COMMON | nobleGases.heliumPocketMinY | number | -48; -2048-2048 | Minimum block Y at which Helium pocket cells may generate. |
+| COMMON | nobleGases.heliumPocketMaxY | number | 16; -2048-2048 | Maximum block Y at which Helium pocket cells may generate; clamped to the minimum. |
+| COMMON | nobleGases.radonPocketRarity | number | 48; 1-1000000 | Average chunk spacing control for Radon pocket placement; higher is rarer. |
+| COMMON | nobleGases.radonPocketMinY | number | -60; -2048-2048 | Minimum block Y at which Radon pocket cells may generate. |
+| COMMON | nobleGases.radonPocketMaxY | number | -16; -2048-2048 | Maximum block Y at which Radon pocket cells may generate; clamped to the minimum. |
+| COMMON | nobleGases.gasPocketMinCells | number | 2; 1-4096 | Minimum number of gas cells placed by one natural pocket feature. |
+| COMMON | nobleGases.gasPocketMaxCells | number | 6; 1-4096 | Maximum number of gas cells placed by one natural pocket; clamped to the minimum. |
+| COMMON | nobleGases.airSeparatorTankCapacity | number | 8000; 1-1000000 | Capacity in mB of each separate noble-gas output tank in an Air Separator. |
+| COMMON | nobleGases.airSeparatorMinRpm | number | 64; 1-1024 | Minimum absolute kinetic speed required for an Air Separator to operate. |
+| COMMON | nobleGases.airSeparatorMaxRpm | number | 256; 1-1024 | Kinetic speed at which Air Separator output scaling caps; clamped to the minimum RPM. |
+| COMMON | nobleGases.airSeparatorStress | number | 16; 0-1024 | Base Create stress impact of an operating Air Separator. |
+| COMMON | nobleGases.airSeparatorUpgradeStress | number | 8; 0-1024 | Additional Create stress impact while an Isotope Separation Module is installed. |
+| COMMON | nobleGases.airSeparatorHeliumRateMilli | number | 500; 0-1000000 | Helium output at minimum RPM, in thousandths of an mB per tick. |
+| COMMON | nobleGases.airSeparatorNeonRateMilli | number | 1000; 0-1000000 | Neon output at minimum RPM, in thousandths of an mB per tick. |
+| COMMON | nobleGases.airSeparatorArgonRateMilli | number | 8000; 0-1000000 | Argon output at minimum RPM, in thousandths of an mB per tick. |
+| COMMON | nobleGases.airSeparatorKryptonRateMilli | number | 250; 0-1000000 | Krypton output at minimum RPM, in thousandths of an mB per tick. |
+| COMMON | nobleGases.airSeparatorXenonRateMilli | number | 100; 0-1000000 | Xenon output at minimum RPM, in thousandths of an mB per tick. |
+| COMMON | nobleGases.airSeparatorHelium3Work | number | 24000; 1-100000000 | Work ticks at minimum RPM required to produce one Helium-3 Crystal with the isotope module. |
+| COMMON | nobleGases.airSeparatorAllowedDimensions | list | [minecraft:overworld] | Dimension IDs where Air Separators may extract atmospheric gases; an empty list allows none. |
+| COMMON | nobleGases.ionThrusterTank | number | 8000; 1-1000000 | Internal propellant tank capacity of each Ion Thruster, in mB. |
+| COMMON | nobleGases.ionThrusterFeCapacity | number | 400000; 0-1000000000 | Internal FE capacity of each Ion Thruster. |
+| COMMON | nobleGases.ionThrusterFeReceive | number | 8000; 0-1000000000 | Maximum FE an Ion Thruster can receive per tick, capped by its capacity. |
+| COMMON | nobleGases.ionThrusterBaseThrust | number | 0.30; 0.0-100.0 | Base velocity added per tick before the gas-specific thrust multiplier. The default moves small Helium-powered ships while preserving stronger heavy-gas acceleration. |
+| COMMON | nobleGases.ionThrusterBaseMaxSpeed | number | 8.0; 0.0-100.0 | Base ship speed cap in blocks per second before the propellant speed multiplier. |
+| COMMON | nobleGases.ionThrusterThrustMultipliers | list | [.55, .80, 1.0, 1.30, 1.70, 1.90, 1.0] | Thrust multipliers ordered Helium, Neon, Argon, Krypton, Xenon, Radon, then external fallback. |
+| COMMON | nobleGases.ionThrusterSpeedMultipliers | list | [1.40, 1.25, 1.0, 1.20, 1.30, 1.15, 1.0] | Speed-cap multipliers ordered Helium, Neon, Argon, Krypton, Xenon, Radon, then external fallback. |
+| COMMON | nobleGases.ionThrusterFluidCosts | list | [2, 2, 3, 1, 1, 1, 2] | Propellant consumed per operating tick, in mB, using the standard gas order. |
+| COMMON | nobleGases.ionThrusterFeCosts | list | [100, 90, 80, 110, 130, 150, 100] | FE consumed per operating tick using the standard gas order. |
 
 ## Lightning
 

@@ -1812,60 +1812,182 @@ public final class MagConfig {
         b.comment("Excitable noble gases, atmospheric separation, ion propulsion, and Radon safety.")
          .translation("magnetization.configuration.nobleGases")
          .push("nobleGases");
-        GAS_EXCITER_CAPACITY = b.defineInRange("gasExciterCapacity", 10_000, 0, 1_000_000_000);
-        GAS_EXCITER_RECEIVE = b.defineInRange("gasExciterReceive", 100, 0, 1_000_000_000);
-        GAS_EXCITER_FE_PER_TICK = b.defineInRange("gasExciterFePerTick", 20, 0, 1_000_000);
-        GAS_EXCITATION_MAX_CELLS = b.defineInRange("gasExcitationMaxCells", 4096, 1, 1_000_000);
-        RADON_RADIATION_ENABLED = b.define("radonRadiationEnabled", true);
-        RADON_EXPOSURE_THRESHOLD_TICKS = b.defineInRange("radonExposureThresholdTicks", 600, 1, 1_000_000);
-        RADON_EXPOSURE_DECAY_PER_TICK = b.defineInRange("radonExposureDecayPerTick", 2, 0, 1000);
-        RADON_DAMAGE_INTERVAL_TICKS = b.defineInRange("radonDamageIntervalTicks", 100, 1, 1_000_000);
-        RADON_DAMAGE_AMOUNT = b.defineInRange("radonDamageAmount", 1.0d, 0.0d, 1000.0d);
-        RADON_THRUSTER_EXPOSURE_RADIUS = b.defineInRange("radonThrusterExposureRadius", 4, 0, 64);
-        HELIUM_POCKET_GENERATION_ENABLED = b.define("heliumPocketGenerationEnabled", true);
-        RADON_POCKET_GENERATION_ENABLED = b.define("radonPocketGenerationEnabled", true);
-        HELIUM_POCKET_RARITY = b.defineInRange("heliumPocketRarity", 32, 1, 1_000_000);
-        HELIUM_POCKET_MIN_Y = b.defineInRange("heliumPocketMinY", -48, -2048, 2048);
-        HELIUM_POCKET_MAX_Y = b.defineInRange("heliumPocketMaxY", 16, -2048, 2048);
-        RADON_POCKET_RARITY = b.defineInRange("radonPocketRarity", 48, 1, 1_000_000);
-        RADON_POCKET_MIN_Y = b.defineInRange("radonPocketMinY", -60, -2048, 2048);
-        RADON_POCKET_MAX_Y = b.defineInRange("radonPocketMaxY", -16, -2048, 2048);
-        GAS_POCKET_MIN_CELLS = b.defineInRange("gasPocketMinCells", 2, 1, 4096);
-        GAS_POCKET_MAX_CELLS = b.defineInRange("gasPocketMaxCells", 6, 1, 4096);
-        AIR_SEPARATOR_TANK_CAPACITY = b.defineInRange("airSeparatorTankCapacity", 8000, 1, 1_000_000);
-        AIR_SEPARATOR_MIN_RPM = b.defineInRange("airSeparatorMinRpm", 64, 1, 1024);
-        AIR_SEPARATOR_MAX_RPM = b.defineInRange("airSeparatorMaxRpm", 256, 1, 1024);
-        AIR_SEPARATOR_STRESS = b.defineInRange("airSeparatorStress", 16, 0, 1024);
-        AIR_SEPARATOR_UPGRADE_STRESS = b.defineInRange("airSeparatorUpgradeStress", 8, 0, 1024);
+        GAS_EXCITER_CAPACITY = b
+                .comment("Internal FE capacity of each Gas Exciter.")
+                .translation("magnetization.configuration.nobleGases.gasExciterCapacity")
+                .defineInRange("gasExciterCapacity", 10_000, 0, 1_000_000_000);
+        GAS_EXCITER_RECEIVE = b
+                .comment("Maximum FE a Gas Exciter can receive per tick, capped by its capacity.")
+                .translation("magnetization.configuration.nobleGases.gasExciterReceive")
+                .defineInRange("gasExciterReceive", 100, 0, 1_000_000_000);
+        GAS_EXCITER_FE_PER_TICK = b
+                .comment("FE consumed each tick while a Gas Exciter keeps an attached gas network excited.")
+                .translation("magnetization.configuration.nobleGases.gasExciterFePerTick")
+                .defineInRange("gasExciterFePerTick", 20, 0, 1_000_000);
+        GAS_EXCITATION_MAX_CELLS = b
+                .comment("Safety cap on gas cells visited by one excitation flood-fill.")
+                .translation("magnetization.configuration.nobleGases.gasExcitationMaxCells")
+                .defineInRange("gasExcitationMaxCells", 4096, 1, 1_000_000);
+        RADON_RADIATION_ENABLED = b
+                .comment("Enable accumulated Radon exposure, damage, and Ion Thruster exhaust exposure.")
+                .translation("magnetization.configuration.nobleGases.radonRadiationEnabled")
+                .define("radonRadiationEnabled", true);
+        RADON_EXPOSURE_THRESHOLD_TICKS = b
+                .comment("Exposure ticks accumulated before Radon begins dealing damage.")
+                .translation("magnetization.configuration.nobleGases.radonExposureThresholdTicks")
+                .defineInRange("radonExposureThresholdTicks", 600, 1, 1_000_000);
+        RADON_EXPOSURE_DECAY_PER_TICK = b
+                .comment("Accumulated Radon exposure removed per safe tick; 0 disables natural decay.")
+                .translation("magnetization.configuration.nobleGases.radonExposureDecayPerTick")
+                .defineInRange("radonExposureDecayPerTick", 2, 0, 1000);
+        RADON_DAMAGE_INTERVAL_TICKS = b
+                .comment("Additional exposure ticks between damage pulses after the threshold is reached.")
+                .translation("magnetization.configuration.nobleGases.radonDamageIntervalTicks")
+                .defineInRange("radonDamageIntervalTicks", 100, 1, 1_000_000);
+        RADON_DAMAGE_AMOUNT = b
+                .comment("Magic damage dealt by each Radon exposure pulse, in half-hearts.")
+                .translation("magnetization.configuration.nobleGases.radonDamageAmount")
+                .defineInRange("radonDamageAmount", 1.0d, 0.0d, 1000.0d);
+        RADON_THRUSTER_EXPOSURE_RADIUS = b
+                .comment("Radius in blocks around active Radon Ion Thruster exhaust that accumulates exposure.")
+                .translation("magnetization.configuration.nobleGases.radonThrusterExposureRadius")
+                .defineInRange("radonThrusterExposureRadius", 4, 0, 64);
+        HELIUM_POCKET_GENERATION_ENABLED = b
+                .comment("Generate underground Helium gas pockets in newly generated Overworld chunks.")
+                .translation("magnetization.configuration.nobleGases.heliumPocketGenerationEnabled")
+                .define("heliumPocketGenerationEnabled", true);
+        RADON_POCKET_GENERATION_ENABLED = b
+                .comment("Generate underground Radon gas pockets in newly generated Overworld chunks.")
+                .translation("magnetization.configuration.nobleGases.radonPocketGenerationEnabled")
+                .define("radonPocketGenerationEnabled", true);
+        HELIUM_POCKET_RARITY = b
+                .comment("Average chunk spacing control for Helium pocket placement; higher is rarer.")
+                .translation("magnetization.configuration.nobleGases.heliumPocketRarity")
+                .defineInRange("heliumPocketRarity", 32, 1, 1_000_000);
+        HELIUM_POCKET_MIN_Y = b
+                .comment("Minimum block Y at which Helium pocket cells may generate.")
+                .translation("magnetization.configuration.nobleGases.heliumPocketMinY")
+                .defineInRange("heliumPocketMinY", -48, -2048, 2048);
+        HELIUM_POCKET_MAX_Y = b
+                .comment("Maximum block Y at which Helium pocket cells may generate; clamped to the minimum.")
+                .translation("magnetization.configuration.nobleGases.heliumPocketMaxY")
+                .defineInRange("heliumPocketMaxY", 16, -2048, 2048);
+        RADON_POCKET_RARITY = b
+                .comment("Average chunk spacing control for Radon pocket placement; higher is rarer.")
+                .translation("magnetization.configuration.nobleGases.radonPocketRarity")
+                .defineInRange("radonPocketRarity", 48, 1, 1_000_000);
+        RADON_POCKET_MIN_Y = b
+                .comment("Minimum block Y at which Radon pocket cells may generate.")
+                .translation("magnetization.configuration.nobleGases.radonPocketMinY")
+                .defineInRange("radonPocketMinY", -60, -2048, 2048);
+        RADON_POCKET_MAX_Y = b
+                .comment("Maximum block Y at which Radon pocket cells may generate; clamped to the minimum.")
+                .translation("magnetization.configuration.nobleGases.radonPocketMaxY")
+                .defineInRange("radonPocketMaxY", -16, -2048, 2048);
+        GAS_POCKET_MIN_CELLS = b
+                .comment("Minimum number of gas cells placed by one natural pocket feature.")
+                .translation("magnetization.configuration.nobleGases.gasPocketMinCells")
+                .defineInRange("gasPocketMinCells", 2, 1, 4096);
+        GAS_POCKET_MAX_CELLS = b
+                .comment("Maximum number of gas cells placed by one natural pocket; clamped to the minimum.")
+                .translation("magnetization.configuration.nobleGases.gasPocketMaxCells")
+                .defineInRange("gasPocketMaxCells", 6, 1, 4096);
+        AIR_SEPARATOR_TANK_CAPACITY = b
+                .comment("Capacity in mB of each separate noble-gas output tank in an Air Separator.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorTankCapacity")
+                .defineInRange("airSeparatorTankCapacity", 8000, 1, 1_000_000);
+        AIR_SEPARATOR_MIN_RPM = b
+                .comment("Minimum absolute kinetic speed required for an Air Separator to operate.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorMinRpm")
+                .defineInRange("airSeparatorMinRpm", 64, 1, 1024);
+        AIR_SEPARATOR_MAX_RPM = b
+                .comment("Kinetic speed at which Air Separator output scaling caps; clamped to the minimum RPM.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorMaxRpm")
+                .defineInRange("airSeparatorMaxRpm", 256, 1, 1024);
+        AIR_SEPARATOR_STRESS = b
+                .comment("Base Create stress impact of an operating Air Separator.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorStress")
+                .defineInRange("airSeparatorStress", 16, 0, 1024);
+        AIR_SEPARATOR_UPGRADE_STRESS = b
+                .comment("Additional Create stress impact while an Isotope Separation Module is installed.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorUpgradeStress")
+                .defineInRange("airSeparatorUpgradeStress", 8, 0, 1024);
         // Fixed-point thousandths of a millibucket per tick at the minimum RPM.
-        AIR_SEPARATOR_HELIUM_RATE_MILLI = b.defineInRange("airSeparatorHeliumRateMilli", 500, 0, 1_000_000);
-        AIR_SEPARATOR_NEON_RATE_MILLI = b.defineInRange("airSeparatorNeonRateMilli", 1000, 0, 1_000_000);
-        AIR_SEPARATOR_ARGON_RATE_MILLI = b.defineInRange("airSeparatorArgonRateMilli", 8000, 0, 1_000_000);
-        AIR_SEPARATOR_KRYPTON_RATE_MILLI = b.defineInRange("airSeparatorKryptonRateMilli", 250, 0, 1_000_000);
-        AIR_SEPARATOR_XENON_RATE_MILLI = b.defineInRange("airSeparatorXenonRateMilli", 100, 0, 1_000_000);
-        AIR_SEPARATOR_HELIUM3_WORK = b.defineInRange("airSeparatorHelium3Work", 24_000, 1, 100_000_000);
-        AIR_SEPARATOR_ALLOWED_DIMENSIONS = b.defineListAllowEmpty("airSeparatorAllowedDimensions",
-                List.of("minecraft:overworld"), () -> "minecraft:overworld", value -> value instanceof String);
-        ION_THRUSTER_TANK = b.defineInRange("ionThrusterTank", 8000, 1, 1_000_000);
-        ION_THRUSTER_FE_CAPACITY = b.defineInRange("ionThrusterFeCapacity", 400_000, 0, 1_000_000_000);
-        ION_THRUSTER_FE_RECEIVE = b.defineInRange("ionThrusterFeReceive", 8_000, 0, 1_000_000_000);
+        AIR_SEPARATOR_HELIUM_RATE_MILLI = b
+                .comment("Helium output at minimum RPM, in thousandths of an mB per tick.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorHeliumRateMilli")
+                .defineInRange("airSeparatorHeliumRateMilli", 500, 0, 1_000_000);
+        AIR_SEPARATOR_NEON_RATE_MILLI = b
+                .comment("Neon output at minimum RPM, in thousandths of an mB per tick.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorNeonRateMilli")
+                .defineInRange("airSeparatorNeonRateMilli", 1000, 0, 1_000_000);
+        AIR_SEPARATOR_ARGON_RATE_MILLI = b
+                .comment("Argon output at minimum RPM, in thousandths of an mB per tick.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorArgonRateMilli")
+                .defineInRange("airSeparatorArgonRateMilli", 8000, 0, 1_000_000);
+        AIR_SEPARATOR_KRYPTON_RATE_MILLI = b
+                .comment("Krypton output at minimum RPM, in thousandths of an mB per tick.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorKryptonRateMilli")
+                .defineInRange("airSeparatorKryptonRateMilli", 250, 0, 1_000_000);
+        AIR_SEPARATOR_XENON_RATE_MILLI = b
+                .comment("Xenon output at minimum RPM, in thousandths of an mB per tick.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorXenonRateMilli")
+                .defineInRange("airSeparatorXenonRateMilli", 100, 0, 1_000_000);
+        AIR_SEPARATOR_HELIUM3_WORK = b
+                .comment("Work ticks at minimum RPM required to produce one Helium-3 Crystal with the isotope module.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorHelium3Work")
+                .defineInRange("airSeparatorHelium3Work", 24_000, 1, 100_000_000);
+        AIR_SEPARATOR_ALLOWED_DIMENSIONS = b
+                .comment("Dimension IDs where Air Separators may extract atmospheric gases; an empty list allows none.")
+                .translation("magnetization.configuration.nobleGases.airSeparatorAllowedDimensions")
+                .defineListAllowEmpty("airSeparatorAllowedDimensions",
+                        List.of("minecraft:overworld"), () -> "minecraft:overworld", value -> value instanceof String);
+        ION_THRUSTER_TANK = b
+                .comment("Internal propellant tank capacity of each Ion Thruster, in mB.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterTank")
+                .defineInRange("ionThrusterTank", 8000, 1, 1_000_000);
+        ION_THRUSTER_FE_CAPACITY = b
+                .comment("Internal FE capacity of each Ion Thruster.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterFeCapacity")
+                .defineInRange("ionThrusterFeCapacity", 400_000, 0, 1_000_000_000);
+        ION_THRUSTER_FE_RECEIVE = b
+                .comment("Maximum FE an Ion Thruster can receive per tick, capped by its capacity.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterFeReceive")
+                .defineInRange("ionThrusterFeReceive", 8_000, 0, 1_000_000_000);
         ION_THRUSTER_BASE_THRUST = b.comment(
                 "Base velocity added per tick before the gas-specific thrust multiplier. 0.30 lets",
                 "even the weakest Helium profile move a small six-block ship while Xenon and Radon",
                 "retain their stronger acceleration.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterBaseThrust")
                 .defineInRange("ionThrusterBaseThrust", 0.30d, 0.0d, 100.0d);
-        ION_THRUSTER_BASE_MAX_SPEED = b.defineInRange("ionThrusterBaseMaxSpeed", 8.0d, 0.0d, 100.0d);
+        ION_THRUSTER_BASE_MAX_SPEED = b
+                .comment("Base ship speed cap in blocks per second before the propellant speed multiplier.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterBaseMaxSpeed")
+                .defineInRange("ionThrusterBaseMaxSpeed", 8.0d, 0.0d, 100.0d);
         // Order: Helium, Neon, Argon, Krypton, Xenon, Radon, external-tag fallback.
-        ION_THRUSTER_THRUST_MULTIPLIERS = b.defineListAllowEmpty("ionThrusterThrustMultipliers",
-                List.of(.55d, .80d, 1.0d, 1.30d, 1.70d, 1.90d, 1.0d), () -> 1.0d,
-                value -> value instanceof Double d && d >= 0.0d);
-        ION_THRUSTER_SPEED_MULTIPLIERS = b.defineListAllowEmpty("ionThrusterSpeedMultipliers",
-                List.of(1.40d, 1.25d, 1.0d, 1.20d, 1.30d, 1.15d, 1.0d), () -> 1.0d,
-                value -> value instanceof Double d && d >= 0.0d);
-        ION_THRUSTER_FLUID_COSTS = b.defineListAllowEmpty("ionThrusterFluidCosts",
-                List.of(2, 2, 3, 1, 1, 1, 2), () -> 1, value -> value instanceof Integer i && i >= 1);
-        ION_THRUSTER_FE_COSTS = b.defineListAllowEmpty("ionThrusterFeCosts",
-                List.of(100, 90, 80, 110, 130, 150, 100), () -> 100, value -> value instanceof Integer i && i >= 0);
+        ION_THRUSTER_THRUST_MULTIPLIERS = b
+                .comment("Thrust multipliers ordered Helium, Neon, Argon, Krypton, Xenon, Radon, then external fallback.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterThrustMultipliers")
+                .defineListAllowEmpty("ionThrusterThrustMultipliers",
+                        List.of(.55d, .80d, 1.0d, 1.30d, 1.70d, 1.90d, 1.0d), () -> 1.0d,
+                        value -> value instanceof Double d && d >= 0.0d);
+        ION_THRUSTER_SPEED_MULTIPLIERS = b
+                .comment("Speed-cap multipliers ordered Helium, Neon, Argon, Krypton, Xenon, Radon, then external fallback.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterSpeedMultipliers")
+                .defineListAllowEmpty("ionThrusterSpeedMultipliers",
+                        List.of(1.40d, 1.25d, 1.0d, 1.20d, 1.30d, 1.15d, 1.0d), () -> 1.0d,
+                        value -> value instanceof Double d && d >= 0.0d);
+        ION_THRUSTER_FLUID_COSTS = b
+                .comment("Propellant consumed per operating tick, in mB, using the standard gas order.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterFluidCosts")
+                .defineListAllowEmpty("ionThrusterFluidCosts",
+                        List.of(2, 2, 3, 1, 1, 1, 2), () -> 1, value -> value instanceof Integer i && i >= 1);
+        ION_THRUSTER_FE_COSTS = b
+                .comment("FE consumed per operating tick using the standard gas order.")
+                .translation("magnetization.configuration.nobleGases.ionThrusterFeCosts")
+                .defineListAllowEmpty("ionThrusterFeCosts",
+                        List.of(100, 90, 80, 110, 130, 150, 100), () -> 100,
+                        value -> value instanceof Integer i && i >= 0);
         b.pop();
 
         b.comment("Lightning Induced Remnant Magnetism (LIRM). Real-world phenomenon — a",
