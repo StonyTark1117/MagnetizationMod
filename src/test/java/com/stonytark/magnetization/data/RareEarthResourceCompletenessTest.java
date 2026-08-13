@@ -136,6 +136,28 @@ class RareEarthResourceCompletenessTest {
                 "c:ingots/neodymium_alloy", "magnetization:neodymium_alloy_plate");
     }
 
+    @Test
+    void createOreExcavationCoversEveryRareEarthFamilyWithIndependentGates() throws IOException {
+        final java.util.Map<String, String> outputs = java.util.Map.of(
+                "bastnasite", "magnetization:bastnasite_concentrate",
+                "monazite", "magnetization:monazite_concentrate",
+                "cobaltite", "magnetization:cobaltite_concentrate",
+                "borax", "magnetization:boron_dust");
+        for (final var entry : outputs.entrySet()) {
+            final String ore = entry.getKey();
+            final JsonObject vein = json("data/magnetization/recipe/ore_vein_type/" + ore + ".json");
+            final JsonObject drilling = json("data/magnetization/recipe/drilling/" + ore + ".json");
+            final String gate = "ore_excavation_" + ore;
+            assertTrue(vein.getAsJsonArray("neoforge:conditions").toString().contains(gate),
+                    () -> ore + " infinite vein lacks its independent config condition");
+            assertTrue(drilling.getAsJsonArray("neoforge:conditions").toString().contains(gate),
+                    () -> ore + " drilling recipe lacks its independent config condition");
+            assertEquals("magnetization:ore_vein_type/" + ore, drilling.get("veinId").getAsString());
+            assertEquals(entry.getValue(), drilling.getAsJsonArray("output")
+                    .get(0).getAsJsonObject().get("id").getAsString());
+        }
+    }
+
     private static void assertFirstResult(final String recipe, final String expected) throws IOException {
         assertEquals(expected, json("data/magnetization/recipe/" + recipe + ".json")
                 .getAsJsonArray("results").get(0).getAsJsonObject().get("id").getAsString());

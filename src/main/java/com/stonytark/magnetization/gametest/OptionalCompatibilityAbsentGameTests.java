@@ -116,6 +116,14 @@ public final class OptionalCompatibilityAbsentGameTests {
             helper.assertTrue(!new CompatConfigCondition(CompatConfigCondition.Feature.TFMG_COMPAT)
                             .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
                             && !new CompatConfigCondition(CompatConfigCondition.Feature.PATCHOULI)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
+                            && !new CompatConfigCondition(CompatConfigCondition.Feature.ORE_EXCAVATION_BASTNASITE)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
+                            && !new CompatConfigCondition(CompatConfigCondition.Feature.ORE_EXCAVATION_MONAZITE)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
+                            && !new CompatConfigCondition(CompatConfigCondition.Feature.ORE_EXCAVATION_COBALTITE)
+                            .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY)
+                            && !new CompatConfigCondition(CompatConfigCondition.Feature.ORE_EXCAVATION_BORAX)
                             .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY),
                     "Recipe master condition remained enabled");
             helper.assertTrue(!MagConfig.jadeCompatEnabled() && !MagConfig.wthitCompatEnabled()

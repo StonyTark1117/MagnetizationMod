@@ -433,7 +433,11 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.createAdditionRecipesEnabled | boolean | true | Load Permanent Magnet alternatives for the Electric Motor and Alternator. Takes effect on data reload. |
 | COMMON | compat.createAdditionFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by Crafts & Additions Tesla Coils; 0 is a soft disable. |
 | COMMON | compat.createBigCannonsCompatEnabled | boolean | true | Master switch for Create: Big Cannons projectile runtime compatibility. Datapack material tags remain available independently. |
-| COMMON | compat.oreExcavationCompatEnabled | boolean | true | Allow Ore Excavation to bulk-excavate Magnetization ores and Helium-3 geodes while preserving Ore Excavation's own limits and blacklists. |
+| COMMON | compat.oreExcavationCompatEnabled | boolean | true | Master switch for Ore Excavation deposit grouping and all Create Ore Excavation infinite veins while preserving both add-ons' own limits and blacklists. |
+| COMMON | compat.createOreExcavationBastnasiteVeinEnabled | boolean | true | Load the Bastnäsite infinite-vein and drilling recipes. Disable this late-game source independently; takes effect on data reload. |
+| COMMON | compat.createOreExcavationMonaziteVeinEnabled | boolean | true | Load the Monazite infinite-vein and drilling recipes. Disable this late-game source independently; takes effect on data reload. |
+| COMMON | compat.createOreExcavationCobaltiteVeinEnabled | boolean | true | Load the Cobaltite infinite-vein and drilling recipes. Disable this late-game source independently; takes effect on data reload. |
+| COMMON | compat.createOreExcavationBoraxVeinEnabled | boolean | true | Load the Borax infinite-vein and drilling recipes. Disable this late-game source independently; takes effect on data reload. |
 | COMMON | compat.dieselGeneratorsCompatEnabled | boolean | true | Master switch for Create: Diesel Generators runtime compatibility. |
 | COMMON | compat.dieselGeneratorsFerrofluidSprayEnabled | boolean | true | Make chemical sprayer and turret projectiles carrying Ferrofluid apply Magnetized for ten seconds. |
 | COMMON | compat.enderTransmissionCompatEnabled | boolean | true | Master switch for Create: Ender Transmission compatibility and its optional field relay. |

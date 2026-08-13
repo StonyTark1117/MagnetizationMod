@@ -26,7 +26,11 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         ALEXSCAVES("alexscaves"),
         CREATE_ADDITION("create_addition"),
         PLANT_OIL_FERROFLUID("plant_oil_ferrofluid"),
-        ORE_EXCAVATION("ore_excavation");
+        ORE_EXCAVATION("ore_excavation"),
+        ORE_EXCAVATION_BASTNASITE("ore_excavation_bastnasite"),
+        ORE_EXCAVATION_MONAZITE("ore_excavation_monazite"),
+        ORE_EXCAVATION_COBALTITE("ore_excavation_cobaltite"),
+        ORE_EXCAVATION_BORAX("ore_excavation_borax");
 
         private final String serializedName;
 
@@ -70,6 +74,14 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
             case CREATE_ADDITION -> MagConfig.createAdditionRecipesEnabled();
             case PLANT_OIL_FERROFLUID -> MagConfig.plantOilFerrofluidRecipeEnabled();
             case ORE_EXCAVATION -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get();
+            case ORE_EXCAVATION_BASTNASITE -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get()
+                    && MagConfig.CREATE_ORE_EXCAVATION_BASTNASITE_VEIN_ENABLED.get();
+            case ORE_EXCAVATION_MONAZITE -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get()
+                    && MagConfig.CREATE_ORE_EXCAVATION_MONAZITE_VEIN_ENABLED.get();
+            case ORE_EXCAVATION_COBALTITE -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get()
+                    && MagConfig.CREATE_ORE_EXCAVATION_COBALTITE_VEIN_ENABLED.get();
+            case ORE_EXCAVATION_BORAX -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get()
+                    && MagConfig.CREATE_ORE_EXCAVATION_BORAX_VEIN_ENABLED.get();
         };
     }
 

@@ -19,6 +19,7 @@
 - Added a data-driven Gas Vent compatibility API and profiles for all eleven TFMG virtual gases, including buoyant recoverable clouds and Gas Exciter support.
 - Added optional **Create: Cosmonautics** recipes and material/fuel tags for heat-stable samarium-cobalt spacecraft components.
 - Added optional **Ore Excavation** deposit grouping and **Create Ore Excavation** infinite-vein recipes for Magnetization ores and Helium-3 geodes.
+- Added independently configurable Create Ore Excavation veins for Bastnäsite, Monazite, Cobaltite, and Borax so every native ore family has an infinite-deposit route.
 - Expanded the **Tokamak** from its fixed 3x3 ring into configurable odd-edged square rings up to 15x15 by default, with FE capacity, generation, and output scaling linearly with ring size.
 
 ### Changed

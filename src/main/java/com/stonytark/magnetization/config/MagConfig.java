@@ -475,6 +475,10 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue CREATE_ADDITION_FIELD_FORCE_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue CREATE_BIG_CANNONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue ORE_EXCAVATION_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ORE_EXCAVATION_BASTNASITE_VEIN_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ORE_EXCAVATION_MONAZITE_VEIN_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ORE_EXCAVATION_COBALTITE_VEIN_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_ORE_EXCAVATION_BORAX_VEIN_ENABLED;
     public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue DIESEL_GENERATORS_FERROFLUID_SPRAY_ENABLED;
     public static final ModConfigSpec.BooleanValue ENDER_TRANSMISSION_COMPAT_ENABLED;
@@ -2180,10 +2184,34 @@ public final class MagConfig {
                 .define("createBigCannonsCompatEnabled", true);
         ORE_EXCAVATION_COMPAT_ENABLED = b
                 .comment("Allow Ore Excavation to bulk-excavate Magnetization ore deposits and Helium-3 geodes.",
-                         "The optional bridge only adds Magnetization's own ore tag to an excavation;",
-                         "it does not change Ore Excavation's configured limits, tools, or blacklist.")
+                         "This is also the master switch for Create Ore Excavation infinite veins.",
+                         "The optional bridge does not change either addon's configured limits, tools, or blacklist.")
                 .translation("magnetization.configuration.compat.oreExcavationCompatEnabled")
                 .define("oreExcavationCompatEnabled", true);
+        CREATE_ORE_EXCAVATION_BASTNASITE_VEIN_ENABLED = b
+                .comment("Load the Bastnasite infinite-vein and drilling recipes for Create Ore Excavation.",
+                         "Disable this one late-game source without removing other Magnetization veins.",
+                         "Takes effect on data reload and still requires oreExcavationCompatEnabled.")
+                .translation("magnetization.configuration.compat.createOreExcavationBastnasiteVeinEnabled")
+                .define("createOreExcavationBastnasiteVeinEnabled", true);
+        CREATE_ORE_EXCAVATION_MONAZITE_VEIN_ENABLED = b
+                .comment("Load the Monazite infinite-vein and drilling recipes for Create Ore Excavation.",
+                         "Disable this one late-game source without removing other Magnetization veins.",
+                         "Takes effect on data reload and still requires oreExcavationCompatEnabled.")
+                .translation("magnetization.configuration.compat.createOreExcavationMonaziteVeinEnabled")
+                .define("createOreExcavationMonaziteVeinEnabled", true);
+        CREATE_ORE_EXCAVATION_COBALTITE_VEIN_ENABLED = b
+                .comment("Load the Cobaltite infinite-vein and drilling recipes for Create Ore Excavation.",
+                         "Disable this one late-game source without removing other Magnetization veins.",
+                         "Takes effect on data reload and still requires oreExcavationCompatEnabled.")
+                .translation("magnetization.configuration.compat.createOreExcavationCobaltiteVeinEnabled")
+                .define("createOreExcavationCobaltiteVeinEnabled", true);
+        CREATE_ORE_EXCAVATION_BORAX_VEIN_ENABLED = b
+                .comment("Load the Borax infinite-vein and drilling recipes for Create Ore Excavation.",
+                         "Disable this one late-game source without removing other Magnetization veins.",
+                         "Takes effect on data reload and still requires oreExcavationCompatEnabled.")
+                .translation("magnetization.configuration.compat.createOreExcavationBoraxVeinEnabled")
+                .define("createOreExcavationBoraxVeinEnabled", true);
         DIESEL_GENERATORS_COMPAT_ENABLED = b
                 .comment("Master switch for Create: Diesel Generators compatibility.")
                 .translation("magnetization.configuration.compat.dieselGeneratorsCompatEnabled")
