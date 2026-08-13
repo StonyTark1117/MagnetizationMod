@@ -82,6 +82,11 @@ class NobleGasResourceCompletenessTest {
         assertTrue(lang.has("item.magnetization.isotope_separation_module"));
         assertTrue(lang.has("item.magnetization.air_filter"));
         assertTrue(lang.has("tooltip.magnetization.air_filter.use"));
+        for (final String key : List.of("gas_exciter", "air_separator", "ion_thruster",
+                "isotope_separation_module", "fluid", "storage")) {
+            assertTrue(lang.has("tooltip.magnetization." + key + ".use"),
+                    () -> "Missing inventory-use tooltip translation for " + key);
+        }
         final JsonObject isotopeRecipe = json("data/magnetization/recipe/isotope_separation_module.json");
         final String isotopeIngredients = isotopeRecipe.getAsJsonArray("ingredients").toString();
         assertEquals(2, isotopeIngredients.split("magnetization:air_filter", -1).length - 1,

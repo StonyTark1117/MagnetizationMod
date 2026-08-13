@@ -3,6 +3,7 @@ package com.stonytark.magnetization.gametest;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.content.MagItemTooltips;
 import com.stonytark.magnetization.content.MachineFuelItemHandler;
 import com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlockEntity;
 import com.stonytark.magnetization.content.electrolyzer.ElectrolyzerBlockEntity;
@@ -42,6 +43,15 @@ public final class ReleaseCoverageGameTests {
     private static final String EMPTY = "empty";
 
     private ReleaseCoverageGameTests() {}
+
+    @GameTest(template = EMPTY, timeoutTicks = 40)
+    public static void everyRegisteredItemHasAUseTooltip(final GameTestHelper helper) {
+        for (final var holder : MagItems.REGISTER.getEntries()) {
+            helper.assertTrue(MagItemTooltips.hasUseTooltip(holder.get()),
+                    "Registered item has no central use tooltip: " + holder.getId());
+        }
+        helper.succeed();
+    }
 
     @GameTest(template = EMPTY, timeoutTicks = 40, batch = "configSyncPayload")
     public static void commonSettingsPayloadOverridesAndRestoresClientValues(final GameTestHelper helper) {

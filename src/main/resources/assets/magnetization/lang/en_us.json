@@ -949,6 +949,7 @@
   "tooltip.magnetization.magnetite_oxidising": "Oxidising: %s%% remaining",
   "tooltip.magnetization.iron_oxide_ore.use": "Mine for raw material; smelt or blast into an ingot. Magnetic — pulled by attractive fields.",
   "tooltip.magnetization.iron_oxide_storage.use": "Compact storage block. Recompose to 9 raw / ingots. Some variants act as passive emitters — see the Field Manual.",
+  "tooltip.magnetization.storage.use": "Compact nine-unit storage block; craft it back into its component material when needed.",
   "tooltip.magnetization.iron_oxide_ingot.use": "Smelting product. Crafts into the matching tier's tools/armor and into the storage block.",
   "tooltip.magnetization.metal_tool.use": "Magnetic tool. Place in an electromagnet GUI to stamp polarity; magnetized tools vacuum nearby ferromagnetic items and trigger their category signature ability on use.",
   "tooltip.magnetization.metal_armor.use": "Magnetic armor. Place in an electromagnet GUI to stamp polarity; while worn the player becomes a magnetizable entity drawn by fields.",

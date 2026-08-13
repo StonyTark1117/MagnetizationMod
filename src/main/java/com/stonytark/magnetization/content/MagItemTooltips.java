@@ -27,7 +27,7 @@ import java.util.Map;
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagItemTooltips {
 
-    private static Map<Item, String> map;
+    private static volatile Map<Item, String> map;
 
     private MagItemTooltips() {}
 
@@ -168,6 +168,9 @@ public final class MagItemTooltips {
         m.put(MagItems.RAILGUN_EMITTER.get(),          "tooltip.magnetization.railgun_emitter.use");
         m.put(MagItems.ELECTROLYZER.get(),             "tooltip.magnetization.electrolyzer.use");
         m.put(MagItems.GAS_VENT.get(),                 "tooltip.magnetization.gas_vent.use");
+        m.put(MagItems.GAS_EXCITER.get(),              "tooltip.magnetization.gas_exciter.use");
+        m.put(MagItems.AIR_SEPARATOR.get(),            "tooltip.magnetization.air_separator.use");
+        m.put(MagItems.ION_THRUSTER.get(),             "tooltip.magnetization.ion_thruster.use");
         m.put(MagItems.HOMOPOLAR_MOTOR.get(),          "tooltip.magnetization.homopolar_motor.use");
         m.put(MagItems.STRUCTURAL_INDUCER.get(),       "tooltip.magnetization.structural_inducer.use");
         m.put(MagItems.TOKAMAK_CONTROLLER.get(),       "tooltip.magnetization.tokamak_controller.use");
@@ -181,6 +184,7 @@ public final class MagItemTooltips {
         m.put(MagItems.PYROLYTIC_CARBON.get(),         "tooltip.magnetization.pyrolytic_carbon.use");
         m.put(MagItems.MR_FLUID_BUCKET.get(),          "tooltip.magnetization.mr_fluid.use");
         m.put(MagItems.PETRIFIED_WOOD.get(),           "tooltip.magnetization.petrified_wood.use");
+        m.put(MagItems.ISOTOPE_SEPARATION_MODULE.get(), "tooltip.magnetization.isotope_separation_module.use");
         for (final var anvil : new Item[]{
                 MagItems.MAGNETITE_ANVIL.get(), MagItems.MAGHEMITE_ANVIL.get(),
                 MagItems.HEMATITE_ANVIL.get(), MagItems.TITANOMAGNETITE_ANVIL.get(),
@@ -202,6 +206,10 @@ public final class MagItemTooltips {
                 MagItems.HELIUM_3_CRYSTAL.get(), MagItems.HELIUM_3_CELL.get(),
                 MagItems.TRITIUM_CELL.get(), MagItems.PYROLYTIC_CARBON.get(),
         }) m.put(i, "tooltip.magnetization.material.use");
+        for (final var i : new Item[]{
+                MagItems.FERROMAGNETIC_BLOCK.get(), MagItems.LITHIUM_BLOCK.get(),
+                MagItems.RAW_GALLIUM_BLOCK.get(), MagItems.RAW_LITHIUM_BLOCK.get(),
+        }) m.put(i, "tooltip.magnetization.storage.use");
         for (final var i : new Item[]{
                 MagItems.BASTNASITE_ORE.get(), MagItems.DEEPSLATE_BASTNASITE_ORE.get(),
                 MagItems.MONAZITE_ORE.get(), MagItems.DEEPSLATE_MONAZITE_ORE.get(),
@@ -239,6 +247,8 @@ public final class MagItemTooltips {
                 MagItems.FERROFLUID_BUCKET.get(), MagItems.MR_FLUID_BUCKET.get(), MagItems.DEUTERIUM_OXIDE_BUCKET.get(),
                 MagItems.GALLIUM_BUCKET.get(), MagItems.MIXED_GALLIUM_BUCKET.get(), MagItems.HYDROGEN_BUCKET.get(),
                 MagItems.TRITIUM_BUCKET.get(), MagItems.HELIUM_3_BUCKET.get(), MagItems.LIQUID_LITHIUM_BUCKET.get(),
+                MagItems.HELIUM_BUCKET.get(), MagItems.NEON_BUCKET.get(), MagItems.ARGON_BUCKET.get(),
+                MagItems.KRYPTON_BUCKET.get(), MagItems.XENON_BUCKET.get(), MagItems.RADON_BUCKET.get(),
         }) m.put(i, "tooltip.magnetization.fluid.use");
         for (final var i : new Item[]{
                 MagItems.PYRRHOTITE_CATALYST.get(), MagItems.ENHANCED_PYRRHOTITE_CATALYST.get(),
@@ -254,10 +264,15 @@ public final class MagItemTooltips {
         return m;
     }
 
-    @SubscribeEvent
-    public static void onTooltip(final ItemTooltipEvent event) {
-        if (map == null) {
-            // Build lazily — items aren't resolved at class-init time on the mod bus.
+    /** Release invariant used by GameTests and diagnostics. */
+    public static boolean hasUseTooltip(final Item item) {
+        return tooltipMap().containsKey(item);
+    }
+
+    private static Map<Item, String> tooltipMap() {
+        if (map != null) return map;
+        synchronized (MagItemTooltips.class) {
+            if (map != null) return map;
             try {
                 map = build();
             } catch (final Throwable t) {
@@ -266,13 +281,19 @@ public final class MagItemTooltips {
                 // of silently dropping every tooltip going forward.
                 org.slf4j.LoggerFactory.getLogger("magnetization/Tooltips")
                         .warn("Tooltip key map build failed; tooltips will be skipped", t);
-                map = java.util.Map.of(); // poison empty map so we don't retry every call
-                return;
+                map = java.util.Map.of();
             }
+            return map;
         }
+    }
+
+    @SubscribeEvent
+    public static void onTooltip(final ItemTooltipEvent event) {
+        // Build lazily — items aren't resolved at class-init time on the mod bus.
+        final Map<Item, String> tooltips = tooltipMap();
         final ItemStack stack = event.getItemStack();
         final List<Component> lines = event.getToolTip();
-        final String key = map.get(stack.getItem());
+        final String key = tooltips.get(stack.getItem());
         if (key != null) {
             lines.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
         }
