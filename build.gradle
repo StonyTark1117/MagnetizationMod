@@ -1229,10 +1229,10 @@ dependencies {
     compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}")
     compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}")
 
-    // Just Enough Resources (JER) — JEI add-on that shows ore distribution +
-    // mob loot tables. Soft-dep; the @JERPlugin annotation is JER's discovery
-    // mechanism (scanned at FMLCommonSetup), so without JER installed our
-    // plugin class is never loaded and the missing imports don't matter.
+    // Just Enough Resources (JER) — JEI add-on that shows ore distributions and
+    // mob loot tables. Soft-dep; Magnetization invokes its adapter explicitly
+    // behind a ModList presence gate, so the JER imports remain unloaded when
+    // this optional dependency is absent.
     compileOnly("maven.modrinth:just-enough-resources-jer:${jer_version}")
     localRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
 

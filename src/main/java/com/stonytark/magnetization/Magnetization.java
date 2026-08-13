@@ -169,12 +169,10 @@ public final class Magnetization {
             // net so a disabled manual is absent from Patchouli's registry.
             com.stonytark.magnetization.compat.patchouli.MagPatchouliCompat.applyMasterToggle();
 
-            // Just Enough Resources integration — register magnetite ore
-            // distributions directly via JERAPI.getInstance(). We avoid JER's
-            // @JERPlugin annotation route because the 1.6.0.17 NeoForge build
-            // scans for the wrong type and never finds the plugin. The
-            // isLoaded check keeps MagJerPlugin (and its JER imports)
-            // unloaded when JER isn't installed.
+            // Just Enough Resources integration — register the synchronized
+            // all-ore/natural-resource catalog directly against JER's live API.
+            // The presence gate keeps MagJerPlugin and its optional imports
+            // unloaded when JER is not installed.
             if (ModList.get().isLoaded("jeresources")
                     && com.stonytark.magnetization.config.MagConfig.justEnoughResourcesCompatEnabled()) {
                 com.stonytark.magnetization.compat.jer.MagJerPlugin.register();

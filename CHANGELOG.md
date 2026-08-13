@@ -26,6 +26,7 @@
 - Magnet consumption in the Homopolar Motor and MHD Jet now defaults to **off**; packs can still opt into strength-scaled magnet burn times with `propulsion.magnetSlotConsumesFuel`.
 
 ### Fixed
+- Synchronized JER with all ten ore families and every other natural resource, including geodes, gas pockets, magnetic gravel, anomaly lodestone clusters, meteorites, and petrified wood; its automated catalog test now detects worldgen, distribution, variant, or loot drift.
 - Rare-earth magnet blocks now use a valid permanent-magnet block entity and emit their intended tiers: samarium–cobalt is **MEDIUM**, neodymium is **STRONG**.
 - Replaced the rare-earth feature's placeholder vanilla ore, tool, armor, storage-block, and magnet models with dedicated textures and complete translations/tooltips.
 - Bounded and synchronized the handheld Gas Detector's scan cache, replacing time buckets in cache keys with in-place refreshed readings, a 64-origin per-level LRU cap, weak level ownership, and immediate world-unload eviction. Its range scan now skips unloaded columns and avoids block-entity lookups for ordinary blocks.
