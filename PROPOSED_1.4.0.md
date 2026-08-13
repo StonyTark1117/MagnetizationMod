@@ -2,6 +2,17 @@ Proposed Plan
 
 # Rare-Earth Magnet Progression: Samarium–Cobalt and Neodymium
 
+## 1.4 Release Scope Clarification
+
+The implemented 1.4 scope intentionally does not add Xenotime. Bastnäsite,
+Monazite, Cobaltite, and Borax are the complete precursor set for this release;
+Xenotime was an obsolete carry-over from an earlier draft, not existing content.
+
+Create: Aeronautics support in 1.4 remains the existing optional ship, field,
+and Sable runtime integration. Supplemental Aeronautics recipes are not a 1.4
+deliverable. Create: Cosmonautics does expose stable spacecraft components in
+the targeted runtime, so its guarded Samarium-Cobalt recipes remain in scope.
+
 ## Magnet Progression
 
 Add Samarium–Cobalt as a complete intermediate rare-earth magnet tier:
@@ -30,7 +41,7 @@ Add naturally occurring precursor resources:
 
   - Rare phosphate mineral and source of Samarium-bearing concentrate.
 
-  - Can share some rare-earth processing infrastructure with Bastnäsite and Xenotime.
+  - Can share rare-earth processing infrastructure with Bastnäsite.
 
   - May produce a small radioactive waste byproduct to fit the mod’s existing radiation/gas systems if that can be represented cleanly.
 
@@ -117,12 +128,12 @@ Base functionality:
 
 Create: Aeronautics integration:
 
-- Add SmCo Alloy or SmCo Magnets as optional recipe ingredients for high-tier aircraft, propulsion, guidance, gyroscopic, or electromagnetic components  
-where the existing recipe APIs support it.
+- Retain Magnetization's existing optional Aeronautics/Sable ship, field, and
+  physics integration without introducing a hard dependency.
 
-- Prefer SmCo over NdFeB for components that represent high-temperature engines or aerospace machinery.
-
-- Keep the integration recipe-based rather than changing Aeronautics behavior directly.
+- Do not add or advertise supplemental Aeronautics recipes in 1.4. Recipe
+  compatibility can be reconsidered for a later release if the targeted addon
+  publishes stable, identifiable component recipes.
 
 Create: Cosmonautics-style integration:
 
@@ -193,7 +204,7 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - Samarium–Cobalt Alloy ingots, plates, blocks, tools, armor, and magnets.
 
-- Existing Neodymium/Bastnäsite/Xenotime/Borax/NdFeB content from the prior plan.
+- Existing Neodymium/Bastnäsite/Borax/NdFeB content from the prior plan.
 
 - Separate tool tiers and armor materials for SmCo and NdFeB.
 
@@ -205,7 +216,7 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - Create processing recipes and optional TFMG/Immersive Engineering alternatives.
 
-- Optional Aeronautics and Cosmonautics recipe compatibility.
+- Existing optional Aeronautics runtime compatibility and guarded Cosmonautics recipe compatibility.
 
 - Common tags for Samarium, Cobalt, SmCo Alloy, rare-earth concentrates, oxides, powders, plates, ingots, storage blocks, and machine magnets.
 
@@ -229,7 +240,9 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - Alex’s Caves Neodymium compatibility remains optional and functional.
 
-- TFMG, Immersive Engineering, Aeronautics, and Cosmonautics compatibility recipes load only when their mods are present.
+- TFMG, Immersive Engineering, and Cosmonautics compatibility recipes load only when their mods are present.
+
+- Aeronautics runtime integration remains optional and introduces no hard dependency.
 
 - Optional compatibility absence tests confirm no hard dependencies were introduced.
 
@@ -251,6 +264,5 @@ MagneticStrength.EXTREME emitter tier unchanged.
 
 - No new machine is required for either rare-earth branch.
 
-- Create: Aeronautics and any Cosmonautics-style mod integrations remain optional recipe/tag compatibility, not hard dependencies.
-
+- Create: Aeronautics runtime integration and Cosmonautics recipe/tag integration remain optional, not hard dependencies.
 
