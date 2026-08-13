@@ -111,6 +111,15 @@ class RareEarthResourceCompletenessTest {
             final JsonObject modifier = json("data/magnetization/neoforge/biome_modifier/add_ore_" + ore + ".json");
             assertEquals("magnetization:config_gated_add_features", modifier.get("type").getAsString());
             assertEquals("rare_earth_ores", modifier.get("flag").getAsString());
+
+            final String configured = json("data/magnetization/worldgen/configured_feature/ore_" + ore + ".json")
+                    .getAsJsonObject("config").getAsJsonArray("targets").toString();
+            assertTrue(configured.contains("minecraft:stone_ore_replaceables")
+                            && configured.contains("magnetization:" + ore + "_ore"),
+                    () -> "Stone " + ore + " ore is registered but absent from its configured feature");
+            assertTrue(configured.contains("minecraft:deepslate_ore_replaceables")
+                            && configured.contains("magnetization:deepslate_" + ore + "_ore"),
+                    () -> "Deepslate " + ore + " ore is registered but absent from its configured feature");
         }
     }
 
