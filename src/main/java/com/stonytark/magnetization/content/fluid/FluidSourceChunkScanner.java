@@ -12,11 +12,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 
 /**
- * Re-registers the field/creep fluid source cells when a chunk loads.
+ * Re-registers the field/creep fluid cells when a chunk loads.
  *
  * <p>The fluid registries (magnetized ferrofluid, plain ferrofluid, gallium,
- * mixed gallium, MR fluid) are transient static maps populated ONLY from each
- * block's {@code onPlace}. But {@code onPlace} does NOT fire when a chunk is
+ * mixed gallium, MR fluid, hardened MR fluid) are transient static maps populated
+ * ONLY from each block's {@code onPlace}. But {@code onPlace} does NOT fire when a chunk is
  * deserialized from disk — so after a save→quit→reload, a settled pool's source
  * blocks still exist in the world but their registry entries are gone, and the
  * pool silently stops emitting its field / creeping / hardening until physically
@@ -49,13 +49,13 @@ public final class FluidSourceChunkScanner {
         for (int si = 0; si < sections.length; si++) {
             final LevelChunkSection sec = sections[si];
             if (sec.hasOnlyAir()) continue;
-            if (!sec.maybeHas(FluidSourceChunkScanner::isTrackedSource)) continue;   // palette skip — cheap
+            if (!sec.maybeHas(FluidSourceChunkScanner::isTrackedCell)) continue;   // palette skip — cheap
             final int sectionMinY = (minSection + si) << 4;
             for (int x = 0; x < 16; x++) {
                 for (int y = 0; y < 16; y++) {
                     for (int z = 0; z < 16; z++) {
                         final BlockState st = sec.getBlockState(x, y, z);
-                        if (!isTrackedSource(st)) continue;
+                        if (!isTrackedCell(st)) continue;
                         positions.add(new BlockPos(baseX + x, sectionMinY + y, baseZ + z));
                         states.add(st);
                     }
@@ -68,16 +68,23 @@ public final class FluidSourceChunkScanner {
         });
     }
 
-    private static boolean isTrackedSource(final BlockState st) {
+    private static boolean isTrackedCell(final BlockState st) {
         return st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())
                 || st.is(MagBlocks.FERROFLUID_BLOCK.get())
                 || st.is(MagBlocks.MIXED_GALLIUM_BLOCK.get())
                 || st.is(MagBlocks.GALLIUM_BLOCK.get())
-                || st.is(MagBlocks.MR_FLUID_BLOCK.get());
+                || st.is(MagBlocks.MR_FLUID_BLOCK.get())
+                || st.is(MagBlocks.HARDENED_MR_FLUID.get());
     }
 
-    /** Mirror each block's {@code onPlace} registration (source cells only). */
+    /** Mirror each block's {@code onPlace} registration. Fluid registries track
+     * source cells only; hardened MR fluid is a solid and tracks every cell so it
+     * can be reconsidered and reverted after a reload. */
     private static void register(final ServerLevel level, final BlockPos pos, final BlockState st) {
+        if (st.is(MagBlocks.HARDENED_MR_FLUID.get())) {
+            HardenedMrFluidRegistry.add(level, pos);
+            return;
+        }
         if (!st.getFluidState().isSource()) return;   // only true source cells, like onPlace
         if (st.is(MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get())) {
             MagnetizedFerrofluidRegistry.add(level, pos, st.getValue(MagnetizedFerrofluidBlock.POLARITY));

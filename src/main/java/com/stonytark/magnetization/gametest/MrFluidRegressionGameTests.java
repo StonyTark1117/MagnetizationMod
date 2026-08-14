@@ -1,5 +1,8 @@
 package com.stonytark.magnetization.gametest;
 
+import com.stonytark.magnetization.content.fluid.FluidSourceChunkScanner;
+import com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock;
+import com.stonytark.magnetization.content.fluid.HardenedMrFluidRegistry;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.physics.MagneticFields;
 import net.minecraft.core.BlockPos;
@@ -9,6 +12,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 
 /** Behavioral coverage for MR Fluid promises restored from earlier releases. */
 @GameTestHolder("magnetization_regressions")
@@ -56,5 +60,47 @@ public final class MrFluidRegressionGameTests {
                 helper.succeed();
             });
         });
+    }
+
+    /**
+     * Reload regression: the hardened registry is process-local and empty in a
+     * newly loaded level. Replaying the real chunk-load callback must discover a
+     * persisted hardened cell so the normal tick handler can melt an unpowered
+     * bridge instead of leaving it permanently solid.
+     */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void persistedHardenedMrFluidRevertsAfterChunkLoad(final GameTestHelper helper) {
+        final BlockPos fluid = findFieldFreePosition(helper);
+        helper.setBlock(fluid.below(), Blocks.STONE);
+        helper.setBlock(fluid, MagBlocks.HARDENED_MR_FLUID.get().defaultBlockState()
+                .setValue(HardenedMrFluidBlock.SOURCE, true));
+
+        final BlockPos absoluteFluid = helper.absolutePos(fluid);
+        HardenedMrFluidRegistry.remove(helper.getLevel(), absoluteFluid);
+        helper.assertTrue(!HardenedMrFluidRegistry.snapshot(helper.getLevel()).contains(absoluteFluid),
+                "Test setup must simulate the empty transient registry after a reload");
+
+        FluidSourceChunkScanner.onChunkLoad(new ChunkEvent.Load(
+                helper.getLevel().getChunkAt(absoluteFluid), false));
+
+        helper.runAfterDelay(20L, () -> {
+            helper.assertTrue(!MagneticFields.isInField(helper.getLevel(), absoluteFluid),
+                    "The reload regression position entered an unrelated magnetic field");
+            final BlockState reverted = helper.getBlockState(fluid);
+            helper.assertTrue(reverted.is(MagBlocks.MR_FLUID_BLOCK.get())
+                            && reverted.getFluidState().isSource(),
+                    "Persisted unpowered hardened MR fluid should revert after its chunk loads; got " + reverted);
+            helper.succeed();
+        });
+    }
+
+    private static BlockPos findFieldFreePosition(final GameTestHelper helper) {
+        for (int y = 2; y <= 98; y += 8) {
+            final BlockPos candidate = new BlockPos(2, y, 1);
+            if (!MagneticFields.isInField(helper.getLevel(), helper.absolutePos(candidate))) {
+                return candidate;
+            }
+        }
+        throw new IllegalStateException("Could not find a field-free position for MR Fluid regression coverage");
     }
 }
