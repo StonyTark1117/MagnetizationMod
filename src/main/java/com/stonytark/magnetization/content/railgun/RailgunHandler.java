@@ -4,11 +4,13 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.SableBridge;
+import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
+import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +50,8 @@ import java.util.WeakHashMap;
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class RailgunHandler {
+
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger("magnetization/Railgun");
 
     /**
      * Sable's force bridge integrates over one 1/20-second physics tick. The
@@ -65,6 +70,10 @@ public final class RailgunHandler {
     /** Avoid an invalid/extreme physics velocity turning one tick into an
      * unbounded world scan. This still covers 5,120 blocks/s of travel. */
     private static final int MAX_BLOCK_BREAK_SWEEP_DISTANCE = 256;
+    /** Sable can take a few physics ticks to publish a freshly assembled body's
+     *  valid mass and broad-phase bounds. Keep the new projectile attached to its
+     *  arc during that initialization window instead of immediately cooling down. */
+    private static final int AUTO_ASSEMBLY_GRACE_TICKS = 20;
 
     /**
      * Manual arcs temporarily turn captured ships into suspended payloads. The
@@ -76,6 +85,7 @@ public final class RailgunHandler {
      * swept block-breaking or non-destructive collision protection follows the
      * full coast, not just rail ticks. */
     private static final Map<ServerLevel, Map<UUID, LaunchedShip>> LAUNCHED_SHIPS = new WeakHashMap<>();
+    private static final Map<ServerLevel, Map<ArcKey, PendingAssembly>> PENDING_ASSEMBLIES = new WeakHashMap<>();
 
     private record ArcKey(BlockPos first, BlockPos second) {
         private static ArcKey of(final BlockPos a, final BlockPos b) {
@@ -101,6 +111,7 @@ public final class RailgunHandler {
     }
 
     private record LaunchedShip(Direction facing, ArcKey owner, boolean breakBlocks) {}
+    private record PendingAssembly(UUID shipId, long createdTick) {}
 
     private RailgunHandler() {}
 
@@ -110,8 +121,10 @@ public final class RailgunHandler {
         final ServerSubLevelContainer container = SubLevelContainer.getContainer(server);
         if (!MagConfig.railgunEnabled()) {
             LAUNCHED_SHIPS.remove(server);
+            PENDING_ASSEMBLIES.remove(server);
             return;
         }
+        prunePendingAssemblies(server);
         processLaunchedShips(server, container);
         if ((server.getGameTime() % MagConfig.railgunTicks()) != 0L) return;
 
@@ -254,6 +267,9 @@ public final class RailgunHandler {
         other.setManualMode(manual);
         final boolean breakBlocks = master.breaksBlocks();
         other.setBreakBlocks(breakBlocks);
+        final boolean autoAssemble = master.autoAssemble() || other.autoAssemble();
+        master.setAutoAssemble(autoAssemble);
+        other.setAutoAssemble(autoAssemble);
 
         if (!master.isPowered() || !other.isPowered()) {
             releaseHolds(server, ArcKey.of(masterPos, otherPos));
@@ -275,7 +291,8 @@ public final class RailgunHandler {
         final Vec3 axis = worldAxis(owner, facing);
         final AABB channel = channelBox(masterPos, otherPos, facing, effL, owner);
 
-        processArc(server, container, master, other, channel, axis, owner, effL, manual, breakBlocks,
+        processArc(server, container, master, other, masterPos, otherPos, facing,
+                channel, axis, owner, effL, manual, breakBlocks, autoAssemble,
                 ArcKey.of(masterPos, otherPos));
 
         // Mirror to the display sibling.
@@ -284,10 +301,21 @@ public final class RailgunHandler {
 
     private static void processArc(final ServerLevel server, final @Nullable ServerSubLevelContainer container,
                                    final RailgunEmitterBlockEntity master, final RailgunEmitterBlockEntity other,
+                                   final BlockPos masterPos, final BlockPos otherPos, final Direction facing,
                                    final AABB channel, final Vec3 axis, final @Nullable ServerSubLevel owner,
                                    final int effL, final boolean manual,
-                                   final boolean breakBlocks, final ArcKey arc) {
-        final boolean hasTarget = anyShipInChannel(container, server, channel) || anyEntityInChannel(server, channel);
+                                   final boolean breakBlocks, final boolean autoAssemble, final ArcKey arc) {
+        boolean hasTarget = anyShipInChannel(container, server, channel) || anyEntityInChannel(server, channel)
+                || pendingAssemblyInGrace(server, container, arc);
+        if (!hasTarget && autoAssemble && master.arcState() == RailgunEmitterBlockEntity.ArcState.IDLE) {
+            final ServerSubLevel assembled = assembleStagedBlocks(
+                    server, container, masterPos, otherPos, facing, effL, owner, axis);
+            if (assembled != null) {
+                PENDING_ASSEMBLIES.computeIfAbsent(server, ignored -> new HashMap<>())
+                        .put(arc, new PendingAssembly(assembled.getUniqueId(), server.getGameTime()));
+                hasTarget = true;
+            }
+        }
         switch (master.arcState()) {
             case IDLE -> {
                 if (hasTarget) {
@@ -334,6 +362,129 @@ public final class RailgunHandler {
                 /* decays in the BE tick, then re-arms to IDLE */
             }
         }
+    }
+
+    /** Returns whether an arc's newly assembled projectile is still inside the
+     *  short Sable initialization window. A valid broad-phase target supersedes
+     *  this naturally; the grace entry then expires without affecting its launch. */
+    private static boolean pendingAssemblyInGrace(final ServerLevel server,
+                                                  final @Nullable ServerSubLevelContainer container,
+                                                  final ArcKey arc) {
+        final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
+        if (pending == null) return false;
+        final PendingAssembly assembly = pending.get(arc);
+        if (assembly == null) return false;
+        if (server.getGameTime() - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS) {
+            pending.remove(arc);
+            if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
+            return false;
+        }
+        if (container != null) {
+            try {
+                final SubLevel sub = container.getSubLevel(assembly.shipId());
+                if (sub != null && sub.isRemoved()) {
+                    pending.remove(arc);
+                    if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
+                    return false;
+                }
+            } catch (final RuntimeException ignored) {
+                // Assembly publication is briefly racy with the physics pipeline;
+                // the bounded grace period is specifically for that interval.
+            }
+        }
+        return true;
+    }
+
+    private static void prunePendingAssemblies(final ServerLevel server) {
+        final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
+        if (pending == null) return;
+        final long now = server.getGameTime();
+        pending.values().removeIf(assembly -> now - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS);
+        if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
+    }
+
+    /** Assemble every non-air block strictly inside the paired rails and current
+     *  capture thickness. The resulting Sable body's centre is projected onto the
+     *  railgun's held-target line, which lifts/centres a staged projectile before
+     *  the ordinary HOLDING/LAUNCHING state machine takes over. */
+    private static @Nullable ServerSubLevel assembleStagedBlocks(
+            final ServerLevel server, final @Nullable ServerSubLevelContainer container,
+            final BlockPos masterPos, final BlockPos otherPos, final Direction facing,
+            final int effL, final @Nullable ServerSubLevel owner, final Vec3 launchAxis) {
+        if (container == null) return null;
+        final List<BlockPos> blocks = stagedBlocks(server, masterPos, otherPos, facing, effL);
+        if (blocks.isEmpty()) return null;
+
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        for (final BlockPos pos : blocks) {
+            minX = Math.min(minX, pos.getX());
+            minY = Math.min(minY, pos.getY());
+            minZ = Math.min(minZ, pos.getZ());
+            maxX = Math.max(maxX, pos.getX());
+            maxY = Math.max(maxY, pos.getY());
+            maxZ = Math.max(maxZ, pos.getZ());
+        }
+
+        try {
+            final ServerSubLevel ship = SubLevelAssemblyHelper.assembleBlocks(
+                    server, blocks.getFirst(), blocks,
+                    new BoundingBox3i(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1));
+            final Pose3d pose = new Pose3d(ship.logicalPose());
+            final Vec3 liveCenter = new Vec3(pose.position().x(), pose.position().y(), pose.position().z());
+            final Vec3 launchOrigin = worldCenter(owner, masterPos)
+                    .add(worldCenter(owner, otherPos)).scale(0.5d);
+            final Vec3 targetCenter = launchOrigin.add(launchAxis.scale(
+                    liveCenter.subtract(launchOrigin).dot(launchAxis)));
+            container.physicsSystem().getPipeline().teleport(ship,
+                    new Vector3d(targetCenter.x, targetCenter.y, targetCenter.z), pose.orientation());
+            return ship;
+        } catch (final Throwable failure) {
+            LOG.error("Railgun auto-assembly failed for {} staged blocks between {} and {}",
+                    blocks.size(), masterPos.toShortString(), otherPos.toShortString(), failure);
+            return null;
+        }
+    }
+
+    /** Collect the complete rectangular staging volume between, but never
+     *  including, the two rails. A positive server limit rejects the whole load
+     *  rather than truncating it into a damaged projectile; zero is unlimited. */
+    private static List<BlockPos> stagedBlocks(final ServerLevel server,
+                                               final BlockPos masterPos, final BlockPos otherPos,
+                                               final Direction facing, final int effL) {
+        final int dx = otherPos.getX() - masterPos.getX();
+        final int dy = otherPos.getY() - masterPos.getY();
+        final int dz = otherPos.getZ() - masterPos.getZ();
+        final int gap = Math.abs(dx) + Math.abs(dy) + Math.abs(dz);
+        if (gap <= 1 || effL <= 0) return List.of();
+        final int gx = Integer.signum(dx), gy = Integer.signum(dy), gz = Integer.signum(dz);
+        final Direction.Axis thirdAxis = thirdAxis(facing.getAxis(), gapAxis(masterPos, otherPos, facing));
+        final int halfThickness = MagConfig.railgunChannelHalfThickness();
+        final int limit = MagConfig.railgunAutoAssembleMaxBlocks();
+        final List<BlockPos> blocks = new ArrayList<>();
+        for (int along = 1; along <= effL; along++) {
+            for (int across = 1; across < gap; across++) {
+                final BlockPos lane = masterPos.relative(facing, along)
+                        .offset(gx * across, gy * across, gz * across);
+                for (int height = -halfThickness; height <= halfThickness; height++) {
+                    final BlockPos candidate = switch (thirdAxis) {
+                        case X -> lane.offset(height, 0, 0);
+                        case Y -> lane.offset(0, height, 0);
+                        case Z -> lane.offset(0, 0, height);
+                    };
+                    if (!server.hasChunkAt(candidate) || server.getBlockState(candidate).isAir()) continue;
+                    blocks.add(candidate.immutable());
+                    if (limit > 0 && blocks.size() > limit) return List.of();
+                }
+            }
+        }
+        return blocks;
+    }
+
+    private static Direction.Axis thirdAxis(final Direction.Axis facing, final Direction.Axis gap) {
+        if (facing != Direction.Axis.X && gap != Direction.Axis.X) return Direction.Axis.X;
+        if (facing != Direction.Axis.Y && gap != Direction.Axis.Y) return Direction.Axis.Y;
+        return Direction.Axis.Z;
     }
 
     private static void triggerRailgunFire(final ServerLevel server, final BlockPos pos,
@@ -576,9 +727,15 @@ public final class RailgunHandler {
 
     static void releaseHoldsForEmitter(final ServerLevel server, final BlockPos emitter) {
         final Map<UUID, HeldShip> held = HELD_SHIPS.get(server);
-        if (held == null) return;
-        held.values().removeIf(suspension -> suspension.owner.contains(emitter));
-        if (held.isEmpty()) HELD_SHIPS.remove(server);
+        if (held != null) {
+            held.values().removeIf(suspension -> suspension.owner.contains(emitter));
+            if (held.isEmpty()) HELD_SHIPS.remove(server);
+        }
+        final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
+        if (pending != null) {
+            pending.keySet().removeIf(arc -> arc.contains(emitter));
+            if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
+        }
     }
 
     /** Apply the GUI's block-breaking switch to the whole resolved arc. */
@@ -597,6 +754,22 @@ public final class RailgunHandler {
             other.setBreakBlocks(enabled);
         }
         updateLaunchedShipsForEmitter(server, emitter, enabled);
+        return true;
+    }
+
+    /** Apply the GUI's world-block auto-assembly mode to the whole resolved arc. */
+    public static boolean setArcAutoAssemble(final ServerLevel server, final BlockPos emitter,
+                                             final boolean enabled) {
+        final RailgunEmitterBlockEntity be = registeredEmitter(server, emitter);
+        if (be == null) return false;
+        be.setAutoAssemble(enabled);
+        final BlockState state = be.getBlockState();
+        if (!state.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)) return true;
+        final Direction facing = state.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING);
+        final SiblingResult sibling = findSibling(server, emitter, facing,
+                RailgunRegistry.snapshot(server), SableBridge.subLevelOf(be));
+        final RailgunEmitterBlockEntity other = sibling.pos == null ? null : registeredEmitter(server, sibling.pos);
+        if (!sibling.dissipated && other != null) other.setAutoAssemble(enabled);
         return true;
     }
 

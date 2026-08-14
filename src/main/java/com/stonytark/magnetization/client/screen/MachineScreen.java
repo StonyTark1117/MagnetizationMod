@@ -26,6 +26,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             BAR_H = MachineGuiLayout.BAR_HEIGHT;
     private static final int FLUID_X = 138;
     private Button railgunBreakingButton;
+    private Button railgunAutoAssembleButton;
 
     /** Denominator for the secondary fuel/fluid bar. Uses the server-authoritative
      *  value synced through the menu ({@code stat4}) so a multiplayer client whose
@@ -47,6 +48,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void init() {
         super.init();
         if (menu.kind() == MachineMenu.Kind.RAILGUN) {
+            railgunAutoAssembleButton = addRenderableWidget(Button.builder(railgunAutoAssembleLabel(), button -> {
+                if (minecraft != null && minecraft.gameMode != null) {
+                    minecraft.gameMode.handleInventoryButtonClick(
+                            menu.containerId, MachineMenu.BUTTON_RAILGUN_AUTO_ASSEMBLE);
+                }
+            }).bounds(leftPos + 8, topPos + 37, 100, 14).build());
             railgunBreakingButton = addRenderableWidget(Button.builder(railgunBreakingLabel(), button -> {
                 if (minecraft != null && minecraft.gameMode != null) {
                     minecraft.gameMode.handleInventoryButtonClick(
@@ -67,10 +74,22 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 : "gui.magnetization.railgun_break_blocks_off");
     }
 
+    private boolean railgunAutoAssembles() {
+        return (menu.displayAuxiliary()
+                & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.AUTO_ASSEMBLE_BIT) != 0;
+    }
+
+    private Component railgunAutoAssembleLabel() {
+        return Component.translatable(railgunAutoAssembles()
+                ? "gui.magnetization.railgun_auto_assemble_on"
+                : "gui.magnetization.railgun_auto_assemble_off");
+    }
+
     @Override
     protected void containerTick() {
         super.containerTick();
         if (railgunBreakingButton != null) railgunBreakingButton.setMessage(railgunBreakingLabel());
+        if (railgunAutoAssembleButton != null) railgunAutoAssembleButton.setMessage(railgunAutoAssembleLabel());
     }
 
     @Override
@@ -196,6 +215,9 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_railgun_state_"
                         + states[Math.min(states.length - 1, packed
                         & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ARC_STATE_MASK)]));
+                lines.add(Component.translatable(railgunAutoAssembles()
+                        ? "tooltip.magnetization.gui_railgun_auto_assemble_on"
+                        : "tooltip.magnetization.gui_railgun_auto_assemble_off"));
             }
         }
         // Railgun already has a precise arc-state row; its final machine-status

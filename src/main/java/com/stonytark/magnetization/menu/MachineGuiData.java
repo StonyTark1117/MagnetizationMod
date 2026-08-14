@@ -159,6 +159,8 @@ public interface MachineGuiData extends MachineHudData {
                         & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.MANUAL_MODE_BIT) != 0;
                 final boolean breakBlocks = (packed
                         & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.BREAK_BLOCKS_BIT) != 0;
+                final boolean autoAssemble = (packed
+                        & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.AUTO_ASSEMBLE_BIT) != 0;
                 final String[] states = {"idle", "holding", "launching", "cooldown"};
                 final String stateKey = states[Math.min(states.length - 1, packed
                         & com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity.ARC_STATE_MASK)];
@@ -171,6 +173,10 @@ public interface MachineGuiData extends MachineHudData {
                         ? "tooltip.magnetization.gui_railgun_break_blocks_on"
                         : "tooltip.magnetization.gui_railgun_break_blocks_off")
                         .withStyle(breakBlocks ? ChatFormatting.RED : ChatFormatting.GREEN));
+                out.add(Component.translatable(autoAssemble
+                        ? "tooltip.magnetization.gui_railgun_auto_assemble_on"
+                        : "tooltip.magnetization.gui_railgun_auto_assemble_off")
+                        .withStyle(autoAssemble ? ChatFormatting.GOLD : ChatFormatting.GRAY));
                 out.add(statusLine(guiKind(), display.status()));
             }
             case MOTOR -> {

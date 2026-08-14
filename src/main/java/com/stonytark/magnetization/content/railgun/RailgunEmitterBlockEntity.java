@@ -32,6 +32,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     public static final int ARC_STATE_MASK = 15;
     public static final int MANUAL_MODE_BIT = 16;
     public static final int BREAK_BLOCKS_BIT = 32;
+    public static final int AUTO_ASSEMBLE_BIT = 64;
 
     /** Arc lifecycle. The lower-BlockPos emitter of a pair owns the live state. */
     public enum ArcState { IDLE, HOLDING, LAUNCHING, COOLDOWN }
@@ -46,6 +47,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     private int cooldownTicks;
     private boolean manualMode;     // a remote is paired on this arc
     private boolean breakBlocks = true; // per-arc player control; server config remains the global gate
+    private boolean autoAssemble;   // turn ordinary blocks staged between the rails into the next projectile
     private boolean fireRequested;  // set by the bound remote; consumed by the handler
 
     private int railLength;         // cached by the handler each scan
@@ -81,6 +83,10 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     public boolean breaksBlocks() { return breakBlocks; }
     public void setBreakBlocks(final boolean enabled) {
         if (breakBlocks != enabled) { breakBlocks = enabled; setChanged(); }
+    }
+    public boolean autoAssemble() { return autoAssemble; }
+    public void setAutoAssemble(final boolean enabled) {
+        if (autoAssemble != enabled) { autoAssemble = enabled; setChanged(); }
     }
     public int railLength() { return railLength; }
     public void setRailLength(final int l) { if (railLength != l) { railLength = l; setChanged(); } }
@@ -146,10 +152,12 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() { return MagConfig.railgunFeCapacity(); }
     @Override public int guiStat1() { return railLength; }
-    /** Pack arc state (bits 0-3), mode (bit 4), and block breaking (bit 5). */
+    /** Pack arc state (bits 0-3), remote mode (bit 4), block breaking (bit 5),
+     *  and automatic world-block assembly (bit 6). */
     @Override public int guiStat2() {
         return (manualMode ? MANUAL_MODE_BIT : 0)
-                | (breakBlocks ? BREAK_BLOCKS_BIT : 0) | state.ordinal();
+                | (breakBlocks ? BREAK_BLOCKS_BIT : 0)
+                | (autoAssemble ? AUTO_ASSEMBLE_BIT : 0) | state.ordinal();
     }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
         return switch (state) {
@@ -191,7 +199,12 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level != null && !level.isClientSide) RailgunRegistry.unregister(level, getBlockPos());
+        if (level != null && !level.isClientSide) {
+            RailgunRegistry.unregister(level, getBlockPos());
+            if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                RailgunHandler.releaseHoldsForEmitter(server, getBlockPos());
+            }
+        }
     }
 
     @Override
@@ -203,6 +216,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         tag.putInt("Cooldown", cooldownTicks);
         tag.putBoolean("Manual", manualMode);
         tag.putBoolean("BreakBlocks", breakBlocks);
+        tag.putBoolean("AutoAssemble", autoAssemble);
         tag.putBoolean("RedstonePowered", redstonePowered);
         tag.putInt("RailLength", railLength);
         tag.put("Remote", remoteSlot.createTag(registries));
@@ -219,6 +233,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
         // Existing worlds predate the per-arc switch and retain the historical
         // block-breaking behaviour until a player explicitly disables it.
         breakBlocks = !tag.contains("BreakBlocks") || tag.getBoolean("BreakBlocks");
+        autoAssemble = tag.getBoolean("AutoAssemble");
         redstonePowered = tag.getBoolean("RedstonePowered");
         railLength = tag.getInt("RailLength");
         remoteSlot.fromTag(tag.getList("Remote", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);

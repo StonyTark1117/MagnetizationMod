@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 public final class MachineMenu extends AbstractContainerMenu {
 
     public static final int BUTTON_RAILGUN_BLOCK_BREAKING = 0;
+    public static final int BUTTON_RAILGUN_AUTO_ASSEMBLE = 1;
 
     /** Display flavour — drives slot tooltip + stat labels on the screen. */
     public enum Kind { MOTOR, JET, TOKAMAK, THRUSTER, ION_THRUSTER, FUSION_THRUSTER, RAILGUN, ELECTROLYZER,
@@ -222,15 +223,19 @@ public final class MachineMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(final Player player, final int id) {
-        if (kind != Kind.RAILGUN || id != BUTTON_RAILGUN_BLOCK_BREAKING) return false;
+        if (kind != Kind.RAILGUN || (id != BUTTON_RAILGUN_BLOCK_BREAKING
+                && id != BUTTON_RAILGUN_AUTO_ASSEMBLE)) return false;
         return access.evaluate((level, p) -> {
             if (!(level instanceof net.minecraft.server.level.ServerLevel server)
                     || !(server.getBlockEntity(p) instanceof
                     com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity railgun)) {
                 return false;
             }
-            return com.stonytark.magnetization.content.railgun.RailgunHandler.setArcBlockBreaking(
-                    server, p, !railgun.breaksBlocks());
+            return id == BUTTON_RAILGUN_BLOCK_BREAKING
+                    ? com.stonytark.magnetization.content.railgun.RailgunHandler.setArcBlockBreaking(
+                            server, p, !railgun.breaksBlocks())
+                    : com.stonytark.magnetization.content.railgun.RailgunHandler.setArcAutoAssemble(
+                            server, p, !railgun.autoAssemble());
         }, false);
     }
 }

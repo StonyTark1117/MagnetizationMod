@@ -219,7 +219,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                 "Build two parallel rails with emitters facing the same direction.");
         scene.overlay().showOutlineWithText(util.select().fromTo(first, second), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("Both rails must reach the minimum length before an arc can launch a target.")
+                .text("Both rails must reach the minimum length before an arc can launch a target. The GUI can auto-assemble every block staged between them into a centered projectile ship.")
                 .placeNearTarget();
         scene.idle(90);
     }

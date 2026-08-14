@@ -162,6 +162,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_HELIUM3;
     public static final ModConfigSpec.BooleanValue RAILGUN_ENABLED;
     public static final ModConfigSpec.BooleanValue RAILGUN_AUTO_FIRE;
+    public static final ModConfigSpec.IntValue    RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS;
     public static final ModConfigSpec.IntValue    RAILGUN_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue    RAILGUN_MAX_LAUNCH_TICKS;
     public static final ModConfigSpec.IntValue    RAILGUN_HOLD_FE_COST;
@@ -1139,6 +1140,9 @@ public final class MagConfig {
                 .define("railgunEnabled", true);
         RAILGUN_AUTO_FIRE = b.translation("magnetization.configuration.propulsion.railgunAutoFire")
                 .define("railgunAutoFire", true);
+        RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS = b
+                .translation("magnetization.configuration.propulsion.railgunAutoAssembleMaxBlocks")
+                .defineInRange("railgunAutoAssembleMaxBlocks", 0, 0, 1_000_000);
         RAILGUN_COOLDOWN_TICKS = b.translation("magnetization.configuration.propulsion.railgunCooldownTicks")
                 .defineInRange("railgunCooldownTicks", 40, 0, 2000);
         RAILGUN_MAX_LAUNCH_TICKS = b.translation("magnetization.configuration.propulsion.railgunMaxLaunchTicks")
@@ -3103,6 +3107,9 @@ public final class MagConfig {
     public static boolean analogRedstoneInducer()       { return booleanOr(ANALOG_REDSTONE_INDUCER, false); }
     public static boolean railgunEnabled()              { return booleanOr(RAILGUN_ENABLED, true); }
     public static boolean railgunAutoFire()             { return booleanOr(RAILGUN_AUTO_FIRE, true); }
+    /** Maximum ordinary world blocks an auto-assembling arc may turn into one
+     *  projectile. Zero deliberately means unlimited. */
+    public static int    railgunAutoAssembleMaxBlocks() { return intOr(RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS, 0); }
     public static int    railgunCooldownTicks()         { return intOr(RAILGUN_COOLDOWN_TICKS, 40); }
     public static int    railgunMaxLaunchTicks()        { return intOr(RAILGUN_MAX_LAUNCH_TICKS, 100); }
     public static int    railgunHoldFeCost()            { return intOr(RAILGUN_HOLD_FE_COST, 8); }
