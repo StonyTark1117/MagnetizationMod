@@ -14,6 +14,7 @@
 - Added client-side exhaust plumes for active Micro Thrusters, Fusion Thrusters, MHD Jets, and Ion Thrusters, including a coolant-mist sheath around cooled Fusion exhaust. A local client option disables all of these particles without affecting propulsion.
 
 ### Fixed
+- Restored the Repulsor Gun's documented recoil from vanilla Lodestones. Lodestones now participate in the magnetic-emitter gameplay tag, and behavioral GameTests cover loose-object/entity push, Lodestone self-launch, and Sable-ship impulse.
 - Fixed Railguns mounted on Sable sub-levels targeting their own host craft instead of a staged projectile. Mounted emitters now keep their Sable tick lifecycle, ignore the carrying ship during capture/hold/launch, and can auto-assemble and launch payloads from the moving plot.
 - Restored the Magnetosphere Solar Sail's persistent per-panel night cutoff. Empty-hand right-clicking a panel now switches between the configured nighttime thrust fraction and no thrust after dusk, with the selected state saved and shown in machine overlays.
 - G-Force Cushions now recognize metallic horse barding in the body-armor slot, so armored horses receive the same zero-damage landing promised for other metallic-armor wearers.

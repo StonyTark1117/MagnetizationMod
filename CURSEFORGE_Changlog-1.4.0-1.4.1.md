@@ -68,6 +68,7 @@ Magnetization 1.4.1 is a corrective content and stability release for Minecraft 
 
 ## Restored shipped behavior
 
+- Restored the Repulsor Gun's documented recoil when fired at a vanilla Lodestone, including the advertised aim-downward traversal launch.
 - Restored Curios `charm`, `back`, and `hands` slots for the Field Compass, Magnetic Grapple, and Repulsor Gun.
 - Curios regression coverage now validates the real player capability and exact item-to-slot assignments, and release-JAR verification requires the slot data.
 - Fixed EMP Flux Charges leaving FE in receive-only machines. EMPs now clear the real backing buffer of all ten affected machine types without making that energy extractable to cables.
