@@ -2344,29 +2344,24 @@ public final class MagGameTests {
         helper.succeed();
     }
 
-    /**
-     * #97 — MR Fluid horse armor runs the same field-mitigation path on a horse
-     * (the visual render layer is client-only and not covered here). Generic damage
-     * to an armored horse is reduced in a field vs out of field.
-     */
+    /** #97 — MR Fluid horse armor is valid MR barding and participates in the
+     * shared magnetizable-armor tag. The full menu-to-field path is covered in
+     * {@link MrFluidRegressionGameTests#mrHorseArmorMagnetizesAndPullsMount}. */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
-    public static void mrHorseArmorIsValidBardingOnTheMitigationPath(final GameTestHelper helper) {
-        // The horse-barding piece routes through the SAME MrArmorHandler proven by
-        // mrArmorMitigatesDamageInField (it's an MrFluidHorseArmorItem, which the
-        // handler's isMrPiece recognises), and equips to the horse body slot
-        // (AnimalArmorItem / EQUESTRIAN). Its fluid↔rigid look is a client render
-        // layer, not headless-testable. We assert it's valid barding a horse
-        // accepts and that it's the recognised MR class.
+    public static void mrHorseArmorIsValidMagnetizableBarding(final GameTestHelper helper) {
         final net.minecraft.world.item.ItemStack barding =
                 new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MR_FLUID_HORSE_ARMOR.get());
         helper.assertTrue(barding.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem,
                 "MR horse armor should be an MrFluidHorseArmorItem (recognised by the MR mitigation handler)");
         helper.assertTrue(barding.getItem() instanceof net.minecraft.world.item.AnimalArmorItem,
                 "MR horse armor should be an AnimalArmorItem (equips to the horse body slot)");
+        helper.assertTrue(barding.is(com.stonytark.magnetization.api.MagTags.METAL_ARMOR),
+                "MR horse armor should be in metal_armor so electromagnets accept it");
         final net.minecraft.world.entity.animal.horse.Horse horse =
                 helper.spawn(net.minecraft.world.entity.EntityType.HORSE, new BlockPos(1, 1, 1));
         helper.assertTrue(horse.isBodyArmorItem(barding),
                 "A horse should accept MR horse armor as body barding");
+        horse.discard();
         helper.succeed();
     }
 

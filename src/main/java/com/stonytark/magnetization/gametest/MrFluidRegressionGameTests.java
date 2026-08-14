@@ -94,6 +94,58 @@ public final class MrFluidRegressionGameTests {
         });
     }
 
+    /** The documented MR barding path must accept polarity in the real
+     * electromagnet menu and make the equipped mount react to a field. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void mrHorseArmorMagnetizesAndPullsMount(final GameTestHelper helper) {
+        final net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        final net.minecraft.world.item.ItemStack barding = new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.MR_FLUID_HORSE_ARMOR.get());
+
+        final BlockPos emitterRel = new BlockPos(0, 1, 0);
+        helper.setBlock(emitterRel, MagBlocks.ELECTROMAGNET.get());
+        final BlockPos emitterPos = helper.absolutePos(emitterRel);
+        final net.minecraft.world.entity.player.Player player =
+                helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
+        final com.stonytark.magnetization.menu.EmitterMenu menu =
+                new com.stonytark.magnetization.menu.EmitterMenu(1, player.getInventory(),
+                        net.minecraft.world.inventory.ContainerLevelAccess.create(level, emitterPos), emitterPos,
+                        com.stonytark.magnetization.menu.EmitterMenu.CAP_ARMOR
+                                | com.stonytark.magnetization.menu.EmitterMenu.CAP_POLARITY);
+        helper.assertTrue(menu.getSlot(0).mayPlace(barding),
+                "The electromagnet armor slot should accept MR horse armor");
+        menu.getSlot(0).set(barding);
+        helper.assertTrue(menu.clickMenuButton(player,
+                        com.stonytark.magnetization.menu.EmitterMenu.BUTTON_POLARITY_SOUTH),
+                "The electromagnet polarity button should handle MR horse armor");
+        helper.assertTrue(menu.armorStack().get(
+                        com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get())
+                        == com.stonytark.magnetization.api.MagneticPolarity.SOUTH,
+                "The electromagnet should stamp SOUTH polarity onto MR horse armor");
+
+        final net.minecraft.world.entity.animal.horse.Horse horse =
+                helper.spawn(net.minecraft.world.entity.EntityType.HORSE, new BlockPos(1, 1, 1));
+        horse.setNoAi(true);
+        horse.setNoGravity(true);
+        horse.setItemSlot(net.minecraft.world.entity.EquipmentSlot.BODY, menu.armorStack().copy());
+        final com.stonytark.magnetization.api.MagneticField field =
+                new com.stonytark.magnetization.api.MagneticField(
+                        net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(4, 1, 1))),
+                        new net.minecraft.world.phys.Vec3(0, 1, 0),
+                        com.stonytark.magnetization.api.MagneticPolarity.SOUTH,
+                        com.stonytark.magnetization.api.MagneticStrength.STRONG,
+                        com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL);
+
+        helper.runAfterDelay(3L, () -> {
+            horse.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            com.stonytark.magnetization.physics.FieldApplicator.apply(level, field, true, true);
+            helper.assertTrue(horse.getDeltaMovement().lengthSqr() > 1.0e-6,
+                    "A horse wearing magnetized MR barding should react to a magnetic field");
+            horse.discard();
+            helper.succeed();
+        });
+    }
+
     private static BlockPos findFieldFreePosition(final GameTestHelper helper) {
         for (int y = 2; y <= 98; y += 8) {
             final BlockPos candidate = new BlockPos(2, y, 1);

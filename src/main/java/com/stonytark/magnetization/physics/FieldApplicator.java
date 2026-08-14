@@ -624,10 +624,10 @@ public final class FieldApplicator {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
                 if (MagConfig.isItemDisabled(armor)) continue;
-                // MR (magnetorheological) armor is NEVER pulled by a field — instead
-                // it hardens in one (see MrArmorHandler). Skip it entirely so it
-                // can't contribute pull susceptibility, even if polarity-stamped.
-                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
+                // Player-worn MR liquid armor hardens instead of pulling. MR horse
+                // armor is intentionally magnetizable barding and therefore remains
+                // in this path while also receiving MrArmorHandler's mitigation.
+                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem) continue;
                 // A piece reacts if it's metal armor, OR if it's been explicitly
                 // magnetized (carries a polarity stamp) — the latter lets gear
                 // that's otherwise field-inert by design (e.g. the Magnetoresistive
@@ -759,8 +759,9 @@ public final class FieldApplicator {
             final boolean armorReacts = MagConfig.armorReactsToFields();
             for (final ItemStack armor : EquippedArmor.all(living)) {
                 if (MagConfig.isItemDisabled(armor)) continue;
-                // MR armor never contributes pull susceptibility (it hardens, not pulls).
-                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem || armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrFluidHorseArmorItem) continue;
+                // Player-worn MR armor hardens instead of pulling; MR horse armor
+                // is the documented magnetizable-barding exception.
+                if (armor.getItem() instanceof com.stonytark.magnetization.content.mrarmor.MrLiquidArmorItem) continue;
                 if (!com.stonytark.magnetization.compat.FerromagneticCompat.integrationEnabled(armor)) continue;
                 final boolean magnetized = armor.has(MagDataComponents.ARMOR_POLARITY.get());
                 if (!com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)

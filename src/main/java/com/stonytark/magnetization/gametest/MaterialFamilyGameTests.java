@@ -113,16 +113,25 @@ public final class MaterialFamilyGameTests {
             }
         }
 
-        // MR equipment is a deliberately fluid, field-hardening special family:
-        // complete tools/armor/barding, but intentionally excluded from the metal
-        // tags so fields harden it rather than pulling the wearer.
+        // MR player equipment is a deliberately fluid, field-hardening special
+        // family and stays outside the metal tags so fields harden it rather than
+        // pulling the wearer. MR horse armor is the documented exception: like the
+        // other barding families, it is magnetizable in an electromagnet and pulls
+        // its mount while retaining MR field hardening.
         for (final String part : List.of("sword", "pickaxe", "axe", "shovel", "hoe")) {
             assertSpecialEquipment(helper, recipes, "mr_fluid_" + part, part, MagTags.METAL_TOOLS);
         }
         for (final String part : List.of("helmet", "chestplate", "leggings", "boots")) {
             assertSpecialEquipment(helper, recipes, "mr_liquid_" + part, part, MagTags.METAL_ARMOR);
         }
-        assertSpecialEquipment(helper, recipes, "mr_fluid_horse_armor", "horse_armor", MagTags.METAL_ARMOR);
+        final ResourceLocation mrHorseArmorKey = Magnetization.id("mr_fluid_horse_armor");
+        final Item mrHorseArmor = BuiltInRegistries.ITEM.get(mrHorseArmorKey);
+        helper.assertTrue(mrHorseArmor instanceof AnimalArmorItem,
+                "mr_fluid_horse_armor has the wrong item type: " + mrHorseArmor);
+        helper.assertTrue(recipes.byKey(mrHorseArmorKey).isPresent(),
+                "Missing equipment recipe " + mrHorseArmorKey);
+        helper.assertTrue(new ItemStack(mrHorseArmor).is(MagTags.METAL_ARMOR),
+                "mr_fluid_horse_armor must be magnetizable through metal_armor");
 
         final ItemStack dampeningBoots = stack("magnetoresistive_boots");
         helper.assertTrue(dampeningBoots.is(ItemTags.FOOT_ARMOR), "Magnetoresistive Boots are missing from foot_armor");
