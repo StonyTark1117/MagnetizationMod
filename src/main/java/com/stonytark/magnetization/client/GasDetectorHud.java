@@ -27,7 +27,17 @@ import java.util.Locale;
 /** Detailed inspection overlay opened by right-clicking the gas detector. */
 @EventBusSubscriber(modid = Magnetization.MOD_ID, value = Dist.CLIENT)
 public final class GasDetectorHud {
-    private static final int HOTBAR_OFFSET = 85;
+    /**
+     * Keep the complete expanded readout above Minecraft's action-bar line. The
+     * detector deliberately also sends a server-authored action-bar summary on
+     * use, so anchoring this at the old 85-pixel offset put that summary through
+     * the location/exposure lines and, for Radon, directly above the warning.
+     */
+    static final int HOTBAR_OFFSET = 124;
+    static final float HUD_SCALE = 0.75f;
+    static final int DANGER_LINE_Y = 50;
+    static final int VANILLA_ACTION_BAR_OFFSET = 68;
+    private static final int ACTION_BAR_TEXT_TOP = 4;
     private static final int SYNC_INTERVAL_TICKS = 5;
     private static boolean expanded;
     private static int lastRequestTick = Integer.MIN_VALUE;
@@ -86,7 +96,7 @@ public final class GasDetectorHud {
         final int y = graphics.guiHeight() - HOTBAR_OFFSET;
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(0.75f, 0.75f, 1f);
+        graphics.pose().scale(HUD_SCALE, HUD_SCALE, 1f);
         if (!reading.found()) {
             graphics.drawCenteredString(minecraft.font,
                     Component.translatable("hud.magnetization.gas_detector.none")
@@ -110,7 +120,8 @@ public final class GasDetectorHud {
             if (reading.dangerous()) {
                 graphics.drawCenteredString(minecraft.font,
                         Component.translatable("hud.magnetization.gas_detector.danger")
-                                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD), 0, 50, 0xFFFFFFFF);
+                                .withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+                        0, DANGER_LINE_Y, 0xFFFFFFFF);
             }
         }
         graphics.pose().popPose();
@@ -172,6 +183,14 @@ public final class GasDetectorHud {
 
     private static String metres(final double distance) {
         return String.format(Locale.ROOT, "%.1fm", Math.max(0.1d, distance));
+    }
+
+    /** Vertical clearance between the Radon HUD's lowest pixel and the vanilla action bar. */
+    static int actionBarGap(final int fontLineHeight) {
+        final int hudBottomOffset = HOTBAR_OFFSET
+                - (int) Math.ceil((DANGER_LINE_Y + fontLineHeight) * HUD_SCALE);
+        final int actionBarTopOffset = VANILLA_ACTION_BAR_OFFSET + ACTION_BAR_TEXT_TOP;
+        return hudBottomOffset - actionBarTopOffset;
     }
 
     private static String cardinal(final double degrees) {
