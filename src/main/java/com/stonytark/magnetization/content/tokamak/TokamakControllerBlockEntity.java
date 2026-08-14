@@ -8,6 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,6 +17,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -28,7 +32,8 @@ import java.util.Set;
  * rings are supported) and loaded
  * with deuterium fuel, it fuses and generates a large, steady FE output that it
  * pushes to adjacent machines/cables. Larger rings scale the reactor linearly.
- * Fuel is loaded by right-clicking with a Deuterium Cell.
+ * Fuel cells and optional coolant are shared across every core; cooling
+ * raises generation/output and stretches fuel life without changing dry operation.
  */
 public class TokamakControllerBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData {
@@ -43,12 +48,20 @@ public class TokamakControllerBlockEntity extends BlockEntity
     private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
     private int formedRingEdge = 0;
     private int formedRingMultiplier = 0;
+    private final FluidTank coolant = new FluidTank(
+            com.stonytark.magnetization.config.MagConfig.tokamakCoolantTankPerScale(),
+            stack -> com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolant(stack.getFluid())) {
+        @Override protected void onContentsChanged() { TokamakControllerBlockEntity.this.setChanged(); }
+    };
+    private double burnAccumulator;
+    private boolean coolingActive;
     private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
 
-    /** Fuel slot — holds spare fusion cells (D-D / D-T / D-He³), auto-fed into the burn. */
+    /** Shared input slot — holds spare fusion cells or drains one coolant bucket at a time. */
     private final net.minecraft.world.SimpleContainer fuelSlot = new net.minecraft.world.SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final ItemStack st) {
-            return cellTier(st) >= 0;
+            return cellTier(st) >= 0
+                    || com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolantBucket(st);
         }
         @Override public void setChanged() { super.setChanged(); TokamakControllerBlockEntity.this.setChanged(); }
     };
@@ -99,6 +112,28 @@ public class TokamakControllerBlockEntity extends BlockEntity
         return displayOwner().fuelSlot;
     }
 
+    /** Insert-only shared coolant tank exposed through every formed core. */
+    public IFluidHandler coolantHandler() {
+        return new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(
+                displayOwner().coolant);
+    }
+
+    public int coolantStored() { return displayOwner().coolant.getFluidAmount(); }
+    public int coolantCapacity() { return displayOwner().coolant.getCapacity(); }
+    public boolean coolingActive() { return displayOwner().coolingActive; }
+
+    /** Pour one vanilla or common-tagged coolant bucket into the shared tank. */
+    public boolean fillCoolantBucket(final ItemStack bucket) {
+        final java.util.Optional<FluidStack> coolantBucket =
+                com.stonytark.magnetization.content.fluid.CoolantFluids.coolantFromBucket(bucket);
+        if (coolantBucket.isEmpty()) return false;
+        final FluidTank target = displayOwner().coolant;
+        if (target.fill(coolantBucket.get(), IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
+        target.fill(coolantBucket.get(), IFluidHandler.FluidAction.EXECUTE);
+        displayOwner().setChanged();
+        return true;
+    }
+
     net.minecraft.world.Container ownFuelContainer() { return fuelSlot; }
 
     /** Master buffer exposed through a formed Tokamak-Coil perimeter. */
@@ -112,6 +147,20 @@ public class TokamakControllerBlockEntity extends BlockEntity
         final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, masterPos,
                 com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
         return ring != null && ring.valid() && ring.requiredFrame().contains(framePos) ? master.energy : null;
+    }
+
+    /** Shared coolant input exposed through a formed Tokamak's perimeter coils. */
+    public static @Nullable IFluidHandler coolantHandlerFromFrame(final Level level,
+                                                                  final BlockPos framePos) {
+        final BlockPos masterPos = TokamakRingPreview.findController(level, framePos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        if (masterPos == null
+                || !(level.getBlockEntity(masterPos) instanceof TokamakControllerBlockEntity master)
+                || com.stonytark.magnetization.config.MagConfig.isBlockDisabled(master.getBlockState())) return null;
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, masterPos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        return ring != null && ring.valid() && ring.requiredFrame().contains(framePos)
+                ? new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(master.coolant) : null;
     }
 
     /** Deterministic formed master for any core in the reactor. */
@@ -149,6 +198,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
     @Override public int guiStat4() { return tierBurnTicks(displayOwner().currentTier); }
     @Override public int guiStructureSize() { return displayOwner().formedRingEdge; }
     @Override public int guiStructureScale() { return displayOwner().formedRingMultiplier; }
+    @Override public int guiCoolantStored() { return coolantStored(); }
+    @Override public int guiCoolantCapacity() { return coolantCapacity(); }
+    @Override public boolean guiCoolingActive() { return coolingActive(); }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
         final TokamakControllerBlockEntity owner = displayOwner();
         if (owner.formedRingEdge <= 0) {
@@ -164,6 +216,11 @@ public class TokamakControllerBlockEntity extends BlockEntity
                                   final TokamakControllerBlockEntity be) {
         if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
+        final ItemStack input = be.fuelSlot.getItem(0);
+        if (com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolantBucket(input)
+                && be.fillCoolantBucket(input)) {
+            be.fuelSlot.setItem(0, new ItemStack(Items.BUCKET));
+        }
         if (be.formedRingEdge <= 0 && !TokamakRingPreview.isPotentialMaster(level, pos,
                 com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge())) return;
         final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, pos,
@@ -174,8 +231,11 @@ public class TokamakControllerBlockEntity extends BlockEntity
             be.formedRingEdge = 0;
             be.formedRingMultiplier = 0;
             be.lastOutput = 0;
+            be.coolingActive = false;
+            be.resizeCoolant(com.stonytark.magnetization.config.MagConfig.tokamakCoolantTankPerScale());
             be.energy.resize(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
-                    com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3());
+                    boosted(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(),
+                            coolingProfile(true).powerMultiplier()));
             setLit(level, pos, state, false);
             be.setChanged();
             if (be.syncGate.changed(be, server.registryAccess())) {
@@ -198,7 +258,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
         if (previousEdge != ring.edge()) invalidateCapabilities(level, ring);
 
         be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
-                scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier));
+                boosted(scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier),
+                        coolingProfile(true).powerMultiplier()));
+        be.resizeCoolant(scaled(com.stonytark.magnetization.config.MagConfig.tokamakCoolantTankPerScale(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
         // gen/output use that tier's rates (mixing tiers cleanly, one cell at a time).
         if (be.burnTime <= 0) {
@@ -213,14 +275,27 @@ public class TokamakControllerBlockEntity extends BlockEntity
             }
         }
         final boolean fusing = be.burnTime > 0;
+        final int coolantCost = scaled(
+                com.stonytark.magnetization.config.MagConfig.tokamakCoolantPerTickPerScale(), multiplier);
+        final boolean cooled = fusing && be.consumeCoolant(coolantCost);
+        final CoolingProfile cooling = coolingProfile(cooled);
+        be.coolingActive = cooled;
         if (fusing) {
-            be.energy.generate(scaled(tierGenPerTick(be.currentTier), multiplier));
-            be.burnTime--;
+            be.energy.generate(boosted(scaled(tierGenPerTick(be.currentTier), multiplier),
+                    cooling.powerMultiplier()));
+            be.burnAccumulator += 1.0d / cooling.fuelEfficiencyMultiplier();
+            final int burnSteps = Math.min(be.burnTime, (int) be.burnAccumulator);
+            if (burnSteps > 0) {
+                be.burnTime -= burnSteps;
+                be.burnAccumulator -= burnSteps;
+            }
             be.setChanged();
+        } else {
+            be.burnAccumulator = 0.0d;
         }
         setCoreLit(level, ring.requiredCores(), fusing);
         be.lastOutput = pushEnergy(server, ring.requiredCores(), be.energy,
-                scaled(tierOutputRate(be.currentTier), multiplier));
+                boosted(scaled(tierOutputRate(be.currentTier), multiplier), cooling.powerMultiplier()));
         if (server.getGameTime() % 10L == 0L && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
         }
@@ -248,6 +323,37 @@ public class TokamakControllerBlockEntity extends BlockEntity
     private static int scaled(final int base, final int multiplier) {
         return (int) Math.min(Integer.MAX_VALUE,
                 Math.max(0L, (long) Math.max(0, base) * Math.max(1, multiplier)));
+    }
+
+    private static int boosted(final int base, final double multiplier) {
+        return (int) Math.min(Integer.MAX_VALUE,
+                Math.max(0.0d, Math.ceil(Math.max(0, base) * Math.max(1.0d, multiplier))));
+    }
+
+    /** Runtime profile used by both reactor logic and regression tests. */
+    public static CoolingProfile coolingProfile(final boolean cooled) {
+        return cooled
+                ? new CoolingProfile(
+                        com.stonytark.magnetization.config.MagConfig.tokamakCooledPowerMultiplier(),
+                        com.stonytark.magnetization.config.MagConfig.tokamakCooledFuelEfficiency())
+                : new CoolingProfile(1.0d, 1.0d);
+    }
+
+    public record CoolingProfile(double powerMultiplier, double fuelEfficiencyMultiplier) {}
+
+    private boolean consumeCoolant(final int amount) {
+        if (coolant.getFluidAmount() <= 0 || coolant.getFluid().isEmpty()) return false;
+        if (amount > 0 && coolant.getFluidAmount() < amount) return false;
+        if (amount > 0) coolant.drain(amount, IFluidHandler.FluidAction.EXECUTE);
+        return true;
+    }
+
+    private void resizeCoolant(final int capacity) {
+        final int clamped = Math.max(1, capacity);
+        if (coolant.getCapacity() == clamped) return;
+        coolant.setCapacity(clamped);
+        final int excess = coolant.getFluidAmount() - clamped;
+        if (excess > 0) coolant.drain(excess, IFluidHandler.FluidAction.EXECUTE);
     }
 
     /** Push to neighbours; returns total FE moved this tick (the GUI's output readout). */
@@ -333,6 +439,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
         tag.putInt("LastOutput", lastOutput); // synced via getUpdateTag → WTHIT/GUI output readout
         tag.putInt("RingEdge", formedRingEdge);
         tag.putInt("RingMultiplier", formedRingMultiplier);
+        tag.put("Coolant", coolant.writeToNBT(registries, new CompoundTag()));
+        tag.putDouble("BurnAccumulator", burnAccumulator);
+        tag.putBoolean("Cooling", coolingActive);
         tag.put("Fuel", fuelSlot.createTag(registries));
     }
 
@@ -345,6 +454,9 @@ public class TokamakControllerBlockEntity extends BlockEntity
         lastOutput = tag.getInt("LastOutput");
         formedRingEdge = tag.getInt("RingEdge");
         formedRingMultiplier = tag.getInt("RingMultiplier");
+        coolant.readFromNBT(registries, tag.getCompound("Coolant"));
+        burnAccumulator = tag.getDouble("BurnAccumulator");
+        coolingActive = tag.getBoolean("Cooling");
         fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 

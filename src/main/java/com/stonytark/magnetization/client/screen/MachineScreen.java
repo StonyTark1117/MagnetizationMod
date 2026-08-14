@@ -25,6 +25,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int ENERGY_X = 156, BAR_Y = MachineGuiLayout.BAR_Y, BAR_W = 12,
             BAR_H = MachineGuiLayout.BAR_HEIGHT;
     private static final int FLUID_X = 138;
+    private static final int COOLANT_X = 120;
     private Button railgunBreakingButton;
     private Button railgunAutoAssembleButton;
 
@@ -137,6 +138,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 drawBar(g, leftPos + FLUID_X, topPos + BAR_Y, menu.displayAuxiliary() / barMax, 0xFFDDE6FF); }
             default -> { }
         }
+        if (menu.kind() == MachineMenu.Kind.TOKAMAK
+                || menu.kind() == MachineMenu.Kind.FUSION_THRUSTER) {
+            drawBar(g, leftPos + COOLANT_X, topPos + BAR_Y,
+                    menu.coolantStored() / (float) menu.coolantCapacity(),
+                    menu.coolingActive() ? 0xFF55D6FF : 0xFF397FC4);
+        }
     }
 
     private static void drawSlotRecess(final GuiGraphics g, final int x, final int y, final int colour) {
@@ -174,10 +181,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case TOKAMAK -> {
                 final String[] tiers = {"dd", "dt", "he3"};
                 lines.add(MachineGuiData.tokamakRingScaleLine(menu.displayData()));
-                lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
-                        + tiers[Math.min(2, Math.max(0, menu.displayTier()))]));
-                lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_operation",
+                lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_operation_tier",
+                        Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
+                                + tiers[Math.min(2, Math.max(0, menu.displayTier()))]),
                         menu.displayCurrent() / 20, Math.max(0, menu.displayAuxiliary())));
+                lines.add(MachineGuiData.coolingLine(menu.displayData()));
             }
             case THRUSTER -> lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
             case ION_THRUSTER -> {
@@ -189,6 +197,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             case FUSION_THRUSTER -> {
                 lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
                 lines.add(Component.translatable("tooltip.magnetization.gui_fusion_size", Math.max(0, menu.displayAuxiliary())));
+                lines.add(MachineGuiData.coolingLine(menu.displayData()));
             }
             case MOTOR -> {
                 lines.add(MachineGuiData.magnetStatusLine(menu.getSlot(0).getItem()));
@@ -247,6 +256,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     ? Component.translatable("tooltip.magnetization.gui_fuel", menu.displayCurrent() / 20)
                     : Component.translatable("tooltip.magnetization.gui_fluid", menu.displayCurrent());
             g.renderTooltip(font, t, mx, my);
+        }
+        if ((menu.kind() == MachineMenu.Kind.TOKAMAK
+                || menu.kind() == MachineMenu.Kind.FUSION_THRUSTER)
+                && inBar(mx, my, COOLANT_X)) {
+            g.renderTooltip(font, Component.translatable("tooltip.magnetization.gui_coolant",
+                    menu.coolantStored(), menu.coolantCapacity()), mx, my);
         }
         GuiTextLayout.renderTooltipIfClipped(g, font, title,
                 leftPos + 8, topPos + 6, imageWidth - 16, mx, my);

@@ -160,6 +160,11 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE;
     public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_TRITIUM;
     public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_FLUID_DENSITY_HELIUM3;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_COOLANT_TANK_PER_INTERIOR;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_COOLANT_PER_TICK_BASE;
+    public static final ModConfigSpec.IntValue    FUSION_THRUSTER_COOLANT_PER_TICK_PER_INTERIOR;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_COOLED_POWER_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue FUSION_THRUSTER_COOLED_EFFICIENCY_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue RAILGUN_ENABLED;
     public static final ModConfigSpec.BooleanValue RAILGUN_AUTO_FIRE;
     public static final ModConfigSpec.IntValue    RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS;
@@ -228,6 +233,10 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    TOKAMAK_GEN_PER_TICK_HELIUM3;
     public static final ModConfigSpec.IntValue    TOKAMAK_OUTPUT_RATE_HELIUM3;
     public static final ModConfigSpec.IntValue    TOKAMAK_BURN_TICKS_HELIUM3;
+    public static final ModConfigSpec.IntValue    TOKAMAK_COOLANT_TANK_PER_SCALE;
+    public static final ModConfigSpec.IntValue    TOKAMAK_COOLANT_PER_TICK_PER_SCALE;
+    public static final ModConfigSpec.DoubleValue TOKAMAK_COOLED_POWER_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue TOKAMAK_COOLED_FUEL_EFFICIENCY;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_CAPACITY;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_RECEIVE;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_PER_TICK;
@@ -1136,6 +1145,21 @@ public final class MagConfig {
                 .defineInRange("fusionThrusterFluidDensityTritium", 4.5d, 0.1d, 1000.0d);
         FUSION_THRUSTER_FLUID_DENSITY_HELIUM3 = b.translation("magnetization.configuration.propulsion.fusionThrusterFluidDensityHelium3")
                 .defineInRange("fusionThrusterFluidDensityHelium3", 12.5d, 0.1d, 1000.0d);
+        FUSION_THRUSTER_COOLANT_TANK_PER_INTERIOR = b
+                .translation("magnetization.configuration.propulsion.fusionThrusterCoolantTankPerInterior")
+                .defineInRange("fusionThrusterCoolantTankPerInterior", 8_000, 1, 1_000_000);
+        FUSION_THRUSTER_COOLANT_PER_TICK_BASE = b
+                .translation("magnetization.configuration.propulsion.fusionThrusterCoolantPerTickBase")
+                .defineInRange("fusionThrusterCoolantPerTickBase", 1, 0, 10_000);
+        FUSION_THRUSTER_COOLANT_PER_TICK_PER_INTERIOR = b
+                .translation("magnetization.configuration.propulsion.fusionThrusterCoolantPerTickPerInterior")
+                .defineInRange("fusionThrusterCoolantPerTickPerInterior", 1, 0, 10_000);
+        FUSION_THRUSTER_COOLED_POWER_MULTIPLIER = b
+                .translation("magnetization.configuration.propulsion.fusionThrusterCooledPowerMultiplier")
+                .defineInRange("fusionThrusterCooledPowerMultiplier", 1.35d, 1.0d, 10.0d);
+        FUSION_THRUSTER_COOLED_EFFICIENCY_MULTIPLIER = b
+                .translation("magnetization.configuration.propulsion.fusionThrusterCooledEfficiencyMultiplier")
+                .defineInRange("fusionThrusterCooledEfficiencyMultiplier", 1.25d, 1.0d, 10.0d);
         RAILGUN_ENABLED = b.translation("magnetization.configuration.propulsion.railgunEnabled")
                 .define("railgunEnabled", true);
         RAILGUN_AUTO_FIRE = b.translation("magnetization.configuration.propulsion.railgunAutoFire")
@@ -1278,6 +1302,18 @@ public final class MagConfig {
                 .defineInRange("tokamakOutputRateHelium3", 24000, 0, 1_000_000_000);
         TOKAMAK_BURN_TICKS_HELIUM3 = b.translation("magnetization.configuration.machines.tokamakBurnTicksHelium3")
                 .defineInRange("tokamakBurnTicksHelium3", 7200, 1, 1_000_000_000);
+        TOKAMAK_COOLANT_TANK_PER_SCALE = b
+                .translation("magnetization.configuration.machines.tokamakCoolantTankPerScale")
+                .defineInRange("tokamakCoolantTankPerScale", 8_000, 1, 1_000_000);
+        TOKAMAK_COOLANT_PER_TICK_PER_SCALE = b
+                .translation("magnetization.configuration.machines.tokamakCoolantPerTickPerScale")
+                .defineInRange("tokamakCoolantPerTickPerScale", 1, 0, 10_000);
+        TOKAMAK_COOLED_POWER_MULTIPLIER = b
+                .translation("magnetization.configuration.machines.tokamakCooledPowerMultiplier")
+                .defineInRange("tokamakCooledPowerMultiplier", 1.5d, 1.0d, 10.0d);
+        TOKAMAK_COOLED_FUEL_EFFICIENCY = b
+                .translation("magnetization.configuration.machines.tokamakCooledFuelEfficiency")
+                .defineInRange("tokamakCooledFuelEfficiency", 1.5d, 1.0d, 10.0d);
         ELECTROLYZER_FE_CAPACITY = b.translation("magnetization.configuration.machines.electrolyzerFeCapacity")
                 .defineInRange("electrolyzerFeCapacity", 200_000, 0, 1_000_000_000);
         ELECTROLYZER_FE_RECEIVE = b.translation("magnetization.configuration.machines.electrolyzerFeReceive")
@@ -2942,6 +2978,11 @@ public final class MagConfig {
     public static double fusionThrusterFluidDensityDeuteriumOxide() { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_DEUTERIUM_OXIDE, 0.35d); }
     public static double fusionThrusterFluidDensityTritium()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_TRITIUM, 4.5d); }
     public static double fusionThrusterFluidDensityHelium3()        { return doubleOr(FUSION_THRUSTER_FLUID_DENSITY_HELIUM3, 12.5d); }
+    public static int    fusionThrusterCoolantTankPerInterior()     { return intOr(FUSION_THRUSTER_COOLANT_TANK_PER_INTERIOR, 8_000); }
+    public static int    fusionThrusterCoolantPerTickBase()         { return intOr(FUSION_THRUSTER_COOLANT_PER_TICK_BASE, 1); }
+    public static int    fusionThrusterCoolantPerTickPerInterior()  { return intOr(FUSION_THRUSTER_COOLANT_PER_TICK_PER_INTERIOR, 1); }
+    public static double fusionThrusterCooledPowerMultiplier()      { return doubleOr(FUSION_THRUSTER_COOLED_POWER_MULTIPLIER, 1.35d); }
+    public static double fusionThrusterCooledEfficiencyMultiplier() { return doubleOr(FUSION_THRUSTER_COOLED_EFFICIENCY_MULTIPLIER, 1.25d); }
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
     public static boolean simulatedCoastersCompatEnabled() {
         return booleanOr(SIMULATED_COASTERS_COMPAT_ENABLED, true);
@@ -3177,6 +3218,10 @@ public final class MagConfig {
     public static int    tokamakGenPerTickHelium3()    { return intOr(TOKAMAK_GEN_PER_TICK_HELIUM3, 3000); }
     public static int    tokamakOutputRateHelium3()    { return intOr(TOKAMAK_OUTPUT_RATE_HELIUM3, 24000); }
     public static int    tokamakBurnTicksHelium3()     { return intOr(TOKAMAK_BURN_TICKS_HELIUM3, 7200); }
+    public static int    tokamakCoolantTankPerScale()  { return intOr(TOKAMAK_COOLANT_TANK_PER_SCALE, 8_000); }
+    public static int    tokamakCoolantPerTickPerScale() { return intOr(TOKAMAK_COOLANT_PER_TICK_PER_SCALE, 1); }
+    public static double tokamakCooledPowerMultiplier() { return doubleOr(TOKAMAK_COOLED_POWER_MULTIPLIER, 1.5d); }
+    public static double tokamakCooledFuelEfficiency() { return doubleOr(TOKAMAK_COOLED_FUEL_EFFICIENCY, 1.5d); }
     public static int    electrolyzerFeCapacity()      { return electrolyzerFeCapacityRaw(); }
     public static int    electrolyzerFeReceive()       { return Math.min(electrolyzerFeReceiveRaw(), electrolyzerFeCapacityRaw()); }
     public static int    electrolyzerFePerTick()       { return intOr(ELECTROLYZER_FE_PER_TICK, 256); }

@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
  * (Hydrogen / Deuterium Oxide / Tritium / Helium-3), with Helium-3 the strongest
  * AND longest-running (denser fluids drain slower). Only the deterministic master
  * interior fires; right-clicking any interior opens the master's shared GUI.
+ * Optional water or common-tagged cooling fluid increases thrust/speed and reduces FE/propellant use;
+ * an empty coolant tank preserves the original dry performance exactly.
  */
 public class FusionThrusterBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
@@ -53,14 +55,20 @@ public class FusionThrusterBlockEntity extends BlockEntity
      *  every other interior forwards its fluid capability here (see {@link #panelTank}),
      *  so a bigger panel holds proportionally more fuel from one shared tank. */
     private final FluidTank tank = new FluidTank(MagConfig.fusionThrusterTank(),
-            fs -> isFusionFluid(fs.getFluid()));
+            fs -> isFusionFluid(fs.getFluid())) {
+        @Override protected void onContentsChanged() { FusionThrusterBlockEntity.this.setChanged(); }
+    };
+    private final FluidTank coolant = new FluidTank(MagConfig.fusionThrusterCoolantTankPerInterior(),
+            fs -> com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolant(fs.getFluid())) {
+        @Override protected void onContentsChanged() { FusionThrusterBlockEntity.this.setChanged(); }
+    };
     private final ReceiveBuffer energy = new ReceiveBuffer(
             MagConfig.fusionThrusterFeCapacity(), MagConfig.fusionThrusterFeReceive());
 
-    /** Bucket-input slot — the 4 fusion-fluid buckets auto-drain into the tank. */
+    /** Bucket-input slot — fusion-fluid and coolant buckets auto-drain into their tanks. */
     private final SimpleContainer bucketSlot = new SimpleContainer(1) {
         @Override public boolean canPlaceItem(final int s, final ItemStack st) {
-            return isFusionFluidBucket(st);
+            return isInputBucket(st);
         }
         @Override public void setChanged() { super.setChanged(); FusionThrusterBlockEntity.this.setChanged(); }
     };
@@ -77,6 +85,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     /** Fractional fuel-consumption accumulator (denser fluids drain < 1 mB/tick). */
     private double fluidAccum;
     private boolean firing;
+    private boolean coolingActive;
 
     public FusionThrusterBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.FUSION_THRUSTER.get(), pos, state);
@@ -96,10 +105,25 @@ public class FusionThrusterBlockEntity extends BlockEntity
         // directly; capability access need not wait for its throttled panel scan.
         return master.energy;
     }
+
+    /** Shared fuel + coolant input exposed by a Tokamak Coil in a valid frame. */
+    public static @Nullable IFluidHandler fluidHandlerFromFrame(final Level level,
+                                                                final BlockPos framePos) {
+        final BlockPos masterPos = FusionThrusterPanel.findMasterFromFrame(
+                level, framePos, MagConfig.fusionThrusterMaxEdge());
+        if (masterPos == null
+                || !(level.getBlockEntity(masterPos) instanceof FusionThrusterBlockEntity master)
+                || MagConfig.isBlockDisabled(master.getBlockState())) return null;
+        final FusionThrusterBlockEntity inputMaster = master.inputMaster();
+        return new com.stonytark.magnetization.content.fluid.MultiTankInputFluidHandler(
+                inputMaster.tank, inputMaster.coolant);
+    }
     // Insert-only: pipes can fuel the panel but can't siphon unburnt fusion fuel back
     // out. panelTank() resolves the (possibly remote master's) tank, so wrap per call.
     public IFluidHandler fluidHandler() {
-        return new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(panelTank());
+        final FusionThrusterBlockEntity inputMaster = inputMaster();
+        return new com.stonytark.magnetization.content.fluid.MultiTankInputFluidHandler(
+                inputMaster.tank, inputMaster.coolant);
     }
     public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
 
@@ -109,6 +133,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
     private FluidTank panelTank() {
         final FusionThrusterBlockEntity m = panelMaster();
         return m != null ? m.tank : tank;
+    }
+
+    private FluidTank panelCoolant() {
+        final FusionThrusterBlockEntity m = panelMaster();
+        return m != null ? m.coolant : coolant;
     }
 
     /** The panel's shared FE buffer: the master's buffer, so a cable on ANY interior
@@ -130,7 +159,32 @@ public class FusionThrusterBlockEntity extends BlockEntity
         return null;
     }
 
+    /** Resolve fluid input against the live structure, even before its first tick.
+     *  Create pipes and frame-coil capabilities may run earlier than the panel
+     *  ticker, so relying only on cached formation data would strand fluid in a
+     *  non-master or expose only the one-cell capacity on a newly formed panel. */
+    private FusionThrusterBlockEntity inputMaster() {
+        if (level == null) return this;
+        if (cachedValid && cachedMaster != null
+                && level.getBlockEntity(cachedMaster) instanceof FusionThrusterBlockEntity master) {
+            master.resizeSharedTanks(Math.max(1, cachedInterior));
+            return master;
+        }
+        final FusionThrusterPanel.Result result = FusionThrusterPanel.validate(
+                level, getBlockPos(), facing(), MagConfig.fusionThrusterMaxEdge());
+        if (result.valid() && result.master() != null
+                && level.getBlockEntity(result.master()) instanceof FusionThrusterBlockEntity master) {
+            master.resizeSharedTanks(Math.max(1, result.interiorCount()));
+            return master;
+        }
+        resizeSharedTanks(1);
+        return this;
+    }
+
     public boolean isFiring() { return firing; }
+    public boolean coolingActive() { return panelMaster() != null ? panelMaster().coolingActive : coolingActive; }
+    public int coolantStored() { return panelCoolant().getFluidAmount(); }
+    public int coolantCapacity() { return panelCoolant().getCapacity(); }
     public int interiorCount() { return cachedInterior; }
     public boolean formed() { return cachedValid; }
 
@@ -154,6 +208,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
     @Override public int guiStat4() {
         return (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterTank() * Math.max(1, cachedInterior));
     }
+    @Override public int guiCoolantStored() { return coolantStored(); }
+    @Override public int guiCoolantCapacity() { return coolantCapacity(); }
+    @Override public boolean guiCoolingActive() { return coolingActive(); }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
         final BlockState state = getBlockState();
         final boolean visiblyFiring = state.hasProperty(BlockStateProperties.LIT)
@@ -187,6 +244,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
                 || st.is(MagItems.TRITIUM_BUCKET.get()) || st.is(MagItems.HELIUM_3_BUCKET.get());
     }
 
+    public static boolean isInputBucket(final ItemStack stack) {
+        return com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolantBucket(stack)
+                || isFusionFluidBucket(stack);
+    }
+
     private static boolean isCompatibleHydrogenBucket(final ItemStack stack) {
         if (!stack.is(com.stonytark.magnetization.api.MagTags.HYDROGEN_BUCKETS)) return false;
         final net.minecraft.resources.ResourceLocation id =
@@ -195,6 +257,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     private static @Nullable Fluid bucketFluid(final ItemStack st) {
+        final java.util.Optional<FluidStack> coolant =
+                com.stonytark.magnetization.content.fluid.CoolantFluids.coolantFromBucket(st);
+        if (coolant.isPresent()) return coolant.get().getFluid();
         if (isCompatibleHydrogenBucket(st)) {
             final java.util.Optional<FluidStack> contained =
                     net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(st);
@@ -208,15 +273,18 @@ public class FusionThrusterBlockEntity extends BlockEntity
         return null;
     }
 
-    /** Pour one fusion-fluid bucket (1000 mB) into the shared panel tank if it matches/empty. */
+    /** Pour one fuel or coolant bucket (1000 mB) into the matching shared panel tank. */
     public boolean fillFromBucket(final ItemStack bucket) {
         final Fluid fluid = bucketFluid(bucket);
         if (fluid == null) return false;
-        final FluidTank into = panelTank();
+        final FusionThrusterBlockEntity inputMaster = inputMaster();
+        final FluidTank into = com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolant(fluid)
+                ? inputMaster.coolant : inputMaster.tank;
         final FluidStack stack = new FluidStack(fluid, 1000);
         if (into.fill(stack, IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
         into.fill(stack, IFluidHandler.FluidAction.EXECUTE);
-        setChanged();
+        inputMaster.setChanged();
+        if (inputMaster != this) setChanged();
         return true;
     }
 
@@ -248,6 +316,34 @@ public class FusionThrusterBlockEntity extends BlockEntity
                 be.exhaustColour(), Math.max(1, be.interiorCount()));
     }
 
+    private void resizeSharedTanks(final int interiorCount) {
+        final int count = Math.max(1, interiorCount);
+        // Compute in long + clamp: tank config × a large panel can exceed int range.
+        final int fuelCap = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterTank() * count);
+        if (tank.getCapacity() != fuelCap) {
+            tank.setCapacity(fuelCap);
+            final int over = tank.getFluidAmount() - fuelCap;
+            if (over > 0) tank.drain(over, IFluidHandler.FluidAction.EXECUTE);
+        }
+        final int coolantCap = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterCoolantTankPerInterior() * count);
+        if (coolant.getCapacity() != coolantCap) {
+            coolant.setCapacity(coolantCap);
+            final int over = coolant.getFluidAmount() - coolantCap;
+            if (over > 0) coolant.drain(over, IFluidHandler.FluidAction.EXECUTE);
+        }
+    }
+
+    /** Auto-drain one vanilla/Create-inserted fuel or coolant bucket after panel
+     *  resolution, so an input on any interior always reaches the shared master. */
+    private void drainInputBucket() {
+        final ItemStack in = bucketSlot.getItem(0);
+        if (isInputBucket(in) && fillFromBucket(in)) {
+            bucketSlot.setItem(0, new ItemStack(Items.BUCKET));
+        }
+    }
+
     private int exhaustColour() {
         final Fluid fluid = panelTank().getFluid().getFluid();
         if (isHydrogen(fluid)) return 0x74D9FF;
@@ -265,13 +361,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     private void runEngine(final ServerLevel server, final @Nullable ServerSubLevel host) {
-        tank.setCapacity(MagConfig.fusionThrusterTank());
         energy.resize(MagConfig.fusionThrusterFeCapacity(), MagConfig.fusionThrusterFeReceive());
-        // Auto-drain a fusion-fluid bucket into the tank (works anywhere).
-        final ItemStack in = bucketSlot.getItem(0);
-        if (isFusionFluidBucket(in) && fillFromBucket(in)) {
-            bucketSlot.setItem(0, new ItemStack(Items.BUCKET));
-        }
 
         // Re-validate the panel on a throttle (cache between scans). The
         // `lastScanTick == MIN_VALUE` guard forces the FIRST scan: subtracting
@@ -342,43 +432,41 @@ public class FusionThrusterBlockEntity extends BlockEntity
         // Only the deterministic master fires + drives the LIT visuals.
         final boolean isMaster = cachedValid && getBlockPos().equals(cachedMaster);
         if (!isMaster) {
+            resizeSharedTanks(1);
+            drainInputBucket();
             if (firing) firing = false;     // a demoted block goes dark via the master's sweep
+            coolingActive = false;
             return;
         }
 
         final int count = Math.max(1, cachedInterior);
+        resizeSharedTanks(count);
+        drainInputBucket();
 
-        // The panel's fuel capacity scales with its interior-block count, so a bigger
-        // panel holds proportionally more fuel (config tank size is now per cell).
-        // Compute in long + clamp to Integer.MAX_VALUE: at the config extremes
-        // (tank 1,000,000 × up to 62² interior cells) a plain int*int would overflow
-        // NEGATIVE, making setCapacity shed the whole tank every tick.
-        final int cap = (int) Math.min(Integer.MAX_VALUE,
-                (long) MagConfig.fusionThrusterTank() * count);
-        if (tank.getCapacity() != cap) {
-            tank.setCapacity(cap);
-            final int over = tank.getFluidAmount() - cap;   // panel shrank → shed the excess
-            if (over > 0) tank.drain(over, IFluidHandler.FluidAction.EXECUTE);
-        }
-
-        final int feCost = (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterFeCostBase()
-                + (long) MagConfig.fusionThrusterFeCostPerInterior() * count);
-        final int fluidCost = (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterFluidPerTickBase()
-                + (long) MagConfig.fusionThrusterFluidPerTickPerInterior() * count);
+        final int coolantCost = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterCoolantPerTickBase()
+                        + (long) MagConfig.fusionThrusterCoolantPerTickPerInterior() * count);
+        final boolean coolingAvailable = hasCoolant(coolantCost);
+        final OperatingProfile profile = operatingProfile(count, coolingAvailable);
 
         final FluidStack fuel = tank.getFluid();
         final boolean canFire = host != null && ThrustControl.canRun(server, cachedControlList,
                 cachedValid && !fuel.isEmpty() && tank.getFluidAmount() >= 1,
-                energy.getEnergyStored() >= feCost);
+                energy.getEnergyStored() >= profile.feCost());
 
         firing = canFire;
+        coolingActive = canFire && coolingAvailable;
         if (canFire) {
-            energy.drainInternal(feCost);
+            energy.drainInternal(profile.feCost());
+            if (coolingActive && coolantCost > 0) {
+                coolant.drain(coolantCost, IFluidHandler.FluidAction.EXECUTE);
+            }
             // Denser/better fluids drain LESS per tick → run far longer per tank.
-            fluidAccum += fluidCost / fluidDensity(fuel.getFluid());
+            fluidAccum += profile.nominalFluidCost() / fluidDensity(fuel.getFluid());
             final int whole = (int) fluidAccum;
             if (whole > 0) { tank.drain(whole, IFluidHandler.FluidAction.EXECUTE); fluidAccum -= whole; }
-            thrustHost(host, count, fluidMult(fuel.getFluid()));
+            thrustHost(host, count, fluidMult(fuel.getFluid()) * profile.powerMultiplier(),
+                    profile.speedMultiplier());
             setChanged();
         }
 
@@ -399,9 +487,36 @@ public class FusionThrusterBlockEntity extends BlockEntity
         return s.hasProperty(DirectionalBlock.FACING) ? s.getValue(DirectionalBlock.FACING) : Direction.NORTH;
     }
 
+    /** Operating costs and bonuses used directly by the engine and by tests. */
+    public static OperatingProfile operatingProfile(final int interiorCount, final boolean cooled) {
+        final int count = Math.max(1, interiorCount);
+        final int baseFe = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterFeCostBase()
+                        + (long) MagConfig.fusionThrusterFeCostPerInterior() * count);
+        final int baseFluid = (int) Math.min(Integer.MAX_VALUE,
+                (long) MagConfig.fusionThrusterFluidPerTickBase()
+                        + (long) MagConfig.fusionThrusterFluidPerTickPerInterior() * count);
+        final double efficiency = cooled ? Math.max(1.0d,
+                MagConfig.fusionThrusterCooledEfficiencyMultiplier()) : 1.0d;
+        final double power = cooled ? Math.max(1.0d,
+                MagConfig.fusionThrusterCooledPowerMultiplier()) : 1.0d;
+        return new OperatingProfile(
+                Math.max(0, (int) Math.ceil(baseFe / efficiency)),
+                baseFluid / efficiency, power, power);
+    }
+
+    public record OperatingProfile(int feCost, double nominalFluidCost,
+                                   double powerMultiplier, double speedMultiplier) {}
+
+    private boolean hasCoolant(final int amount) {
+        return !coolant.getFluid().isEmpty() && coolant.getFluidAmount() > 0
+                && (amount <= 0 || coolant.getFluidAmount() >= amount);
+    }
+
     /** Push the host opposite the exhaust-facing panel face, exponential in
      *  interior count and scaled by the active fluid's strength multiplier. */
-    private void thrustHost(final ServerSubLevel host, final int count, final double fluidMult) {
+    private void thrustHost(final ServerSubLevel host, final int count, final double fluidMult,
+                            final double speedMultiplier) {
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) return;
         final RigidBodyHandle handle = RigidBodyHandle.of(host);
         if (handle == null || !handle.isValid()) return;
@@ -413,7 +528,7 @@ public class FusionThrusterBlockEntity extends BlockEntity
         final Vec3 dirWorld = pose.transformNormal(new Vec3(dirLocal.x, dirLocal.y, dirLocal.z)).normalize();
         final Vector3dc v = handle.getLinearVelocity();
         if (v.x() * dirWorld.x + v.y() * dirWorld.y + v.z() * dirWorld.z
-                >= MagConfig.fusionThrusterMaxSpeed()) return;
+                >= MagConfig.fusionThrusterMaxSpeed() * speedMultiplier) return;
 
         final double mass = host.getMassTracker().getMass();
         final double magnitude = MagConfig.fusionThrusterThrustBase()
@@ -430,7 +545,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putInt("Energy", energy.getEnergyStored());
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        tag.put("Coolant", coolant.writeToNBT(registries, new CompoundTag()));
         tag.put("Bucket", bucketSlot.createTag(registries));
+        tag.putBoolean("Cooling", coolingActive);
         // Sync the resolved panel state so the client BE (and thus the WTHIT/Jade/TOP/Create-goggle
         // HUD) reports the real interior count, formed flag, and master — which the
         // panel-fluid forwarding (panelTank) also needs to resolve on the client.
@@ -444,7 +561,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         energy.setStored(tag.getInt("Energy"));
         tank.readFromNBT(registries, tag.getCompound("Tank"));
+        coolant.readFromNBT(registries, tag.getCompound("Coolant"));
         bucketSlot.fromTag(tag.getList("Bucket", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
+        coolingActive = tag.getBoolean("Cooling");
         // Restores the synced HUD state on the client; on the server these are
         // recomputed by the next validation pass, so a stale value is harmless.
         cachedValid = tag.getBoolean("Formed");

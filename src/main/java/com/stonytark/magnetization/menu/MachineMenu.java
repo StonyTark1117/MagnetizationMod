@@ -32,14 +32,15 @@ public final class MachineMenu extends AbstractContainerMenu {
         COIL, SAIL }
 
     public static final int INPUT_X = 80;
+    public static final int COOLED_INPUT_X = 100;
     public static final int WIDE_LABEL_INPUT_X = 112;
     public static final int INPUT_Y = MachineGuiLayout.INPUT_Y;
 
     /** Railgun, fusion-thruster, and electrolyzer readouts need the extra label
      *  width to the left of their input slot. */
     public static int inputX(final Kind kind) {
-        return kind == Kind.RAILGUN || kind == Kind.FUSION_THRUSTER || kind == Kind.ELECTROLYZER
-                ? WIDE_LABEL_INPUT_X : INPUT_X;
+        if (kind == Kind.FUSION_THRUSTER) return COOLED_INPUT_X;
+        return kind == Kind.RAILGUN || kind == Kind.ELECTROLYZER ? WIDE_LABEL_INPUT_X : INPUT_X;
     }
 
     private final ContainerLevelAccess access;
@@ -54,6 +55,9 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final WideData stat4 = new WideData();
     private final WideData structureSize = new WideData();
     private final WideData structureScale = new WideData();
+    private final WideData coolantStored = new WideData();
+    private final WideData coolantCapacity = new WideData();
+    private final DataSlot coolingActive = DataSlot.standalone();
     private final DataSlot displayStatus = DataSlot.standalone();
 
     /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
@@ -115,6 +119,11 @@ public final class MachineMenu extends AbstractContainerMenu {
         addDataSlot(structureSize.hi);
         addDataSlot(structureScale.lo);
         addDataSlot(structureScale.hi);
+        addDataSlot(coolantStored.lo);
+        addDataSlot(coolantStored.hi);
+        addDataSlot(coolantCapacity.lo);
+        addDataSlot(coolantCapacity.hi);
+        addDataSlot(coolingActive);
         addDataSlot(displayStatus);
         refresh();
     }
@@ -145,6 +154,9 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int displayCapacity() { return Math.max(1, stat4()); }
     public int structureSize() { return Math.max(0, structureSize.get()); }
     public int structureScale() { return Math.max(0, structureScale.get()); }
+    public int coolantStored() { return Math.max(0, coolantStored.get()); }
+    public int coolantCapacity() { return Math.max(1, coolantCapacity.get()); }
+    public boolean coolingActive() { return coolingActive.get() != 0; }
     public MachineDisplayData.Status displayStatus() {
         final MachineDisplayData.Status[] values = MachineDisplayData.Status.values();
         final int code = displayStatus.get();
@@ -152,7 +164,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     }
     public MachineDisplayData displayData() {
         return new MachineDisplayData(energyStored(), energyMax(), displayCurrent(), displayCapacity(),
-                displayTier(), displayAuxiliary(), structureSize(), structureScale(), displayStatus());
+                displayTier(), displayAuxiliary(), structureSize(), structureScale(),
+                coolantStored(), coolantCapacity(), coolingActive(), displayStatus());
     }
 
     private void refresh() {
@@ -167,6 +180,9 @@ public final class MachineMenu extends AbstractContainerMenu {
                 stat4.set(snapshot.capacity());
                 structureSize.set(snapshot.structureSize());
                 structureScale.set(snapshot.structureScale());
+                coolantStored.set(snapshot.coolantStored());
+                coolantCapacity.set(snapshot.coolantCapacity());
+                coolingActive.set(snapshot.coolingActive() ? 1 : 0);
                 displayStatus.set(snapshot.statusCode());
             }
         });
@@ -185,10 +201,11 @@ public final class MachineMenu extends AbstractContainerMenu {
         return switch (kind) {
             case MOTOR, JET -> MagneticMaterials.isMagnet(stack);
             case TOKAMAK -> stack.is(MagItems.DEUTERIUM_CELL.get())
-                    || stack.is(MagItems.TRITIUM_CELL.get()) || stack.is(MagItems.HELIUM_3_CELL.get());
+                    || stack.is(MagItems.TRITIUM_CELL.get()) || stack.is(MagItems.HELIUM_3_CELL.get())
+                    || stack.is(net.minecraft.world.item.Items.WATER_BUCKET);
             case THRUSTER -> stack.is(MagItems.FERROFLUID_BUCKET.get());
             case ION_THRUSTER -> com.stonytark.magnetization.content.jet.IonThrusterBlockEntity.isPropellantBucket(stack);
-            case FUSION_THRUSTER -> com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.isFusionFluidBucket(stack);
+            case FUSION_THRUSTER -> com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity.isInputBucket(stack);
             case RAILGUN -> stack.is(MagItems.RAILGUN_REMOTE.get());
             case ELECTROLYZER -> stack.is(net.minecraft.world.item.Items.WATER_BUCKET);
             case COIL, SAIL -> false;   // HUD-only kinds: no menu, no input slot

@@ -3,7 +3,11 @@ package com.stonytark.magnetization.content.tokamak;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -14,6 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,6 +51,31 @@ public final class TokamakControllerBlock extends Block implements EntityBlock {
         if (level.isClientSide || type != MagBlockEntities.TOKAMAK_CONTROLLER.get()) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<TokamakControllerBlockEntity>)
                 TokamakControllerBlockEntity::serverTick;
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
+                                              final BlockPos pos, final Player player, final InteractionHand hand,
+                                              final BlockHitResult hit) {
+        if (!com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolantBucket(stack)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (!(level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity self)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        final TokamakControllerBlockEntity master = TokamakControllerBlockEntity.formedMaster(level, pos);
+        final TokamakControllerBlockEntity target = master == null ? self : master;
+        if (!target.fillCoolantBucket(stack)) return ItemInteractionResult.CONSUME;
+        if (!level.isClientSide) {
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+                if (!player.addItem(new ItemStack(Items.BUCKET))) {
+                    player.drop(new ItemStack(Items.BUCKET), false);
+                }
+            }
+            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 0.8f);
+        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override

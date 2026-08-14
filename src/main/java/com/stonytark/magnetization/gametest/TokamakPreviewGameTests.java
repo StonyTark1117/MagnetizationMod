@@ -167,6 +167,62 @@ public final class TokamakPreviewGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "tokamakCooling")
+    public static void tokamakWaterCoolingBoostsPowerAndExtendsFuelWithoutChangingDryBaseline(
+            final GameTestHelper helper) {
+        final BlockPos controller = new BlockPos(2, 1, 2);
+        helper.setBlock(controller, MagBlocks.TOKAMAK_CONTROLLER.get());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx != 0 || dz != 0) {
+                    helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
+                }
+            }
+        }
+        final var reactor = (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity)
+                helper.getBlockEntity(controller);
+        reactor.fuelContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get()));
+
+        com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity.serverTick(
+                helper.getLevel(), helper.absolutePos(controller), reactor.getBlockState(), reactor);
+        final int dryGeneration = reactor.energyBuffer().getEnergyStored();
+        final int burnAfterDryTick = reactor.guiStat1();
+        helper.assertTrue(dryGeneration
+                        == com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick(),
+                "A dry Tokamak must retain the pre-cooling FE/t baseline; generated=" + dryGeneration);
+        helper.assertTrue(!reactor.coolingActive(),
+                "A dry Tokamak incorrectly reported active cooling");
+
+        final net.neoforged.neoforge.fluids.capability.IFluidHandler frameInput =
+                helper.getLevel().getCapability(
+                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                        helper.absolutePos(controller.offset(1, 0, 0)), null);
+        helper.assertTrue(frameInput != null,
+                "A formed Tokamak perimeter coil must expose the shared coolant input");
+        final int accepted = frameInput.fill(new net.neoforged.neoforge.fluids.FluidStack(
+                        net.minecraft.world.level.material.Fluids.WATER, 1_000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        helper.assertTrue(accepted == 1_000 && reactor.coolantStored() == 1_000,
+                "Water piped through a perimeter coil did not reach the master coolant tank");
+
+        com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity.serverTick(
+                helper.getLevel(), helper.absolutePos(controller), reactor.getBlockState(), reactor);
+        final int cooledGeneration = reactor.energyBuffer().getEnergyStored() - dryGeneration;
+        helper.assertTrue(cooledGeneration > dryGeneration,
+                "Water cooling must increase Tokamak FE/t; dry=" + dryGeneration
+                        + " cooled=" + cooledGeneration);
+        helper.assertTrue(reactor.guiStat1() == burnAfterDryTick,
+                "The first cooled tick should preserve more cell life than a dry tick; before="
+                        + burnAfterDryTick + " after=" + reactor.guiStat1());
+        helper.assertTrue(reactor.coolingActive() && reactor.coolantStored() < 1_000,
+                "Active cooling did not consume water or synchronize its state");
+        helper.assertTrue(reactor.displayData().coolingActive()
+                        && reactor.displayData().coolantStored() == reactor.coolantStored(),
+                "GUI/HUD snapshot lost the Tokamak coolant state");
+        helper.succeed();
+    }
+
     private static void fillCoreInterior(final GameTestHelper helper, final BlockPos controller,
                                          final int ringRadius) {
         final int inner = ringRadius - 1;

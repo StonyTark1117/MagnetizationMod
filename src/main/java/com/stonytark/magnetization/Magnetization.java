@@ -228,6 +228,20 @@ public final class Magnetization {
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.FUSION_THRUSTER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                MagBlockEntities.TOKAMAK_CONTROLLER.get(), (be, side) -> disabled(be) ? null : be.coolantHandler());
+        // Perimeter coils are the accessible service ports for large solid-core
+        // Tokamaks and formed Fusion Thruster panels. Prefer a thruster panel when
+        // a coil borders one; otherwise expose the reactor master's coolant input.
+        event.registerBlock(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                (level, pos, state, blockEntity, side) -> {
+                    final net.neoforged.neoforge.fluids.capability.IFluidHandler fusion =
+                            com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity
+                                    .fluidHandlerFromFrame(level, pos);
+                    return fusion != null ? fusion
+                            : com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
+                                    .coolantHandlerFromFrame(level, pos);
+                }, MagBlocks.TOKAMAK_COIL.get());
+        event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.MHD_JET.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());
         event.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                 MagBlockEntities.ELECTROLYZER.get(), (be, side) -> disabled(be) ? null : be.fluidHandler());

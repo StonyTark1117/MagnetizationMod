@@ -35,8 +35,8 @@ import org.jetbrains.annotations.Nullable;
  * Fusion Thruster interior block — see {@link FusionThrusterBlockEntity}. Tiled
  * inside a Tokamak-Coil ring to form a flat panel; {@code FACING} is the exhaust
  * side and reaction thrust moves the ship opposite it. Right-click with a
- * fusion-fluid bucket to top up the panel's tank; empty-hand opens the shared
- * panel GUI. {@code LIT} = the panel is actively firing.
+ * fusion-fluid or coolant bucket to top up the panel's shared tanks;
+ * empty-hand opens the shared panel GUI. {@code LIT} = the panel is actively firing.
  */
 public final class FusionThrusterBlock extends DirectionalBlock implements EntityBlock, IWrenchable {
 
@@ -106,7 +106,7 @@ public final class FusionThrusterBlock extends DirectionalBlock implements Entit
     protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level,
                                               final BlockPos pos, final Player player, final InteractionHand hand,
                                               final BlockHitResult hit) {
-        if (!FusionThrusterBlockEntity.isFusionFluidBucket(stack)) {
+        if (!FusionThrusterBlockEntity.isInputBucket(stack)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         final FusionThrusterBlockEntity be = resolveTarget(level, pos, state);

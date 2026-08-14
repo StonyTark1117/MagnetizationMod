@@ -50,7 +50,7 @@ public final class PlaytestWorldSetup {
     private static final String ROOT_TAG = "magnetization:playtest_setup";
     // Bump whenever the staged footprint changes so existing disposable saves
     // are rebuilt on the next login instead of silently retaining an old lab.
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     private static final int LAB_X = 64;
     private static final int LAB_Z = 64;
 
@@ -267,6 +267,8 @@ public final class PlaytestWorldSetup {
 
         final TokamakControllerBlockEntity tokamak = blockEntity(level, anchor.offset(14, 0, 18),
                 TokamakControllerBlockEntity.class);
+        tokamak.coolantHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
         tokamak.fuelContainer().setItem(0, new ItemStack(MagItems.TRITIUM_CELL.get(), 2));
         tokamak.energyBuffer().receiveEnergy(25_000, false);
         TokamakControllerBlockEntity.serverTick(level, tokamak.getBlockPos(), tokamak.getBlockState(), tokamak);
@@ -275,6 +277,8 @@ public final class PlaytestWorldSetup {
                 FusionThrusterBlockEntity.class);
         FusionThrusterBlockEntity.serverTick(level, fusion.getBlockPos(), fusion.getBlockState(), fusion);
         fusion.fluidHandler().fill(new FluidStack(MagFluids.HELIUM_3.get(), 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        fusion.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
                 IFluidHandler.FluidAction.EXECUTE);
         fusion.energyBuffer().receiveEnergy(30_000, false);
 
@@ -297,8 +301,10 @@ public final class PlaytestWorldSetup {
         final RailgunEmitterBlockEntity railgun = blockEntity(level, anchor.offset(37, 0, 22),
                 RailgunEmitterBlockEntity.class);
         return electrolyzer.waterAmount() > 0 && electrolyzer.energyBuffer().getEnergyStored() > 0
-                && !tokamak.fuelContainer().isEmpty() && tokamak.energyBuffer().getEnergyStored() > 0
-                && fusion.guiStat1() >= 2_000 && fusion.energyBuffer().getEnergyStored() > 0
+                && !tokamak.fuelContainer().isEmpty() && tokamak.coolantStored() > 0
+                && tokamak.energyBuffer().getEnergyStored() > 0
+                && fusion.guiStat1() >= 2_000 && fusion.coolantStored() >= 2_000
+                && fusion.energyBuffer().getEnergyStored() > 0
                 && railgun.energyBuffer().getEnergyStored() > 0 && railgun.manualMode()
                 && railgun.railLength() == 8;
     }
@@ -314,8 +320,9 @@ public final class PlaytestWorldSetup {
                 RailgunEmitterBlockEntity.class);
         return "electrolyzer=" + electrolyzer.waterAmount() + "mB/"
                 + electrolyzer.energyBuffer().getEnergyStored() + "FE tokamak="
-                + tokamak.fuelContainer().getItem(0).getCount() + "fuel/"
+                + tokamak.fuelContainer().getItem(0).getCount() + "fuel/" + tokamak.coolantStored() + "mB water/"
                 + tokamak.energyBuffer().getEnergyStored() + "FE fusion=" + fusion.guiStat1() + "mB/"
+                + fusion.coolantStored() + "mB water/"
                 + fusion.energyBuffer().getEnergyStored() + "FE railgun="
                 + railgun.energyBuffer().getEnergyStored() + "FE/manual=" + railgun.manualMode()
                 + "/length=" + railgun.railLength();
@@ -367,19 +374,21 @@ public final class PlaytestWorldSetup {
                 stack(Items.WATER_BUCKET, 8), stack(MagItems.HYDROGEN_BUCKET.get(), 4),
                 stack(MagItems.TRITIUM_BUCKET.get(), 2), stack(Items.BUCKET, 8), stack(Items.REDSTONE_BLOCK, 4)));
 
-        label(level, a.offset(12, 0, 15), "TOKAMAK", "Valid 3x3 ring", "Break/reform coils", "Fuel in chest");
+        label(level, a.offset(12, 0, 15), "TOKAMAK", "Valid 3x3 ring", "Dry vs water-cooled", "Fuel + water chest");
         final BlockPos tokamak = a.offset(14, 0, 18);
         set(level, tokamak, MagBlocks.TOKAMAK_CONTROLLER.get());
         for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
             if (dx != 0 || dz != 0) set(level, tokamak.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
         }
         stockChest(level, a.offset(12, 0, 20), List.of(stack(MagItems.DEUTERIUM_CELL.get(), 8),
-                stack(MagItems.TRITIUM_CELL.get(), 8), stack(MagItems.HELIUM_3_CELL.get(), 8)));
+                stack(MagItems.TRITIUM_CELL.get(), 8), stack(MagItems.HELIUM_3_CELL.get(), 8),
+                stack(Items.WATER_BUCKET, 8)));
 
-        label(level, a.offset(23, 0, 15), "FUSION PANEL", "5x3 formed panel", "Remove an interior", "Fuel in chest");
+        label(level, a.offset(23, 0, 15), "FUSION PANEL", "5x3 formed panel", "Dry vs water-cooled", "Fuel + water chest");
         buildFusionPanel(level, a.offset(25, 0, 18));
         stockChest(level, a.offset(23, 0, 20), List.of(stack(MagItems.HELIUM_3_BUCKET.get(), 8),
-                stack(MagItems.TRITIUM_BUCKET.get(), 8), stack(MagItems.HYDROGEN_BUCKET.get(), 8)));
+                stack(MagItems.TRITIUM_BUCKET.get(), 8), stack(MagItems.HYDROGEN_BUCKET.get(), 8),
+                stack(Items.WATER_BUCKET, 8)));
 
         label(level, a.offset(35, 0, 15), "RAILGUN", "Two 8-block rails", "Auto + remote", "Target lane north");
         buildRail(level, a.offset(37, 0, 22));

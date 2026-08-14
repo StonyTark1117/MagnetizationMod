@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added optional coolant loops to the Tokamak and Fusion Thruster. Vanilla water works out of the box, and dedicated fluids in the common `c:cooling_fluid` tag (including TFMG Cooling Fluid when its compat is enabled) work by bucket or pipe. Dry machines retain their previous baseline performance; actively cooled Tokamaks generate and output more FE while extending fuel-cell life, and cooled Fusion Thrusters gain thrust and speed while consuming less FE and propellant. Both expose shared coolant tanks through their interiors and Tokamak-Coil frames, with synchronized GUI/HUD status and configurable capacity, coolant cost, power, and efficiency bonuses.
+
 ## 1.4.1 — Expandable Tokamak emergency hotfix
 
 ### Fixed

@@ -172,6 +172,8 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .text("The center core becomes the master. Other cores forward fuel and FE; perimeter coils expose the shared FE output. This size runs at 3x capacity, generation, and output.")
                 .placeNearTarget();
         scene.idle(90);
+        text(scene, util, center, util.grid().at(4, 1, 4),
+                "Pipe vanilla water or tagged coolant into any core or perimeter coil: cooling raises FE output and extends fuel-cell life. Dry reactors retain baseline performance.");
     }
 
     private static void fusionPanel(final SceneBuilder scene, final SceneBuildingUtil util,
@@ -198,6 +200,8 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .text("Expand the interior into a solid rectangular panel; all interiors share one facing.")
                 .placeNearTarget();
         scene.idle(90);
+        text(scene, util, center, util.grid().at(3, 1, 3),
+                "Feed fusion fuel plus vanilla water or tagged coolant through any interior or frame coil. Cooling increases thrust and speed while reducing FE and fuel use.");
     }
 
     private static void railgunPair(final SceneBuilder scene, final SceneBuildingUtil util,

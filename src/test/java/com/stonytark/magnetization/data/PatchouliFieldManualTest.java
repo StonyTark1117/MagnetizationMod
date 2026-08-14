@@ -175,14 +175,17 @@ class PatchouliFieldManualTest {
         final Set<String> strings = new HashSet<>();
         collectStrings(parse(entry), strings);
         assertTrue(strings.contains("book.magnetization.entry.tokamak.construction.text")
-                        && strings.contains("book.magnetization.entry.tokamak.io.text"),
-                "Tokamak Field Manual entry must include construction and connection pages");
+                        && strings.contains("book.magnetization.entry.tokamak.io.text")
+                        && strings.contains("book.magnetization.entry.tokamak.cooling.text"),
+                "Tokamak Field Manual entry must include construction, connection, and cooling pages");
 
         final JsonObject translations = parse(EN_US).getAsJsonObject();
         final String construction = translations
                 .get("book.magnetization.entry.tokamak.construction.text").getAsString();
         final String connections = translations
                 .get("book.magnetization.entry.tokamak.io.text").getAsString();
+        final String cooling = translations
+                .get("book.magnetization.entry.tokamak.cooling.text").getAsString();
         assertTrue(construction.contains("3x3:") && construction.contains("8 coils + 1 core")
                         && construction.contains("5x5:") && construction.contains("16 coils + 9 cores")
                         && construction.contains("7x7:") && construction.contains("24 coils + 25 cores")
@@ -191,8 +194,26 @@ class PatchouliFieldManualTest {
         assertTrue(connections.contains("center core") && connections.contains("any core")
                         && connections.contains("perimeter coil"),
                 "Tokamak connection page must explain master, follower, and frame access");
-        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 6,
-                "Field Manual version must advance for corrected expandable-Tokamak guidance");
+        assertTrue(cooling.contains("water") && cooling.contains("FE generation and output increase")
+                        && cooling.contains("fuel cell lasts longer"),
+                "Tokamak cooling page must explain water use, higher power, and higher efficiency");
+        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 7,
+                "Field Manual version must advance for fusion-machine cooling guidance");
+    }
+
+    @Test
+    void fusionThrusterInstructionsExplainOptionalCooling() throws IOException {
+        final Path entry = BOOK.resolve("entries/ships/fusion_thruster.json");
+        final Set<String> strings = new HashSet<>();
+        collectStrings(parse(entry), strings);
+        assertTrue(strings.contains("book.magnetization.entry.fusion_thruster.cooling.text"),
+                "Fusion Thruster Field Manual entry must include its cooling page");
+
+        final String cooling = parse(EN_US).getAsJsonObject()
+                .get("book.magnetization.entry.fusion_thruster.cooling.text").getAsString();
+        assertTrue(cooling.contains("previous thrust") && cooling.contains("consumes less FE")
+                        && cooling.contains("fusion fuel"),
+                "Fusion Thruster cooling page must preserve baseline and explain both bonuses");
     }
 
     @Test

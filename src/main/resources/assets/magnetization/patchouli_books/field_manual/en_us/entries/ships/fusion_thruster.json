@@ -16,6 +16,11 @@
     {
       "type": "patchouli:text",
       "text": "book.magnetization.entry.fusion_thruster.fuel"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.cooling.title",
+      "text": "book.magnetization.entry.fusion_thruster.cooling.text"
     }
   ]
 }

@@ -961,7 +961,7 @@ public final class MagGameTests {
      * NORTH-facing interior cells) validates, reports interiorCount==3 and the
      * deterministic master (min by y,x,z), and — being off-ship — never lights.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120, batch = "fusionCoolingPanel")
     public static void fusionThrusterPanelFormsAndFires(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
@@ -998,6 +998,11 @@ public final class MagGameTests {
         final int cap = master.fluidHandler().getTankCapacity(0);
         helper.assertTrue(cap == expected,
                 "Panel fuel tank should scale to per-cell × 3 interiors = " + expected + "; got " + cap);
+        final int expectedCoolant = com.stonytark.magnetization.config.MagConfig
+                .fusionThrusterCoolantTankPerInterior() * 3;
+        helper.assertTrue(master.fluidHandler().getTanks() == 2
+                        && master.fluidHandler().getTankCapacity(1) == expectedCoolant,
+                "Panel coolant tank should be exposed and scale to " + expectedCoolant + " mB");
 
         // Off-ship: the master never fires, so no interior is LIT.
         boolean anyLit = false;
@@ -1044,7 +1049,7 @@ public final class MagGameTests {
 
     /**
      * #123 — Fusion Thruster thrusts a ship: build the panel, pre-load the master's
-     * Helium-3 tank + FE (NBT carries through assembly), assemble the whole panel
+     * Helium-3, water coolant + FE (NBT carries through assembly), assemble the whole panel
      * into a Sable ship in open sky, tick, and assert the rigid body gained velocity
      * opposite the exhaust-facing panel face (FACING = NORTH, thrust = SOUTH).
      */
@@ -1055,7 +1060,7 @@ public final class MagGameTests {
         final BlockPos base = new BlockPos(abs.getX(), 240, abs.getZ());
         buildFusionPanel(level, base);
 
-        // Pre-load the master interior (min y,x,z) with Helium-3 + FE before assembly.
+        // Pre-load the master interior (min y,x,z) with Helium-3, water + FE before assembly.
         final BlockPos masterPos = base.offset(1, 1, 0);
         if (!(level.getBlockEntity(masterPos)
                 instanceof com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity master)) {
@@ -1063,6 +1068,9 @@ public final class MagGameTests {
         }
         master.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
                 com.stonytark.magnetization.registry.MagFluids.HELIUM_3.get(), 16_000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        master.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                net.minecraft.world.level.material.Fluids.WATER, 8_000),
                 net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         master.energyBuffer().receiveEnergy(2_000_000, false);
 
@@ -2926,12 +2934,12 @@ public final class MagGameTests {
     }
 
     /**
-     * Fusion Thruster panel fuel is a single SHARED tank: filling a non-master
-     * interior's fluid handler pools into the master's tank (so a pipe on any cell
+     * Fusion Thruster panel fuel and coolant are SHARED tanks: filling a non-master
+     * interior's fluid handler pools into the master's tanks (so a pipe on any cell
      * feeds the whole panel). Drives serverTick directly (the open-sky panel isn't
      * in a gametest ticking region) so each interior caches the master first.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "fusionCoolingShared")
     public static void fusionThrusterSharesOneTankAcrossInteriors(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
@@ -2959,6 +2967,11 @@ public final class MagGameTests {
         final int masterMb = master.fluidHandler().getFluidInTank(0).getAmount();
         helper.assertTrue(masterMb == 1000,
                 "Fuel piped into a non-master interior should pool in the master tank; master mB=" + masterMb);
+        corner.fluidHandler().fill(new net.neoforged.neoforge.fluids.FluidStack(
+                        net.minecraft.world.level.material.Fluids.WATER, 1000),
+                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        helper.assertTrue(master.coolantStored() == 1000,
+                "Water piped into a non-master interior should pool in the master coolant tank");
         clearFusionPanel(level, base);
         helper.succeed();
     }
@@ -3009,10 +3022,10 @@ public final class MagGameTests {
 
     /**
      * Every Tokamak Coil in a complete Fusion Thruster perimeter exposes the
-     * panel master's shared FE capability. This includes diagonal corner coils;
-     * an unrelated standalone coil must remain passive and expose no energy cap.
+     * panel master's shared FE and fuel/coolant input capabilities. This includes
+     * diagonal corner coils; an unrelated standalone coil must remain passive.
      */
-    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60)
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "fusionCoolingFrame")
     public static void fusionThrusterAcceptsEnergyThroughEveryFrameCoil(final GameTestHelper helper) {
         final net.minecraft.server.level.ServerLevel level = helper.getLevel();
         final BlockPos base = new BlockPos(helper.absolutePos(new BlockPos(1, 1, 1)).getX(), 240,
@@ -3020,6 +3033,7 @@ public final class MagGameTests {
         buildFusionPanel(level, base);
 
         int inserted = 0;
+        int coolantInserted = 0;
         for (int x = 0; x <= 4; x++) {
             for (int y = 0; y <= 2; y++) {
                 if (y == 1 && x >= 1 && x <= 3) continue;
@@ -3033,6 +3047,17 @@ public final class MagGameTests {
                     return;
                 }
                 inserted += frameEnergy.receiveEnergy(1000, false);
+                final net.neoforged.neoforge.fluids.capability.IFluidHandler frameFluids = level.getCapability(
+                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                        framePos, null);
+                if (frameFluids == null) {
+                    clearFusionPanel(level, base);
+                    helper.fail("formed Fusion Thruster frame coil has no fluid capability at " + framePos);
+                    return;
+                }
+                coolantInserted += frameFluids.fill(new net.neoforged.neoforge.fluids.FluidStack(
+                                net.minecraft.world.level.material.Fluids.WATER, 1000),
+                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             }
         }
 
@@ -3046,6 +3071,9 @@ public final class MagGameTests {
         helper.assertTrue(inserted == 12_000 && master.energyBuffer().getEnergyStored() == 12_000,
                 "all 12 frame coils should feed the shared master buffer; inserted=" + inserted
                         + " master FE=" + master.energyBuffer().getEnergyStored());
+        helper.assertTrue(coolantInserted == 12_000 && master.coolantStored() == 12_000,
+                "all 12 frame coils should feed the shared coolant tank; inserted=" + coolantInserted
+                        + " master coolant=" + master.coolantStored());
 
         final BlockPos standalone = base.offset(6, 0, 0);
         level.setBlock(standalone, MagBlocks.TOKAMAK_COIL.get().defaultBlockState(),

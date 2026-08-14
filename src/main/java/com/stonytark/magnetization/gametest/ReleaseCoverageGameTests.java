@@ -152,8 +152,8 @@ public final class ReleaseCoverageGameTests {
                                                      final int value) {}
             });
             serverMenu.broadcastFullState();
-            helper.assertTrue(transported[0] != null && transported[0].length == 17,
-                    "Server menu did not emit its complete 17-slot settings snapshot");
+            helper.assertTrue(transported[0] != null && transported[0].length == 22,
+                    "Server menu did not emit its complete 22-slot settings snapshot");
 
             // A separate physical client can have different COMMON values. Apply only the
             // vanilla menu packet captured above: displayed capacities must remain server-owned.
@@ -217,14 +217,16 @@ public final class ReleaseCoverageGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = EMPTY, timeoutTicks = 60)
-    public static void activeMachineFuelAndEnergyPersist(final GameTestHelper helper) {
+    @GameTest(template = EMPTY, timeoutTicks = 60, batch = "coolingPersistence")
+    public static void activeMachineFuelCoolantAndEnergyPersist(final GameTestHelper helper) {
         final ServerLevel level = helper.getLevel();
         final BlockPos tokamakPos = new BlockPos(1, 1, 1);
         helper.setBlock(tokamakPos, MagBlocks.TOKAMAK_CONTROLLER.get());
         buildTokamakRing(helper, tokamakPos);
         final TokamakControllerBlockEntity tokamak =
                 (TokamakControllerBlockEntity) helper.getBlockEntity(tokamakPos);
+        tokamak.coolantHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
         tokamak.fuelContainer().setItem(0, new ItemStack(MagItems.TRITIUM_CELL.get(), 2));
         TokamakControllerBlockEntity.serverTick(level, helper.absolutePos(tokamakPos),
                 tokamak.getBlockState(), tokamak);
@@ -239,6 +241,8 @@ public final class ReleaseCoverageGameTests {
                 "Tokamak generated FE did not persist");
         helper.assertTrue(tokamak.fuelContainer().getItem(0).getCount() == 1,
                 "Tokamak queued fuel did not persist");
+        helper.assertTrue(tokamak.coolantStored() > 0,
+                "Tokamak coolant did not persist");
 
         final BlockPos panelBase = absoluteSkyBase(helper, 240);
         buildFusionPanel(level, panelBase, 5, 3);
@@ -246,6 +250,8 @@ public final class ReleaseCoverageGameTests {
         final FusionThrusterBlockEntity thruster = (FusionThrusterBlockEntity) level.getBlockEntity(masterPos);
         FusionThrusterBlockEntity.serverTick(level, masterPos, thruster.getBlockState(), thruster);
         thruster.fluidHandler().fill(new FluidStack(MagFluids.HELIUM_3.get(), 2_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        thruster.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 3_000),
                 IFluidHandler.FluidAction.EXECUTE);
         thruster.energyBuffer().receiveEnergy(54_321, false);
         thruster.bucketContainer().setItem(0, new ItemStack(MagItems.TRITIUM_BUCKET.get()));
@@ -256,6 +262,8 @@ public final class ReleaseCoverageGameTests {
                 "Fusion panel formed/master state did not persist");
         helper.assertTrue(thruster.guiStat1() == 2_000 && thruster.energyBuffer().getEnergyStored() == 54_321,
                 "Fusion fuel/FE did not persist");
+        helper.assertTrue(thruster.coolantStored() == 3_000,
+                "Fusion Thruster coolant did not persist");
         helper.assertTrue(thruster.bucketContainer().getItem(0).is(MagItems.TRITIUM_BUCKET.get()),
                 "Fusion queued bucket did not persist");
         clearPanel(level, panelBase, 5, 3);
@@ -343,8 +351,8 @@ public final class ReleaseCoverageGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = EMPTY, timeoutTicks = 60)
-    public static void fuelAutomationRejectsAndNeverDuplicates(final GameTestHelper helper) {
+    @GameTest(template = EMPTY, timeoutTicks = 60, batch = "coolingAutomation")
+    public static void fuelAndCoolantAutomationNeverDuplicates(final GameTestHelper helper) {
         final ServerLevel level = helper.getLevel();
         final BlockPos tokamakPos = new BlockPos(1, 1, 1);
         helper.setBlock(tokamakPos, MagBlocks.TOKAMAK_CONTROLLER.get());
@@ -360,14 +368,37 @@ public final class ReleaseCoverageGameTests {
                         && tokamak.fuelContainer().getItem(0).getCount() == 2,
                 "Automation must not extract active Tokamak fuel");
 
+        final BlockPos coolantControllerPos = new BlockPos(3, 1, 1);
+        helper.setBlock(coolantControllerPos, MagBlocks.TOKAMAK_CONTROLLER.get());
+        final TokamakControllerBlockEntity coolantController =
+                (TokamakControllerBlockEntity) helper.getBlockEntity(coolantControllerPos);
+        final MachineFuelItemHandler coolantBuckets =
+                new MachineFuelItemHandler(coolantController.fuelContainer());
+        helper.assertTrue(coolantBuckets.insertItem(0, new ItemStack(Items.WATER_BUCKET), false).isEmpty(),
+                "Tokamak automation must accept a water coolant bucket");
+        TokamakControllerBlockEntity.serverTick(level, helper.absolutePos(coolantControllerPos),
+                coolantController.getBlockState(), coolantController);
+        helper.assertTrue(coolantController.fuelContainer().getItem(0).is(Items.BUCKET)
+                        && coolantController.coolantStored() == 1_000,
+                "Tokamak must drain one water bucket into 1000 mB coolant");
+        helper.assertTrue(coolantBuckets.extractItem(0, 64, false).getCount() == 1,
+                "Tokamak coolant's empty bucket must be automatable");
+
         final BlockPos panelBase = absoluteSkyBase(helper, 250);
         buildFusionPanel(level, panelBase, 3, 3);
         final BlockPos masterPos = panelBase.offset(1, 1, 0);
         final FusionThrusterBlockEntity thruster = (FusionThrusterBlockEntity) level.getBlockEntity(masterPos);
         FusionThrusterBlockEntity.serverTick(level, masterPos, thruster.getBlockState(), thruster);
         final MachineFuelItemHandler buckets = new MachineFuelItemHandler(thruster.bucketContainer());
-        helper.assertTrue(buckets.insertItem(0, new ItemStack(Items.WATER_BUCKET), false).getCount() == 1,
-                "Fusion Thruster must reject a wrong fluid bucket");
+        helper.assertTrue(buckets.insertItem(0, new ItemStack(Items.WATER_BUCKET), false).isEmpty(),
+                "Fusion Thruster must accept a water coolant bucket");
+        FusionThrusterBlockEntity.serverTick(level, masterPos, thruster.getBlockState(), thruster);
+        helper.assertTrue(thruster.bucketContainer().getItem(0).is(Items.BUCKET)
+                        && thruster.coolantStored() == 1_000,
+                "One water bucket must become exactly one empty bucket and 1000 mB coolant");
+        helper.assertTrue(buckets.extractItem(0, 64, false).getCount() == 1
+                        && buckets.extractItem(0, 64, false).isEmpty(),
+                "Coolant's empty bucket must be extractable exactly once");
         buckets.insertItem(0, new ItemStack(MagItems.HELIUM_3_BUCKET.get()), false);
         FusionThrusterBlockEntity.serverTick(level, masterPos, thruster.getBlockState(), thruster);
         helper.assertTrue(thruster.bucketContainer().getItem(0).is(Items.BUCKET)
@@ -377,12 +408,15 @@ public final class ReleaseCoverageGameTests {
                         && buckets.extractItem(0, 64, false).isEmpty(),
                 "Empty bucket must be extractable exactly once");
         helper.assertTrue(thruster.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
-                        IFluidHandler.FluidAction.EXECUTE) == 0,
-                "Fusion pipe must reject a non-fusion fluid");
+                        IFluidHandler.FluidAction.EXECUTE) == 1_000
+                        && thruster.coolantStored() == 2_000,
+                "Fusion pipe must route water into the coolant tank");
         final int fuelBeforeDrain = thruster.guiStat1();
+        final int coolantBeforeDrain = thruster.coolantStored();
         helper.assertTrue(thruster.fluidHandler().drain(1000, IFluidHandler.FluidAction.EXECUTE).isEmpty()
-                        && thruster.guiStat1() == fuelBeforeDrain,
-                "Pipe extraction must not siphon active fusion fuel");
+                        && thruster.guiStat1() == fuelBeforeDrain
+                        && thruster.coolantStored() == coolantBeforeDrain,
+                "Pipe extraction must not siphon active fusion fuel or coolant");
         clearPanel(level, panelBase, 3, 3);
 
         final BlockPos electrolyzerPos = new BlockPos(1, 1, 3);

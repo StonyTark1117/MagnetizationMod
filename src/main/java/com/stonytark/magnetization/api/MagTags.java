@@ -32,6 +32,17 @@ public final class MagTags {
             TagKey.create(Registries.ITEM,
                     net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "buckets/hydrogen"));
 
+    /** Dedicated cross-mod coolants. Vanilla water is accepted separately;
+     * TFMG publishes its Cooling Fluid source/flowing variants to this tag. */
+    public static final TagKey<Fluid> COOLING_FLUIDS =
+            TagKey.create(Registries.FLUID,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "cooling_fluid"));
+
+    /** Full-bucket containers corresponding to {@link #COOLING_FLUIDS}. */
+    public static final TagKey<Item> COOLING_FLUID_BUCKETS =
+            TagKey.create(Registries.ITEM,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "buckets/cooling_fluid"));
+
     public static final TagKey<Item> FERROMAGNETIC_ITEMS =
             TagKey.create(Registries.ITEM, Magnetization.id("ferromagnetic"));
 

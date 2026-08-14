@@ -51,6 +51,11 @@ public interface MachineGuiData extends MachineHudData {
     /** Performance multiplier derived from the formed structure. */
     default int guiStructureScale() { return 0; }
 
+    /** Optional coolant tank synchronized for fusion machines. */
+    default int guiCoolantStored() { return 0; }
+    default int guiCoolantCapacity() { return 1; }
+    default boolean guiCoolingActive() { return false; }
+
     /**
      * Named server-authoritative snapshot for new display consumers. The legacy
      * guiStat methods remain as a compatibility bridge for old screens.
@@ -58,7 +63,8 @@ public interface MachineGuiData extends MachineHudData {
     default MachineDisplayData displayData() {
         return new MachineDisplayData(guiEnergyStored(), guiEnergyMax(), guiStat1(),
                 guiStat4(), guiStat3(), guiStat2(), guiStructureSize(),
-                guiStructureScale(), guiDisplayStatus());
+                guiStructureScale(), guiCoolantStored(), guiCoolantCapacity(),
+                guiCoolingActive(), guiDisplayStatus());
     }
 
     /** Override when a machine's lifecycle is richer than current > 0 = active. */
@@ -128,6 +134,7 @@ public interface MachineGuiData extends MachineHudData {
                 if (display.structureScale() > 0) out.add(tokamakScaleLine(display));
                 out.add(Component.translatable("tooltip.magnetization.gui_fuel", display.current() / 20).withStyle(ChatFormatting.GRAY));
                 out.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, display.auxiliary())).withStyle(ChatFormatting.GRAY));
+                out.add(coolingLine(display));
                 if (display.current() > 0) {
                     // Name the current fuel tier as text (was only implied by the bar in
                     // the hover HUD). Reuses the same tier keys the GUI screen uses.
@@ -145,6 +152,7 @@ public interface MachineGuiData extends MachineHudData {
                 out.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, display.current())).withStyle(ChatFormatting.AQUA));
                 final int interiors = Math.max(0, display.auxiliary());
                 out.add(Component.translatable("tooltip.magnetization.gui_fusion_size", interiors).withStyle(ChatFormatting.GRAY));
+                out.add(coolingLine(display));
                 out.add(statusLine(guiKind(), display.status()));
             }
             case ELECTROLYZER -> {
@@ -203,6 +211,19 @@ public interface MachineGuiData extends MachineHudData {
         final int edge = display.structureSize();
         return Component.translatable("tooltip.magnetization.gui_tokamak_ring",
                 edge, edge, edge * 4 - 4, (edge - 2) * (edge - 2)).withStyle(ChatFormatting.GRAY);
+    }
+
+    static Component coolingLine(final MachineDisplayData display) {
+        if (display.coolingActive()) {
+            return Component.translatable("tooltip.magnetization.gui_cooling_active",
+                    display.coolantStored(), display.coolantCapacity()).withStyle(ChatFormatting.AQUA);
+        }
+        if (display.coolantStored() > 0) {
+            return Component.translatable("tooltip.magnetization.gui_cooling_ready",
+                    display.coolantStored(), display.coolantCapacity()).withStyle(ChatFormatting.BLUE);
+        }
+        return Component.translatable("tooltip.magnetization.gui_cooling_dry")
+                .withStyle(ChatFormatting.GOLD);
     }
 
     static Component tokamakScaleLine(final MachineDisplayData display) {

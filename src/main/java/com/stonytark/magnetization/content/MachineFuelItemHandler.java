@@ -11,7 +11,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  *
  * <p><b>Insert</b> is gated by the container's own {@code canPlaceItem} filter, so
  * only the fuel each machine accepts goes in (cells for the tokamak, potency
- * magnets for the motor/MHD jet, fusion/ferrofluid buckets for the thrusters).
+ * magnets for the motor/MHD jet, and fuel or coolant buckets for the fusion machines).
  *
  * <p><b>Extract</b> follows a single "spent-only" rule: an item may leave the slot
  * <i>only if the slot would reject it on insert</i>. For fuel slots the held item
