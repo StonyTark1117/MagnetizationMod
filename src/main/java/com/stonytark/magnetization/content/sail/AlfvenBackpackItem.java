@@ -13,10 +13,10 @@ import java.util.List;
  * Alfvén Ribbon Backpack (Solar Wind Wings) — a chest-slot Elytra alternative.
  * Glides like an elytra, but its superconducting ribbons catch the ambient
  * solar-wind current to give a <b>permanent, fuel-free forward boost</b> (no
- * firework rockets) whenever you glide <b>in daylight at any altitude</b> or
- * anywhere in <b>the End</b>. Higher altitude strengthens the boost. The wearable
- * cousin of the {@link SolarSailBlock}; drive logic lives in
- * {@code AlfvenBackpackHandler}.
+ * firework rockets) whenever you glide <b>in daylight at any altitude</b> by
+ * default, or anywhere in <b>the End</b>. Higher altitude strengthens the boost;
+ * packs can optionally require daylight flight above Y=120. The wearable cousin
+ * of the {@link SolarSailBlock}; drive logic lives in {@code AlfvenBackpackHandler}.
  */
 public final class AlfvenBackpackItem extends ElytraItem {
 

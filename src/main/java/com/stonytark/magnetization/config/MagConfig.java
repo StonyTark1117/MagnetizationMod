@@ -217,6 +217,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue SOLAR_SAIL_SPEED_CAP;
     public static final ModConfigSpec.DoubleValue ALFVEN_ACCEL;
     public static final ModConfigSpec.DoubleValue ALFVEN_MAX_SPEED;
+    public static final ModConfigSpec.BooleanValue ALFVEN_HIGH_ALTITUDE_REQUIRED;
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_RANGE;
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_THRUST;
     public static final ModConfigSpec.DoubleValue REPULSOR_TRACK_MAX_SPEED;
@@ -1291,6 +1292,11 @@ public final class MagConfig {
                 .defineInRange("alfvenAccel", 0.08d, 0.0d, 100.0d);
         ALFVEN_MAX_SPEED = b.translation("magnetization.configuration.propulsion.alfvenMaxSpeed")
                 .defineInRange("alfvenMaxSpeed", 1.4d, 0.0d, 100.0d);
+        ALFVEN_HIGH_ALTITUDE_REQUIRED = b
+                .comment("Require the Alfvén Elytra to be above Y=120 before its daylight boost works.",
+                         "Default false: daylight boost remains available at any altitude. The End is always exempt.")
+                .translation("magnetization.configuration.propulsion.alfvenHighAltitudeRequired")
+                .define("alfvenHighAltitudeRequired", false);
         REPULSOR_TRACK_RANGE = b.translation("magnetization.configuration.propulsion.repulsorTrackRange")
                 .defineInRange("repulsorTrackRange", 6.0d, 0.0d, 64.0d);
         REPULSOR_TRACK_THRUST = b.translation("magnetization.configuration.propulsion.repulsorTrackThrust")
@@ -3293,6 +3299,9 @@ public final class MagConfig {
     public static double solarSailSpeedCap()        { return doubleOr(SOLAR_SAIL_SPEED_CAP, 4.0d); }
     public static double alfvenAccel()              { return doubleOr(ALFVEN_ACCEL, 0.08d); }
     public static double alfvenMaxSpeed()           { return doubleOr(ALFVEN_MAX_SPEED, 1.4d); }
+    public static boolean alfvenHighAltitudeRequired() {
+        return booleanOr(ALFVEN_HIGH_ALTITUDE_REQUIRED, false);
+    }
     public static double dipolePoleOffset()         { return doubleOr(DIPOLE_POLE_OFFSET, 1.5d); }
     public static double repulsorTrackRange()       { return doubleOr(REPULSOR_TRACK_RANGE, 6.0d); }
     public static double repulsorTrackThrust()      { return doubleOr(REPULSOR_TRACK_THRUST, 0.5d); }

@@ -210,6 +210,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | propulsion.solarSailSpeedCap | number | 4.0; 0.0-100.0 | Absolute max speed ceiling regardless of panel count. |
 | COMMON | propulsion.alfvenAccel | number | 0.08; 0.0-100.0 | Forward push per tick along the look vector. |
 | COMMON | propulsion.alfvenMaxSpeed | number | 1.4; 0.0-100.0 | Cruise cap (scaled by altitude). |
+| COMMON | propulsion.alfvenHighAltitudeRequired | boolean | false | Default off. When enabled, the daylight boost only works above Y=120. The End remains unrestricted. |
 | COMMON | propulsion.repulsorTrackRange | number | 6.0; 0.0-64.0 | Range a repulsor coil pushes a ship along its track. |
 | COMMON | propulsion.repulsorTrackThrust | number | 0.5; 0.0-100.0 | Perpendicular velocity added per tick to a ship in the cone when a Vector Core is installed. |
 | COMMON | propulsion.repulsorTrackMaxSpeed | number | 5.0; 0.0-100.0 | Terminal speed along the track. |

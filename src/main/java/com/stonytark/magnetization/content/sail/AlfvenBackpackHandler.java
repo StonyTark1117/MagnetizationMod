@@ -14,13 +14,15 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /**
  * Drives the Alfvén Ribbon Backpack's passive forward boost. While the wearer
  * is gliding with the backpack in the chest slot and the environment has a
- * usable current — daylight at any altitude, or anywhere in the End —
+ * usable current — daylight at any altitude by default, or anywhere in the End —
  * it adds a small, capped forward velocity each tick along the look direction,
- * so the player cruises indefinitely without firework rockets.
+ * so the player cruises indefinitely without firework rockets. Packs may opt
+ * into the original above-Y=120 daylight restriction.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class AlfvenBackpackHandler {
 
+    static final double HIGH_ALTITUDE_CUTOFF_Y = 120.0;
     private static final double BASE_ACCEL = 0.08;       // forward push per tick at the low-altitude floor
     private static final double BASE_MAX_SPEED = 1.4;     // cruise cap along the look vector (×altitude factor)
 
@@ -34,9 +36,11 @@ public final class AlfvenBackpackHandler {
         if (MagConfig.isItemDisabled(backpack)
                 || !(backpack.getItem() instanceof AlfvenBackpackItem)) return;
 
-        // The ribbons catch a current in daylight, or anywhere in the End.
+        // The ribbons catch a current in daylight, or anywhere in the End. Packs
+        // may opt into the original high-altitude-only daylight behavior.
         final boolean inEnd = player.level().dimension() == Level.END;
-        if (!inEnd && !player.level().isDay()) return;
+        if (!hasUsableCurrent(inEnd, player.level().isDay(), player.getY(),
+                MagConfig.alfvenHighAltitudeRequired())) return;
 
         // Stronger the higher you fly: 0.7 near sea level → ~2.4 in the high sky.
         final double altFactor = inEnd ? 1.6
@@ -59,5 +63,11 @@ public final class AlfvenBackpackHandler {
         player.setDeltaMovement(dm);
         player.hurtMarked = true; // force the server to sync the new velocity to the client
         player.resetFallDistance();
+    }
+
+    static boolean hasUsableCurrent(final boolean inEnd, final boolean day,
+                                    final double altitude, final boolean highAltitudeRequired) {
+        if (inEnd) return true;
+        return day && (!highAltitudeRequired || altitude > HIGH_ALTITUDE_CUTOFF_Y);
     }
 }
