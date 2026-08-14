@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "com.stonytark.magnetization.mixin.compat",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "magnetization.refmap.json",
   "mixins": [
     "ImmersiveAeronauticsShipTransferMixin"
   ],
