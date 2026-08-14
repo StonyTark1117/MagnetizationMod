@@ -2,7 +2,7 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
-Current release: **1.4.0**. The next release, **1.4.1**, completes the expandable Tokamak and Gas Detector behavior that 1.4.0 described prematurely, and adds coolant loops, Railgun projectile auto-assembly, iron-oxide golems, active-thruster exhaust feedback, per-golem controls, and complete Ponder scene localization.
+Current release: **1.4.1**. This hotfix completes the expandable Tokamak and Gas Detector behavior that 1.4.0 described prematurely; adds coolant loops, Railgun projectile auto-assembly, iron-oxide golems, active-thruster exhaust feedback, per-golem controls, and complete Ponder scene localization; and restores the MR Fluid Golem, Curios slots, EMP drains, MR Fluid redstone hardening, Solar Sail cutoff, metallic horse-armor interactions, and ship-mounted Railguns.
 
 ## Requirements
 
@@ -423,9 +423,11 @@ Core release profiles plus isolated optional-mod suites make failures attributab
 ```sh
 ./gradlew smokeServerMinimal   # RELEASE GATE — minimal dedicated server, hard deps only
 ./gradlew smokeGameTest        # RELEASE GATE — headless GameTest suite
+./gradlew smokeRegressionGameTest # RELEASE GATE — restored shipped-feature regressions
 ./gradlew smokeClientNormal    # manual — client, hard deps only (no compat pack)
 ./gradlew smokeClientCompat    # manual — client + Sodium/Iris/JEI/tag-coverage mods
-./gradlew releaseGate          # build + both automated gates
+./gradlew smokeOptionalClientProfiles # isolated Jade/TOP/REI/EMI/Ponder client boots
+./gradlew releaseGate          # build + GameTests + regression suite + minimal server
 ./gradlew releaseMatrixGate    # release gate + every isolated published optional-mod suite
 ./gradlew smokeCosmonauticsGameTest # published Cosmonautics-only compatibility suite
 ```

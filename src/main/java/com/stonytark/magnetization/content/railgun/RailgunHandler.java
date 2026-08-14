@@ -124,7 +124,7 @@ public final class RailgunHandler {
             PENDING_ASSEMBLIES.remove(server);
             return;
         }
-        prunePendingAssemblies(server);
+        prunePendingAssemblies(server, container);
         processLaunchedShips(server, container);
         if ((server.getGameTime() % MagConfig.railgunTicks()) != 0L) return;
 
@@ -305,8 +305,8 @@ public final class RailgunHandler {
                                    final AABB channel, final Vec3 axis, final @Nullable ServerSubLevel owner,
                                    final int effL, final boolean manual,
                                    final boolean breakBlocks, final boolean autoAssemble, final ArcKey arc) {
-        boolean hasTarget = anyShipInChannel(container, server, channel) || anyEntityInChannel(server, channel)
-                || pendingAssemblyInGrace(server, container, arc);
+        boolean hasTarget = anyShipInChannel(container, server, channel, owner) || anyEntityInChannel(server, channel)
+                || pendingAssemblyPresent(server, container, arc);
         if (!hasTarget && autoAssemble && master.arcState() == RailgunEmitterBlockEntity.ArcState.IDLE) {
             final ServerSubLevel assembled = assembleStagedBlocks(
                     server, container, masterPos, otherPos, facing, effL, owner, axis);
@@ -321,7 +321,7 @@ public final class RailgunHandler {
                 if (hasTarget) {
                     if (manual) {
                         master.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
-                        trapTargets(container, server, channel, axis, true, arc);
+                        trapTargets(container, server, channel, axis, true, arc, owner);
                     }
                     else if (MagConfig.railgunAutoFire()) {
                         releaseHolds(server, arc);
@@ -338,7 +338,7 @@ public final class RailgunHandler {
                     break;
                 }
                 master.drawPower(MagConfig.railgunHoldFeCost());
-                trapTargets(container, server, channel, axis, true, arc);   // hold: damp forward too
+                trapTargets(container, server, channel, axis, true, arc, owner);   // hold: damp forward too
                 if (master.consumeFireRequest() || other.consumeFireRequest()) {
                     releaseHolds(server, arc);
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.LAUNCHING);
@@ -353,7 +353,7 @@ public final class RailgunHandler {
                     master.setArcState(RailgunEmitterBlockEntity.ArcState.COOLDOWN);
                     master.setCooldownTicks(MagConfig.railgunCooldownTicks());
                 } else {
-                    accelerateTargets(container, server, channel, axis, effL, breakBlocks, arc);
+                    accelerateTargets(container, server, channel, axis, effL, breakBlocks, arc, owner);
                     master.setLaunchTicks(master.launchTicks() + 1);
                 }
             }
@@ -364,21 +364,17 @@ public final class RailgunHandler {
         }
     }
 
-    /** Returns whether an arc's newly assembled projectile is still inside the
-     *  short Sable initialization window. A valid broad-phase target supersedes
-     *  this naturally; the grace entry then expires without affecting its launch. */
-    private static boolean pendingAssemblyInGrace(final ServerLevel server,
+    /** Keep explicit ownership of a newly assembled projectile until its first
+     * successful launch. Nested assembly from a moving Sable plot can publish a
+     * valid body before it appears in the outer broad phase; expiring solely by
+     * age made mounted manual railguns drop their payload after one second. */
+    private static boolean pendingAssemblyPresent(final ServerLevel server,
                                                   final @Nullable ServerSubLevelContainer container,
                                                   final ArcKey arc) {
         final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
         if (pending == null) return false;
         final PendingAssembly assembly = pending.get(arc);
         if (assembly == null) return false;
-        if (server.getGameTime() - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS) {
-            pending.remove(arc);
-            if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
-            return false;
-        }
         if (container != null) {
             try {
                 final SubLevel sub = container.getSubLevel(assembly.shipId());
@@ -395,11 +391,43 @@ public final class RailgunHandler {
         return true;
     }
 
-    private static void prunePendingAssemblies(final ServerLevel server) {
+    private static void prunePendingAssemblies(final ServerLevel server,
+                                               final @Nullable ServerSubLevelContainer container) {
         final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
         if (pending == null) return;
         final long now = server.getGameTime();
-        pending.values().removeIf(assembly -> now - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS);
+        pending.values().removeIf(assembly -> {
+            if (container == null) return now - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS;
+            try {
+                final SubLevel sub = container.getSubLevel(assembly.shipId());
+                return sub != null ? sub.isRemoved()
+                        : now - assembly.createdTick() > AUTO_ASSEMBLY_GRACE_TICKS;
+            } catch (final RuntimeException ignored) {
+                return false;
+            }
+        });
+        if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
+    }
+
+    private static @Nullable ServerSubLevel pendingAssemblyShip(
+            final ServerLevel server, final @Nullable ServerSubLevelContainer container,
+            final ArcKey arc) {
+        if (container == null) return null;
+        final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
+        final PendingAssembly assembly = pending == null ? null : pending.get(arc);
+        if (assembly == null) return null;
+        try {
+            final SubLevel sub = container.getSubLevel(assembly.shipId());
+            return sub instanceof ServerSubLevel ship && !ship.isRemoved() ? ship : null;
+        } catch (final RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    private static void clearPendingAssembly(final ServerLevel server, final ArcKey arc) {
+        final Map<ArcKey, PendingAssembly> pending = PENDING_ASSEMBLIES.get(server);
+        if (pending == null) return;
+        pending.remove(arc);
         if (pending.isEmpty()) PENDING_ASSEMBLIES.remove(server);
     }
 
@@ -651,10 +679,12 @@ public final class RailgunHandler {
         return new BoundingBox3d(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
-    private static boolean anyShipInChannel(final @Nullable ServerSubLevelContainer container, final ServerLevel server, final AABB channel) {
+    private static boolean anyShipInChannel(final @Nullable ServerSubLevelContainer container,
+                                            final ServerLevel server, final AABB channel,
+                                            final @Nullable ServerSubLevel owner) {
         if (container == null) return false;
         for (final SubLevel sub : container.queryIntersecting(sable(channel))) {
-            if (sub instanceof ServerSubLevel ship && !ship.getMassTracker().isInvalid()
+            if (sub instanceof ServerSubLevel ship && ship != owner && !ship.getMassTracker().isInvalid()
                     && ship.getMassTracker().getMass() > 0.0) return true;
         }
         return false;
@@ -672,20 +702,20 @@ public final class RailgunHandler {
      *  bleed forward speed toward the breech so it parks for boarding. */
     private static void trapTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
                                     final AABB channel, final Vec3 axis,
-                                    final boolean dampForward, final ArcKey arc) {
+                                    final boolean dampForward, final ArcKey arc,
+                                    final @Nullable ServerSubLevel owner) {
         final double lat = MagConfig.railgunLateralDamp();
+        final Set<UUID> trapped = new HashSet<>();
         if (container != null) {
             for (final SubLevel sub : container.queryIntersecting(sable(channel))) {
-                if (!(sub instanceof ServerSubLevel ship)) continue;
-                final RigidBodyHandle h = RigidBodyHandle.of(ship);
-                if (h == null || !h.isValid()) continue;
-                markHeld(server, container, ship, arc);
-                final Vector3dc v = h.getLinearVelocity();
-                final double along = v.x() * axis.x + v.y() * axis.y + v.z() * axis.z;
-                final Vec3 lateral = new Vec3(v.x() - along * axis.x, v.y() - along * axis.y, v.z() - along * axis.z);
-                final Vector3d dv = new Vector3d(-lateral.x * lat, -lateral.y * lat, -lateral.z * lat);
-                if (dampForward) { dv.add(-along * axis.x * 0.5, -along * axis.y * 0.5, -along * axis.z * 0.5); }
-                h.addLinearAndAngularVelocity(dv, new Vector3d());
+                if (!(sub instanceof ServerSubLevel ship) || ship == owner) continue;
+                if (trapShip(server, container, ship, axis, dampForward, lat, arc)) {
+                    trapped.add(ship.getUniqueId());
+                }
+            }
+            final ServerSubLevel pending = pendingAssemblyShip(server, container, arc);
+            if (pending != null && pending != owner && !trapped.contains(pending.getUniqueId())) {
+                trapShip(server, container, pending, axis, dampForward, lat, arc);
             }
         }
 
@@ -701,6 +731,25 @@ public final class RailgunHandler {
             e.setDeltaMovement(nv);
             e.hurtMarked = true;
         }
+    }
+
+    private static boolean trapShip(final ServerLevel server,
+                                    final ServerSubLevelContainer container,
+                                    final ServerSubLevel ship, final Vec3 axis,
+                                    final boolean dampForward, final double lateralDamp,
+                                    final ArcKey arc) {
+        final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+        if (handle == null || !handle.isValid()) return false;
+        markHeld(server, container, ship, arc);
+        final Vector3dc velocity = handle.getLinearVelocity();
+        final double along = velocity.x() * axis.x + velocity.y() * axis.y + velocity.z() * axis.z;
+        final Vec3 lateral = new Vec3(velocity.x() - along * axis.x,
+                velocity.y() - along * axis.y, velocity.z() - along * axis.z);
+        final Vector3d delta = new Vector3d(-lateral.x * lateralDamp,
+                -lateral.y * lateralDamp, -lateral.z * lateralDamp);
+        if (dampForward) delta.add(-along * axis.x * 0.5, -along * axis.y * 0.5, -along * axis.z * 0.5);
+        handle.addLinearAndAngularVelocity(delta, new Vector3d());
+        return true;
     }
 
     private static void markHeld(final ServerLevel server, final ServerSubLevelContainer container,
@@ -806,62 +855,32 @@ public final class RailgunHandler {
 
     private static void accelerateTargets(final @Nullable ServerSubLevelContainer container, final ServerLevel server,
                                           final AABB channel, final Vec3 axis, final int effL,
-                                          final boolean breakBlocks, final ArcKey arc) {
+                                          final boolean breakBlocks, final ArcKey arc,
+                                          final @Nullable ServerSubLevel owner) {
         final Direction facing = axisToDirection(axis);
         final double magnitude = MagConfig.railgunForceBase() * Math.pow(effL, MagConfig.railgunForceExponent());
         final double shipMagnitude = magnitude * SHIP_LAUNCH_FORCE_CALIBRATION;
         final double lat = MagConfig.railgunLateralDamp();
 
         // Ships.
+        final Set<UUID> accelerated = new HashSet<>();
+        UUID pendingId = null;
         if (container != null) {
+            final ServerSubLevel pending = pendingAssemblyShip(server, container, arc);
+            pendingId = pending == null ? null : pending.getUniqueId();
             for (final SubLevel sub : container.queryIntersecting(sable(channel))) {
-                if (!(sub instanceof ServerSubLevel ship) || ship.getMassTracker().isInvalid()
+                if (!(sub instanceof ServerSubLevel ship) || ship == owner || ship.getMassTracker().isInvalid()
                         || ship.getMassTracker().getMass() <= 0.0) continue;
-                final RigidBodyHandle h = RigidBodyHandle.of(ship);
-                if (h == null || !h.isValid()) continue;
-                final Vector3dc v = h.getLinearVelocity();
-                final double along = v.x() * axis.x + v.y() * axis.y + v.z() * axis.z;
-                // Lateral damp (trap on rail).
-                final Vec3 lateral = new Vec3(v.x() - along * axis.x, v.y() - along * axis.y, v.z() - along * axis.z);
-                h.addLinearAndAngularVelocity(
-                        new Vector3d(-lateral.x * lat, -lateral.y * lat, -lateral.z * lat), new Vector3d());
-                // Forward push. Multiplying by mass makes the resulting
-                // acceleration mass-independent after Sable's F/m integration,
-                // so a large ship gets the same decisive launch as a small one.
-                if (shipMagnitude > 0.0d) {
-                    final double mass = ship.getMassTracker().getMass();
-                    final org.joml.Vector3dc com = ship.getMassTracker().getCenterOfMass();
-                    // MassTracker reports the centre of mass in ship-local
-                    // coordinates, while applyWorldImpulse expects a world-space
-                    // point. Passing the local value directly gives a launched
-                    // ship a huge off-centre torque once it is away from the
-                    // origin, which can spin the body into Sable's removal path.
-                    final Vec3 worldCom = ship.logicalPose().transformPosition(
-                            new Vec3(com.x(), com.y(), com.z()));
-                    SableBridge.applyWorldImpulse(ship,
-                            worldCom,
-                            new Vec3(axis.x * shipMagnitude * mass,
-                                    axis.y * shipMagnitude * mass,
-                                    axis.z * shipMagnitude * mass));
-                }
-                final Vector3d launchedVelocity = h.getLinearVelocity(new Vector3d());
-                double forwardSpeed = launchedVelocity.x * axis.x
-                        + launchedVelocity.y * axis.y + launchedVelocity.z * axis.z;
-                final BoundingBox3d physicsBounds = authoritativeBounds(container, ship);
-                if (breakBlocks && MagConfig.railgunBreaksBlocks()) {
-                    breakPathAhead(server, physicsBounds, facing, forwardSpeed, true);
-                } else {
-                    clampToCollisionSafeVelocity(server, physicsBounds, h, 1.0d / 20.0d);
-                    final Vector3d guardedVelocity = h.getLinearVelocity(new Vector3d());
-                    forwardSpeed = guardedVelocity.x * axis.x
-                            + guardedVelocity.y * axis.y + guardedVelocity.z * axis.z;
-                }
-                if (forwardSpeed > 0.5d) {
-                    LAUNCHED_SHIPS.computeIfAbsent(server, ignored -> new HashMap<>())
-                            .put(ship.getUniqueId(), new LaunchedShip(facing, arc, breakBlocks));
-                }
+                if (accelerateShip(container, server, ship, axis, facing, shipMagnitude,
+                        lat, breakBlocks, arc)) accelerated.add(ship.getUniqueId());
+            }
+            if (pending != null && pending != owner && !accelerated.contains(pending.getUniqueId())
+                    && accelerateShip(container, server, pending, axis, facing, shipMagnitude,
+                    lat, breakBlocks, arc)) {
+                accelerated.add(pending.getUniqueId());
             }
         }
+        if (pendingId != null && accelerated.contains(pendingId)) clearPendingAssembly(server, arc);
 
         // Magnetic entities.
         final double entMag = magnitude * MagConfig.railgunEntityScale();
@@ -874,6 +893,49 @@ public final class RailgunHandler {
             e.setDeltaMovement(nv);
             e.hurtMarked = true;
         }
+    }
+
+    private static boolean accelerateShip(final ServerSubLevelContainer container,
+                                          final ServerLevel server, final ServerSubLevel ship,
+                                          final Vec3 axis, final Direction facing,
+                                          final double shipMagnitude, final double lateralDamp,
+                                          final boolean breakBlocks, final ArcKey arc) {
+        if (ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0) return false;
+        final RigidBodyHandle handle = RigidBodyHandle.of(ship);
+        if (handle == null || !handle.isValid()) return false;
+        final Vector3dc velocity = handle.getLinearVelocity();
+        final double along = velocity.x() * axis.x + velocity.y() * axis.y + velocity.z() * axis.z;
+        final Vec3 lateral = new Vec3(velocity.x() - along * axis.x,
+                velocity.y() - along * axis.y, velocity.z() - along * axis.z);
+        handle.addLinearAndAngularVelocity(new Vector3d(-lateral.x * lateralDamp,
+                -lateral.y * lateralDamp, -lateral.z * lateralDamp), new Vector3d());
+        if (shipMagnitude > 0.0d) {
+            final double mass = ship.getMassTracker().getMass();
+            final org.joml.Vector3dc center = ship.getMassTracker().getCenterOfMass();
+            final Vec3 worldCenter = ship.logicalPose().transformPosition(
+                    new Vec3(center.x(), center.y(), center.z()));
+            SableBridge.applyWorldImpulse(ship, worldCenter,
+                    new Vec3(axis.x * shipMagnitude * mass,
+                            axis.y * shipMagnitude * mass,
+                            axis.z * shipMagnitude * mass));
+        }
+        final Vector3d launchedVelocity = handle.getLinearVelocity(new Vector3d());
+        double forwardSpeed = launchedVelocity.x * axis.x
+                + launchedVelocity.y * axis.y + launchedVelocity.z * axis.z;
+        final BoundingBox3d physicsBounds = authoritativeBounds(container, ship);
+        if (breakBlocks && MagConfig.railgunBreaksBlocks()) {
+            breakPathAhead(server, physicsBounds, facing, forwardSpeed, true);
+        } else {
+            clampToCollisionSafeVelocity(server, physicsBounds, handle, 1.0d / 20.0d);
+            final Vector3d guardedVelocity = handle.getLinearVelocity(new Vector3d());
+            forwardSpeed = guardedVelocity.x * axis.x
+                    + guardedVelocity.y * axis.y + guardedVelocity.z * axis.z;
+        }
+        if (forwardSpeed > 0.5d) {
+            LAUNCHED_SHIPS.computeIfAbsent(server, ignored -> new HashMap<>())
+                    .put(ship.getUniqueId(), new LaunchedShip(facing, arc, breakBlocks));
+        }
+        return true;
     }
 
     private static Direction axisToDirection(final Vec3 axis) {

@@ -4,6 +4,8 @@ import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.menu.MachineMenu;
 import com.stonytark.magnetization.registry.MagBlockEntities;
 import com.stonytark.magnetization.registry.MagItems;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -28,6 +30,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  */
 public class RailgunEmitterBlockEntity extends BlockEntity
         implements com.stonytark.magnetization.menu.MachineGuiData,
+        BlockEntitySubLevelActor,
         com.stonytark.magnetization.content.emp.EmpDrainable {
 
     public static final int ARC_STATE_MASK = 15;
@@ -190,6 +193,15 @@ public class RailgunEmitterBlockEntity extends BlockEntity
                 && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, st, st, net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** Keep cooldowns, capacity changes, and HUD synchronization alive after
+     * this emitter is assembled into a Sable sub-level. Plot block entities are
+     * driven through Sable's actor hook rather than relying on the outer-world
+     * block ticker. */
+    @Override
+    public void sable$tick(final ServerSubLevel subLevel) {
+        if (level != null) serverTick(level, getBlockPos(), getBlockState(), this);
     }
 
     @Override

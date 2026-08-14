@@ -5,8 +5,10 @@ import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity;
 import com.stonytark.magnetization.menu.MachineMenu;
 import com.stonytark.magnetization.registry.MagBlocks;
+import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import net.minecraft.core.BlockPos;
@@ -199,6 +201,110 @@ public final class RailgunAutoAssemblyGameTests {
                 MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.set(priorThickness);
                 throw failure;
             }
+        });
+    }
+
+    /** A railgun assembled as part of a Sable craft must ignore its own host
+     * body, assemble a staged payload out of that plot, and launch the payload
+     * rather than accelerating the ship carrying the gun. Regression for #8. */
+    @GameTest(template = EMPTY, timeoutTicks = 180, batch = "railgunMountedSublevel")
+    public static void mountedRailgunLaunchesPayloadWithoutTargetingHost(final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final BlockPos fixture = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos first = new BlockPos(fixture.getX(), 300, fixture.getZ());
+        final BlockPos second = first.offset(4, 0, 0);
+        final List<BlockPos> hostBlocks = new ArrayList<>();
+        buildRail(level, first);
+        buildRail(level, second);
+        for (final BlockPos emitter : List.of(first, second)) {
+            hostBlocks.add(emitter);
+            for (int i = 1; i <= 6; i++) hostBlocks.add(emitter.relative(Direction.NORTH, i));
+        }
+        // Connect both rails behind their breeches without occupying the launch channel.
+        for (int x = 0; x <= 4; x++) {
+            final BlockPos bridge = first.offset(x, 0, 1);
+            level.setBlock(bridge, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+            hostBlocks.add(bridge);
+        }
+
+        final BlockPos min = hostBlocks.stream().reduce((a, b) -> new BlockPos(
+                Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()), Math.min(a.getZ(), b.getZ()))).orElse(first);
+        final BlockPos max = hostBlocks.stream().reduce((a, b) -> new BlockPos(
+                Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()), Math.max(a.getZ(), b.getZ()))).orElse(first);
+        final ServerSubLevel host = SubLevelAssemblyHelper.assembleBlocks(level, first, hostBlocks,
+                new BoundingBox3i(min.getX(), min.getY(), min.getZ(), max.getX() + 1, max.getY() + 1, max.getZ() + 1));
+        final var container = SubLevelContainer.getContainer(level);
+        if (container == null) {
+            helper.fail("Sable sub-level container is unavailable");
+            return;
+        }
+
+        final BlockPos plotFirst = host.getPlot().getCenterBlock();
+        final BlockPos plotSecond = plotFirst.offset(4, 0, 0);
+        final int priorLimit = MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.get();
+        final int priorThickness = MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.get();
+        MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.set(0);
+        MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.set(0);
+
+        helper.runAfterDelay(5L, () -> {
+            final RailgunEmitterBlockEntity a = emitter(level, plotFirst);
+            final RailgunEmitterBlockEntity b = emitter(level, plotSecond);
+            if (a == null || b == null) {
+                cleanupShip(container, host);
+                MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.set(priorLimit);
+                MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.set(priorThickness);
+                helper.fail("Assembled host lost its railgun emitters");
+                return;
+            }
+            power(level, plotFirst);
+            power(level, plotSecond);
+            a.remoteContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                    com.stonytark.magnetization.registry.MagItems.RAILGUN_REMOTE.get()));
+            com.stonytark.magnetization.content.railgun.RailgunHandler
+                    .setArcAutoAssemble(level, plotFirst, true);
+            final Set<UUID> shipsBefore = shipIds(container);
+            final BlockPos payload = plotFirst.offset(2, 0, -2);
+            level.setBlock(payload, Blocks.IRON_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
+
+            helper.runAfterDelay(30L, () -> {
+                final ServerSubLevel projectile = newShip(container, shipsBefore);
+                try {
+                    helper.assertTrue(level.getBlockState(payload).isAir(),
+                            "Mounted railgun did not assemble its staged payload");
+                    helper.assertTrue(projectile != null,
+                            "Mounted railgun did not split the staged payload into a launch ship");
+                    helper.assertTrue(a.arcState() == RailgunEmitterBlockEntity.ArcState.HOLDING,
+                            "Mounted manual railgun did not hold its payload; state=" + a.arcState());
+                    if (projectile == null) return;
+                    a.requestFire();
+                    helper.runAfterDelay(6L, () -> {
+                        try {
+                            final RigidBodyHandle projectileHandle = RigidBodyHandle.of(projectile);
+                            final RigidBodyHandle hostHandle = RigidBodyHandle.of(host);
+                            final Vector3d projectileVelocity = projectileHandle == null ? new Vector3d()
+                                    : projectileHandle.getLinearVelocity(new Vector3d());
+                            final Vector3d hostVelocity = hostHandle == null ? new Vector3d()
+                                    : hostHandle.getLinearVelocity(new Vector3d());
+                            helper.assertTrue(projectileVelocity.z < -0.5d,
+                                    "Mounted railgun payload was not launched; velocity=" + projectileVelocity);
+                            helper.assertTrue(Math.abs(hostVelocity.z) < 0.25d,
+                                    "Mounted railgun targeted its own host craft; velocity=" + hostVelocity);
+                            helper.succeed();
+                        } finally {
+                            cleanupShip(container, projectile);
+                            cleanupShip(container, host);
+                            MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.set(priorLimit);
+                            MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.set(priorThickness);
+                        }
+                    });
+                } catch (final Throwable failure) {
+                    cleanupShip(container, projectile);
+                    cleanupShip(container, host);
+                    MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.set(priorLimit);
+                    MagConfig.RAILGUN_CHANNEL_HALF_THICKNESS.set(priorThickness);
+                    throw failure;
+                }
+            });
         });
     }
 

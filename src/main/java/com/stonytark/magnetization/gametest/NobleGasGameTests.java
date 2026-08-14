@@ -200,6 +200,13 @@ public final class NobleGasGameTests {
         final BlockPos gas = new BlockPos(1, 1, 1);
         final BlockPos low = new BlockPos(0, 1, 1);
         final BlockPos high = new BlockPos(2, 1, 1);
+        // Keep the gas cell stationary while the delayed assertion observes
+        // excitation decay; otherwise a native fluid tick can move the gas and
+        // turn this into an assertion against minecraft:air.
+        helper.setBlock(gas.above(), Blocks.STONE);
+        helper.setBlock(gas.below(), Blocks.STONE);
+        helper.setBlock(gas.north(), Blocks.STONE);
+        helper.setBlock(gas.south(), Blocks.STONE);
         helper.setBlock(gas, MagFluids.NEON.get().defaultFluidState().createLegacyBlock());
         helper.setBlock(low, MagBlocks.GAS_EXCITER.get());
         helper.setBlock(high, MagBlocks.GAS_EXCITER.get());
@@ -213,12 +220,16 @@ public final class NobleGasGameTests {
         helper.assertTrue((lowOwns ? lowBe : highBe).energyBuffer().getEnergyStored() == 100 - cost
                         && (lowOwns ? highBe : lowBe).energyBuffer().getEnergyStored() == 100,
                 "Exactly the lowest-position eligible Gas Exciter must pay FE");
-        helper.setBlock(low, Blocks.AIR);
-        helper.setBlock(high, Blocks.AIR);
+        helper.setBlock(low, Blocks.STONE);
+        helper.setBlock(high, Blocks.STONE);
         GasExcitation.recompute(helper.getLevel(), helper.absolutePos(gas));
         helper.assertTrue(helper.getBlockState(gas).getValue(ExcitableGasBlock.EXCITED),
                 "Gas did not retain its full three-tick shutoff grace");
-        helper.startSequence().thenExecuteAfter(4, () -> helper.assertTrue(
+        // Scheduled block ticks and GameTest sequences can run on opposite sides
+        // of the same server-tick boundary. Observe one tick beyond the three
+        // decay steps so this asserts the grace contract rather than scheduler
+        // ordering within the fourth tick.
+        helper.startSequence().thenExecuteAfter(5, () -> helper.assertTrue(
                         !helper.getBlockState(gas).getValue(ExcitableGasBlock.EXCITED),
                         "Gas stayed excited after its shutoff grace expired"))
                 .thenSucceed();
