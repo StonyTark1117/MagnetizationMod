@@ -23,7 +23,8 @@ import net.neoforged.fml.ModList;
  * inventory, armor, offhand, and (when Curios is present) curio slots.
  * Electromagnetic induction, gamified.
  */
-public class InductionPadBlockEntity extends BlockEntity {
+public class InductionPadBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private final InternalBuffer energy = new InternalBuffer(
             com.stonytark.magnetization.config.MagConfig.inductionPadCapacity(),
@@ -36,6 +37,12 @@ public class InductionPadBlockEntity extends BlockEntity {
     /** Exposed to {@code RegisterCapabilitiesEvent} so cables can push FE in. */
     public IEnergyStorage energyBuffer() {
         return energy;
+    }
+
+    @Override
+    public void clearEnergyForEmp() {
+        energy.setStored(0);
+        syncEmpEnergyChange();
     }
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,

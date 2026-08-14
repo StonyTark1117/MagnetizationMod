@@ -22,7 +22,7 @@ public final class EmpChargeBlock extends Block {
 
     private static final int RADIUS = 12;
     private static final int BLACKOUT_TICKS = 200; // 10s
-    private static final int DRAIN_PASSES = 32;
+    private static final int DRAIN_PASSES = 256;
 
     public EmpChargeBlock(final Properties props) {
         super(props);
@@ -47,11 +47,16 @@ public final class EmpChargeBlock extends Block {
                     cur.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
                     if (cur.equals(center)) continue;
                     if (!level.isLoaded(cur)) continue;
-                    if (level.getBlockEntity(cur) == null) continue;
-                    if (level.getBlockEntity(cur) instanceof AbstractEmitterBlockEntity emitter) {
+                    final net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(cur);
+                    if (blockEntity == null) continue;
+                    if (blockEntity instanceof AbstractEmitterBlockEntity emitter) {
                         emitter.disableForEmp(BLACKOUT_TICKS);
                     }
-                    drainEnergy(level, cur.immutable());
+                    if (blockEntity instanceof EmpDrainable drainable) {
+                        drainable.clearEnergyForEmp();
+                    } else {
+                        drainEnergy(level, cur.immutable());
+                    }
                 }
             }
         }
@@ -66,10 +71,22 @@ public final class EmpChargeBlock extends Block {
     }
 
     private static void drainEnergy(final ServerLevel level, final BlockPos pos) {
-        final IEnergyStorage cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-        if (cap == null || !cap.canExtract()) return;
+        final java.util.Set<IEnergyStorage> seen = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
+        drainCapability(level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null), seen);
+        for (final net.minecraft.core.Direction side : net.minecraft.core.Direction.values()) {
+            drainCapability(level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side), seen);
+        }
+    }
+
+    private static void drainCapability(final IEnergyStorage cap, final java.util.Set<IEnergyStorage> seen) {
+        if (cap == null || !seen.add(cap) || !cap.canExtract()) return;
+        int previous = cap.getEnergyStored();
         for (int i = 0; i < DRAIN_PASSES && cap.getEnergyStored() > 0; i++) {
             if (cap.extractEnergy(Integer.MAX_VALUE, false) <= 0) break;
+            final int now = cap.getEnergyStored();
+            if (now >= previous) break; // defensive guard for a broken capability implementation
+            previous = now;
         }
     }
 }

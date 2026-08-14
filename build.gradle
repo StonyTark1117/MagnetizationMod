@@ -116,7 +116,8 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'rundata',
-        'runserver', 'rungametestserver', 'runoptionalcompatibilityabsentgametestserver',
+        'runserver', 'rungametestserver', 'runregressiongametestserver',
+        'runoptionalcompatibilityabsentgametestserver',
         'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runsimulatedcoasterstrackstylesgametestserver', 'runsimulatedcoasterstrackstylesclient',
@@ -152,7 +153,8 @@ def minimalProfileTasks = [
         'smokeenchantmentindustrygametest', 'smokeendertransmissiongametest',
         'smoketfmggametest', 'smokeoreexcavationgametest', 'smokecreateoreexcavationgametest', 'smokecuriosgametest', 'smokeoptionalcompatibilityabsentgametest',
         'runserversmoke', 'runclientminimal',
-        'smokeserverminimal', 'smokegametest', 'smokeclientnormal', 'releasegate'
+        'smokeserverminimal', 'smokegametest', 'smokeregressiongametest',
+        'smokeclientnormal', 'releasegate'
 ]
 def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
 if (!wantsMinimalClasspath) {
@@ -445,7 +447,8 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 // The `Dneoforge[.]gameTestServer=true` char-class regex matches that literal
 // flag but NOT this command's own text (which carries the bracketed form), so
 // pgrep can't self-match and kill its own shell.
-tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGameTestServer'
+tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGameTestServer'
+        || it.name == 'runAeroPortalsGameTestServer'
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
         || it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
@@ -474,7 +477,9 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runAeroPortalsGam
                 logger.warn("runGameTestServer: zombie-kill step failed (continuing): ${e.message}")
             }
         }
-        def lock = file(it.name == 'runAeroPortalsGameTestServer'
+        def lock = file(it.name == 'runRegressionGameTestServer'
+                ? 'run-regression-gametest/world/session.lock'
+                : it.name == 'runAeroPortalsGameTestServer'
                 ? 'run-aeroportals-gametest/world/session.lock'
                 : it.name == 'runImmersiveAeronauticsGameTestServer'
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
@@ -547,6 +552,9 @@ processResources {
     }
     // The isolated optional-test namespace needs the same empty arena without
     // committing a second binary NBT fixture.
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_regressions/structure'
+    }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_aeroportals/structure'
     }
@@ -724,6 +732,11 @@ neoForge {
             // Keep GameTests isolated from the developer world. Sable sublevel
             // files are not a safe fixture for a repeated headless test run.
             gameDirectory = file('run-gametest')
+        }
+        regressionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-regression-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_regressions'
         }
         optionalCompatibilityAbsentGameTestServer {
             type = 'gameTestServer'
@@ -1033,6 +1046,13 @@ tasks.register('smokeGameTest', Exec) {
     commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runGameTestServer', 'run-gametest', '300'
 }
 
+tasks.register('smokeRegressionGameTest', Exec) {
+    group = 'verification'
+    description = 'Runs isolated behavioral coverage for restored shipped features.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runRegressionGameTestServer',
+            'run-regression-gametest', '300'
+}
+
 tasks.register('smokeOptionalCompatibilityAbsentGameTest', Exec) {
     group = 'verification'
     description = 'Supervises the optional-compatibility absent-mod profile on the minimal runtime.'
@@ -1216,7 +1236,7 @@ tasks.register('smokeOptionalClientProfiles') {
 tasks.register('releaseGate') {
     group = 'verification'
     description = 'Everything that must be green before tagging a release: build + GameTests + minimal server.'
-    dependsOn 'build', 'smokeGameTest', 'smokeServerMinimal'
+    dependsOn 'build', 'smokeGameTest', 'smokeRegressionGameTest', 'smokeServerMinimal'
 }
 
 tasks.register('releaseMatrixGate', Exec) {

@@ -31,7 +31,8 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * It is the entry point of the fusion-fuel isotope chain. Pipe water in / hydrogen
  * out via the {@code FluidHandler} capability, or use it cauldron-style with buckets.
  */
-public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiData {
+public class ElectrolyzerBlockEntity extends BlockEntity
+        implements MachineGuiData, com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private final FluidTank waterTank = new FluidTank(MagConfig.electrolyzerWaterTank(), fs -> fs.getFluid() == Fluids.WATER);
     private final FluidTank hydrogenTank = new FluidTank(MagConfig.electrolyzerHydrogenTank(), fs -> fs.getFluid() == MagFluids.HYDROGEN.get());
@@ -74,6 +75,7 @@ public class ElectrolyzerBlockEntity extends BlockEntity implements MachineGuiDa
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public IFluidHandler fluidHandler() { return fluidIO; }
     public Container bucketContainer() { return bucketSlot; }
 

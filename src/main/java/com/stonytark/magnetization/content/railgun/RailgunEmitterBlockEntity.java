@@ -27,7 +27,8 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * fire it with the bound remote in hand). One pairing covers both sibling rails.
  */
 public class RailgunEmitterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData {
+        implements com.stonytark.magnetization.menu.MachineGuiData,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     public static final int ARC_STATE_MASK = 15;
     public static final int MANUAL_MODE_BIT = 16;
@@ -70,6 +71,7 @@ public class RailgunEmitterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public Container remoteContainer() { return remoteSlot; }
 
     public ArcState arcState() { return state; }

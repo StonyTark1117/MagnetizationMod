@@ -20,7 +20,8 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * redstone or FE it magnetically spins the item (direction toggled by
  * right-click / wrench). Synced to the client, which draws + spins the item.
  */
-public class MagneticItemFrameBlockEntity extends BlockEntity {
+public class MagneticItemFrameBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.content.emp.EmpDrainable {
 
     /** Spin modes, cycled by right-click: turn left / turn right / tumble up /
      *  tumble down. Two axes (yaw for left-right, pitch for up-down) × two signs. */
@@ -39,6 +40,7 @@ public class MagneticItemFrameBlockEntity extends BlockEntity {
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public ItemStack getDisplayedItem() { return displayed; }
     public boolean isSpinning() { return spinning; }
     public int spinMode() { return spinMode; }

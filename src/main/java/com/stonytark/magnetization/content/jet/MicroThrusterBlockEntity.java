@@ -39,7 +39,8 @@ import java.util.List;
  * WTHIT/Jade/TOP/Create goggles via the registered fluid + energy capabilities.
  */
 public class MicroThrusterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     public static final int TANK_CAPACITY = 8_000;       // 8 buckets of ferrofluid
     private static final int FE_CAPACITY = 400_000;
@@ -74,6 +75,7 @@ public class MicroThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     // Insert-only: pipes can fuel the thruster but can't siphon unburnt fuel back out.
     private final IFluidHandler insertOnly = new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(tank);
     public IFluidHandler fluidHandler() { return insertOnly; }

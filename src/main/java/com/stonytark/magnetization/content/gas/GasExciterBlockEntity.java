@@ -24,7 +24,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.List;
 
-public final class GasExciterBlockEntity extends BlockEntity {
+public final class GasExciterBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.content.emp.EmpDrainable {
     private final Buffer energy = new Buffer(MagConfig.gasExciterCapacity(), MagConfig.gasExciterReceive());
     private long consumedAt = Long.MIN_VALUE;
     private Fluid hudGas = Fluids.EMPTY;
@@ -38,6 +39,7 @@ public final class GasExciterBlockEntity extends BlockEntity {
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public boolean canExcite() {
         return !redstoneDisabledNow() && energy.getEnergyStored() >= MagConfig.gasExciterFePerTick();
     }

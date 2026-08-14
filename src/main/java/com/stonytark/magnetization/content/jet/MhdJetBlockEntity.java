@@ -44,7 +44,8 @@ import java.util.List;
  * magnet only reaches full speed if you feed it matching power.
  */
 public class MhdJetBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private static final int CAPACITY = 400_000;
     private static final int MAX_RECEIVE = 8_000;
@@ -66,6 +67,7 @@ public class MhdJetBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     // Insert-only: pipes can fuel the jet but can't siphon the conductive fluid back out.
     private final IFluidHandler insertOnly = new com.stonytark.magnetization.content.fluid.InsertOnlyFluidHandler(fluidTank);
     public IFluidHandler fluidHandler() { return insertOnly; }

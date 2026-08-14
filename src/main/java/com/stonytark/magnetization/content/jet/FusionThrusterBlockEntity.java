@@ -46,7 +46,8 @@ import org.jetbrains.annotations.Nullable;
  * an empty coolant tank preserves the original dry performance exactly.
  */
 public class FusionThrusterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private static final long RESCAN_INTERVAL = 20L;
 
@@ -92,6 +93,14 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return panelEnergy(); }
+
+    @Override
+    public void clearEnergyForEmp() {
+        final FusionThrusterBlockEntity master = panelMaster();
+        final FusionThrusterBlockEntity owner = master != null ? master : this;
+        owner.energy.setStored(0);
+        owner.syncEmpEnergyChange();
+    }
 
     /** Shared FE capability exposed by a Tokamak Coil in a valid thruster frame. */
     public static @Nullable IEnergyStorage energyBufferFromFrame(final Level level,

@@ -31,7 +31,8 @@ import org.joml.Vector3dc;
  * vanilla block-entity ticker does NOT run inside a Sable sub-level), and falls
  * back to the world ticker off-ship just to keep its powered visual honest.
  */
-public class GyrostabilizerBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
+public class GyrostabilizerBlockEntity extends BlockEntity
+        implements BlockEntitySubLevelActor, com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private static final int CAPACITY = 50_000;
     private static final int MAX_RECEIVE = 1_000;
@@ -47,6 +48,7 @@ public class GyrostabilizerBlockEntity extends BlockEntity implements BlockEntit
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public boolean isStabilizing() { return stabilizing; }
 
     /** Vanilla ticker (off-ship / fallback): nothing to stabilize, but resolve a

@@ -36,7 +36,8 @@ import org.joml.Vector3dc;
 
 /** Electric noble-gas propulsion for Sable ships. */
 public final class IonThrusterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor {
+        implements com.stonytark.magnetization.menu.MachineGuiData, BlockEntitySubLevelActor,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     public record Propellant(double thrust, double speed, int fluidPerTick, int fePerTick, int colour) {}
     public static final Propellant FALLBACK = new Propellant(1.0, 1.0, 2, 100, 0xC8D8FF);
@@ -58,6 +59,7 @@ public final class IonThrusterBlockEntity extends BlockEntity
     }
 
     public IEnergyStorage energyBuffer() { return energy; }
+    @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public IFluidHandler fluidHandler() { return insertOnly; }
     public net.minecraft.world.Container bucketContainer() { return bucketSlot; }
     public int propellantColour() { return tank.isEmpty() ? 0 : profile(tank.getFluid()).colour(); }
