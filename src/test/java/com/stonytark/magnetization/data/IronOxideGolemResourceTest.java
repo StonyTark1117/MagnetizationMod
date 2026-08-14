@@ -65,6 +65,31 @@ class IronOxideGolemResourceTest {
         assertEquals(7, hashes.size(), "every visual state should have a distinct texture");
     }
 
+    @Test void mrFluidGolemHasDistinctSoftAndHardenedPresentation() throws Exception {
+        final var hashes = new HashSet<String>();
+        for (final String id : List.of("mr_fluid_golem", "mr_fluid_golem_hardened")) {
+            final Path texture = RES.resolve("assets/magnetization/textures/entity/" + id + ".png");
+            final var image = ImageIO.read(texture.toFile());
+            assertNotNull(image, id);
+            assertEquals(128, image.getWidth(), id);
+            assertEquals(128, image.getHeight(), id);
+            hashes.add(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(Files.readAllBytes(texture))));
+        }
+        assertEquals(2, hashes.size(), "soft and hardened MR textures must remain distinct");
+
+        final var lang = JsonParser.parseString(Files.readString(
+                RES.resolve("assets/magnetization/lang/en_us.json"))).getAsJsonObject();
+        assertTrue(lang.has("tooltip.magnetization.golem.mr_fluid.fluid"));
+        assertTrue(lang.has("tooltip.magnetization.golem.mr_fluid.hardened"));
+
+        final String loot = Files.readString(
+                RES.resolve("data/magnetization/loot_table/entities/mr_fluid_golem.json"));
+        assertTrue(loot.contains("magnetization:mr_fluid_bucket"),
+                "MR Fluid Golem must return its own material instead of vanilla iron");
+        assertFalse(loot.contains("minecraft:iron_nugget"));
+    }
+
     @Test void manualAndAdvancementsAreValidJson() throws Exception {
         final String manual = Files.readString(RES.resolve(
                 "assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/iron_oxide_golems.json"));
@@ -116,7 +141,7 @@ class IronOxideGolemResourceTest {
         final var lang = JsonParser.parseString(Files.readString(
                 RES.resolve("assets/magnetization/lang/en_us.json"))).getAsJsonObject();
         for (final String sound : List.of("golem.polarize", "golem.oxidize", "golem.heat_change",
-                "golem.dampen", "golem.capture")) {
+                "golem.dampen", "golem.capture", "golem.harden", "golem.soften")) {
             final String subtitle = sounds.getAsJsonObject(sound).get("subtitle").getAsString();
             assertTrue(lang.has(subtitle), sound + " subtitle translation");
             assertFalse(sounds.getAsJsonObject(sound).getAsJsonArray("sounds").isEmpty(), sound);

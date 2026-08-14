@@ -4,7 +4,7 @@
     {
       "rolls": { "min": 0, "max": 2 },
       "entries": [
-        { "type": "minecraft:item", "name": "minecraft:iron_nugget" }
+        { "type": "minecraft:item", "name": "magnetization:mr_fluid_bucket" }
       ]
     }
   ]

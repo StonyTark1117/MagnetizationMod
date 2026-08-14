@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Restored the MR Fluid Golem's material identity instead of inheriting vanilla Iron Golem behavior end to end. Its soft form now has normal knockback and configured 30% mitigation; magnetic fields synchronize the hardened texture, 92% mitigation, and knockback immunity immediately. MR Fluid Buckets repair it instead of iron ingots and replace vanilla iron-nugget drops, harden/soften transitions emit subtitled sound and particle cues, and Jade/WTHIT expose the live state. Existing saved golems migrate to player-created guardians.
+
 ## 1.4.1 — Tokamak completion, coolant loops & magnetic golems
 
 ### Added

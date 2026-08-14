@@ -574,12 +574,97 @@ public final class IronOxideGolemGameTests {
             helper.assertTrue(MagneticFields.isInField(level, mrGolem.position()),
                     "Mobile source was absent from shared MagneticFields query");
             helper.assertTrue(mrGolem.isHardened(), "MR Fluid Golem did not harden in mobile field");
+            helper.assertTrue(Math.abs(mrGolem.getAttributeValue(
+                            net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE) - 1.0d) < 1.0e-6d,
+                    "Hardened MR Fluid Golem was not knockback immune");
             final Long hardenedUntil = helmet.get(MagDataComponents.HARDENED_UNTIL.get());
             helper.assertTrue(hardenedUntil != null && hardenedUntil > level.getGameTime(),
                     "MR armor did not acquire a live hardened window in mobile field");
             List.of(source, mrGolem, wearer).forEach(Entity::discard);
             helper.succeed();
         });
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 100, batch = "ironOxideMrBehavior")
+    public static void mrGolemSwitchesMitigationAndKnockbackWithField(final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final Vec3 base = highPosition(helper, 310, 0, 0);
+        final MrFluidGolem mrGolem = spawnAbsolute(level, MagEntities.MR_FLUID_GOLEM.get(), base);
+        mrGolem.setNoAi(true);
+        mrGolem.setNoGravity(true);
+
+        mrGolem.setPlayerCreated(false);
+        final CompoundTag legacySave = new CompoundTag();
+        mrGolem.addAdditionalSaveData(legacySave);
+        mrGolem.readAdditionalSaveData(legacySave);
+        helper.assertTrue(mrGolem.isPlayerCreated(), "Crafted MR guardian should be player-created");
+        helper.assertTrue(!mrGolem.isHardened(), "MR Fluid Golem should begin fluid");
+        helper.assertTrue(Math.abs(mrGolem.getAttributeValue(
+                        net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE)) < 1.0e-6d,
+                "Soft MR Fluid Golem retained vanilla iron-golem knockback immunity");
+
+        mrGolem.setHealth(mrGolem.getMaxHealth());
+        mrGolem.hurt(level.damageSources().generic(), 10.0f);
+        final float expectedSoftHealth = mrGolem.getMaxHealth()
+                - 10.0f * (1.0f - MagConfig.mrGolemBaseMitigation());
+        helper.assertTrue(Math.abs(mrGolem.getHealth() - expectedSoftHealth) < 0.01f,
+                "Soft MR mitigation was not applied; health=" + mrGolem.getHealth());
+
+        final MagnetiteGolem source = spawnAbsolute(level, MagEntities.MAGNETITE_GOLEM.get(), base.add(-2, 0, 0));
+        source.setNoAi(true);
+        source.setNoGravity(true);
+        source.aiStep();
+        mrGolem.invulnerableTime = 0;
+        mrGolem.setHealth(mrGolem.getMaxHealth());
+        mrGolem.hurt(level.damageSources().generic(), 10.0f);
+        final float expectedHardenedHealth = mrGolem.getMaxHealth()
+                - 10.0f * (1.0f - MagConfig.mrGolemFieldMitigation());
+        helper.assertTrue(mrGolem.isHardened(), "MR Fluid Golem did not harden before resolving damage");
+        helper.assertTrue(Math.abs(mrGolem.getHealth() - expectedHardenedHealth) < 0.01f,
+                "Hardened MR mitigation was not applied; health=" + mrGolem.getHealth());
+        helper.assertTrue(Math.abs(mrGolem.getAttributeValue(
+                        net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE) - 1.0d) < 1.0e-6d,
+                "Hardened MR Fluid Golem did not gain knockback immunity");
+
+        source.discard();
+        mrGolem.invulnerableTime = 0;
+        mrGolem.hurt(level.damageSources().generic(), 1.0f);
+        helper.assertTrue(!mrGolem.isHardened(), "MR Fluid Golem stayed hardened after its field disappeared");
+        helper.assertTrue(Math.abs(mrGolem.getAttributeValue(
+                        net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE)) < 1.0e-6d,
+                "Softened MR Fluid Golem kept hardened knockback immunity");
+        mrGolem.discard();
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 80, batch = "ironOxideMrRepair")
+    public static void mrGolemRepairsWithFluidInsteadOfIron(final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final ServerPlayer player = headlessPlayer(level, "mr-fluid-repair");
+        final MrFluidGolem mrGolem = spawnAbsolute(level, MagEntities.MR_FLUID_GOLEM.get(),
+                highPosition(helper, 305, 0, 0));
+        mrGolem.setNoAi(true);
+        mrGolem.setNoGravity(true);
+        mrGolem.setHealth(20.0f);
+        try {
+            final ItemStack iron = new ItemStack(net.minecraft.world.item.Items.IRON_INGOT);
+            player.setItemInHand(InteractionHand.MAIN_HAND, iron);
+            player.interactOn(mrGolem, InteractionHand.MAIN_HAND);
+            helper.assertTrue(mrGolem.getHealth() == 20.0f && iron.getCount() == 1,
+                    "MR Fluid Golem inherited vanilla iron-ingot repair");
+
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MagItems.MR_FLUID_BUCKET.get()));
+            player.interactOn(mrGolem, InteractionHand.MAIN_HAND);
+            helper.assertTrue(mrGolem.getHealth() == 45.0f,
+                    "MR fluid bucket did not repair 25 health; health=" + mrGolem.getHealth());
+            helper.assertTrue(player.getItemInHand(InteractionHand.MAIN_HAND)
+                            .is(net.minecraft.world.item.Items.BUCKET),
+                    "MR fluid repair did not return an empty bucket");
+            helper.succeed();
+        } finally {
+            mrGolem.discard();
+            removeOnlinePlayer(level, player);
+        }
     }
 
     @GameTest(template = EMPTY, timeoutTicks = 80, batch = "ironOxideDrops")

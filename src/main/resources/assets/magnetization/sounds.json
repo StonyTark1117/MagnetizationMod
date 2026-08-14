@@ -18,5 +18,13 @@
   "golem.capture": {
     "subtitle": "subtitles.magnetization.golem.capture",
     "sounds": [{"name": "minecraft:block.lodestone.place", "type": "event"}]
+  },
+  "golem.harden": {
+    "subtitle": "subtitles.magnetization.golem.harden",
+    "sounds": [{"name": "minecraft:block.iron_trapdoor.close", "type": "event"}]
+  },
+  "golem.soften": {
+    "subtitle": "subtitles.magnetization.golem.soften",
+    "sounds": [{"name": "minecraft:item.bucket.empty", "type": "event"}]
   }
 }
