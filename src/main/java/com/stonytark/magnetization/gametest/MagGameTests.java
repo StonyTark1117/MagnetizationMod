@@ -1085,10 +1085,10 @@ public final class MagGameTests {
                 dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(level, masterPos, all, bounds);
         teleportShip(level, ship, new BlockPos(base.getX(), 245, base.getZ()));
 
-        // Short window (like the railgun ship test): long enough for the thruster to
-        // fire, short enough that gravity doesn't drop the ship out of the loaded
-        // region (which invalidates the handle and zeroes the reading).
-        helper.runAfterDelay(20L, () -> {
+        // Observe the first firing ticks. A three-interior panel accelerates hard
+        // enough that waiting 20 ticks can carry the disposable craft outside
+        // Sable's valid physics region before this assertion gets its handle.
+        helper.runAfterDelay(6L, () -> {
             final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle h =
                     dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
             if (h == null) { removeShip(level, ship); helper.fail("no ship handle"); return; }

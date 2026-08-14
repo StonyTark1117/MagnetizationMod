@@ -110,7 +110,10 @@ public final class RailgunAutoAssemblyGameTests {
                                 + projectile.logicalPose().position().y());
 
                 a.requestFire();
-                helper.runAfterDelay(24L, () -> {
+                // Sample immediately after launch. The short test rails impart
+                // enough speed that the disposable body may leave Sable's valid
+                // region well before the previous 24-tick observation point.
+                helper.runAfterDelay(6L, () -> {
                     try {
                         final RigidBodyHandle handle = RigidBodyHandle.of(projectile);
                         final Vector3d velocity = handle == null ? new Vector3d()
@@ -173,7 +176,9 @@ public final class RailgunAutoAssemblyGameTests {
                 helper.assertTrue(shipIds(container).equals(shipsBefore),
                         "An oversized staged payload must not allocate a partial ship");
                 MagConfig.RAILGUN_AUTO_ASSEMBLE_MAX_BLOCKS.set(2);
-                helper.runAfterDelay(25L, () -> {
+                // Auto-assembly runs on the next machine ticks; inspect the new
+                // projectile before the unpaired automatic arc launches it away.
+                helper.runAfterDelay(6L, () -> {
                     final ServerSubLevel projectile = newShip(container, shipsBefore);
                     try {
                         helper.assertTrue(level.getBlockState(one).isAir() && level.getBlockState(two).isAir(),
