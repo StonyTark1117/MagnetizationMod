@@ -19,8 +19,9 @@ import java.util.Set;
 
 /**
  * Hardens MR (magnetorheological) fluid into {@link MagBlocks#HARDENED_MR_FLUID}
- * while it sits inside an active magnetic field — a walkable solid for temporary
- * bridges — and reverts it to fluid once the field is gone. Iterates the small
+ * while it carries a redstone signal or sits inside an active magnetic field —
+ * a walkable solid for wired gates and temporary bridges — and reverts it to
+ * fluid once both activations are gone. Iterates the small
  * MR-fluid source + hardened registries (no field-volume scan); when a source is
  * in a field it flood-hardens the whole connected fluid body so the bridge is
  * continuous, recording per-cell whether it was a source so the revert restores
@@ -54,7 +55,7 @@ public final class MrFluidHardenHandler {
             if (done.contains(src)) continue;
             final BlockState st = server.getBlockState(src);
             if (!st.is(MagBlocks.MR_FLUID_BLOCK.get())) { MrFluidSourceRegistry.remove(server, src); continue; }
-            if (MagneticFields.isInField(server, src)) budget = floodHarden(server, src, done, budget);
+            if (isActivated(server, src, st)) budget = floodHarden(server, src, done, budget);
         }
 
         // Revert: any hardened block no longer in a field melts back. Mirror how
@@ -70,7 +71,7 @@ public final class MrFluidHardenHandler {
                 if (!server.isLoaded(pos)) continue;
                 final BlockState st = server.getBlockState(pos);
                 if (!st.is(MagBlocks.HARDENED_MR_FLUID.get())) { HardenedMrFluidRegistry.remove(server, pos); continue; }
-                if (!MagneticFields.isInField(server, pos)) {
+                if (!isActivated(server, pos, st)) {
                     if (st.getValue(HardenedMrFluidBlock.SOURCE)) restoreSources.add(pos.immutable());
                     server.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                     HardenedMrFluidRegistry.remove(server, pos);
@@ -82,6 +83,15 @@ public final class MrFluidHardenHandler {
         for (final BlockPos src : restoreSources) {
             server.setBlock(src, MagBlocks.MR_FLUID_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
         }
+    }
+
+    /** Redstone restores the original wired-control mode; fields retain the
+     * later wireless hardening mode. The direct-neighbour query closes the brief
+     * ordering window before the conductive-fluid network writes its POWER state. */
+    private static boolean isActivated(final ServerLevel server, final BlockPos pos, final BlockState state) {
+        return MagneticFields.isInField(server, pos)
+                || FluidRedstone.signal(state) > 0
+                || server.hasNeighborSignal(pos);
     }
 
     /** Flood the connected MR-fluid body from {@code start}, converting each cell
@@ -96,8 +106,10 @@ public final class MrFluidHardenHandler {
             final BlockState st = server.getBlockState(p);
             if (!st.is(MagBlocks.MR_FLUID_BLOCK.get())) continue;
             final boolean source = st.getFluidState().isSource();
+            final int signal = FluidRedstone.signal(st);
             server.setBlock(p, MagBlocks.HARDENED_MR_FLUID.get().defaultBlockState()
-                    .setValue(HardenedMrFluidBlock.SOURCE, source), Block.UPDATE_ALL);
+                    .setValue(HardenedMrFluidBlock.SOURCE, source)
+                    .setValue(FluidRedstone.POWER, signal), Block.UPDATE_ALL);
             MrFluidSourceRegistry.remove(server, p);
             HardenedMrFluidRegistry.add(server, p);
             budget--;

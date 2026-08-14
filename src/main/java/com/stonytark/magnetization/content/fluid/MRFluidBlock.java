@@ -13,7 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Magnetorheological (MR) fluid block — an iron-particle smart fluid. It flows
- * like a liquid until it sits inside a magnetic field, where it snaps rigid into
+ * like a liquid until it receives a redstone signal or sits inside a magnetic
+ * field, where it snaps rigid into
  * {@link com.stonytark.magnetization.registry.MagBlocks#HARDENED_MR_FLUID}
  * (walkable — temporary bridges/walkways) and melts back when the field is gone.
  * The field reaction is driven by {@link MrFluidHardenHandler}; this block just
@@ -22,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>It conducts redstone like liquid dust (see {@link FluidRedstone}); the
  * conduction survives hardening, since {@link HardenedMrFluidBlock} conducts too.
  *
- * <p>(It no longer stiffens on a redstone signal — hardening is field-only.)
+ * <p>Redstone and magnetic fields are independent activation paths: either one
+ * keeps the connected cells rigid, enabling both wired gates and field bridges.
  */
 public final class MRFluidBlock extends LiquidBlock implements FluidRedstone.Conductor {
 

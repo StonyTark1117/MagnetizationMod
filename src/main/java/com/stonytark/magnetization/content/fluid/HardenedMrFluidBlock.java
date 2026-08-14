@@ -17,10 +17,10 @@ import java.util.List;
 
 /**
  * Hardened MR Fluid — the solid grey block MR (magnetorheological) fluid snaps
- * into while inside a magnetic field, letting you walk across it (temporary
- * bridges/walkways). It is NOT craftable and drops nothing; it reverts to MR
- * fluid both when it leaves the field ({@link MrFluidHardenHandler}) and when a
- * player breaks it. The {@link #SOURCE} flag records whether the cell it hardened
+ * into while powered by redstone or inside a magnetic field, letting you walk
+ * across it (temporary bridges/walkways). It is NOT craftable and drops nothing;
+ * it reverts to MR fluid when neither activation remains ({@link MrFluidHardenHandler})
+ * and when a player breaks it. The {@link #SOURCE} flag records whether the cell it hardened
  * from was a fluid source, so the field-revert restores the body correctly.
  */
 public final class HardenedMrFluidBlock extends Block implements FluidRedstone.Conductor {
@@ -42,6 +42,9 @@ public final class HardenedMrFluidBlock extends Block implements FluidRedstone.C
     protected void onPlace(final BlockState state, final Level level, final BlockPos pos,
                            final BlockState oldState, final boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
+        if (!level.isClientSide && !oldState.is(this)) {
+            HardenedMrFluidRegistry.add(level, pos);
+        }
         FluidRedstone.onNeighborChanged(level, pos, this);
     }
 
@@ -84,8 +87,12 @@ public final class HardenedMrFluidBlock extends Block implements FluidRedstone.C
     @Override
     protected void onRemove(final BlockState state, final Level level, final BlockPos pos,
                             final BlockState newState, final boolean isMoving) {
-        // Drop our registry tracking whenever we leave this position.
-        if (!level.isClientSide) HardenedMrFluidRegistry.remove(level, pos);
+        // Block-state property updates (notably signal_power recomputation) also
+        // call this hook. Keep tracking unless the hardened block truly leaves;
+        // otherwise losing redstone unregisters it just before it can melt.
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            HardenedMrFluidRegistry.remove(level, pos);
+        }
         super.onRemove(state, level, pos, newState, isMoving);
         // Broken by a player (replaced with air) → turn back into MR fluid, not
         // nothing. Only restore a SOURCE when this cell hardened from a real source:

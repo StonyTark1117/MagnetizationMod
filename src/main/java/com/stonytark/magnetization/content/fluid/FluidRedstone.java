@@ -20,11 +20,10 @@ import java.util.Map;
 /**
  * Makes the mod's conductive fluids carry a redstone signal like a body of
  * liquid redstone dust — ferrofluid, magnetized ferrofluid, MR fluid, and the
- * Hardened MR Fluid bridge block all conduct. They never <em>react</em> to a
- * signal (no behaviour changes when powered) and are not power sources; they
- * simply relay an external signal across their connected span, attenuating one
- * level per cell exactly like dust, so you can route wiring through pools and
- * walkways for complex machines.
+ * Hardened MR Fluid bridge block all conduct. Conductors are not power sources;
+ * they relay an external signal across their connected span, attenuating one
+ * level per cell exactly like dust. MR Fluid additionally uses the conducted
+ * value to harden while powered, restoring its redstone-controlled bridge mode.
  *
  * <p>Power is stored per cell in the {@link #POWER} blockstate property. When
  * anything adjacent to the network changes, the whole connected component is

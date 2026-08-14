@@ -821,14 +821,13 @@ public final class MagGameTests {
 
     /**
      * #91 — MR Fluid hardens to a solid block when inside an active magnetic field.
-     * Places an MR-fluid source beside a redstone-powered electromagnet and asserts
-     * the fluid cell becomes {@code hardened_mr_fluid} once the field reaches it.
+     * Places an MR-fluid source beside a passive permanent magnet and asserts the
+     * fluid cell becomes {@code hardened_mr_fluid} once the field reaches it. The
+     * passive source keeps this independent from the redstone activation test.
      */
     @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 120)
     public static void mrFluidHardensInField(final GameTestHelper helper) {
-        forceDefaultEmitterPower();                                              // config-drift guard
-        helper.setBlock(new BlockPos(1, 1, 1), MagBlocks.ELECTROMAGNET.get());
-        helper.setBlock(new BlockPos(1, 2, 1), Blocks.REDSTONE_BLOCK);            // powers the electromagnet
+        helper.setBlock(new BlockPos(1, 1, 1), MagBlocks.PERMANENT_MAGNET.get());
         final BlockPos fluid = new BlockPos(2, 1, 1);
         helper.setBlock(new BlockPos(2, 0, 1), Blocks.STONE);                     // floor so the source stays put
         helper.setBlock(fluid, MagBlocks.MR_FLUID_BLOCK.get());
