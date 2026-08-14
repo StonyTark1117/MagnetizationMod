@@ -11,6 +11,7 @@ import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
 import com.stonytark.magnetization.content.jet.FusionThrusterPanel;
 import com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity;
 import com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity;
+import com.stonytark.magnetization.content.sail.SolarSailBlockEntity;
 import com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity;
 import com.stonytark.magnetization.menu.MachineMenu;
 import com.stonytark.magnetization.registry.MagBlocks;
@@ -293,6 +294,53 @@ public final class ReleaseCoverageGameTests {
                 "Dipole tuning did not survive NBT round-trip");
         helper.assertTrue(helper.getBlockState(pos).getValue(DirectionalBlock.FACING) == Direction.WEST,
                 "Dipole facing changed during BE persistence round-trip");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 40)
+    public static void solarSailNightCutoffPersistsAndSyncs(final GameTestHelper helper) {
+        final BlockPos pos = new BlockPos(1, 1, 1);
+        helper.setBlock(pos, MagBlocks.SOLAR_SAIL.get());
+        final SolarSailBlockEntity sail = (SolarSailBlockEntity) helper.getBlockEntity(pos);
+
+        helper.assertTrue(!sail.isNightDisabled(),
+                "A newly placed Solar Sail should use the configured nighttime thrust");
+        sail.toggleNightDisabled();
+        final CompoundTag saved = sail.saveWithoutMetadata(helper.getLevel().registryAccess());
+        helper.assertTrue(saved.getBoolean("NightOff"),
+                "Solar Sail did not save its per-panel night cutoff");
+        helper.assertTrue(sail.getUpdateTag(helper.getLevel().registryAccess()).getBoolean("NightOff"),
+                "Solar Sail did not synchronize its per-panel night cutoff");
+
+        sail.toggleNightDisabled();
+        sail.loadCustomOnly(saved, helper.getLevel().registryAccess());
+        helper.assertTrue(sail.isNightDisabled(),
+                "Solar Sail night cutoff did not survive an NBT round-trip");
+        helper.assertTrue(sail.hudLines().size() == 4,
+                "Solar Sail HUD should expose panels, day/night, cutoff, and activity");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 40)
+    public static void gForceCushionRecognizesHorseBodyArmor(final GameTestHelper helper) {
+        final BlockPos cushionPos = new BlockPos(1, 0, 1);
+        helper.setBlock(cushionPos, MagBlocks.G_FORCE_CUSHION.get());
+        final var horse = helper.spawn(net.minecraft.world.entity.EntityType.HORSE, new BlockPos(1, 1, 1));
+        horse.setNoAi(true);
+        horse.setBodyArmorItem(new ItemStack(Items.IRON_HORSE_ARMOR));
+        horse.setHealth(horse.getMaxHealth());
+
+        MagBlocks.G_FORCE_CUSHION.get().fallOn(helper.getLevel(), helper.getBlockState(cushionPos),
+                helper.absolutePos(cushionPos), horse, 12.0F);
+        helper.assertTrue(horse.getHealth() == horse.getMaxHealth(),
+                "Metallic horse body armor should let the G-Force Cushion arrest the fall");
+
+        horse.setBodyArmorItem(ItemStack.EMPTY);
+        horse.invulnerableTime = 0;
+        MagBlocks.G_FORCE_CUSHION.get().fallOn(helper.getLevel(), helper.getBlockState(cushionPos),
+                helper.absolutePos(cushionPos), horse, 12.0F);
+        helper.assertTrue(horse.getHealth() < horse.getMaxHealth(),
+                "An unarmored horse should retain normal fall damage on the G-Force Cushion");
         helper.succeed();
     }
 

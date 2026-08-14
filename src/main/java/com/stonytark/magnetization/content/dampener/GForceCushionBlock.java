@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.content.dampener;
 
+import com.stonytark.magnetization.api.EquippedArmor;
 import com.stonytark.magnetization.api.MagTags;
 import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.BlockPos;
@@ -46,7 +47,7 @@ public final class GForceCushionBlock extends Block {
     }
 
     private static boolean hasMetallicArmor(final LivingEntity living) {
-        for (final ItemStack armor : living.getArmorSlots()) {
+        for (final ItemStack armor : EquippedArmor.all(living)) {
             if (!MagConfig.isItemDisabled(armor)
                     && com.stonytark.magnetization.compat.FerromagneticCompat.is(armor, MagTags.METAL_ARMOR)) {
                 return true;

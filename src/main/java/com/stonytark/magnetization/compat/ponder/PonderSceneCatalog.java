@@ -55,7 +55,7 @@ public final class PonderSceneCatalog {
                             "Mount it on a ship, aim the exhaust with a wrench, then supply FE and one accepted gas propellant."),
                     "magnetization:ion_thruster"),
             generic("solar_sail", "Use a Solar Sail",
-                    "Mount panels on a ship and point them with a wrench; daylight and panel count drive thrust.",
+                    "Mount panels on a ship and point them with a wrench; empty-hand right-click toggles each panel's night cutoff.",
                     false, "magnetization:solar_sail"),
             generic("kinetic_coil", "Use a Kinetic Coil",
                     "A passing magnetic ship induces FE and a redstone pulse in the coil.", false,

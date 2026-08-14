@@ -24,8 +24,8 @@ import org.joml.Vector3dc;
  * craft, each sail panel intercepts the ambient field of the solar wind and
  * gives the ship a small, fuel-free forward push along its facing. Thrust scales
  * automatically with the number of panels (more sail = more push), with altitude
- * (stronger up high), and with daylight: full by day, half by night — or zero at
- * night if the panel's night cut-off is toggled on (right-click).
+ * (stronger up high), and with daylight: full by day, the configured fraction by
+ * night — or zero at night if the panel's night cut-off is toggled on (right-click).
  */
 public class SolarSailBlockEntity extends BlockEntity
         implements BlockEntitySubLevelActor, com.stonytark.magnetization.menu.MachineGuiData {
@@ -36,6 +36,8 @@ public class SolarSailBlockEntity extends BlockEntity
     private static final double SAIL_SPEED_BASE = 0.7;
     private static final double SAIL_SPEED_PER_PANEL = 0.05;
     private static final double SAIL_SPEED_CAP = 4.0;
+
+    private boolean nightDisabled = false;
 
     // ── Client-synced HUD state (WTHIT/Jade/TOP/Create goggles) ──
     private int lastPanels = 0;          // panels in the assembled sail
@@ -50,6 +52,19 @@ public class SolarSailBlockEntity extends BlockEntity
         super(MagBlockEntities.SOLAR_SAIL.get(), pos, state);
     }
 
+    public boolean isNightDisabled() {
+        return nightDisabled;
+    }
+
+    public void toggleNightDisabled() {
+        nightDisabled = !nightDisabled;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
+    }
+
     /** Sable drives this when the panel is part of a moving sub-level. */
     @Override
     public void sable$tick(final ServerSubLevel host) {
@@ -60,10 +75,11 @@ public class SolarSailBlockEntity extends BlockEntity
         }
         if (host.getMassTracker().isInvalid() || host.getMassTracker().getMass() <= 0.0) { recordHud(server, 0, true, false); return; }
 
-        // Day = full; night = server-config fraction (default 0.5, 0 disables).
+        // Day = full. At night, a panel cutoff overrides the configured fraction.
         final boolean day = server.isDay();
         final double dayFactor = day ? 1.0
-                : com.stonytark.magnetization.config.MagConfig.solarSailNightFactor();
+                : (nightDisabled ? 0.0
+                : com.stonytark.magnetization.config.MagConfig.solarSailNightFactor());
         if (dayFactor <= 0.0) { recordHud(server, SailPanelCounter.count(server, host), day, false); return; }
         // More effective the higher you fly; never fully zero at sea level.
         final double altFactor = Mth.clamp(0.3 + (getBlockPos().getY() - 64) / 256.0, 0.3, 1.5);
@@ -126,6 +142,10 @@ public class SolarSailBlockEntity extends BlockEntity
         out.add(net.minecraft.network.chat.Component.translatable(lastDay
                 ? "tooltip.magnetization.gui_sail_day" : "tooltip.magnetization.gui_sail_night")
                 .withStyle(lastDay ? net.minecraft.ChatFormatting.YELLOW : net.minecraft.ChatFormatting.BLUE));
+        out.add(net.minecraft.network.chat.Component.translatable(nightDisabled
+                ? "tooltip.magnetization.gui_sail_night_cutoff_on"
+                : "tooltip.magnetization.gui_sail_night_cutoff_off")
+                .withStyle(nightDisabled ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.GRAY));
         out.add(net.minecraft.network.chat.Component.translatable(lastActive
                 ? "tooltip.magnetization.gui_sail_sailing" : "tooltip.magnetization.machine_idle_sail")
                 .withStyle(lastActive ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.YELLOW));
@@ -135,6 +155,7 @@ public class SolarSailBlockEntity extends BlockEntity
     @Override
     public CompoundTag getUpdateTag(final HolderLookup.Provider registries) {
         final CompoundTag tag = super.getUpdateTag(registries);
+        tag.putBoolean("NightOff", nightDisabled);
         tag.putInt("Panels", lastPanels);
         tag.putBoolean("Day", lastDay);
         tag.putBoolean("Active", lastActive);
@@ -144,6 +165,7 @@ public class SolarSailBlockEntity extends BlockEntity
     @Override
     public void handleUpdateTag(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.handleUpdateTag(tag, registries);
+        nightDisabled = tag.getBoolean("NightOff");
         lastPanels = tag.getInt("Panels");
         lastDay = tag.getBoolean("Day");
         lastActive = tag.getBoolean("Active");
@@ -160,5 +182,17 @@ public class SolarSailBlockEntity extends BlockEntity
                             final HolderLookup.Provider registries) {
         final CompoundTag tag = pkt.getTag();
         if (tag != null) handleUpdateTag(tag, registries);
+    }
+
+    @Override
+    protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putBoolean("NightOff", nightDisabled);
+    }
+
+    @Override
+    protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        nightDisabled = tag.getBoolean("NightOff");
     }
 }
