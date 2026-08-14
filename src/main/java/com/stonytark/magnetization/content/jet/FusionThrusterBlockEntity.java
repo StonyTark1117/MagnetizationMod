@@ -314,6 +314,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
                                   final FusionThrusterBlockEntity be) {
         ThrusterPlume.tick(level, pos, state, ThrusterPlume.Style.FUSION,
                 be.exhaustColour(), Math.max(1, be.interiorCount()));
+        if (be.coolingActive()) {
+            ThrusterPlume.tickCooledFusion(level, pos, state, Math.max(1, be.interiorCount()));
+        }
     }
 
     private void resizeSharedTanks(final int interiorCount) {

@@ -19,6 +19,8 @@ import org.joml.Vector3f;
  */
 final class ThrusterPlume {
 
+    private static final int COOLED_FUSION_COLOUR = 0xB8F4FF;
+
     enum Style {
         MHD(2, 1.15d, 0.075d, 0.16d, 1),
         MICRO(3, 1.45d, 0.12d, 0.20d, 1),
@@ -82,6 +84,48 @@ final class ThrusterPlume {
         if (style != Style.FUSION) return style.tickDivisor;
         final long panelSamples = (long) Math.max(1, nozzleCount) * style.samples;
         final long capped = Math.max(style.tickDivisor, (panelSamples + 23L) / 24L);
+        return (int) Math.min(Integer.MAX_VALUE, capped);
+    }
+
+    /**
+     * Adds a pale coolant-mist sheath around an already-running Fusion plume.
+     * The caller gates this on synchronized cooling state; the normal LIT guard
+     * here ensures a delayed BE update can never leave steam on an idle panel.
+     */
+    static void tickCooledFusion(final Level level, final BlockPos pos, final BlockState state,
+                                 final int nozzleCount) {
+        if (!level.isClientSide || !state.hasProperty(BlockStateProperties.LIT)
+                || !state.getValue(BlockStateProperties.LIT)
+                || !state.hasProperty(DirectionalBlock.FACING)) return;
+
+        final RandomSource random = level.random;
+        final int divisor = cooledSamplingDivisor(nozzleCount);
+        if (divisor > 1 && random.nextInt(divisor) != 0) return;
+
+        final Direction exhaust = state.getValue(DirectionalBlock.FACING);
+        final double reach = random.nextDouble() * 0.72d;
+        final double angle = random.nextDouble() * Math.PI * 2.0d;
+        final double radius = 0.15d + reach * 0.16d;
+        final double lateralA = Math.cos(angle) * radius;
+        final double lateralB = Math.sin(angle) * radius;
+        final Vec3 point = plumePoint(pos, exhaust, reach, lateralA, lateralB);
+        final Vec3 velocity = plumeVelocity(exhaust, 0.11d,
+                lateralA * 0.16d, lateralB * 0.16d);
+
+        level.addParticle(new DustParticleOptions(colourVector(COOLED_FUSION_COLOUR), 0.82f),
+                point.x, point.y, point.z, velocity.x, velocity.y, velocity.z);
+        add(level, ParticleTypes.CLOUD, point, velocity.scale(0.52d));
+        if (random.nextInt(5) == 0) {
+            final Vec3 nozzle = plumePoint(pos, exhaust, 0.04d,
+                    lateralA * 0.65d, lateralB * 0.65d);
+            add(level, ParticleTypes.SPLASH, nozzle, velocity.scale(0.35d));
+        }
+    }
+
+    /** Keep the additive cooled layer to roughly twelve sampled cells/tick. */
+    static int cooledSamplingDivisor(final int nozzleCount) {
+        final long count = Math.max(1, nozzleCount);
+        final long capped = Math.max(4L, (count + 11L) / 12L);
         return (int) Math.min(Integer.MAX_VALUE, capped);
     }
 

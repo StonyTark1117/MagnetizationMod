@@ -46,6 +46,14 @@ class ThrusterPlumeTest {
     }
 
     @Test
+    void cooledFusionLayerHasAnIndependentPanelWideCap() {
+        assertEquals(4, ThrusterPlume.cooledSamplingDivisor(1));
+        assertEquals(4, ThrusterPlume.cooledSamplingDivisor(36));
+        assertEquals(84, ThrusterPlume.cooledSamplingDivisor(1_000));
+        assertEquals(178_956_971, ThrusterPlume.cooledSamplingDivisor(Integer.MAX_VALUE));
+    }
+
+    @Test
     void activeThrustersUseFiringStatusAndFusionUsesVisibleState() {
         for (final var kind : java.util.List.of(
                 com.stonytark.magnetization.menu.MachineMenu.Kind.JET,
