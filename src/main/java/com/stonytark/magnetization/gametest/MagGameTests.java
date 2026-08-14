@@ -1132,21 +1132,28 @@ public final class MagGameTests {
         }
     }
 
-    /** Put a test stack into an actual Curios slot without bypassing the
-     * capability lookup used by {@code UseCurioPayload}. */
+    /** Put a test stack into its advertised Curios slot without bypassing the
+     * capability lookup used by {@code UseCurioPayload}. Naming the expected
+     * slot keeps activation tests from passing against an unrelated slot supplied
+     * by another mod while Magnetization's own player assignment is absent. */
     private static boolean placeCurio(final net.minecraft.server.level.ServerPlayer player,
                                       final net.minecraft.world.item.ItemStack stack) {
         if (!net.neoforged.fml.ModList.get().isLoaded("curios")) return false;
         final var handler = player.getCapability(
                 top.theillusivec4.curios.api.CuriosCapability.INVENTORY);
         if (handler == null || handler.getCurios() == null) return false;
-        for (final var entry : handler.getCurios().entrySet()) {
-            final var stacks = entry.getValue().getStacks();
-            if (stacks.getSlots() <= 0) continue;
-            stacks.setStackInSlot(0, stack);
-            return true;
-        }
-        return false;
+        final String slotId = stack.is(com.stonytark.magnetization.registry.MagItems.FIELD_COMPASS.get())
+                ? "charm"
+                : stack.is(com.stonytark.magnetization.registry.MagItems.MAGNETIC_GRAPPLE.get())
+                ? "back"
+                : stack.is(com.stonytark.magnetization.registry.MagItems.REPULSOR_GUN.get())
+                ? "hands" : null;
+        if (slotId == null) return false;
+        final var slot = handler.getCurios().get(slotId);
+        if (slot == null || slot.getStacks().getSlots() <= 0
+                || !slot.getStacks().isItemValid(0, stack)) return false;
+        slot.getStacks().setStackInSlot(0, stack);
+        return true;
     }
 
     /** Small struct mirroring the panel validator's result for the gametest. */
