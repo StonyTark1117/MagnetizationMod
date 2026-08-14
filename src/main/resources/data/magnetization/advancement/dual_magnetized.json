@@ -9,21 +9,14 @@
     "announce_to_chat": false
   },
   "criteria": {
-    "north_armor": {
+    "opposite_polarities": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": "#magnetization:metal_armor",
             "components": { "magnetization:armor_polarity": "north" }
-          }
-        ]
-      }
-    },
-    "south_armor": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
+          },
           {
             "items": "#magnetization:metal_armor",
             "components": { "magnetization:armor_polarity": "south" }
@@ -32,5 +25,5 @@
       }
     }
   },
-  "requirements": [["north_armor"], ["south_armor"]]
+  "requirements": [["opposite_polarities"]]
 }

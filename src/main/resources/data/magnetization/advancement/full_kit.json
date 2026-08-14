@@ -9,16 +9,27 @@
     "announce_to_chat": true
   },
   "criteria": {
-    "electromagnet":         { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:electromagnet" } ] } },
-    "kinetic_electromagnet": { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:kinetic_electromagnet" } ] } },
-    "magnetic_anchor":       { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_anchor" } ] } },
-    "repulsor_coil":         { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:repulsor_coil" } ] } },
-    "tractor_beam":          { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:tractor_beam" } ] } },
-    "magnetic_excavator":    { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:magnetic_excavator" } ] } },
-    "permanent_magnet":      { "trigger": "minecraft:inventory_changed", "conditions": { "items": [ { "items": "magnetization:permanent_magnet" } ] } }
+    "all_emitters": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "magnetization:electromagnet" },
+          { "items": "magnetization:dipole_electromagnet" },
+          { "items": "magnetization:kinetic_electromagnet" },
+          { "items": "magnetization:magnetic_anchor" },
+          { "items": "magnetization:repulsor_coil" },
+          { "items": "magnetization:tractor_beam" },
+          { "items": "magnetization:magnetic_excavator" },
+          { "items": "magnetization:permanent_magnet" },
+          { "items": "magnetization:temporary_magnet" },
+          { "items": "magnetization:samarium_cobalt_magnet" },
+          { "items": "magnetization:neodymium_magnet" },
+          { "items": "magnetization:pyrrhotite_block" },
+          { "items": "magnetization:titanomagnetite_block" },
+          { "items": "magnetization:meteorite_core" }
+        ]
+      }
+    }
   },
-  "requirements": [
-    ["electromagnet"], ["kinetic_electromagnet"], ["magnetic_anchor"],
-    ["repulsor_coil"], ["tractor_beam"], ["magnetic_excavator"], ["permanent_magnet"]
-  ]
+  "requirements": [["all_emitters"]]
 }

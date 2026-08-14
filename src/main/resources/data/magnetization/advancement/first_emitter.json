@@ -15,12 +15,19 @@
         "items": [
           { "items": [
             "magnetization:electromagnet",
+            "magnetization:dipole_electromagnet",
             "magnetization:kinetic_electromagnet",
             "magnetization:magnetic_anchor",
             "magnetization:repulsor_coil",
             "magnetization:tractor_beam",
             "magnetization:permanent_magnet",
-            "magnetization:magnetic_excavator"
+            "magnetization:temporary_magnet",
+            "magnetization:samarium_cobalt_magnet",
+            "magnetization:neodymium_magnet",
+            "magnetization:magnetic_excavator",
+            "magnetization:pyrrhotite_block",
+            "magnetization:titanomagnetite_block",
+            "magnetization:meteorite_core"
           ] }
         ]
       }
