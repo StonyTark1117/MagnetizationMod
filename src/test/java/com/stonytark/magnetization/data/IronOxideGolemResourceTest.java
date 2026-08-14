@@ -90,6 +90,30 @@ class IronOxideGolemResourceTest {
         assertFalse(loot.contains("minecraft:iron_nugget"));
     }
 
+    @Test void mrFluidGolemSoftStateCannotRegressToAStaticTextureSwap() throws Exception {
+        final String renderer = Files.readString(Path.of(
+                "src/main/java/com/stonytark/magnetization/client/MrFluidGolemRenderer.java"));
+        assertTrue(renderer.contains("addLayer(new FluidSurfaceLayer(this))"),
+                "MR Fluid Golem must install its animated soft-surface layer");
+        assertTrue(renderer.contains("ModelBakery.WATER_FLOW.sprite().wrap"),
+                "soft MR Fluid must reuse the game's animated water-flow sprite");
+        assertTrue(renderer.contains("RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS)"),
+                "the flowing surface must remain visibly distinct from the stone-like base");
+        assertFalse(renderer.contains("RenderType.energySwirl"),
+                "the golem must not maintain a separate scrolling animation path");
+        assertTrue(renderer.contains("golem.isHardened()) return"),
+                "hardening must stop the fluid surface animation");
+
+        try (var entityTextures = Files.list(
+                RES.resolve("assets/magnetization/textures/entity"))) {
+            assertEquals(0L, entityTextures
+                            .filter(path -> path.getFileName().toString()
+                                    .matches("mr_fluid_golem_[0-9]+\\.png"))
+                            .count(),
+                    "the renderer must reuse the existing MR texture instead of duplicating frames");
+        }
+    }
+
     @Test void manualAndAdvancementsAreValidJson() throws Exception {
         final String manual = Files.readString(RES.resolve(
                 "assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/iron_oxide_golems.json"));

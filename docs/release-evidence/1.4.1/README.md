@@ -8,7 +8,7 @@ Captured on 2026-08-14 from disposable singleplayer clients rendered with Mesa l
 | --- | --- | --- |
 | Expanded Tokamak GUI | [tokamak-gui-5x5.png](tokamak-gui-5x5.png) | Formed GUI reports a 5x5 reactor with 16 coils and 9 cores. |
 | Expanded Tokamak goggles | [tokamak-goggles-5x5.png](tokamak-goggles-5x5.png) | Preview reports a valid 5x5 ring, solid 3x3 core interior, and 3x performance multiplier. |
-| Golem renderers | [golem-renderers.png](golem-renderers.png) | Gallium, MR Fluid, Magnetite, Pyrrhotite, Hematite, and Titanomagnetite render together with distinct models/materials. |
+| Golem renderer presence | [golem-renderers.png](golem-renderers.png) | Presence-only capture. It exposed the shipped MR Fluid Golem regression: the soft golem rendered as a static gray Iron Golem palette swap. It is not animation or state-transition acceptance evidence. |
 | Engine effects | [thruster-exhaust-coolant-mist.png](thruster-exhaust-coolant-mist.png) | The staged Sable craft shows the Micro, MHD, Ion, and Fusion exhaust styles; the cooled Fusion panel emits the pale cloud/splash mist sheath. |
 | Gas Detector HUD | [gas-detector-hud.png](gas-detector-hud.png) | Active scan identifies Argon and renders state, heading, range, exposure, dose, and SAFE verdict. |
 | Tokamak Ponder | [ponder-tokamak.png](ponder-tokamak.png) | Solid-core 5x5 layout renders with correctly localized master/core scaling guidance. |
@@ -17,6 +17,10 @@ Captured on 2026-08-14 from disposable singleplayer clients rendered with Mesa l
 | Copycats+ Ponder | [ponder-copycats.png](ponder-copycats.png) | Optional scene opens in a client with `copycats` and explains copied-material susceptibility and goggles output. |
 
 The Railgun visual pass initially exposed `magnetization.ponder.railgun_pair.text_2` as a raw key. All 33 Ponder instruction resources were corrected to Ponder's one-based numbering, the synchronization test now enforces that convention, and the four committed Ponder captures were taken after the fix/reload.
+
+### MR Fluid Golem acceptance correction
+
+The original review incorrectly accepted one static group screenshot as proof that the MR Fluid Golem retained its material identity. The `v1.4.0` release JAR contains only the static soft/hardened texture swap shown in that capture; it does not contain a moving fluid surface. Golem release acceptance must therefore include a controlled field-free soft-state capture over multiple atlas frames, a field-hardening transition, and a field-removal/softening transition. A single still image or a successful client launch is insufficient.
 
 ## Automated acceptance
 
