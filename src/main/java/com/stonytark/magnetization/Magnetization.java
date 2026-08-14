@@ -204,12 +204,17 @@ public final class Magnetization {
         event.registerBlockEntity(cap, MagBlockEntities.MICRO_THRUSTER.get(),      (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.ION_THRUSTER.get(),        (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.FUSION_THRUSTER.get(),     (be, side) -> disabled(be) ? null : be.energyBuffer());
-        // A formed Fusion Thruster is one multiblock: cables may connect to any
-        // Tokamak-Coil perimeter block and still feed the deterministic master's
-        // buffer. Standalone coils and coils used by a Tokamak return no FE cap.
-        event.registerBlock(cap, (level, pos, state, blockEntity, side) ->
-                        com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity
-                                .energyBufferFromFrame(level, pos),
+        // Both formed coil-framed multiblocks expose their deterministic master's
+        // shared FE buffer through any perimeter coil. This keeps the master
+        // reachable when a larger Tokamak's solid core interior encloses it.
+        event.registerBlock(cap, (level, pos, state, blockEntity, side) -> {
+                    final net.neoforged.neoforge.energy.IEnergyStorage fusion =
+                            com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity
+                                    .energyBufferFromFrame(level, pos);
+                    return fusion != null ? fusion
+                            : com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
+                                    .energyBufferFromFrame(level, pos);
+                },
                 MagBlocks.TOKAMAK_COIL.get());
         event.registerBlockEntity(cap, MagBlockEntities.RAILGUN_EMITTER.get(),     (be, side) -> disabled(be) ? null : be.energyBuffer());
         event.registerBlockEntity(cap, MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), (be, side) -> disabled(be) ? null : be.energyBuffer());

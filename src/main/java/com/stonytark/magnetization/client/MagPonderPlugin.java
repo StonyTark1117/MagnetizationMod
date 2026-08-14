@@ -150,7 +150,12 @@ public final class MagPonderPlugin implements PonderPlugin {
                                     final PonderSceneCatalog.Scene definition) {
         prepare(scene, definition);
         final BlockPos center = util.grid().at(2, 1, 2);
-        scene.world().setBlock(center, MagBlocks.TOKAMAK_CONTROLLER.get().defaultBlockState(), false);
+        for (int x = 1; x <= 3; x++) {
+            for (int z = 1; z <= 3; z++) {
+                scene.world().setBlock(util.grid().at(x, 1, z),
+                        MagBlocks.TOKAMAK_CONTROLLER.get().defaultBlockState(), false);
+            }
+        }
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
                 if (x == 0 || x == 4 || z == 0 || z == 4) {
@@ -161,10 +166,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4));
         text(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4),
-                "Center the controller inside any complete odd square perimeter. This 5x5 ring uses 16 coils and runs at 3x capacity, generation, and output.");
+                "Fill the ring interior with Reactor Cores. This 5x5 reactor uses 16 coils and a solid 3x3 interior of 9 cores.");
         scene.overlay().showOutlineWithText(util.select().position(center), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("Start at 3x3, then expand through 5x5, 7x7, and larger odd rings up to the configured limit. Load fuel after a perimeter is complete.")
+                .text("The center core becomes the master. Other cores forward fuel and FE; perimeter coils expose the shared FE output. This size runs at 3x capacity, generation, and output.")
                 .placeNearTarget();
         scene.idle(90);
     }

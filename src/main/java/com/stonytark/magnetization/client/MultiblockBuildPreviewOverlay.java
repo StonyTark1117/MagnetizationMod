@@ -209,6 +209,10 @@ public final class MultiblockBuildPreviewOverlay {
             drawCube(lines, pose, pos, camera, 0xFF70FF90);
         for (final BlockPos pos : p.invalidEdges())
             drawCube(lines, pose, pos, camera, 0xFFFF5050);
+        for (final BlockPos pos : p.requiredCores())
+            drawCube(lines, pose, pos, camera, 0xFF70D8FF);
+        for (final BlockPos pos : p.invalidCores())
+            drawCube(lines, pose, pos, camera, 0xFFFF5050);
         drawCube(lines, pose, p.controller(), camera, 0xFFFFD866);
     }
 
@@ -228,18 +232,22 @@ public final class MultiblockBuildPreviewOverlay {
     private static List<String> tokamakText(final TokamakOverlayPreview preview) {
         final TokamakRingPreview.Preview p = preview.target();
         final TokamakRingPreview.Preview formed = preview.formed();
-        final String bad = p.invalidEdges().isEmpty() ? "none" : pos(p.invalidEdges().get(0));
+        final String badCoil = p.invalidEdges().isEmpty() ? "none" : pos(p.invalidEdges().get(0));
+        final String badCore = p.invalidCores().isEmpty() ? "none" : pos(p.invalidCores().get(0));
         final String active = formed.valid()
                 ? formed.edge() + "x" + formed.edge() + " (×" + Math.max(1, formed.edge() - 2) + ")"
                 : "none";
         return List.of(
                 "Tokamak Preview",
                 "Target ring: " + p.edge() + "x" + p.edge() + " (" + p.coilCount() + " coils)",
+                "Core interior: " + (p.edge() - 2) + "x" + (p.edge() - 2)
+                        + " (" + p.coreCount() + " cores)",
                 "Performance when complete: ×" + Math.max(1, p.edge() - 2),
                 "Active ring: " + active,
                 "Master: " + pos(p.controller()),
                 "Facing: horizontal ring",
-                "Invalid edge: " + bad,
+                "Missing/wrong coil: " + badCoil,
+                "Missing/wrong core: " + badCore,
                 "Status: " + (p.valid() ? "VALID" : "INVALID"));
     }
 

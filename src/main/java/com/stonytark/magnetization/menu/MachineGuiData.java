@@ -190,7 +190,7 @@ public interface MachineGuiData extends MachineHudData {
         }
         final int edge = display.structureSize();
         return Component.translatable("tooltip.magnetization.gui_tokamak_ring",
-                edge, edge, edge * 4 - 4).withStyle(ChatFormatting.GRAY);
+                edge, edge, edge * 4 - 4, (edge - 2) * (edge - 2)).withStyle(ChatFormatting.GRAY);
     }
 
     static Component tokamakScaleLine(final MachineDisplayData display) {
@@ -202,7 +202,8 @@ public interface MachineGuiData extends MachineHudData {
         if (display.structureSize() <= 0) return tokamakRingLine(display);
         final int edge = display.structureSize();
         return Component.translatable("tooltip.magnetization.gui_tokamak_ring_scaled",
-                edge, edge, edge * 4 - 4, Math.max(1, display.structureScale()));
+                edge, edge, edge * 4 - 4, (edge - 2) * (edge - 2),
+                Math.max(1, display.structureScale()));
     }
 
     /** Magnetic potency of the slotted material (0 = empty / not a magnet).

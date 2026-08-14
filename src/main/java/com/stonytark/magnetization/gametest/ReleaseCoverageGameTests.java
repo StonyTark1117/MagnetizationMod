@@ -296,7 +296,7 @@ public final class ReleaseCoverageGameTests {
         buildTokamakRing(helper, tokamak);
         final BlockPos tokamakAbs = helper.absolutePos(tokamak);
         helper.assertTrue(TokamakControllerBlockEntity.isRingFormed(level, tokamakAbs),
-                "Tokamak's fixed minimum/maximum 3x3 ring should validate");
+                "Tokamak's configured minimum/maximum 3x3 structure should validate");
         helper.setBlock(tokamak.offset(1, 0, 0), Blocks.AIR);
         helper.assertTrue(!TokamakControllerBlockEntity.isRingFormed(level, tokamakAbs),
                 "Incomplete Tokamak ring should fail");

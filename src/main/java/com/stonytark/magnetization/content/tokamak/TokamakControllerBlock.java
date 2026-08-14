@@ -52,15 +52,19 @@ public final class TokamakControllerBlock extends Block implements EntityBlock {
                                                final Player player, final BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof net.minecraft.server.level.ServerPlayer sp)
-                || !(level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity be)) {
+                || !(level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity self)) {
             return InteractionResult.PASS;
         }
+        final TokamakControllerBlockEntity formedMaster =
+                TokamakControllerBlockEntity.formedMaster(level, pos);
+        final TokamakControllerBlockEntity be = formedMaster == null ? self : formedMaster;
+        final BlockPos target = be.getBlockPos();
         sp.openMenu(new net.minecraft.world.SimpleMenuProvider(
                 (id, inv, p) -> new com.stonytark.magnetization.menu.MachineMenu(
-                        id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, pos), pos,
+                        id, inv, net.minecraft.world.inventory.ContainerLevelAccess.create(level, target), target,
                         com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK, be.fuelContainer()),
                 net.minecraft.network.chat.Component.translatable("block.magnetization.tokamak_controller")),
-                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, pos,
+                buf -> com.stonytark.magnetization.menu.MachineMenu.writeOpen(buf, target,
                         com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK));
         return InteractionResult.CONSUME;
     }
@@ -70,7 +74,10 @@ public final class TokamakControllerBlock extends Block implements EntityBlock {
                             final BlockState newState, final boolean moving) {
         if (!state.is(newState.getBlock())
                 && level.getBlockEntity(pos) instanceof TokamakControllerBlockEntity be) {
-            net.minecraft.world.Containers.dropContents(level, pos, be.fuelContainer());
+            be.invalidateReactorCapabilities();
+            // Never drop the center master's shared fuel when a follower core is
+            // removed; only this physical block's private slot belongs here.
+            net.minecraft.world.Containers.dropContents(level, pos, be.ownFuelContainer());
         }
         super.onRemove(state, level, pos, newState, moving);
     }

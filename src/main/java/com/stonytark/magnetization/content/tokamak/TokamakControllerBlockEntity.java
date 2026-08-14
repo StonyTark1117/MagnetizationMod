@@ -16,10 +16,16 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tokamak fusion reactor controller. When ringed by a complete square perimeter
- * of Tokamak Coils (3x3 minimum; larger odd rings are supported) and loaded
+ * of Tokamak Coils around a solid Reactor-Core interior (3x3 minimum; larger odd
+ * rings are supported) and loaded
  * with deuterium fuel, it fuses and generates a large, steady FE output that it
  * pushes to adjacent machines/cables. Larger rings scale the reactor linearly.
  * Fuel is loaded by right-clicking with a Deuterium Cell.
@@ -79,42 +85,77 @@ public class TokamakControllerBlockEntity extends BlockEntity
         };
     }
 
-    public int currentTier() { return currentTier; }
+    public int currentTier() { return displayOwner().currentTier; }
 
     public TokamakControllerBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.TOKAMAK_CONTROLLER.get(), pos, state);
     }
 
     public IEnergyStorage energyBuffer() {
-        return energy;
+        return displayOwner().energy;
     }
 
     public net.minecraft.world.Container fuelContainer() {
-        return fuelSlot;
+        return displayOwner().fuelSlot;
+    }
+
+    net.minecraft.world.Container ownFuelContainer() { return fuelSlot; }
+
+    /** Master buffer exposed through a formed Tokamak-Coil perimeter. */
+    public static @Nullable IEnergyStorage energyBufferFromFrame(final Level level,
+                                                                 final BlockPos framePos) {
+        final BlockPos masterPos = TokamakRingPreview.findController(level, framePos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        if (masterPos == null
+                || !(level.getBlockEntity(masterPos) instanceof TokamakControllerBlockEntity master)
+                || com.stonytark.magnetization.config.MagConfig.isBlockDisabled(master.getBlockState())) return null;
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, masterPos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        return ring != null && ring.valid() && ring.requiredFrame().contains(framePos) ? master.energy : null;
+    }
+
+    /** Deterministic formed master for any core in the reactor. */
+    public static @Nullable TokamakControllerBlockEntity formedMaster(final Level level,
+                                                                       final BlockPos corePos) {
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, corePos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        if (ring == null || !ring.valid()) return null;
+        return level.getBlockEntity(ring.controller()) instanceof TokamakControllerBlockEntity master
+                ? master : null;
+    }
+
+    private TokamakControllerBlockEntity displayOwner() {
+        if (level != null) {
+            final TokamakControllerBlockEntity master = formedMaster(level, getBlockPos());
+            if (master != null) return master;
+        }
+        return this;
     }
 
     // ── MachineGuiData (shared GUI: fuel runtime + current FE output) ──
-    @Override public net.minecraft.world.Container guiInput() { return fuelSlot; }
+    @Override public net.minecraft.world.Container guiInput() { return fuelContainer(); }
     @Override public com.stonytark.magnetization.menu.MachineMenu.Kind guiKind() {
         return com.stonytark.magnetization.menu.MachineMenu.Kind.TOKAMAK;
     }
-    @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
+    @Override public int guiEnergyStored() { return displayOwner().energy.getEnergyStored(); }
     @Override public int guiEnergyMax() {
+        final TokamakControllerBlockEntity owner = displayOwner();
         return scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
-                Math.max(1, formedRingMultiplier));
+                Math.max(1, owner.formedRingMultiplier));
     }
-    @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
-    @Override public int guiStat2() { return lastOutput; }        // FE/tick out
-    @Override public int guiStat3() { return currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
-    @Override public int guiStat4() { return tierBurnTicks(currentTier); }  // bar denominator (server config)
-    @Override public int guiStructureSize() { return formedRingEdge; }
-    @Override public int guiStructureScale() { return formedRingMultiplier; }
+    @Override public int guiStat1() { return displayOwner().burnTime; }          // ticks; screen shows seconds
+    @Override public int guiStat2() { return displayOwner().lastOutput; }        // FE/tick out
+    @Override public int guiStat3() { return displayOwner().currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
+    @Override public int guiStat4() { return tierBurnTicks(displayOwner().currentTier); }
+    @Override public int guiStructureSize() { return displayOwner().formedRingEdge; }
+    @Override public int guiStructureScale() { return displayOwner().formedRingMultiplier; }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
-        if (formedRingEdge <= 0) {
+        final TokamakControllerBlockEntity owner = displayOwner();
+        if (owner.formedRingEdge <= 0) {
             return com.stonytark.magnetization.menu.MachineDisplayData.Status.INVALID;
         }
-        return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
-                && getBlockState().getValue(BlockStateProperties.LIT)
+        return owner.getBlockState().hasProperty(BlockStateProperties.LIT)
+                && owner.getBlockState().getValue(BlockStateProperties.LIT)
                 ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
                 : com.stonytark.magnetization.menu.MachineDisplayData.Status.FORMED;
     }
@@ -123,14 +164,39 @@ public class TokamakControllerBlockEntity extends BlockEntity
                                   final TokamakControllerBlockEntity be) {
         if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
-        // Resolve formation once per tick. Besides avoiding two full perimeter
-        // scans, this keeps capacity, generation, output, and LIT state tied to
-        // the exact same authoritative ring snapshot.
-        final TokamakRingPreview.Preview ring = TokamakRingPreview.preview(level, pos);
-        final boolean formed = ring.valid();
-        final int multiplier = formed ? Math.max(1, ring.edge() - 2) : 1;
-        be.formedRingEdge = formed ? ring.edge() : 0;
-        be.formedRingMultiplier = formed ? multiplier : 0;
+        if (be.formedRingEdge <= 0 && !TokamakRingPreview.isPotentialMaster(level, pos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge())) return;
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, pos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        final boolean formed = ring != null && ring.valid();
+        if (!formed) {
+            final int previousEdge = be.formedRingEdge;
+            be.formedRingEdge = 0;
+            be.formedRingMultiplier = 0;
+            be.lastOutput = 0;
+            be.energy.resize(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
+                    com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3());
+            setLit(level, pos, state, false);
+            be.setChanged();
+            if (be.syncGate.changed(be, server.registryAccess())) {
+                server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS);
+            }
+            if (previousEdge > 0) be.invalidateReactorCapabilities(previousEdge);
+            return;
+        }
+
+        final int multiplier = Math.max(1, ring.edge() - 2);
+        final int previousEdge = be.formedRingEdge;
+        be.formedRingEdge = ring.edge();
+        be.formedRingMultiplier = multiplier;
+        // Only the deterministic center reaches this point. Followers are
+        // rejected by the cheap potential-master gate above; their capabilities
+        // and displays resolve the center on demand.
+        if (!pos.equals(ring.controller())) {
+            return;
+        }
+        if (previousEdge != ring.edge()) invalidateCapabilities(level, ring);
+
         be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
                 scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
@@ -146,16 +212,14 @@ public class TokamakControllerBlockEntity extends BlockEntity
                 be.setChanged();
             }
         }
-        final boolean fusing = be.burnTime > 0 && formed;
+        final boolean fusing = be.burnTime > 0;
         if (fusing) {
             be.energy.generate(scaled(tierGenPerTick(be.currentTier), multiplier));
             be.burnTime--;
             be.setChanged();
         }
-        if (state.getValue(BlockStateProperties.LIT) != fusing) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.LIT, fusing), Block.UPDATE_CLIENTS);
-        }
-        be.lastOutput = pushEnergy(server, pos, be.energy,
+        setCoreLit(level, ring.requiredCores(), fusing);
+        be.lastOutput = pushEnergy(server, ring.requiredCores(), be.energy,
                 scaled(tierOutputRate(be.currentTier), multiplier));
         if (server.getGameTime() % 10L == 0L && be.syncGate.changed(be, server.registryAccess())) {
             server.sendBlockUpdated(pos, be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS); // WTHIT
@@ -164,22 +228,21 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
     /** The largest complete odd-edged Tokamak coil ring up to the configured limit. */
     public static boolean isRingFormed(final Level level, final BlockPos pos) {
-        return TokamakRingPreview.preview(level, pos).valid();
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.previewFromCore(level, pos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        return ring != null && ring.valid();
     }
 
     /** The completed ring edge, or 0 while no minimum ring is formed. */
     public static int ringEdge(final Level level, final BlockPos pos) {
-        final TokamakRingPreview.Preview preview = TokamakRingPreview.preview(level, pos);
-        return preview.valid() ? preview.edge() : 0;
+        final TokamakRingPreview.Preview preview = TokamakRingPreview.previewFromCore(level, pos,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge());
+        return preview != null && preview.valid() ? preview.edge() : 0;
     }
 
     /** Linear performance scale: 3x3 = 1, 5x5 = 3, 7x7 = 5, etc. */
     public static int ringMultiplier(final Level level, final BlockPos pos) {
         return Math.max(1, ringEdge(level, pos) - 2);
-    }
-
-    private int ringMultiplier() {
-        return level == null ? 1 : ringMultiplier(level, getBlockPos());
     }
 
     private static int scaled(final int base, final int multiplier) {
@@ -188,19 +251,57 @@ public class TokamakControllerBlockEntity extends BlockEntity
     }
 
     /** Push to neighbours; returns total FE moved this tick (the GUI's output readout). */
-    private static int pushEnergy(final ServerLevel level, final BlockPos pos, final GenBuffer energy, final int outputRate) {
+    private static int pushEnergy(final ServerLevel level, final List<BlockPos> cores,
+                                  final GenBuffer energy, final int outputRate) {
         if (energy.getEnergyStored() <= 0) return 0;
         int pushed = 0;
-        for (final Direction dir : Direction.values()) {
-            if (energy.getEnergyStored() <= 0) break;
-            final IEnergyStorage target = level.getCapability(
-                    Capabilities.EnergyStorage.BLOCK, pos.relative(dir), dir.getOpposite());
-            if (target == null || !target.canReceive()) continue;
-            final int offered = Math.min(outputRate - pushed, energy.getEnergyStored());
-            final int accepted = target.receiveEnergy(offered, false);
-            if (accepted > 0) { energy.extractEnergy(accepted, false); pushed += accepted; }
+        final Set<BlockPos> interior = new HashSet<>(cores);
+        final Set<BlockPos> visitedTargets = new HashSet<>();
+        for (final BlockPos core : cores) {
+            for (final Direction dir : Direction.values()) {
+                if (pushed >= outputRate || energy.getEnergyStored() <= 0) return pushed;
+                final BlockPos targetPos = core.relative(dir);
+                if (interior.contains(targetPos) || !visitedTargets.add(targetPos)) continue;
+                final IEnergyStorage target = level.getCapability(
+                        Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
+                if (target == null || target == energy || !target.canReceive()) continue;
+                final int offered = Math.min(outputRate - pushed, energy.getEnergyStored());
+                final int accepted = target.receiveEnergy(offered, false);
+                if (accepted > 0) { energy.extractEnergy(accepted, false); pushed += accepted; }
+            }
         }
         return pushed;
+    }
+
+    private static void setCoreLit(final Level level, final List<BlockPos> cores, final boolean lit) {
+        for (final BlockPos core : cores) {
+            final BlockState state = level.getBlockState(core);
+            setLit(level, core, state, lit);
+        }
+    }
+
+    private static void setLit(final Level level, final BlockPos pos,
+                               final BlockState state, final boolean lit) {
+        if (state.hasProperty(BlockStateProperties.LIT)
+                && state.getValue(BlockStateProperties.LIT) != lit) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    void invalidateReactorCapabilities() {
+        invalidateReactorCapabilities(formedRingEdge);
+    }
+
+    private void invalidateReactorCapabilities(final int edge) {
+        if (level == null || edge < 3) return;
+        invalidateCapabilities(level, TokamakRingPreview.previewExact(level, getBlockPos(), edge,
+                com.stonytark.magnetization.config.MagConfig.tokamakMaxEdge()));
+    }
+
+    private static void invalidateCapabilities(final Level level,
+                                               final TokamakRingPreview.Preview ring) {
+        for (final BlockPos core : ring.requiredCores()) level.invalidateCapabilities(core);
+        for (final BlockPos frame : ring.requiredFrame()) level.invalidateCapabilities(frame);
     }
 
     private static final class GenBuffer extends EnergyStorage {
