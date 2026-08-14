@@ -1,11 +1,15 @@
 package com.stonytark.magnetization.compat;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.stonytark.magnetization.compat.ponder.PonderSceneCatalog;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,13 +34,43 @@ class PonderSceneCatalogTest {
             assertFalse(scene.title().isBlank(), () -> scene.id() + " has no title");
             assertFalse(scene.targets().isEmpty(), () -> scene.id() + " has no targets");
             if (scene.kind() == PonderSceneCatalog.Kind.GENERIC) {
-                assertFalse(scene.message().isBlank(), () -> scene.id() + " has no explanatory text");
+                assertEquals(1, scene.texts().size(), () -> scene.id() + " needs one explanatory text");
             }
             for (final String target : scene.targets()) {
                 assertTrue(targets.add(target), () -> target + " has more than one Ponder scene definition");
                 if (target.startsWith("magnetization:")) assertLocalBlockstate(target);
             }
         }
+    }
+
+    @Test
+    void everySceneHeaderAndInstructionHasShippingEnglishLocalization() throws Exception {
+        final JsonObject lang = JsonParser.parseString(Files.readString(
+                MAIN.resolve("assets/magnetization/lang/en_us.json"))).getAsJsonObject();
+        final Map<String, String> expected = new LinkedHashMap<>();
+
+        for (final PonderSceneCatalog.Scene scene : PonderSceneCatalog.allScenes()) {
+            final String prefix = "magnetization.ponder." + scene.id() + ".";
+            expected.put(prefix + "header", scene.title());
+            for (int i = 0; i < scene.texts().size(); i++) {
+                expected.put(prefix + "text_" + i, scene.text(i));
+            }
+        }
+
+        assertEquals(18, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
+        assertEquals(33, PonderSceneCatalog.allScenes().stream()
+                .mapToInt(scene -> scene.texts().size()).sum(), "Unexpected Ponder instruction count");
+        assertEquals(51, expected.size(), "Unexpected Ponder localization count");
+        expected.forEach((key, value) -> {
+            assertTrue(lang.has(key), () -> "Missing Ponder localization: " + key);
+            assertEquals(value, lang.get(key).getAsString(), () -> "Stale Ponder localization: " + key);
+        });
+
+        final Set<String> shippingKeys = lang.keySet().stream()
+                .filter(key -> key.startsWith("magnetization.ponder."))
+                .collect(Collectors.toSet());
+        assertEquals(expected.keySet(), shippingKeys,
+                "Shipping Ponder keys must exactly match the synchronized scene catalog");
     }
 
     @Test

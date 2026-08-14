@@ -166,14 +166,14 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4));
         text(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4),
-                "Fill the ring interior with Reactor Cores. This 5x5 reactor uses 16 coils and a solid 3x3 interior of 9 cores.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().position(center), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("The center core becomes the master. Other cores forward fuel and FE; perimeter coils expose the shared FE output. This size runs at 3x capacity, generation, and output.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(90);
         text(scene, util, center, util.grid().at(4, 1, 4),
-                "Pipe water, heavy water, liquid Gallium, or tagged coolant into any core or perimeter coil. Higher-quality coolant boosts output and fuel life farther.");
+                definition.text(2));
     }
 
     private static void fusionPanel(final SceneBuilder scene, final SceneBuildingUtil util,
@@ -194,14 +194,14 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, util.grid().at(1, 1, 1), util.grid().at(3, 1, 3));
         text(scene, util, util.grid().at(1, 1, 1), util.grid().at(3, 1, 3),
-                "A Fusion Thruster interior sits inside a one-block Tokamak-Coil frame.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().position(center), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("Expand the interior into a solid rectangular panel; all interiors share one facing.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(90);
         text(scene, util, center, util.grid().at(3, 1, 3),
-                "Feed water, liquid Gallium, or tagged coolant through any interior or frame coil. Heavy water uses a frame coil for cooling; interiors keep it as fuel.");
+                definition.text(2));
     }
 
     private static void railgunPair(final SceneBuilder scene, final SceneBuildingUtil util,
@@ -220,10 +220,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, util.grid().at(1, 1, 1), util.grid().at(5, 1, 3));
         text(scene, util, util.grid().at(1, 1, 1), util.grid().at(5, 1, 3),
-                "Build two parallel rails with emitters facing the same direction.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().fromTo(first, second), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("Both rails must reach the minimum length before an arc can launch a target. The GUI can auto-assemble every block staged between them into a centered projectile ship.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(90);
     }
@@ -239,14 +239,14 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, exciter, util.grid().at(4, 1, 2));
         text(scene, util, util.grid().at(2, 1, 2), util.grid().at(4, 1, 2),
-                "One powered Gas Exciter elects itself to energize the entire connected same-gas volume.");
+                definition.text(0));
         for (int x = 2; x <= 4; x++) {
             scene.world().setBlock(util.grid().at(x, 1, 2), MagBlocks.XENON_BLOCK.get().defaultBlockState()
                     .setValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED, true), false);
         }
         scene.overlay().showOutlineWithText(util.select().position(exciter), 90)
                 .colored(PonderPalette.OUTPUT)
-                .text("Supply FE and keep redstone off. Adjacent redstone can excite gas directly, but disables this machine.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(100);
     }
@@ -261,14 +261,14 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.world().setBlock(exciter, MagBlocks.GAS_EXCITER.get().defaultBlockState(), false);
         show(scene, util, exciter, vent);
         text(scene, util, vent, vent,
-                "Pipe exactly 1000 mB of a profiled addon gas into any face and leave the wrench-aimed outlet clear.");
+                definition.text(0));
         for (int x = 3; x <= 4; x++) {
             scene.world().setBlock(util.grid().at(x, 1, 2), MagBlocks.PROXY_GAS_CLOUD.get().defaultBlockState()
                     .setValue(com.stonytark.magnetization.content.gas.ProxyGasCloudBlock.EXCITED, true), false);
         }
         show(scene, util, util.grid().at(3, 1, 2), util.grid().at(4, 1, 2));
         text(scene, util, exciter, util.grid().at(4, 1, 2),
-                "The source cloud keeps its fluid identity and is recoverable. An Exciter directly behind the vent can illuminate it.");
+                definition.text(1));
     }
 
     private static void airSeparator(final SceneBuilder scene, final SceneBuildingUtil util,
@@ -279,14 +279,14 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH), false);
         show(scene, util, separator, separator);
         text(scene, util, separator, separator,
-                "Open the GUI, select Mechanical Input, then assign one horizontal face for Create rotation.");
+                definition.text(0));
 
         final BlockPos shaft = separator.south();
         scene.world().setBlock(shaft, com.simibubi.create.AllBlocks.SHAFT.get().defaultBlockState()
                 .setValue(BlockStateProperties.AXIS, Direction.Axis.Z), false);
         show(scene, util, shaft, shaft);
         text(scene, util, shaft, shaft,
-                "The default minimum is 64 RPM. Speed scales production up to the configured maximum.");
+                definition.text(1));
 
         final BlockPos[] outputs = {separator.north(), separator.east(), separator.west(),
                 separator.above(), separator.below()};
@@ -297,10 +297,10 @@ public final class MagPonderPlugin implements PonderPlugin {
             show(scene, util, outputs[i], outputs[i]);
         }
         text(scene, util, separator.below(), separator.above(),
-                "Assign the five remaining faces to Helium, Neon, Argon, Krypton, and Xenon; each face drains an independent tank.");
+                definition.text(2));
         scene.overlay().showOutlineWithText(util.select().position(separator), 90)
                 .colored(PonderPalette.OUTPUT)
-                .text("Installing an Isotope Separation Module adds slow renewable Helium-3 Crystal production.")
+                .text(definition.text(3))
                 .placeNearTarget();
         scene.idle(100);
     }
@@ -320,10 +320,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         show(scene, util, helium, radon);
         show(scene, util, thruster, thruster);
         text(scene, util, helium, radon,
-                "Helium favors efficiency and cruising speed; Xenon gives strong safe thrust; Radon is strongest but hazardous.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().position(thruster), 90)
                 .colored(PonderPalette.OUTPUT)
-                .text("Mount it on a ship, aim the exhaust with a wrench, then supply FE and one accepted gas propellant.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(100);
     }
@@ -338,7 +338,7 @@ public final class MagPonderPlugin implements PonderPlugin {
         }
         show(scene, util, util.grid().at(1, 1, 1), util.grid().at(4, 1, 1));
         text(scene, util, util.grid().at(1, 1, 1), util.grid().at(4, 1, 1),
-                "Bastnäsite, Monazite, Cobaltite, and Borax supply the two staged Create-processing branches.");
+                definition.text(0));
 
         final BlockPos smco = util.grid().at(1, 1, 3);
         final BlockPos ndfeb = util.grid().at(3, 1, 3);
@@ -346,10 +346,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.world().setBlock(ndfeb, MagBlocks.NEODYMIUM_MAGNET.get().defaultBlockState(), false);
         show(scene, util, smco, ndfeb);
         text(scene, util, smco, smco,
-                "Samarium-Cobalt is the heat-stable MEDIUM tier, refined from Monazite and Cobaltite.");
+                definition.text(1));
         scene.overlay().showOutlineWithText(util.select().position(ndfeb), 90)
                 .colored(PonderPalette.OUTPUT)
-                .text("Neodymium-Iron-Boron is the strongest machine magnet and also requires Dysprosium and Boron.")
+                .text(definition.text(2))
                 .placeNearTarget();
         scene.idle(100);
     }
@@ -365,10 +365,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.world().setBlock(magnet, MagBlocks.ELECTROMAGNET.get().defaultBlockState(), false);
         show(scene, util, coupler, magnet);
         text(scene, util, coupler, coupler,
-                "Steam 'n' Rails couplers share one train. A magnetic field accelerates or brakes the linked consist along its track.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().position(magnet), 100)
                 .colored(PonderPalette.OUTPUT)
-                .text("Structural Inducers ignore assembled train entities; disassemble a train before treating its blocks as a structure.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(110);
     }
@@ -383,10 +383,10 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.world().setBlock(material, Blocks.IRON_BLOCK.defaultBlockState(), false);
         show(scene, util, copycat, material);
         text(scene, util, copycat, material,
-                "A Copycats+ block inherits magnetic susceptibility from its copied material, including after contraption assembly.");
+                definition.text(0));
         scene.overlay().showOutlineWithText(util.select().position(copycat), 90)
                 .colored(PonderPalette.OUTPUT)
-                .text("Create goggles report whether the stored material is ferromagnetic, diamagnetic, excluded, or nonmagnetic.")
+                .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(100);
     }
@@ -397,7 +397,7 @@ public final class MagPonderPlugin implements PonderPlugin {
             final BlockPos pos = util.grid().at(2, 1, 2);
             scene.world().setBlock(pos, block.defaultBlockState(), false);
             show(scene, util, pos, pos);
-            text(scene, util, pos, pos, definition.message());
+            text(scene, util, pos, pos, definition.text(0));
             if (definition.rightClickHint()) {
                 scene.overlay().showControls(util.vector().topOf(pos),
                                 net.createmod.catnip.math.Pointing.DOWN, 70)

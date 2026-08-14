@@ -2,11 +2,15 @@
 
 ## Unreleased
 
-### Added
-- Added a local client config switch that disables all active-thruster exhaust particles, including the cooled Fusion mist, without affecting propulsion.
-- Added optional coolant loops to the Tokamak and Fusion Thruster. Vanilla water is the baseline, Deuterium Oxide is a modest upgrade, liquid Gallium is the high-efficiency liquid-metal option, and fluids in `c:cooling_fluid` (including TFMG Cooling Fluid when its dedicated compatibility option is enabled) use a configurable tagged-fluid curve. Better coolant is consumed more slowly and scales the configured cooling bonuses farther. Dry machines retain their previous performance; cooled Tokamaks generate/output more FE and extend fuel-cell life, while cooled Fusion Thrusters gain thrust/speed and consume less FE/propellant. Shared tanks accept buckets and Create pipes through interiors and Tokamak-Coil frames, with synchronized GUI/HUD state.
+## 1.4.1 — Tokamak completion, coolant loops & magnetic golems
 
-## 1.4.1 — Expandable Tokamak emergency hotfix
+### Added
+- Added optional coolant loops to the Tokamak and Fusion Thruster. Vanilla water is the baseline, Deuterium Oxide is a modest upgrade, liquid Gallium is the high-efficiency liquid-metal option, and fluids in `c:cooling_fluid` use a configurable tagged-fluid curve. Better coolant is consumed more slowly and scales the configured cooling bonuses farther. Dry machines retain their previous performance; cooled Tokamaks generate/output more FE and extend fuel-cell life, while cooled Fusion Thrusters gain thrust/speed and consume less FE/propellant. Shared tanks accept buckets and Create pipes through interiors and Tokamak-Coil frames, with synchronized GUI/HUD state.
+- Added a dedicated `compat.tfmgCoolingFluidEnabled` switch for TFMG Cooling Fluid so packs can use the broader TFMG integration without automatically accepting its fluid as fusion coolant.
+- Added optional Railgun projectile auto-assembly. A paired railgun can collect ordinary blocks staged between its rails into a centered Sable projectile ship, with a configurable maximum block count, synchronized GUI state, Ponder guidance, and end-to-end GameTests.
+- Added Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems. Their mobile magnetic behavior, polarity controls, material-specific states, drops, advancements, renderers, sounds, Field Manual guidance, Create goggles, Jade/WTHIT displays, and ship/entity interactions are covered by dedicated unit and GameTests.
+- Added independent, enabled-by-default content switches for the Gallium, MR Fluid, Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems. Disabled types cannot be built or spawned and existing entities safely retain their save data while their custom material behavior becomes inert.
+- Added client-side exhaust plumes for active Micro Thrusters, Fusion Thrusters, MHD Jets, and Ion Thrusters, including a coolant-mist sheath around cooled Fusion exhaust. A local client option disables all of these particles without affecting propulsion.
 
 ### Fixed
 - Completed the Gas Detector exposure and safe-distance readouts promised by 1.4.0. Its expanded HUD and action-bar reading now show server-authoritative Radon dose/threshold, exposed/recovering/clear state, and estimated clearance from a Radon cell or active Ion Thruster exhaust.
@@ -16,6 +20,7 @@
 - Synchronized the formed ring edge and performance multiplier through the Tokamak block entity and machine menu. The GUI and Create goggles, Jade, WTHIT, and The One Probe now report ring dimensions, coil count, multiplier, and explicit Invalid / Formed / Active state.
 - Replaced the goggles overlay's hard-coded eight-coil, 3x3 output. Looking at any configured outer-ring coil now finds the centered controller and previews that exact perimeter, including its missing edge, expected multiplier, and currently active inner ring while an expansion is unfinished.
 - Replaced the fixed eight-coil Ponder instructions with a 5x5 example and guidance for the complete odd-ring progression.
+- Added all 51 generated-style English Ponder entries for the 18 registered scenes, replacing raw `magnetization.ponder.*` identifiers with their intended titles and instructions. The synchronized scene catalog and unit test now reject missing, stale, reordered, or extra scene translations.
 
 ## 1.4.0 — Noble gases & rare-earth progression
 

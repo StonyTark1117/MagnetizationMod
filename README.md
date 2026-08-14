@@ -2,7 +2,7 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
-Current release: **1.4.1**, an emergency hotfix completing the expandable Tokamak behavior and its GUI, goggles/HUD, Ponder, and runtime regression coverage that were incomplete in 1.4.0.
+Current release: **1.4.0**. The next release, **1.4.1**, completes the expandable Tokamak and Gas Detector behavior that 1.4.0 described prematurely, and adds coolant loops, Railgun projectile auto-assembly, iron-oxide golems, active-thruster exhaust feedback, per-golem controls, and complete Ponder scene localization.
 
 ## Requirements
 
