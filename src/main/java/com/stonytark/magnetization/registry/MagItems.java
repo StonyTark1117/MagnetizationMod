@@ -4,6 +4,7 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.content.item.FieldCompassItem;
 import com.stonytark.magnetization.content.item.GasDetectorItem;
 import com.stonytark.magnetization.content.item.MagneticGrappleItem;
+import com.stonytark.magnetization.content.item.ConfigurableGolemSpawnEggItem;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
@@ -253,30 +254,36 @@ public final class MagItems {
                     p -> new AnimalArmorItem(MagArmorMaterials.gallium(), AnimalArmorItem.BodyType.EQUESTRIAN, false, p),
                     new Item.Properties().stacksTo(1));
     /** Spawn egg for the MR Fluid Golem (crafted, not multiblock — it's fluid-based). */
-    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MR_FLUID_GOLEM_SPAWN_EGG =
+    public static final DeferredItem<ConfigurableGolemSpawnEggItem> MR_FLUID_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("mr_fluid_golem_spawn_egg",
-                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
-                            com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM, 0x4A4E54, 0x9AA0A8, p),
+                    p -> new ConfigurableGolemSpawnEggItem(MagEntities.MR_FLUID_GOLEM,
+                            0x4A4E54, 0x9AA0A8,
+                            com.stonytark.magnetization.config.MagConfig::mrFluidGolemEnabled, p),
                     new Item.Properties());
 
     /** Creative/test eggs for the structure-built iron-oxide golems. They have
      * no recipes: survival creation remains the four-block T structure. */
-    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MAGNETITE_GOLEM_SPAWN_EGG =
+    public static final DeferredItem<ConfigurableGolemSpawnEggItem> MAGNETITE_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("magnetite_golem_spawn_egg",
-                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
-                            MagEntities.MAGNETITE_GOLEM, 0x343A3E, 0xA34738, p), new Item.Properties());
-    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> PYRRHOTITE_GOLEM_SPAWN_EGG =
+                    p -> new ConfigurableGolemSpawnEggItem(MagEntities.MAGNETITE_GOLEM,
+                            0x343A3E, 0xA34738, com.stonytark.magnetization.config.MagConfig::magnetiteGolemEnabled, p),
+                    new Item.Properties());
+    public static final DeferredItem<ConfigurableGolemSpawnEggItem> PYRRHOTITE_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("pyrrhotite_golem_spawn_egg",
-                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
-                            MagEntities.PYRRHOTITE_GOLEM, 0x6B512E, 0xE06B29, p), new Item.Properties());
-    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> HEMATITE_GOLEM_SPAWN_EGG =
+                    p -> new ConfigurableGolemSpawnEggItem(MagEntities.PYRRHOTITE_GOLEM,
+                            0x6B512E, 0xE06B29, com.stonytark.magnetization.config.MagConfig::pyrrhotiteGolemEnabled, p),
+                    new Item.Properties());
+    public static final DeferredItem<ConfigurableGolemSpawnEggItem> HEMATITE_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("hematite_golem_spawn_egg",
-                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
-                            MagEntities.HEMATITE_GOLEM, 0x541E22, 0xB64A3B, p), new Item.Properties());
-    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> TITANOMAGNETITE_GOLEM_SPAWN_EGG =
+                    p -> new ConfigurableGolemSpawnEggItem(MagEntities.HEMATITE_GOLEM,
+                            0x541E22, 0xB64A3B, com.stonytark.magnetization.config.MagConfig::hematiteGolemEnabled, p),
+                    new Item.Properties());
+    public static final DeferredItem<ConfigurableGolemSpawnEggItem> TITANOMAGNETITE_GOLEM_SPAWN_EGG =
             REGISTER.registerItem("titanomagnetite_golem_spawn_egg",
-                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
-                            MagEntities.TITANOMAGNETITE_GOLEM, 0x202A37, 0x5FBFD5, p), new Item.Properties());
+                    p -> new ConfigurableGolemSpawnEggItem(MagEntities.TITANOMAGNETITE_GOLEM,
+                            0x202A37, 0x5FBFD5,
+                            com.stonytark.magnetization.config.MagConfig::titanomagnetiteGolemEnabled, p),
+                    new Item.Properties());
 
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =

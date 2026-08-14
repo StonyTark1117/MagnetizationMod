@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.golem;
 
 import com.stonytark.magnetization.registry.MagBlocks;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
@@ -45,10 +46,18 @@ public class GalliumGolem extends IronGolem {
         return level().getBiome(blockPosition()).value().getBaseTemperature() < 0.2f;
     }
 
+    public boolean featureEnabled() {
+        return MagConfig.galliumGolemEnabled();
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
         if (level().isClientSide || !(level() instanceof ServerLevel server)) return;
+        if (!featureEnabled()) {
+            warmTicks = 0;
+            return;
+        }
         if (inColdBiome()) {
             warmTicks = 0;
             return;
@@ -69,7 +78,8 @@ public class GalliumGolem extends IronGolem {
 
     @Override
     public boolean hurt(final DamageSource source, float amount) {
-        if (!level().isClientSide && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !inColdBiome()) {
+        if (featureEnabled() && !level().isClientSide
+                && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !inColdBiome()) {
             amount *= com.stonytark.magnetization.config.MagConfig.galliumGolemWarmDamageMult(); // softer when warm
         }
         return super.hurt(source, amount);

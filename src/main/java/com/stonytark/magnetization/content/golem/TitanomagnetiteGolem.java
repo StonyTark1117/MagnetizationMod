@@ -2,6 +2,7 @@ package com.stonytark.magnetization.content.golem;
 
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.MagneticFields;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,6 +42,7 @@ public final class TitanomagnetiteGolem extends MagneticGolem {
         builder.define(AXIS_X, 0.0f); builder.define(AXIS_Y, 1.0f); builder.define(AXIS_Z, 0.0f);
     }
     public boolean isCharged() { return entityData.get(CHARGED); }
+    @Override public boolean featureEnabled() { return MagConfig.titanomagnetiteGolemEnabled(); }
     public @Nullable MagneticField recordedField() {
         return recorded != null ? recorded : syncedRecorded();
     }
@@ -54,7 +56,8 @@ public final class TitanomagnetiteGolem extends MagneticGolem {
     }
 
     @Override public void aiStep() {
-        if (!level().isClientSide && level() instanceof ServerLevel server && tickCount % 10 == 0) {
+        if (featureEnabled() && !level().isClientSide
+                && level() instanceof ServerLevel server && tickCount % 10 == 0) {
             final MagneticField found = MagneticFields.strongestField(server, position(), getUUID(), true);
             if (found != null) {
                 final MagneticField captured = IronOxideGolemLogic.captureSnapshot(found, position());
@@ -72,6 +75,7 @@ public final class TitanomagnetiteGolem extends MagneticGolem {
         super.aiStep();
     }
     @Override public @Nullable MagneticField mobileField() {
+        if (!featureEnabled()) return null;
         final MagneticField snapshot = recorded != null ? recorded : syncedRecorded();
         return snapshot == null ? null : new MagneticField(position().add(0, getBbHeight() * .5d, 0),
                 snapshot.axis(), magneticPolarity(), snapshot.strength(), snapshot.shape());

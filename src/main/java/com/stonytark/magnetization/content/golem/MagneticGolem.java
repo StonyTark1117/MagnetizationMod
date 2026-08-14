@@ -62,15 +62,21 @@ public abstract class MagneticGolem extends IronGolem {
     /** Raw, undampened field at the golem's current world position. */
     public abstract @Nullable MagneticField mobileField();
 
+    /** Live per-type config gate. Existing entities are kept save-safe but
+     *  become magnetically inert while their type is disabled. */
+    public abstract boolean featureEnabled();
+
     /** Client-safe effective field for HUDs and the goggles overlay. Server
      * physics uses the authoritative chunk registry; this mirrors nearby live
      * Hematite entities so the displayed tier/range matches it. */
     public @Nullable MagneticField displayedField() {
+        if (!featureEnabled()) return null;
         final MagneticField raw = mobileField();
         if (raw == null) return null;
         final int dampeners = level().getEntitiesOfClass(HematiteGolem.class,
                         AABB.ofSize(raw.origin(), 8.0d, 8.0d, 8.0d),
                         hematite -> hematite != this
+                                && hematite.featureEnabled()
                                 && hematite.position().distanceToSqr(raw.origin()) <= 16.0d)
                 .size();
         return raw.withSteppedStrength(MobileFieldRegistry.stepDown(raw.strength(), dampeners));
@@ -82,7 +88,8 @@ public abstract class MagneticGolem extends IronGolem {
     @Override
     protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
         final ItemStack held = player.getItemInHand(hand);
-        if (player.isShiftKeyDown() && acceptsPolarizer() && held.is(MagItems.HEMATITE_LENS.get())) {
+        if (featureEnabled() && player.isShiftKeyDown() && acceptsPolarizer()
+                && held.is(MagItems.HEMATITE_LENS.get())) {
             if (!level().isClientSide) {
                 final MagneticPolarity stored = held.get(MagDataComponents.ARMOR_POLARITY.get());
                 setMagneticPolarity(stored == null ? MagneticPolarity.NORTH : stored);
@@ -99,6 +106,10 @@ public abstract class MagneticGolem extends IronGolem {
     public void aiStep() {
         super.aiStep();
         if (!(level() instanceof ServerLevel server)) return;
+        if (!featureEnabled()) {
+            MobileFieldRegistry.remove(this);
+            return;
+        }
         final MagneticField raw = mobileField();
         MobileFieldRegistry.update(server, this, raw);
         if (raw != null) {

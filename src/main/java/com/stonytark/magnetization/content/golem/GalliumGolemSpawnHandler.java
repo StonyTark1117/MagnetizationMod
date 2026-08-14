@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.golem;
 
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.registry.MagBlocks;
 import com.stonytark.magnetization.registry.MagEntities;
 import net.minecraft.core.BlockPos;
@@ -18,6 +19,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.IronGolem;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,14 +33,16 @@ import org.jetbrains.annotations.Nullable;
 public final class GalliumGolemSpawnHandler {
 
     private record Spec(Supplier<? extends Block> material,
-                        Supplier<? extends EntityType<? extends IronGolem>> entityType) {}
+                        Supplier<? extends EntityType<? extends IronGolem>> entityType,
+                        BooleanSupplier enabled) {}
 
     private static final List<Spec> SPECS = List.of(
-            new Spec(MagBlocks.SOLID_GALLIUM, MagEntities.GALLIUM_GOLEM),
-            new Spec(MagBlocks.MAGNETITE_BLOCK, MagEntities.MAGNETITE_GOLEM),
-            new Spec(MagBlocks.PYRRHOTITE_BLOCK, MagEntities.PYRRHOTITE_GOLEM),
-            new Spec(MagBlocks.HEMATITE_BLOCK, MagEntities.HEMATITE_GOLEM),
-            new Spec(MagBlocks.TITANOMAGNETITE_BLOCK, MagEntities.TITANOMAGNETITE_GOLEM));
+            new Spec(MagBlocks.SOLID_GALLIUM, MagEntities.GALLIUM_GOLEM, MagConfig::galliumGolemEnabled),
+            new Spec(MagBlocks.MAGNETITE_BLOCK, MagEntities.MAGNETITE_GOLEM, MagConfig::magnetiteGolemEnabled),
+            new Spec(MagBlocks.PYRRHOTITE_BLOCK, MagEntities.PYRRHOTITE_GOLEM, MagConfig::pyrrhotiteGolemEnabled),
+            new Spec(MagBlocks.HEMATITE_BLOCK, MagEntities.HEMATITE_GOLEM, MagConfig::hematiteGolemEnabled),
+            new Spec(MagBlocks.TITANOMAGNETITE_BLOCK, MagEntities.TITANOMAGNETITE_GOLEM,
+                    MagConfig::titanomagnetiteGolemEnabled));
     private static final java.util.Map<Block, BlockPattern> PATTERNS = new java.util.HashMap<>();
 
     private GalliumGolemSpawnHandler() {}
@@ -66,6 +70,7 @@ public final class GalliumGolemSpawnHandler {
         final BlockState placed = level.getBlockState(placedPos);
         final boolean head = placed.is(Blocks.CARVED_PUMPKIN) || placed.is(Blocks.JACK_O_LANTERN);
         final Spec spec = SPECS.stream()
+                .filter(candidate -> candidate.enabled().getAsBoolean())
                 .filter(candidate -> head || placed.is(candidate.material().get()))
                 .filter(candidate -> pattern(candidate.material().get()).find(level, placedPos) != null)
                 .findFirst().orElse(null);

@@ -271,10 +271,12 @@ public final class MagCreativeTab {
                         accept(output, MagItems.HELIUM_3_BUCKET);
                         accept(output, MagItems.LIQUID_LITHIUM_BUCKET);
                         accept(output, MagItems.MR_FLUID_GOLEM_SPAWN_EGG);
-                        accept(output, MagItems.MAGNETITE_GOLEM_SPAWN_EGG);
-                        accept(output, MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG);
-                        accept(output, MagItems.HEMATITE_GOLEM_SPAWN_EGG);
-                        accept(output, MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG);
+                        if (MagConfig.magnetiteGolemEnabled()) accept(output, MagItems.MAGNETITE_GOLEM_SPAWN_EGG);
+                        if (MagConfig.pyrrhotiteGolemEnabled()) accept(output, MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG);
+                        if (MagConfig.hematiteGolemEnabled()) accept(output, MagItems.HEMATITE_GOLEM_SPAWN_EGG);
+                        if (MagConfig.titanomagnetiteGolemEnabled()) {
+                            accept(output, MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG);
+                        }
 
                         // ── Compasses & handheld tools ──
                         accept(output, MagItems.FIELD_COMPASS);

@@ -11,6 +11,11 @@ import java.util.Locale;
 public final class MagneticGolemHud {
     public static List<Component> lines(final MagneticGolem golem) {
         final List<Component> lines = new ArrayList<>();
+        if (!golem.featureEnabled()) {
+            lines.add(Component.translatable("tooltip.magnetization.golem.disabled")
+                    .withStyle(ChatFormatting.RED));
+            return lines;
+        }
         lines.add(Component.translatable("tooltip.magnetization.golem.polarity",
                 golem.magneticPolarity().name()).withStyle(ChatFormatting.LIGHT_PURPLE));
         final var field = golem.displayedField();

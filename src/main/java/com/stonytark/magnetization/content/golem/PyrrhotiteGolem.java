@@ -3,6 +3,7 @@ package com.stonytark.magnetization.content.golem;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteHeatResolver;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,8 +27,9 @@ public final class PyrrhotiteGolem extends MagneticGolem {
         super.defineSynchedData(builder); builder.define(HEAT, BlazeBurnerBlock.HeatLevel.NONE.ordinal());
     }
     public BlazeBurnerBlock.HeatLevel observedHeat() { return BlazeBurnerBlock.HeatLevel.values()[entityData.get(HEAT)]; }
+    @Override public boolean featureEnabled() { return MagConfig.pyrrhotiteGolemEnabled(); }
     @Override public void aiStep() {
-        if (!level().isClientSide && tickCount % 10 == 0) {
+        if (featureEnabled() && !level().isClientSide && tickCount % 10 == 0) {
             final BlazeBurnerBlock.HeatLevel previous = observedHeat();
             final BlazeBurnerBlock.HeatLevel resolved = PyrrhotiteHeatResolver.resolve(level(), blockPosition());
             if (resolved != previous) {
@@ -42,6 +44,7 @@ public final class PyrrhotiteGolem extends MagneticGolem {
         super.aiStep();
     }
     @Override public @Nullable MagneticField mobileField() {
+        if (!featureEnabled()) return null;
         final MagneticStrength strength = PyrrhotiteHeatResolver.strengthForHeat(observedHeat());
         return strength == null ? null : new MagneticField(position().add(0, getBbHeight() * .5d, 0),
                 new Vec3(0, 1, 0), magneticPolarity(), strength, MagneticField.Shape.OMNIDIRECTIONAL);

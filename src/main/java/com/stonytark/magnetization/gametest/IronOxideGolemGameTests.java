@@ -6,12 +6,15 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
 import com.stonytark.magnetization.content.golem.GalliumGolemSpawnHandler;
+import com.stonytark.magnetization.content.golem.GalliumGolem;
 import com.stonytark.magnetization.content.golem.HematiteGolem;
 import com.stonytark.magnetization.content.golem.MagneticGolem;
 import com.stonytark.magnetization.content.golem.MagnetiteGolem;
 import com.stonytark.magnetization.content.golem.MrFluidGolem;
 import com.stonytark.magnetization.content.golem.PyrrhotiteGolem;
 import com.stonytark.magnetization.content.golem.TitanomagnetiteGolem;
+import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.content.item.ConfigurableGolemSpawnEggItem;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.physics.MobileFieldRegistry;
@@ -20,12 +23,14 @@ import com.stonytark.magnetization.registry.MagDataComponents;
 import com.stonytark.magnetization.registry.MagEntities;
 import com.stonytark.magnetization.registry.MagItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -34,11 +39,14 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -54,6 +62,10 @@ public final class IronOxideGolemGameTests {
     private static final String EMPTY = "empty";
 
     private record SpawnSpec(Block material, EntityType<? extends MagneticGolem> type) {}
+    private record ConfigSpec(@org.jetbrains.annotations.Nullable Block material,
+                              EntityType<? extends IronGolem> type,
+                              ModConfigSpec.BooleanValue enabled,
+                              @org.jetbrains.annotations.Nullable ConfigurableGolemSpawnEggItem egg) {}
 
     private IronOxideGolemGameTests() {}
 
@@ -107,6 +119,84 @@ public final class IronOxideGolemGameTests {
             }
             helper.succeed();
         } finally {
+            removeOnlinePlayer(level, player);
+        }
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 120, batch = "ironOxideConfig")
+    public static void eachConfigToggleBlocksCreationAndMakesExistingGolemsInert(final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final ServerPlayer player = headlessPlayer(level, "oxide-config");
+        final List<ConfigSpec> specs = List.of(
+                new ConfigSpec(MagBlocks.SOLID_GALLIUM.get(), MagEntities.GALLIUM_GOLEM.get(),
+                        MagConfig.GALLIUM_GOLEM_ENABLED, null),
+                new ConfigSpec(null, MagEntities.MR_FLUID_GOLEM.get(),
+                        MagConfig.MR_FLUID_GOLEM_ENABLED, MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get()),
+                new ConfigSpec(MagBlocks.MAGNETITE_BLOCK.get(), MagEntities.MAGNETITE_GOLEM.get(),
+                        MagConfig.MAGNETITE_GOLEM_ENABLED, MagItems.MAGNETITE_GOLEM_SPAWN_EGG.get()),
+                new ConfigSpec(MagBlocks.PYRRHOTITE_BLOCK.get(), MagEntities.PYRRHOTITE_GOLEM.get(),
+                        MagConfig.PYRRHOTITE_GOLEM_ENABLED, MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG.get()),
+                new ConfigSpec(MagBlocks.HEMATITE_BLOCK.get(), MagEntities.HEMATITE_GOLEM.get(),
+                        MagConfig.HEMATITE_GOLEM_ENABLED, MagItems.HEMATITE_GOLEM_SPAWN_EGG.get()),
+                new ConfigSpec(MagBlocks.TITANOMAGNETITE_BLOCK.get(), MagEntities.TITANOMAGNETITE_GOLEM.get(),
+                        MagConfig.TITANOMAGNETITE_GOLEM_ENABLED, MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG.get()));
+        final Map<ModConfigSpec.BooleanValue, Boolean> originals = new LinkedHashMap<>();
+        specs.forEach(spec -> originals.put(spec.enabled(), spec.enabled().get()));
+        try {
+            for (int index = 0; index < specs.size(); index++) {
+                final ConfigSpec spec = specs.get(index);
+                spec.enabled().set(false);
+
+                final BlockPos center = helper.absolutePos(new BlockPos(1, 2, 1));
+                clearCube(level, center, 2);
+                if (spec.material() != null) {
+                    final List<BlockPos> body = List.of(center, center.below(), center.east(), center.west());
+                    body.forEach(pos -> level.setBlock(pos, spec.material().defaultBlockState(), Block.UPDATE_ALL));
+                    final BlockPos head = center.above();
+                    level.setBlock(head, Blocks.CARVED_PUMPKIN.defaultBlockState(), Block.UPDATE_ALL);
+                    helper.assertTrue(GalliumGolemSpawnHandler.trySpawn(level, head, player) == null,
+                            "Disabled structure created " + spec.type());
+                    helper.assertTrue(level.getBlockState(head).is(Blocks.CARVED_PUMPKIN)
+                                    && body.stream().allMatch(pos -> level.getBlockState(pos).is(spec.material())),
+                            "Rejected disabled structure consumed its blocks");
+                }
+
+                final IronGolem existing = spawnAbsolute(level, spec.type(), highPosition(helper, 245, index * 4, 0));
+                existing.aiStep();
+                if (existing instanceof MagneticGolem magnetic) {
+                    helper.assertTrue(!magnetic.featureEnabled() && magnetic.mobileField() == null,
+                            "Disabled existing golem retained custom magnetic behavior");
+                    helper.assertTrue(!MobileFieldRegistry.contains(level, existing.getUUID()),
+                            "Disabled existing golem remained in the mobile-field registry");
+                } else if (existing instanceof GalliumGolem gallium) {
+                    helper.assertTrue(!gallium.featureEnabled(), "Disabled Gallium Golem remained enabled");
+                } else if (existing instanceof MrFluidGolem mrFluid) {
+                    helper.assertTrue(!mrFluid.featureEnabled() && !mrFluid.isHardened(),
+                            "Disabled MR Fluid Golem retained hardening behavior");
+                }
+
+                if (spec.egg() != null) {
+                    final ItemStack egg = new ItemStack(spec.egg());
+                    final String eggPath = net.minecraft.core.registries.BuiltInRegistries.ITEM
+                            .getKey(spec.egg()).getPath();
+                    helper.assertTrue(MagConfig.isItemDisabled(eggPath),
+                            "Disabled golem egg was not exposed through the content-disable gate");
+                    player.setItemInHand(InteractionHand.MAIN_HAND, egg);
+                    final BlockPos target = center.offset(0, 0, 3);
+                    level.setBlock(target, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+                    final InteractionResult result = spec.egg().useOn(new UseOnContext(player,
+                            InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(target),
+                            Direction.UP, target, false)));
+                    helper.assertTrue(result == InteractionResult.FAIL && egg.getCount() == 1,
+                            "Disabled creative egg was not rejected without consumption");
+                }
+
+                existing.discard();
+                spec.enabled().set(true);
+            }
+            helper.succeed();
+        } finally {
+            originals.forEach(ModConfigSpec.BooleanValue::set);
             removeOnlinePlayer(level, player);
         }
     }

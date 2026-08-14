@@ -97,6 +97,19 @@ class IronOxideGolemResourceTest {
         }
     }
 
+    @Test void everyGolemToggleIsLocalized() throws Exception {
+        final var lang = JsonParser.parseString(Files.readString(
+                RES.resolve("assets/magnetization/lang/en_us.json"))).getAsJsonObject();
+        for (final String material : List.of("gallium", "mrFluid", "magnetite", "pyrrhotite",
+                "hematite", "titanomagnetite")) {
+            final String key = "magnetization.configuration.content." + material + "GolemEnabled";
+            assertTrue(lang.has(key), key);
+            assertTrue(lang.has(key + ".tooltip"), key + ".tooltip");
+        }
+        assertTrue(lang.has("message.magnetization.golem_disabled"));
+        assertTrue(lang.has("tooltip.magnetization.golem.disabled"));
+    }
+
     @Test void everyCustomGolemSoundHasAnAccessibleSubtitle() throws Exception {
         final var sounds = JsonParser.parseString(Files.readString(
                 RES.resolve("assets/magnetization/sounds.json"))).getAsJsonObject();

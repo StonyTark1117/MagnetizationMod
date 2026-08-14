@@ -383,6 +383,15 @@ public final class MagConfig {
     /** Ticks a stamped magnetite stack waits before converting in place to
      *  its maghemite equivalent. Only consulted when oxidation is enabled. */
     public static final ModConfigSpec.IntValue     MAGNETITE_OXIDATION_TICKS;
+    /** Per-type soft disables for every Magnetization golem. Disabled types
+     *  cannot be constructed or spawned from eggs; existing entities are
+     *  retained but their custom material behavior is inert. */
+    public static final ModConfigSpec.BooleanValue GALLIUM_GOLEM_ENABLED;
+    public static final ModConfigSpec.BooleanValue MR_FLUID_GOLEM_ENABLED;
+    public static final ModConfigSpec.BooleanValue MAGNETITE_GOLEM_ENABLED;
+    public static final ModConfigSpec.BooleanValue PYRRHOTITE_GOLEM_ENABLED;
+    public static final ModConfigSpec.BooleanValue HEMATITE_GOLEM_ENABLED;
+    public static final ModConfigSpec.BooleanValue TITANOMAGNETITE_GOLEM_ENABLED;
 
     /** Master toggle for the field-applicator and anchor-binding debug logs. Off by default. */
     public static final ModConfigSpec.BooleanValue DEBUG_LOGGING;
@@ -1584,6 +1593,48 @@ public final class MagConfig {
                          "magnetiteOxidationEnabled is true.")
                 .translation("magnetization.configuration.content.magnetiteOxidationTicks")
                 .defineInRange("magnetiteOxidationTicks", 168000, 1200, 2_400_000);
+
+        GALLIUM_GOLEM_ENABLED = b
+                .comment("Enable the Gallium Golem. When disabled, its T-structure cannot create it,",
+                         "and existing Gallium Golems remain in-world but stop melting or taking",
+                         "their material-specific extra warm-biome damage.")
+                .translation("magnetization.configuration.content.galliumGolemEnabled")
+                .define("galliumGolemEnabled", true);
+
+        MR_FLUID_GOLEM_ENABLED = b
+                .comment("Enable the MR Fluid Golem. When disabled, its spawn egg is hidden,",
+                         "uncraftable, and unusable; existing MR Fluid Golems remain in-world",
+                         "but stop hardening or applying their material-specific mitigation.")
+                .translation("magnetization.configuration.content.mrFluidGolemEnabled")
+                .define("mrFluidGolemEnabled", true);
+
+        MAGNETITE_GOLEM_ENABLED = b
+                .comment("Enable the Magnetite Golem. When disabled, its T-structure and spawn egg",
+                         "cannot create it, its egg is hidden from the creative tab, and existing",
+                         "Magnetite Golems remain in-world but stop emitting fields or oxidizing.")
+                .translation("magnetization.configuration.content.magnetiteGolemEnabled")
+                .define("magnetiteGolemEnabled", true);
+
+        PYRRHOTITE_GOLEM_ENABLED = b
+                .comment("Enable the Pyrrhotite Golem. When disabled, its T-structure and spawn egg",
+                         "cannot create it, its egg is hidden from the creative tab, and existing",
+                         "Pyrrhotite Golems remain in-world but stop reacting to heat or emitting fields.")
+                .translation("magnetization.configuration.content.pyrrhotiteGolemEnabled")
+                .define("pyrrhotiteGolemEnabled", true);
+
+        HEMATITE_GOLEM_ENABLED = b
+                .comment("Enable the Hematite Golem. When disabled, its T-structure and spawn egg",
+                         "cannot create it, its egg is hidden from the creative tab, and existing",
+                         "Hematite Golems remain in-world but stop dampening magnetic fields.")
+                .translation("magnetization.configuration.content.hematiteGolemEnabled")
+                .define("hematiteGolemEnabled", true);
+
+        TITANOMAGNETITE_GOLEM_ENABLED = b
+                .comment("Enable the Titanomagnetite Golem. When disabled, its T-structure and spawn",
+                         "egg cannot create it, its egg is hidden from the creative tab, and existing",
+                         "Titanomagnetite Golems remain in-world but stop capturing or emitting fields.")
+                .translation("magnetization.configuration.content.titanomagnetiteGolemEnabled")
+                .define("titanomagnetiteGolemEnabled", true);
 
         MAGNETIC_SWITCH_RANGE = b
                 .comment("Magnetic Switch ship-detection radius in blocks. Switch outputs a 0–15",
@@ -3349,6 +3400,11 @@ public final class MagConfig {
     }
 
     public static boolean isItemDisabled(final String path) {
+        if ("mr_fluid_golem_spawn_egg".equals(path) && !mrFluidGolemEnabled()) return true;
+        if ("magnetite_golem_spawn_egg".equals(path) && !magnetiteGolemEnabled()) return true;
+        if ("pyrrhotite_golem_spawn_egg".equals(path) && !pyrrhotiteGolemEnabled()) return true;
+        if ("hematite_golem_spawn_egg".equals(path) && !hematiteGolemEnabled()) return true;
+        if ("titanomagnetite_golem_spawn_egg".equals(path) && !titanomagnetiteGolemEnabled()) return true;
         try {
             return DISABLED_ITEMS.get().contains(path);
         } catch (final Throwable t) {
@@ -3434,6 +3490,30 @@ public final class MagConfig {
         } catch (final Throwable t) {
             return true;
         }
+    }
+
+    public static boolean magnetiteGolemEnabled() {
+        return booleanOr(MAGNETITE_GOLEM_ENABLED, true);
+    }
+
+    public static boolean galliumGolemEnabled() {
+        return booleanOr(GALLIUM_GOLEM_ENABLED, true);
+    }
+
+    public static boolean mrFluidGolemEnabled() {
+        return booleanOr(MR_FLUID_GOLEM_ENABLED, true);
+    }
+
+    public static boolean pyrrhotiteGolemEnabled() {
+        return booleanOr(PYRRHOTITE_GOLEM_ENABLED, true);
+    }
+
+    public static boolean hematiteGolemEnabled() {
+        return booleanOr(HEMATITE_GOLEM_ENABLED, true);
+    }
+
+    public static boolean titanomagnetiteGolemEnabled() {
+        return booleanOr(TITANOMAGNETITE_GOLEM_ENABLED, true);
     }
 
     /** @return whether an emitter on a contraption should exclude its whole connected

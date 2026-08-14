@@ -30,10 +30,11 @@ public final class MagnetiteGolem extends MagneticGolem {
     }
     public boolean isOxidized() { return entityData.get(OXIDIZED); }
     public long oxidationTicks() { return oxidationTicks; }
+    @Override public boolean featureEnabled() { return MagConfig.magnetiteGolemEnabled(); }
 
     @Override public void aiStep() {
         super.aiStep();
-        if (!(level() instanceof ServerLevel) || isOxidized()) return;
+        if (!featureEnabled() || !(level() instanceof ServerLevel) || isOxidized()) return;
         final boolean enabled;
         final long duration;
         try { enabled = MagConfig.MAGNETITE_OXIDATION_ENABLED.get(); }
@@ -50,6 +51,7 @@ public final class MagnetiteGolem extends MagneticGolem {
         }
     }
     @Override public MagneticField mobileField() {
+        if (!featureEnabled()) return null;
         return new MagneticField(position().add(0, getBbHeight() * .5d, 0), new Vec3(0, 1, 0),
                 magneticPolarity(), isOxidized() ? MagneticStrength.MEDIUM : MagneticStrength.WEAK,
                 MagneticField.Shape.OMNIDIRECTIONAL);

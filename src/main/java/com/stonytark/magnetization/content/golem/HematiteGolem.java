@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.golem;
 
 import com.stonytark.magnetization.api.MagneticField;
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -23,8 +24,10 @@ public final class HematiteGolem extends MagneticGolem {
     @Override protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder); builder.define(DAMPENED_SOURCES, 0);
     }
+    @Override public boolean featureEnabled() { return MagConfig.hematiteGolemEnabled(); }
     @Override public void aiStep() {
-        if (!level().isClientSide && level() instanceof ServerLevel server && tickCount % 10 == 0) {
+        if (featureEnabled() && !level().isClientSide
+                && level() instanceof ServerLevel server && tickCount % 10 == 0) {
             final int previous = dampenedSourceCount();
             final int current = com.stonytark.magnetization.physics.MagneticFields.countSourcesNear(
                     server, position(), 4.0d, getUUID());

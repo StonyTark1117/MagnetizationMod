@@ -90,7 +90,8 @@ public final class MobileFieldRegistry {
                                        final @Nullable UUID sourceId) {
         int count = 0;
         for (final Source source : snapshotNear(level, BlockPos.containing(raw.origin()), 4)) {
-            if (source.id().equals(sourceId) || !source.isHematite()) continue;
+            if (source.id().equals(sourceId) || !source.isHematite()
+                    || !source.entity().featureEnabled()) continue;
             if (source.entity().position().distanceToSqr(raw.origin()) <= 16.0d) count++;
         }
         if (count == 0) return raw;

@@ -22,6 +22,11 @@ public enum GalliumGolemBodyProvider implements IEntityComponentProvider {
     public void appendBody(final ITooltip tooltip, final IEntityAccessor accessor, final IPluginConfig config) {
         final Entity entity = accessor.getEntity();
         if (!(entity instanceof GalliumGolem golem)) return;
+        if (!golem.featureEnabled()) {
+            tooltip.addLine(Component.translatable("tooltip.magnetization.golem.disabled")
+                    .withStyle(ChatFormatting.RED));
+            return;
+        }
         tooltip.addLine(Component.translatable("tooltip.magnetization.gallium_golem.soft")
                 .withStyle(ChatFormatting.GRAY));
         final boolean cold = golem.level().getBiome(golem.blockPosition()).value().getBaseTemperature() < 0.2f;

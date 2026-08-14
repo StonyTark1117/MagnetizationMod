@@ -300,6 +300,12 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | content.solarSailNightFactor | number | 0.5; 0.0-1.0 | Solar Sail thrust at night as a fraction of daytime thrust. 1.0 = full power at night; 0.5 = half (default); 0 = the sail does nothing at night. |
 | COMMON | content.magnetiteOxidationEnabled | boolean | false | Master switch for the passive magnetite → maghemite inventory decay. Off by default — players found the slow rusting of hoarded magnetite more confusing than satisfying. Turn on to re-enable. |
 | COMMON | content.magnetiteOxidationTicks | number | 168000; 1200-2400000 | Ticks a stamped magnetite stack waits before converting to its maghemite equivalent. Default 168000 = 1 in-game week (7 days). Only consulted when magnetiteOxidationEnabled is true. |
+| COMMON | content.galliumGolemEnabled | boolean | true | Allow Gallium Golems to be built. Disabling this keeps existing golems in-world but stops their melting and material-specific warm-biome damage. |
+| COMMON | content.mrFluidGolemEnabled | boolean | true | Allow MR Fluid Golem spawn eggs to be crafted or used. Disabling this keeps existing golems in-world but stops their hardening and material-specific damage mitigation. |
+| COMMON | content.magnetiteGolemEnabled | boolean | true | Allow Magnetite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops their magnetic field and oxidation behavior. |
+| COMMON | content.pyrrhotiteGolemEnabled | boolean | true | Allow Pyrrhotite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops their heat response and magnetic field. |
+| COMMON | content.hematiteGolemEnabled | boolean | true | Allow Hematite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops their field dampening. |
+| COMMON | content.titanomagnetiteGolemEnabled | boolean | true | Allow Titanomagnetite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops field capture and emission. |
 | COMMON | content.magneticSwitchRange | number | 8; 1-64 | How far the Magnetic Switch scans for a Sable ship/contraption to derive its redstone output strength. Default 8 blocks. Larger ranges let one switch cover a hangar; smaller ranges force tight placement. |
 
 ## Items

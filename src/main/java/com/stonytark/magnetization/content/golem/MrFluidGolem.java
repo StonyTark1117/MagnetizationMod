@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.content.golem;
 
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.physics.MagneticFields;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -51,9 +52,17 @@ public class MrFluidGolem extends IronGolem {
         return this.entityData.get(HARDENED);
     }
 
+    public boolean featureEnabled() {
+        return MagConfig.mrFluidGolemEnabled();
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
+        if (!featureEnabled()) {
+            if (!level().isClientSide && this.entityData.get(HARDENED)) this.entityData.set(HARDENED, false);
+            return;
+        }
         if (!level().isClientSide && (tickCount % com.stonytark.magnetization.config.MagConfig.golemFieldCheckTicks()) == 0 && level() instanceof ServerLevel server) {
             final boolean inField = MagneticFields.isInField(server, position());
             if (this.entityData.get(HARDENED) != inField) this.entityData.set(HARDENED, inField);
@@ -62,7 +71,7 @@ public class MrFluidGolem extends IronGolem {
 
     @Override
     public boolean hurt(final DamageSource source, float amount) {
-        if (!level().isClientSide && level() instanceof ServerLevel server
+        if (featureEnabled() && !level().isClientSide && level() instanceof ServerLevel server
                 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             final float mit = MagneticFields.isInField(server, position())
                     ? com.stonytark.magnetization.config.MagConfig.mrGolemFieldMitigation()
