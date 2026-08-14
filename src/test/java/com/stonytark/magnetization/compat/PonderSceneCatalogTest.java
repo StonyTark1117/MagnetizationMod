@@ -53,7 +53,10 @@ class PonderSceneCatalogTest {
             final String prefix = "magnetization.ponder." + scene.id() + ".";
             expected.put(prefix + "header", scene.title());
             for (int i = 0; i < scene.texts().size(); i++) {
-                expected.put(prefix + "text_" + i, scene.text(i));
+                // Ponder's generated scene text keys are one-based. A zero-based
+                // resource silently shifts every instruction and leaves the final
+                // overlay displaying its raw translation key in-game.
+                expected.put(prefix + "text_" + (i + 1), scene.text(i));
             }
         }
 
