@@ -58,6 +58,51 @@ public final class TokamakPreviewGameTests {
         helper.assertTrue(com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
                         .ringMultiplier(helper.getLevel(), helper.absolutePos(controller)) == 3,
                 "Expanded Tokamak ring did not receive its expected 3x performance scale");
+
+        final var construction = TokamakRingPreview.constructionPreview(
+                helper.getLevel(), helper.absolutePos(controller), 7);
+        helper.assertTrue(construction.valid() && construction.edge() == 5,
+                "Construction diagnostics did not select the completed expanded ring");
+
+        final BlockPos missing = controller.offset(2, 0, 0);
+        helper.setBlock(missing, net.minecraft.world.level.block.Blocks.AIR);
+        final var broken = TokamakRingPreview.previewExact(
+                helper.getLevel(), helper.absolutePos(controller), 5, 7);
+        helper.assertTrue(!broken.valid() && broken.edge() == 5
+                        && broken.invalidEdges().contains(helper.absolutePos(missing)),
+                "Expanded-ring diagnostics did not identify its missing outer coil");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "tokamakPreview")
+    public static void expandedTokamakActuallyGeneratesAtScaledRate(final GameTestHelper helper) {
+        final BlockPos controller = new BlockPos(5, 1, 5);
+        helper.setBlock(controller, MagBlocks.TOKAMAK_CONTROLLER.get());
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (Math.abs(dx) == 2 || Math.abs(dz) == 2) {
+                    helper.setBlock(controller.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
+                }
+            }
+        }
+
+        final var be = (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity)
+                helper.getBlockEntity(controller);
+        be.fuelContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                com.stonytark.magnetization.registry.MagItems.DEUTERIUM_CELL.get()));
+        com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity.serverTick(
+                helper.getLevel(), helper.absolutePos(controller), be.getBlockState(), be);
+
+        final int multiplier = 3;
+        helper.assertTrue(be.energyBuffer().getMaxEnergyStored()
+                        == com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity() * multiplier,
+                "Expanded Tokamak did not scale its FE capacity to 3x");
+        helper.assertTrue(be.energyBuffer().getEnergyStored()
+                        == com.stonytark.magnetization.config.MagConfig.tokamakGenPerTick() * multiplier,
+                "Expanded Tokamak did not generate Deuterium power at 3x");
+        helper.assertTrue(helper.getBlockState(controller)
+                        .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
+                "Expanded Tokamak stayed unlit after a fueled server tick");
         helper.succeed();
     }
 }

@@ -37,23 +37,53 @@ public final class TokamakRingPreview {
         // operational at its smaller completed size while an outer ring is
         // still being built.
         for (int radius = maxRadius; radius >= 1; radius--) {
-            final List<BlockPos> frame = frame(controller, radius);
-            final List<BlockPos> invalid = new ArrayList<>();
-            for (final BlockPos p : frame) {
-                if (!level.getBlockState(p).is(MagBlocks.TOKAMAK_COIL.get())) invalid.add(p);
-            }
-            if (invalid.isEmpty()) {
-                return new Preview(true, controller.immutable(), List.copyOf(frame),
-                        List.of(), radius * 2 + 1);
-            }
+            final Preview candidate = inspect(level, controller, radius);
+            if (candidate.valid()) return candidate;
         }
 
-        final List<BlockPos> minimum = frame(controller, 1);
-        final List<BlockPos> invalid = minimum.stream()
-                .filter(p -> !level.getBlockState(p).is(MagBlocks.TOKAMAK_COIL.get()))
-                .toList();
-        return new Preview(false, controller.immutable(), List.copyOf(minimum),
-                invalid, 3);
+        return inspect(level, controller, 1);
+    }
+
+    /** Inspect one explicitly selected odd-edged ring. This is used by the
+     * construction overlay when a player looks at an outer coil: diagnostics
+     * must describe that ring, even while it is incomplete. */
+    public static Preview previewExact(final BlockGetter level, final BlockPos controller,
+                                       final int requestedEdge, final int maxEdge) {
+        final int limit = normalizedMaxEdge(maxEdge);
+        int edge = Math.max(3, Math.min(limit, requestedEdge));
+        if (edge % 2 == 0) edge--;
+        return inspect(level, controller, (edge - 1) / 2);
+    }
+
+    /** Construction-oriented view used while looking at the controller. A
+     * started outer perimeter takes precedence over an already-formed inner
+     * ring so goggles show the expansion the player is currently building. */
+    public static Preview constructionPreview(final BlockGetter level, final BlockPos controller,
+                                               final int maxEdge) {
+        final Preview formed = preview(level, controller, maxEdge);
+        final int formedRadius = formed.valid() ? (formed.edge() - 1) / 2 : 0;
+        final int maxRadius = (normalizedMaxEdge(maxEdge) - 1) / 2;
+        for (int radius = maxRadius; radius > Math.max(1, formedRadius); radius--) {
+            final Preview candidate = inspect(level, controller, radius);
+            if (candidate.invalidEdges().size() < candidate.requiredFrame().size()) return candidate;
+        }
+        return formed;
+    }
+
+    private static int normalizedMaxEdge(final int maxEdge) {
+        final int configured = Math.max(3, maxEdge);
+        return configured % 2 == 0 ? configured - 1 : configured;
+    }
+
+    private static Preview inspect(final BlockGetter level, final BlockPos controller,
+                                   final int radius) {
+        final List<BlockPos> frame = frame(controller, radius);
+        final List<BlockPos> invalid = new ArrayList<>();
+        for (final BlockPos p : frame) {
+            if (!level.getBlockState(p).is(MagBlocks.TOKAMAK_COIL.get())) invalid.add(p);
+        }
+        return new Preview(invalid.isEmpty(), controller.immutable(), List.copyOf(frame),
+                List.copyOf(invalid), radius * 2 + 1);
     }
 
     private static List<BlockPos> frame(final BlockPos controller, final int radius) {

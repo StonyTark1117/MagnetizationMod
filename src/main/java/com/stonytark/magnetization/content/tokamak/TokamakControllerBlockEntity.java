@@ -128,7 +128,12 @@ public class TokamakControllerBlockEntity extends BlockEntity
                                   final TokamakControllerBlockEntity be) {
         if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
-        final int multiplier = ringMultiplier(level, pos);
+        // Resolve formation once per tick. Besides avoiding two full perimeter
+        // scans, this keeps capacity, generation, output, and LIT state tied to
+        // the exact same authoritative ring snapshot.
+        final TokamakRingPreview.Preview ring = TokamakRingPreview.preview(level, pos);
+        final boolean formed = ring.valid();
+        final int multiplier = formed ? Math.max(1, ring.edge() - 2) : 1;
         be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
                 scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
@@ -144,7 +149,7 @@ public class TokamakControllerBlockEntity extends BlockEntity
                 be.setChanged();
             }
         }
-        final boolean fusing = be.burnTime > 0 && isRingFormed(level, pos);
+        final boolean fusing = be.burnTime > 0 && formed;
         if (fusing) {
             be.energy.generate(scaled(tierGenPerTick(be.currentTier), multiplier));
             be.burnTime--;
