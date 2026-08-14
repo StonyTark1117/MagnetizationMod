@@ -83,7 +83,11 @@ public final class FusionThrusterBlock extends DirectionalBlock implements Entit
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             final Level level, final BlockState state, final BlockEntityType<T> type) {
-        if (level.isClientSide || type != MagBlockEntities.FUSION_THRUSTER.get()) return null;
+        if (type != MagBlockEntities.FUSION_THRUSTER.get()) return null;
+        if (level.isClientSide) {
+            return (BlockEntityTicker<T>) (BlockEntityTicker<FusionThrusterBlockEntity>)
+                    FusionThrusterBlockEntity::clientTick;
+        }
         return (BlockEntityTicker<T>) (BlockEntityTicker<FusionThrusterBlockEntity>) FusionThrusterBlockEntity::serverTick;
     }
 

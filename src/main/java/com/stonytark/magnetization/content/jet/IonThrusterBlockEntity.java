@@ -136,6 +136,12 @@ public final class IonThrusterBlockEntity extends BlockEntity
         }
     }
 
+    public static void clientTick(final Level level, final BlockPos pos, final BlockState state,
+                                  final IonThrusterBlockEntity be) {
+        final int colour = be.propellantColour();
+        if (colour != 0) ThrusterPlume.tick(level, pos, state, ThrusterPlume.Style.ION, colour);
+    }
+
     @Override public void sable$tick(final ServerSubLevel subLevel) {
         if (!MagConfig.isBlockDisabled(getBlockState()) && level instanceof ServerLevel server) runEngine(server, subLevel);
     }

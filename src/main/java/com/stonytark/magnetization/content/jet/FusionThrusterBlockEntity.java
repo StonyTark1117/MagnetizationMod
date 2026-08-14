@@ -155,8 +155,16 @@ public class FusionThrusterBlockEntity extends BlockEntity
         return (int) Math.min(Integer.MAX_VALUE, (long) MagConfig.fusionThrusterTank() * Math.max(1, cachedInterior));
     }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
-        if (!cachedValid) return com.stonytark.magnetization.menu.MachineDisplayData.Status.INVALID;
-        return firing ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
+        final BlockState state = getBlockState();
+        final boolean visiblyFiring = state.hasProperty(BlockStateProperties.LIT)
+                && state.getValue(BlockStateProperties.LIT);
+        return displayStatus(cachedValid, visiblyFiring);
+    }
+
+    static com.stonytark.magnetization.menu.MachineDisplayData.Status displayStatus(
+            final boolean formed, final boolean visiblyFiring) {
+        if (!formed) return com.stonytark.magnetization.menu.MachineDisplayData.Status.INVALID;
+        return visiblyFiring ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
                 : com.stonytark.magnetization.menu.MachineDisplayData.Status.FORMED;
     }
 
@@ -232,6 +240,21 @@ public class FusionThrusterBlockEntity extends BlockEntity
         if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
+    }
+
+    public static void clientTick(final Level level, final BlockPos pos, final BlockState state,
+                                  final FusionThrusterBlockEntity be) {
+        ThrusterPlume.tick(level, pos, state, ThrusterPlume.Style.FUSION,
+                be.exhaustColour(), Math.max(1, be.interiorCount()));
+    }
+
+    private int exhaustColour() {
+        final Fluid fluid = panelTank().getFluid().getFluid();
+        if (isHydrogen(fluid)) return 0x74D9FF;
+        if (fluid == MagFluids.TRITIUM.get()) return 0x70FF96;
+        if (fluid == MagFluids.HELIUM_3.get()) return 0xFFD36A;
+        if (fluid == MagFluids.DEUTERIUM_OXIDE.get()) return 0x829CFF;
+        return 0xDDEBFF;
     }
 
     /** Sable sub-level tick — thruster is mounted on this ship. */

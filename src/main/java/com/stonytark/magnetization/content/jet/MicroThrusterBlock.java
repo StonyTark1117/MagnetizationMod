@@ -77,7 +77,11 @@ public final class MicroThrusterBlock extends DirectionalBlock implements Entity
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             final Level level, final BlockState state, final BlockEntityType<T> type) {
-        if (level.isClientSide || type != MagBlockEntities.MICRO_THRUSTER.get()) return null;
+        if (type != MagBlockEntities.MICRO_THRUSTER.get()) return null;
+        if (level.isClientSide) {
+            return (BlockEntityTicker<T>) (BlockEntityTicker<MicroThrusterBlockEntity>)
+                    MicroThrusterBlockEntity::clientTick;
+        }
         return (BlockEntityTicker<T>) (BlockEntityTicker<MicroThrusterBlockEntity>) MicroThrusterBlockEntity::serverTick;
     }
 

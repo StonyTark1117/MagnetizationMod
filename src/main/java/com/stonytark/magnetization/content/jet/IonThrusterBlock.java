@@ -53,32 +53,13 @@ public final class IonThrusterBlock extends DirectionalBlock implements EntityBl
         return new IonThrusterBlockEntity(pos, state);
     }
 
-    @Override public void animateTick(final BlockState state, final Level level, final BlockPos pos,
-                                      final net.minecraft.util.RandomSource random) {
-        if (!state.getValue(BlockStateProperties.LIT)
-                || !(level.getBlockEntity(pos) instanceof IonThrusterBlockEntity be)) return;
-        final int colour = be.propellantColour();
-        if (colour == 0) return;
-        final float red = ((colour >> 16) & 255) / 255.0F;
-        final float green = ((colour >> 8) & 255) / 255.0F;
-        final float blue = (colour & 255) / 255.0F;
-        final Direction exhaust = state.getValue(FACING);
-        final double x = pos.getX() + .5 + exhaust.getStepX() * .58;
-        final double y = pos.getY() + .5 + exhaust.getStepY() * .58;
-        final double z = pos.getZ() + .5 + exhaust.getStepZ() * .58;
-        level.addParticle(new net.minecraft.core.particles.DustParticleOptions(
-                        new org.joml.Vector3f(red, green, blue), .9F), x, y, z,
-                exhaust.getStepX() * .12, exhaust.getStepY() * .12, exhaust.getStepZ() * .12);
-        if (random.nextInt(24) == 0) {
-            final float pitch = .8F + Math.max(0, be.propellantProfile()) * .04F;
-            level.playLocalSound(x, y, z, net.minecraft.sounds.SoundEvents.BEACON_AMBIENT,
-                    SoundSource.BLOCKS, .18F, pitch, false);
-        }
-    }
     @Override @SuppressWarnings("unchecked")
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             final Level level, final BlockState state, final BlockEntityType<T> type) {
-        if (level.isClientSide || type != MagBlockEntities.ION_THRUSTER.get()) return null;
+        if (type != MagBlockEntities.ION_THRUSTER.get()) return null;
+        if (level.isClientSide) {
+            return (BlockEntityTicker<T>) (BlockEntityTicker<IonThrusterBlockEntity>) IonThrusterBlockEntity::clientTick;
+        }
         return (BlockEntityTicker<T>) (BlockEntityTicker<IonThrusterBlockEntity>) IonThrusterBlockEntity::serverTick;
     }
 

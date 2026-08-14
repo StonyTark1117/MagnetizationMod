@@ -93,6 +93,12 @@ public interface MachineGuiData extends MachineHudData {
      * report requirements they do not have.
      */
     static Component statusLine(final MachineMenu.Kind kind, final MachineDisplayData.Status status) {
+        if (status == MachineDisplayData.Status.ACTIVE && switch (kind) {
+            case JET, THRUSTER, ION_THRUSTER, FUSION_THRUSTER -> true;
+            default -> false;
+        }) {
+            return Component.translatable("tooltip.magnetization.machine_firing").withStyle(ChatFormatting.GREEN);
+        }
         if (status != MachineDisplayData.Status.IDLE) return statusLine(status);
         final String key = switch (kind) {
             case MOTOR -> "tooltip.magnetization.machine_idle_motor";

@@ -79,7 +79,10 @@ public final class MhdJetBlock extends DirectionalBlock implements EntityBlock, 
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             final Level level, final BlockState state, final BlockEntityType<T> type) {
-        if (level.isClientSide || type != MagBlockEntities.MHD_JET.get()) return null;
+        if (type != MagBlockEntities.MHD_JET.get()) return null;
+        if (level.isClientSide) {
+            return (BlockEntityTicker<T>) (BlockEntityTicker<MhdJetBlockEntity>) MhdJetBlockEntity::clientTick;
+        }
         return (BlockEntityTicker<T>) (BlockEntityTicker<MhdJetBlockEntity>) MhdJetBlockEntity::serverTick;
     }
 

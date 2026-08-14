@@ -1850,6 +1850,7 @@
   "tooltip.magnetization.gui_magnet": "%s (Strength %s)",
   "tooltip.magnetization.gui_no_magnet": "No magnet installed",
   "tooltip.magnetization.machine_active": "Active",
+  "tooltip.magnetization.machine_firing": "Firing",
   "tooltip.magnetization.machine_formed": "Formed",
   "tooltip.magnetization.machine_invalid": "Invalid structure",
   "tooltip.magnetization.machine_holding": "Holding target",

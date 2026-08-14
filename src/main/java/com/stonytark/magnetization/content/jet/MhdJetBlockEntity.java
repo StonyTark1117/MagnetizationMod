@@ -166,6 +166,19 @@ public class MhdJetBlockEntity extends BlockEntity
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
     }
 
+    public static void clientTick(final Level level, final BlockPos pos, final BlockState state,
+                                  final MhdJetBlockEntity be) {
+        ThrusterPlume.tick(level, pos, state, ThrusterPlume.Style.MHD, be.exhaustColour());
+    }
+
+    private int exhaustColour() {
+        final Fluid fluid = fluidTank.getFluid().getFluid();
+        if (fluid == MagFluids.GALLIUM.get() || fluid == MagFluids.GALLIUM_FLOWING.get()) return 0xC8D1E8;
+        if (fluid == MagFluids.MIXED_GALLIUM.get() || fluid == MagFluids.MIXED_GALLIUM_FLOWING.get()) return 0xA58BC7;
+        if (fluid == MagFluids.LIQUID_LITHIUM.get() || fluid == MagFluids.LIQUID_LITHIUM_FLOWING.get()) return 0xFFD86B;
+        return 0x72E6FF;
+    }
+
     /** Sable sub-level tick: the jet is mounted on this ship — thrust it. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {

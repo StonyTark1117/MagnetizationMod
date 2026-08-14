@@ -118,6 +118,11 @@ public class MicroThrusterBlockEntity extends BlockEntity
         be.runEngine(server, SableBridge.subLevelAt(server, pos));
     }
 
+    public static void clientTick(final Level level, final BlockPos pos, final BlockState state,
+                                  final MicroThrusterBlockEntity be) {
+        ThrusterPlume.tick(level, pos, state, ThrusterPlume.Style.MICRO, 0xB96CFF);
+    }
+
     /** Sable sub-level tick: thruster is mounted on this ship — thrust it. */
     @Override
     public void sable$tick(final ServerSubLevel subLevel) {
