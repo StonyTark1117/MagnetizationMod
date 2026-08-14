@@ -346,7 +346,7 @@ The base magnetite ore vein generates in every overworld biome regardless of the
 
 `./gradlew runClient` starts an in-development client; `./gradlew runServer` starts a hands-on dedicated server. `./gradlew runData` regenerates recipes, loot tables, vanilla mining tags, and crater structure templates; compatibility tags and other curated data remain hand-authored.
 
-### Prepared 1.4.0 playtest worlds
+### Prepared 1.4.1 playtest worlds
 
 Two isolated client profiles keep persistent, disposable saves under
 `run-playtest-lab/` and `run-playtest-survival/`:

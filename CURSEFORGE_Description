@@ -30,12 +30,29 @@ Place magnets on the ground to influence sable contraptions (ships) and mobs/pla
 - **Hematite Lens** — multiblock polarity filter. Caps an emitter and only lets one polarity through.
 - **Titanomagnetite Block + Imprint Module** — the block records a nearby emitter's full config (range, strength, shape, polarity); the hand-held Imprint Module captures the recording and projects it onto another emitter elsewhere. No manual re-tuning.
 
-## New in 1.3.0 — Fusion, Railgun & the fuel overhaul
+## New in 1.4.1 — Expandable reactors, coolant & magnetic golems
+
+- **Completed expandable Tokamaks** — build any configured odd square from 3×3 through 15×15 using a Tokamak Coil perimeter around a solid Reactor Core interior. Larger reactors scale FE capacity, generation, and output; every core and perimeter coil forwards access to one authoritative controller.
+- **Optional fusion coolant loops** — Tokamaks and Fusion Thrusters accept coolant through their interiors, Tokamak Coil frames, buckets, or Create pipes. Water provides the baseline bonus, Deuterium Oxide improves it, and liquid Gallium is the high-efficiency option. Tagged `c:cooling_fluid` fluids use a configurable curve, with a separate switch for TFMG Cooling Fluid.
+- **Railgun projectile auto-assembly** — stage ordinary blocks between a paired Railgun's rails and it can assemble them into a centered Sable projectile before launch. The feature has a configurable block limit and a synchronized GUI toggle.
+- **Six configurable golems** — Gallium and MR Fluid Golems are joined by Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems, each with material-specific magnetic behavior, state, drops, inspection overlays, sounds, and an independent content switch.
+- **Active-thruster feedback** — Micro Thrusters, Fusion Thrusters, MHD Jets, and Ion Thrusters now emit distinct exhaust plumes while firing. Cooled Fusion Thrusters add a coolant-mist sheath; a client option disables all exhaust particles.
+- **Finished Gas Detector readouts** — the handheld detector now shows server-authoritative Radon dose, threshold, exposure/recovery state, and estimated distance to safety from Radon cells and active Radon exhaust.
+- **Complete Ponder localization** — all 18 registered scenes now show written titles and instructions instead of raw translation identifiers, including the 5×5 Tokamak and Railgun auto-assembly guidance.
+
+## 1.4.0 feature set — Noble gases & rare-earth progression
+
+- **Excitable noble gases** — Hydrogen, Helium, Neon, and Helium-3 rise; Argon, Krypton, Xenon, and radioactive Radon settle. Redstone or the FE-powered Gas Exciter illuminates connected gas networks, while Tritium radioluminesces without external power.
+- **Air Separator and Ion Thruster** — separate atmospheric gases with Create rotation, enrich Helium-3 crystals, and propel Sable ships with gas-specific thrust, speed, efficiency, FE cost, and exhaust behavior.
+- **Rare-earth magnet progression** — Bastnäsite, Monazite, Cobaltite, and Borax feed staged Create processing into Samarium–Cobalt and Neodymium–Iron–Boron magnets, storage blocks, tools, and armor.
+- **Optional ecosystem integrations** — JER resource charts, Ore Excavation deposits, Create Ore Excavation veins, TFMG gas routing, Cosmonautics recipes, and many additional Create-addon bridges remain condition-gated and independently configurable.
+
+## 1.3.0 feature set — Fusion, Railgun & the fuel overhaul
 
 - **Fusion Thruster** — an expandable flat-panel multiblock airship thruster (a Tokamak Coil perimeter around a fusion-cell fill). Bigger panel = exponentially more thrust; burns the new fusion fluids, with Helium-3 the strongest and longest-running.
 - **Railgun** — two parallel powered rails form an arc that grabs a ship or magnetic entity and launches it down the channel with force that grows exponentially with length, smashing obstructions in the way. Fires automatically, or pair the Railgun Remote for a manual trap-board-launch workflow.
 - **Electrolyzer** — a cauldron-style powered machine that shows its fluid inside; splits water + FE into Hydrogen, the start of the fusion-fuel ladder: Water → Hydrogen → Deuterium → (+ Lithium) Tritium → Helium-3. New Lithium ore and a rare Helium-3 geode round out sourcing.
-- **Fuel overhaul** — the Tokamak burns three cell tiers; the MHD Jet runs on a conductive working fluid (gallium / mixed gallium / liquid lithium); magnet-slot machines now consume their magnet over a strength-scaled burn; and every fuel-burning machine accepts hopper/pipe intake (toggleable in config).
+- **Fuel overhaul** — the Tokamak burns three cell tiers; the MHD Jet runs on a conductive working fluid (gallium / mixed gallium / liquid lithium); magnet-slot machines can optionally consume their magnet over a strength-scaled burn; and every fuel-burning machine accepts hopper/pipe intake (toggleable in config).
 
 ## FE/RF as alternative power
 
@@ -88,7 +105,8 @@ Craftable in-game guidebook covering basics, every emitter, ship polarity, and a
 ## Integrations (all auto-detected)
 
 - **Create Goggles, Jade, WTHIT, The One Probe** — emitter readouts in tooltips and HUD overlays (range rings, anchor tethers, inverter connectors, excavator preview, ship polarity + susceptibility + ferrous-block count).
-- **JEI, REI, EMI, JER** — info pages on the ferromagnetic tag.
+- **JEI, REI, EMI** — recipe browsing and discovery pages for magnetic materials, ores, fusion fuels, and major machines.
+- **Just Enough Resources (JER)** — a JEI add-on providing synchronized distribution and drop charts for all ten Magnetization ore families, Helium-3 geodes, magnetic gravel, anomaly lodestone clusters, meteorites, petrified wood, and natural Helium/Radon pockets.
 - **Curios, Patchouli, Applied Energistics 2** — see above.
 - **Modded armor and tools** — Immersive Engineering (Steel + Faraday + Hammer + Wirecutter + Revolver + Railgun), Iron's Spells (iron/netherite-plated armor + Cultist/Executioner/Knight swords), Cataclysm (Ignitium kit + tool set), Alex's Caves (Hazmat suit), Mekanism (Steel armor + tools), Twilight Forest (knightmetal/steeleaf/ironwood/fiery sets) — all accept polarity stamps from the Electromagnet GUI and feed the magnetized-armor pull system.
 - **Ferromagnetic tag coverage for 25+ mods** — Magnetizing, Create: Magnetics, Simulated, Alex's Caves, Twilight Forest, Create: New Age, Create: Crafts & Additions, Mekanism, Aether, Iron Chests / Sophisticated Storage, **Immersive Engineering** (Tesla Coil, Floodlight, Transformers, Capacitors, plus the full steel/aluminum architecture line — fences, gates, posts, doors, trapdoors, catwalks, scaffolding, ladders, sheetmetal), Modular Golems / Extra Golems / Cataclysm bosses / Bosses of Mass Destruction, Quark Oretoises, Supplementaries, **Macaw's mods** (Doors / Fences / Lights / Bridges / Trapdoors / Windows — every metal variant), **Immersive Aircraft + Aviator Dreams** (all 15 aircraft entities + crafting components), and broader `c:` metal tag coverage (steel, nickel, cobalt, zinc, brass, tin, lead, silver, osmium, uranium, aluminum, neodymium, electrum, invar, constantan, bronze) so any tech mod populating those gets free integration.
@@ -103,8 +121,8 @@ Generated config GUI covers physics constants, ship polarity/susceptibility weig
 
 ## Requirements
 
-- NeoForge 21.1.247+
-- Create 6.0.11+
+- NeoForge 21.1.200+
+- Create 6.0.10+
 - Sable 2.0.3+
 - Create: Aeronautics 1.3.0+
 - Simulated 1.3.0+

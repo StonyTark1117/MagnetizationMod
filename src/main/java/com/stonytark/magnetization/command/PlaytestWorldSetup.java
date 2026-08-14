@@ -42,7 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/** Reproducible, development-only 1.4.0 manual-playtest worlds. */
+/** Reproducible, development-only 1.4.1 manual-playtest worlds. */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class PlaytestWorldSetup {
     private static final String ENABLED_PROPERTY = "magnetization.playtest";
@@ -363,7 +363,7 @@ public final class PlaytestWorldSetup {
     }
 
     private static void buildLab(final ServerLevel level, final BlockPos a) {
-        label(level, a.offset(2, 0, 2), "1.4.0 TEST LAB", "Reset: /magnetization", "playtest lab reset", "Stations ->");
+        label(level, a.offset(2, 0, 2), "1.4.1 TEST LAB", "Reset: /magnetization", "playtest lab reset", "Stations ->");
         buildGallery(level, a.offset(2, 0, 5));
         buildAllItemsStorage(level, a.offset(2, 0, 10));
 

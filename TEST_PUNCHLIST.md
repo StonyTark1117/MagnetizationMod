@@ -1,6 +1,6 @@
 # Magnetization — In-World Test Punchlist
 
-**Generated:** 2026-06-15 · covers the 20 open `Test:` tasks (#77–85, #90–93, #96–97, #99, #103–104, #109, #112)
+**Updated:** 2026-08-14 · includes the 1.4.1 release pass plus the original 20 `Test:` tasks (#77–85, #90–93, #96–97, #99, #103–104, #109, #112)
 
 ## How to use this
 Each entry has: **Obtain → Setup → Trigger → Expect → Config**, then a **Result** line for you to fill in.
@@ -22,6 +22,52 @@ file back (or just the Result lines) and I'll act on the failures.
 > fluid/redstone loop), which is why the gallium Lorentz tests (#103/#104) are synchronous wiring checks
 > rather than live entity-push tests. Every ✅ below was confirmed by an actual single-test run that printed
 > "All N required tests passed :)".
+
+---
+
+## 1.4.1 release pass
+
+Run these checks in a fresh prepared lab before publishing 1.4.1. Record each result as `PASS`, `FAIL`, or `PARTIAL` and retain screenshots/video for the visual checks.
+
+### Expandable Tokamak and coolant
+
+- **Setup:** compare the prepared fueled 3×3 and 5×5 Tokamaks. The 3×3 uses eight coils around one Reactor Core. The 5×5 uses sixteen perimeter coils around a solid 3×3 interior of nine Reactor Cores. Connect FE storage to a perimeter coil and inspect the controller, a follower core, and an outer coil with Create goggles and one supported HUD viewer.
+- **Trigger:** run each reactor dry, then with Water, Deuterium Oxide, and Gallium coolant supplied by bucket and pipe. Break one outer 5×5 coil, replace it, and try replacing one interior core with air.
+- **Expect:** only complete solid-core structures form; the 5×5 reports a 3× multiplier and three times the 3×3 capacity/generation. Every access point reports the same formed/active state and tank/FE values. Better coolant lasts longer and increases the configured output/fuel-life bonuses; dry operation retains baseline behavior.
+- **Result:** _UNTESTED_
+
+### Railgun projectile auto-assembly
+
+- **Setup:** pair and power two Railgun Emitters, enable auto-assembly in the GUI, and stage an asymmetric group of ordinary blocks between the rails. Keep a second pair in manual/remote mode and supplies ready for block-limit and obstruction checks.
+- **Trigger:** fire the staged projectile, repeat with auto-assembly disabled, then exceed the configured block cap.
+- **Expect:** enabled rails assemble one centered Sable projectile and launch it; disabled rails do not assemble loose blocks; an oversized candidate is rejected with clear GUI/HUD feedback. Remote hold/fire and ordinary pre-built ship launches still work.
+- **Result:** _UNTESTED_
+
+### Thruster exhaust and coolant mist
+
+- **Setup:** activate a Micro Thruster, dry and cooled Fusion Thrusters, an MHD Jet, and Ion Thrusters using at least Helium, Xenon, and Radon. Observe from the side and behind with the CLIENT option `visuals.thrusterExhaustEffectsEnabled` on and off.
+- **Expect:** particles appear only while firing, align opposite thrust, and remain visually distinct per machine/propellant. A cooled Fusion Thruster adds a mist sheath. Disabling the client option removes all exhaust particles without changing propulsion. Radon exhaust still produces the detector warning described below.
+- **Result:** _UNTESTED_
+
+### Gas Detector safety readouts
+
+- **Setup:** hold the Gas Detector near a natural/placed Radon pocket and an active Radon-fueled Ion Thruster, with a safe-gas control nearby.
+- **Trigger:** enter exposure range, remain until dose accumulates, retreat gradually, and wait for recovery.
+- **Expect:** HUD/action-bar text reports the detected gas, excited state where applicable, server-owned dose and threshold, `EXPOSED`/`RECOVERING`/`CLEAR` state, and a distance-to-safety estimate that reaches safe as the player exits the hazard. Non-Radon gases must not fabricate a radiation dose.
+- **Result:** _UNTESTED_
+
+### Six golem families and content switches
+
+- **Setup:** build or summon Gallium, MR Fluid, Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems at the prepared golem station. Inspect all six with Create goggles and a supported HUD viewer; provide heat, magnetic fields, hostile mobs, and a Sable ship as applicable.
+- **Trigger:** exercise each material-specific state/polarity interaction, kill one normally to inspect drops, then disable each golem's content switch and retry construction/spawning after the required restart/reload.
+- **Expect:** all six have localized names and readable status, preserve their own material behavior, drops, sounds, and ship/entity response, and become unbuildable/unspawnable when independently disabled. Existing disabled-type entities retain save data while their custom material behavior stays inert.
+- **Result:** _UNTESTED_
+
+### Ponder localization and guidance
+
+- **Setup:** open every Magnetization Ponder scene through Create's Ponder interface, including Tokamak construction and Railgun auto-assembly.
+- **Expect:** all 18 scenes show written English titles and instructions—never raw `magnetization.ponder.*` keys. The Tokamak scene demonstrates a 5×5 coil perimeter with nine solid interior cores; the Railgun scene explains staging, the GUI toggle, limits, centering, and launch.
+- **Result:** _UNTESTED_
 
 ---
 
@@ -111,13 +157,13 @@ file back (or just the Result lines) and I'll act on the failures.
 - **Config (anvils):** `magnetiteBreakChance`, `maghemiteBreakChance`, `hematiteBreakChance`, `titanomagnetiteBreakChance`, `defaultBreakChance`.
 - **Result:** ✅ GameTest-verified (`anvilDampenerDetectedWhenMagnetAdjacent`): dampener adjacency detection + per-metal config defaults (titanomagnetite 0). In-world: confirm break-chance feel at the anvil.
 
-## #90 — Deuterium Oxide + Fuel Cell + Tokamak  ⟶ `deuterium_oxide`, `deuterium_cell`, `tokamak_controller`, `tokamak_coil`
-- **Obtain:** D₂O bucket from the fluid; Deuterium Cell = iron + redstone + glowstone + deuterium_oxide_bucket _(verify in JEI/EMI)_. **Tokamak controller/coil recipes not confirmed in code — check JEI; flag if creative-only.**
-- **Setup:** ring the controller with 8 tokamak_coils on the same Y (full 3×3 perimeter). Right-click the controller with a Deuterium Cell to load fuel. Put an FE machine/cable adjacent to receive output.
-- **Trigger:** complete the ring with fuel loaded.
-- **Expect:** controller `LIT` turns on; generates ~2000 FE/tick into its buffer and pushes up to 16000 FE/tick to neighbors; fuel slot drains one cell at a time (~4 min/cell); GUI shows burn time, output rate, stored/capacity. Break the ring → stops.
-- **Config (machines):** `tokamakFeCapacity` (4000000), `tokamakGenPerTick` (2000), `tokamakOutputRate` (16000), `tokamakBurnTicksPerCell` (4800).
-- **Result:** ✅ GameTest-verified (`tokamakGeneratesWithRingAndFuel`): ring-of-8 forms, fuel loads, buffer charges, block LIT. In-world: confirm output push + GUI.
+## #90 — Deuterium Oxide + Fuel Cell + Tokamak  ⟶ `deuterium_oxide`, `deuterium_cell`, `tokamak_controller`, `tokamak_coil`, `reactor_core`
+- **Obtain:** use JEI/EMI to confirm the D₂O bucket, Deuterium Cell, Tokamak Controller, Tokamak Coil, and Reactor Core recipes.
+- **Setup:** build either a 3×3 structure (eight coils around one Reactor Core) or any configured larger odd square with a complete coil perimeter and solid Reactor Core interior. The center core is the master controller. Load a Deuterium Cell through any core and connect FE storage through the controller or a perimeter coil.
+- **Trigger:** complete the structure with fuel loaded; compare dry operation with Water, Deuterium Oxide, and Gallium coolant; then remove one perimeter coil or interior core.
+- **Expect:** the structure reports Formed/Active and generates FE only while complete. Capacity, generation, and output scale with the formed size (5×5 = 3× baseline). Coolant is optional; better coolant increases the configured bonuses and is consumed more slowly. Breaking either the perimeter or solid interior stops operation and reports the missing structure element.
+- **Config (machines):** `tokamakMaxEdge`, base capacity/generation/output/burn controls, coolant tank/intake controls, coolant quality curve, and optional TFMG Cooling Fluid compatibility.
+- **Result:** ✅ Core 3×3 and fueled 5×5 formation/scaling are GameTest-covered. In-world: confirm pipe routing, coolant comparison, GUI/HUD synchronization, and recovery after structure repair.
 
 ## #91 — MR Fluid hardens in field → walkable bridge  ⟶ `mr_fluid`, `hardened_mr_fluid`
 - **Obtain:** MR Fluid bucket = water_bucket + iron_ingot + raw_magnetite (shapeless) _(verify in JEI/EMI)_.
