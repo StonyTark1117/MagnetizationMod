@@ -2,6 +2,8 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
+Current release: **1.4.1**, an emergency hotfix completing the expandable Tokamak behavior and its GUI, goggles/HUD, Ponder, and runtime regression coverage that were incomplete in 1.4.0.
+
 ## Requirements
 
 - Minecraft **1.21.1**

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.1 — Expandable Tokamak emergency hotfix
+
+### Fixed
+- Completed the expandable Tokamak implementation that 1.4.0 incorrectly described as finished. Centered horizontal odd-edged coil perimeters from 3x3 through the configured maximum now use one authoritative formation snapshot for validity, FE capacity, generation, output, and lit state.
+- Added a real fueled 5x5 reactor regression test. It verifies formation, 3x FE capacity, 3x Deuterium generation, active state, synchronized display data, incomplete outer-ring diagnostics, and controller discovery from an outer coil.
+- Synchronized the formed ring edge and performance multiplier through the Tokamak block entity and machine menu. The GUI and Create goggles, Jade, WTHIT, and The One Probe now report ring dimensions, coil count, multiplier, and explicit Invalid / Formed / Active state.
+- Replaced the goggles overlay's hard-coded eight-coil, 3x3 output. Looking at any configured outer-ring coil now finds the centered controller and previews that exact perimeter, including its missing edge, expected multiplier, and currently active inner ring while an expansion is unfinished.
+- Replaced the fixed eight-coil Ponder instructions with a 5x5 example and guidance for the complete odd-ring progression.
+
 ## 1.4.0 — Noble gases & rare-earth progression
 
 ### Added
