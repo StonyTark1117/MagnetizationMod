@@ -67,16 +67,44 @@ class IronOxideGolemResourceTest {
 
     @Test void mrFluidGolemHasDistinctSoftAndHardenedPresentation() throws Exception {
         final var hashes = new HashSet<String>();
-        for (final String id : List.of("mr_fluid_golem", "mr_fluid_golem_hardened")) {
-            final Path texture = RES.resolve("assets/magnetization/textures/entity/" + id + ".png");
-            final var image = ImageIO.read(texture.toFile());
-            assertNotNull(image, id);
-            assertEquals(128, image.getWidth(), id);
-            assertEquals(128, image.getHeight(), id);
-            hashes.add(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
-                    .digest(Files.readAllBytes(texture))));
-        }
+        final Path textureDir = RES.resolve("assets/magnetization/textures/entity");
+        final var soft = ImageIO.read(textureDir.resolve("mr_fluid_golem.png").toFile());
+        final var hardened = ImageIO.read(textureDir.resolve("mr_fluid_golem_hardened.png").toFile());
+        assertNotNull(soft);
+        assertNotNull(hardened);
+        assertEquals(128, soft.getWidth());
+        assertEquals(128, soft.getHeight());
+        assertEquals(128, hardened.getWidth());
+        assertEquals(128, hardened.getHeight());
+        hashes.add(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                .digest(Files.readAllBytes(textureDir.resolve("mr_fluid_golem.png")))));
+        hashes.add(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                .digest(Files.readAllBytes(textureDir.resolve("mr_fluid_golem_hardened.png")))));
         assertEquals(2, hashes.size(), "soft and hardened MR textures must remain distinct");
+
+        final var frameHashes = new HashSet<String>();
+        for (int frame = 0; frame < 16; frame++) {
+            final Path framePath = textureDir.resolve("mr_fluid_golem_" + frame + ".png");
+            final var image = ImageIO.read(framePath.toFile());
+            assertNotNull(image, framePath.toString());
+            assertEquals(128, image.getWidth(), framePath.toString());
+            assertEquals(128, image.getHeight(), framePath.toString());
+            frameHashes.add(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(Files.readAllBytes(framePath))));
+        }
+        assertEquals(16, frameHashes.size(), "every soft MR frame must visibly animate");
+        assertArrayEquals(Files.readAllBytes(textureDir.resolve("mr_fluid_golem_0.png")),
+                Files.readAllBytes(textureDir.resolve("mr_fluid_golem.png")),
+                "the legacy soft texture must remain a valid frame-zero fallback");
+
+        final var armor = ImageIO.read(RES.resolve(
+                "assets/magnetization/textures/models/armor/mr_liquid_layer_1_0.png").toFile());
+        final double[] softMean = opaqueMean(soft);
+        final double[] armorMean = opaqueMean(armor);
+        for (int channel = 0; channel < 3; channel++) {
+            assertEquals(armorMean[channel], softMean[channel], 2.0,
+                    "golem fluid palette must match MR armor channel " + channel);
+        }
 
         final var lang = JsonParser.parseString(Files.readString(
                 RES.resolve("assets/magnetization/lang/en_us.json"))).getAsJsonObject();
@@ -93,25 +121,41 @@ class IronOxideGolemResourceTest {
     @Test void mrFluidGolemSoftStateCannotRegressToAStaticTextureSwap() throws Exception {
         final String renderer = Files.readString(Path.of(
                 "src/main/java/com/stonytark/magnetization/client/MrFluidGolemRenderer.java"));
-        assertTrue(renderer.contains("addLayer(new FluidSurfaceLayer(this))"),
-                "MR Fluid Golem must install its animated soft-surface layer");
-        assertTrue(renderer.contains("ModelBakery.WATER_FLOW.sprite().wrap"),
-                "soft MR Fluid must reuse the game's animated water-flow sprite");
-        assertTrue(renderer.contains("RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS)"),
-                "the flowing surface must remain visibly distinct from the stone-like base");
-        assertFalse(renderer.contains("RenderType.energySwirl"),
-                "the golem must not maintain a separate scrolling animation path");
-        assertTrue(renderer.contains("golem.isHardened()) return"),
-                "hardening must stop the fluid surface animation");
+        assertTrue(renderer.contains("golem.isHardened()) return HARDENED"),
+                "hardening must select the rigid texture directly");
+        assertTrue(renderer.contains("FLUID_FRAMES[(entity.tickCount / FRAME_TIME) % FRAMES]"),
+                "soft state must select complete UV-correct frames");
+        assertTrue(renderer.contains("FRAMES = 16"));
+        assertTrue(renderer.contains("FRAME_TIME = 3"));
+        assertFalse(renderer.contains("addLayer("),
+                "MR Fluid Golem must render one coherent mesh without a flickering overlay");
+        assertFalse(renderer.contains("ModelBakery.WATER_"));
+        assertFalse(renderer.contains("RenderType.energySwirl"));
 
-        try (var entityTextures = Files.list(
-                RES.resolve("assets/magnetization/textures/entity"))) {
-            assertEquals(0L, entityTextures
-                            .filter(path -> path.getFileName().toString()
-                                    .matches("mr_fluid_golem_[0-9]+\\.png"))
-                            .count(),
-                    "the renderer must reuse the existing MR texture instead of duplicating frames");
+        final String armorLayer = Files.readString(Path.of(
+                "src/main/java/com/stonytark/magnetization/client/MrLiquidArmorLayer.java"));
+        final String generator = Files.readString(Path.of("tools/gen_mr_golem.py"));
+        assertTrue(armorLayer.contains("FRAMES = 16"));
+        assertTrue(armorLayer.contains("FRAME_TIME = 3"));
+        assertTrue(generator.contains("FRAMES = 16"));
+        assertTrue(generator.contains("FLUID_TINT = (95, 95, 105)"));
+    }
+
+    private static double[] opaqueMean(final java.awt.image.BufferedImage image) {
+        final double[] sums = new double[3];
+        int count = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                final int argb = image.getRGB(x, y);
+                if ((argb >>> 24) == 0) continue;
+                sums[0] += (argb >>> 16) & 0xFF;
+                sums[1] += (argb >>> 8) & 0xFF;
+                sums[2] += argb & 0xFF;
+                count++;
+            }
         }
+        assertTrue(count > 0, "texture must contain opaque pixels");
+        return new double[]{sums[0] / count, sums[1] / count, sums[2] / count};
     }
 
     @Test void manualAndAdvancementsAreValidJson() throws Exception {

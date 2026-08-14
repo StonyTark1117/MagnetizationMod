@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixed
-- Restored the MR Fluid Golem's material identity instead of inheriting vanilla Iron Golem behavior end to end. Its soft body now renders from the same live water-flow animation used by MR-fluid visuals, without a duplicate frame set, and magnetic hardening locks it to the existing rigid texture. The soft form has normal knockback and configured 30% mitigation; fields synchronize 92% mitigation and knockback immunity immediately. MR Fluid Buckets repair it instead of iron ingots and replace vanilla iron-nugget drops, harden/soften transitions emit subtitled sound and particle cues, and Jade/WTHIT expose the live state. Existing saved golems migrate to player-created guardians.
+- Restored the MR Fluid Golem's material identity instead of inheriting vanilla Iron Golem behavior end to end. Its soft body now uses complete UV-correct frames generated from the same 16-frame tinted-water animation and three-tick cadence as worn MR armor; magnetic hardening swaps the single model pass to the existing rigid texture. The soft form has normal knockback and configured 30% mitigation; fields synchronize 92% mitigation and knockback immunity immediately. MR Fluid Buckets repair it instead of iron ingots and replace vanilla iron-nugget drops, harden/soften transitions emit subtitled sound and particle cues, and Jade/WTHIT expose the live state. Existing saved golems migrate to player-created guardians.
 
 ## 1.4.1 — Tokamak completion, coolant loops & magnetic golems
 
