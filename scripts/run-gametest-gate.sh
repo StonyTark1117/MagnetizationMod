@@ -38,6 +38,12 @@ if [[ -d "$game_directory" ]]; then
     echo "$run_task: moved previous generated run directory to $archive"
 fi
 
+# Gradle can consider the run-preparation task up to date even after the game
+# directory was archived. The dedicated server requires both its working
+# directory and the world parent to exist before it can create properties and
+# acquire world/session.lock on a genuinely fresh run.
+mkdir -p "$game_directory/world"
+
 # A separate process group lets the supervisor terminate the nested Gradle JVM
 # and its lingering Minecraft/Sable child without touching any other Gradle run.
 setsid ./gradlew "$run_task" --no-daemon >"$runner_output" 2>&1 &
