@@ -33,9 +33,9 @@ The original review incorrectly accepted one static group screenshot as proof th
 
 ## Automated acceptance
 
-- `releaseMatrixGate -PmagSmokeSeconds=5`: passed all 22 isolated profiles on 2026-08-14 in 15m15s, including the minimal release profile, absent-mod behavior, Coasters Simulated: Track Styles, Steam 'n' Rails, Copycats+, TFMG, both Ore Excavation integrations, and Curios.
+- `releaseMatrixGate -PmagSmokeSeconds=5`: passed all 22 isolated profiles on 2026-08-14 in 12m10s, including the minimal release profile, absent-mod behavior, Coasters Simulated: Track Styles, Steam 'n' Rails, Copycats+, TFMG, both Ore Excavation integrations, and Curios.
 - Fresh minimal server: generated isolated `eula.txt` and deterministic `server.properties`, reached `Done`, accepted `stop`, passed strict log review, and left no matching JVM alive.
-- Core GameTests: a fresh standalone run passed 163/163 in 1.206m and the final matrix run passed 163/163 in 3.930m while Sable generated the 50-structure batch. The separate MR/EMP regression namespace passed 2/2. No GameTest JVM or standard server port remained after the standalone gate.
+- Core GameTests: the final matrix run passed 165/165 in 48.22s, including the hardened-MR-fluid chunk-reload and magnetized-horse-armor regressions. The focused MR/EMP regression namespace passed 4/4 in 9.810s. No GameTest JVM or standard server port remained after the gate.
 - Optional clients: isolated Jade and The One Probe profiles entered singleplayer and produced the ten committed HUD captures above. The full lab client also reached the world with Sodium and the pinned Iris build; the development wrapper corrects that Iris jar's exclusive `1.21.1` metadata upper bound without shipping Iris or modifying the release JAR.
 - Immutable visual gate: all 51 declared PNGs are present and match `playtest/baselines/SHA256SUMS`; an ordinary survival Railgun comparison passed at RMSE `0.00949255` against the `0.08` limit without recording or replacing the baseline.
 - Release artifact: `verifyReleaseJar` confirmed required metadata and rejected build-cache/OS-file leakage.
