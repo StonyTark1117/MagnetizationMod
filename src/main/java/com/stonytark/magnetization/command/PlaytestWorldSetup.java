@@ -50,7 +50,7 @@ public final class PlaytestWorldSetup {
     private static final String ROOT_TAG = "magnetization:playtest_setup";
     // Bump whenever the staged footprint changes so existing disposable saves
     // are rebuilt on the next login instead of silently retaining an old lab.
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
     private static final int LAB_X = 64;
     private static final int LAB_Z = 64;
 
@@ -82,7 +82,11 @@ public final class PlaytestWorldSetup {
                                 .then(Commands.literal("seed")
                                         .executes(ctx -> seedPersistence(ctx.getSource())))
                                 .then(Commands.literal("verify")
-                                        .executes(ctx -> verifyPersistence(ctx.getSource())))))
+                                        .executes(ctx -> verifyPersistence(ctx.getSource()))))
+                        .then(Commands.literal("railgun_auto")
+                                .executes(ctx -> seedRailgunAutoAssembly(ctx.getSource())))
+                        .then(Commands.literal("thruster_exhaust")
+                                .executes(ctx -> seedThrusterExhaust(ctx.getSource()))))
                 .then(Commands.literal("where").executes(ctx -> where(ctx.getSource())));
     }
 
@@ -90,14 +94,16 @@ public final class PlaytestWorldSetup {
             Map.entry("overview", new BlockPos(2, 2, 2)),
             Map.entry("gallery", new BlockPos(8, 2, 8)),
             Map.entry("electrolyzer", new BlockPos(3, 2, 21)),
-            Map.entry("tokamak", new BlockPos(14, 2, 22)),
+            Map.entry("tokamak", new BlockPos(17, 2, 23)),
             Map.entry("fusion", new BlockPos(27, 2, 22)),
             Map.entry("railgun", new BlockPos(38, 2, 25)),
             Map.entry("dipoles", new BlockPos(51, 2, 22)),
             Map.entry("automation", new BlockPos(4, 2, 35)),
             Map.entry("gallium", new BlockPos(16, 2, 35)),
+            Map.entry("golems", new BlockPos(16, 2, 35)),
             Map.entry("ship", new BlockPos(32, 2, 40)),
             Map.entry("portal", new BlockPos(51, 2, 40)),
+            Map.entry("thruster_exhaust", new BlockPos(32, 2, 45)),
             Map.entry("gas_excitation", new BlockPos(8, 2, 56)),
             Map.entry("air_separator", new BlockPos(21, 2, 56)),
             Map.entry("ion_thruster", new BlockPos(33, 2, 56)),
@@ -250,10 +256,38 @@ public final class PlaytestWorldSetup {
         }
     }
 
+    private static int seedRailgunAutoAssembly(final CommandSourceStack source) {
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final int staged = stageRailgunAutoAssembly(player.serverLevel(), currentAnchor(player));
+            source.sendSuccess(() -> Component.literal(
+                    "PLAYTEST_ASSERT SEEDED railgun_auto blocks=" + staged), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal(
+                    "PLAYTEST_ASSERT FAIL railgun_auto: " + exception.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int seedThrusterExhaust(final CommandSourceStack source) {
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final int blocks = stageThrusterExhaust(player.serverLevel(), currentAnchor(player));
+            source.sendSuccess(() -> Component.literal(
+                    "PLAYTEST_ASSERT SEEDED thruster_exhaust blocks=" + blocks), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal(
+                    "PLAYTEST_ASSERT FAIL thruster_exhaust: " + exception.getMessage()));
+            return 0;
+        }
+    }
+
     private static BlockPos currentAnchor(final ServerPlayer player) {
         final CompoundTag tag = state(player);
         if (tag.getInt("Version") != VERSION || !Preset.LAB.id.equals(tag.getString("Preset"))) {
-            throw new IllegalStateException("The persistence scenario requires a staged lab preset");
+            throw new IllegalStateException("This scenario requires a staged lab preset");
         }
         return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
     }
@@ -289,6 +323,93 @@ public final class PlaytestWorldSetup {
         railgun.setRailLength(8);
         railgun.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
         railgun.setChanged();
+    }
+
+    static int stageRailgunAutoAssembly(final ServerLevel level, final BlockPos anchor) {
+        final BlockPos first = anchor.offset(37, 0, 22);
+        final BlockPos second = anchor.offset(41, 0, 22);
+        buildRail(level, first);
+        buildRail(level, second);
+        final RailgunEmitterBlockEntity a = blockEntity(level, first, RailgunEmitterBlockEntity.class);
+        final RailgunEmitterBlockEntity b = blockEntity(level, second, RailgunEmitterBlockEntity.class);
+        a.energyBuffer().receiveEnergy(35_000, false);
+        b.energyBuffer().receiveEnergy(35_000, false);
+        a.setManualMode(false);
+        b.setManualMode(false);
+        a.setAutoAssemble(true);
+        b.setAutoAssemble(true);
+        a.setRailLength(8);
+        b.setRailLength(8);
+
+        int staged = 0;
+        for (int across = 1; across <= 3; across++) {
+            for (int along = 1; along <= 3; along++) {
+                final Block block = (across + along) % 2 == 0 ? Blocks.IRON_BLOCK : Blocks.COPPER_BLOCK;
+                set(level, first.offset(across, -1, -along), block);
+                staged++;
+            }
+        }
+        return staged;
+    }
+
+    static int stageThrusterExhaust(final ServerLevel level, final BlockPos anchor) {
+        // Four active engine styles on one connected Sable test craft. They face
+        // south so their exhaust points back toward the station camera while the
+        // craft accelerates safely north through the marked ship lane.
+        final BlockPos origin = anchor.offset(28, 4, 39);
+        final Direction facing = Direction.SOUTH;
+        final List<BlockPos> blocks = new ArrayList<>();
+
+        setFacing(level, origin, MagBlocks.MICRO_THRUSTER.get(), facing);
+        set(level, origin.east(), Blocks.IRON_BLOCK);
+        setFacing(level, origin.east(2), MagBlocks.MHD_JET.get(), facing);
+        set(level, origin.east(3), Blocks.IRON_BLOCK);
+        setFacing(level, origin.east(4), MagBlocks.ION_THRUSTER.get(), facing);
+        set(level, origin.east(5), Blocks.IRON_BLOCK);
+        for (int x = 0; x <= 5; x++) blocks.add(origin.east(x));
+
+        final BlockPos fusionBase = origin.offset(6, -1, 0);
+        buildFusionPanel(level, fusionBase, facing);
+        for (int x = 0; x < 5; x++) for (int y = 0; y < 3; y++) {
+            blocks.add(fusionBase.offset(x, y, 0));
+        }
+
+        final var micro = blockEntity(level, origin,
+                com.stonytark.magnetization.content.jet.MicroThrusterBlockEntity.class);
+        micro.fluidHandler().fill(new FluidStack(MagFluids.FERROFLUID.get(), 4_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        micro.energyBuffer().receiveEnergy(16_000, false);
+
+        final var mhd = blockEntity(level, origin.east(2),
+                com.stonytark.magnetization.content.jet.MhdJetBlockEntity.class);
+        mhd.setMagnet(new ItemStack(MagItems.NEODYMIUM_MAGNET.get()));
+        mhd.fluidHandler().fill(new FluidStack(MagFluids.GALLIUM.get(), 4_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        mhd.energyBuffer().receiveEnergy(16_000, false);
+
+        final var ion = blockEntity(level, origin.east(4),
+                com.stonytark.magnetization.content.jet.IonThrusterBlockEntity.class);
+        ion.fluidHandler().fill(new FluidStack(MagFluids.XENON.get(), 4_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        ion.energyBuffer().receiveEnergy(16_000, false);
+
+        final FusionThrusterBlockEntity fusion = blockEntity(level, fusionBase.offset(1, 1, 0),
+                FusionThrusterBlockEntity.class);
+        fusion.fluidHandler().fill(new FluidStack(MagFluids.HELIUM_3.get(), 4_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        fusion.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 4_000),
+                IFluidHandler.FluidAction.EXECUTE);
+        fusion.energyBuffer().receiveEnergy(32_000, false);
+
+        final var bounds = new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                origin.getX(), fusionBase.getY(), origin.getZ(),
+                fusionBase.getX() + 5, fusionBase.getY() + 3, origin.getZ() + 1);
+        final var ship = dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(
+                level, origin, blocks, bounds);
+        if (ship.getMassTracker().isInvalid()) {
+            throw new IllegalStateException("Thruster preview assembled with invalid mass");
+        }
+        return blocks.size();
     }
 
     static boolean persistenceStateValid(final ServerLevel level, final BlockPos anchor) {
@@ -374,12 +495,10 @@ public final class PlaytestWorldSetup {
                 stack(Items.WATER_BUCKET, 8), stack(MagItems.HYDROGEN_BUCKET.get(), 4),
                 stack(MagItems.TRITIUM_BUCKET.get(), 2), stack(Items.BUCKET, 8), stack(Items.REDSTONE_BLOCK, 4)));
 
-        label(level, a.offset(12, 0, 15), "TOKAMAK", "Valid 3x3 ring", "Compare coolant curves", "Fuel + coolant chest");
+        label(level, a.offset(12, 0, 15), "TOKAMAK", "Formed 3x3 + 5x5", "Solid cores + coolant", "Fuel + coolant chest");
         final BlockPos tokamak = a.offset(14, 0, 18);
-        set(level, tokamak, MagBlocks.TOKAMAK_CONTROLLER.get());
-        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
-            if (dx != 0 || dz != 0) set(level, tokamak.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
-        }
+        buildTokamak(level, tokamak, 1);
+        buildTokamak(level, a.offset(19, 0, 18), 2);
         stockChest(level, a.offset(12, 0, 20), List.of(stack(MagItems.DEUTERIUM_CELL.get(), 8),
                 stack(MagItems.TRITIUM_CELL.get(), 8), stack(MagItems.HELIUM_3_CELL.get(), 8),
                 stack(Items.WATER_BUCKET, 8), stack(MagItems.DEUTERIUM_OXIDE_BUCKET.get(), 8),
@@ -394,7 +513,7 @@ public final class PlaytestWorldSetup {
 
         label(level, a.offset(35, 0, 15), "RAILGUN", "Two 8-block rails", "Auto + remote", "Target lane north");
         buildRail(level, a.offset(37, 0, 22));
-        buildRail(level, a.offset(40, 0, 22));
+        buildRail(level, a.offset(41, 0, 22));
         stockChest(level, a.offset(35, 0, 20), List.of(stack(MagItems.RAILGUN_REMOTE.get(), 4),
                 stack(Items.IRON_BLOCK, 32), stack(Items.COPPER_BLOCK, 32), stack(Items.REDSTONE_BLOCK, 8)));
 
@@ -421,6 +540,10 @@ public final class PlaytestWorldSetup {
         set(level, a.offset(16, 0, 30), MagBlocks.HARDENED_MR_FLUID.get());
         set(level, a.offset(18, 0, 30), MagBlocks.PERMANENT_MAGNET.get());
         stockChest(level, a.offset(16, 0, 32), List.of(stack(MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get(), 8),
+                stack(MagItems.MAGNETITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.HEMATITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG.get(), 4),
                 stack(MagItems.GALLIUM_BUCKET.get(), 8), stack(MagItems.MR_FLUID_BUCKET.get(), 8),
                 stack(MagItems.MAGNETITE_BLOCK.get(), 16), stack(MagItems.PYRRHOTITE_BLOCK.get(), 16),
                 stack(MagItems.HEMATITE_BLOCK.get(), 16), stack(MagItems.TITANOMAGNETITE_BLOCK.get(), 16),
@@ -438,6 +561,8 @@ public final class PlaytestWorldSetup {
         stockChest(level, a.offset(44, 1, 31), List.of(stack(Items.OBSIDIAN, 64), stack(Items.FLINT_AND_STEEL, 2),
                 stack(MagItems.RAILGUN_EMITTER.get(), 8), stack(MagItems.RAILGUN_REMOTE.get(), 8),
                 stack(MagItems.POLARITY_INVERTER.get(), 8), stack(MagItems.MAGNETITE_BLOCK.get(), 32)));
+
+        label(level, a.offset(27, 0, 43), "THRUSTER EXHAUST", "Run scenario command", "4 active plume styles", "Cooled Fusion mist");
 
         label(level, a.offset(2, 0, 48), "GAS EXCITATION", "Dormant + lit gases", "Detector + vent", "Supplies in chest");
         set(level, a.offset(2, 0, 51), MagBlocks.GAS_EXCITER.get());
@@ -541,14 +666,30 @@ public final class PlaytestWorldSetup {
     }
 
     private static void buildFusionPanel(final ServerLevel level, final BlockPos base) {
+        buildFusionPanel(level, base, Direction.NORTH);
+    }
+
+    private static void buildFusionPanel(final ServerLevel level, final BlockPos base,
+                                         final Direction facing) {
         for (int x = 0; x < 5; x++) for (int y = 0; y < 3; y++) {
             final boolean interior = x > 0 && x < 4 && y == 1;
             BlockState state = interior ? MagBlocks.FUSION_THRUSTER.get().defaultBlockState()
                     : MagBlocks.TOKAMAK_COIL.get().defaultBlockState();
             if (interior && state.hasProperty(DirectionalBlock.FACING)) {
-                state = state.setValue(DirectionalBlock.FACING, Direction.NORTH);
+                state = state.setValue(DirectionalBlock.FACING, facing);
             }
             level.setBlock(base.offset(x, y, 0), state, Block.UPDATE_ALL);
+        }
+    }
+
+    private static void buildTokamak(final ServerLevel level, final BlockPos center,
+                                     final int halfEdge) {
+        for (int dx = -halfEdge; dx <= halfEdge; dx++) {
+            for (int dz = -halfEdge; dz <= halfEdge; dz++) {
+                final boolean perimeter = Math.abs(dx) == halfEdge || Math.abs(dz) == halfEdge;
+                set(level, center.offset(dx, 0, dz), perimeter
+                        ? MagBlocks.TOKAMAK_COIL.get() : MagBlocks.TOKAMAK_CONTROLLER.get());
+            }
         }
     }
 
@@ -572,6 +713,10 @@ public final class PlaytestWorldSetup {
         return List.of(stack(MagItems.FIELD_COMPASS.get(), 1), stack(MagItems.ORE_COMPASS.get(), 1),
                 stack(MagItems.RAILGUN_REMOTE.get(), 2), stack(MagItems.MAGNETIC_GRAPPLE.get(), 1),
                 stack(MagItems.REPULSOR_GUN.get(), 1), stack(MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.MAGNETITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.HEMATITE_GOLEM_SPAWN_EGG.get(), 4),
+                stack(MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG.get(), 4),
                 stack(MagItems.HYDROGEN_BUCKET.get(), 4), stack(MagItems.DEUTERIUM_CELL.get(), 8),
                 stack(MagItems.TRITIUM_CELL.get(), 8), stack(MagItems.HELIUM_3_CELL.get(), 8),
                 stack(MagItems.TRITIUM_BUCKET.get(), 4), stack(MagItems.HELIUM_3_BUCKET.get(), 4),
@@ -611,6 +756,13 @@ public final class PlaytestWorldSetup {
 
     private static void set(final ServerLevel level, final BlockPos pos, final Block block) {
         level.setBlock(pos, block.defaultBlockState(), Block.UPDATE_ALL);
+    }
+
+    private static void setFacing(final ServerLevel level, final BlockPos pos, final Block block,
+                                  final Direction facing) {
+        BlockState state = block.defaultBlockState();
+        if (state.hasProperty(DirectionalBlock.FACING)) state = state.setValue(DirectionalBlock.FACING, facing);
+        level.setBlock(pos, state, Block.UPDATE_ALL);
     }
 
     private static void stockChest(final ServerLevel level, final BlockPos pos, final List<ItemStack> contents) {

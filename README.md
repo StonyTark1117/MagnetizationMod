@@ -393,11 +393,13 @@ The manifest in `playtest/automation-matrix.json` controls stations, log checks,
 captures, and visual thresholds. Evidence is written beneath the ignored
 `playtest-results/` directory. The first accepted run creates baselines and reports
 `BASELINE_CREATED`; subsequent runs compare captures and report `PASS` or `FAIL`.
-The lab video actions spawn a moving Sable test ship and invoke an AeroPortals
-dimension transfer while recording; detailed ship-data retention remains covered by
-the deterministic compatibility GameTests. The matrix also opens the major machine
-GUIs, records their interaction states, and spawns both gallium and MR-fluid golems
-for visual inspection. Fuel-slot acceptance/rejection and setting changes remain
+The lab video actions spawn a moving Sable test ship, auto-assemble and launch a
+Railgun projectile, record all four active thruster plume styles plus cooled Fusion
+mist, and invoke an AeroPortals dimension transfer; detailed ship-data retention
+remains covered by the deterministic compatibility GameTests. The matrix also opens
+the major machine GUIs, records their interaction states, and spawns Gallium, MR Fluid,
+Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems for visual inspection.
+Fuel-slot acceptance/rejection and setting changes remain
 operator-confirmed steps because their GUI coordinates vary with scale and recipe-viewer layout.
 Before traversing the lab, the runner seeds active Electrolyzer, Tokamak, Fusion
 Thruster, and Railgun state, saves and exits to the title screen, reopens the same
