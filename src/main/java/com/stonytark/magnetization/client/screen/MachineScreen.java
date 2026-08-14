@@ -154,10 +154,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         switch (menu.kind()) {
             case TOKAMAK -> {
                 final String[] tiers = {"dd", "dt", "he3"};
+                lines.add(MachineGuiData.tokamakRingScaleLine(menu.displayData()));
                 lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_tier_"
                         + tiers[Math.min(2, Math.max(0, menu.displayTier()))]));
-                lines.add(Component.translatable("tooltip.magnetization.gui_fuel", menu.displayCurrent() / 20));
-                lines.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, menu.displayAuxiliary())));
+                lines.add(Component.translatable("tooltip.magnetization.gui_tokamak_operation",
+                        menu.displayCurrent() / 20, Math.max(0, menu.displayAuxiliary())));
             }
             case THRUSTER -> lines.add(Component.translatable("tooltip.magnetization.gui_fluid", Math.max(0, menu.displayCurrent())));
             case ION_THRUSTER -> {

@@ -103,6 +103,15 @@ public final class TokamakPreviewGameTests {
         helper.assertTrue(helper.getBlockState(controller)
                         .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT),
                 "Expanded Tokamak stayed unlit after a fueled server tick");
+        final var display = be.displayData();
+        helper.assertTrue(display.structureSize() == 5 && display.structureScale() == 3,
+                "Expanded Tokamak did not expose its 5x5 ring and 3x scale to GUI/HUD consumers");
+        helper.assertTrue(display.status()
+                        == com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE,
+                "Fueled expanded Tokamak did not expose ACTIVE status");
+        helper.assertTrue(be.hudLines().stream().anyMatch(line -> line.getString().contains("5x5"))
+                        && be.hudLines().stream().anyMatch(line -> line.getString().contains("3")),
+                "Expanded Tokamak HUD omitted its ring size or performance multiplier");
         helper.succeed();
     }
 }

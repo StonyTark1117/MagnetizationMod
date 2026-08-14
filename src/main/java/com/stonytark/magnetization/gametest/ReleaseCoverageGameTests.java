@@ -152,8 +152,8 @@ public final class ReleaseCoverageGameTests {
                                                      final int value) {}
             });
             serverMenu.broadcastFullState();
-            helper.assertTrue(transported[0] != null && transported[0].length == 13,
-                    "Server menu did not emit its complete 13-slot settings snapshot");
+            helper.assertTrue(transported[0] != null && transported[0].length == 17,
+                    "Server menu did not emit its complete 17-slot settings snapshot");
 
             // A separate physical client can have different COMMON values. Apply only the
             // vanilla menu packet captured above: displayed capacities must remain server-owned.

@@ -51,6 +51,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     private final WideData stat2 = new WideData();
     private final WideData stat3 = new WideData();
     private final WideData stat4 = new WideData();
+    private final WideData structureSize = new WideData();
+    private final WideData structureScale = new WideData();
     private final DataSlot displayStatus = DataSlot.standalone();
 
     /** A 32-bit value synced across TWO {@link DataSlot}s (low + high 16 bits). A
@@ -108,6 +110,10 @@ public final class MachineMenu extends AbstractContainerMenu {
         addDataSlot(stat3.hi);
         addDataSlot(stat4.lo);
         addDataSlot(stat4.hi);
+        addDataSlot(structureSize.lo);
+        addDataSlot(structureSize.hi);
+        addDataSlot(structureScale.lo);
+        addDataSlot(structureScale.hi);
         addDataSlot(displayStatus);
         refresh();
     }
@@ -136,6 +142,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int displayAuxiliary() { return stat2(); }
     public int displayTier() { return stat3(); }
     public int displayCapacity() { return Math.max(1, stat4()); }
+    public int structureSize() { return Math.max(0, structureSize.get()); }
+    public int structureScale() { return Math.max(0, structureScale.get()); }
     public MachineDisplayData.Status displayStatus() {
         final MachineDisplayData.Status[] values = MachineDisplayData.Status.values();
         final int code = displayStatus.get();
@@ -143,7 +151,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     }
     public MachineDisplayData displayData() {
         return new MachineDisplayData(energyStored(), energyMax(), displayCurrent(), displayCapacity(),
-                displayTier(), displayAuxiliary(), displayStatus());
+                displayTier(), displayAuxiliary(), structureSize(), structureScale(), displayStatus());
     }
 
     private void refresh() {
@@ -156,6 +164,8 @@ public final class MachineMenu extends AbstractContainerMenu {
                 stat2.set(snapshot.auxiliary());
                 stat3.set(snapshot.tier());
                 stat4.set(snapshot.capacity());
+                structureSize.set(snapshot.structureSize());
+                structureScale.set(snapshot.structureScale());
                 displayStatus.set(snapshot.statusCode());
             }
         });

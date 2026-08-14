@@ -45,13 +45,20 @@ public interface MachineGuiData extends MachineHudData {
      *  correct fill percentage. -1 = no secondary bar. */
     default int guiStat4() { return -1; }
 
+    /** Formed multiblock edge/interior count for structure-aware machines. */
+    default int guiStructureSize() { return 0; }
+
+    /** Performance multiplier derived from the formed structure. */
+    default int guiStructureScale() { return 0; }
+
     /**
      * Named server-authoritative snapshot for new display consumers. The legacy
      * guiStat methods remain as a compatibility bridge for old screens.
      */
     default MachineDisplayData displayData() {
         return new MachineDisplayData(guiEnergyStored(), guiEnergyMax(), guiStat1(),
-                guiStat4(), guiStat3(), guiStat2(), guiDisplayStatus());
+                guiStat4(), guiStat3(), guiStat2(), guiStructureSize(),
+                guiStructureScale(), guiDisplayStatus());
     }
 
     /** Override when a machine's lifecycle is richer than current > 0 = active. */
@@ -111,6 +118,8 @@ public interface MachineGuiData extends MachineHudData {
         final MachineDisplayData display = displayData();
         switch (guiKind()) {
             case TOKAMAK -> {
+                out.add(tokamakRingLine(display));
+                if (display.structureScale() > 0) out.add(tokamakScaleLine(display));
                 out.add(Component.translatable("tooltip.magnetization.gui_fuel", display.current() / 20).withStyle(ChatFormatting.GRAY));
                 out.add(Component.translatable("tooltip.magnetization.gui_output", Math.max(0, display.auxiliary())).withStyle(ChatFormatting.GRAY));
                 if (display.current() > 0) {
@@ -172,6 +181,28 @@ public interface MachineGuiData extends MachineHudData {
             }
         }
         return out;
+    }
+
+    static Component tokamakRingLine(final MachineDisplayData display) {
+        if (display.structureSize() <= 0) {
+            return Component.translatable("tooltip.magnetization.gui_tokamak_ring_invalid")
+                    .withStyle(ChatFormatting.RED);
+        }
+        final int edge = display.structureSize();
+        return Component.translatable("tooltip.magnetization.gui_tokamak_ring",
+                edge, edge, edge * 4 - 4).withStyle(ChatFormatting.GRAY);
+    }
+
+    static Component tokamakScaleLine(final MachineDisplayData display) {
+        return Component.translatable("tooltip.magnetization.gui_tokamak_scale",
+                Math.max(1, display.structureScale())).withStyle(ChatFormatting.LIGHT_PURPLE);
+    }
+
+    static Component tokamakRingScaleLine(final MachineDisplayData display) {
+        if (display.structureSize() <= 0) return tokamakRingLine(display);
+        final int edge = display.structureSize();
+        return Component.translatable("tooltip.magnetization.gui_tokamak_ring_scaled",
+                edge, edge, edge * 4 - 4, Math.max(1, display.structureScale()));
     }
 
     /** Magnetic potency of the slotted material (0 = empty / not a magnet).

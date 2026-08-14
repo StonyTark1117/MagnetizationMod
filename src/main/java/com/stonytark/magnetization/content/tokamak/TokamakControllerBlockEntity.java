@@ -35,6 +35,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
     private int burnTime = 0;
     private int currentTier = 0;   // 0 = D-D, 1 = D-T, 2 = D-He³ — set when a cell is consumed
     private int lastOutput = 0; // FE actually pushed to neighbours last tick (GUI readout)
+    private int formedRingEdge = 0;
+    private int formedRingMultiplier = 0;
     private final com.stonytark.magnetization.content.MachineSyncGate syncGate = new com.stonytark.magnetization.content.MachineSyncGate();
 
     /** Fuel slot — holds spare fusion cells (D-D / D-T / D-He³), auto-fed into the burn. */
@@ -98,30 +100,23 @@ public class TokamakControllerBlockEntity extends BlockEntity
     }
     @Override public int guiEnergyStored() { return energy.getEnergyStored(); }
     @Override public int guiEnergyMax() {
-        return scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), ringMultiplier());
+        return scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
+                Math.max(1, formedRingMultiplier));
     }
     @Override public int guiStat1() { return burnTime; }          // ticks; screen shows seconds
     @Override public int guiStat2() { return lastOutput; }        // FE/tick out
     @Override public int guiStat3() { return currentTier; }       // 0=D-D, 1=D-T, 2=D-He³
     @Override public int guiStat4() { return tierBurnTicks(currentTier); }  // bar denominator (server config)
+    @Override public int guiStructureSize() { return formedRingEdge; }
+    @Override public int guiStructureScale() { return formedRingMultiplier; }
     @Override public com.stonytark.magnetization.menu.MachineDisplayData.Status guiDisplayStatus() {
+        if (formedRingEdge <= 0) {
+            return com.stonytark.magnetization.menu.MachineDisplayData.Status.INVALID;
+        }
         return level != null && getBlockState().hasProperty(BlockStateProperties.LIT)
                 && getBlockState().getValue(BlockStateProperties.LIT)
                 ? com.stonytark.magnetization.menu.MachineDisplayData.Status.ACTIVE
-                : com.stonytark.magnetization.menu.MachineDisplayData.Status.IDLE;
-    }
-
-    /** Prepend the active fuel tier (D-D / D-T / D-He³) to the shared tokamak HUD
-     *  lines so WTHIT/Jade/TOP/Create goggles show which cell is burning + its runtime + output. */
-    @Override
-    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
-        final java.util.List<net.minecraft.network.chat.Component> out = new java.util.ArrayList<>();
-        final String[] tiers = {"dd", "dt", "he3"};
-        out.add(net.minecraft.network.chat.Component.translatable(
-                "tooltip.magnetization.gui_tokamak_tier_" + tiers[Math.min(2, Math.max(0, currentTier))])
-                .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
-        out.addAll(com.stonytark.magnetization.menu.MachineGuiData.super.hudLines());
-        return out;
+                : com.stonytark.magnetization.menu.MachineDisplayData.Status.FORMED;
     }
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,
@@ -134,6 +129,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
         final TokamakRingPreview.Preview ring = TokamakRingPreview.preview(level, pos);
         final boolean formed = ring.valid();
         final int multiplier = formed ? Math.max(1, ring.edge() - 2) : 1;
+        be.formedRingEdge = formed ? ring.edge() : 0;
+        be.formedRingMultiplier = formed ? multiplier : 0;
         be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
                 scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
@@ -233,6 +230,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
         tag.putInt("Burn", burnTime);
         tag.putInt("Tier", currentTier);
         tag.putInt("LastOutput", lastOutput); // synced via getUpdateTag → WTHIT/GUI output readout
+        tag.putInt("RingEdge", formedRingEdge);
+        tag.putInt("RingMultiplier", formedRingMultiplier);
         tag.put("Fuel", fuelSlot.createTag(registries));
     }
 
@@ -243,6 +242,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
         burnTime = tag.getInt("Burn");
         currentTier = tag.getInt("Tier");
         lastOutput = tag.getInt("LastOutput");
+        formedRingEdge = tag.getInt("RingEdge");
+        formedRingMultiplier = tag.getInt("RingMultiplier");
         fuelSlot.fromTag(tag.getList("Fuel", net.minecraft.nbt.Tag.TAG_COMPOUND), registries);
     }
 
