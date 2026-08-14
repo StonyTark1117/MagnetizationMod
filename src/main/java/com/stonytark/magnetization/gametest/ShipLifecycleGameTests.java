@@ -34,6 +34,10 @@ public final class ShipLifecycleGameTests {
     private static final String EMPTY = "empty";
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger("magnetization/gametest");
     private static final int RAILGUN_TEST_GAP = 5;
+    // A three-wide ship cannot be geometrically centered between rails five
+    // blocks apart. Use an even gap for the manual boarding fixture so its
+    // collider never starts against one rail and loses launch speed to contact.
+    private static final int RAILGUN_MANUAL_TEST_GAP = 6;
     private static final int RAILGUN_TEST_POST_EXIT_TICKS = 20;
 
     private record RailgunBenchmark(String name, int railLength, int shipEdge,
@@ -392,7 +396,7 @@ public final class ShipLifecycleGameTests {
     public static void manualRailgunSuspendsShipUntilRemoteFire(final GameTestHelper helper) {
         final var level = helper.getLevel();
         final BlockPos rail = skyBase(helper, 240);
-        final BlockPos sibling = rail.offset(RAILGUN_TEST_GAP, 0, 0);
+        final BlockPos sibling = rail.offset(RAILGUN_MANUAL_TEST_GAP, 0, 0);
         final BlockPos shipOrigin = rail.offset(2, 0, -2);
         final List<BlockPos> blocks = railgunShipBlocks(shipOrigin, 3);
         place(level, blocks, blocks.stream().map(ignored -> Blocks.IRON_BLOCK.defaultBlockState()).toList());
