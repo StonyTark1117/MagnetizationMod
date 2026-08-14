@@ -192,7 +192,13 @@ public final class IonThrusterBlockEntity extends BlockEntity
         for (final net.minecraft.world.entity.LivingEntity living : server.getEntitiesOfClass(
                 net.minecraft.world.entity.LivingEntity.class,
                 new net.minecraft.world.phys.AABB(world, world).inflate(radius))) {
-            com.stonytark.magnetization.content.effect.RadonExposureHandler.addExposure(living, 1);
+            // Exposure uses the inflated AABB above, so Chebyshev distance gives
+            // the matching shortest clearance to one of that hazard cube's faces.
+            final Vec3 position = living.position();
+            final double fromCentre = Math.max(Math.abs(position.x - world.x),
+                    Math.max(Math.abs(position.y - world.y), Math.abs(position.z - world.z)));
+            com.stonytark.magnetization.content.effect.RadonExposureHandler.addExposure(
+                    living, 1, Math.max(0.0d, radius - fromCentre));
         }
     }
 

@@ -150,6 +150,20 @@ class NobleGasResourceCompletenessTest {
         assertEquals(32, model.getAsJsonArray("overrides").size());
         assertTrue(model.getAsJsonArray("overrides").get(0).getAsJsonObject()
                 .getAsJsonObject("predicate").has("magnetization:gas_angle"));
+        for (final String key : List.of(
+                "hud.magnetization.gas_detector.exposure",
+                "hud.magnetization.gas_detector.safety.disabled",
+                "hud.magnetization.gas_detector.safety.exposed",
+                "hud.magnetization.gas_detector.safety.radon_clearance",
+                "hud.magnetization.gas_detector.safety.recovering",
+                "hud.magnetization.gas_detector.safety.clear",
+                "message.magnetization.gas_detector.safety.exposed",
+                "message.magnetization.gas_detector.safety.radon_clearance")) {
+            assertTrue(lang.has(key), () -> "Missing Gas Detector exposure/safety translation " + key);
+        }
+        assertTrue(lang.get("book.magnetization.entry.gas_detector.readout.text").getAsString()
+                        .contains("distance to leave"),
+                "Field Manual no longer explains the Gas Detector's safety-distance readout");
     }
 
     private static void assertPaperFilterRecipe(final JsonObject recipe) {

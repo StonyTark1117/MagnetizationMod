@@ -3,6 +3,7 @@
 ## 1.4.1 — Expandable Tokamak emergency hotfix
 
 ### Fixed
+- Completed the Gas Detector exposure and safe-distance readouts promised by 1.4.0. Its expanded HUD and action-bar reading now show server-authoritative Radon dose/threshold, exposed/recovering/clear state, and estimated clearance from a Radon cell or active Ion Thruster exhaust.
 - Corrected expanded Tokamak construction to require a solid Reactor-Core interior, not one center core surrounded by a distant coil perimeter. A 5x5 reactor now requires nine cores and a 7x7 requires twenty-five. The center is the deterministic master; follower cores forward fuel, FE, GUI, and HUD access, perimeter coils expose shared FE output, and no follower generates independently.
 - Completed the expandable Tokamak implementation that 1.4.0 incorrectly described as finished. Horizontal odd-edged structures from 3x3 through the configured maximum now validate both their coil perimeter and solid core interior through one authoritative formation snapshot for FE capacity, generation, output, and lit state.
 - Added a real fueled 5x5 reactor regression test. It verifies formation, 3x FE capacity, 3x Deuterium generation, active state, synchronized display data, incomplete outer-ring diagnostics, and controller discovery from an outer coil.

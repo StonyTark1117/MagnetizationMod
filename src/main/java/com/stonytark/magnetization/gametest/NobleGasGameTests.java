@@ -442,6 +442,44 @@ public final class NobleGasGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "gasDetectorExposureSync")
+    public static void gasDetectorPayloadCarriesServerOwnedExposureAndSafetyDistance(final GameTestHelper helper) {
+        final var zombie = helper.spawnWithNoFreeWill(net.minecraft.world.entity.EntityType.ZOMBIE,
+                new BlockPos(1, 1, 1));
+        final boolean enabled = com.stonytark.magnetization.config.MagConfig.RADON_RADIATION_ENABLED.get();
+        final int threshold = com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_THRESHOLD_TICKS.get();
+        final int recovery = com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_DECAY_PER_TICK.get();
+        try {
+            com.stonytark.magnetization.config.MagConfig.RADON_RADIATION_ENABLED.set(true);
+            com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_THRESHOLD_TICKS.set(40);
+            com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_DECAY_PER_TICK.set(3);
+            com.stonytark.magnetization.content.effect.RadonExposureHandler.addExposure(zombie, 10, 2.75d);
+
+            final var snapshot = com.stonytark.magnetization.content.effect.RadonExposureHandler.snapshot(zombie);
+            helper.assertTrue(snapshot.radiationEnabled() && snapshot.dose() == 10
+                            && snapshot.threshold() == 40 && snapshot.recoveryPerTick() == 3,
+                    "Gas Detector exposure snapshot did not use server-owned dose/config values");
+            helper.assertTrue(snapshot.exposed() && Math.abs(snapshot.distanceToSafety() - 2.75d) < 0.0001d,
+                    "Gas Detector snapshot lost the active exhaust hazard or distance to safety");
+
+            final var payload = com.stonytark.magnetization.network.GasDetectorStatusPayload.from(zombie);
+            final var buffer = new net.minecraft.network.RegistryFriendlyByteBuf(
+                    io.netty.buffer.Unpooled.buffer(), helper.getLevel().registryAccess());
+            com.stonytark.magnetization.network.GasDetectorStatusPayload.CODEC.encode(buffer, payload);
+            final var received = com.stonytark.magnetization.network.GasDetectorStatusPayload.CODEC.decode(buffer);
+            helper.assertTrue(received.radiationEnabled() && received.dose() == 10
+                            && received.threshold() == 40 && received.recoveryPerTick() == 3
+                            && received.exposed()
+                            && Math.abs(received.distanceToSafety() - 2.75d) < 0.0001d,
+                    "Clientbound Gas Detector payload drifted from the authoritative exposure snapshot");
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.RADON_RADIATION_ENABLED.set(enabled);
+            com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_THRESHOLD_TICKS.set(threshold);
+            com.stonytark.magnetization.config.MagConfig.RADON_EXPOSURE_DECAY_PER_TICK.set(recovery);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 40, batch = "configMutating")
     public static void radonExhaustDoseSurvivesCleanAirTick(final GameTestHelper helper) {
         final var zombie = helper.spawnWithNoFreeWill(net.minecraft.world.entity.EntityType.ZOMBIE,
