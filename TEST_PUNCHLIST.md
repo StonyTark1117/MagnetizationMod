@@ -165,13 +165,13 @@ Run these checks in a fresh prepared lab before publishing 1.4.1. Record each re
 - **Config (machines):** `tokamakMaxEdge`, base capacity/generation/output/burn controls, coolant tank/intake controls, coolant quality curve, and optional TFMG Cooling Fluid compatibility.
 - **Result:** ✅ Core 3×3 and fueled 5×5 formation/scaling are GameTest-covered. In-world: confirm pipe routing, coolant comparison, GUI/HUD synchronization, and recovery after structure repair.
 
-## #91 — MR Fluid hardens in field → walkable bridge  ⟶ `mr_fluid`, `hardened_mr_fluid`
+## #91 — MR Fluid hardens from redstone or field → walkable bridge  ⟶ `mr_fluid`, `hardened_mr_fluid`
 - **Obtain:** MR Fluid bucket = water_bucket + iron_ingot + raw_magnetite (shapeless) _(verify in JEI/EMI)_.
-- **Setup:** place MR fluid so it forms a small pool/body; set up a powered emitter beside it.
-- **Trigger:** power the emitter so the field covers the fluid.
-- **Expect:** the connected MR fluid body snaps to solid grey `hardened_mr_fluid` (walkable, no fall-through); unpower / remove field → reverts to fluid. Hardening floods the connected body.
+- **Setup:** place MR fluid so it forms a small pool/body; prepare both a direct redstone input and a separate passive magnetic-field source.
+- **Trigger:** test redstone with no field, remove the signal, then test the field with no redstone.
+- **Expect:** either activation independently snaps the connected body to solid grey `hardened_mr_fluid` (walkable, no fall-through); removing both activations restores the fluid source/body. Hardening floods the connected body.
 - **Config (performance):** `mrFluidHardenTicks` (5).
-- **Result:** ✅ GameTest-verified (`mrFluidHardensInField`): MR-fluid source beside a powered electromagnet hardens to hardened_mr_fluid. In-world: confirm revert when field removed + walkable.
+- **Result:** ✅ GameTest-verified independently: `mrFluidHardensInField` uses a passive permanent magnet, while `mrFluidHardensWithRedstoneAndReverts` proves redstone-only hardening and source restoration. In-world: confirm the solid is walkable and a connected pool restores cleanly.
 
 ## #92 — MR Armor field behavior  ⟶ `mr_liquid_helmet/chestplate/leggings/boots`
 - **Obtain:** each = iron piece + mr_fluid_bucket (shapeless) _(verify in JEI/EMI)_.

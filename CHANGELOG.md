@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Fixed
+- Restored the Curios player slot provisioning removed after 1.1.2: players again receive the advertised `charm`, `back`, and `hands` slots for the Field Compass, Magnetic Grapple, and Repulsor Gun. The Curios GameTest now validates the real player capability and exact item-to-slot assignments.
+- Fixed EMP Flux Charges leaving FE inside receive-only Magnetization machines. EMPs now clear each machine's real backing buffer without making it extractable to ordinary cables, and an isolated behavioral GameTest charges and wipes all ten affected machine types through a real detonation.
+- Restored the original redstone-controlled MR Fluid hardening alongside magnetic-field activation. Conducted or adjacent redstone now hardens connected MR Fluid and removing the signal melts it back; same-block signal updates no longer unregister hardened cells before reversion.
 - Restored the MR Fluid Golem's material identity instead of inheriting vanilla Iron Golem behavior end to end. Its soft body now uses complete UV-correct frames generated from the same 16-frame tinted-water animation and three-tick cadence as worn MR armor; magnetic hardening swaps the single model pass to the existing rigid texture. The soft form has normal knockback and configured 30% mitigation; fields synchronize 92% mitigation and knockback immunity immediately. MR Fluid Buckets repair it instead of iron ingots and replace vanilla iron-nugget drops, harden/soften transitions emit subtitled sound and particle cues, and Jade/WTHIT expose the live state. Existing saved golems migrate to player-created guardians.
 
 ## 1.4.1 — Tokamak completion, coolant loops & magnetic golems
