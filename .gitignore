@@ -9,6 +9,7 @@ run/
 # smokeServerMinimal / smokeClientNormal).
 run-smoke-server/
 run-smoke-client/
+run-client-*/
 run-simulated-coasters-track-styles-client/
 run-large-world-repro/
 # Persistent local manual-playtest saves. Their layouts are rebuilt by the
