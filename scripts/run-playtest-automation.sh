@@ -209,8 +209,16 @@ while IFS= read -r station; do
   while IFS= read -r station_action; do
     [[ -z $station_action ]] || send_command "$station_action"
   done < <(jq -r --arg s "$station" '.stationActions[$s][]? // empty' "$manifest")
+  if jq -e --arg s "$station" '.itemUseStations | index($s) != null' "$manifest" >/dev/null; then
+    ydotool click 0xC1 >/dev/null
+    sleep 2
+  fi
   capture "$station"
   compare_or_seed "$result_dir/screenshots/$station.png"
+  if jq -e --arg s "$station" '.closeAfterCaptureStations | index($s) != null' "$manifest" >/dev/null; then
+    key 1
+    sleep 1
+  fi
   if jq -e --arg p "$profile" --arg s "$station" '
       $p == "lab" and (.guiStations | index($s) != null)' "$manifest" >/dev/null; then
     # Right-click the station fixture, retain the GUI (or interaction result),

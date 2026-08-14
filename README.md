@@ -227,7 +227,8 @@ While goggles are worn, additional world overlays appear:
 The built-in Mods → Magnetization → Config screen and the generated TOML files are
 the canonical complete option list. Player-facing and world-generation options live in
 `config/magnetization-common.toml`; server-owner limits, diagnostics, and command
-permissions live in `config/magnetization-server.toml`.
+permissions live in `config/magnetization-server.toml`; render-only options such as
+thruster exhaust particles live in `config/magnetization-client.toml`.
 The tables below highlight selected high-impact settings; use the config screen or generated TOML files for the exhaustive list.
 
 For the complete generated reference, see [docs/configuration.md](docs/configuration.md). Regenerate it with python3 scripts/generate-config-reference.py; use --check to verify it is current.
@@ -363,7 +364,8 @@ launches reopen the persistent save without rebuilding over your observations.
 - **Test Lab:** Creative mode, a complete Magnetization item chest bank, a focused
   inventory kit, texture/material gallery, Electrolyzer rejection and output-stall
   stations, formed Tokamak and Fusion structures, a powered Railgun, all Dipole
-  facings, Gas Exciter/Vent and noble-gas inspection, Air Separator and Ion Thruster
+  facings, Gas Exciter/Vent and noble-gas inspection, a live Gas Detector HUD check,
+  direct Tokamak/Railgun Ponder captures, Air Separator and Ion Thruster
   stations, a complete rare-earth source-to-magnet gallery, Gallium/Golem inspection,
   an automation bench, and marked ship/portal lanes with their supplies.
 - **Survival Progression:** Survival mode, crafting/smelting infrastructure, empty

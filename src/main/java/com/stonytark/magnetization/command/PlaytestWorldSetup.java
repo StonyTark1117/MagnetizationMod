@@ -105,6 +105,9 @@ public final class PlaytestWorldSetup {
             Map.entry("portal", new BlockPos(51, 2, 40)),
             Map.entry("thruster_exhaust", new BlockPos(32, 2, 45)),
             Map.entry("gas_excitation", new BlockPos(8, 2, 56)),
+            Map.entry("gas_detector", new BlockPos(8, 2, 56)),
+            Map.entry("ponder_tokamak", new BlockPos(2, 2, 2)),
+            Map.entry("ponder_railgun", new BlockPos(2, 2, 2)),
             Map.entry("air_separator", new BlockPos(21, 2, 56)),
             Map.entry("ion_thruster", new BlockPos(33, 2, 56)),
             Map.entry("rare_earth", new BlockPos(51, 2, 58)));
