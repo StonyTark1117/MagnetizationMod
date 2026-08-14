@@ -33,7 +33,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Validate sources and release JAR
-        run: ./gradlew test build verifyReleaseJar --no-daemon --max-workers=1 --console=plain
+        run: ./gradlew -Dorg.gradle.java.home="$JAVA_HOME" test build verifyReleaseJar --no-daemon --max-workers=1 --console=plain
 
       - name: Verify generated configuration reference
         run: python3 scripts/generate-config-reference.py --check
