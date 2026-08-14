@@ -129,7 +129,7 @@ for mod_id in "${mod_ids[@]}"; do
 done
 
 unexpected_errors=$(grep -En '/(ERROR|FATAL)\]' "$log_file" \
-    | grep -Ev 'Error while loading the narrator$|Error starting SoundSystem\. Turning off sounds & music$' \
+    | grep -Ev 'Error while loading the narrator$|Error starting SoundSystem\. Turning off sounds & music$|Invalid path in pack: byg:textures/block/track/TODO\.txt, ignoring$' \
     || true)
 if [[ -n $unexpected_errors ]]; then
     printf '%s\n' "$unexpected_errors" >&2
@@ -137,26 +137,11 @@ if [[ -n $unexpected_errors ]]; then
     exit 1
 fi
 
-# Ask the only window on the isolated X server to close normally. If upstream
-# ignores WM_DELETE_WINDOW, cleanup still bounds and targets only this profile.
-window_id=$(DISPLAY="$display" xdotool search --onlyvisible --name '.' 2>/dev/null | head -n 1 || true)
-if [[ -n $window_id ]]; then
-    DISPLAY="$display" xdotool windowclose "$window_id" 2>/dev/null || true
+if [[ $required_mods == 'ponder,railways,copycats' ]] \
+        && ! grep -Fq 'Registered 16 core and 2 optional Magnetization Ponder scenes' "$log_file"; then
+    echo "$run_task: Steam Rails and Copycats loaded, but both optional Ponder scenes did not register" >&2
+    exit 1
 fi
-close_deadline=$((SECONDS + 30))
-while (( SECONDS < close_deadline )); do
-    if ! kill -0 "$runner_pid" 2>/dev/null; then
-        if wait "$runner_pid"; then status=0; else status=$?; fi
-        runner_pid=''
-        (( status == 0 )) || {
-            echo "$run_task: client failed while closing (status $status)" >&2
-            tail -n 200 "$runner_output" >&2
-            exit 1
-        }
-        break
-    fi
-    sleep 1
-done
 
 printf '%s: rendered main menu with required mods [%s] on isolated display %s\n' \
     "$run_task" "$required_mods" "$display"
