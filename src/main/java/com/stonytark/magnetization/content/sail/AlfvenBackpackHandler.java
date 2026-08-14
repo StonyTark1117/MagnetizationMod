@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /**
  * Drives the Alfvén Ribbon Backpack's passive forward boost. While the wearer
  * is gliding with the backpack in the chest slot and the environment has a
- * usable current — daylight high above the surface, or anywhere in the End —
+ * usable current — daylight at any altitude, or anywhere in the End —
  * it adds a small, capped forward velocity each tick along the look direction,
  * so the player cruises indefinitely without firework rockets.
  */
