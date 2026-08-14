@@ -40,6 +40,10 @@ public final class MagConfig {
      *  file in {@code config/}. */
     public static final ModConfigSpec COMMON_SPEC;
 
+    /** CLIENT-type spec: local visual preferences that are never replaced by a
+     *  connected server's authoritative COMMON snapshot. */
+    public static final ModConfigSpec CLIENT_SPEC;
+
     public static final ModConfigSpec.DoubleValue STRENGTH_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue ENTITY_VELOCITY_SCALE;
     public static final ModConfigSpec.DoubleValue CONICAL_HALF_ANGLE_COS;
@@ -133,6 +137,7 @@ public final class MagConfig {
     public static final ModConfigSpec.DoubleValue ANVIL_BREAK_DEFAULT;
 
     // ── propulsion: thrusters / sail / backpack / repulsor-track / motor ──
+    public static final ModConfigSpec.BooleanValue THRUSTER_EXHAUST_EFFECTS_ENABLED;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_TANK;
     public static final ModConfigSpec.BooleanValue ALLOW_REDSTONE_THRUST_POWER;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_CAPACITY;
@@ -626,6 +631,19 @@ public final class MagConfig {
         // Each builder's push/pop stack is independent and self-balanced.
         final ModConfigSpec.Builder b = new ModConfigSpec.Builder();
         final ModConfigSpec.Builder sb = new ModConfigSpec.Builder();
+        final ModConfigSpec.Builder cb = new ModConfigSpec.Builder();
+
+        cb.comment("Local visual-effect preferences. These settings affect only this client.")
+          .translation("magnetization.configuration.visuals")
+          .push("visuals");
+
+        THRUSTER_EXHAUST_EFFECTS_ENABLED = cb
+                .comment("Render exhaust particles while MHD, Micro, Ion, and Fusion thrusters fire.",
+                         "Set false to suppress both normal plumes and the cooled Fusion mist.")
+                .translation("magnetization.configuration.visuals.thrusterExhaustEffectsEnabled")
+                .define("thrusterExhaustEffectsEnabled", true);
+
+        cb.pop();
 
         b.comment("Physics tuning for the Sable sub-level query and entity force application.")
          .translation("magnetization.configuration.physics")
@@ -2628,6 +2646,7 @@ public final class MagConfig {
 
         COMMON_SPEC = b.build();
         SPEC = sb.build();
+        CLIENT_SPEC = cb.build();
     }
 
     /** Helper: returns the configured permission level, or a fallback if the

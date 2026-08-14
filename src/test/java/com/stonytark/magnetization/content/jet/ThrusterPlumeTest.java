@@ -7,6 +7,7 @@ import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ThrusterPlumeTest {
@@ -51,6 +52,17 @@ class ThrusterPlumeTest {
         assertEquals(4, ThrusterPlume.cooledSamplingDivisor(36));
         assertEquals(84, ThrusterPlume.cooledSamplingDivisor(1_000));
         assertEquals(178_956_971, ThrusterPlume.cooledSamplingDivisor(Integer.MAX_VALUE));
+    }
+
+    @Test
+    void clientConfigCanSuppressEveryExhaustLayer() {
+        assertTrue(com.stonytark.magnetization.config.MagConfig
+                .THRUSTER_EXHAUST_EFFECTS_ENABLED.getDefault());
+        assertFalse(ThrusterPlume.exhaustEffectsEnabled(() -> false));
+        assertTrue(ThrusterPlume.exhaustEffectsEnabled(() -> true));
+        assertTrue(ThrusterPlume.exhaustEffectsEnabled(() -> {
+            throw new IllegalStateException("config not loaded yet");
+        }));
     }
 
     @Test

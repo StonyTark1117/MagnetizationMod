@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added a local client config switch that disables all active-thruster exhaust particles, including the cooled Fusion mist, without affecting propulsion.
 - Added optional coolant loops to the Tokamak and Fusion Thruster. Vanilla water is the baseline, Deuterium Oxide is a modest upgrade, liquid Gallium is the high-efficiency liquid-metal option, and fluids in `c:cooling_fluid` (including TFMG Cooling Fluid when compat is enabled) use a configurable tagged-fluid curve. Better coolant is consumed more slowly and scales the configured cooling bonuses farther. Dry machines retain their previous performance; cooled Tokamaks generate/output more FE and extend fuel-cell life, while cooled Fusion Thrusters gain thrust/speed and consume less FE/propellant. Shared tanks accept buckets and Create pipes through interiors and Tokamak-Coil frames, with synchronized GUI/HUD state.
 
 ## 1.4.1 — Expandable Tokamak emergency hotfix

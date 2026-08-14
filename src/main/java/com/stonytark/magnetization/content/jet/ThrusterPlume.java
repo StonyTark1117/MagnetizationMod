@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.content.jet;
 
+import com.stonytark.magnetization.config.MagConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Client-side exhaust shared by the ship engines. A block-entity ticker drives
@@ -52,7 +55,7 @@ final class ThrusterPlume {
 
     static void tick(final Level level, final BlockPos pos, final BlockState state,
                      final Style style, final int colour, final int nozzleCount) {
-        if (!level.isClientSide || !state.hasProperty(BlockStateProperties.LIT)
+        if (!exhaustEffectsEnabled() || !level.isClientSide || !state.hasProperty(BlockStateProperties.LIT)
                 || !state.getValue(BlockStateProperties.LIT)
                 || !state.hasProperty(DirectionalBlock.FACING)) return;
 
@@ -94,7 +97,7 @@ final class ThrusterPlume {
      */
     static void tickCooledFusion(final Level level, final BlockPos pos, final BlockState state,
                                  final int nozzleCount) {
-        if (!level.isClientSide || !state.hasProperty(BlockStateProperties.LIT)
+        if (!exhaustEffectsEnabled() || !level.isClientSide || !state.hasProperty(BlockStateProperties.LIT)
                 || !state.getValue(BlockStateProperties.LIT)
                 || !state.hasProperty(DirectionalBlock.FACING)) return;
 
@@ -127,6 +130,19 @@ final class ThrusterPlume {
         final long count = Math.max(1, nozzleCount);
         final long capped = Math.max(4L, (count + 11L) / 12L);
         return (int) Math.min(Integer.MAX_VALUE, capped);
+    }
+
+    static boolean exhaustEffectsEnabled() {
+        return exhaustEffectsEnabled(() -> MagConfig.THRUSTER_EXHAUST_EFFECTS_ENABLED.get());
+    }
+
+    /** Config-not-loaded tolerant for early client ticks and isolated tests. */
+    static boolean exhaustEffectsEnabled(final BooleanSupplier configuredValue) {
+        try {
+            return configuredValue.getAsBoolean();
+        } catch (final Throwable ignored) {
+            return true;
+        }
     }
 
     private static float particleScale(final Style style) {

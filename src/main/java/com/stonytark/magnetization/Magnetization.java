@@ -66,6 +66,9 @@ public final class Magnetization {
         // single player can set biome rarity/gen correctly up front, and so the
         // toggles are loaded early (before FMLCommonSetup region registration).
         modContainer.registerConfig(ModConfig.Type.COMMON, MagConfig.COMMON_SPEC);
+        // CLIENT spec — local visual preferences that a connected server must not
+        // override through the authoritative COMMON-config snapshot.
+        modContainer.registerConfig(ModConfig.Type.CLIENT, MagConfig.CLIENT_SPEC);
 
         modBus.addListener(com.stonytark.magnetization.registry.MagEntities::onAttributes);
         modBus.addListener(Magnetization::onCommonSetup);
