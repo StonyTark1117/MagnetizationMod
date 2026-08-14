@@ -20,6 +20,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +68,9 @@ public abstract class MagneticGolem extends IronGolem {
      *  become magnetically inert while their type is disabled. */
     public abstract boolean featureEnabled();
 
+    /** The material represented by this body, consumed for a vanilla-sized repair. */
+    public abstract Item repairMaterial();
+
     /** Client-safe effective field for HUDs and the goggles overlay. Server
      * physics uses the authoritative chunk registry; this mirrors nearby live
      * Hematite entities so the displayed tier/range matches it. */
@@ -88,6 +93,17 @@ public abstract class MagneticGolem extends IronGolem {
     @Override
     protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
         final ItemStack held = player.getItemInHand(hand);
+        if (featureEnabled() && held.is(repairMaterial())) {
+            final float before = getHealth();
+            heal(25.0f);
+            if (getHealth() == before) return InteractionResult.PASS;
+            playSound(net.minecraft.sounds.SoundEvents.IRON_GOLEM_REPAIR, 1.0f,
+                    1.0f + (random.nextFloat() - random.nextFloat()) * 0.2f);
+            held.consume(1, player);
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        // Falling through to IronGolem would repair every mineral body with iron.
+        if (featureEnabled() && held.is(Items.IRON_INGOT)) return InteractionResult.PASS;
         if (featureEnabled() && player.isShiftKeyDown() && acceptsPolarizer()
                 && held.is(MagItems.HEMATITE_LENS.get())) {
             if (!level().isClientSide) {

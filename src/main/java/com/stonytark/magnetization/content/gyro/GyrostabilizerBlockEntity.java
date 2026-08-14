@@ -32,7 +32,8 @@ import org.joml.Vector3dc;
  * back to the world ticker off-ship just to keep its powered visual honest.
  */
 public class GyrostabilizerBlockEntity extends BlockEntity
-        implements BlockEntitySubLevelActor, com.stonytark.magnetization.content.emp.EmpDrainable {
+        implements BlockEntitySubLevelActor, com.stonytark.magnetization.menu.MachineHudData,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private static final int CAPACITY = 50_000;
     private static final int MAX_RECEIVE = 1_000;
@@ -50,6 +51,19 @@ public class GyrostabilizerBlockEntity extends BlockEntity
     public IEnergyStorage energyBuffer() { return energy; }
     @Override public void clearEnergyForEmp() { energy.setStored(0); syncEmpEnergyChange(); }
     public boolean isStabilizing() { return stabilizing; }
+
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        final boolean powered = getBlockState().hasProperty(BlockStateProperties.POWERED)
+                && getBlockState().getValue(BlockStateProperties.POWERED);
+        final String key = stabilizing
+                ? "tooltip.magnetization.gyro_stabilizing"
+                : powered ? "tooltip.magnetization.gyro_idle" : "tooltip.magnetization.gyro_off";
+        final net.minecraft.ChatFormatting colour = stabilizing
+                ? net.minecraft.ChatFormatting.GREEN
+                : powered ? net.minecraft.ChatFormatting.YELLOW : net.minecraft.ChatFormatting.GRAY;
+        return java.util.List.of(net.minecraft.network.chat.Component.translatable(key).withStyle(colour));
+    }
 
     /** Vanilla ticker (off-ship / fallback): nothing to stabilize, but resolve a
      *  possible host and keep the powered visual + status honest. */

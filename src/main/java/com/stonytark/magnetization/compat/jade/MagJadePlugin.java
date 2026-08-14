@@ -19,6 +19,7 @@ public class MagJadePlugin implements IWailaPlugin {
 
     public static final ResourceLocation FIELD_INFO = Magnetization.id("field_info");
     public static final ResourceLocation GOLEM_INFO = Magnetization.id("golem_info");
+    public static final ResourceLocation GALLIUM_GOLEM_INFO = Magnetization.id("gallium_golem_info");
     public static final ResourceLocation MR_FLUID_GOLEM_INFO = Magnetization.id("mr_fluid_golem_info");
 
     @Override
@@ -37,6 +38,8 @@ public class MagJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(MachineInfoProvider.INSTANCE, Block.class);
         registration.registerEntityComponent(MagneticGolemProvider.INSTANCE,
                 com.stonytark.magnetization.content.golem.MagneticGolem.class);
+        registration.registerEntityComponent(GalliumGolemProvider.INSTANCE,
+                com.stonytark.magnetization.content.golem.GalliumGolem.class);
         registration.registerEntityComponent(MrFluidGolemProvider.INSTANCE,
                 com.stonytark.magnetization.content.golem.MrFluidGolem.class);
     }

@@ -43,6 +43,9 @@ public final class TitanomagnetiteGolem extends MagneticGolem {
     }
     public boolean isCharged() { return entityData.get(CHARGED); }
     @Override public boolean featureEnabled() { return MagConfig.titanomagnetiteGolemEnabled(); }
+    @Override public net.minecraft.world.item.Item repairMaterial() {
+        return com.stonytark.magnetization.registry.MagItems.TITANOMAGNETITE_INGOT.get();
+    }
     public @Nullable MagneticField recordedField() {
         return recorded != null ? recorded : syncedRecorded();
     }

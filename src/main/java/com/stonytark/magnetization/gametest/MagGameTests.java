@@ -1820,30 +1820,37 @@ public final class MagGameTests {
                 instanceof com.stonytark.magnetization.content.motor.HomopolarMotorBlockEntity motor)) {
             helper.fail("no motor BE"); return;
         }
-        // Shrink the burn so one magnet is gone in a few producing ticks.
-        com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(5);
-        com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(0);
-        com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(true);
-        motor.magnetContainer().setItem(0,
-                new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
-
-        helper.runAfterDelay(20L, () -> {
+        final int previousBase = com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.get();
+        final int previousPotency = com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.get();
+        final boolean previousConsumption =
+                com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.get();
+        try {
+            // Drive the production tick directly after shrinking the duration.
+            // Waiting a fixed number of world ticks was load-order-sensitive in
+            // the full 159-test server because Create can initialize a newly
+            // placed kinetic BE after that deadline.
+            com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(5);
+            com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(0);
+            com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(true);
+            motor.magnetContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                    com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
+            for (int tick = 0; tick < 5; tick++) motor.tick();
             helper.assertTrue(motor.magnetContainer().getItem(0).isEmpty(),
                     "Magnet should be consumed once its burn time elapses (consume on)");
+
             // Legacy: with consumption off, a magnet is never consumed.
             com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(false);
-            motor.magnetContainer().setItem(0,
-                    new net.minecraft.world.item.ItemStack(com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
-            helper.runAfterDelay(20L, () -> {
-                final boolean stillThere = !motor.magnetContainer().getItem(0).isEmpty();
-                // Restore defaults for the rest of the batch.
-                com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(1200);
-                com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(400);
-                com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(false);
-                helper.assertTrue(stillThere, "Legacy mode (consume off) must NOT consume the magnet");
-                helper.succeed();
-            });
-        });
+            motor.magnetContainer().setItem(0, new net.minecraft.world.item.ItemStack(
+                    com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get()));
+            for (int tick = 0; tick < 20; tick++) motor.tick();
+            helper.assertTrue(!motor.magnetContainer().getItem(0).isEmpty(),
+                    "Legacy mode (consume off) must NOT consume the magnet");
+            helper.succeed();
+        } finally {
+            com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_BASE.set(previousBase);
+            com.stonytark.magnetization.config.MagConfig.MAGNET_BURN_TICKS_PER_POTENCY.set(previousPotency);
+            com.stonytark.magnetization.config.MagConfig.MAGNET_SLOT_CONSUMES_FUEL.set(previousConsumption);
+        }
     }
 
     /**

@@ -71,6 +71,9 @@ public final class PlaytestSetupGameTests {
                 "Survival preset must stage an empty Electrolyzer");
         helper.assertTrue(level.getBlockState(anchor.offset(14, 1, 7)).is(MagBlocks.TOKAMAK_CONTROLLER.get()),
                 "Survival preset must stage a formed Tokamak");
+        helper.assertTrue(level.getBlockState(anchor.offset(37, 0, 22)).is(MagBlocks.RAILGUN_EMITTER.get())
+                        && level.getBlockState(anchor.offset(37, 0, 21)).is(Blocks.COPPER_BLOCK),
+                "Survival preset must stage the Railgun station advertised by its capture matrix");
         helper.assertTrue(level.getBlockEntity(anchor.offset(2, 1, 9)) instanceof ChestBlockEntity rawInputs
                         && contains(rawInputs, MagItems.RAW_LITHIUM.get())
                         && contains(rawInputs, MagItems.BASTNASITE_ORE.get())
@@ -82,6 +85,14 @@ public final class PlaytestSetupGameTests {
                         && !contains(rawInputs, MagItems.TRITIUM_CELL.get())
                         && !contains(rawInputs, MagItems.HELIUM_3_CELL.get()),
                 "Survival supplies must contain raw lithium but no finished isotope fuel");
+        final int survivalRailgunPayload = PlaytestWorldSetup.stageRailgunAutoAssembly(level, anchor);
+        final var survivalRailgun = (com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity)
+                level.getBlockEntity(anchor.offset(37, 0, 22));
+        helper.assertTrue(survivalRailgunPayload == 9 && survivalRailgun != null
+                        && survivalRailgun.autoAssemble()
+                        && survivalRailgun.manualMode()
+                        && survivalRailgun.energyBuffer().getEnergyStored() > 0,
+                "Survival Railgun visual fixture must be powered and actively auto-assembling");
 
         PlaytestWorldSetup.clearForTest(level, anchor);
         helper.succeed();

@@ -21,6 +21,9 @@ public final class MagneticGolemHud {
         final var field = golem.displayedField();
         lines.add(Component.translatable("tooltip.magnetization.golem.field",
                 field == null ? "NONE" : field.strength().name()).withStyle(ChatFormatting.DARK_AQUA));
+        lines.add(Component.translatable("tooltip.magnetization.golem.repair",
+                new net.minecraft.world.item.ItemStack(golem.repairMaterial()).getHoverName())
+                .withStyle(ChatFormatting.GREEN));
         if (golem instanceof MagnetiteGolem magnetite) {
             lines.add(Component.translatable(magnetite.isOxidized()
                     ? "tooltip.magnetization.golem.magnetite.oxidized"

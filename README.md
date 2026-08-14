@@ -393,14 +393,21 @@ The prepared worlds can also be driven through the host desktop with
 `scripts/run-playtest-automation.sh lab` or `scripts/run-playtest-automation.sh survival`.
 The manifest in `playtest/automation-matrix.json` controls stations, log checks, video
 captures, and visual thresholds. Evidence is written beneath the ignored
-`playtest-results/` directory. The first accepted run creates baselines and reports
-`BASELINE_CREATED`; subsequent runs compare captures and report `PASS` or `FAIL`.
-The lab video actions spawn a moving Sable test ship, auto-assemble and launch a
-Railgun projectile, record all four active thruster plume styles plus cooled Fusion
-mist, and invoke an AeroPortals dimension transfer; detailed ship-data retention
-remains covered by the deterministic compatibility GameTests. The matrix also opens
-the major machine GUIs, records their interaction states, and spawns Gallium, MR Fluid,
-Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems for visual inspection.
+`playtest-results/` directory. Accepted reference images are immutable, committed
+files under `playtest/baselines/`: ordinary runs fail if a declared baseline is
+missing, while the explicit `record` second argument replaces them and reports
+`BASELINE_RECORDED`. `./gradlew verifyPlaytestBaselines` checks manifest coverage
+and every accepted PNG's SHA-256 hash without launching a client.
+The lab video actions spawn a moving Sable test ship, auto-assemble a Railgun
+projectile into a held review state, and record all four active thruster plume styles plus cooled
+Fusion mist. The portal station is a marked construction lane, while actual
+AeroPortals transfer and ship-data retention remain covered by the isolated,
+deterministic compatibility GameTests. The matrix also opens
+the major machine GUIs, records their interaction states, and stages damaged,
+material-active Magnetite, Pyrrhotite, Hematite, and Titanomagnetite Golems. Individual
+stations require the Create-goggles and WTHIT entity readouts to target each golem;
+isolated Jade and The One Probe profiles repeat the Titanomagnetite, Gallium,
+soft/hardened MR Fluid, and active Gas Exciter checks.
 Fuel-slot acceptance/rejection and setting changes remain
 operator-confirmed steps because their GUI coordinates vary with scale and recipe-viewer layout.
 Before traversing the lab, the runner seeds active Electrolyzer, Tokamak, Fusion

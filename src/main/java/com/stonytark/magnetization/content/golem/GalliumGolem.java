@@ -10,6 +10,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -48,6 +53,22 @@ public class GalliumGolem extends IronGolem {
 
     public boolean featureEnabled() {
         return MagConfig.galliumGolemEnabled();
+    }
+
+    @Override
+    protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
+        final ItemStack held = player.getItemInHand(hand);
+        if (featureEnabled() && held.is(com.stonytark.magnetization.registry.MagItems.GALLIUM_INGOT.get())) {
+            final float before = getHealth();
+            heal(25.0f);
+            if (getHealth() == before) return InteractionResult.PASS;
+            playSound(net.minecraft.sounds.SoundEvents.IRON_GOLEM_REPAIR, 0.8f,
+                    1.2f + (random.nextFloat() - random.nextFloat()) * 0.15f);
+            held.consume(1, player);
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        if (featureEnabled() && held.is(Items.IRON_INGOT)) return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     @Override

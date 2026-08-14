@@ -28,6 +28,9 @@ public final class PyrrhotiteGolem extends MagneticGolem {
     }
     public BlazeBurnerBlock.HeatLevel observedHeat() { return BlazeBurnerBlock.HeatLevel.values()[entityData.get(HEAT)]; }
     @Override public boolean featureEnabled() { return MagConfig.pyrrhotiteGolemEnabled(); }
+    @Override public net.minecraft.world.item.Item repairMaterial() {
+        return com.stonytark.magnetization.registry.MagItems.PYRRHOTITE_INGOT.get();
+    }
     @Override public void aiStep() {
         if (featureEnabled() && !level().isClientSide && tickCount % 10 == 0) {
             final BlazeBurnerBlock.HeatLevel previous = observedHeat();

@@ -16,8 +16,9 @@ run-large-world-repro/
 # development-only playtest presets, so binary world data stays out of Git.
 run-playtest-lab/
 run-playtest-survival/
+run-playtest-automation/
+run-playtest-automation-survival/
 playtest-results/
-playtest/baselines/
 # Isolated game directories for the GameTest run profiles.
 run-gametest/
 run-aeroportals-gametest/

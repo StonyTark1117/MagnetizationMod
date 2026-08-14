@@ -50,7 +50,7 @@ public final class PlaytestWorldSetup {
     private static final String ROOT_TAG = "magnetization:playtest_setup";
     // Bump whenever the staged footprint changes so existing disposable saves
     // are rebuilt on the next login instead of silently retaining an old lab.
-    private static final int VERSION = 4;
+    private static final int VERSION = 5;
     private static final int LAB_X = 64;
     private static final int LAB_Z = 64;
 
@@ -86,29 +86,45 @@ public final class PlaytestWorldSetup {
                         .then(Commands.literal("railgun_auto")
                                 .executes(ctx -> seedRailgunAutoAssembly(ctx.getSource())))
                         .then(Commands.literal("thruster_exhaust")
-                                .executes(ctx -> seedThrusterExhaust(ctx.getSource()))))
+                                .executes(ctx -> seedThrusterExhaust(ctx.getSource())))
+                        .then(Commands.literal("gas_exciter_hud")
+                                .executes(ctx -> seedGasExciterHud(ctx.getSource()))))
                 .then(Commands.literal("where").executes(ctx -> where(ctx.getSource())));
     }
 
     private static final Map<String, BlockPos> STATIONS = Map.ofEntries(
             Map.entry("overview", new BlockPos(2, 2, 2)),
             Map.entry("gallery", new BlockPos(8, 2, 8)),
-            Map.entry("electrolyzer", new BlockPos(3, 2, 21)),
-            Map.entry("tokamak", new BlockPos(17, 2, 23)),
+            Map.entry("electrolyzer", new BlockPos(2, 2, 21)),
+            // Stand on the south coil and look directly into the center core;
+            // this remains stable through the chat-fade delay and avoids the
+            // perimeter coil intercepting the controller interaction.
+            Map.entry("tokamak", new BlockPos(14, 1, 19)),
             Map.entry("fusion", new BlockPos(27, 2, 22)),
-            Map.entry("railgun", new BlockPos(38, 2, 25)),
-            Map.entry("dipoles", new BlockPos(51, 2, 22)),
+            Map.entry("railgun", new BlockPos(37, 2, 25)),
+            Map.entry("dipoles", new BlockPos(52, 2, 22)),
             Map.entry("automation", new BlockPos(4, 2, 35)),
             Map.entry("gallium", new BlockPos(16, 2, 35)),
             Map.entry("golems", new BlockPos(16, 2, 35)),
+            // Stand east of the supply chest so entity HUD captures cannot
+            // accidentally target the chest through the golem model.
+            Map.entry("golems_active", new BlockPos(20, 0, 35)),
+            Map.entry("golem_magnetite_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_pyrrhotite_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_hematite_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_titanomagnetite_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_gallium_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_mr_fluid_soft_hud", new BlockPos(20, 0, 35)),
+            Map.entry("golem_mr_fluid_hardened_hud", new BlockPos(20, 0, 35)),
             Map.entry("ship", new BlockPos(32, 2, 40)),
             Map.entry("portal", new BlockPos(51, 2, 40)),
             Map.entry("thruster_exhaust", new BlockPos(32, 2, 45)),
             Map.entry("gas_excitation", new BlockPos(8, 2, 56)),
+            Map.entry("gas_exciter_hud", new BlockPos(2, 2, 56)),
             Map.entry("gas_detector", new BlockPos(8, 2, 56)),
             Map.entry("ponder_tokamak", new BlockPos(2, 2, 2)),
             Map.entry("ponder_railgun", new BlockPos(2, 2, 2)),
-            Map.entry("air_separator", new BlockPos(21, 2, 56)),
+            Map.entry("air_separator", new BlockPos(20, 2, 56)),
             Map.entry("ion_thruster", new BlockPos(33, 2, 56)),
             Map.entry("rare_earth", new BlockPos(51, 2, 58)));
 
@@ -218,8 +234,19 @@ public final class PlaytestWorldSetup {
             }
             final BlockPos anchor = new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
             final BlockPos target = anchor.offset(offset);
+            final float pitch = switch (stationName.toLowerCase(Locale.ROOT)) {
+                case "tokamak" -> 65.0f;
+                case "railgun" -> 30.0f;
+                case "fusion" -> 0.0f;
+                case "dipoles", "air_separator" -> 10.0f;
+                case "electrolyzer" -> 15.0f;
+                case "golems_active", "golem_magnetite_hud", "golem_pyrrhotite_hud",
+                        "golem_hematite_hud", "golem_titanomagnetite_hud", "golem_gallium_hud",
+                        "golem_mr_fluid_soft_hud", "golem_mr_fluid_hardened_hud" -> 0.0f;
+                default -> 15.0f;
+            };
             player.teleportTo(player.serverLevel(), target.getX() + 0.5, target.getY(), target.getZ() + 0.5,
-                    Set.of(), 180.0f, 15.0f);
+                    Set.of(), 180.0f, pitch);
             source.sendSuccess(() -> Component.literal("Station " + stationName + " at " + pos(target)), false);
             return 1;
         } catch (final Exception exception) {
@@ -237,6 +264,34 @@ public final class PlaytestWorldSetup {
             return 1;
         } catch (final Exception exception) {
             source.sendFailure(Component.literal("Unable to seed persistence scenario: " + exception.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int seedGasExciterHud(final CommandSourceStack source) {
+        try {
+            final ServerPlayer player = source.getPlayerOrException();
+            final BlockPos anchor = currentAnchor(player);
+            final BlockPos pos = anchor.offset(2, 0, 51);
+            final var exciter = blockEntity(player.serverLevel(), pos,
+                    com.stonytark.magnetization.content.gas.GasExciterBlockEntity.class);
+            player.serverLevel().setBlock(pos.below(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            player.serverLevel().setBlock(pos.east(), MagBlocks.ARGON_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
+            // Capability receive limits are per call/tick. Fill the complete
+            // fixture buffer so it remains active after command chat fades and
+            // the HUD screenshot is taken, rather than accepting one 100-FE
+            // call and going idle five ticks later.
+            while (exciter.energyBuffer().getEnergyStored() < exciter.energyBuffer().getMaxEnergyStored()
+                    && exciter.energyBuffer().receiveEnergy(
+                            exciter.energyBuffer().getMaxEnergyStored(), false) > 0) {
+                // Continue until the configured capacity or a zero-receive setup.
+            }
+            com.stonytark.magnetization.content.gas.GasExciterBlockEntity.serverTick(
+                    player.serverLevel(), pos, player.serverLevel().getBlockState(pos), exciter);
+            source.sendSuccess(() -> Component.literal("Active Gas Exciter HUD fixture staged"), false);
+            return 1;
+        } catch (final Exception exception) {
+            source.sendFailure(Component.literal("Could not stage Gas Exciter HUD: " + exception.getMessage()));
             return 0;
         }
     }
@@ -262,7 +317,7 @@ public final class PlaytestWorldSetup {
     private static int seedRailgunAutoAssembly(final CommandSourceStack source) {
         try {
             final ServerPlayer player = source.getPlayerOrException();
-            final int staged = stageRailgunAutoAssembly(player.serverLevel(), currentAnchor(player));
+            final int staged = stageRailgunAutoAssembly(player.serverLevel(), currentPresetAnchor(player));
             source.sendSuccess(() -> Component.literal(
                     "PLAYTEST_ASSERT SEEDED railgun_auto blocks=" + staged), false);
             return 1;
@@ -295,19 +350,27 @@ public final class PlaytestWorldSetup {
         return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
     }
 
+    private static BlockPos currentPresetAnchor(final ServerPlayer player) {
+        final CompoundTag tag = state(player);
+        if (tag.getInt("Version") != VERSION || Preset.parse(tag.getString("Preset")) == null) {
+            throw new IllegalStateException("This scenario requires a staged playtest preset");
+        }
+        return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
+    }
+
     static void seedPersistence(final ServerLevel level, final BlockPos anchor) {
         final ElectrolyzerBlockEntity electrolyzer = blockEntity(level, anchor.offset(2, 0, 17),
                 ElectrolyzerBlockEntity.class);
         electrolyzer.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
                 IFluidHandler.FluidAction.EXECUTE);
-        electrolyzer.energyBuffer().receiveEnergy(20_000, false);
+        fillEnergy(electrolyzer.energyBuffer());
 
         final TokamakControllerBlockEntity tokamak = blockEntity(level, anchor.offset(14, 0, 18),
                 TokamakControllerBlockEntity.class);
         tokamak.coolantHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
                 IFluidHandler.FluidAction.EXECUTE);
         tokamak.fuelContainer().setItem(0, new ItemStack(MagItems.TRITIUM_CELL.get(), 2));
-        tokamak.energyBuffer().receiveEnergy(25_000, false);
+        fillEnergy(tokamak.energyBuffer());
         TokamakControllerBlockEntity.serverTick(level, tokamak.getBlockPos(), tokamak.getBlockState(), tokamak);
 
         final FusionThrusterBlockEntity fusion = blockEntity(level, anchor.offset(26, 1, 18),
@@ -317,11 +380,11 @@ public final class PlaytestWorldSetup {
                 IFluidHandler.FluidAction.EXECUTE);
         fusion.fluidHandler().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 2_000),
                 IFluidHandler.FluidAction.EXECUTE);
-        fusion.energyBuffer().receiveEnergy(30_000, false);
+        fillEnergy(fusion.energyBuffer());
 
         final RailgunEmitterBlockEntity railgun = blockEntity(level, anchor.offset(37, 0, 22),
                 RailgunEmitterBlockEntity.class);
-        railgun.energyBuffer().receiveEnergy(35_000, false);
+        fillEnergy(railgun.energyBuffer());
         railgun.setManualMode(true);
         railgun.setRailLength(8);
         railgun.setArcState(RailgunEmitterBlockEntity.ArcState.HOLDING);
@@ -335,10 +398,14 @@ public final class PlaytestWorldSetup {
         buildRail(level, second);
         final RailgunEmitterBlockEntity a = blockEntity(level, first, RailgunEmitterBlockEntity.class);
         final RailgunEmitterBlockEntity b = blockEntity(level, second, RailgunEmitterBlockEntity.class);
-        a.energyBuffer().receiveEnergy(35_000, false);
-        b.energyBuffer().receiveEnergy(35_000, false);
-        a.setManualMode(false);
-        b.setManualMode(false);
+        fillEnergy(a.energyBuffer());
+        fillEnergy(b.energyBuffer());
+        // Match the proven end-to-end fixture: a paired remote keeps the newly
+        // assembled projectile held in the channel long enough for visual review
+        // instead of launching it before the 12-second chat-fade boundary.
+        a.remoteContainer().setItem(0, new ItemStack(MagItems.RAILGUN_REMOTE.get()));
+        a.setManualMode(true);
+        b.setManualMode(true);
         a.setAutoAssemble(true);
         b.setAutoAssemble(true);
         a.setRailLength(8);
@@ -458,6 +525,15 @@ public final class PlaytestWorldSetup {
             throw new IllegalStateException("Expected " + type.getSimpleName() + " at " + pos);
         }
         return type.cast(blockEntity);
+    }
+
+    private static void fillEnergy(final net.neoforged.neoforge.energy.IEnergyStorage storage) {
+        int previous = -1;
+        while (storage.getEnergyStored() < storage.getMaxEnergyStored()
+                && storage.getEnergyStored() != previous) {
+            previous = storage.getEnergyStored();
+            storage.receiveEnergy(storage.getMaxEnergyStored(), false);
+        }
     }
 
     private static void buildFloor(final ServerLevel level, final BlockPos anchor) {
@@ -625,6 +701,9 @@ public final class PlaytestWorldSetup {
             if (dx != 0 || dz != 0) set(level, tokamak.offset(dx, 0, dz), MagBlocks.TOKAMAK_COIL.get());
         }
         buildFusionPanel(level, a.offset(22, 1, 6));
+        label(level, a.offset(35, 0, 15), "SURVIVAL RAILGUN", "Powered 8-block rail",
+                "Vanilla payload blocks", "Craft and bind a remote");
+        buildRail(level, a.offset(37, 0, 22));
         stockChest(level, a.offset(2, 1, 9), List.of(stack(Items.IRON_INGOT, 64), stack(Items.COPPER_INGOT, 64),
                 stack(Items.REDSTONE, 64), stack(Items.QUARTZ, 32), stack(Items.COAL, 64),
                 stack(MagItems.RAW_MAGNETITE.get(), 64), stack(MagItems.RAW_LITHIUM.get(), 64),
@@ -801,7 +880,11 @@ public final class PlaytestWorldSetup {
 
     private static BlockPos savedAnchor(final ServerPlayer player, final Preset preset) {
         final CompoundTag tag = state(player);
-        if (tag.getInt("Version") == VERSION && preset.id.equals(tag.getString("Preset"))) {
+        // Preserve the established disposable-world anchor across fixture version
+        // bumps. Re-anchoring at the player's current station made upgrades build
+        // an entire lab around remote visual-isolation fixtures.
+        if (preset.id.equals(tag.getString("Preset"))
+                && tag.contains("X") && tag.contains("Y") && tag.contains("Z")) {
             return new BlockPos(tag.getInt("X"), tag.getInt("Y"), tag.getInt("Z"));
         }
         return chooseAnchor(player);

@@ -17,6 +17,7 @@ final class MagTopRegistration {
         InterModComms.sendTo("theoneprobe", "getTheOneProbe", () -> (Function<ITheOneProbe, Void>) probe -> {
             probe.registerProvider(EmitterProbeProvider.INSTANCE);
             probe.registerProvider(MachineProbeProvider.INSTANCE);
+            probe.registerEntityProvider(CustomGolemProbeProvider.INSTANCE);
             return null;
         });
     }

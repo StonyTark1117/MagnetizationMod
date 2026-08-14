@@ -24,7 +24,8 @@ import net.neoforged.fml.ModList;
  * Electromagnetic induction, gamified.
  */
 public class InductionPadBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.content.emp.EmpDrainable {
+        implements com.stonytark.magnetization.menu.MachineHudData,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
 
     private final InternalBuffer energy = new InternalBuffer(
             com.stonytark.magnetization.config.MagConfig.inductionPadCapacity(),
@@ -43,6 +44,15 @@ public class InductionPadBlockEntity extends BlockEntity
     public void clearEnergyForEmp() {
         energy.setStored(0);
         syncEmpEnergyChange();
+    }
+
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        return java.util.List.of(net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.induction_pad.status",
+                        String.format(java.util.Locale.ROOT, "%.0f", MagConfig.inductionPadRange()),
+                        MagConfig.inductionPadChargePerTick())
+                .withStyle(net.minecraft.ChatFormatting.AQUA));
     }
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,

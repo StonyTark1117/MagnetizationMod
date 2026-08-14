@@ -236,13 +236,13 @@ public final class MagClientRegistration {
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.GALLIUM_GOLEM.get(),
                 GalliumGolemRenderer::new);
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.MAGNETITE_GOLEM.get(),
-                IronOxideGolemRenderer::new);
+                context -> new IronOxideGolemRenderer(context, IronOxideGolemModel.Profile.MAGNETITE));
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.PYRRHOTITE_GOLEM.get(),
-                IronOxideGolemRenderer::new);
+                context -> new IronOxideGolemRenderer(context, IronOxideGolemModel.Profile.PYRRHOTITE));
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.HEMATITE_GOLEM.get(),
-                IronOxideGolemRenderer::new);
+                context -> new IronOxideGolemRenderer(context, IronOxideGolemModel.Profile.HEMATITE));
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.TITANOMAGNETITE_GOLEM.get(),
-                IronOxideGolemRenderer::new);
+                context -> new IronOxideGolemRenderer(context, IronOxideGolemModel.Profile.TITANOMAGNETITE));
     }
 
     @SubscribeEvent

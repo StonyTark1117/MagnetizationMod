@@ -2,27 +2,49 @@
   "schema": 1,
   "profiles": {
     "lab": {
-      "gradleTask": "runPlaytestLabClient",
-      "gameDirectory": "run-playtest-lab",
+      "gradleTask": "runPlaytestAutomationClient",
+      "gameDirectory": "run-playtest-automation",
       "resetCommand": "/magnetization playtest lab reset",
-      "stations": ["overview", "gallery", "electrolyzer", "tokamak", "fusion", "railgun", "dipoles", "automation", "golems", "ship", "portal", "thruster_exhaust", "gas_excitation", "gas_detector", "air_separator", "ion_thruster", "rare_earth", "ponder_tokamak", "ponder_railgun"]
+      "stations": ["overview", "gallery", "electrolyzer", "tokamak", "fusion", "railgun", "dipoles", "automation", "golems_active", "golem_magnetite_hud", "golem_pyrrhotite_hud", "golem_hematite_hud", "golem_titanomagnetite_hud", "golem_gallium_hud", "golem_mr_fluid_soft_hud", "golem_mr_fluid_hardened_hud", "ship", "portal", "thruster_exhaust", "gas_excitation", "gas_exciter_hud", "gas_detector", "air_separator", "ion_thruster", "rare_earth", "ponder_tokamak", "ponder_railgun"]
     },
     "survival": {
-      "gradleTask": "runPlaytestSurvivalClient",
-      "gameDirectory": "run-playtest-survival",
+      "gradleTask": "runPlaytestAutomationSurvivalClient",
+      "gameDirectory": "run-playtest-automation-survival",
       "resetCommand": "/magnetization playtest survival reset",
-      "stations": ["overview", "electrolyzer", "tokamak", "fusion", "railgun", "golems"]
+      "stations": ["overview", "electrolyzer", "tokamak", "fusion", "railgun", "golems_active", "golem_titanomagnetite_hud"]
+    },
+    "jade": {
+      "gradleTask": "runJadeClient",
+      "gameDirectory": "run-client-jade",
+      "resetCommand": "/magnetization playtest lab reset",
+      "stations": ["golem_titanomagnetite_hud", "golem_gallium_hud", "golem_mr_fluid_soft_hud", "golem_mr_fluid_hardened_hud", "gas_exciter_hud"]
+    },
+    "top": {
+      "gradleTask": "runTopClient",
+      "gameDirectory": "run-client-top",
+      "resetCommand": "/magnetization playtest lab reset",
+      "stations": ["golem_titanomagnetite_hud", "golem_gallium_hud", "golem_mr_fluid_soft_hud", "golem_mr_fluid_hardened_hud", "gas_exciter_hud"]
     }
   },
   "visualThreshold": 0.08,
-  "videoStations": ["railgun", "ship", "portal", "thruster_exhaust"],
+  "videoStations": ["railgun", "ship", "thruster_exhaust", "golem_mr_fluid_soft_hud"],
   "videoActions": {
     "railgun": "/magnetization playtest scenario railgun_auto",
     "ship": "/magnetization spawn_test_ship 4 magnetite",
-    "portal": "/aeroportals teleport minecraft:the_nether",
-    "thruster_exhaust": "/magnetization playtest scenario thruster_exhaust"
+    "thruster_exhaust": "/magnetization playtest scenario thruster_exhaust",
+    "golem_mr_fluid_soft_hud": "/setblock ~2 ~ ~-4 magnetization:permanent_magnet"
   },
+  "videoCleanupActions": {
+    "golem_mr_fluid_soft_hud": "/setblock ~2 ~ ~-4 minecraft:air"
+  },
+  "videoCleanupDelays": {
+    "golem_mr_fluid_soft_hud": 2
+  },
+  "videoBaselineStations": ["golem_mr_fluid_soft_hud"],
   "stationActions": {
+    "railgun": [
+      "/magnetization playtest scenario railgun_auto"
+    ],
     "gas_detector": [
       "/item replace entity @s weapon.mainhand with magnetization:gas_detector",
       "/setblock ~2 ~ ~ magnetization:radon",
@@ -34,23 +56,103 @@
     "ponder_railgun": [
       "/ponder magnetization:railgun_emitter"
     ],
-    "golems": [
+    "golems_active": [
       "/kill @e[type=magnetization:gallium_golem,distance=..16]",
       "/kill @e[type=magnetization:mr_fluid_golem,distance=..16]",
       "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
       "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
       "/kill @e[type=magnetization:hematite_golem,distance=..16]",
       "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
-      "/summon magnetization:gallium_golem ~-5 ~ ~",
-      "/summon magnetization:mr_fluid_golem ~-3 ~ ~",
-      "/summon magnetization:magnetite_golem ~-1 ~ ~",
-      "/summon magnetization:pyrrhotite_golem ~1 ~ ~",
-      "/summon magnetization:hematite_golem ~3 ~ ~",
-      "/summon magnetization:titanomagnetite_golem ~5 ~ ~"
+      "/setblock ~-1 ~-1 ~-5 minecraft:magma_block",
+      "/setblock ~2 ~-1 ~-5 magnetization:permanent_magnet",
+      "/setblock ~5 ~-1 ~-5 magnetization:permanent_magnet",
+      "/summon magnetization:magnetite_golem ~-4.5 ~ ~-5 {NoAI:1b,Silent:1b,Oxidized:1b,Health:50.0f,Rotation:[0.0f,0.0f]}",
+      "/summon magnetization:pyrrhotite_golem ~-1.5 ~ ~-5 {NoAI:1b,Silent:1b,Health:45.0f,Rotation:[0.0f,0.0f]}",
+      "/summon magnetization:hematite_golem ~1.5 ~ ~-5 {NoAI:1b,Silent:1b,Health:55.0f,Rotation:[0.0f,0.0f]}",
+      "/summon magnetization:titanomagnetite_golem ~4.5 ~ ~-5 {NoAI:1b,Silent:1b,Health:60.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_magnetite_hud": [
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/summon magnetization:magnetite_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Oxidized:1b,Health:50.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_pyrrhotite_hud": [
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/setblock ~ ~-1 ~-4 minecraft:magma_block",
+      "/summon magnetization:pyrrhotite_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:45.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_hematite_hud": [
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/setblock ~2 ~ ~-4 magnetization:permanent_magnet",
+      "/summon magnetization:hematite_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:55.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_titanomagnetite_hud": [
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/setblock ~2 ~ ~-4 magnetization:permanent_magnet",
+      "/summon magnetization:titanomagnetite_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:60.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_gallium_hud": [
+      "/kill @e[type=magnetization:gallium_golem,distance=..16]",
+      "/kill @e[type=magnetization:mr_fluid_golem,distance=..16]",
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/summon magnetization:gallium_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:35.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_mr_fluid_soft_hud": [
+      "/fill 1192 99 1190 1208 105 1202 minecraft:air",
+      "/fill 1192 99 1190 1208 99 1202 minecraft:smooth_stone",
+      "/tp @s 1200 100 1200 180 0",
+      "/kill @e[type=magnetization:gallium_golem,distance=..16]",
+      "/kill @e[type=magnetization:mr_fluid_golem,distance=..16]",
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/fill ~-8 ~-2 ~-10 ~8 ~2 ~2 minecraft:air replace magnetization:permanent_magnet",
+      "/summon magnetization:mr_fluid_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:40.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "golem_mr_fluid_hardened_hud": [
+      "/fill 1192 99 1190 1208 105 1202 minecraft:air",
+      "/fill 1192 99 1190 1208 99 1202 minecraft:smooth_stone",
+      "/tp @s 1200 100 1200 180 0",
+      "/kill @e[type=magnetization:gallium_golem,distance=..16]",
+      "/kill @e[type=magnetization:mr_fluid_golem,distance=..16]",
+      "/kill @e[type=magnetization:magnetite_golem,distance=..16]",
+      "/kill @e[type=magnetization:pyrrhotite_golem,distance=..16]",
+      "/kill @e[type=magnetization:hematite_golem,distance=..16]",
+      "/kill @e[type=magnetization:titanomagnetite_golem,distance=..16]",
+      "/fill ~-8 ~-2 ~-10 ~8 ~2 ~2 minecraft:air replace magnetization:permanent_magnet",
+      "/setblock ~2 ~ ~-4 magnetization:permanent_magnet",
+      "/summon magnetization:mr_fluid_golem ~ ~ ~-4 {NoAI:1b,Silent:1b,Health:40.0f,Rotation:[0.0f,0.0f]}",
+      "/item replace entity @s armor.head with create:goggles"
+    ],
+    "gas_exciter_hud": [
+      "/magnetization playtest scenario gas_exciter_hud",
+      "/item replace entity @s armor.head with create:goggles"
     ]
   },
   "itemUseStations": ["gas_detector"],
   "closeAfterCaptureStations": ["ponder_tokamak", "ponder_railgun"],
   "guiStations": ["electrolyzer", "tokamak", "fusion", "railgun", "dipoles", "air_separator"],
-  "fatalLogPatterns": "/(?:ERROR|FATAL)\\]|Missing textures? in model|Unable to load model|assert(?:ion)? failed"
+  "fatalLogPatterns": "(?:ERROR|FATAL)\\]|Missing textures? in model|Unable to load model|assert(?:ion)? failed"
 }

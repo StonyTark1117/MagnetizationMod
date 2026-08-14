@@ -9,9 +9,13 @@ import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.IronGolem;
 
-/** Shared vanilla iron-golem model with material/state-specific textures. */
+/** Distinct mineral silhouettes with material/state-specific textures. */
 public final class IronOxideGolemRenderer extends IronGolemRenderer {
-    public IronOxideGolemRenderer(final EntityRendererProvider.Context context) { super(context); }
+    public IronOxideGolemRenderer(final EntityRendererProvider.Context context,
+                                  final IronOxideGolemModel.Profile profile) {
+        super(context);
+        this.model = new IronOxideGolemModel(profile);
+    }
 
     private static ResourceLocation texture(final String name) {
         return ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "textures/entity/" + name + ".png");

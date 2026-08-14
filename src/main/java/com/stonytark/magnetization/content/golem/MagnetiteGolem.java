@@ -31,6 +31,11 @@ public final class MagnetiteGolem extends MagneticGolem {
     public boolean isOxidized() { return entityData.get(OXIDIZED); }
     public long oxidationTicks() { return oxidationTicks; }
     @Override public boolean featureEnabled() { return MagConfig.magnetiteGolemEnabled(); }
+    @Override public net.minecraft.world.item.Item repairMaterial() {
+        return isOxidized()
+                ? com.stonytark.magnetization.registry.MagItems.MAGHEMITE_INGOT.get()
+                : com.stonytark.magnetization.registry.MagItems.MAGNETITE_INGOT.get();
+    }
 
     @Override public void aiStep() {
         super.aiStep();

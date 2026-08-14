@@ -19,7 +19,8 @@ import net.minecraft.world.phys.AABB;
  * proximity to a 0–15 output, which decays a few ticks after movement stops.
  */
 public class MagnetostrictiveSensorBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.menu.RangeConfigurable {
+        implements com.stonytark.magnetization.menu.RangeConfigurable,
+        com.stonytark.magnetization.menu.MachineHudData {
 
     private int signal = 0;
     /** Per-block detection-range override in blocks; 0 = use the config default. */
@@ -31,6 +32,14 @@ public class MagnetostrictiveSensorBlockEntity extends BlockEntity
 
     public int getSignal() {
         return signal;
+    }
+
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        return java.util.List.of(net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.sensor.status", signal,
+                        String.format(java.util.Locale.ROOT, "%.0f", effectiveRange()))
+                .withStyle(net.minecraft.ChatFormatting.AQUA));
     }
 
     /** Effective detection radius: the dialed override if set, else the config

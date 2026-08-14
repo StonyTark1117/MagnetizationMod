@@ -16,7 +16,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * Emits a fresh random redstone strength every couple ticks while a magnet is
  * adjacent (the Barkhausen jitter), 0 otherwise. See {@link BarkhausenBlock}.
  */
-public class BarkhausenBlockEntity extends BlockEntity {
+public class BarkhausenBlockEntity extends BlockEntity
+        implements com.stonytark.magnetization.menu.MachineHudData {
 
     private static final int INTERVAL = 2;
 
@@ -28,6 +29,16 @@ public class BarkhausenBlockEntity extends BlockEntity {
 
     public int getSignal() {
         return signal;
+    }
+
+    @Override
+    public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        final net.minecraft.network.chat.Component value = signal > 0
+                ? net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.barkhausen.jitter", signal)
+                : net.minecraft.network.chat.Component.translatable(
+                        "tooltip.magnetization.barkhausen.idle");
+        return java.util.List.of(value.copy().withStyle(net.minecraft.ChatFormatting.AQUA));
     }
 
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state,

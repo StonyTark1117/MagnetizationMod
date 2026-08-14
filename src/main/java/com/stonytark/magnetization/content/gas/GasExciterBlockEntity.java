@@ -25,7 +25,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import java.util.List;
 
 public final class GasExciterBlockEntity extends BlockEntity
-        implements com.stonytark.magnetization.content.emp.EmpDrainable {
+        implements com.stonytark.magnetization.menu.MachineHudData,
+        com.stonytark.magnetization.content.emp.EmpDrainable {
     private final Buffer energy = new Buffer(MagConfig.gasExciterCapacity(), MagConfig.gasExciterReceive());
     private long consumedAt = Long.MIN_VALUE;
     private Fluid hudGas = Fluids.EMPTY;
@@ -48,7 +49,7 @@ public final class GasExciterBlockEntity extends BlockEntity
     public boolean hudRedstoneDisabled() { return hudRedstoneDisabled; }
 
     /** WTHIT reads this server-synchronized snapshot from the client block entity. */
-    public List<Component> hudLines() {
+    @Override public List<Component> hudLines() {
         final Component gas = hudGas == Fluids.EMPTY
                 ? Component.translatable("tooltip.magnetization.gas_exciter.no_gas")
                 : Component.translatable("tooltip.magnetization.gas_exciter.gas",

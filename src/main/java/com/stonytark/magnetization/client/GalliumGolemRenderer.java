@@ -6,10 +6,7 @@ import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.IronGolem;
 
-/**
- * Renders the Gallium Golem with the iron-golem model and a gallium palette-swap
- * texture.
- */
+/** Renders a sagging cast-metal body with the dedicated gallium texture. */
 public final class GalliumGolemRenderer extends IronGolemRenderer {
 
     private static final ResourceLocation TEXTURE =
@@ -17,6 +14,7 @@ public final class GalliumGolemRenderer extends IronGolemRenderer {
 
     public GalliumGolemRenderer(final EntityRendererProvider.Context ctx) {
         super(ctx);
+        this.model = new GalliumGolemModel();
     }
 
     @Override

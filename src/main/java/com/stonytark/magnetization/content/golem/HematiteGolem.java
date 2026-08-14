@@ -25,6 +25,9 @@ public final class HematiteGolem extends MagneticGolem {
         super.defineSynchedData(builder); builder.define(DAMPENED_SOURCES, 0);
     }
     @Override public boolean featureEnabled() { return MagConfig.hematiteGolemEnabled(); }
+    @Override public net.minecraft.world.item.Item repairMaterial() {
+        return com.stonytark.magnetization.registry.MagItems.HEMATITE_INGOT.get();
+    }
     @Override public void aiStep() {
         if (featureEnabled() && !level().isClientSide
                 && level() instanceof ServerLevel server && tickCount % 10 == 0) {
