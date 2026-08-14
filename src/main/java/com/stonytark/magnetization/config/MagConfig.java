@@ -508,6 +508,7 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue COPYCATS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue CURIOS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue TFMG_COOLING_FLUID_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_GAS_EXCITATION_ENABLED;
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue STEAM_N_RAILS_COMPAT_ENABLED;
@@ -2437,6 +2438,14 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.tfmgProcessingRecipesEnabled")
                 .define("tfmgProcessingRecipesEnabled", true);
 
+        TFMG_COOLING_FLUID_ENABLED = b
+                .comment("Allow TFMG Cooling Fluid to cool Tokamaks and Fusion Thrusters.",
+                         "Disable this without turning off other TFMG compatibility. The TFMG",
+                         "compatibility master switch must also be enabled. New input and cooling",
+                         "use stop immediately; already stored fluid remains inert until re-enabled.")
+                .translation("magnetization.configuration.compat.tfmgCoolingFluidEnabled")
+                .define("tfmgCoolingFluidEnabled", true);
+
         TFMG_GAS_EXCITATION_ENABLED = b
                 .comment("Allow TFMG virtual gases to be released through a Gas Vent and excited",
                          "as persistent proxy clouds. Requires the TFMG compatibility master switch.",
@@ -3155,6 +3164,9 @@ public final class MagConfig {
     }
     public static boolean tfmgProcessingRecipesEnabled() {
         return tfmgCompatEnabled() && booleanOr(TFMG_PROCESSING_RECIPES_ENABLED, true);
+    }
+    public static boolean tfmgCoolingFluidEnabled() {
+        return tfmgCompatEnabled() && booleanOr(TFMG_COOLING_FLUID_ENABLED, true);
     }
     public static boolean tfmgGasExcitationEnabled() {
         return tfmgCompatEnabled() && booleanOr(TFMG_GAS_EXCITATION_ENABLED, true);

@@ -20,7 +20,7 @@ import java.util.Optional;
  * <p>Vanilla water, deuterium oxide, and liquid gallium are built in. Addons can opt dedicated coolants into the
  * common {@code c:cooling_fluid} and {@code c:buckets/cooling_fluid} tags; TFMG
  * already publishes its Cooling Fluid to both. TFMG-owned entries additionally
- * honor Magnetization's live TFMG compatibility toggle. {@link #quality} drives
+ * honor Magnetization's live TFMG-coolant compatibility toggle. {@link #quality} drives
  * a configurable curve: better coolant is consumed more slowly and scales the
  * machine's configured cooling bonuses farther above dry performance.</p>
  */
@@ -33,6 +33,8 @@ public final class CoolantFluids {
     }
 
     public static double quality(final Fluid fluid) {
+        final ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
+        if (id != null && id.getNamespace().equals("tfmg") && !MagConfig.tfmgCoolingFluidEnabled()) return 0.0d;
         if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER
                 || fluid.builtInRegistryHolder().is(net.minecraft.tags.FluidTags.WATER)) {
             return Math.max(0.1d, MagConfig.coolantQualityWater());
@@ -43,8 +45,6 @@ public final class CoolantFluids {
         if (fluid == MagFluids.GALLIUM.get() || fluid == MagFluids.GALLIUM_FLOWING.get()) {
             return Math.max(0.1d, MagConfig.coolantQualityGallium());
         }
-        final ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
-        if (id != null && id.getNamespace().equals("tfmg") && !MagConfig.tfmgCompatEnabled()) return 0.0d;
         return fluid.builtInRegistryHolder().is(MagTags.COOLING_FLUIDS)
                 ? Math.max(0.1d, MagConfig.coolantQualityTagged()) : 0.0d;
     }

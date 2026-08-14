@@ -2,6 +2,7 @@ package com.stonytark.magnetization.gametest;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.stonytark.magnetization.api.MagTags;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.fluid.CoolantFluids;
 import com.stonytark.magnetization.content.jet.FusionThrusterBlockEntity;
 import com.stonytark.magnetization.content.gas.GasExcitationProfiles;
@@ -44,42 +45,65 @@ public final class TfmgHydrogenGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 40, batch = "tfmgCooling")
     public static void tfmgCoolingFluidWorksWithoutMakingFuelsCoolant(final GameTestHelper helper) {
+        final boolean originalMaster = MagConfig.TFMG_COMPAT_ENABLED.get();
+        final boolean originalCooling = MagConfig.TFMG_COOLING_FLUID_ENABLED.get();
         final Fluid cooling = fluid("tfmg", "cooling_fluid");
         final Fluid flowingCooling = fluid("tfmg", "flowing_cooling_fluid");
         final ItemStack coolingBucket = new ItemStack(item("tfmg", "cooling_fluid_bucket"));
-        helper.assertTrue(cooling.builtInRegistryHolder().is(MagTags.COOLING_FLUIDS)
-                        && flowingCooling.builtInRegistryHolder().is(MagTags.COOLING_FLUIDS),
-                "TFMG Cooling Fluid variants are missing from c:cooling_fluid");
-        helper.assertTrue(coolingBucket.is(MagTags.COOLING_FLUID_BUCKETS)
-                        && CoolantFluids.isCoolantBucket(coolingBucket),
-                "TFMG Cooling Fluid Bucket is missing from the shared coolant input contract");
+        try {
+            MagConfig.TFMG_COMPAT_ENABLED.set(true);
+            MagConfig.TFMG_COOLING_FLUID_ENABLED.set(true);
+            helper.assertTrue(cooling.builtInRegistryHolder().is(MagTags.COOLING_FLUIDS)
+                            && flowingCooling.builtInRegistryHolder().is(MagTags.COOLING_FLUIDS),
+                    "TFMG Cooling Fluid variants are missing from c:cooling_fluid");
+            helper.assertTrue(coolingBucket.is(MagTags.COOLING_FLUID_BUCKETS)
+                            && CoolantFluids.isCoolantBucket(coolingBucket),
+                    "TFMG Cooling Fluid Bucket is missing from the shared coolant input contract");
 
-        final BlockPos fusionPos = new BlockPos(1, 1, 1);
-        helper.setBlock(fusionPos, MagBlocks.FUSION_THRUSTER.get());
-        final FusionThrusterBlockEntity fusion =
-                (FusionThrusterBlockEntity) helper.getBlockEntity(fusionPos);
-        helper.assertTrue(fusion.fluidHandler().fill(new FluidStack(cooling, 1_000),
-                        IFluidHandler.FluidAction.EXECUTE) == 1_000
-                        && fusion.fluidHandler().getFluidInTank(0).isEmpty()
-                        && fusion.coolantStored() == 1_000,
-                "Fusion Thruster did not route piped TFMG Cooling Fluid to its coolant tank");
+            final BlockPos fusionPos = new BlockPos(1, 1, 1);
+            helper.setBlock(fusionPos, MagBlocks.FUSION_THRUSTER.get());
+            final FusionThrusterBlockEntity fusion =
+                    (FusionThrusterBlockEntity) helper.getBlockEntity(fusionPos);
+            helper.assertTrue(fusion.fluidHandler().fill(new FluidStack(cooling, 1_000),
+                            IFluidHandler.FluidAction.EXECUTE) == 1_000
+                            && fusion.fluidHandler().getFluidInTank(0).isEmpty()
+                            && fusion.coolantStored() == 1_000,
+                    "Fusion Thruster did not route piped TFMG Cooling Fluid to its coolant tank");
 
-        final BlockPos tokamakPos = new BlockPos(3, 1, 1);
-        helper.setBlock(tokamakPos, MagBlocks.TOKAMAK_CONTROLLER.get());
-        final com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity tokamak =
-                (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity)
-                        helper.getBlockEntity(tokamakPos);
-        helper.assertTrue(tokamak.fuelContainer().canPlaceItem(0, coolingBucket)
-                        && tokamak.fillCoolantBucket(coolingBucket)
-                        && tokamak.coolantStored() == 1_000,
-                "Tokamak did not accept a TFMG Cooling Fluid Bucket");
+            final BlockPos tokamakPos = new BlockPos(3, 1, 1);
+            helper.setBlock(tokamakPos, MagBlocks.TOKAMAK_CONTROLLER.get());
+            final com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity tokamak =
+                    (com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity)
+                            helper.getBlockEntity(tokamakPos);
+            helper.assertTrue(tokamak.fuelContainer().canPlaceItem(0, coolingBucket)
+                            && tokamak.fillCoolantBucket(coolingBucket)
+                            && tokamak.coolantStored() == 1_000,
+                    "Tokamak did not accept a TFMG Cooling Fluid Bucket");
 
-        helper.assertTrue(CoolantFluids.quality(MagFluids.GALLIUM.get())
-                        > CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
-                        && CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
-                        > CoolantFluids.quality(net.minecraft.world.level.material.Fluids.WATER)
-                        && !CoolantFluids.isCoolant(MagFluids.HYDROGEN.get()),
-                "Gallium, heavy water, and water should follow the intended curve without making fuel gas coolant");
+            helper.assertTrue(CoolantFluids.quality(MagFluids.GALLIUM.get())
+                            > CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
+                            && CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
+                            > CoolantFluids.quality(net.minecraft.world.level.material.Fluids.WATER)
+                            && !CoolantFluids.isCoolant(MagFluids.HYDROGEN.get()),
+                    "Gallium, heavy water, and water should follow the intended curve without making fuel gas coolant");
+
+            MagConfig.TFMG_COOLING_FLUID_ENABLED.set(false);
+            final BlockPos disabledFusionPos = new BlockPos(5, 1, 1);
+            helper.setBlock(disabledFusionPos, MagBlocks.FUSION_THRUSTER.get());
+            final FusionThrusterBlockEntity disabledFusion =
+                    (FusionThrusterBlockEntity) helper.getBlockEntity(disabledFusionPos);
+            helper.assertTrue(!MagConfig.tfmgCoolingFluidEnabled()
+                            && CoolantFluids.quality(cooling) == 0.0d
+                            && !CoolantFluids.isCoolantBucket(coolingBucket)
+                            && disabledFusion.fluidHandler().fill(new FluidStack(cooling, 1_000),
+                                    IFluidHandler.FluidAction.EXECUTE) == 0
+                            && CoolantFluids.isCoolant(net.minecraft.world.level.material.Fluids.WATER)
+                            && CoolantFluids.isCoolant(MagFluids.GALLIUM.get()),
+                    "Dedicated TFMG cooling toggle did not reject TFMG input while preserving built-in coolants");
+        } finally {
+            MagConfig.TFMG_COOLING_FLUID_ENABLED.set(originalCooling);
+            MagConfig.TFMG_COMPAT_ENABLED.set(originalMaster);
+        }
         helper.succeed();
     }
 

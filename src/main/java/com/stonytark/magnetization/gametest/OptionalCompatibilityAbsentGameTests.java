@@ -102,10 +102,11 @@ public final class OptionalCompatibilityAbsentGameTests {
                             && !MagConfig.steamRailsFieldReaction(),
                     "Transport compatibility master did not cascade to its behavior toggles");
             helper.assertTrue(!MagConfig.tfmgProcessingRecipesEnabled()
+                            && !MagConfig.tfmgCoolingFluidEnabled()
                             && !MagConfig.tfmgGasExcitationEnabled()
                             && !MagConfig.tfmgSteelmakingRecipesEnabled()
                             && !MagConfig.tfmgPolarizerFieldEnabled(),
-                    "TFMG master did not cascade to recipes and Polarizer fields");
+                    "TFMG master did not cascade to coolant, recipes, and Polarizer fields");
             helper.assertTrue(!new CompatConfigCondition(CompatConfigCondition.Feature.TFMG_GAS_EXCITATION)
                             .test(net.neoforged.neoforge.common.conditions.ICondition.IContext.EMPTY),
                     "TFMG gas-excitation condition ignored the package master");
