@@ -58,6 +58,9 @@ public final class TokamakPreviewGameTests {
         helper.assertTrue(com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity
                         .ringMultiplier(helper.getLevel(), helper.absolutePos(controller)) == 3,
                 "Expanded Tokamak ring did not receive its expected 3x performance scale");
+        helper.assertTrue(helper.absolutePos(controller).equals(TokamakRingPreview.findController(
+                        helper.getLevel(), helper.absolutePos(controller.offset(2, 0, 0)), 7)),
+                "Goggle targeting could not resolve the controller from a 5x5 outer coil");
 
         final var construction = TokamakRingPreview.constructionPreview(
                 helper.getLevel(), helper.absolutePos(controller), 7);

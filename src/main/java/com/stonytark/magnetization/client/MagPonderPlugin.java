@@ -151,20 +151,20 @@ public final class MagPonderPlugin implements PonderPlugin {
         prepare(scene, definition);
         final BlockPos center = util.grid().at(2, 1, 2);
         scene.world().setBlock(center, MagBlocks.TOKAMAK_CONTROLLER.get().defaultBlockState(), false);
-        for (int x = 1; x <= 3; x++) {
-            for (int z = 1; z <= 3; z++) {
-                if (x != 2 || z != 2) {
+        for (int x = 0; x <= 4; x++) {
+            for (int z = 0; z <= 4; z++) {
+                if (x == 0 || x == 4 || z == 0 || z == 4) {
                     scene.world().setBlock(util.grid().at(x, 1, z),
                             MagBlocks.TOKAMAK_COIL.get().defaultBlockState(), false);
                 }
             }
         }
-        show(scene, util, util.grid().at(1, 1, 1), util.grid().at(3, 1, 3));
-        text(scene, util, util.grid().at(1, 1, 1), util.grid().at(3, 1, 3),
-                "Surround the controller with exactly 8 Tokamak Coils.");
+        show(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4));
+        text(scene, util, util.grid().at(0, 1, 0), util.grid().at(4, 1, 4),
+                "Center the controller inside any complete odd square perimeter. This 5x5 ring uses 16 coils and runs at 3x capacity, generation, and output.");
         scene.overlay().showOutlineWithText(util.select().position(center), 80)
                 .colored(PonderPalette.OUTPUT)
-                .text("Load a fuel cell into the controller once the ring is complete.")
+                .text("Start at 3x3, then expand through 5x5, 7x7, and larger odd rings up to the configured limit. Load fuel after a perimeter is complete.")
                 .placeNearTarget();
         scene.idle(90);
     }

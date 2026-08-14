@@ -70,6 +70,30 @@ public final class TokamakRingPreview {
         return formed;
     }
 
+    /** Resolve the nearest centered controller for a controller or perimeter
+     * coil hit. Unlike the old one-block lookup, this covers every configured
+     * expanded-ring radius. */
+    public static BlockPos findController(final BlockGetter level, final BlockPos hit,
+                                          final int maxEdge) {
+        if (level.getBlockState(hit).is(MagBlocks.TOKAMAK_CONTROLLER.get())) return hit;
+        if (!level.getBlockState(hit).is(MagBlocks.TOKAMAK_COIL.get())) return null;
+        final int maxRadius = (normalizedMaxEdge(maxEdge) - 1) / 2;
+        BlockPos nearest = null;
+        int nearestRadius = Integer.MAX_VALUE;
+        for (int dx = -maxRadius; dx <= maxRadius; dx++) {
+            for (int dz = -maxRadius; dz <= maxRadius; dz++) {
+                final int radius = Math.max(Math.abs(dx), Math.abs(dz));
+                if (radius < 1 || radius >= nearestRadius) continue;
+                final BlockPos candidate = hit.offset(dx, 0, dz);
+                if (level.getBlockState(candidate).is(MagBlocks.TOKAMAK_CONTROLLER.get())) {
+                    nearest = candidate.immutable();
+                    nearestRadius = radius;
+                }
+            }
+        }
+        return nearest;
+    }
+
     private static int normalizedMaxEdge(final int maxEdge) {
         final int configured = Math.max(3, maxEdge);
         return configured % 2 == 0 ? configured - 1 : configured;

@@ -69,7 +69,7 @@ public final class MultiblockBuildPreviewOverlay {
         if (isFusionTarget(mc.level, hit)) {
             renderFusion(mc.level, hit, pose, camera, lines);
         } else if (isTokamakTarget(mc.level, hit)) {
-            renderTokamak(mc.level, tokamakControllerTarget(mc.level, hit), pose, camera, lines);
+            renderTokamak(mc.level, tokamakPreview(mc.level, hit), pose, camera, lines);
         } else {
             final BlockPos emitter = findRailgunEmitter(mc.level, hit);
             if (emitter != null) renderRailgun(mc.level, emitter, pose, camera, lines);
@@ -98,8 +98,7 @@ public final class MultiblockBuildPreviewOverlay {
                     mc.level, fusionInteriorTarget(mc.level, hit), facing, MagConfig.fusionThrusterMaxEdge());
             lines = fusionText(p);
         } else if (isTokamakTarget(mc.level, hit)) {
-            lines = tokamakText(TokamakRingPreview.preview(
-                    mc.level, tokamakControllerTarget(mc.level, hit)));
+            lines = tokamakText(tokamakPreview(mc.level, hit));
         } else {
             final BlockPos emitter = findRailgunEmitter(mc.level, hit);
             if (emitter == null) return;
@@ -159,16 +158,27 @@ public final class MultiblockBuildPreviewOverlay {
     }
 
     private static BlockPos tokamakControllerTarget(final Level level, final BlockPos hit) {
-        if (level.getBlockState(hit).is(MagBlocks.TOKAMAK_CONTROLLER.get())) return hit;
-        if (!level.getBlockState(hit).is(MagBlocks.TOKAMAK_COIL.get())) return null;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
-                final BlockPos candidate = hit.offset(dx, 0, dz);
-                if (level.getBlockState(candidate).is(MagBlocks.TOKAMAK_CONTROLLER.get())) return candidate;
-            }
+        return TokamakRingPreview.findController(level, hit, MagConfig.tokamakMaxEdge());
+    }
+
+    private record TokamakOverlayPreview(TokamakRingPreview.Preview target,
+                                         TokamakRingPreview.Preview formed) {}
+
+    private static TokamakOverlayPreview tokamakPreview(final Level level, final BlockPos hit) {
+        final BlockPos controller = tokamakControllerTarget(level, hit);
+        if (controller == null) throw new IllegalArgumentException("Tokamak target has no controller");
+        final TokamakRingPreview.Preview formed = TokamakRingPreview.preview(level, controller);
+        final TokamakRingPreview.Preview target;
+        if (level.getBlockState(hit).is(MagBlocks.TOKAMAK_COIL.get())) {
+            final int radius = Math.max(Math.abs(hit.getX() - controller.getX()),
+                    Math.abs(hit.getZ() - controller.getZ()));
+            target = TokamakRingPreview.previewExact(level, controller, radius * 2 + 1,
+                    MagConfig.tokamakMaxEdge());
+        } else {
+            target = TokamakRingPreview.constructionPreview(level, controller,
+                    MagConfig.tokamakMaxEdge());
         }
-        return null;
+        return new TokamakOverlayPreview(target, formed);
     }
 
     private static Direction facingForFusion(final Level level, final BlockPos hit) {
@@ -191,10 +201,10 @@ public final class MultiblockBuildPreviewOverlay {
         if (p.master() != null) drawCube(lines, pose, p.master(), camera, 0xFFFFD866);
     }
 
-    private static void renderTokamak(final Level level, final BlockPos controller,
+    private static void renderTokamak(final Level level, final TokamakOverlayPreview preview,
                                       final PoseStack pose, final Vec3 camera,
                                       final VertexConsumer lines) {
-        final TokamakRingPreview.Preview p = TokamakRingPreview.preview(level, controller);
+        final TokamakRingPreview.Preview p = preview.target();
         for (final BlockPos pos : p.requiredFrame())
             drawCube(lines, pose, pos, camera, 0xFF70FF90);
         for (final BlockPos pos : p.invalidEdges())
@@ -215,14 +225,20 @@ public final class MultiblockBuildPreviewOverlay {
                 "Status: " + (p.valid() ? "VALID" : "INVALID"));
     }
 
-    private static List<String> tokamakText(final TokamakRingPreview.Preview p) {
+    private static List<String> tokamakText(final TokamakOverlayPreview preview) {
+        final TokamakRingPreview.Preview p = preview.target();
+        final TokamakRingPreview.Preview formed = preview.formed();
         final String bad = p.invalidEdges().isEmpty() ? "none" : pos(p.invalidEdges().get(0));
+        final String active = formed.valid()
+                ? formed.edge() + "x" + formed.edge() + " (×" + Math.max(1, formed.edge() - 2) + ")"
+                : "none";
         return List.of(
                 "Tokamak Preview",
-                "Frame: 8 Tokamak Coils",
+                "Target ring: " + p.edge() + "x" + p.edge() + " (" + p.coilCount() + " coils)",
+                "Performance when complete: ×" + Math.max(1, p.edge() - 2),
+                "Active ring: " + active,
                 "Master: " + pos(p.controller()),
                 "Facing: horizontal ring",
-                "Dimensions: 3x3x1",
                 "Invalid edge: " + bad,
                 "Status: " + (p.valid() ? "VALID" : "INVALID"));
     }
