@@ -8,6 +8,16 @@
       "item": "magnetization:tokamak_controller",
       "text": "book.magnetization.entry.tokamak.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.construction.title",
+      "text": "book.magnetization.entry.tokamak.construction.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.io.title",
+      "text": "book.magnetization.entry.tokamak.io.text"
     }
   ]
 }

@@ -105,6 +105,7 @@ class PatchouliFieldManualTest {
                 "fluids/fusion_fuels.json",
                 "fluids/lithium.json",
                 "fluids/noble_gases.json",
+                "advanced/tokamak.json",
                 "advanced/magnet_burning.json",
                 "gear/gas_detector.json",
                 "gear/rare_earth_magnets.json",
@@ -166,6 +167,32 @@ class PatchouliFieldManualTest {
         assertTrue(viewers.contains("Ponder"), "Field Manual must identify its animated Ponder guidance");
         assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 5,
                 "Field Manual version must advance for complete rare-earth and Ponder guidance");
+    }
+
+    @Test
+    void tokamakInstructionsRequireAndCountTheSolidCoreInterior() throws IOException {
+        final Path entry = BOOK.resolve("entries/advanced/tokamak.json");
+        final Set<String> strings = new HashSet<>();
+        collectStrings(parse(entry), strings);
+        assertTrue(strings.contains("book.magnetization.entry.tokamak.construction.text")
+                        && strings.contains("book.magnetization.entry.tokamak.io.text"),
+                "Tokamak Field Manual entry must include construction and connection pages");
+
+        final JsonObject translations = parse(EN_US).getAsJsonObject();
+        final String construction = translations
+                .get("book.magnetization.entry.tokamak.construction.text").getAsString();
+        final String connections = translations
+                .get("book.magnetization.entry.tokamak.io.text").getAsString();
+        assertTrue(construction.contains("3x3:") && construction.contains("8 coils + 1 core")
+                        && construction.contains("5x5:") && construction.contains("16 coils + 9 cores")
+                        && construction.contains("7x7:") && construction.contains("24 coils + 25 cores")
+                        && construction.contains("every") && construction.contains("interior"),
+                "Tokamak construction page must state the solid interior and canonical core counts");
+        assertTrue(connections.contains("center core") && connections.contains("any core")
+                        && connections.contains("perimeter coil"),
+                "Tokamak connection page must explain master, follower, and frame access");
+        assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 6,
+                "Field Manual version must advance for corrected expandable-Tokamak guidance");
     }
 
     @Test

@@ -209,7 +209,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | COMMON | machines.tokamakFeCapacity | number | 4000000; 0-1000000000 | Internal FE buffer of the Tokamak Controller. |
-| COMMON | machines.tokamakMaxEdge | number | 15; 3-63 | Largest odd square ring edge accepted by the reactor. 15 permits 3x3 through 15x15 rings; larger rings linearly increase FE capacity and output. |
+| COMMON | machines.tokamakMaxEdge | number | 15; 3-63 | Largest odd square reactor accepted. A coil perimeter must surround a solid Reactor-Core interior; 15 permits 3x3 through 15x15 structures. Larger structures linearly increase FE capacity and output. |
 | COMMON | machines.tokamakGenPerTick | number | 2000; 0-1000000 | FE generated per tick while fusing. |
 | COMMON | machines.tokamakOutputRate | number | 16000; 0-1000000000 | Max FE pushed to neighbours per tick. |
 | COMMON | machines.tokamakBurnTicksPerCell | number | 4800; 1-1000000000 | How many ticks one Deuterium (D-D) Cell fuses. |

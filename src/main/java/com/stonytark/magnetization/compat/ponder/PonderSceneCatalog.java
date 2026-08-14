@@ -13,7 +13,7 @@ import java.util.List;
 public final class PonderSceneCatalog {
 
     private static final List<Scene> CORE_SCENES = List.of(
-            custom("tokamak_ring", "Build a Tokamak ring", Kind.TOKAMAK,
+            custom("tokamak_ring", "Build a solid-core Tokamak", Kind.TOKAMAK,
                     "magnetization:tokamak_controller", "magnetization:tokamak_coil"),
             custom("fusion_panel", "Build a Fusion Thruster panel", Kind.FUSION_PANEL,
                     "magnetization:fusion_thruster"),
