@@ -62,7 +62,7 @@ public final class HematiteLensItem extends Item {
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
-    private static MagneticPolarity lensPolarity(final ItemStack stack) {
+    public static MagneticPolarity lensPolarity(final ItemStack stack) {
         final MagneticPolarity stored = stack.get(MagDataComponents.ARMOR_POLARITY.get());
         return stored != null ? stored : MagneticPolarity.NORTH;
     }

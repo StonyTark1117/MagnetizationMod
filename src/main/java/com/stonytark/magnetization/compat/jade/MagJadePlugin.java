@@ -18,6 +18,7 @@ import snownee.jade.api.WailaPlugin;
 public class MagJadePlugin implements IWailaPlugin {
 
     public static final ResourceLocation FIELD_INFO = Magnetization.id("field_info");
+    public static final ResourceLocation GOLEM_INFO = Magnetization.id("golem_info");
 
     @Override
     public void register(final IWailaCommonRegistration registration) {
@@ -33,5 +34,7 @@ public class MagJadePlugin implements IWailaPlugin {
         // the BE, so non-emitter blocks see a no-op.
         registration.registerBlockComponent(EmitterFieldProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(MachineInfoProvider.INSTANCE, Block.class);
+        registration.registerEntityComponent(MagneticGolemProvider.INSTANCE,
+                com.stonytark.magnetization.content.golem.MagneticGolem.class);
     }
 }

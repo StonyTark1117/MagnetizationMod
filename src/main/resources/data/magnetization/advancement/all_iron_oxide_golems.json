@@ -1,0 +1,11 @@
+{
+  "parent":"magnetization:iron_oxide_golem",
+  "display":{"icon":{"id":"magnetization:titanomagnetite_block"},"title":{"translate":"advancement.magnetization.all_iron_oxide_golems.title"},"description":{"translate":"advancement.magnetization.all_iron_oxide_golems.description"},"frame":"challenge","show_toast":true,"announce_to_chat":true},
+  "criteria":{
+    "magnetite":{"trigger":"minecraft:summoned_entity","conditions":{"entity":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"type":"magnetization:magnetite_golem"}}]}},
+    "pyrrhotite":{"trigger":"minecraft:summoned_entity","conditions":{"entity":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"type":"magnetization:pyrrhotite_golem"}}]}},
+    "hematite":{"trigger":"minecraft:summoned_entity","conditions":{"entity":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"type":"magnetization:hematite_golem"}}]}},
+    "titanomagnetite":{"trigger":"minecraft:summoned_entity","conditions":{"entity":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"type":"magnetization:titanomagnetite_golem"}}]}}
+  },
+  "requirements":[["magnetite"],["pyrrhotite"],["hematite"],["titanomagnetite"]]
+}

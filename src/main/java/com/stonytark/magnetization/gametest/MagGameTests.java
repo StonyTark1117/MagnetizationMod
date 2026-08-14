@@ -3838,6 +3838,35 @@ public final class MagGameTests {
         }).run();
     }
 
+    @GameTest(template = EMPTY_TEMPLATE, timeoutTicks = 100)
+    public static void ironOxideGolemsExposeTheirCoreStates(final GameTestHelper helper) {
+        final var magnetite = helper.spawn(
+                com.stonytark.magnetization.registry.MagEntities.MAGNETITE_GOLEM.get(), new BlockPos(0, 1, 0));
+        final var pyrrhotite = helper.spawn(
+                com.stonytark.magnetization.registry.MagEntities.PYRRHOTITE_GOLEM.get(), new BlockPos(2, 1, 0));
+        final var hematite = helper.spawn(
+                com.stonytark.magnetization.registry.MagEntities.HEMATITE_GOLEM.get(), new BlockPos(0, 1, 2));
+        final var titan = helper.spawn(
+                com.stonytark.magnetization.registry.MagEntities.TITANOMAGNETITE_GOLEM.get(), new BlockPos(2, 1, 2));
+        helper.assertTrue(magnetite.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH) == 100.0d,
+                "Magnetite health should be 100");
+        helper.assertTrue(pyrrhotite.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH) == 90.0d,
+                "Pyrrhotite health should be 90");
+        helper.assertTrue(hematite.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE) == 1.0d,
+                "Hematite should have full knockback resistance");
+        helper.assertTrue(titan.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH) == 120.0d,
+                "Titanomagnetite health should be 120");
+        helper.assertTrue(hematite.mobileField() == null, "Hematite must never emit a field");
+        helper.assertTrue(magnetite.mobileField().strength()
+                        == com.stonytark.magnetization.api.MagneticStrength.WEAK,
+                "Fresh Magnetite should emit WEAK");
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(com.stonytark.magnetization.physics.MobileFieldRegistry.size(helper.getLevel()) >= 4,
+                    "All live golems should be present in the mobile field registry");
+            helper.succeed();
+        });
+    }
+
     private static com.stonytark.magnetization.content.railgun.RailgunEmitterBlockEntity findRailgunEmitter(
             final dev.ryanhcode.sable.sublevel.ServerSubLevel ship) {
         for (final var holder : ship.getPlot().getLoadedChunks()) {

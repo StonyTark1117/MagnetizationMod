@@ -1,0 +1,7 @@
+{
+  "type":"minecraft:entity",
+  "pools":[
+    {"rolls":1,"conditions":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"nbt":"{Oxidized:0b}"}}],"entries":[{"type":"minecraft:item","name":"magnetization:magnetite_ingot","functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":3,"max":5}}]}]},
+    {"rolls":1,"conditions":[{"condition":"minecraft:entity_properties","entity":"this","predicate":{"nbt":"{Oxidized:1b}"}}],"entries":[{"type":"minecraft:item","name":"magnetization:maghemite_ingot","functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":3,"max":5}}]}]}
+  ]
+}

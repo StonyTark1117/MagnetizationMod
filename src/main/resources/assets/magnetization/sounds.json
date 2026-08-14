@@ -1,0 +1,22 @@
+{
+  "golem.polarize": {
+    "subtitle": "subtitles.magnetization.golem.polarize",
+    "sounds": [{"name": "minecraft:block.amethyst_block.resonate", "type": "event"}]
+  },
+  "golem.oxidize": {
+    "subtitle": "subtitles.magnetization.golem.oxidize",
+    "sounds": [{"name": "minecraft:block.copper_bulb.turn_on", "type": "event"}]
+  },
+  "golem.heat_change": {
+    "subtitle": "subtitles.magnetization.golem.heat_change",
+    "sounds": [{"name": "minecraft:block.fire.extinguish", "type": "event"}]
+  },
+  "golem.dampen": {
+    "subtitle": "subtitles.magnetization.golem.dampen",
+    "sounds": [{"name": "minecraft:block.lodestone.hit", "type": "event"}]
+  },
+  "golem.capture": {
+    "subtitle": "subtitles.magnetization.golem.capture",
+    "sounds": [{"name": "minecraft:block.lodestone.place", "type": "event"}]
+  }
+}

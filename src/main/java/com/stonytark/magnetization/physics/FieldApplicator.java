@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Predicate;
+import com.stonytark.magnetization.content.golem.MagneticGolem;
 
 /**
  * Walks a {@link MagneticField} and applies its force to:
@@ -116,6 +117,20 @@ public final class FieldApplicator {
         apply(level, field, null, null);
     }
 
+    /** Apply a mobile golem field while retaining normal ship/item/hostile-mob
+     * behaviour and excluding only the source's protected living targets. */
+    public static void applyFromEntity(final ServerLevel level, final MagneticField raw,
+                                       final MagneticGolem source) {
+        final MagneticField field = MobileFieldRegistry.dampen(level, raw, source.getUUID());
+        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
+        applyToSubLevels(level, field, null, null);
+        applyToEntities(level, field, true, true, entity -> !source.protectsFromOwnField(entity));
+        if (MagConfig.immersivePortalsCompatEnabled()
+                && ModList.get().isLoaded("immersive_portals_core")) {
+            ImmersivePortalFieldCompat.applyThroughPortals(level, field, null, null);
+        }
+    }
+
     public static void apply(
             final ServerLevel level,
             final MagneticField field,
@@ -137,12 +152,13 @@ public final class FieldApplicator {
             final @Nullable ServerSubLevel exclude,
             final @Nullable Predicate<ServerSubLevel> shipFilter
     ) {
-        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
-        applyToSubLevels(level, field, exclude, shipFilter);
-        applyToEntities(level, field, true, true);
+        final MagneticField effective = MobileFieldRegistry.dampen(level, field, null);
+        if (effective.polarity() == MagneticPolarity.NONE || effective.strength().force() <= 0) return;
+        applyToSubLevels(level, effective, exclude, shipFilter);
+        applyToEntities(level, effective, true, true);
         if (MagConfig.immersivePortalsCompatEnabled()
                 && ModList.get().isLoaded("immersive_portals_core")) {
-            ImmersivePortalFieldCompat.applyThroughPortals(level, field, exclude, shipFilter);
+            ImmersivePortalFieldCompat.applyThroughPortals(level, effective, exclude, shipFilter);
         }
     }
 
@@ -160,10 +176,12 @@ public final class FieldApplicator {
             final @Nullable ServerSubLevel exclude,
             final @Nullable Predicate<ServerSubLevel> shipFilter
     ) {
+        final MagneticField effectiveFirst = MobileFieldRegistry.dampen(level, first, null);
+        final MagneticField effectiveSecond = MobileFieldRegistry.dampen(level, second, null);
         final java.util.Map<ServerSubLevel, Double> firstWanted = new java.util.HashMap<>();
         final java.util.Map<ServerSubLevel, Double> secondWanted = new java.util.HashMap<>();
-        measureSubLevelAcceleration(level, first, exclude, shipFilter, firstWanted);
-        measureSubLevelAcceleration(level, second, exclude, shipFilter, secondWanted);
+        measureSubLevelAcceleration(level, effectiveFirst, exclude, shipFilter, firstWanted);
+        measureSubLevelAcceleration(level, effectiveSecond, exclude, shipFilter, secondWanted);
 
         final java.util.Map<ServerSubLevel, Double> scales = new java.util.HashMap<>();
         final java.util.Set<ServerSubLevel> affected = new java.util.HashSet<>(firstWanted.keySet());
@@ -177,14 +195,14 @@ public final class FieldApplicator {
             final double granted = ShipTickBudget.grant(ship, now, cap, wanted);
             if (granted > 0.0d) scales.put(ship, granted / wanted);
         }
-        applyToSubLevelsPlanned(level, first, exclude, shipFilter, scales);
-        applyToSubLevelsPlanned(level, second, exclude, shipFilter, scales);
-        applyToEntities(level, first, true, true);
-        applyToEntities(level, second, true, true);
+        applyToSubLevelsPlanned(level, effectiveFirst, exclude, shipFilter, scales);
+        applyToSubLevelsPlanned(level, effectiveSecond, exclude, shipFilter, scales);
+        applyToEntities(level, effectiveFirst, true, true);
+        applyToEntities(level, effectiveSecond, true, true);
         if (MagConfig.immersivePortalsCompatEnabled()
                 && ModList.get().isLoaded("immersive_portals_core")) {
-            ImmersivePortalFieldCompat.applyThroughPortals(level, first, exclude, shipFilter);
-            ImmersivePortalFieldCompat.applyThroughPortals(level, second, exclude, shipFilter);
+            ImmersivePortalFieldCompat.applyThroughPortals(level, effectiveFirst, exclude, shipFilter);
+            ImmersivePortalFieldCompat.applyThroughPortals(level, effectiveSecond, exclude, shipFilter);
         }
     }
 
@@ -201,9 +219,10 @@ public final class FieldApplicator {
      */
     public static void apply(final ServerLevel level, final MagneticField field,
                              final boolean affectsArmor, final boolean affectsItems) {
-        if (field.polarity() == MagneticPolarity.NONE || field.strength().force() <= 0) return;
-        applyToSubLevels(level, field, null, null);
-        applyToEntities(level, field, affectsArmor, affectsItems);
+        final MagneticField effective = MobileFieldRegistry.dampen(level, field, null);
+        if (effective.polarity() == MagneticPolarity.NONE || effective.strength().force() <= 0) return;
+        applyToSubLevels(level, effective, null, null);
+        applyToEntities(level, effective, affectsArmor, affectsItems);
     }
 
     // ---------------- ships (Sable sub-levels) ----------------
@@ -502,6 +521,12 @@ public final class FieldApplicator {
 
     private static void applyToEntities(final ServerLevel level, final MagneticField field,
                                         final boolean affectsArmor, final boolean affectsItems) {
+        applyToEntities(level, field, affectsArmor, affectsItems, null);
+    }
+
+    private static void applyToEntities(final ServerLevel level, final MagneticField field,
+                                        final boolean affectsArmor, final boolean affectsItems,
+                                        final @Nullable Predicate<Entity> sourceFilter) {
         // Create trains are constrained to a rail graph, so entity knockback is
         // ineffective (and unsafe for coupled cars). Steam 'n' Rails compatibility
         // projects the field onto the rail tangent and updates the shared Train once.
@@ -510,7 +535,8 @@ public final class FieldApplicator {
         final AABB box = AABB.ofSize(field.origin(), 2 * r, 2 * r, 2 * r);
         final TargetTickCache targetCache = targetCache(level);
         final List<Entity> nearby = level.getEntities((Entity) null, box,
-                entity -> targetSnapshot(targetCache, level, entity, affectsArmor, affectsItems).magnetizable());
+                entity -> (sourceFilter == null || sourceFilter.test(entity))
+                        && targetSnapshot(targetCache, level, entity, affectsArmor, affectsItems).magnetizable());
         PerformanceDiagnostics.recordFieldQuery(level, nearby.size());
         if (nearby.isEmpty()) return;
 

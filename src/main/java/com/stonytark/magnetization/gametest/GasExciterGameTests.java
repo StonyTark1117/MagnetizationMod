@@ -163,7 +163,11 @@ public final class GasExciterGameTests {
 
         helper.setBlock(firstPos, Blocks.AIR);
         helper.setBlock(secondPos, Blocks.AIR);
-        helper.runAfterDelay(6, () -> {
+        for (long tick = 1L; tick <= 4L; tick++) {
+            helper.runAtTickTime(tick, () -> com.stonytark.magnetization.content.fluid.GasExcitation.recompute(
+                    helper.getLevel(), helper.absolutePos(sourcePos)));
+        }
+        helper.runAfterDelay(5, () -> {
             helper.assertTrue(!source.isExcited() && source.grace() == 0,
                     "Proxy excitation grace did not decay to dormant");
             helper.succeed();

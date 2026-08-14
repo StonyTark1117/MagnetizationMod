@@ -46,7 +46,7 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
      *  scan this cube; cheaper-tier catalysts found within the cube self-gate
      *  by checking the pyrrhotite's distance against their own transmitRadius.
      *  7³ = 729 block-state reads at worst per pyrrhotite tick — still cheap. */
-    private static final int MAX_CATALYST_SCAN_RADIUS = 7;
+    private static final int MAX_CATALYST_SCAN_RADIUS = PyrrhotiteHeatResolver.MAX_CATALYST_SCAN_RADIUS;
 
     /** Tick of the last full heat/catalyst scan; gates the expensive cube scan. */
     private long lastScanTick = Long.MIN_VALUE;
@@ -91,24 +91,7 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
         final BlockPos pos = getBlockPos();
 
         // 1) Direct heat sources touching the pyrrhotite itself.
-        BlazeBurnerBlock.HeatLevel max = scanDirectHeat(level, pos);
-
-        // 2) Heat forwarded through any Catalyst whose own transmitRadius
-        //    reaches this pyrrhotite. Each tier (basic 3 / enhanced 5 /
-        //    cosmic 7) decides its own range, so mixed-tier networks stack.
-        for (int dx = -MAX_CATALYST_SCAN_RADIUS; dx <= MAX_CATALYST_SCAN_RADIUS; dx++) {
-            for (int dy = -MAX_CATALYST_SCAN_RADIUS; dy <= MAX_CATALYST_SCAN_RADIUS; dy++) {
-                for (int dz = -MAX_CATALYST_SCAN_RADIUS; dz <= MAX_CATALYST_SCAN_RADIUS; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    final BlockPos at = pos.offset(dx, dy, dz);
-                    if (!(level.getBlockState(at).getBlock() instanceof PyrrhotiteCatalystBlock cat)) continue;
-                    final int chebyshev = Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz)));
-                    if (chebyshev > cat.transmitRadius()) continue;
-                    final BlazeBurnerBlock.HeatLevel relayed = scanDirectHeat(level, at);
-                    if (relayed.ordinal() > max.ordinal()) max = relayed;
-                }
-            }
-        }
+        final BlazeBurnerBlock.HeatLevel max = PyrrhotiteHeatResolver.resolve(level, pos);
 
         // Persist + sync only when the observed heat actually changes.
         if (lastObservedHeat != max) {
@@ -124,12 +107,7 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
      *  intentional {@code NONE → null} (no field) can be regression-tested
      *  without a live Create blaze burner. */
     public static @Nullable MagneticStrength strengthForHeat(final BlazeBurnerBlock.HeatLevel heat) {
-        return switch (heat) {
-            case NONE -> null;
-            case SMOULDERING, FADING -> MagneticStrength.WEAK;
-            case KINDLED -> MagneticStrength.STRONG;
-            case SEETHING -> MagneticStrength.EXTREME;
-        };
+        return PyrrhotiteHeatResolver.strengthForHeat(heat);
     }
 
     /** Max heat level across the 6 axis-aligned neighbours of {@code pos}.
@@ -145,36 +123,12 @@ public final class PyrrhotiteBlockEntity extends AbstractEmitterBlockEntity {
      *  Create's blaze burner has the HEAT_LEVEL property, so the original
      *  scan silently missed everything else. */
     private static BlazeBurnerBlock.HeatLevel scanDirectHeat(final Level level, final BlockPos pos) {
-        BlazeBurnerBlock.HeatLevel max = BlazeBurnerBlock.HeatLevel.NONE;
-        for (final Direction dir : Direction.values()) {
-            final BlockState neighbour = level.getBlockState(pos.relative(dir));
-            final BlazeBurnerBlock.HeatLevel observed = heatOf(neighbour);
-            if (observed.ordinal() > max.ordinal()) max = observed;
-        }
-        return max;
+        return PyrrhotiteHeatResolver.scanDirectHeat(level, pos);
     }
 
     /** Map a single block state to a Create-equivalent heat tier. */
     private static BlazeBurnerBlock.HeatLevel heatOf(final BlockState state) {
-        if (state.hasProperty(BlazeBurnerBlock.HEAT_LEVEL)) {
-            return state.getValue(BlazeBurnerBlock.HEAT_LEVEL);
-        }
-        final var block = state.getBlock();
-        if (block == net.minecraft.world.level.block.Blocks.LAVA) {
-            return BlazeBurnerBlock.HeatLevel.SEETHING;
-        }
-        if (block == net.minecraft.world.level.block.Blocks.FIRE
-                || block == net.minecraft.world.level.block.Blocks.SOUL_FIRE
-                || block == net.minecraft.world.level.block.Blocks.MAGMA_BLOCK) {
-            return BlazeBurnerBlock.HeatLevel.KINDLED;
-        }
-        if ((block == net.minecraft.world.level.block.Blocks.CAMPFIRE
-                || block == net.minecraft.world.level.block.Blocks.SOUL_CAMPFIRE)
-                && state.hasProperty(net.minecraft.world.level.block.CampfireBlock.LIT)
-                && state.getValue(net.minecraft.world.level.block.CampfireBlock.LIT)) {
-            return BlazeBurnerBlock.HeatLevel.SMOULDERING;
-        }
-        return BlazeBurnerBlock.HeatLevel.NONE;
+        return PyrrhotiteHeatResolver.heatOf(state);
     }
 
     /** Cached last-tick heat reading for tooltip surfacing. Updated each

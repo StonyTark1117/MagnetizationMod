@@ -907,6 +907,7 @@ public final class MagCommands {
             final int paintedCount = com.stonytark.magnetization.worldgen.WorldChunkMigrations.completedCount(level, repaintId);
             final int meteorites = com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.activeCount(level);
             final int emitters = com.stonytark.magnetization.physics.EmitterRegistry.size(level);
+            final int mobileEmitters = com.stonytark.magnetization.physics.MobileFieldRegistry.size(level);
             final int railguns = com.stonytark.magnetization.content.railgun.RailgunRegistry.size(level);
             final int ferroSrc = com.stonytark.magnetization.content.fluid.FerrofluidSourceRegistry.snapshot(level).size();
             final int ferroMag = com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel(level).size();
@@ -915,7 +916,7 @@ public final class MagCommands {
             final int mrHard = com.stonytark.magnetization.content.fluid.HardenedMrFluidRegistry.snapshot(level).size();
             final int gallium = com.stonytark.magnetization.content.fluid.GalliumRegistry.snapshot(level).size();
 
-            grandTotal += lirm + meteorites + emitters + railguns
+            grandTotal += lirm + meteorites + emitters + mobileEmitters + railguns
                     + ferroSrc + ferroMag + ferroCreep + mrSrc + mrHard + gallium;
 
             lines.add(Component.literal("  " + level.dimension().location())
@@ -928,7 +929,7 @@ public final class MagCommands {
                     repaintVersion, paintedCount))
                     .withStyle(ChatFormatting.AQUA));
             lines.add(Component.literal(String.format(
-                    "    caches — emitters %d, railguns %d", emitters, railguns))
+                    "    caches — block emitters %d, mobile golems %d, railguns %d", emitters, mobileEmitters, railguns))
                     .withStyle(ChatFormatting.AQUA));
             lines.add(Component.literal(String.format(
                     "    caches — ferrofluid %d src / %d magnetized / %d creep", ferroSrc, ferroMag, ferroCreep))
@@ -979,6 +980,17 @@ public final class MagCommands {
                         blockId, pos.toShortString(), dist,
                         field.strength().name(), field.polarity().name()));
             }
+        }
+        for (final var mobile : com.stonytark.magnetization.physics.MobileFieldRegistry.snapshot(level)) {
+            if (mobile.entity().distanceToSqr(player) > radiusSq) continue;
+            final var field = mobile.rawField();
+            final int dist = (int) Math.round(mobile.entity().distanceTo(player));
+            final String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE
+                    .getKey(mobile.entity().getType()).toString();
+            hits.add(field == null
+                    ? String.format("  %s (%d b) — inert/dampener", id, dist)
+                    : String.format("  %s (%d b) — %s %s", id, dist,
+                    field.strength().name(), field.polarity().name()));
         }
         if (hits.isEmpty()) {
             src.sendSuccess(() -> Component.literal(
@@ -1231,6 +1243,7 @@ public final class MagCommands {
     private static int printStats(final CommandSourceStack src) {
         final ServerLevel level = src.getLevel();
         final int emitters = com.stonytark.magnetization.physics.EmitterRegistry.size(level);
+        final int mobileEmitters = com.stonytark.magnetization.physics.MobileFieldRegistry.size(level);
 
         int ships = 0;
         final dev.ryanhcode.sable.api.sublevel.SubLevelContainer container =
@@ -1255,9 +1268,9 @@ public final class MagCommands {
         final int finalShips = ships;
         final int finalMag = magnetized;
         src.sendSuccess(() -> Component.literal(String.format(
-                "Stats in %s: %d emitters loaded, %d Sable ships, %d magnetized entities.",
-                level.dimension().location(), emitters, finalShips, finalMag)), false);
-        return emitters + finalShips + finalMag;
+                "Stats in %s: %d block emitters, %d mobile golems, %d Sable ships, %d magnetized entities.",
+                level.dimension().location(), emitters, mobileEmitters, finalShips, finalMag)), false);
+        return emitters + mobileEmitters + finalShips + finalMag;
     }
 
     /** Give the running player a replacement Patchouli Field Manual. This is a

@@ -14,13 +14,13 @@ class PyrrhotiteHeatTest {
 
     @Test
     void noneEmitsNoField() {
-        assertNull(PyrrhotiteBlockEntity.strengthForHeat(BlazeBurnerBlock.HeatLevel.NONE));
+        assertNull(PyrrhotiteHeatResolver.strengthForHeat(BlazeBurnerBlock.HeatLevel.NONE));
     }
 
     @Test
     void smoulderingIsWeak() {
         assertSame(MagneticStrength.WEAK,
-                PyrrhotiteBlockEntity.strengthForHeat(BlazeBurnerBlock.HeatLevel.SMOULDERING));
+                PyrrhotiteHeatResolver.strengthForHeat(BlazeBurnerBlock.HeatLevel.SMOULDERING));
     }
 
     @Test
@@ -28,18 +28,18 @@ class PyrrhotiteHeatTest {
         // FADING is the cool-down stage between KINDLED and inert; mapping it
         // to WEAK keeps the field-tier readout monotonic as the burner cools.
         assertSame(MagneticStrength.WEAK,
-                PyrrhotiteBlockEntity.strengthForHeat(BlazeBurnerBlock.HeatLevel.FADING));
+                PyrrhotiteHeatResolver.strengthForHeat(BlazeBurnerBlock.HeatLevel.FADING));
     }
 
     @Test
     void kindledIsStrong() {
         assertSame(MagneticStrength.STRONG,
-                PyrrhotiteBlockEntity.strengthForHeat(BlazeBurnerBlock.HeatLevel.KINDLED));
+                PyrrhotiteHeatResolver.strengthForHeat(BlazeBurnerBlock.HeatLevel.KINDLED));
     }
 
     @Test
     void seethingIsExtreme() {
         assertSame(MagneticStrength.EXTREME,
-                PyrrhotiteBlockEntity.strengthForHeat(BlazeBurnerBlock.HeatLevel.SEETHING));
+                PyrrhotiteHeatResolver.strengthForHeat(BlazeBurnerBlock.HeatLevel.SEETHING));
     }
 }

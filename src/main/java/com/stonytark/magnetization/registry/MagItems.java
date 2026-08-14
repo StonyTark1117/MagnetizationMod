@@ -259,6 +259,25 @@ public final class MagItems {
                             com.stonytark.magnetization.registry.MagEntities.MR_FLUID_GOLEM, 0x4A4E54, 0x9AA0A8, p),
                     new Item.Properties());
 
+    /** Creative/test eggs for the structure-built iron-oxide golems. They have
+     * no recipes: survival creation remains the four-block T structure. */
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> MAGNETITE_GOLEM_SPAWN_EGG =
+            REGISTER.registerItem("magnetite_golem_spawn_egg",
+                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
+                            MagEntities.MAGNETITE_GOLEM, 0x343A3E, 0xA34738, p), new Item.Properties());
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> PYRRHOTITE_GOLEM_SPAWN_EGG =
+            REGISTER.registerItem("pyrrhotite_golem_spawn_egg",
+                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
+                            MagEntities.PYRRHOTITE_GOLEM, 0x6B512E, 0xE06B29, p), new Item.Properties());
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> HEMATITE_GOLEM_SPAWN_EGG =
+            REGISTER.registerItem("hematite_golem_spawn_egg",
+                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
+                            MagEntities.HEMATITE_GOLEM, 0x541E22, 0xB64A3B, p), new Item.Properties());
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> TITANOMAGNETITE_GOLEM_SPAWN_EGG =
+            REGISTER.registerItem("titanomagnetite_golem_spawn_egg",
+                    p -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(
+                            MagEntities.TITANOMAGNETITE_GOLEM, 0x202A37, 0x5FBFD5, p), new Item.Properties());
+
     /** Smelted magnetite. In #magnetization:ferromagnetic so emitters pull it. */
     public static final DeferredItem<Item> MAGNETITE_INGOT =
             REGISTER.registerSimpleItem("magnetite_ingot", new Item.Properties());

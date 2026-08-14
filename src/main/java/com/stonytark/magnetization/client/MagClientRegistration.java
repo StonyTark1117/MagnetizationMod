@@ -235,6 +235,14 @@ public final class MagClientRegistration {
                 MrFluidGolemRenderer::new);
         event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.GALLIUM_GOLEM.get(),
                 GalliumGolemRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.MAGNETITE_GOLEM.get(),
+                IronOxideGolemRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.PYRRHOTITE_GOLEM.get(),
+                IronOxideGolemRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.HEMATITE_GOLEM.get(),
+                IronOxideGolemRenderer::new);
+        event.registerEntityRenderer(com.stonytark.magnetization.registry.MagEntities.TITANOMAGNETITE_GOLEM.get(),
+                IronOxideGolemRenderer::new);
     }
 
     @SubscribeEvent

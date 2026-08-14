@@ -31,7 +31,7 @@ import java.util.UUID;
 
 /**
  * Goggles-only world overlay: while the player wears Create's Engineer's
- * Goggles, every active emitter in the loaded level gets a polarity-tinted
+ * Goggles, every active block emitter and magnetic golem in the loaded level gets a polarity-tinted
  * horizontal ring drawn at its origin's y-plane, sized to the emitter's
  * effective range. Helps the player see how far each magnet reaches when
  * planning propulsion tracks or docking stations.
@@ -92,6 +92,25 @@ public final class FieldLineOverlay {
                 drawAnchorTether(buf, ps, camPos, level, pos, anchor.boundShipId(), color);
             }
         });
+
+        // Mobile sources are synced entities rather than block-entity registry
+        // entries. Render their effective (Hematite-dampened) live field through
+        // the same goggles surface so moving a golem never makes diagnostics stale.
+        for (final net.minecraft.world.entity.Entity entity : mc.level.entitiesForRendering()) {
+            if (!(entity instanceof com.stonytark.magnetization.content.golem.MagneticGolem golem)) continue;
+            final MagneticField field = golem.displayedField();
+            if (field == null || field.range() <= 0.5d
+                    || field.strength() == com.stonytark.magnetization.api.MagneticStrength.NONE) continue;
+            final Vec3 origin = field.origin();
+            ps.pushPose();
+            ps.translate(origin.x - camPos.x, origin.y - camPos.y, origin.z - camPos.z);
+            final int color = field.polarity() == MagneticPolarity.SOUTH ? 0x80_60_A0_E0 : 0x80_E0_60_60;
+            switch (field.shape()) {
+                case OMNIDIRECTIONAL -> drawRing(buf, ps.last().pose(), field.range(), color);
+                case DIRECTIONAL, CONICAL -> drawArrow(buf, ps.last().pose(), field.axis(), field.range(), color);
+            }
+            ps.popPose();
+        }
 
         buffers.endBatch(RenderType.lines());
     }

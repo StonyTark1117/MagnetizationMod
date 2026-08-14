@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * lattice naturally cancels out applied magnetic fields. Placed adjacent to
  * an emitter (any of 6 faces) it dampens that emitter's strength tier by one
  * step per block. Stacking is additive: two hematite faces drop a {@code
- * STRONG} emitter to {@code WEAK}; three or more clamp at {@code WEAK}.
+ * STRONG} emitter to {@code WEAK}; enough dampeners suppress it to {@code NONE}.
  *
  * <p>The block is a passive marker — no BE, no ticker. Detection happens in
  * {@link com.stonytark.magnetization.content.AbstractEmitterBlockEntity#tickEmitter}
@@ -32,8 +32,7 @@ public final class HematiteBlock extends Block {
     }
 
     /** Walk the 6 axis-aligned neighbours of {@code pos}; for each adjacent
-     *  hematite block, step the strength tier down by one. {@code WEAK} is the
-     *  floor (further hematite blocks have no additional effect). */
+     *  hematite block, step the strength tier down by one, down to {@code NONE}. */
     public static MagneticStrength dampenedStrength(final BlockGetter level,
                                                      final BlockPos pos,
                                                      final MagneticStrength base) {

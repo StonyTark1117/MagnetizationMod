@@ -260,6 +260,10 @@ public final class MagItemTooltips {
         m.put(MagItems.HEMATITE_LENS.get(), "tooltip.magnetization.hematite_lens.use");
         m.put(MagItems.IMPRINT_MODULE.get(), "tooltip.magnetization.imprint_module.use");
         m.put(MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get(), "tooltip.magnetization.golem_spawn_egg.use");
+        for (final var egg : new Item[]{
+                MagItems.MAGNETITE_GOLEM_SPAWN_EGG.get(), MagItems.PYRRHOTITE_GOLEM_SPAWN_EGG.get(),
+                MagItems.HEMATITE_GOLEM_SPAWN_EGG.get(), MagItems.TITANOMAGNETITE_GOLEM_SPAWN_EGG.get(),
+        }) m.put(egg, "tooltip.magnetization.iron_oxide_golem_spawn_egg.use");
 
         return m;
     }

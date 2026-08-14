@@ -414,12 +414,16 @@ public final class PlaytestWorldSetup {
         stockChest(level, a.offset(2, 0, 32), List.of(stack(Items.COAL, 16), stack(Items.LAVA_BUCKET, 4),
                 stack(Items.WATER_BUCKET, 8), stack(MagItems.TRITIUM_CELL.get(), 8), stack(Items.BUCKET, 16)));
 
-        label(level, a.offset(14, 0, 27), "GALLIUM + GOLEM", "Solid/liquid textures", "Soft/hardened golem", "Spawn eggs in chest");
+        label(level, a.offset(14, 0, 27), "GOLEM LAB", "All oxide bodies", "Heat + polarizer", "Targets and MR checks");
         set(level, a.offset(14, 0, 30), MagBlocks.SOLID_GALLIUM.get());
         set(level, a.offset(16, 0, 30), MagBlocks.HARDENED_MR_FLUID.get());
         set(level, a.offset(18, 0, 30), MagBlocks.PERMANENT_MAGNET.get());
         stockChest(level, a.offset(16, 0, 32), List.of(stack(MagItems.MR_FLUID_GOLEM_SPAWN_EGG.get(), 8),
-                stack(MagItems.GALLIUM_BUCKET.get(), 8), stack(MagItems.MR_FLUID_BUCKET.get(), 8)));
+                stack(MagItems.GALLIUM_BUCKET.get(), 8), stack(MagItems.MR_FLUID_BUCKET.get(), 8),
+                stack(MagItems.MAGNETITE_BLOCK.get(), 16), stack(MagItems.PYRRHOTITE_BLOCK.get(), 16),
+                stack(MagItems.HEMATITE_BLOCK.get(), 16), stack(MagItems.TITANOMAGNETITE_BLOCK.get(), 16),
+                stack(MagItems.HEMATITE_LENS.get(), 2), stack(Items.CARVED_PUMPKIN, 16),
+                stack(Items.CAMPFIRE, 4), stack(Items.LAVA_BUCKET, 4), stack(Items.IRON_INGOT, 32)));
 
         label(level, a.offset(25, 0, 27), "SHIP TEST LANE", "Assemble on blue pad", "Rotate + move", "Thruster/railgun parts");
         fill(level, a.offset(25, 0, 30), a.offset(39, 0, 42), Blocks.LIGHT_BLUE_CONCRETE);
@@ -578,7 +582,10 @@ public final class PlaytestWorldSetup {
                 stack(MagItems.MICRO_THRUSTER.get(), 8), stack(MagItems.GAS_DETECTOR.get(), 1),
                 stack(MagItems.GAS_EXCITER.get(), 8), stack(MagItems.GAS_VENT.get(), 8),
                 stack(MagItems.AIR_SEPARATOR.get(), 8), stack(MagItems.ION_THRUSTER.get(), 8),
-                stack(MagItems.NEODYMIUM_MAGNET.get(), 8), stack(Items.COPPER_BLOCK, 64),
+                stack(MagItems.NEODYMIUM_MAGNET.get(), 8), stack(MagItems.HEMATITE_LENS.get(), 1),
+                stack(MagItems.MAGNETITE_BLOCK.get(), 16), stack(MagItems.PYRRHOTITE_BLOCK.get(), 16),
+                stack(MagItems.HEMATITE_BLOCK.get(), 16), stack(MagItems.TITANOMAGNETITE_BLOCK.get(), 16),
+                stack(Items.CARVED_PUMPKIN, 16), stack(Items.COPPER_BLOCK, 64),
                 stack(Items.IRON_BLOCK, 64), stack(Items.REDSTONE_BLOCK, 32), stack(Items.WATER_BUCKET, 8));
     }
 

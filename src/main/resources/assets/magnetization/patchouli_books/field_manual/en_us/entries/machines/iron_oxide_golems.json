@@ -1,0 +1,13 @@
+{
+  "name": "book.magnetization.entry.iron_oxide_golems.name",
+  "icon": "magnetization:magnetite_block",
+  "category": "magnetization:machines",
+  "pages": [
+    {"type":"patchouli:text","title":"book.magnetization.entry.iron_oxide_golems.build.title","text":"book.magnetization.entry.iron_oxide_golems.build.text"},
+    {"type":"patchouli:spotlight","item":"magnetization:magnetite_block","text":"book.magnetization.entry.iron_oxide_golems.magnetite"},
+    {"type":"patchouli:spotlight","item":"magnetization:pyrrhotite_block","text":"book.magnetization.entry.iron_oxide_golems.pyrrhotite"},
+    {"type":"patchouli:spotlight","item":"magnetization:hematite_block","text":"book.magnetization.entry.iron_oxide_golems.hematite"},
+    {"type":"patchouli:spotlight","item":"magnetization:titanomagnetite_block","text":"book.magnetization.entry.iron_oxide_golems.titanomagnetite"},
+    {"type":"patchouli:text","title":"book.magnetization.entry.iron_oxide_golems.control.title","text":"book.magnetization.entry.iron_oxide_golems.control.text"}
+  ]
+}

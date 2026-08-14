@@ -48,6 +48,7 @@ public final class Magnetization {
         MagEffects.EFFECTS.register(modBus);
         MagEffects.POTIONS.register(modBus);
         MagParticles.REGISTER.register(modBus);
+        com.stonytark.magnetization.registry.MagSounds.REGISTER.register(modBus);
         MagBiomeModifiers.REGISTER.register(modBus);
         com.stonytark.magnetization.registry.MagConditions.REGISTER.register(modBus);
         com.stonytark.magnetization.registry.MagLootModifiers.REGISTER.register(modBus);
@@ -318,6 +319,7 @@ public final class Magnetization {
             com.stonytark.magnetization.physics.ShipMagneticRegistry.onLevelUnload(server);
             com.stonytark.magnetization.content.fluid.GasExcitation.onLevelUnload(server);
             com.stonytark.magnetization.physics.FieldApplicator.onLevelUnload(server);
+            com.stonytark.magnetization.physics.MobileFieldRegistry.onLevelUnload(server);
             com.stonytark.magnetization.physics.InventorySink.onLevelUnload(server);
             com.stonytark.magnetization.physics.PerformanceDiagnostics.onLevelUnload(server);
             if (ModList.get().isLoaded("railways")) {
