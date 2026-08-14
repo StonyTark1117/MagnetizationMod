@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "minecraft:lodestone",
     "magnetization:electromagnet",
     "magnetization:dipole_electromagnet",
     "magnetization:kinetic_electromagnet",
