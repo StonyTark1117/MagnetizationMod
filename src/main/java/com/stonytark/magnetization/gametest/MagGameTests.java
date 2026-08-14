@@ -3056,7 +3056,7 @@ public final class MagGameTests {
                     return;
                 }
                 coolantInserted += frameFluids.fill(new net.neoforged.neoforge.fluids.FluidStack(
-                                net.minecraft.world.level.material.Fluids.WATER, 1000),
+                                com.stonytark.magnetization.registry.MagFluids.DEUTERIUM_OXIDE.get(), 1000),
                         net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             }
         }
@@ -3074,6 +3074,10 @@ public final class MagGameTests {
         helper.assertTrue(coolantInserted == 12_000 && master.coolantStored() == 12_000,
                 "all 12 frame coils should feed the shared coolant tank; inserted=" + coolantInserted
                         + " master coolant=" + master.coolantStored());
+        helper.assertTrue(master.fluidHandler().getFluidInTank(0).isEmpty()
+                        && master.fluidHandler().getFluidInTank(1).is(
+                        com.stonytark.magnetization.registry.MagFluids.DEUTERIUM_OXIDE.get()),
+                "heavy water through a frame coil must select coolant without filling the fuel tank");
 
         final BlockPos standalone = base.offset(6, 0, 0);
         level.setBlock(standalone, MagBlocks.TOKAMAK_COIL.get().defaultBlockState(),

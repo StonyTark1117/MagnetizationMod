@@ -235,7 +235,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
             be.resizeCoolant(com.stonytark.magnetization.config.MagConfig.tokamakCoolantTankPerScale());
             be.energy.resize(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(),
                     boosted(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(),
-                            coolingProfile(true).powerMultiplier()));
+                            coolingProfile(true, com.stonytark.magnetization.content.fluid.CoolantFluids
+                                    .maximumConfiguredQuality()).powerMultiplier()));
             setLit(level, pos, state, false);
             be.setChanged();
             if (be.syncGate.changed(be, server.registryAccess())) {
@@ -259,7 +260,8 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
         be.energy.resize(scaled(com.stonytark.magnetization.config.MagConfig.tokamakFeCapacity(), multiplier),
                 boosted(scaled(com.stonytark.magnetization.config.MagConfig.tokamakOutputRateHelium3(), multiplier),
-                        coolingProfile(true).powerMultiplier()));
+                        coolingProfile(true, com.stonytark.magnetization.content.fluid.CoolantFluids
+                                .maximumConfiguredQuality()).powerMultiplier()));
         be.resizeCoolant(scaled(com.stonytark.magnetization.config.MagConfig.tokamakCoolantTankPerScale(), multiplier));
         // Auto-feed: load one cell when the burn is empty, recording its tier so
         // gen/output use that tier's rates (mixing tiers cleanly, one cell at a time).
@@ -275,10 +277,14 @@ public class TokamakControllerBlockEntity extends BlockEntity
             }
         }
         final boolean fusing = be.burnTime > 0;
-        final int coolantCost = scaled(
+        final int baseCoolantCost = scaled(
                 com.stonytark.magnetization.config.MagConfig.tokamakCoolantPerTickPerScale(), multiplier);
+        final double coolantQuality = com.stonytark.magnetization.content.fluid.CoolantFluids
+                .quality(be.coolant.getFluid().getFluid());
+        final int coolantCost = com.stonytark.magnetization.content.fluid.CoolantFluids
+                .consumptionForQuality(baseCoolantCost, coolantQuality);
         final boolean cooled = fusing && be.consumeCoolant(coolantCost);
-        final CoolingProfile cooling = coolingProfile(cooled);
+        final CoolingProfile cooling = coolingProfile(cooled, coolantQuality);
         be.coolingActive = cooled;
         if (fusing) {
             be.energy.generate(boosted(scaled(tierGenPerTick(be.currentTier), multiplier),
@@ -332,10 +338,17 @@ public class TokamakControllerBlockEntity extends BlockEntity
 
     /** Runtime profile used by both reactor logic and regression tests. */
     public static CoolingProfile coolingProfile(final boolean cooled) {
+        return coolingProfile(cooled, 1.0d);
+    }
+
+    public static CoolingProfile coolingProfile(final boolean cooled, final double coolantQuality) {
+        final double quality = cooled ? Math.max(0.1d, coolantQuality) : 0.0d;
         return cooled
                 ? new CoolingProfile(
-                        com.stonytark.magnetization.config.MagConfig.tokamakCooledPowerMultiplier(),
-                        com.stonytark.magnetization.config.MagConfig.tokamakCooledFuelEfficiency())
+                        1.0d + (Math.max(1.0d, com.stonytark.magnetization.config.MagConfig
+                                .tokamakCooledPowerMultiplier()) - 1.0d) * quality,
+                        1.0d + (Math.max(1.0d, com.stonytark.magnetization.config.MagConfig
+                                .tokamakCooledFuelEfficiency()) - 1.0d) * quality)
                 : new CoolingProfile(1.0d, 1.0d);
     }
 

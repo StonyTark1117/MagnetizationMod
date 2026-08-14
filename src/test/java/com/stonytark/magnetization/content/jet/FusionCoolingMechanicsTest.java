@@ -1,6 +1,7 @@
 package com.stonytark.magnetization.content.jet;
 
 import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.content.fluid.CoolantFluids;
 import com.stonytark.magnetization.content.tokamak.TokamakControllerBlockEntity;
 import org.junit.jupiter.api.Test;
 
@@ -37,5 +38,22 @@ class FusionCoolingMechanicsTest {
         assertEquals(1.0d, dry.fuelEfficiencyMultiplier());
         assertTrue(cooled.powerMultiplier() > dry.powerMultiplier());
         assertTrue(cooled.fuelEfficiencyMultiplier() > dry.fuelEfficiencyMultiplier());
+    }
+
+    @Test
+    void higherQualityCoolantMovesBothMachinesFurtherAlongTheEfficiencyCurve() {
+        final var waterThruster = FusionThrusterBlockEntity.operatingProfile(3, true, 1.0d);
+        final var galliumThruster = FusionThrusterBlockEntity.operatingProfile(3, true, 1.75d);
+        assertTrue(galliumThruster.feCost() < waterThruster.feCost());
+        assertTrue(galliumThruster.nominalFluidCost() < waterThruster.nominalFluidCost());
+        assertTrue(galliumThruster.powerMultiplier() > waterThruster.powerMultiplier());
+        assertTrue(galliumThruster.speedMultiplier() > waterThruster.speedMultiplier());
+
+        final var waterTokamak = TokamakControllerBlockEntity.coolingProfile(true, 1.0d);
+        final var galliumTokamak = TokamakControllerBlockEntity.coolingProfile(true, 1.75d);
+        assertTrue(galliumTokamak.powerMultiplier() > waterTokamak.powerMultiplier());
+        assertTrue(galliumTokamak.fuelEfficiencyMultiplier() > waterTokamak.fuelEfficiencyMultiplier());
+        assertTrue(CoolantFluids.consumptionForQuality(100, 1.75d)
+                < CoolantFluids.consumptionForQuality(100, 1.0d));
     }
 }

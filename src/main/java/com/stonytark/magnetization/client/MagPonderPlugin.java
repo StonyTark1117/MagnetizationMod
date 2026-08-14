@@ -173,7 +173,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .placeNearTarget();
         scene.idle(90);
         text(scene, util, center, util.grid().at(4, 1, 4),
-                "Pipe vanilla water or tagged coolant into any core or perimeter coil: cooling raises FE output and extends fuel-cell life. Dry reactors retain baseline performance.");
+                "Pipe water, heavy water, liquid Gallium, or tagged coolant into any core or perimeter coil. Higher-quality coolant boosts output and fuel life farther.");
     }
 
     private static void fusionPanel(final SceneBuilder scene, final SceneBuildingUtil util,
@@ -201,7 +201,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .placeNearTarget();
         scene.idle(90);
         text(scene, util, center, util.grid().at(3, 1, 3),
-                "Feed fusion fuel plus vanilla water or tagged coolant through any interior or frame coil. Cooling increases thrust and speed while reducing FE and fuel use.");
+                "Feed water, liquid Gallium, or tagged coolant through any interior or frame coil. Heavy water uses a frame coil for cooling; interiors keep it as fuel.");
     }
 
     private static void railgunPair(final SceneBuilder scene, final SceneBuildingUtil util,

@@ -115,8 +115,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
                 || !(level.getBlockEntity(masterPos) instanceof FusionThrusterBlockEntity master)
                 || MagConfig.isBlockDisabled(master.getBlockState())) return null;
         final FusionThrusterBlockEntity inputMaster = master.inputMaster();
+        // The frame is the coolant service port. Put coolant first so overlapping
+        // heavy water routes to cooling here while interior inputs retain its
+        // established Fusion-Thruster fuel behavior.
         return new com.stonytark.magnetization.content.fluid.MultiTankInputFluidHandler(
-                inputMaster.tank, inputMaster.coolant);
+                inputMaster.coolant, inputMaster.tank);
     }
     // Insert-only: pipes can fuel the panel but can't siphon unburnt fusion fuel back
     // out. panelTank() resolves the (possibly remote master's) tank, so wrap per call.
@@ -257,9 +260,6 @@ public class FusionThrusterBlockEntity extends BlockEntity
     }
 
     private static @Nullable Fluid bucketFluid(final ItemStack st) {
-        final java.util.Optional<FluidStack> coolant =
-                com.stonytark.magnetization.content.fluid.CoolantFluids.coolantFromBucket(st);
-        if (coolant.isPresent()) return coolant.get().getFluid();
         if (isCompatibleHydrogenBucket(st)) {
             final java.util.Optional<FluidStack> contained =
                     net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(st);
@@ -270,6 +270,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
         if (st.is(MagItems.DEUTERIUM_OXIDE_BUCKET.get())) return MagFluids.DEUTERIUM_OXIDE.get();
         if (st.is(MagItems.TRITIUM_BUCKET.get())) return MagFluids.TRITIUM.get();
         if (st.is(MagItems.HELIUM_3_BUCKET.get())) return MagFluids.HELIUM_3.get();
+        final java.util.Optional<FluidStack> coolant =
+                com.stonytark.magnetization.content.fluid.CoolantFluids.coolantFromBucket(st);
+        if (coolant.isPresent()) return coolant.get().getFluid();
         return null;
     }
 
@@ -278,8 +281,9 @@ public class FusionThrusterBlockEntity extends BlockEntity
         final Fluid fluid = bucketFluid(bucket);
         if (fluid == null) return false;
         final FusionThrusterBlockEntity inputMaster = inputMaster();
-        final FluidTank into = com.stonytark.magnetization.content.fluid.CoolantFluids.isCoolant(fluid)
-                ? inputMaster.coolant : inputMaster.tank;
+        // Preserve Deuterium Oxide's established bucket role as fusion fuel.
+        // Heavy-water cooling is selected through a frame-coil fluid port.
+        final FluidTank into = isFusionFluid(fluid) ? inputMaster.tank : inputMaster.coolant;
         final FluidStack stack = new FluidStack(fluid, 1000);
         if (into.fill(stack, IFluidHandler.FluidAction.SIMULATE) < 1000) return false;
         into.fill(stack, IFluidHandler.FluidAction.EXECUTE);
@@ -446,11 +450,15 @@ public class FusionThrusterBlockEntity extends BlockEntity
         resizeSharedTanks(count);
         drainInputBucket();
 
-        final int coolantCost = (int) Math.min(Integer.MAX_VALUE,
+        final int baseCoolantCost = (int) Math.min(Integer.MAX_VALUE,
                 (long) MagConfig.fusionThrusterCoolantPerTickBase()
                         + (long) MagConfig.fusionThrusterCoolantPerTickPerInterior() * count);
+        final double coolantQuality = com.stonytark.magnetization.content.fluid.CoolantFluids
+                .quality(coolant.getFluid().getFluid());
+        final int coolantCost = com.stonytark.magnetization.content.fluid.CoolantFluids
+                .consumptionForQuality(baseCoolantCost, coolantQuality);
         final boolean coolingAvailable = hasCoolant(coolantCost);
-        final OperatingProfile profile = operatingProfile(count, coolingAvailable);
+        final OperatingProfile profile = operatingProfile(count, coolingAvailable, coolantQuality);
 
         final FluidStack fuel = tank.getFluid();
         final boolean canFire = host != null && ThrustControl.canRun(server, cachedControlList,
@@ -492,6 +500,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
 
     /** Operating costs and bonuses used directly by the engine and by tests. */
     public static OperatingProfile operatingProfile(final int interiorCount, final boolean cooled) {
+        return operatingProfile(interiorCount, cooled, 1.0d);
+    }
+
+    public static OperatingProfile operatingProfile(final int interiorCount, final boolean cooled,
+                                                     final double coolantQuality) {
         final int count = Math.max(1, interiorCount);
         final int baseFe = (int) Math.min(Integer.MAX_VALUE,
                 (long) MagConfig.fusionThrusterFeCostBase()
@@ -499,10 +512,11 @@ public class FusionThrusterBlockEntity extends BlockEntity
         final int baseFluid = (int) Math.min(Integer.MAX_VALUE,
                 (long) MagConfig.fusionThrusterFluidPerTickBase()
                         + (long) MagConfig.fusionThrusterFluidPerTickPerInterior() * count);
-        final double efficiency = cooled ? Math.max(1.0d,
-                MagConfig.fusionThrusterCooledEfficiencyMultiplier()) : 1.0d;
-        final double power = cooled ? Math.max(1.0d,
-                MagConfig.fusionThrusterCooledPowerMultiplier()) : 1.0d;
+        final double quality = cooled ? Math.max(0.1d, coolantQuality) : 0.0d;
+        final double efficiency = cooled ? 1.0d + (Math.max(1.0d,
+                MagConfig.fusionThrusterCooledEfficiencyMultiplier()) - 1.0d) * quality : 1.0d;
+        final double power = cooled ? 1.0d + (Math.max(1.0d,
+                MagConfig.fusionThrusterCooledPowerMultiplier()) - 1.0d) * quality : 1.0d;
         return new OperatingProfile(
                 Math.max(0, (int) Math.ceil(baseFe / efficiency)),
                 baseFluid / efficiency, power, power);

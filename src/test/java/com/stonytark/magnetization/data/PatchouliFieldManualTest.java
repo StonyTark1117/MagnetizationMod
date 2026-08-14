@@ -194,9 +194,10 @@ class PatchouliFieldManualTest {
         assertTrue(connections.contains("center core") && connections.contains("any core")
                         && connections.contains("perimeter coil"),
                 "Tokamak connection page must explain master, follower, and frame access");
-        assertTrue(cooling.contains("water") && cooling.contains("FE generation and output increase")
-                        && cooling.contains("fuel cell lasts longer"),
-                "Tokamak cooling page must explain water use, higher power, and higher efficiency");
+        assertTrue(cooling.contains("Water") && cooling.contains("Deuterium Oxide")
+                        && cooling.contains("liquid Gallium") && cooling.contains("power")
+                        && cooling.contains("fuel-life"),
+                "Tokamak cooling page must explain the coolant curve, higher power, and fuel efficiency");
         assertTrue(parse(BOOK_DEFINITION).getAsJsonObject().get("version").getAsInt() >= 7,
                 "Field Manual version must advance for fusion-machine cooling guidance");
     }
@@ -211,9 +212,9 @@ class PatchouliFieldManualTest {
 
         final String cooling = parse(EN_US).getAsJsonObject()
                 .get("book.magnetization.entry.fusion_thruster.cooling.text").getAsString();
-        assertTrue(cooling.contains("previous thrust") && cooling.contains("consumes less FE")
-                        && cooling.contains("fusion fuel"),
-                "Fusion Thruster cooling page must preserve baseline and explain both bonuses");
+        assertTrue(cooling.contains("previous thrust") && cooling.contains("liquid Gallium")
+                        && cooling.contains("frame coil") && cooling.contains("fuel-efficiency"),
+                "Fusion Thruster cooling page must preserve baseline and explain coolant routing/curves");
     }
 
     @Test

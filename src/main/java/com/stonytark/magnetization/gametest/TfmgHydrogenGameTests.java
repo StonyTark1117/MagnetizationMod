@@ -74,10 +74,12 @@ public final class TfmgHydrogenGameTests {
                         && tokamak.coolantStored() == 1_000,
                 "Tokamak did not accept a TFMG Cooling Fluid Bucket");
 
-        helper.assertTrue(!CoolantFluids.isCoolant(MagFluids.DEUTERIUM_OXIDE.get())
-                        && !CoolantFluids.isCoolant(MagFluids.GALLIUM.get())
+        helper.assertTrue(CoolantFluids.quality(MagFluids.GALLIUM.get())
+                        > CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
+                        && CoolantFluids.quality(MagFluids.DEUTERIUM_OXIDE.get())
+                        > CoolantFluids.quality(net.minecraft.world.level.material.Fluids.WATER)
                         && !CoolantFluids.isCoolant(MagFluids.HYDROGEN.get()),
-                "Fusion fuels and MHD working fluids must not become ambiguous coolant inputs");
+                "Gallium, heavy water, and water should follow the intended curve without making fuel gas coolant");
         helper.succeed();
     }
 

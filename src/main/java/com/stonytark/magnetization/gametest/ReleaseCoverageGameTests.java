@@ -384,6 +384,30 @@ public final class ReleaseCoverageGameTests {
         helper.assertTrue(coolantBuckets.extractItem(0, 64, false).getCount() == 1,
                 "Tokamak coolant's empty bucket must be automatable");
 
+        final BlockPos heavyWaterControllerPos = new BlockPos(5, 1, 1);
+        helper.setBlock(heavyWaterControllerPos, MagBlocks.TOKAMAK_CONTROLLER.get());
+        final TokamakControllerBlockEntity heavyWaterController =
+                (TokamakControllerBlockEntity) helper.getBlockEntity(heavyWaterControllerPos);
+        helper.assertTrue(heavyWaterController.fillCoolantBucket(
+                        new ItemStack(MagItems.DEUTERIUM_OXIDE_BUCKET.get()))
+                        && heavyWaterController.coolantStored() == 1_000,
+                "Tokamak must accept Deuterium Oxide as upgraded coolant");
+
+        final BlockPos dualRoleThrusterPos = new BlockPos(7, 1, 1);
+        helper.setBlock(dualRoleThrusterPos, MagBlocks.FUSION_THRUSTER.get());
+        final FusionThrusterBlockEntity dualRoleThruster =
+                (FusionThrusterBlockEntity) helper.getBlockEntity(dualRoleThrusterPos);
+        helper.assertTrue(dualRoleThruster.fluidHandler().fill(
+                        new FluidStack(MagFluids.DEUTERIUM_OXIDE.get(), 1_000),
+                        IFluidHandler.FluidAction.EXECUTE) == 1_000
+                        && dualRoleThruster.guiStat1() == 1_000,
+                "Deuterium Oxide through a Fusion Thruster interior must preserve its fuel role");
+        helper.assertTrue(dualRoleThruster.fluidHandler().fill(
+                        new FluidStack(MagFluids.GALLIUM.get(), 1_000),
+                        IFluidHandler.FluidAction.EXECUTE) == 1_000
+                        && dualRoleThruster.coolantStored() == 1_000,
+                "Liquid Gallium through a Fusion Thruster interior must route to coolant");
+
         final BlockPos panelBase = absoluteSkyBase(helper, 250);
         buildFusionPanel(level, panelBase, 3, 3);
         final BlockPos masterPos = panelBase.offset(1, 1, 0);

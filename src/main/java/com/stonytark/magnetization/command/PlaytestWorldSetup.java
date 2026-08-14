@@ -374,7 +374,7 @@ public final class PlaytestWorldSetup {
                 stack(Items.WATER_BUCKET, 8), stack(MagItems.HYDROGEN_BUCKET.get(), 4),
                 stack(MagItems.TRITIUM_BUCKET.get(), 2), stack(Items.BUCKET, 8), stack(Items.REDSTONE_BLOCK, 4)));
 
-        label(level, a.offset(12, 0, 15), "TOKAMAK", "Valid 3x3 ring", "Dry vs water-cooled", "Fuel + water chest");
+        label(level, a.offset(12, 0, 15), "TOKAMAK", "Valid 3x3 ring", "Compare coolant curves", "Fuel + coolant chest");
         final BlockPos tokamak = a.offset(14, 0, 18);
         set(level, tokamak, MagBlocks.TOKAMAK_CONTROLLER.get());
         for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
@@ -382,13 +382,15 @@ public final class PlaytestWorldSetup {
         }
         stockChest(level, a.offset(12, 0, 20), List.of(stack(MagItems.DEUTERIUM_CELL.get(), 8),
                 stack(MagItems.TRITIUM_CELL.get(), 8), stack(MagItems.HELIUM_3_CELL.get(), 8),
-                stack(Items.WATER_BUCKET, 8)));
+                stack(Items.WATER_BUCKET, 8), stack(MagItems.DEUTERIUM_OXIDE_BUCKET.get(), 8),
+                stack(MagItems.GALLIUM_BUCKET.get(), 8)));
 
-        label(level, a.offset(23, 0, 15), "FUSION PANEL", "5x3 formed panel", "Dry vs water-cooled", "Fuel + water chest");
+        label(level, a.offset(23, 0, 15), "FUSION PANEL", "5x3 formed panel", "Heavy water coolant via frame", "Fuel + coolant chest");
         buildFusionPanel(level, a.offset(25, 0, 18));
         stockChest(level, a.offset(23, 0, 20), List.of(stack(MagItems.HELIUM_3_BUCKET.get(), 8),
                 stack(MagItems.TRITIUM_BUCKET.get(), 8), stack(MagItems.HYDROGEN_BUCKET.get(), 8),
-                stack(Items.WATER_BUCKET, 8)));
+                stack(Items.WATER_BUCKET, 8), stack(MagItems.DEUTERIUM_OXIDE_BUCKET.get(), 8),
+                stack(MagItems.GALLIUM_BUCKET.get(), 8)));
 
         label(level, a.offset(35, 0, 15), "RAILGUN", "Two 8-block rails", "Auto + remote", "Target lane north");
         buildRail(level, a.offset(37, 0, 22));

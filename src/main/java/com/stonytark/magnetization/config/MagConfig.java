@@ -237,6 +237,10 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue    TOKAMAK_COOLANT_PER_TICK_PER_SCALE;
     public static final ModConfigSpec.DoubleValue TOKAMAK_COOLED_POWER_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue TOKAMAK_COOLED_FUEL_EFFICIENCY;
+    public static final ModConfigSpec.DoubleValue COOLANT_QUALITY_WATER;
+    public static final ModConfigSpec.DoubleValue COOLANT_QUALITY_DEUTERIUM_OXIDE;
+    public static final ModConfigSpec.DoubleValue COOLANT_QUALITY_GALLIUM;
+    public static final ModConfigSpec.DoubleValue COOLANT_QUALITY_TAGGED;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_CAPACITY;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_RECEIVE;
     public static final ModConfigSpec.IntValue    ELECTROLYZER_FE_PER_TICK;
@@ -1314,6 +1318,18 @@ public final class MagConfig {
         TOKAMAK_COOLED_FUEL_EFFICIENCY = b
                 .translation("magnetization.configuration.machines.tokamakCooledFuelEfficiency")
                 .defineInRange("tokamakCooledFuelEfficiency", 1.5d, 1.0d, 10.0d);
+        COOLANT_QUALITY_WATER = b
+                .translation("magnetization.configuration.machines.coolantQualityWater")
+                .defineInRange("coolantQualityWater", 1.0d, 0.1d, 10.0d);
+        COOLANT_QUALITY_DEUTERIUM_OXIDE = b
+                .translation("magnetization.configuration.machines.coolantQualityDeuteriumOxide")
+                .defineInRange("coolantQualityDeuteriumOxide", 1.15d, 0.1d, 10.0d);
+        COOLANT_QUALITY_GALLIUM = b
+                .translation("magnetization.configuration.machines.coolantQualityGallium")
+                .defineInRange("coolantQualityGallium", 1.75d, 0.1d, 10.0d);
+        COOLANT_QUALITY_TAGGED = b
+                .translation("magnetization.configuration.machines.coolantQualityTagged")
+                .defineInRange("coolantQualityTagged", 1.35d, 0.1d, 10.0d);
         ELECTROLYZER_FE_CAPACITY = b.translation("magnetization.configuration.machines.electrolyzerFeCapacity")
                 .defineInRange("electrolyzerFeCapacity", 200_000, 0, 1_000_000_000);
         ELECTROLYZER_FE_RECEIVE = b.translation("magnetization.configuration.machines.electrolyzerFeReceive")
@@ -3222,6 +3238,10 @@ public final class MagConfig {
     public static int    tokamakCoolantPerTickPerScale() { return intOr(TOKAMAK_COOLANT_PER_TICK_PER_SCALE, 1); }
     public static double tokamakCooledPowerMultiplier() { return doubleOr(TOKAMAK_COOLED_POWER_MULTIPLIER, 1.5d); }
     public static double tokamakCooledFuelEfficiency() { return doubleOr(TOKAMAK_COOLED_FUEL_EFFICIENCY, 1.5d); }
+    public static double coolantQualityWater() { return doubleOr(COOLANT_QUALITY_WATER, 1.0d); }
+    public static double coolantQualityDeuteriumOxide() { return doubleOr(COOLANT_QUALITY_DEUTERIUM_OXIDE, 1.15d); }
+    public static double coolantQualityGallium() { return doubleOr(COOLANT_QUALITY_GALLIUM, 1.75d); }
+    public static double coolantQualityTagged() { return doubleOr(COOLANT_QUALITY_TAGGED, 1.35d); }
     public static int    electrolyzerFeCapacity()      { return electrolyzerFeCapacityRaw(); }
     public static int    electrolyzerFeReceive()       { return Math.min(electrolyzerFeReceiveRaw(), electrolyzerFeCapacityRaw()); }
     public static int    electrolyzerFePerTick()       { return intOr(ELECTROLYZER_FE_PER_TICK, 256); }
