@@ -85,6 +85,10 @@ public final class Magnetization {
         if (ModList.get().isLoaded("railways")) {
             com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.wire(NeoForge.EVENT_BUS);
         }
+        if (ModList.get().isLoaded("coastersmagnetized")) {
+            com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedCompat
+                    .wire(NeoForge.EVENT_BUS);
+        }
 
         // Curios — register the Field Compass and Magnetic Grapple as curios
         // so they work from a charm slot. Guarded so the Curios imports don't
@@ -303,6 +307,7 @@ public final class Magnetization {
         com.stonytark.magnetization.network.CommonConfigSyncPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusRequestPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusPayload.register(reg);
+        com.stonytark.magnetization.network.CoastersMagnetizedPowerPayload.register(reg);
     }
 
     private static void onConfigLoading(final net.neoforged.fml.event.config.ModConfigEvent.Loading event) {

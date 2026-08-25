@@ -477,6 +477,12 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.curiosCompatEnabled | boolean | true | Master switch for Curios equipment capabilities, active-item keybind lookup, Field Compass HUD lookup, and Induction Pad charging. |
 | COMMON | compat.tfmgCompatEnabled | boolean | true | Master switch for Magnetization's TFMG recipes, materials, fluids, machines, and Polarizer integration. |
 | COMMON | compat.simulatedCoastersCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer behavior. |
+| COMMON | compat.coastersMagnetizedCompatEnabled | boolean | true | Master switch for using Magnetization fields with Coasters: Magnetized anchors. |
+| COMMON | compat.coastersMagnetizedFieldPowerEnabled | boolean | true | Allow a live Magnetization field to power a Coasters: Magnetized anchor as an alternative to redstone. The addon's mode, force, speed limit, visuals, and native redstone behavior remain authoritative. |
+| COMMON | compat.coastersEngineeredCompatEnabled | boolean | true | Master switch for Magnetization's supplemental Coasters: Engineered integration. |
+| COMMON | compat.coastersEngineeredRecipesEnabled | boolean | true | Load a magnetic-alloy plate alternative for the Coasters: Engineered Linear Motor. Takes effect on data reload. |
+| COMMON | compat.simulatedMissilesCompatEnabled | boolean | true | Master switch for Magnetization's CBC Aeronautics Missiles integration. |
+| COMMON | compat.simulatedMissilesGuidanceEmpEnabled | boolean | true | Permanently disable guidance on Sable missiles intersecting an EMP Flux Charge pulse. Propulsion, payloads, fuzes, and ordinary Sable physics remain unchanged. |
 | COMMON | compat.steamNRailsCompatEnabled | boolean | true | Master switch for Steam 'n' Rails materials, projected train forces, Structural Inducer exclusions, and Ponder integration. |
 | COMMON | compat.patchouliCompatEnabled | boolean | true | Master switch for the Patchouli Field Manual book, recipes, and automatic first-login gift. Restart after re-enabling it. |
 | COMMON | compat.justEnoughResourcesCompatEnabled | boolean | true | Master switch for registering Magnetization's naturally generated ores and geodes with Just Enough Resources. Takes effect on restart. |

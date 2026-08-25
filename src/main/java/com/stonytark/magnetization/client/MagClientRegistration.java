@@ -446,5 +446,7 @@ public final class MagClientRegistration {
         // Stop any looping emitter hums and clear their static state when leaving a
         // world, so the loops don't outlive the level and a reload re-plays them.
         EmitterHumSound.clearAll();
+        com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedCompat
+                .clearClientFieldPower();
     }
 }

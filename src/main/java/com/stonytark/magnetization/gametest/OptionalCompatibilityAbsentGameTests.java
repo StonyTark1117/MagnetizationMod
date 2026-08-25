@@ -26,7 +26,8 @@ public final class OptionalCompatibilityAbsentGameTests {
     public static void optionalAdaptersAndRecipesStayAbsent(final GameTestHelper helper) {
         for (final String mod : new String[]{"create_new_age", "immersiveengineering", "alexscaves",
                 "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission",
-                "rocketnautics", "oreexcavation", "coasterssimulatedextratypes"}) {
+                "rocketnautics", "oreexcavation", "coasterssimulatedextratypes", "coastersmagnetized",
+                "coastersengineered", "coasters_extras", "cbcaeronauticsmissiles"}) {
             helper.assertTrue(!ModList.get().isLoaded(mod),
                     "Minimal absent-mod profile unexpectedly contains " + mod);
         }
@@ -56,6 +57,7 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "alexscaves_ferrofluid_from_ferrouslime",
                 "createaddition_electric_motor_from_permanent_magnet",
                 "createaddition_alternator_from_permanent_magnet",
+                "coasters_engineered_linear_motor_from_magnetic_alloy",
                 "tfmg_polarize_samarium_cobalt_magnet",
                 "tfmg_polarize_neodymium_magnet"}) {
             final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("magnetization", path);
@@ -77,6 +79,9 @@ public final class OptionalCompatibilityAbsentGameTests {
                 MagConfig.TFMG_COMPAT_ENABLED,
                 MagConfig.COSMONAUTICS_COMPAT_ENABLED,
                 MagConfig.SIMULATED_COASTERS_COMPAT_ENABLED,
+                MagConfig.COASTERS_MAGNETIZED_COMPAT_ENABLED,
+                MagConfig.COASTERS_ENGINEERED_COMPAT_ENABLED,
+                MagConfig.SIMULATED_MISSILES_COMPAT_ENABLED,
                 MagConfig.STEAM_N_RAILS_COMPAT_ENABLED,
                 MagConfig.PATCHOULI_COMPAT_ENABLED,
                 MagConfig.JUST_ENOUGH_RESOURCES_COMPAT_ENABLED,
@@ -99,6 +104,9 @@ public final class OptionalCompatibilityAbsentGameTests {
                     "Core optional-package master switch remained enabled");
             helper.assertTrue(!MagConfig.simulatedCoastersFieldReaction()
                             && !MagConfig.simulatedCoastersStructuralInducer()
+                            && !MagConfig.coastersMagnetizedFieldPowerEnabled()
+                            && !MagConfig.coastersEngineeredRecipesEnabled()
+                            && !MagConfig.simulatedMissilesGuidanceEmpEnabled()
                             && !MagConfig.steamRailsFieldReaction(),
                     "Transport compatibility master did not cascade to its behavior toggles");
             helper.assertTrue(!MagConfig.tfmgProcessingRecipesEnabled()

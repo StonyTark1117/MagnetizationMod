@@ -521,6 +521,12 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue TFMG_COOLING_FLUID_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_GAS_EXCITATION_ENABLED;
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTERS_MAGNETIZED_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTERS_MAGNETIZED_FIELD_POWER_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTERS_ENGINEERED_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTERS_ENGINEERED_RECIPES_ENABLED;
+    public static final ModConfigSpec.BooleanValue SIMULATED_MISSILES_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SIMULATED_MISSILES_GUIDANCE_EMP_ENABLED;
     public static final ModConfigSpec.BooleanValue STEAM_N_RAILS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue PATCHOULI_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue JUST_ENOUGH_RESOURCES_COMPAT_ENABLED;
@@ -2393,6 +2399,33 @@ public final class MagConfig {
                 .comment("Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer integration.")
                 .translation("magnetization.configuration.compat.simulatedCoastersCompatEnabled")
                 .define("simulatedCoastersCompatEnabled", true);
+        COASTERS_MAGNETIZED_COMPAT_ENABLED = b
+                .comment("Master switch for Coasters: Magnetized integration.")
+                .translation("magnetization.configuration.compat.coastersMagnetizedCompatEnabled")
+                .define("coastersMagnetizedCompatEnabled", true);
+        COASTERS_MAGNETIZED_FIELD_POWER_ENABLED = b
+                .comment("Allow a live Magnetization field to power Coasters: Magnetized anchors as an alternative to redstone.",
+                         "The addon's mode, force, speed limit, visuals, and ordinary redstone behavior remain authoritative.")
+                .translation("magnetization.configuration.compat.coastersMagnetizedFieldPowerEnabled")
+                .define("coastersMagnetizedFieldPowerEnabled", true);
+        COASTERS_ENGINEERED_COMPAT_ENABLED = b
+                .comment("Master switch for Coasters: Engineered supplemental integration.")
+                .translation("magnetization.configuration.compat.coastersEngineeredCompatEnabled")
+                .define("coastersEngineeredCompatEnabled", true);
+        COASTERS_ENGINEERED_RECIPES_ENABLED = b
+                .comment("Load Magnetization's magnetic-alloy alternative recipe for the Coasters: Engineered Linear Motor.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.coastersEngineeredRecipesEnabled")
+                .define("coastersEngineeredRecipesEnabled", true);
+        SIMULATED_MISSILES_COMPAT_ENABLED = b
+                .comment("Master switch for CBC Aeronautics Missiles integration.")
+                .translation("magnetization.configuration.compat.simulatedMissilesCompatEnabled")
+                .define("simulatedMissilesCompatEnabled", true);
+        SIMULATED_MISSILES_GUIDANCE_EMP_ENABLED = b
+                .comment("Permanently disable missile guidance when a Sable missile intersects an EMP Flux Charge pulse.",
+                         "Propulsion, payloads, fuzes, and ordinary Sable physics are not changed.")
+                .translation("magnetization.configuration.compat.simulatedMissilesGuidanceEmpEnabled")
+                .define("simulatedMissilesGuidanceEmpEnabled", true);
         STEAM_N_RAILS_COMPAT_ENABLED = b
                 .comment("Master switch for Create: Steam 'n' Rails materials, projected train force, Structural Inducer, and Ponder integration.")
                 .translation("magnetization.configuration.compat.steamNRailsCompatEnabled")
@@ -3087,6 +3120,27 @@ public final class MagConfig {
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
     public static boolean simulatedCoastersCompatEnabled() {
         return booleanOr(SIMULATED_COASTERS_COMPAT_ENABLED, true);
+    }
+    public static boolean coastersMagnetizedCompatEnabled() {
+        return booleanOr(COASTERS_MAGNETIZED_COMPAT_ENABLED, true);
+    }
+    public static boolean coastersMagnetizedFieldPowerEnabled() {
+        return coastersMagnetizedCompatEnabled()
+                && booleanOr(COASTERS_MAGNETIZED_FIELD_POWER_ENABLED, true);
+    }
+    public static boolean coastersEngineeredCompatEnabled() {
+        return booleanOr(COASTERS_ENGINEERED_COMPAT_ENABLED, true);
+    }
+    public static boolean coastersEngineeredRecipesEnabled() {
+        return coastersEngineeredCompatEnabled()
+                && booleanOr(COASTERS_ENGINEERED_RECIPES_ENABLED, true);
+    }
+    public static boolean simulatedMissilesCompatEnabled() {
+        return booleanOr(SIMULATED_MISSILES_COMPAT_ENABLED, true);
+    }
+    public static boolean simulatedMissilesGuidanceEmpEnabled() {
+        return simulatedMissilesCompatEnabled()
+                && booleanOr(SIMULATED_MISSILES_GUIDANCE_EMP_ENABLED, true);
     }
     public static boolean simulatedCoastersFieldReaction() {
         return simulatedCoastersCompatEnabled() && booleanOr(SIMULATED_COASTERS_FIELD_REACTION, true);

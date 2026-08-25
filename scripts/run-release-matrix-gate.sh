@@ -19,6 +19,11 @@ run_profile 'AeroPortals compatibility profile' smokeAeroPortalsGameTest
 run_profile 'Immersive Aeronautics compatibility profile' smokeImmersiveAeronauticsGameTest
 run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoastersGameTest
 run_profile 'Coasters Simulated: Track Styles compatibility profile' smokeSimulatedCoastersTrackStylesGameTest
+run_profile 'Coasters: Magnetized compatibility profile' smokeCoastersMagnetizedGameTest
+run_profile 'Coasters: Magnetized client profile' smokeClientCoastersMagnetized
+run_profile 'Coasters: Engineered compatibility profile' smokeCoastersEngineeredGameTest
+run_profile 'Create: Coasters Extras compatibility profile' smokeCoastersExtrasGameTest
+run_profile 'CBC Aeronautics Missiles compatibility profile' smokeSimulatedMissilesGameTest
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 run_profile 'Create: New Age compatibility profile' smokeCreateNewAgeGameTest
 run_profile 'Create: Cosmonautics compatibility profile' smokeCosmonauticsGameTest

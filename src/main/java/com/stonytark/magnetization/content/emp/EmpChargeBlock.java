@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
@@ -38,6 +39,8 @@ public final class EmpChargeBlock extends Block {
 
     /** Sweep the radius: blank emitters, drain FE, flash + boom, consume the charge. */
     public static void detonate(final ServerLevel level, final BlockPos center) {
+        com.stonytark.magnetization.compat.simulatedmissiles.MagSimulatedMissilesCompat
+                .disableGuidanceInPulse(level, Vec3.atCenterOf(center), RADIUS);
         final BlockPos.MutableBlockPos cur = new BlockPos.MutableBlockPos();
         final int r2 = RADIUS * RADIUS;
         for (int dx = -RADIUS; dx <= RADIUS; dx++) {

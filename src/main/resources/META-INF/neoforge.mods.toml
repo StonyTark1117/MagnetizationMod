@@ -25,6 +25,9 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[mixins]]
 config = "magnetization.tfmg.mixins.json"
 
+[[mixins]]
+config = "magnetization.coasters_magnetized.mixins.json"
+
 # Optional guard for Cosmonautics' Deep Space observer on server lifecycles
 # where that dimension is absent (notably NeoForge GameTest servers).
 [[mixins]]
@@ -112,6 +115,36 @@ side = "BOTH"
 modId = "coasterssimulatedextratypes"
 type = "optional"
 versionRange = "[1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Individual Coasters add-ons. These relationships intentionally name the mods,
+# never any modpack that happens to bundle them.
+[[dependencies.${mod_id}]]
+modId = "coastersmagnetized"
+type = "optional"
+versionRange = "[1.1.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "coastersengineered"
+type = "optional"
+versionRange = "[1.0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "coasters_extras"
+type = "optional"
+versionRange = "[1.2,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "cbcaeronauticsmissiles"
+type = "optional"
+versionRange = "[0.1.0,)"
 ordering = "AFTER"
 side = "BOTH"
 

@@ -31,6 +31,10 @@ configurations {
     simulatedCoastersTrackStylesRuntime {
         extendsFrom simulatedCoastersRuntime
     }
+    coastersMagnetizedRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersEngineeredRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersExtrasRuntime { extendsFrom simulatedCoastersRuntime }
+    simulatedMissilesRuntime
     createBigCannonsRuntime
     createNewAgeRuntime
     cosmonauticsRuntime
@@ -104,6 +108,7 @@ configurations {
     // self-contradictory range without altering Magnetization's published JAR.
     irisWrapper
 }
+configurations.simulatedMissilesRuntime.extendsFrom(configurations.createBigCannonsRuntime)
 // The soft-dep / smoke-test mods on localRuntime are the compatibility-heavy client
 // pack we validate against in `./gradlew runClient` (Sodium, Iris, JEI, the tag-
 // coverage mods, etc.). They must NOT be folded in for:
@@ -126,6 +131,9 @@ def minimalProfileTasks = [
         'runaeroportalsgametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
         'runsimulatedcoasterstrackstylesgametestserver', 'runsimulatedcoasterstrackstylesclient',
+        'runcoastersmagnetizedgametestserver', 'runcoastersmagnetizedclient',
+        'runcoastersengineeredgametestserver',
+        'runcoastersextrasgametestserver', 'runsimulatedmissilesgametestserver',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
         'runcosmonauticsgametestserver',
@@ -149,6 +157,9 @@ def minimalProfileTasks = [
         'runstressserver', 'performancestress',
         'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
         'smokesimulatedcoastersgametest', 'smokesimulatedcoasterstrackstylesgametest',
+        'smokecoastersmagnetizedgametest', 'smokeclientcoastersmagnetized',
+        'smokecoastersengineeredgametest',
+        'smokecoastersextrasgametest', 'smokesimulatedmissilesgametest',
         'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
         'smokecosmonauticsgametest',
@@ -195,6 +206,19 @@ def wantsSimulatedCoastersTrackStylesTests = lowered.any {
     it.endsWith('runsimulatedcoasterstrackstylesgametestserver')
             || it.endsWith('smokesimulatedcoasterstrackstylesgametest')
             || it.endsWith('runsimulatedcoasterstrackstylesclient')
+}
+def wantsCoastersMagnetizedTests = lowered.any {
+    it.endsWith('runcoastersmagnetizedgametestserver') || it.endsWith('smokecoastersmagnetizedgametest')
+            || it.endsWith('runcoastersmagnetizedclient') || it.endsWith('smokeclientcoastersmagnetized')
+}
+def wantsCoastersEngineeredTests = lowered.any {
+    it.endsWith('runcoastersengineeredgametestserver') || it.endsWith('smokecoastersengineeredgametest')
+}
+def wantsCoastersExtrasTests = lowered.any {
+    it.endsWith('runcoastersextrasgametestserver') || it.endsWith('smokecoastersextrasgametest')
+}
+def wantsSimulatedMissilesTests = lowered.any {
+    it.endsWith('runsimulatedmissilesgametestserver') || it.endsWith('smokesimulatedmissilesgametest')
 }
 def wantsCreateBigCannonsTests = lowered.any {
     it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
@@ -267,6 +291,8 @@ def wantsMinimalVerification = lowered.any {
 }
 def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsSimulatedCoastersTrackStylesTests,
+                            wantsCoastersMagnetizedTests, wantsCoastersEngineeredTests,
+                            wantsCoastersExtrasTests, wantsSimulatedMissilesTests,
                             wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
                             wantsCosmonauticsTests,
                             wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
@@ -291,6 +317,18 @@ if (wantsSimulatedCoastersTests) {
 }
 if (wantsSimulatedCoastersTrackStylesTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersTrackStylesRuntime }
+}
+if (wantsCoastersMagnetizedTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersMagnetizedRuntime }
+}
+if (wantsCoastersEngineeredTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersEngineeredRuntime }
+}
+if (wantsCoastersExtrasTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersExtrasRuntime }
+}
+if (wantsSimulatedMissilesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedMissilesRuntime }
 }
 if (wantsCreateBigCannonsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.createBigCannonsRuntime }
@@ -476,6 +514,10 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGame
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
         || it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
+        || it.name == 'runCoastersMagnetizedGameTestServer'
+        || it.name == 'runCoastersEngineeredGameTestServer'
+        || it.name == 'runCoastersExtrasGameTestServer'
+        || it.name == 'runSimulatedMissilesGameTestServer'
         || it.name == 'runCreateBigCannonsGameTestServer'
         || it.name == 'runCosmonauticsGameTestServer'
         || it.name == 'runSteamRailsGameTestServer'
@@ -511,6 +553,14 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGame
                 ? 'run-simulated-coasters-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
                 ? 'run-simulated-coasters-track-styles-gametest/world/session.lock'
+                : it.name == 'runCoastersMagnetizedGameTestServer'
+                ? 'run-coasters-magnetized-gametest/world/session.lock'
+                : it.name == 'runCoastersEngineeredGameTestServer'
+                ? 'run-coasters-engineered-gametest/world/session.lock'
+                : it.name == 'runCoastersExtrasGameTestServer'
+                ? 'run-coasters-extras-gametest/world/session.lock'
+                : it.name == 'runSimulatedMissilesGameTestServer'
+                ? 'run-simulated-missiles-gametest/world/session.lock'
                 : it.name == 'runCosmonauticsGameTestServer'
                 ? 'run-cosmonautics-gametest/world/session.lock'
                 : it.name == 'runCreateBigCannonsGameTestServer'
@@ -593,6 +643,18 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulatedcoasters_track_styles/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_magnetized/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_engineered/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_extras/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulated_missiles/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createbigcannons/structure'
@@ -701,6 +763,10 @@ neoForge {
         simulatedCoastersTrackStylesClient {
             client()
             gameDirectory = file('run-simulated-coasters-track-styles-client')
+        }
+        coastersMagnetizedClient {
+            client()
+            gameDirectory = file('run-client-coasters-magnetized')
         }
         // Persistent, disposable manual-playtest worlds. Create one normal world
         // in each game directory on first launch; the preset stages itself on the
@@ -811,6 +877,26 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-simulated-coasters-track-styles-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters_track_styles'
+        }
+        coastersMagnetizedGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-magnetized-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_magnetized'
+        }
+        coastersEngineeredGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-engineered-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_engineered'
+        }
+        coastersExtrasGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-extras-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_extras'
+        }
+        simulatedMissilesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-missiles-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulated_missiles'
         }
         createBigCannonsGameTestServer {
             type = 'gameTestServer'
@@ -1134,6 +1220,34 @@ tasks.register('smokeSimulatedCoastersTrackStylesGameTest', Exec) {
             'run-simulated-coasters-track-styles-gametest', '300'
 }
 
+tasks.register('smokeCoastersMagnetizedGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises field-powered Coasters: Magnetized anchors.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersMagnetizedGameTestServer',
+            'run-coasters-magnetized-gametest', '300'
+}
+
+tasks.register('smokeCoastersEngineeredGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Coasters: Engineered recipe and FE/EMP compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersEngineeredGameTestServer',
+            'run-coasters-engineered-gametest', '300'
+}
+
+tasks.register('smokeCoastersExtrasGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: Coasters Extras through the parent Coasters bridge.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersExtrasGameTestServer',
+            'run-coasters-extras-gametest', '300'
+}
+
+tasks.register('smokeSimulatedMissilesGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises EMP guidance loss for CBC Aeronautics Missiles.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedMissilesGameTestServer',
+            'run-simulated-missiles-gametest', '300'
+}
+
 tasks.register('smokeCreateBigCannonsGameTest', Exec) {
     group = 'verification'
     description = 'Supervises the optional Create: Big Cannons projectile-field compatibility GameTest runtime.'
@@ -1271,6 +1385,8 @@ isolatedClientSmoke('smokeClientRei', 'runReiClient', 'run-client-rei', 'roughly
 isolatedClientSmoke('smokeClientEmi', 'runEmiClient', 'run-client-emi', 'emi')
 isolatedClientSmoke('smokeClientPonderCompat', 'runPonderCompatClient',
         'run-client-ponder-compat', 'ponder,railways,copycats')
+isolatedClientSmoke('smokeClientCoastersMagnetized', 'runCoastersMagnetizedClient',
+        'run-client-coasters-magnetized', 'coastersmagnetized')
 
 tasks.register('smokeOptionalClientProfiles') {
     group = 'verification'
@@ -1356,6 +1472,11 @@ dependencies {
             "curse.maven:coasters-simulated-track-styles-1642719:${simulated_coasters_track_styles_test_file}") {
         transitive = false
     }
+    compileOnly("curse.maven:coasters-magnetized-1642979:${coasters_magnetized_test_file}") { transitive = false }
+    coastersMagnetizedRuntime("curse.maven:coasters-magnetized-1642979:${coasters_magnetized_test_file}") { transitive = false }
+    compileOnly("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
+    coastersEngineeredRuntime("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
+    coastersExtrasRuntime("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
@@ -1402,6 +1523,9 @@ dependencies {
     // runtime exists only for the real CBC projectile GameTests.
     createBigCannonsRuntime("maven.modrinth:GWp4jCJj:${create_big_cannons_test_version}") { transitive = false }
     createBigCannonsRuntime("maven.modrinth:B3pb093D:${ritchies_projectile_test_version}") { transitive = false }
+    compileOnly("curse.maven:create-simulated-missiles-create-aeronautics-1654531:${simulated_missiles_test_file}") { transitive = false }
+    simulatedMissilesRuntime("curse.maven:create-simulated-missiles-create-aeronautics-1654531:${simulated_missiles_test_file}") { transitive = false }
+    simulatedMissilesRuntime("curse.maven:create-radars-1152836:${create_radars_test_file}") { transitive = false }
 
     // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
     // overworld). Hard dep so the region registers correctly on game load.
@@ -1635,6 +1759,8 @@ tasks.register('verifyReleaseJar') {
         final File archive = tasks.named('jar').get().archiveFile.get().asFile
         final List<String> leaked = []
         final List<String> missing = []
+        final List<String> packCoupling = []
+        final List<String> forbiddenPackIds = ['createsmp-polska', 'create-ground-and-air']
         final java.util.zip.ZipFile zip = new java.util.zip.ZipFile(archive)
         try {
             ['LICENSE', 'META-INF/MANIFEST.MF', 'META-INF/neoforge.mods.toml',
@@ -1650,6 +1776,13 @@ tasks.register('verifyReleaseJar') {
                         || name == 'Thumbs.db' || name.endsWith('/Thumbs.db')) {
                     leaked << name
                 }
+                if (!entry.directory) {
+                    final String content = new String(zip.getInputStream(entry).bytes,
+                            java.nio.charset.StandardCharsets.ISO_8859_1).toLowerCase(java.util.Locale.ROOT)
+                    forbiddenPackIds.each { packId ->
+                        if (content.contains(packId)) packCoupling << "${name}: ${packId}"
+                    }
+                }
             }
         } finally {
             zip.close()
@@ -1662,7 +1795,11 @@ tasks.register('verifyReleaseJar') {
             throw new GradleException(
                     "verifyReleaseJar: build-only files leaked into ${archive}: ${leaked}")
         }
-        logger.lifecycle("verifyReleaseJar: ${archive.name} contains required metadata and no build-only cache or OS files.")
+        if (!packCoupling.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: modpack-specific runtime coupling leaked into ${archive}: ${packCoupling}")
+        }
+        logger.lifecycle("verifyReleaseJar: ${archive.name} contains required metadata, no build-only files, and no pack-specific runtime coupling.")
     }
 }
 

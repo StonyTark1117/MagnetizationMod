@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.2 — Coaster and missile ecosystem compatibility
+
+- Added optional **Coasters: Magnetized** support: live Magnetization fields can power magnetic anchors as an alternative to redstone while preserving the addon's mode, force, speed cap, redstone path, and powered models. Combined redstone and field power applies acceleration only once, and server-authoritative visual state now resynchronizes on login and dimension changes.
+- Added a condition-gated **Coasters: Engineered** Linear Motor recipe using Magnetic Alloy Plates. Its master and recipe controls default on; the published addon's bidirectional NeoForge FE behavior remains intact.
+- Verified **Create: Coasters Extras** against the existing Coasters Simulated cart contract. Functional and decorative track additions retain magnetic cart response and Structural Inducer behavior without an unnecessary addon-specific physics hook.
+- Added optional **CBC Aeronautics Missiles** support: EMP Flux Charge pulses permanently disable guidance computers on intersecting Sable missiles while leaving propulsion, payloads, fuzes, and normal physics unchanged. The master and guidance-effect controls default on.
+- Added isolated published-mod GameTest profiles for all four addons, a Coasters: Magnetized client-mixin smoke profile, absent-mod coverage, optional dependency metadata, configuration labels, Field Manual guidance, and release-matrix enforcement.
+- Added pinned development-only audit fixtures for the two modpack manifests that motivated this compatibility pass, plus a release-JAR guard that rejects any pack-specific runtime coupling.
+
 ## 1.4.1 — Tokamak completion, coolant loops & magnetic golems
 
 ### Added

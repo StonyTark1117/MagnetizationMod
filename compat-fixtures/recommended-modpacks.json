@@ -1,0 +1,35 @@
+{
+  "purpose": "Development-only audit pins. These packs motivate coverage but are never runtime dependencies or detection targets.",
+  "captured": "2026-08-25",
+  "packs": [
+    {
+      "name": "CreateSMP Polska",
+      "curseforgeSlug": "createsmp-polska",
+      "manifestName": "CSMP V 1.5",
+      "manifestVersion": "1.5",
+      "minecraft": "1.21.1",
+      "loader": "neoforge-21.1.236",
+      "fileCount": 325,
+      "manifestSha256": "c4b7c116926676a93483f516aa31cd825b830eed530e799d437940241762c09d",
+      "magnetization": {"projectId": 1543554, "fileId": 8332175}
+    },
+    {
+      "name": "Create Ground and Air",
+      "curseforgeSlug": "create-ground-and-air",
+      "manifestName": "Ground and Air 3.1. ",
+      "manifestVersion": "3.1",
+      "minecraft": "1.21.1",
+      "loader": "neoforge-21.1.241",
+      "fileCount": 184,
+      "manifestSha256": "58277d6c7ff81c146838b7b6cf0fd4e019648b8a9a28ea2924622839fe656142",
+      "magnetization": {"projectId": 1543554, "fileId": 8649944},
+      "directlyCoveredAddon": {"modId": "coastersengineered", "projectId": 1643631, "fileId": 8653100}
+    }
+  ],
+  "individualAddonProfiles": [
+    {"modId": "coastersmagnetized", "projectId": 1642979, "fileId": 8668703},
+    {"modId": "coastersengineered", "projectId": 1643631, "fileId": 8653100},
+    {"modId": "coasters_extras", "projectId": 1649197, "fileId": 8718286},
+    {"modId": "cbcaeronauticsmissiles", "projectId": 1654531, "fileId": 8658979}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "coastersengineered" },
+    { "type": "magnetization:compat_config", "feature": "coasters_engineered" }
+  ],
+  "pattern": ["RRR", "CMC", "III"],
+  "key": {
+    "R": { "item": "minecraft:redstone" },
+    "C": { "tag": "c:plates/copper" },
+    "M": { "tag": "c:plates/magnetic_alloy" },
+    "I": { "item": "create:industrial_iron_block" }
+  },
+  "result": { "id": "coastersengineered:linear_motor", "count": 1 }
+}

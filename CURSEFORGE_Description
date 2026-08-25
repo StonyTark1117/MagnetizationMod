@@ -30,6 +30,14 @@ Place magnets on the ground to influence sable contraptions (ships) and mobs/pla
 - **Hematite Lens** — multiblock polarity filter. Caps an emitter and only lets one polarity through.
 - **Titanomagnetite Block + Imprint Module** — the block records a nearby emitter's full config (range, strength, shape, polarity); the hand-held Imprint Module captures the recording and projects it onto another emitter elsewhere. No manual re-tuning.
 
+## New in 1.4.2 — Coaster and missile compatibility
+
+- **Coasters: Magnetized** anchors can use live Magnetization fields instead of redstone, with synchronized powered visuals and no doubled force.
+- **Coasters: Engineered** gains a Magnetic Alloy Plate recipe for its Linear Motor.
+- **Create: Coasters Extras** is verified to preserve the parent Coasters magnetic-cart and Structural Inducer contract.
+- **CBC Aeronautics Missiles** guidance computers are permanently disabled by intersecting EMP Flux Charge pulses; propulsion, payloads, and fuzes remain untouched.
+- Every integration is detected by its individual mod ID and has dedicated release-matrix coverage. No modpack is a runtime dependency.
+
 ## New in 1.4.1 — Expandable reactors, coolant & magnetic golems
 
 - **Completed expandable Tokamaks** — build any configured odd square from 3×3 through 15×15 using a Tokamak Coil perimeter around a solid Reactor Core interior. Larger reactors scale FE capacity, generation, and output; every core and perimeter coil forwards access to one authoritative controller.

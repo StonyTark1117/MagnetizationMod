@@ -1,0 +1,14 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.stonytark.magnetization.mixin.compat",
+  "plugin": "com.stonytark.magnetization.mixin.compat.CoastersMagnetizedMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CoastersMagnetizedPowerMixin",
+    "CoastersMagnetizedRenderPowerMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": { "defaultRequire": 1 }
+}
