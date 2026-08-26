@@ -52,6 +52,12 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+# Remove stale evidence before the nested Gradle process spends time configuring.
+# runServerSmoke also deletes this in doFirst, but without this earlier boundary
+# the supervisor can observe a prior run's Done/Stopping lines and terminate the
+# new server before it has emitted its first log entry.
+rm -f "$log_file"
+
 # Isolate the nested Gradle process and its Minecraft child so a Sable thread
 # that outlives Minecraft's clean stop cannot hang the release gate or make us
 # target unrelated development clients/servers.
@@ -109,7 +115,7 @@ echo 'smokeServerMinimal: server reached Done and accepted a clean stop; termina
 cleanup
 trap - EXIT INT TERM
 
-verify_args=(verifyServerSmokeLog --no-daemon --max-workers=1)
+verify_args=(verifyServerSmokeLog --no-daemon --max-workers=1 "-PmagSmokeSeconds=$dwell_seconds")
 if [[ ${MAG_SMOKE_ALLOW_ERRORS:-0} == 1 ]]; then
     verify_args+=(-PmagSmokeAllowErrors)
 fi

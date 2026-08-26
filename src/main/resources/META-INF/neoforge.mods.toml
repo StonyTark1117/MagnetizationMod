@@ -85,7 +85,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "aeroportals"
 type = "optional"
-versionRange = "[1.2.3,)"
+versionRange = "[${aeroportals_min_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -104,7 +104,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "simulatedcoasters"
 type = "optional"
-versionRange = "[0.1.4,)"
+versionRange = "[${simulated_coasters_min_version},)"
 ordering = "AFTER"
 side = "BOTH"
 

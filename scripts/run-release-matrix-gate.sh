@@ -16,14 +16,20 @@ run_profile() {
 run_profile 'minimal release profile' releaseGate "-PmagSmokeSeconds=$smoke_seconds"
 run_profile 'optional compatibility absent-mod profile' smokeOptionalCompatibilityAbsentGameTest
 run_profile 'AeroPortals compatibility profile' smokeAeroPortalsGameTest
+run_profile 'AeroPortals 1.1.2 legacy compatibility profile' smokeAeroPortalsLegacyGameTest
 run_profile 'Immersive Aeronautics compatibility profile' smokeImmersiveAeronauticsGameTest
 run_profile 'Create: Coasters Simulated compatibility profile' smokeSimulatedCoastersGameTest
+run_profile 'Create: Coasters Simulated 0.1 legacy compatibility profile' smokeSimulatedCoastersLegacyGameTest
 run_profile 'Coasters Simulated: Track Styles compatibility profile' smokeSimulatedCoastersTrackStylesGameTest
+run_profile 'Coasters Simulated: Track Styles client profile' smokeClientSimulatedCoastersTrackStyles
 run_profile 'Coasters: Magnetized compatibility profile' smokeCoastersMagnetizedGameTest
 run_profile 'Coasters: Magnetized client profile' smokeClientCoastersMagnetized
 run_profile 'Coasters: Engineered compatibility profile' smokeCoastersEngineeredGameTest
+run_profile 'Coasters: Engineered Jade/client profile' smokeClientCoastersEngineered
 run_profile 'Create: Coasters Extras compatibility profile' smokeCoastersExtrasGameTest
+run_profile 'Create: Coasters Extras client-render profile' smokeClientCoastersExtras
 run_profile 'CBC Aeronautics Missiles compatibility profile' smokeSimulatedMissilesGameTest
+run_profile 'CBC Aeronautics Missiles client-render profile' smokeClientSimulatedMissiles
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest
 run_profile 'Create: New Age compatibility profile' smokeCreateNewAgeGameTest
 run_profile 'Create: Cosmonautics compatibility profile' smokeCosmonauticsGameTest
@@ -40,5 +46,11 @@ run_profile 'Create: The Factory Must Grow compatibility profile' smokeTfmgGameT
 run_profile 'Ore Excavation compatibility profile' smokeOreExcavationGameTest
 run_profile 'Create Ore Excavation compatibility profile' smokeCreateOreExcavationGameTest
 run_profile 'Curios compatibility profile' smokeCuriosGameTest
+run_profile 'Jade client profile' smokeClientJade
+run_profile 'The One Probe client profile' smokeClientTop
+run_profile 'REI client profile' smokeClientRei
+run_profile 'EMI client profile' smokeClientEmi
+run_profile 'Ponder plus addon client profile' smokeClientPonderCompat
+run_profile 'JEI/JER complete-catalog client profile' smokeClientJer
 
 echo 'releaseMatrixGate: all isolated profiles passed'

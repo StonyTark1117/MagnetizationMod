@@ -15,6 +15,9 @@ import net.neoforged.bus.api.IEventBus;
 /** Optional lifecycle bridge for AeroPortals' reconstructed Sable sublevels. */
 public final class MagAeroPortalsCompat {
 
+    /** AeroPortals 1.2.3 added the plot-remapping API used by the advanced bridge. */
+    private static final boolean HAS_PLOT_REMAP_API = hasPlotRemapApi();
+
     private static final java.util.concurrent.ConcurrentMap<java.util.UUID,
             java.lang.ref.WeakReference<dev.ryanhcode.sable.sublevel.ServerSubLevel>> RECENT_TRANSFERS =
             new java.util.concurrent.ConcurrentHashMap<>();
@@ -33,6 +36,13 @@ public final class MagAeroPortalsCompat {
         // served from a cache populated before reconstruction.
         ShipMagneticRegistry.invalidateAll(event.srcLevel());
         ShipMagneticRegistry.invalidateAll(event.dstLevel());
+
+        // AeroPortals 1.1.2 already exposes the transfer event needed for cache
+        // invalidation. Its event does not
+        // yet expose plot relocation geometry, so remote/swivel coordinate
+        // repair must remain dormant rather than resolving newer methods and
+        // crashing the otherwise compatible pack.
+        if (!HAS_PLOT_REMAP_API) return;
 
         // Remotes still installed in railgun emitters are part of the serialized
         // ship. Their absolute plot position/dimension must follow the move.
@@ -116,5 +126,19 @@ public final class MagAeroPortalsCompat {
         final var newPos = event.remapPlotPos(oldPos);
         return RailgunRemoteItem.remapBinding(stack, event.srcLevel().dimension(),
                 event.dstLevel().dimension(), ignored -> newPos);
+    }
+
+    static boolean hasAdvancedPlotRemapApi() {
+        return HAS_PLOT_REMAP_API;
+    }
+
+    private static boolean hasPlotRemapApi() {
+        try {
+            SubLevelTransferEvent.class.getMethod("remapPlotPos", net.minecraft.core.BlockPos.class);
+            SubLevelTransferEvent.class.getMethod("chainPlotMoves");
+            return true;
+        } catch (final NoSuchMethodException ignored) {
+            return false;
+        }
     }
 }

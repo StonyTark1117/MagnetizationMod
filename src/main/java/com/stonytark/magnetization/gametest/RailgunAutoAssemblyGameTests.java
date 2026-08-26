@@ -206,7 +206,8 @@ public final class RailgunAutoAssemblyGameTests {
 
     /** A railgun assembled as part of a Sable craft must ignore its own host
      * body, assemble a staged payload out of that plot, and launch the payload
-     * rather than accelerating the ship carrying the gun. Regression for #8. */
+     * rather than accelerating the ship carrying the gun. Regression for #8
+     * and the payload-splitting side of #9. */
     @GameTest(template = EMPTY, timeoutTicks = 180, batch = "railgunMountedSublevel")
     public static void mountedRailgunLaunchesPayloadWithoutTargetingHost(final GameTestHelper helper) {
         final ServerLevel level = helper.getLevel();
@@ -308,6 +309,99 @@ public final class RailgunAutoAssemblyGameTests {
         });
     }
 
+    /** Automatic fire must not mistake a ferromagnetic block already belonging
+     * to the carrying sub-level for a projectile. This is the exact #9 report:
+     * a mounted gun with iron between its rails remains idle and does not launch
+     * its own host when projectile auto-assembly is disabled. */
+    @GameTest(template = EMPTY, timeoutTicks = 100, batch = "railgunMountedHostExclusion")
+    public static void mountedAutomaticRailgunIgnoresFerromagneticHostBlock(
+            final GameTestHelper helper) {
+        final ServerLevel level = helper.getLevel();
+        final BlockPos fixture = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos first = new BlockPos(fixture.getX(), 260, fixture.getZ());
+        final BlockPos second = first.offset(4, 0, 0);
+        final BlockPos hostIron = first.offset(2, 0, -2);
+        final List<BlockPos> hostBlocks = new ArrayList<>();
+        buildRail(level, first);
+        buildRail(level, second);
+        for (final BlockPos emitter : List.of(first, second)) {
+            hostBlocks.add(emitter);
+            for (int i = 1; i <= 6; i++) hostBlocks.add(emitter.relative(Direction.NORTH, i));
+        }
+        for (int x = 0; x <= 4; x++) {
+            final BlockPos bridge = first.offset(x, 0, 1);
+            level.setBlock(bridge, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+            hostBlocks.add(bridge);
+        }
+        // Join the ferromagnetic cell directly to both copper rails so Sable's
+        // assembly is unquestionably one connected host structure.
+        for (int x = 1; x <= 3; x++) {
+            final BlockPos channelBridge = first.offset(x, 0, -2);
+            level.setBlock(channelBridge, x == 2 ? Blocks.IRON_BLOCK.defaultBlockState()
+                    : Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+            hostBlocks.add(channelBridge);
+        }
+
+        final BlockPos min = hostBlocks.stream().reduce((a, b) -> new BlockPos(
+                Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()),
+                Math.min(a.getZ(), b.getZ()))).orElse(first);
+        final BlockPos max = hostBlocks.stream().reduce((a, b) -> new BlockPos(
+                Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()),
+                Math.max(a.getZ(), b.getZ()))).orElse(first);
+        final ServerSubLevel host = SubLevelAssemblyHelper.assembleBlocks(level, first, hostBlocks,
+                new BoundingBox3i(min.getX(), min.getY(), min.getZ(),
+                        max.getX() + 1, max.getY() + 1, max.getZ() + 1));
+        final var container = SubLevelContainer.getContainer(level);
+        if (container == null || host == null) {
+            helper.fail("Could not assemble the mounted #9 railgun fixture");
+            return;
+        }
+        final BlockPos plotFirst = host.getPlot().getCenterBlock();
+        final BlockPos plotSecond = plotFirst.offset(4, 0, 0);
+        final BlockPos localIron = new BlockPos(2, 0, -2);
+        helper.runAfterDelay(6L, () -> {
+            final RailgunEmitterBlockEntity a = emitter(level, plotFirst);
+            final RailgunEmitterBlockEntity b = emitter(level, plotSecond);
+            if (a == null || b == null) {
+                cleanupShip(container, host);
+                helper.fail("Mounted #9 fixture lost its railgun emitters");
+                return;
+            }
+            power(level, plotFirst);
+            power(level, plotSecond);
+            a.setManualMode(false);
+            b.setManualMode(false);
+            a.setAutoAssemble(false);
+            b.setAutoAssemble(false);
+            final List<BlockPos> ironOffsets = blockOffsets(host, Blocks.IRON_BLOCK);
+            helper.assertTrue(host.getPlot().getEmbeddedLevelAccessor()
+                            .getBlockState(localIron).is(Blocks.IRON_BLOCK),
+                    "Mounted #9 fixture did not retain iron at expected offset "
+                            + localIron + "; actual iron offsets=" + ironOffsets);
+            final RigidBodyHandle hostHandle = RigidBodyHandle.of(host);
+            final Vector3d before = hostHandle == null ? new Vector3d()
+                    : hostHandle.getLinearVelocity(new Vector3d());
+            helper.runAfterDelay(30L, () -> {
+                try {
+                    final Vector3d after = hostHandle == null ? new Vector3d()
+                            : hostHandle.getLinearVelocity(new Vector3d());
+                    helper.assertTrue(host.getPlot().getEmbeddedLevelAccessor()
+                                    .getBlockState(localIron).is(Blocks.IRON_BLOCK),
+                            "Railgun removed the ferromagnetic block belonging to its host");
+                    helper.assertTrue(a.arcState() == RailgunEmitterBlockEntity.ArcState.IDLE
+                                    && b.arcState() == RailgunEmitterBlockEntity.ArcState.IDLE,
+                            "Mounted automatic railgun treated its own ferromagnetic block as a target");
+                    helper.assertTrue(Math.abs(after.z - before.z) < 0.25d,
+                            "Mounted automatic railgun accelerated its own host craft; before="
+                                    + before + ", after=" + after);
+                    helper.succeed();
+                } finally {
+                    cleanupShip(container, host);
+                }
+            });
+        });
+    }
+
     private static void buildRail(final ServerLevel level, final BlockPos emitter) {
         level.setBlock(emitter, MagBlocks.RAILGUN_EMITTER.get().defaultBlockState()
                 .setValue(DirectionalBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
@@ -315,6 +409,21 @@ public final class RailgunAutoAssemblyGameTests {
             level.setBlock(emitter.relative(Direction.NORTH, i),
                     Blocks.COPPER_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
         }
+    }
+
+    private static List<BlockPos> blockOffsets(final ServerSubLevel ship,
+                                                final net.minecraft.world.level.block.Block block) {
+        final List<BlockPos> found = new ArrayList<>();
+        final var accessor = ship.getPlot().getEmbeddedLevelAccessor();
+        for (int x = -10; x <= 10; x++) {
+            for (int y = -4; y <= 4; y++) {
+                for (int z = -10; z <= 10; z++) {
+                    final BlockPos pos = new BlockPos(x, y, z);
+                    if (accessor.getBlockState(pos).is(block)) found.add(pos);
+                }
+            }
+        }
+        return found;
     }
 
     private static void power(final ServerLevel level, final BlockPos pos) {

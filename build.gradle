@@ -26,8 +26,10 @@ configurations {
     localRuntime
     gameTestRuntime
     aeroportalsRuntime
+    aeroportalsLegacyRuntime
     immersiveAeronauticsRuntime
     simulatedCoastersRuntime
+    simulatedCoastersLegacyRuntime
     simulatedCoastersTrackStylesRuntime {
         extendsFrom simulatedCoastersRuntime
     }
@@ -58,6 +60,7 @@ configurations {
     topClientRuntime
     reiClientRuntime
     emiClientRuntime
+    jerClientRuntime
     ponderCompatClientRuntime {
         extendsFrom steamRailsRuntime, copycatsRuntime
     }
@@ -128,12 +131,14 @@ def minimalProfileTasks = [
         'rundata',
         'runserver', 'rungametestserver', 'runregressiongametestserver',
         'runoptionalcompatibilityabsentgametestserver',
-        'runaeroportalsgametestserver',
+        'runaeroportalsgametestserver', 'runaeroportalslegacygametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
+        'runsimulatedcoasterslegacygametestserver',
         'runsimulatedcoasterstrackstylesgametestserver', 'runsimulatedcoasterstrackstylesclient',
         'runcoastersmagnetizedgametestserver', 'runcoastersmagnetizedclient',
-        'runcoastersengineeredgametestserver',
-        'runcoastersextrasgametestserver', 'runsimulatedmissilesgametestserver',
+        'runcoastersengineeredgametestserver', 'runcoastersengineeredclient',
+        'runcoastersextrasgametestserver', 'runcoastersextrasclient',
+        'runsimulatedmissilesgametestserver', 'runsimulatedmissilesclient',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
         'runcosmonauticsgametestserver',
@@ -151,15 +156,19 @@ def minimalProfileTasks = [
         'runcreateoreexcavationgametestserver',
         'runcuriosgametestserver',
         'runjadeclient', 'runtopclient', 'runreiclient', 'runemiclient',
+        'runjerclient',
         'runpondercompatclient',
         'runlargeworldbootstrapserver', 'runlargeworldfixtureserver',
         'runlargeworldreproserver', 'reproducelargeworldissue',
         'runstressserver', 'performancestress',
-        'smokeaeroportalsgametest', 'smokeimmersiveaeronauticsgametest',
-        'smokesimulatedcoastersgametest', 'smokesimulatedcoasterstrackstylesgametest',
+        'smokeaeroportalsgametest', 'smokeaeroportalslegacygametest',
+        'smokeimmersiveaeronauticsgametest',
+        'smokesimulatedcoastersgametest', 'smokesimulatedcoasterslegacygametest',
+        'smokesimulatedcoasterstrackstylesgametest',
         'smokecoastersmagnetizedgametest', 'smokeclientcoastersmagnetized',
-        'smokecoastersengineeredgametest',
-        'smokecoastersextrasgametest', 'smokesimulatedmissilesgametest',
+        'smokecoastersengineeredgametest', 'smokeclientcoastersengineered',
+        'smokecoastersextrasgametest', 'smokeclientcoastersextras',
+        'smokesimulatedmissilesgametest', 'smokeclientsimulatedmissiles',
         'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
         'smokecosmonauticsgametest',
@@ -168,6 +177,9 @@ def minimalProfileTasks = [
         'smokedieselgeneratorsgametest', 'smokecopycatsgametest',
         'smokeenchantmentindustrygametest', 'smokeendertransmissiongametest',
         'smoketfmggametest', 'smokeoreexcavationgametest', 'smokecreateoreexcavationgametest', 'smokecuriosgametest', 'smokeoptionalcompatibilityabsentgametest',
+        'smokeclientjade', 'smokeclienttop', 'smokeclientrei', 'smokeclientemi',
+        'smokeclientjer', 'smokeclientpondercompat',
+        'smokeclientsimulatedcoasterstrackstyles',
         'runserversmoke', 'runclientminimal',
         'smokeserverminimal', 'smokegametest', 'smokeregressiongametest',
         'smokeclientnormal', 'releasegate'
@@ -196,16 +208,28 @@ def wantsAeroPortalsTests = lowered.any { it.endsWith('runaeroportalsgametestser
 if (wantsAeroPortalsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.aeroportalsRuntime }
 }
+def wantsAeroPortalsLegacyTests = lowered.any {
+    it.endsWith('runaeroportalslegacygametestserver')
+            || it.endsWith('smokeaeroportalslegacygametest')
+}
+if (wantsAeroPortalsLegacyTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.aeroportalsLegacyRuntime }
+}
 def wantsImmersiveAeronauticsTests = lowered.any {
     it.endsWith('runimmersiveaeronauticsgametestserver') || it.endsWith('smokeimmersiveaeronauticsgametest')
 }
 def wantsSimulatedCoastersTests = lowered.any {
     it.endsWith('runsimulatedcoastersgametestserver') || it.endsWith('smokesimulatedcoastersgametest')
 }
+def wantsSimulatedCoastersLegacyTests = lowered.any {
+    it.endsWith('runsimulatedcoasterslegacygametestserver')
+            || it.endsWith('smokesimulatedcoasterslegacygametest')
+}
 def wantsSimulatedCoastersTrackStylesTests = lowered.any {
     it.endsWith('runsimulatedcoasterstrackstylesgametestserver')
             || it.endsWith('smokesimulatedcoasterstrackstylesgametest')
             || it.endsWith('runsimulatedcoasterstrackstylesclient')
+            || it.endsWith('smokeclientsimulatedcoasterstrackstyles')
 }
 def wantsCoastersMagnetizedTests = lowered.any {
     it.endsWith('runcoastersmagnetizedgametestserver') || it.endsWith('smokecoastersmagnetizedgametest')
@@ -213,12 +237,15 @@ def wantsCoastersMagnetizedTests = lowered.any {
 }
 def wantsCoastersEngineeredTests = lowered.any {
     it.endsWith('runcoastersengineeredgametestserver') || it.endsWith('smokecoastersengineeredgametest')
+            || it.endsWith('runcoastersengineeredclient') || it.endsWith('smokeclientcoastersengineered')
 }
 def wantsCoastersExtrasTests = lowered.any {
     it.endsWith('runcoastersextrasgametestserver') || it.endsWith('smokecoastersextrasgametest')
+            || it.endsWith('runcoastersextrasclient') || it.endsWith('smokeclientcoastersextras')
 }
 def wantsSimulatedMissilesTests = lowered.any {
     it.endsWith('runsimulatedmissilesgametestserver') || it.endsWith('smokesimulatedmissilesgametest')
+            || it.endsWith('runsimulatedmissilesclient') || it.endsWith('smokeclientsimulatedmissiles')
 }
 def wantsCreateBigCannonsTests = lowered.any {
     it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
@@ -274,11 +301,14 @@ def wantsLargeWorldFixture = lowered.any {
 def wantsStressBenchmark = lowered.any {
     it.endsWith('runstressserver') || it.endsWith('performancestress')
 }
-def wantsJadeClient = lowered.any { it.endsWith('runjadeclient') }
-def wantsTopClient = lowered.any { it.endsWith('runtopclient') }
-def wantsReiClient = lowered.any { it.endsWith('runreiclient') }
-def wantsEmiClient = lowered.any { it.endsWith('runemiclient') }
-def wantsPonderCompatClient = lowered.any { it.endsWith('runpondercompatclient') }
+def wantsJadeClient = lowered.any { it.endsWith('runjadeclient') || it.endsWith('smokeclientjade') }
+def wantsTopClient = lowered.any { it.endsWith('runtopclient') || it.endsWith('smokeclienttop') }
+def wantsReiClient = lowered.any { it.endsWith('runreiclient') || it.endsWith('smokeclientrei') }
+def wantsEmiClient = lowered.any { it.endsWith('runemiclient') || it.endsWith('smokeclientemi') }
+def wantsJerClient = lowered.any { it.endsWith('runjerclient') || it.endsWith('smokeclientjer') }
+def wantsPonderCompatClient = lowered.any {
+    it.endsWith('runpondercompatclient') || it.endsWith('smokeclientpondercompat')
+}
 
 // These profiles alter the shared runtimeClasspath for the whole Gradle process.
 // Running two of them in one invocation silently contaminates the supposedly
@@ -289,8 +319,10 @@ def wantsPonderCompatClient = lowered.any { it.endsWith('runpondercompatclient')
 def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
-def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTests,
-                            wantsSimulatedCoastersTests, wantsSimulatedCoastersTrackStylesTests,
+def optionalTestProfiles = [wantsAeroPortalsTests, wantsAeroPortalsLegacyTests,
+                            wantsImmersiveAeronauticsTests,
+                            wantsSimulatedCoastersTests, wantsSimulatedCoastersLegacyTests,
+                            wantsSimulatedCoastersTrackStylesTests,
                             wantsCoastersMagnetizedTests, wantsCoastersEngineeredTests,
                             wantsCoastersExtrasTests, wantsSimulatedMissilesTests,
                             wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
@@ -302,7 +334,7 @@ def optionalTestProfiles = [wantsAeroPortalsTests, wantsImmersiveAeronauticsTest
                             wantsCreateOreExcavationTests,
                             wantsLargeWorldFixture, wantsLargeWorldRepro, wantsStressBenchmark,
                             wantsJadeClient, wantsTopClient, wantsReiClient, wantsEmiClient,
-                            wantsPonderCompatClient]
+                            wantsJerClient, wantsPonderCompatClient]
         .count { it }
 if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
     throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
@@ -314,6 +346,9 @@ if (wantsImmersiveAeronauticsTests) {
 }
 if (wantsSimulatedCoastersTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersRuntime }
+}
+if (wantsSimulatedCoastersLegacyTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersLegacyRuntime }
 }
 if (wantsSimulatedCoastersTrackStylesTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersTrackStylesRuntime }
@@ -395,6 +430,9 @@ if (wantsReiClient) {
 }
 if (wantsEmiClient) {
     configurations.runtimeClasspath { extendsFrom configurations.emiClientRuntime }
+}
+if (wantsJerClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.jerClientRuntime }
 }
 if (wantsPonderCompatClient) {
     configurations.runtimeClasspath { extendsFrom configurations.ponderCompatClientRuntime }
@@ -511,8 +549,10 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 // pgrep can't self-match and kill its own shell.
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGameTestServer'
         || it.name == 'runAeroPortalsGameTestServer'
+        || it.name == 'runAeroPortalsLegacyGameTestServer'
         || it.name == 'runImmersiveAeronauticsGameTestServer'
         || it.name == 'runSimulatedCoastersGameTestServer'
+        || it.name == 'runSimulatedCoastersLegacyGameTestServer'
         || it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
         || it.name == 'runCoastersMagnetizedGameTestServer'
         || it.name == 'runCoastersEngineeredGameTestServer'
@@ -547,10 +587,14 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGame
                 ? 'run-regression-gametest/world/session.lock'
                 : it.name == 'runAeroPortalsGameTestServer'
                 ? 'run-aeroportals-gametest/world/session.lock'
+                : it.name == 'runAeroPortalsLegacyGameTestServer'
+                ? 'run-aeroportals-legacy-gametest/world/session.lock'
                 : it.name == 'runImmersiveAeronauticsGameTestServer'
                 ? 'run-immersive-aeronautics-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersGameTestServer'
                 ? 'run-simulated-coasters-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersLegacyGameTestServer'
+                ? 'run-simulated-coasters-legacy-gametest/world/session.lock'
                 : it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
                 ? 'run-simulated-coasters-track-styles-gametest/world/session.lock'
                 : it.name == 'runCoastersMagnetizedGameTestServer'
@@ -618,7 +662,9 @@ processResources {
         neoforge_min_version: neoforge_min_version,
         create_mod_version: create_mod_version,
         jade_min_version: jade_min_version,
-        jei_min_version: jei_min_version
+        jei_min_version: jei_min_version,
+        aeroportals_min_version: aeroportals_min_version,
+        simulated_coasters_min_version: simulated_coasters_min_version
     ]
     inputs.properties(replaceTokens)
     filesMatching('META-INF/neoforge.mods.toml') {
@@ -628,6 +674,9 @@ processResources {
     // committing a second binary NBT fixture.
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_aeroportals/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_aeroportals_legacy/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_regressions/structure'
@@ -640,6 +689,9 @@ processResources {
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulatedcoasters/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters_legacy/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulatedcoasters_track_styles/structure'
@@ -759,6 +811,7 @@ neoForge {
         }
         reiClient { client(); gameDirectory = file('run-client-rei') }
         emiClient { client(); gameDirectory = file('run-client-emi') }
+        jerClient { client(); gameDirectory = file('run-client-jer') }
         ponderCompatClient { client(); gameDirectory = file('run-client-ponder-compat') }
         simulatedCoastersTrackStylesClient {
             client()
@@ -767,6 +820,18 @@ neoForge {
         coastersMagnetizedClient {
             client()
             gameDirectory = file('run-client-coasters-magnetized')
+        }
+        coastersEngineeredClient {
+            client()
+            gameDirectory = file('run-client-coasters-engineered')
+        }
+        coastersExtrasClient {
+            client()
+            gameDirectory = file('run-client-coasters-extras')
+        }
+        simulatedMissilesClient {
+            client()
+            gameDirectory = file('run-client-simulated-missiles')
         }
         // Persistent, disposable manual-playtest worlds. Create one normal world
         // in each game directory on first launch; the preset stages itself on the
@@ -863,6 +928,11 @@ neoForge {
             gameDirectory = file('run-aeroportals-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals'
         }
+        aeroPortalsLegacyGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-aeroportals-legacy-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals_legacy'
+        }
         immersiveAeronauticsGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-immersive-aeronautics-gametest')
@@ -872,6 +942,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-simulated-coasters-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters'
+        }
+        simulatedCoastersLegacyGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-legacy-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters_legacy'
         }
         simulatedCoastersTrackStylesGameTestServer {
             type = 'gameTestServer'
@@ -1199,6 +1274,13 @@ tasks.register('smokeAeroPortalsGameTest', Exec) {
             'run-aeroportals-gametest', '300'
 }
 
+tasks.register('smokeAeroPortalsLegacyGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the CreateSMP Polska AeroPortals 1.1.2 compatibility runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAeroPortalsLegacyGameTestServer',
+            'run-aeroportals-legacy-gametest', '300'
+}
+
 tasks.register('smokeImmersiveAeronauticsGameTest', Exec) {
     group = 'verification'
     description = 'Supervises Railgun/field compatibility tests with Immersive Aeronautics.'
@@ -1211,6 +1293,13 @@ tasks.register('smokeSimulatedCoastersGameTest', Exec) {
     description = 'Supervises magnetic-field and Structural Inducer compatibility with Create: Coasters Simulated.'
     commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersGameTestServer',
             'run-simulated-coasters-gametest', '300'
+}
+
+tasks.register('smokeSimulatedCoastersLegacyGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the CreateSMP Polska Coasters Simulated 0.1 runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersLegacyGameTestServer',
+            'run-simulated-coasters-legacy-gametest', '300'
 }
 
 tasks.register('smokeSimulatedCoastersTrackStylesGameTest', Exec) {
@@ -1383,16 +1472,25 @@ isolatedClientSmoke('smokeClientJade', 'runJadeClient', 'run-client-jade', 'jade
 isolatedClientSmoke('smokeClientTop', 'runTopClient', 'run-client-top', 'theoneprobe')
 isolatedClientSmoke('smokeClientRei', 'runReiClient', 'run-client-rei', 'roughlyenoughitems')
 isolatedClientSmoke('smokeClientEmi', 'runEmiClient', 'run-client-emi', 'emi')
+isolatedClientSmoke('smokeClientJer', 'runJerClient', 'run-client-jer', 'jei,jeresources')
 isolatedClientSmoke('smokeClientPonderCompat', 'runPonderCompatClient',
         'run-client-ponder-compat', 'ponder,railways,copycats')
+isolatedClientSmoke('smokeClientSimulatedCoastersTrackStyles',
+        'runSimulatedCoastersTrackStylesClient',
+        'run-simulated-coasters-track-styles-client', 'simulatedcoasters,coasterssimulatedextratypes')
 isolatedClientSmoke('smokeClientCoastersMagnetized', 'runCoastersMagnetizedClient',
         'run-client-coasters-magnetized', 'coastersmagnetized')
+isolatedClientSmoke('smokeClientCoastersEngineered', 'runCoastersEngineeredClient',
+        'run-client-coasters-engineered', 'coastersengineered,jade')
+isolatedClientSmoke('smokeClientCoastersExtras', 'runCoastersExtrasClient',
+        'run-client-coasters-extras', 'coasters_extras')
+isolatedClientSmoke('smokeClientSimulatedMissiles', 'runSimulatedMissilesClient',
+        'run-client-simulated-missiles', 'cbcaeronauticsmissiles,createbigcannons,create_radar')
 
-tasks.register('smokeOptionalClientProfiles') {
+tasks.register('smokeOptionalClientProfiles', Exec) {
     group = 'verification'
-    description = 'Boots Jade, TOP, REI, EMI, and optional Ponder clients on isolated classpaths.'
-    dependsOn 'smokeClientJade', 'smokeClientTop', 'smokeClientRei', 'smokeClientEmi',
-            'smokeClientPonderCompat'
+    description = 'Boots HUD, recipe-viewer, Ponder, coaster-addon, and missile clients on isolated classpaths.'
+    commandLine 'bash', 'scripts/run-optional-client-profiles.sh'
 }
 
 tasks.register('releaseGate') {
@@ -1452,6 +1550,9 @@ dependencies {
     // the dedicated compatibility GameTest profile.
     compileOnly("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
     aeroportalsRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
+    aeroportalsLegacyRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_legacy_test_file}") {
+        transitive = false
+    }
 
     // Immersive Aeronautics is optional for users. Compile against its internal
     // transfer bridge solely for the real integration GameTest; production code
@@ -1464,6 +1565,10 @@ dependencies {
     // resolver and load the real release only in the dedicated compatibility suite.
     compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
     simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+    simulatedCoastersLegacyRuntime(
+            "curse.maven:create-coasters-simulated-1601871:${simulated_coasters_legacy_test_file}") {
+        transitive = false
+    }
     // Track Styles is a presentation-layer Coasters addon. It does not add a
     // new vehicle type, so Magnetization's cart behavior remains owned by the
     // core Coasters bridge. Load the published addon in a combined isolated
@@ -1476,6 +1581,10 @@ dependencies {
     coastersMagnetizedRuntime("curse.maven:coasters-magnetized-1642979:${coasters_magnetized_test_file}") { transitive = false }
     compileOnly("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
     coastersEngineeredRuntime("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
+    // Engineered owns both its goggles and Jade presentation. Keep Jade in this
+    // isolated loaded-mod profile so its optional plugin is actually linked.
+    coastersEngineeredRuntime("maven.modrinth:jade:15.10.6+neoforge")
+    compileOnly("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
     coastersExtrasRuntime("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
@@ -1569,6 +1678,10 @@ dependencies {
     // this optional dependency is absent.
     compileOnly("maven.modrinth:just-enough-resources-jer:${jer_version}")
     localRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
+    // Reproduce the exact JEI floor used by CreateSMP Polska and prove that all
+    // 28 synchronized charts reach JER's live registry on a real client.
+    jerClientRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_min_version}")
+    jerClientRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
 
     // EMI — third recipe viewer, common alongside JEI/REI. Soft-dep, plugin
     // discovered via @EmiEntrypoint. Modrinth maven (no separate api artifact —
@@ -1760,7 +1873,11 @@ tasks.register('verifyReleaseJar') {
         final List<String> leaked = []
         final List<String> missing = []
         final List<String> packCoupling = []
-        final List<String> forbiddenPackIds = ['createsmp-polska', 'create-ground-and-air']
+        final List<String> forbiddenPackIds = [
+                'createsmp polska', 'createsmp-polska', '1303396',
+                'create ground and air', 'create: ground and air',
+                'create-ground-and-air', '1563081'
+        ]
         final java.util.zip.ZipFile zip = new java.util.zip.ZipFile(archive)
         try {
             ['LICENSE', 'META-INF/MANIFEST.MF', 'META-INF/neoforge.mods.toml',
@@ -1775,6 +1892,11 @@ tasks.register('verifyReleaseJar') {
                         || name == '.DS_Store' || name.endsWith('/.DS_Store')
                         || name == 'Thumbs.db' || name.endsWith('/Thumbs.db')) {
                     leaked << name
+                }
+                forbiddenPackIds.each { packId ->
+                    if (name.toLowerCase(java.util.Locale.ROOT).contains(packId)) {
+                        packCoupling << "${name}: ${packId}"
+                    }
                 }
                 if (!entry.directory) {
                     final String content = new String(zip.getInputStream(entry).bytes,
@@ -1803,6 +1925,52 @@ tasks.register('verifyReleaseJar') {
     }
 }
 
+tasks.register('verifyNoRuntimeModpackCoupling') {
+    group = 'verification'
+    description = 'Rejects recommended-modpack names, slugs, and project IDs from shipped source/resource trees.'
+    final List<String> forbiddenPackIds = [
+            'createsmp polska', 'createsmp-polska', '1303396',
+            'create ground and air', 'create: ground and air',
+            'create-ground-and-air', '1563081'
+    ]
+    final ConfigurableFileTree runtimeJava = fileTree('src/main/java')
+    final ConfigurableFileTree runtimeResources = fileTree('src/main/resources') {
+        exclude '.cache/**'
+    }
+    final ConfigurableFileTree generatedResources = fileTree('src/generated/resources') {
+        exclude '.cache/**'
+    }
+    inputs.files(runtimeJava, runtimeResources, generatedResources)
+    doLast {
+        final List<String> coupling = []
+        [runtimeJava, runtimeResources, generatedResources].each { tree ->
+            tree.files.findAll { it.isFile() }.each { file ->
+                final String relative = rootProject.projectDir.toPath().relativize(file.toPath()).toString()
+                final String path = relative.toLowerCase(java.util.Locale.ROOT)
+                final String content = new String(file.bytes,
+                        java.nio.charset.StandardCharsets.ISO_8859_1).toLowerCase(java.util.Locale.ROOT)
+                forbiddenPackIds.each { marker ->
+                    if (path.contains(marker) || content.contains(marker)) {
+                        coupling << "${relative}: ${marker}"
+                    }
+                }
+            }
+        }
+        if (!coupling.isEmpty()) {
+            throw new GradleException(
+                    "verifyNoRuntimeModpackCoupling: shipped runtime source/resource coupling found: ${coupling}")
+        }
+        logger.lifecycle('verifyNoRuntimeModpackCoupling: runtime source/resources contain no recommended-modpack names, slugs, or project IDs.')
+    }
+}
+
+tasks.register('verifyRecommendedPackFixtures', Exec) {
+    group = 'verification'
+    description = 'Validates complete development-only recommended-pack manifests and individual-addon pins.'
+    commandLine 'python', 'scripts/verify-recommended-pack-fixtures.py'
+}
+
 tasks.named('check') {
-    dependsOn tasks.named('verifyReleaseJar')
+    dependsOn tasks.named('verifyReleaseJar'), tasks.named('verifyNoRuntimeModpackCoupling'),
+            tasks.named('verifyRecommendedPackFixtures')
 }

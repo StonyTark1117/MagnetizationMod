@@ -89,17 +89,23 @@ done
 
 mkdir -p "$repo_dir/$game_directory/logs"
 rm -f "$log_file"
-setsid env DISPLAY="$display" LIBGL_ALWAYS_SOFTWARE=1 \
+setsid env -u WAYLAND_DISPLAY DISPLAY="$display" XDG_SESSION_TYPE=x11 \
+    QT_QPA_PLATFORM=xcb GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 \
     "$repo_dir/gradlew" "$run_task" --no-daemon --max-workers=1 --console=plain \
     >"$runner_output" 2>&1 &
 runner_pid=$!
 deadline=$((SECONDS + timeout_seconds))
 ready=0
+reload_complete_at=0
 
 while (( SECONDS < deadline )); do
     if [[ -f $log_file ]] && grep -Eq 'Created: [0-9]+x[0-9]+x0 minecraft:textures/atlas/gui.png-atlas' "$log_file"; then
-        ready=1
-        break
+        if (( reload_complete_at == 0 )); then
+            reload_complete_at=$SECONDS
+        elif (( SECONDS - reload_complete_at >= 15 )); then
+            ready=1
+            break
+        fi
     fi
     if ! kill -0 "$runner_pid" 2>/dev/null; then
         if wait "$runner_pid"; then status=0; else status=$?; fi
@@ -113,7 +119,7 @@ while (( SECONDS < deadline )); do
 done
 
 if (( ready != 1 )); then
-    echo "$run_task: timed out after ${timeout_seconds}s before rendering the main menu" >&2
+    echo "$run_task: timed out after ${timeout_seconds}s before completing the title-screen resource reload" >&2
     tail -n 100 "$runner_output" >&2
     [[ -f $log_file ]] && tail -n 200 "$log_file" >&2
     exit 1
@@ -128,9 +134,36 @@ for mod_id in "${mod_ids[@]}"; do
     fi
 done
 
+ignored_errors='Error while loading the narrator$|Error starting SoundSystem\. Turning off sounds & music$|Invalid path in pack: byg:textures/block/track/TODO\.txt, ignoring$'
+if [[ $required_mods == 'cbcaeronauticsmissiles,createbigcannons,create_radar' ]]; then
+    # Create: Radars 0.4.9.4 ships exactly eleven zero-byte JSON resources.
+    # They are required by the missile addon but are not produced, patched, or
+    # redistributed by Magnetization. Keep this exception exact and cardinality-
+    # checked so a new model failure (or a partially changed upstream set) fails.
+    radar_empty_resource='Failed to load (blockstate|model) create_radar:(blockstates/(radome|shield_jammer|sky_radar|siren|smart_mount|sonar_bearing|sonar_panel)|models/block/(cannon_mount_radar|sky_radar_mount|shield_jammer|smart_cannon_mount))\.json( from pack mod/create_radar)?$'
+    radar_error_count=$(grep -Ec "/ERROR\].*${radar_empty_resource}" "$log_file" || true)
+    if [[ $radar_error_count != 0 && $radar_error_count != 11 ]]; then
+        echo "$run_task: expected either zero or all eleven audited Create: Radars empty-resource errors; got $radar_error_count" >&2
+        exit 1
+    fi
+    ignored_errors="${ignored_errors}|${radar_empty_resource}"
+fi
+if [[ $required_mods == 'simulatedcoasters,coasterssimulatedextratypes' ]]; then
+    # Track Styles 1.0.0 contains seven unused development filenames which are
+    # invalid resource locations (spaces, capitals, and #). The functional
+    # resources still reload; accept only that exact published set and fail if
+    # it changes partially or any additional error appears.
+    track_styles_invalid_resource='Invalid path in pack: coasterssimulatedextratypes:(textures/block/track/standard_track_dyed - Copy\.png|models/block/track/(steel_no_spine/#0\.png|intamin_triangular/#0\.png|intamin_box/intamin_box_(tie|rail) - pure json( - copy)?\.json)), ignoring$'
+    track_styles_error_count=$(grep -Ec "/ERROR\].*${track_styles_invalid_resource}" "$log_file" || true)
+    if [[ $track_styles_error_count != 0 && $track_styles_error_count != 7 ]]; then
+        echo "$run_task: expected either zero or all seven audited Track Styles invalid-resource errors; got $track_styles_error_count" >&2
+        exit 1
+    fi
+    ignored_errors="${ignored_errors}|${track_styles_invalid_resource}"
+fi
+
 unexpected_errors=$(grep -En '/(ERROR|FATAL)\]' "$log_file" \
-    | grep -Ev 'Error while loading the narrator$|Error starting SoundSystem\. Turning off sounds & music$|Invalid path in pack: byg:textures/block/track/TODO\.txt, ignoring$' \
-    || true)
+    | grep -Ev "$ignored_errors" || true)
 if [[ -n $unexpected_errors ]]; then
     printf '%s\n' "$unexpected_errors" >&2
     echo "$run_task: client reached the menu with ERROR/FATAL log entries" >&2
@@ -141,6 +174,15 @@ if [[ $required_mods == 'ponder,railways,copycats' ]] \
         && ! grep -Fq 'Registered 16 core and 2 optional Magnetization Ponder scenes' "$log_file"; then
     echo "$run_task: Steam Rails and Copycats loaded, but both optional Ponder scenes did not register" >&2
     exit 1
+fi
+
+if [[ $required_mods == 'jei,jeresources' ]]; then
+    jer_registration_count=$(grep -Fc \
+        'Registered 28 synchronized worldgen charts with Just Enough Resources' "$log_file" || true)
+    if [[ $jer_registration_count != 1 ]]; then
+        echo "$run_task: expected exactly one live registration of all 28 JER charts; got $jer_registration_count" >&2
+        exit 1
+    fi
 fi
 
 printf '%s: rendered main menu with required mods [%s] on isolated display %s\n' \

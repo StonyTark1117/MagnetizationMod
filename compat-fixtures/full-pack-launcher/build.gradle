@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '2.0.143'
+}
+
+def packGameDirectory = providers.gradleProperty('packGameDirectory')
+        .map { file(it) }
+        .orElse(file('run'))
+
+neoForge {
+    version = providers.gradleProperty('neoForgeVersion').getOrElse('21.1.241')
+
+    runs {
+        client {
+            client()
+            gameDirectory = packGameDirectory.get()
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.neoforged.net/releases' }
+}

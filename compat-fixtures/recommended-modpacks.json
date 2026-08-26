@@ -11,6 +11,8 @@
       "loader": "neoforge-21.1.236",
       "fileCount": 325,
       "manifestSha256": "c4b7c116926676a93483f516aa31cd825b830eed530e799d437940241762c09d",
+      "normalizedManifest": "recommended-modpacks/createsmp-polska-manifest.json",
+      "normalizedManifestSha256": "8cda2bd68fb54bf56208baf53461a139ed1e6878955d7e20537632d7752daebf",
       "magnetization": {"projectId": 1543554, "fileId": 8332175}
     },
     {
@@ -22,6 +24,8 @@
       "loader": "neoforge-21.1.241",
       "fileCount": 184,
       "manifestSha256": "58277d6c7ff81c146838b7b6cf0fd4e019648b8a9a28ea2924622839fe656142",
+      "normalizedManifest": "recommended-modpacks/create-ground-and-air-manifest.json",
+      "normalizedManifestSha256": "98707431eb6fea2a96d868231dd1809b3d5887bd7d883043ce822fdfa16f6e8c",
       "magnetization": {"projectId": 1543554, "fileId": 8649944},
       "directlyCoveredAddon": {"modId": "coastersengineered", "projectId": 1643631, "fileId": 8653100}
     }

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Guards the cross-mod registration paths which main-menu client smokes cannot exercise. */
@@ -55,6 +57,27 @@ class HudSurfaceCompletenessTest {
         }
     }
 
+    @Test void jadeAndSableHaveNonDuplicatedOverlayOwnership() throws Exception {
+        final String plugin = Files.readString(JAVA.resolve("compat/jade/MagJadePlugin.java"));
+        // Sable's Jade bridge projects targeting into sublevels. Magnetization
+        // owns the two content providers and registers each exactly once against
+        // ordinary blocks; a second SubLevel-specific provider would duplicate
+        // the same field/machine lines when looking inside a craft.
+        assertEquals(1, occurrences(plugin,
+                "registerBlockComponent(EmitterFieldProvider.INSTANCE"));
+        assertEquals(1, occurrences(plugin,
+                "registerBlockComponent(MachineInfoProvider.INSTANCE"));
+        assertFalse(plugin.contains("ServerSubLevel"));
+        assertFalse(plugin.contains("ClientSubLevel"));
+
+        final String emitter = Files.readString(JAVA.resolve(
+                "compat/jade/EmitterFieldProvider.java"));
+        final String machine = Files.readString(JAVA.resolve(
+                "compat/jade/MachineInfoProvider.java"));
+        assertTrue(emitter.contains("instanceof MagneticFieldSource"));
+        assertTrue(machine.contains("instanceof MachineHudData"));
+    }
+
     @Test void solidCustomGolemsCannotFallBackToVanillaModels() throws Exception {
         final String oxideRenderer = Files.readString(JAVA.resolve("client/IronOxideGolemRenderer.java"));
         final String galliumRenderer = Files.readString(JAVA.resolve("client/GalliumGolemRenderer.java"));
@@ -66,5 +89,15 @@ class HudSurfaceCompletenessTest {
         }) {
             assertTrue(registrations.contains("IronOxideGolemModel.Profile." + profile), profile);
         }
+    }
+
+    private static int occurrences(final String source, final String needle) {
+        int count = 0;
+        int offset = 0;
+        while ((offset = source.indexOf(needle, offset)) >= 0) {
+            count++;
+            offset += needle.length();
+        }
+        return count;
     }
 }

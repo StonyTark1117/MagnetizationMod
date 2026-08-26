@@ -30,6 +30,14 @@ Place magnets on the ground to influence sable contraptions (ships) and mobs/pla
 - **Hematite Lens** — multiblock polarity filter. Caps an emitter and only lets one polarity through.
 - **Titanomagnetite Block + Imprint Module** — the block records a nearby emitter's full config (range, strength, shape, polarity); the hand-held Imprint Module captures the recording and projects it onto another emitter elsewhere. No manual re-tuning.
 
+## New in 1.4.3 — Pack compatibility and mounted-Railgun hotfix
+
+- Mounted Railguns now have exact automated coverage for firing staged payloads from Sable ships without selecting or accelerating their own host craft.
+- Optional dependency floors now match behaviorally verified pack-pinned releases: AeroPortals 1.1.2, Create: Coasters Simulated 0.1, and JEI 19.27.0.336.
+- AeroPortals safely retains base magnetic ship state on 1.1.2 and enables Railgun Remote/Simulated swivel remapping only when its newer geometry API is present.
+- New isolated client gates cover Engineered/Jade overlays, Extras rendering, the missile stack, and all 28 live JER charts.
+- Integrations activate only from individual mod IDs; no modpack is a runtime dependency.
+
 ## New in 1.4.2 — Coaster and missile compatibility
 
 - **Coasters: Magnetized** anchors can use live Magnetization fields instead of redstone, with synchronized powered visuals and no doubled force.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.3 — Pack compatibility and mounted-Railgun hotfix
+
+### Fixed
+
+- Lowered optional dependency metadata to the oldest behaviorally verified individual-mod releases used by supported packs: AeroPortals 1.1.2, Create: Coasters Simulated 0.1, and JEI 19.27.0.336. AeroPortals now detects its newer plot-remapping API at runtime, preserving safe cache invalidation and base ship state transfer on 1.1.2 while enabling remote/swivel remapping only where the required geometry API exists.
+- Added exact regressions for GitHub issues #8 and #9. A Railgun mounted on a Sable sublevel launches an external staged payload without accelerating its carrier, and an automatic mounted Railgun ignores ferromagnetic blocks that belong to that carrier instead of firing itself.
+
+### Verification
+
+- Added isolated behavioral profiles for AeroPortals 1.1.2 and Create: Coasters Simulated 0.1 alongside their current-version profiles.
+- Expanded real-addon GameTests for all ten functional and 277 decorative Coasters Extras materials, linked/reloaded trains, Engineered FE/EMP/motor/regeneration behavior and overlay ownership, Magnetized anchor redstone/field combinations, and complete missile containment/guidance invariants.
+- Added private-X-server client profiles for Coasters: Engineered with Jade, Coasters Extras, CBC Aeronautics Missiles, and JEI/JER. The JER profile uses the pack-pinned JEI floor and requires one live registration of all 28 synchronized charts.
+- Added exact recommended-pack launch fixtures, configuration migration checks, and a source/JAR audit which allows pack identifiers only in development fixtures and rejects them from shipped runtime code and resources.
+
 ## 1.4.2 — Coaster and missile ecosystem compatibility
 
 - Added optional **Coasters: Magnetized** support: live Magnetization fields can power magnetic anchors as an alternative to redstone while preserving the addon's mode, force, speed cap, redstone path, and powered models. Combined redstone and field power applies acceleration only once, and server-authoritative visual state now resynchronizes on login and dimension changes.
