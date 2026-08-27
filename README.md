@@ -209,7 +209,7 @@ The field model is **continuous, not per-cycle**:
 
 1. While powered, the Excavator continuously projects a widening cone along its facing (~14° half-angle, ≥5×5 disc even at shallow depth). Every few ticks it rescans the cone for ferromagnetic blocks in `#magnetization:ferromagnetic_blocks` (covers `c:ores/iron|gold|copper|netherite_scrap`, `c:storage_blocks/*` for those metals, plus addon magnetite blocks and selected Create intermediates).
 2. Each newly-found cell gets assembled as its **own** Sable sub-level — not one big column — and added to the in-flight pool. The per-emitter "Pulls" slider caps how many can be in flight simultaneously (default 16, admin ceiling 64).
-3. Each in-flight ship gets a radial impulse toward the emitter every tick, and *tunnels* through obstructions: the world cells on its toward-emitter faces are destroyed (drops pop in place) so the ore can drill through dirt/stone toward the magnet. Multiple ores from the same vein each carve their own tunnel.
+3. Each in-flight ship gets a radial impulse toward the emitter every tick, and *tunnels* through obstructions: the world cells on its toward-emitter faces are destroyed (drops pop in place) so the ore can drill through dirt/stone toward the magnet. Multiple ores from the same vein each carve their own tunnel. Block entities are skipped by default; `machines.excavatorAffectsBlockEntities` is an explicit opt-in for installations that accept the risk of extracting live machinery as one-block moving structures.
 4. On arrival at the emitter, the ship dismantles and its loot drops at the emitter cell — directly into adjacent inventories first (hopper / chest / barrel via IItemHandler), falling back to a dropped ItemEntity for the entity-pass to pull into the same destination.
 
 The **enchanted-tool slot** at (132, 20) threads its enchantments through `LootContextParams.TOOL` for every ship's drop resolution — Fortune III multiplies ore drops, Silk Touch silk-mines, etc. Damageable tools take 1 durability per scan that pulls new blocks; enchanted books are immune. The **redstone-fuel slot** at (28, 20) accepts any item in `#magnetization:redstone_fuel` (dust, redstone block, torch, lever, observer, daylight detector, target, every vanilla button/pressure-plate variant). Items in the slot are never consumed — it's a presence-based internal power source so your wiring can be safely hidden from the Excavator's own pulls. Either an external redstone signal *or* a redstone-fuel item keeps the block active.
@@ -299,6 +299,7 @@ proportionally, so both keep working as usual.
 | `guiLimits.excavatorMaxRange` | 256 | 1–384 | Max scan depth for the Excavator. |
 | `guiLimits.excavatorMaxBlocksPerCycle` | 256 | 1–512 | Cap on cells the Excavator may consider per cone scan; safety against config typos. |
 | `guiLimits.excavatorMaxInFlight` | 16 | 1–64 | Admin ceiling for concurrent in-flight pulls per Excavator. Each in-flight pull is a Sable sub-level, so this also caps physics-simulation cost. |
+| `machines.excavatorAffectsBlockEntities` | false | boolean | Allow the Excavator to extract ferromagnetic block entities. Off by default to protect inventories and Create/Aeronautics machinery; enable only for deliberately compatible machinery. |
 
 ### content
 | Key | Default | Description |

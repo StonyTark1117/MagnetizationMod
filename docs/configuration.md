@@ -270,6 +270,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | machines.itemFrameFePerTick | number | 2; 0-1000000 | FE drained per tick to spin the frame without a redstone signal (0 = redstone only). |
 | COMMON | machines.temporaryMagnetLifetime | number | 12000; 1-1000000000 | Ticks a placed Temporary Magnet lasts before reverting to iron (12000 = 10 minutes). |
 | COMMON | machines.hopperFuelIntake | boolean | true | Let hoppers, Create funnels/belts/arms, and other item transport insert fuel into item-burning machines (Tokamak, Homopolar Motor, MHD Jet, Fusion Thruster, Micro-Thruster). On by default. Turn off to require loading fuel by hand; energy and fluid piping are unaffected. |
+| COMMON | machines.excavatorAffectsBlockEntities | boolean | false | Allow the Magnetic Excavator to extract ferromagnetic block entities. Default off protects inventories and Create/Aeronautics machinery from becoming separate moving structures. |
 
 ## GUI limits
 

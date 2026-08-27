@@ -341,6 +341,10 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_RANGE;
     public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_BLOCKS_PER_CYCLE;
     public static final ModConfigSpec.IntValue                    EXCAVATOR_MAX_IN_FLIGHT;
+    /** Whether the Magnetic Excavator may extract ferromagnetic block entities.
+     *  Disabled by default because extracting live Create/moving-structure
+     *  machinery as one-block Sable bodies can destroy its connection state. */
+    public static final ModConfigSpec.BooleanValue                EXCAVATOR_AFFECTS_BLOCK_ENTITIES;
 
     /** Soft-disabled blocks (by registry path). Disabled blocks emit no field, are
      *  hidden from the creative tab, and skip their right-click GUI. Existing
@@ -1437,6 +1441,14 @@ public final class MagConfig {
                         "energy/fluid piping is unaffected.")
                 .translation("magnetization.configuration.machines.hopperFuelIntake")
                 .define("hopperFuelIntake", true);
+
+        EXCAVATOR_AFFECTS_BLOCK_ENTITIES = b
+                .comment("Allow the Magnetic Excavator to extract ferromagnetic block entities.",
+                         "Disabled by default: live inventories and Create/Aeronautics machinery",
+                         "must remain in place instead of becoming one-block moving structures.",
+                         "Enable only when deliberately mining compatible block entities.")
+                .translation("magnetization.configuration.machines.excavatorAffectsBlockEntities")
+                .define("excavatorAffectsBlockEntities", false);
 
         b.pop();
 
@@ -3402,6 +3414,12 @@ public final class MagConfig {
     public static int    inducerScanInterval()      { return intOr(INDUCER_SCAN_INTERVAL, 10); }
     public static int    inducerMaxStructures()     { return intOr(INDUCER_MAX_STRUCTURES, 8); }
     public static int    inducerTunnelBudget()      { return intOr(INDUCER_TUNNEL_BUDGET, 96); }
+
+    /** Whether the Magnetic Excavator may extract block entities. */
+    public static boolean excavatorAffectsBlockEntities() {
+        try { return EXCAVATOR_AFFECTS_BLOCK_ENTITIES.get(); }
+        catch (final Throwable t) { return false; }
+    }
     public static boolean inductionPadEnabled()     { return booleanOr(INDUCTION_PAD_ENABLED, false); }
     public static int    inductionPadCapacity()     { return intOr(INDUCTION_PAD_CAPACITY, 400_000); }
     public static int    inductionPadTransferIn()   { return intOr(INDUCTION_PAD_TRANSFER_IN, 4000); }

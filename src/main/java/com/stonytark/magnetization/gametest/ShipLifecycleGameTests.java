@@ -125,6 +125,39 @@ public final class ShipLifecycleGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = EMPTY, timeoutTicks = 80, batch = "shipLifecycle")
+    public static void emitterExcludesConnectedNestedSublevels(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final BlockPos parentPos = helper.absolutePos(new BlockPos(1, 1, 1));
+        final BlockPos childPos = parentPos.east(3);
+        place(level, List.of(parentPos), List.of(Blocks.IRON_BLOCK.defaultBlockState()));
+        place(level, List.of(childPos), List.of(Blocks.IRON_BLOCK.defaultBlockState()));
+        final ServerSubLevel parent = assemble(level, parentPos, List.of(parentPos));
+        final ServerSubLevel child = assemble(level, childPos, List.of(childPos));
+        try {
+            child.setSplitFrom(parent, new Pose3d(parent.logicalPose()));
+            final var handle = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(child);
+            helper.assertTrue(handle != null && handle.isValid(), "Connected child has no physics handle");
+            if (handle == null || !handle.isValid()) return;
+            final var field = new com.stonytark.magnetization.api.MagneticField(
+                    new net.minecraft.world.phys.Vec3(childPos.getX() + 8.0d, childPos.getY() + 0.5d,
+                            childPos.getZ() + 0.5d),
+                    new net.minecraft.world.phys.Vec3(1, 0, 0),
+                    com.stonytark.magnetization.api.MagneticPolarity.SOUTH,
+                    com.stonytark.magnetization.api.MagneticStrength.EXTREME,
+                    com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL, 32.0d);
+            final var before = handle.getLinearVelocity(new Vector3d());
+            com.stonytark.magnetization.physics.FieldApplicator.applyToSubLevelsOnly(level, field, parent, null);
+            final var after = handle.getLinearVelocity(new Vector3d());
+            helper.assertTrue(new Vector3d(after).sub(before).lengthSquared() < 1.0e-10,
+                    "Emitter field moved a connected child sublevel; before=" + before + " after=" + after);
+        } finally {
+            remove(level, child);
+            remove(level, parent);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY, timeoutTicks = 160, batch = "shipLifecycleFusionThrusterRotated")
     public static void fusionThrusterWorksOnRotatedMovingShip(final GameTestHelper helper) {
         final var level = helper.getLevel();

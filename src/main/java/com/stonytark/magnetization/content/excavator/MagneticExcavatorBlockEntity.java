@@ -781,6 +781,10 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
             if (bs.isAir()
                     || !com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(bs)) continue;
             if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
+            // A scan/assembly race can create a block entity after the cone pass;
+            // re-check here so the default safety contract remains authoritative.
+            if (!canExtractBlockEntity(level.getBlockEntity(pos) != null,
+                    MagConfig.excavatorAffectsBlockEntities())) continue;
             if (tryAssemblePulled(level, pos, bs, now)) newPulls++;
         }
         if (newPulls > 0) {
@@ -797,6 +801,11 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
 
     /** Assemble a single ferromagnetic cell as a pulled sub-level. Returns true on success. */
     private boolean tryAssemblePulled(final ServerLevel level, final BlockPos pos, final BlockState bs, final long now) {
+        // Final guard immediately before removal/assembly. This closes the
+        // narrow window where a block entity can be created after candidate
+        // validation but before Sable receives the block.
+        if (!canExtractBlockEntity(level.getBlockEntity(pos) != null,
+                MagConfig.excavatorAffectsBlockEntities())) return false;
         final BoundingBox3i bounds = new BoundingBox3i(
                 pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
                 pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
@@ -863,6 +872,8 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
                     cursor.set(origin.getX() + sx, origin.getY() + sy, origin.getZ() + sz);
                     final BlockState bs = level.getBlockState(cursor);
                     if (bs.isAir()) continue;
+                    if (!canExtractBlockEntity(level.getBlockEntity(cursor) != null,
+                            MagConfig.excavatorAffectsBlockEntities())) continue;
                     if (bs.is(MagTags.EXCAVATOR_IMMUNE)) continue;
                     if (!com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic(bs)) continue;
                     out.add(cursor.immutable());
@@ -871,6 +882,12 @@ public class MagneticExcavatorBlockEntity extends AbstractEmitterBlockEntity
         }
         out.sort((a, b) -> Double.compare(a.distSqr(origin), b.distSqr(origin)));
         return out;
+    }
+
+    /** Pure policy seam used by both scan stages and unit tests. */
+    static boolean canExtractBlockEntity(final boolean hasBlockEntity,
+                                         final boolean affectsBlockEntities) {
+        return !hasBlockEntity || affectsBlockEntities;
     }
 
     /** Hurt the installed tool by 1 durability, clearing the slot if the tool
