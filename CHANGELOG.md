@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.4 — Magnetic Excavator structure-safety hotfix
+
+### Fixed
+
+- The Magnetic Excavator now skips block entities by default, preventing Create machinery, inventories, and other live machinery from being extracted into independent one-block Sable structures. Packs that deliberately want the old behavior can opt in with `machines.excavatorAffectsBlockEntities`.
+- Emitters mounted on one Sable structure now exclude connected child structures from their force application, preventing connected physical assemblies from being driven apart by their own field.
+
+### Verification
+
+- Added direct safety tests for the Excavator's block-entity policy and a Sable GameTest proving a connected child structure receives no self-field impulse.
+- Added core Create GameTests for both Chain Conveyor and ordinary Belt block-entity transfer through Sable assembly. These tests do not depend on Create: Tracks or coaster addons.
+
 ## 1.4.3 — Pack compatibility and mounted-Railgun hotfix
 
 ### Fixed
