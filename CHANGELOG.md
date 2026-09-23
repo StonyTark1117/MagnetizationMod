@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.5 — Ironworks materials and Coasters Additions compatibility
+
+### Added
+
+- Added optional Create: Ironworks 4.0.3 support for its copper, bronze, brass, steel, and Sturdy armor sets. Rose Quartz armor remains outside the metal-armor tag.
+- Added Ironworks tin/bronze/steel nuggets, tin/bronze sheets, and Sturdy Sheet Blocks to the appropriate ferromagnetic item or ship-material tags. Existing common tags already cover Ironworks' ingots, ores, and ordinary metal storage blocks.
+- Added optional Create: Coasters Simulated Additions 0.2.0 support. Its Track Control Fin extends Simulated's Redstone Magnet and now contributes onboard magnet susceptibility. Coaster cars, cladding, seats, and path content continue through the existing Coasters/Sable behavior without addon-specific runtime hooks.
+- Added `compat.ironworksCompatEnabled` and `compat.coastersAdditionsCompatEnabled` master switches, plus `compat.coasterFinMagnetizationEnabled` to disable only Track Control Fin susceptibility. These tag-based options take effect on data reload.
+
+### Verification
+
+- Added isolated GameTest profiles for Ironworks, Coasters Simulated Additions, both addons together, and the no-optional-addon configuration. The Coasters profile runs the existing cart-field and Structural Inducer tests alongside addon registry and Track Control Fin tag checks.
+
 ## 1.4.4 — Magnetic Excavator structure-safety hotfix
 
 ### Fixed

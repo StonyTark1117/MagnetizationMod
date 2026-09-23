@@ -17,6 +17,7 @@
     "magnetization:titanomagnetite_block",
     "magnetization:meteorite_core",
     {"id": "simulated:redstone_magnet", "required": false},
+    {"id": "coasterfins:coaster_fin", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "coasters_additions"}, {"type": "magnetization:compat_config", "feature": "coaster_fin_magnetization"}]},
     {"id": "magnetizing:blue_block_magnet", "required": false},
     {"id": "magnetizing:red_block_magnet", "required": false},
     {"id": "magnetizing:blue_directional_block_magnet", "required": false},

@@ -142,6 +142,8 @@ public final class MagCommands {
 
         if (PlaytestWorldSetup.enabled()) root.then(PlaytestWorldSetup.command());
 
+        com.stonytark.magnetization.compat.jammarr.JammarrCompat.register(root);
+
         event.getDispatcher().register(root);
     }
 

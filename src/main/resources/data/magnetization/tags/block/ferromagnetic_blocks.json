@@ -57,6 +57,7 @@
     {"id": "#c:ores/tin", "required": false},
     {"id": "#c:storage_blocks/tin", "required": false},
     {"id": "#c:storage_blocks/raw_tin", "required": false},
+    {"id": "create_ironworks:sturdy_sheet_block", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "ironworks"}]},
     {"id": "#c:ores/lead", "required": false},
     {"id": "#c:storage_blocks/lead", "required": false},
     {"id": "#c:storage_blocks/raw_lead", "required": false},
@@ -157,7 +158,6 @@
     {"id": "supplementaries:wind_vane", "required": false},
     {"id": "supplementaries:hourglass", "required": false},
     {"id": "supplementaries:cannon", "required": false},
-
     {"id": "#c:sheetmetals", "required": false},
     {"id": "immersiveengineering:tesla_coil", "required": false},
     {"id": "immersiveengineering:electromagnet", "required": false},
@@ -189,7 +189,6 @@
     {"id": "immersiveengineering:metal_ladder_alu", "required": false},
     {"id": "immersiveengineering:metal_barrel", "required": false},
     {"id": "immersiveengineering:feedthrough", "required": false},
-
     {"id": "mcwdoors:iron_portcullis", "required": false},
     {"id": "mcwdoors:jail_door", "required": false},
     {"id": "mcwdoors:metal_door", "required": false},
@@ -197,7 +196,6 @@
     {"id": "mcwdoors:metal_reinforced_door", "required": false},
     {"id": "mcwdoors:metal_warning_door", "required": false},
     {"id": "mcwdoors:metal_windowed_door", "required": false},
-
     {"id": "mcwfences:acorn_metal_fence", "required": false},
     {"id": "mcwfences:bastion_metal_fence", "required": false},
     {"id": "mcwfences:bastion_metal_fence_gate", "required": false},
@@ -215,7 +213,6 @@
     {"id": "mcwfences:panelled_metal_fence", "required": false},
     {"id": "mcwfences:twilight_metal_fence", "required": false},
     {"id": "mcwfences:vintage_metal_fence", "required": false},
-
     {"id": "mcwlights:iron_candle_holder", "required": false},
     {"id": "mcwlights:iron_chandelier", "required": false},
     {"id": "mcwlights:iron_framed_torch", "required": false},
@@ -231,15 +228,12 @@
     {"id": "mcwlights:copper_chandelier", "required": false},
     {"id": "mcwlights:copper_small_chandelier", "required": false},
     {"id": "mcwlights:copper_wall_candle_holder", "required": false},
-
     {"id": "mcwbridges:iron_bridge", "required": false},
     {"id": "mcwbridges:iron_bridge_pier", "required": false},
     {"id": "mcwbridges:iron_bridge_stair", "required": false},
-
     {"id": "mcwtrpdoors:metal_trapdoor", "required": false},
     {"id": "mcwtrpdoors:metal_full_trapdoor", "required": false},
     {"id": "mcwtrpdoors:metal_warning_trapdoor", "required": false},
-
     {"id": "mcwwindows:iron_shutter", "required": false},
     {"id": "mcwwindows:metal_window", "required": false},
     {"id": "mcwwindows:metal_four_window", "required": false},

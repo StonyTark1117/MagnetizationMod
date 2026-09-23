@@ -478,6 +478,9 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.curiosCompatEnabled | boolean | true | Master switch for Curios equipment capabilities, active-item keybind lookup, Field Compass HUD lookup, and Induction Pad charging. |
 | COMMON | compat.tfmgCompatEnabled | boolean | true | Master switch for Magnetization's TFMG recipes, materials, fluids, machines, and Polarizer integration. |
 | COMMON | compat.simulatedCoastersCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer behavior. |
+| COMMON | compat.ironworksCompatEnabled | boolean | true | Master switch for Create: Ironworks metal armor and material tag integration. Takes effect on data reload. |
+| COMMON | compat.coastersAdditionsCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated Additions integration. Takes effect on data reload. |
+| COMMON | compat.coasterFinMagnetizationEnabled | boolean | true | Allow Track Control Fins from Coasters Simulated Additions to count as magnetic emitters and add ship susceptibility. Requires Coasters Simulated Additions Compatibility; takes effect on data reload. |
 | COMMON | compat.coastersMagnetizedCompatEnabled | boolean | true | Master switch for using Magnetization fields with Coasters: Magnetized anchors. |
 | COMMON | compat.coastersMagnetizedFieldPowerEnabled | boolean | true | Allow a live Magnetization field to power a Coasters: Magnetized anchor as an alternative to redstone. The addon's mode, force, speed limit, visuals, and native redstone behavior remain authoritative. |
 | COMMON | compat.coastersEngineeredCompatEnabled | boolean | true | Master switch for Magnetization's supplemental Coasters: Engineered integration. |

@@ -27,7 +27,8 @@ public final class OptionalCompatibilityAbsentGameTests {
         for (final String mod : new String[]{"create_new_age", "immersiveengineering", "alexscaves",
                 "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission",
                 "rocketnautics", "oreexcavation", "coasterssimulatedextratypes", "coastersmagnetized",
-                "coastersengineered", "coasters_extras", "cbcaeronauticsmissiles"}) {
+                "coastersengineered", "coasters_extras", "coasterfins", "create_ironworks",
+                "cbcaeronauticsmissiles"}) {
             helper.assertTrue(!ModList.get().isLoaded(mod),
                     "Minimal absent-mod profile unexpectedly contains " + mod);
         }

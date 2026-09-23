@@ -1,0 +1,85 @@
+// Opt-in tests against an unmodified Jammarr release, never a published dependency.
+// ./gradlew jammarrCompatTest -PjammarrTestJar=/path/to/jammarr-1.1.0+mc1.21.1-neoforge.jar
+def releasePath = providers.gradleProperty('jammarrTestJar')
+def fixtureDirectory = layout.buildDirectory.dir('jammarr-fixture')
+def extractJammarrFixture = tasks.register('extractJammarrFixture') {
+    inputs.property('releasePath', releasePath.orElse(''))
+    if (releasePath.isPresent()) inputs.file(releasePath)
+    outputs.dir(fixtureDirectory)
+    doLast {
+        if (!releasePath.isPresent()) throw new GradleException('Pass -PjammarrTestJar pointing to the Jammarr 1.1.0 NeoForge 1.21.1 release')
+        new java.util.zip.ZipFile(file(releasePath.get())).withCloseable { zip ->
+            def entry = zip.getEntry('META-INF/jarjar/stonytark.core-1.1.0.jar')
+            if (entry == null) throw new GradleException('Expected the Jammarr 1.1.0 core in the release')
+            def output = fixtureDirectory.get().file('jammarr-core.jar').asFile
+            output.parentFile.mkdirs()
+            zip.getInputStream(entry).withCloseable { output.bytes = it.bytes }
+        }
+    }
+}
+sourceSets {
+    jammarrTest {
+        java.srcDir('src/jammarrTest/java')
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+    }
+}
+configurations.jammarrTestImplementation.extendsFrom(configurations.testImplementation)
+configurations.jammarrTestRuntimeOnly.extendsFrom(configurations.testRuntimeOnly)
+dependencies {
+    jammarrTestImplementation(files(fixtureDirectory.map { it.file('jammarr-core.jar') }).builtBy(extractJammarrFixture))
+}
+tasks.register('jammarrCompatTest', Test) {
+    group = 'verification'
+    description = 'Exercises the optional bridge against the actual Jammarr 1.1.0 release core.'
+    testClassesDirs = sourceSets.jammarrTest.output.classesDirs
+    classpath = sourceSets.jammarrTest.runtimeClasspath
+    useJUnitPlatform()
+}
+
+// Dedicated, disposable game directories. The original release JAR goes through
+// NeoForge's normal mods-folder/JarJar discovery, exactly as for installed users.
+neoForge.runs {
+    jammarrClient {
+        client()
+        gameDirectory = file('build/jammarr-client')
+        programArguments.addAll('--username', 'MagnetHow')
+        if (providers.gradleProperty('jammarrServerAddress').isPresent()) {
+            programArguments.addAll('--quickPlayMultiplayer', providers.gradleProperty('jammarrServerAddress').get())
+        } else if (providers.gradleProperty('jammarrWorld').isPresent()) {
+            programArguments.addAll('--quickPlaySingleplayer', providers.gradleProperty('jammarrWorld').get())
+        }
+    }
+    jammarrListener {
+        client()
+        gameDirectory = file('build/jammarr-listener')
+        programArguments.addAll('--username', 'MagnetListen', '--quickPlayMultiplayer',
+                providers.gradleProperty('jammarrServerAddress').orElse('127.0.0.1:25585').get())
+    }
+    jammarrDedicatedClient {
+        client()
+        gameDirectory = file('build/jammarr-dedicated-client')
+        programArguments.addAll('--username', 'MagnetHow', '--quickPlayMultiplayer',
+                providers.gradleProperty('jammarrServerAddress').orElse('127.0.0.1:25585').get())
+    }
+    jammarrServer {
+        server()
+        gameDirectory = file('build/jammarr-server')
+        programArgument '--nogui'
+    }
+}
+['Client': 'jammarr-client', 'DedicatedClient': 'jammarr-dedicated-client',
+ 'Listener': 'jammarr-listener', 'Server': 'jammarr-server'].each { target, directory ->
+    def prepare = tasks.register("prepareJammarr${target}") {
+        if (releasePath.isPresent()) inputs.file(releasePath)
+        doLast {
+            if (!releasePath.isPresent()) throw new GradleException('Pass -PjammarrTestJar for the live Jammarr profile')
+            copy {
+                from(releasePath)
+                into(layout.buildDirectory.dir("${directory}/mods"))
+                rename { 'jammarr-1.1.0.jar' }
+            }
+        }
+    }
+    tasks.named("runJammarr${target}") { dependsOn(prepare) }
+}

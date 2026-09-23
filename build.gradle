@@ -36,6 +36,11 @@ configurations {
     coastersMagnetizedRuntime { extendsFrom simulatedCoastersRuntime }
     coastersEngineeredRuntime { extendsFrom simulatedCoastersRuntime }
     coastersExtrasRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersAdditionsRuntime { extendsFrom simulatedCoastersRuntime }
+    ironworksRuntime
+    ironworksCoastersAdditionsRuntime {
+        extendsFrom ironworksRuntime, coastersAdditionsRuntime
+    }
     simulatedMissilesRuntime
     createBigCannonsRuntime
     createNewAgeRuntime
@@ -128,6 +133,7 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runjammarrclient', 'runjammarrdedicatedclient', 'runjammarrlistener', 'runjammarrserver',
         'rundata',
         'runserver', 'rungametestserver', 'runregressiongametestserver',
         'runoptionalcompatibilityabsentgametestserver',
@@ -138,6 +144,8 @@ def minimalProfileTasks = [
         'runcoastersmagnetizedgametestserver', 'runcoastersmagnetizedclient',
         'runcoastersengineeredgametestserver', 'runcoastersengineeredclient',
         'runcoastersextrasgametestserver', 'runcoastersextrasclient',
+        'runironworksgametestserver', 'runcoastersadditionsgametestserver',
+        'runironworkscoastersadditionsgametestserver',
         'runsimulatedmissilesgametestserver', 'runsimulatedmissilesclient',
         'runcreatebigcannonsgametestserver',
         'runcreatenewagegametestserver',
@@ -168,6 +176,8 @@ def minimalProfileTasks = [
         'smokecoastersmagnetizedgametest', 'smokeclientcoastersmagnetized',
         'smokecoastersengineeredgametest', 'smokeclientcoastersengineered',
         'smokecoastersextrasgametest', 'smokeclientcoastersextras',
+        'smokeironworksgametest', 'smokecoastersadditionsgametest',
+        'smokeironworkscoastersadditionsgametest',
         'smokesimulatedmissilesgametest', 'smokeclientsimulatedmissiles',
         'smokecreatebigcannonsgametest',
         'smokecreatenewagegametest', 'smokecreateadditiongametest',
@@ -242,6 +252,16 @@ def wantsCoastersEngineeredTests = lowered.any {
 def wantsCoastersExtrasTests = lowered.any {
     it.endsWith('runcoastersextrasgametestserver') || it.endsWith('smokecoastersextrasgametest')
             || it.endsWith('runcoastersextrasclient') || it.endsWith('smokeclientcoastersextras')
+}
+def wantsIronworksTests = lowered.any {
+    it.endsWith('runironworksgametestserver') || it.endsWith('smokeironworksgametest')
+            || it.endsWith('runironworkscoastersadditionsgametestserver')
+            || it.endsWith('smokeironworkscoastersadditionsgametest')
+}
+def wantsCoastersAdditionsTests = lowered.any {
+    it.endsWith('runcoastersadditionsgametestserver') || it.endsWith('smokecoastersadditionsgametest')
+            || it.endsWith('runironworkscoastersadditionsgametestserver')
+            || it.endsWith('smokeironworkscoastersadditionsgametest')
 }
 def wantsSimulatedMissilesTests = lowered.any {
     it.endsWith('runsimulatedmissilesgametestserver') || it.endsWith('smokesimulatedmissilesgametest')
@@ -361,6 +381,12 @@ if (wantsCoastersEngineeredTests) {
 }
 if (wantsCoastersExtrasTests) {
     configurations.runtimeClasspath { extendsFrom configurations.coastersExtrasRuntime }
+}
+if (wantsIronworksTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.ironworksRuntime }
+}
+if (wantsCoastersAdditionsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersAdditionsRuntime }
 }
 if (wantsSimulatedMissilesTests) {
     configurations.runtimeClasspath { extendsFrom configurations.simulatedMissilesRuntime }
@@ -706,6 +732,12 @@ processResources {
         into 'data/magnetization_coasters_extras/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ironworks/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_additions/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_simulated_missiles/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -967,6 +999,23 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-coasters-extras-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_extras'
+        }
+        ironworksGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ironworks-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ironworks'
+        }
+        coastersAdditionsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-additions-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces',
+                    'magnetization_simulatedcoasters,magnetization_coasters_additions'
+        }
+        ironworksCoastersAdditionsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ironworks-coasters-additions-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces',
+                    'magnetization_ironworks,magnetization_simulatedcoasters,magnetization_coasters_additions'
         }
         simulatedMissilesGameTestServer {
             type = 'gameTestServer'
@@ -1330,6 +1379,27 @@ tasks.register('smokeCoastersExtrasGameTest', Exec) {
             'run-coasters-extras-gametest', '300'
 }
 
+tasks.register('smokeIronworksGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks optional Create: Ironworks materials and armor against its published 1.21.1 artifact.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runIronworksGameTestServer',
+            'run-ironworks-gametest', '300'
+}
+
+tasks.register('smokeCoastersAdditionsGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks Coasters Simulated Additions with the existing magnetic-cart and inducer bridge.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersAdditionsGameTestServer',
+            'run-coasters-additions-gametest', '300'
+}
+
+tasks.register('smokeIronworksCoastersAdditionsGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks Ironworks and Coasters Simulated Additions together.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runIronworksCoastersAdditionsGameTestServer',
+            'run-ironworks-coasters-additions-gametest', '300'
+}
+
 tasks.register('smokeSimulatedMissilesGameTest', Exec) {
     group = 'verification'
     description = 'Supervises EMP guidance loss for CBC Aeronautics Missiles.'
@@ -1586,6 +1656,9 @@ dependencies {
     coastersEngineeredRuntime("maven.modrinth:jade:15.10.6+neoforge")
     compileOnly("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
     coastersExtrasRuntime("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
+    coastersAdditionsRuntime("curse.maven:create-coasters-simulated-additions-1661497:${coasters_additions_test_file}") { transitive = false }
+    coastersAdditionsRuntime("maven.modrinth:interiors:${create_interiors_test_version}") { transitive = false }
+    ironworksRuntime("maven.modrinth:create-ironworks:${ironworks_test_version}") { transitive = false }
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
@@ -1844,6 +1917,8 @@ sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSet
 tasks.test {
     useJUnitPlatform()
 }
+
+apply from: 'gradle/jammarr-compat.gradle'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'

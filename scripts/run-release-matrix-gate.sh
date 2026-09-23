@@ -28,6 +28,9 @@ run_profile 'Coasters: Engineered compatibility profile' smokeCoastersEngineered
 run_profile 'Coasters: Engineered Jade/client profile' smokeClientCoastersEngineered
 run_profile 'Create: Coasters Extras compatibility profile' smokeCoastersExtrasGameTest
 run_profile 'Create: Coasters Extras client-render profile' smokeClientCoastersExtras
+run_profile 'Create: Ironworks compatibility profile' smokeIronworksGameTest
+run_profile 'Create: Coasters Simulated Additions compatibility profile' smokeCoastersAdditionsGameTest
+run_profile 'Ironworks plus Coasters Simulated Additions profile' smokeIronworksCoastersAdditionsGameTest
 run_profile 'CBC Aeronautics Missiles compatibility profile' smokeSimulatedMissilesGameTest
 run_profile 'CBC Aeronautics Missiles client-render profile' smokeClientSimulatedMissiles
 run_profile 'Create: Big Cannons compatibility profile' smokeCreateBigCannonsGameTest

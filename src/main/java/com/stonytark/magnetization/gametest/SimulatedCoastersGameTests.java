@@ -97,10 +97,11 @@ public final class SimulatedCoastersGameTests {
                 .setValue(DirectionalBlock.FACING, Direction.DOWN));
         final StructuralInducerBlockEntity inducer =
                 (StructuralInducerBlockEntity) helper.getBlockEntity(inducerPos);
-        final Vec3 scanCenter = Vec3.atCenterOf(helper.absolutePos(inducerPos.above(6)));
-        // Keep the loose cart inside the inducer cone but well outside the
-        // track snap radius, so Coasters cannot legitimately auto-engage it.
-        final Vec3 cartPosition = scanCenter.add(0.0d, 0.0d, 5.0d);
+        // At this depth the inducer's scan cone is wider than Coaster Fins'
+        // default 6-block keep-engaged radius, letting the loose cart remain
+        // in the inducer scan while staying genuinely disengaged.
+        final Vec3 scanCenter = Vec3.atCenterOf(helper.absolutePos(inducerPos.above(12)));
+        final Vec3 cartPosition = scanCenter.add(0.0d, 0.0d, 7.0d);
         final ServerSubLevel looseCart = CoasterCartSpawner.spawnMinimalContraption(
                 helper.getLevel(), cartPosition, new Quaterniond());
         final Vec3 engagedPosition = scanCenter.add(2.0d, 0.0d, 0.0d);
@@ -127,7 +128,10 @@ public final class SimulatedCoastersGameTests {
 
                 MagConfig.SIMULATED_COASTERS_STRUCTURAL_INDUCER.set(true);
                 helper.assertTrue(!MagSimulatedCoastersCompat.structuralInducerCanAdopt(looseCart),
-                        "A loose/disengaged coaster cart was accepted as a rollercoaster structure");
+                        "A loose/disengaged coaster cart was accepted as a rollercoaster structure"
+                                + " (isCart=" + MagSimulatedCoastersCompat.isCoasterCart(looseCart)
+                                + ", railEngaged=" + MagSimulatedCoastersCompat.isRailEngaged(looseCart)
+                                + ", compatEnabled=" + MagConfig.simulatedCoastersStructuralInducer() + ")");
                 helper.assertTrue(MagSimulatedCoastersCompat.structuralInducerCanAdopt(engagedCart),
                         "A rail-engaged coaster cart was not accepted as a rollercoaster structure");
                 inducer.setExternalSignal(15);

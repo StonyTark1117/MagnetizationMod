@@ -525,6 +525,9 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue TFMG_COOLING_FLUID_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_GAS_EXCITATION_ENABLED;
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_MAGNETIZED_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_MAGNETIZED_FIELD_POWER_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ENGINEERED_COMPAT_ENABLED;
@@ -2411,6 +2414,22 @@ public final class MagConfig {
                 .comment("Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer integration.")
                 .translation("magnetization.configuration.compat.simulatedCoastersCompatEnabled")
                 .define("simulatedCoastersCompatEnabled", true);
+        IRONWORKS_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's optional Create: Ironworks material and armor tag integration.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.ironworksCompatEnabled")
+                .define("ironworksCompatEnabled", true);
+        COASTERS_ADDITIONS_COMPAT_ENABLED = b
+                .comment("Master switch for Magnetization's optional Create: Coasters Simulated Additions integration.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.coastersAdditionsCompatEnabled")
+                .define("coastersAdditionsCompatEnabled", true);
+        COASTER_FIN_MAGNETIZATION_ENABLED = b
+                .comment("Allow Create: Coasters Simulated Additions Track Control Fins to add ship susceptibility.",
+                         "This only controls the Coaster Fin emitter classification; the general per-magnet susceptibility setting still controls its strength.",
+                         "Takes effect on data reload.")
+                .translation("magnetization.configuration.compat.coasterFinMagnetizationEnabled")
+                .define("coasterFinMagnetizationEnabled", true);
         COASTERS_MAGNETIZED_COMPAT_ENABLED = b
                 .comment("Master switch for Coasters: Magnetized integration.")
                 .translation("magnetization.configuration.compat.coastersMagnetizedCompatEnabled")
@@ -3132,6 +3151,15 @@ public final class MagConfig {
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
     public static boolean simulatedCoastersCompatEnabled() {
         return booleanOr(SIMULATED_COASTERS_COMPAT_ENABLED, true);
+    }
+    public static boolean ironworksCompatEnabled() {
+        return booleanOr(IRONWORKS_COMPAT_ENABLED, true);
+    }
+    public static boolean coastersAdditionsCompatEnabled() {
+        return booleanOr(COASTERS_ADDITIONS_COMPAT_ENABLED, true);
+    }
+    public static boolean coasterFinMagnetizationEnabled() {
+        return coastersAdditionsCompatEnabled() && booleanOr(COASTER_FIN_MAGNETIZATION_ENABLED, true);
     }
     public static boolean coastersMagnetizedCompatEnabled() {
         return booleanOr(COASTERS_MAGNETIZED_COMPAT_ENABLED, true);
