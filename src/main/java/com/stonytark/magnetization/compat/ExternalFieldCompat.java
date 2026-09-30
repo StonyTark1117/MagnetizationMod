@@ -21,8 +21,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -274,24 +272,7 @@ public final class ExternalFieldCompat {
         if (blockEntity.getLevel() instanceof ServerLevel server) {
             PerformanceDiagnostics.record(server, Work.ADAPTER_ENERGY_READS, 1);
         }
-        for (Class<?> type = blockEntity.getClass(); type != null; type = type.getSuperclass()) {
-            for (final Field field : type.getDeclaredFields()) {
-                try {
-                    field.setAccessible(true);
-                    final Object storage = field.get(blockEntity);
-                    if (storage == null) continue;
-                    final Method stored = storage.getClass().getMethod("getEnergyStored");
-                    final Method capacity = storage.getClass().getMethod("getMaxEnergyStored");
-                    final Object storedValue = stored.invoke(storage);
-                    final Object capacityValue = capacity.invoke(storage);
-                    if (storedValue instanceof Number have && capacityValue instanceof Number max
-                            && max.doubleValue() > 0.0d) {
-                        return Math.max(0.0d, Math.min(1.0d, have.doubleValue() / max.doubleValue()));
-                    }
-                } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-            }
-        }
-        return 0.0d;
+        return AdapterReflection.energyRatio(blockEntity);
     }
 
     private static boolean invokeBoolean(final Object target, final String name, final boolean fallback) {
@@ -307,11 +288,8 @@ public final class ExternalFieldCompat {
 
     static boolean invokeBooleanWithInt(final Object target, final String name, final int arg,
                                         final java.util.function.BooleanSupplier fallback) {
-        try {
-            final Object value = target.getClass().getMethod(name, int.class).invoke(target, arg);
-            if (value instanceof Boolean bool) return bool;
-        } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-        return fallback.getAsBoolean();
+        final Object value = AdapterReflection.withInt(target, name, arg);
+        return value instanceof Boolean bool ? bool : fallback.getAsBoolean();
     }
 
     private static int invokeInt(final Object target, final String name, final int fallback) {
@@ -325,25 +303,11 @@ public final class ExternalFieldCompat {
     }
 
     private static @Nullable Object invokeNoArgs(final Object target, final String name) {
-        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
-            try {
-                final Method method = type.getDeclaredMethod(name);
-                method.setAccessible(true);
-                return method.invoke(target);
-            } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-        }
-        return null;
+        return AdapterReflection.noArgs(target, name);
     }
 
     private static boolean readBooleanField(final Object target, final String name, final boolean fallback) {
-        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
-            try {
-                final Field field = type.getDeclaredField(name);
-                field.setAccessible(true);
-                return field.getBoolean(target);
-            } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-        }
-        return fallback;
+        return AdapterReflection.booleanField(target, name, fallback);
     }
 
     private static boolean booleanProperty(final BlockState state, final String name, final boolean fallback) {
