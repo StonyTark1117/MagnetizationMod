@@ -90,10 +90,23 @@ public final class MagSteamRailsCompat {
     public static List<CarriageContraptionEntity> nearbyCarriages(final ServerLevel level, final AABB box) {
         final List<CarriageContraptionEntity> all = trackedCarriages(level);
         if (all.isEmpty()) return List.of();
-        if (all.size() <= 16) {
+        final LevelCarriages tracked = CARRIAGES.get(level);
+        // A lone field should not pay to build ordering metadata. Discovery may
+        // also request the snapshot without applying any train field at all.
+        if (all.size() <= 16 || tracked.queries++ == 0) {
             return all.stream().filter(car -> car.isAlive() && car.getBoundingBox().intersects(box)).toList();
         }
-        final LevelCarriages tracked = CARRIAGES.get(level);
+        if (!tracked.spatialReady) {
+            final java.util.ArrayList<CarriageContraptionEntity> fallback = new java.util.ArrayList<>();
+            for (int i = 0; i < all.size(); i++) {
+                final CarriageContraptionEntity car = all.get(i);
+                tracked.order.put(car, i);
+                if (car.getClass() != CarriageContraptionEntity.class || car.getBbHeight() > 8
+                        || level.getEntity(car.getId()) != car) fallback.add(car);
+            }
+            tracked.fallback = fallback;
+            tracked.spatialReady = true;
+        }
         final List<CarriageContraptionEntity> nearby = level.getEntitiesOfClass(CarriageContraptionEntity.class, box,
                 car -> car.isAlive() && tracked.order.containsKey(car));
         // Vanilla section queries extend four blocks below the box. The force
@@ -126,16 +139,9 @@ public final class MagSteamRailsCompat {
         if (tracked.dirty || tracked.snapshotTick != now) {
             tracked.snapshot = List.copyOf(tracked.entities);
             tracked.order.clear();
-            final java.util.ArrayList<CarriageContraptionEntity> fallback = new java.util.ArrayList<>();
-            if (tracked.snapshot.size() > 16) {
-                for (int i = 0; i < tracked.snapshot.size(); i++) {
-                    final CarriageContraptionEntity car = tracked.snapshot.get(i);
-                    tracked.order.put(car, i);
-                    if (car.getClass() != CarriageContraptionEntity.class || car.getBbHeight() > 8
-                            || level.getEntity(car.getId()) != car) fallback.add(car);
-                }
-            }
-            tracked.fallback = fallback;
+            tracked.fallback = List.of();
+            tracked.spatialReady = false;
+            tracked.queries = 0;
             tracked.snapshotTick = now;
             tracked.dirty = false;
         }
@@ -181,6 +187,8 @@ public final class MagSteamRailsCompat {
         private List<CarriageContraptionEntity> snapshot = List.of();
         private final Map<CarriageContraptionEntity, Integer> order = new IdentityHashMap<>();
         private List<CarriageContraptionEntity> fallback = List.of();
+        private boolean spatialReady;
+        private int queries;
         private long snapshotTick = Long.MIN_VALUE;
         private boolean dirty = true;
     }
