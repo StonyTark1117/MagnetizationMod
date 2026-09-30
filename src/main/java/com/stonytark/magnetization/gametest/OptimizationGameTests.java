@@ -36,6 +36,40 @@ import java.util.UUID;
 public final class OptimizationGameTests {
     private OptimizationGameTests() {}
 
+    @GameTest(template = "empty", batch = "optimizationMrFluid", timeoutTicks = 40)
+    public static void storedPowerHardensAndReleasesMrFluidWithoutRedundantFieldSearch(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var pos = helper.absolutePos(new BlockPos(1, 140, 1));
+        final int oldTicks = MagConfig.MR_FLUID_HARDEN_TICKS.get();
+        final var fluid = com.stonytark.magnetization.registry.MagBlocks.MR_FLUID_BLOCK.get();
+        final var hard = com.stonytark.magnetization.registry.MagBlocks.HARDENED_MR_FLUID.get();
+        final var power = com.stonytark.magnetization.content.fluid.FluidRedstone.POWER;
+        try {
+            MagConfig.MR_FLUID_HARDEN_TICKS.set(1);
+            level.setBlockAndUpdate(pos.below(), Blocks.REDSTONE_BLOCK.defaultBlockState());
+            level.setBlockAndUpdate(pos, fluid.defaultBlockState().setValue(power, 15));
+            PerformanceDiagnostics.resetWork(level);
+            com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick(
+                    new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(level.getBlockState(pos).is(hard), "Powered MR source did not harden");
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("mr_fluid_field_searches") == 0L,
+                    "Stored MR power still searched fields");
+            level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
+            level.setBlock(pos, level.getBlockState(pos).setValue(power, 0), 2);
+            com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick(
+                    new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(level.getBlockState(pos).is(fluid), "Unpowered MR source did not revert");
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("mr_fluid_field_searches") > 0L,
+                    "Unpowered MR skipped its field fallback");
+            helper.succeed();
+        } finally {
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.below(), Blocks.AIR.defaultBlockState());
+            MagConfig.MR_FLUID_HARDEN_TICKS.set(oldTicks);
+        }
+    }
+
     @GameTest(template = "empty", batch = "optimizationVerticalBounds", timeoutTicks = 40)
     public static void verticalCullingPreservesLiveMovementAndRotation(final GameTestHelper helper) {
         final var level = helper.getLevel();
