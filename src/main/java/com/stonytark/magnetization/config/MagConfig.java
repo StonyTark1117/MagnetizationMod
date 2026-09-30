@@ -498,7 +498,9 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_RECIPES_ENABLED;
     public static final ModConfigSpec.BooleanValue IMMERSIVE_ENGINEERING_RAILGUN_REACTION;
     public static final ModConfigSpec.DoubleValue IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT;
     public static final ModConfigSpec.BooleanValue ALEXSCAVES_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue ALEXSCAVES_MAGNETRON_LIRM_ENABLED;
     public static final ModConfigSpec.BooleanValue ALEXSCAVES_FIELDS_ENABLED;
     public static final ModConfigSpec.BooleanValue ALEXSCAVES_RECIPES_ENABLED;
     public static final ModConfigSpec.DoubleValue ALEXSCAVES_FIELD_FORCE_MULTIPLIER;
@@ -2304,10 +2306,25 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.immersiveEngineeringFieldForceMultiplier")
                 .defineInRange("immersiveEngineeringFieldForceMultiplier", 1.0d, 0.0d, 100.0d);
 
+        IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT = b
+                .comment("Maximum speed (blocks/tick) to which magnetic fields accelerate a piloted Immersive Aircraft vehicle.",
+                         "Default 2 prevents sustained fields from overrunning vanilla vehicle movement validation.",
+                         "Existing faster native flight is preserved; fields can still brake or redirect it.",
+                         "Applied on the controlling client using this server value. Config reload applies to subsequent impulses.")
+                .translation("magnetization.configuration.compat.immersiveAircraftMagneticSpeedLimit")
+                .defineInRange("immersiveAircraftMagneticSpeedLimit", 2.0d, 0.1d, 4.0d);
         ALEXSCAVES_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's Alex's Caves integration.")
                 .translation("magnetization.configuration.compat.alexsCavesCompatEnabled")
                 .define("alexsCavesCompatEnabled", true);
+        ALEXSCAVES_MAGNETRON_LIRM_ENABLED = b
+                .comment("Experimental: successful physical Magnetron melee damage also triggers LIRM.",
+                         "Default off: punches and slams normally remain physical, non-LIRM attacks.",
+                         "When enabled, stamps one eligible equipment piece and applies nearby log petrification.",
+                         "Requires both Alex's Caves compatibility and LIRM enabled. Applies on config reload.",
+                         "Does not change the upstream damage type or affect other mobs' melee attacks.")
+                .translation("magnetization.configuration.compat.alexsCavesMagnetronLirmEnabled")
+                .define("alexsCavesMagnetronLirmEnabled", false);
         ALEXSCAVES_FIELDS_ENABLED = b
                 .comment("Let active Azure and Scarlet Magnets project polarity-correct fields to ships.",
                          "Alex's Caves keeps ownership of its entity push so forces are not doubled.")
@@ -3288,7 +3305,13 @@ public final class MagConfig {
     public static double immersiveEngineeringFieldForceMultiplier() {
         return doubleOr(IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER, 1.0d);
     }
+    public static double immersiveAircraftMagneticSpeedLimit() {
+        return doubleOr(IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT, 2.0d);
+    }
     public static boolean alexsCavesCompatEnabled() { return booleanOr(ALEXSCAVES_COMPAT_ENABLED, true); }
+    public static boolean alexsCavesMagnetronLirmEnabled() {
+        return alexsCavesCompatEnabled() && booleanOr(ALEXSCAVES_MAGNETRON_LIRM_ENABLED, false);
+    }
     public static boolean alexsCavesFieldsEnabled() {
         return alexsCavesCompatEnabled() && booleanOr(ALEXSCAVES_FIELDS_ENABLED, true);
     }

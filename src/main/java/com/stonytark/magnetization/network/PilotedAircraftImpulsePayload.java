@@ -13,17 +13,19 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import java.util.UUID;
 
 /** Server-computed additive impulse; never replaces the pilot's current native velocity. */
-public record PilotedAircraftImpulsePayload(UUID vehicle, double x, double y, double z) implements CustomPacketPayload {
+public record PilotedAircraftImpulsePayload(UUID vehicle, double x, double y, double z, double speedLimit) implements CustomPacketPayload {
     public static final Type<PilotedAircraftImpulsePayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "piloted_aircraft_impulse"));
     public static final StreamCodec<RegistryFriendlyByteBuf, PilotedAircraftImpulsePayload> CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC, PilotedAircraftImpulsePayload::vehicle,
             ByteBufCodecs.DOUBLE, PilotedAircraftImpulsePayload::x,
             ByteBufCodecs.DOUBLE, PilotedAircraftImpulsePayload::y,
-            ByteBufCodecs.DOUBLE, PilotedAircraftImpulsePayload::z, PilotedAircraftImpulsePayload::new);
+            ByteBufCodecs.DOUBLE, PilotedAircraftImpulsePayload::z,
+            ByteBufCodecs.DOUBLE, PilotedAircraftImpulsePayload::speedLimit, PilotedAircraftImpulsePayload::new);
     @Override public Type<PilotedAircraftImpulsePayload> type() { return TYPE; }
     public static void register(final PayloadRegistrar registrar) {
-        registrar.playToClient(TYPE, CODEC, PilotedAircraftImpulsePayload::handle);
+        // Version 2 adds the server speed limit; reject older four-field decoders at login.
+        registrar.versioned("2").playToClient(TYPE, CODEC, PilotedAircraftImpulsePayload::handle);
     }
     private static void handle(final PilotedAircraftImpulsePayload payload, final IPayloadContext context) {
         context.enqueueWork(() -> {
@@ -31,8 +33,10 @@ public record PilotedAircraftImpulsePayload(UUID vehicle, double x, double y, do
             final var craft = player.getVehicle();
             // Ignore packets from a previous ride, dimension or controller. UUID prevents entity-ID reuse.
             if (craft == null || !craft.getUUID().equals(payload.vehicle()) || craft.getControllingPassenger() != player
-                    || !Double.isFinite(payload.x()) || !Double.isFinite(payload.y()) || !Double.isFinite(payload.z())) return;
-            craft.setDeltaMovement(craft.getDeltaMovement().add(payload.x(), payload.y(), payload.z()));
+                    || !Double.isFinite(payload.x()) || !Double.isFinite(payload.y()) || !Double.isFinite(payload.z())
+                    || !Double.isFinite(payload.speedLimit()) || payload.speedLimit() <= 0) return;
+            craft.setDeltaMovement(com.stonytark.magnetization.compat.AircraftImpulseLimiter.addImpulse(
+                    craft.getDeltaMovement(), new net.minecraft.world.phys.Vec3(payload.x(), payload.y(), payload.z()), payload.speedLimit()));
         });
     }
 }

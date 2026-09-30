@@ -29,10 +29,10 @@ public final class AircraftNetworkAuditClient {
         for (var entity : mc.level.entitiesForRendering()) {
             if (entity.getCustomName() == null || !entity.getCustomName().getString().startsWith("audit-")) continue;
             org.slf4j.LoggerFactory.getLogger("magnetization/aircraft-network-audit").info(
-                    "AIRCRAFT_CLIENT player={} type={} uuid={} tick={} x={} y={} z={} vx={} pilot={}",
+                    "AIRCRAFT_CLIENT player={} type={} uuid={} tick={} x={} y={} z={} vx={} pilot={} entityTicks={} chunkLoaded={} playerPos={}",
                     mc.player.getGameProfile().getName(), BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()),
                     entity.getUUID(), ticks, entity.getX(), entity.getY(), entity.getZ(), entity.getDeltaMovement().x,
-                    entity.getControllingPassenger() == mc.player);
+                    entity.getControllingPassenger() == mc.player, entity.tickCount, mc.level.hasChunkAt(entity.blockPosition()), mc.player.position());
         }
     }
 }

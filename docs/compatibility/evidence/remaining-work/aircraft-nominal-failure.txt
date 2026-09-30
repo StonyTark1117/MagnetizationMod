@@ -1,0 +1,60 @@
+[30Sep2026 05:20:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:airship initial=64 remaining=63 creative=false
+[30Sep2026 05:20:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:airship ticks=400 distance=287.93359812933187
+[30Sep2026 05:21:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:bamboo_hopper initial=64 remaining=63 creative=false
+[30Sep2026 05:21:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:bamboo_hopper ticks=400 distance=387.69943020953394
+[30Sep2026 05:21:26.529] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:biplane initial=64 remaining=63 creative=false
+[30Sep2026 05:21:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:biplane ticks=400 distance=408.4037770772121
+[30Sep2026 05:21:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:cargo_airship initial=64 remaining=63 creative=false
+[30Sep2026 05:21:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:cargo_airship ticks=400 distance=155.5217020500278
+[30Sep2026 05:22:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:dehavilland_dh106 initial=64 remaining=61 creative=false
+[30Sep2026 05:22:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:dehavilland_dh106 ticks=400 distance=102.82162040895895
+[30Sep2026 05:22:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_c47 initial=64 remaining=62 creative=false
+[30Sep2026 05:22:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_c47 ticks=400 distance=90.5758001401333
+[30Sep2026 05:22:46.531] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_dc1 initial=64 remaining=62 creative=false
+[30Sep2026 05:22:46.531] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc1 ticks=400 distance=97.25344627055087
+[30Sep2026 05:23:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_dc2 initial=64 remaining=62 creative=false
+[30Sep2026 05:23:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc2 ticks=400 distance=82.8178078780636
+[30Sep2026 05:23:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:fokker_fviia initial=64 remaining=62 creative=false
+[30Sep2026 05:23:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviia ticks=400 distance=67.84896519551225
+[30Sep2026 05:23:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:fokker_fviib3m initial=64 remaining=62 creative=false
+[30Sep2026 05:23:46.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviib3m ticks=400 distance=83.7982154546482
+[30Sep2026 05:24:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:gyrodyne initial=0 remaining=0 creative=false
+[30Sep2026 05:24:06.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:gyrodyne ticks=400 distance=366.1482675520393
+[30Sep2026 05:24:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:lockheed_l1049g initial=64 remaining=61 creative=false
+[30Sep2026 05:24:26.530] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:lockheed_l1049g ticks=400 distance=69.84809231528538
+[30Sep2026 05:24:32.901] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -12.911324124778048,-5.80666154149867E-4,0.0015001580351039346
+[30Sep2026 05:24:32.955] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -25.341361766035973,-0.001132296761170437,0.0032786063349204823
+[30Sep2026 05:24:33.005] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -37.34470625295067,-0.0016563433579506182,0.0053512739523673605
+[30Sep2026 05:24:33.055] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -11.625055522204164,-4.978424319688202E-4,0.002382031010856486
+[30Sep2026 05:24:33.103] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -22.914740377580216,-9.707921308574896E-4,0.005086679798655458
+[30Sep2026 05:24:33.153] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.992369912607273,-4.493025665510686E-4,0.0030376984049136813
+[30Sep2026 05:24:33.201] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.72880057348182,-4.268372392459696E-4,0.0033775747587823563
+[30Sep2026 05:24:33.250] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.4951563403976,-4.054962933821571E-4,0.003720025281594395
+[30Sep2026 05:24:33.304] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.288050629001873,-3.852225582079427E-4,0.004060274942142164
+[30Sep2026 05:24:33.355] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.104481370312186,-3.6596144647660367E-4,0.004393145441105181
+[30Sep2026 05:24:33.878] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -17.17324384776316,-4.272744783690996E-4,0.01209306579620631
+[30Sep2026 05:24:34.083] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -12.079182473773102,-1.9775111383069088E-4,0.005994303730995715
+[30Sep2026 05:24:34.283] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -14.648494064734052,-1.8786418604577193E-4,0.006034800094902475
+[30Sep2026 05:24:34.486] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -16.926404516163245,-1.7847111388391568E-4,0.006029712730982656
+[30Sep2026 05:24:34.686] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -17.960974134018215,-1.6954826233472886E-4,0.005899263174370152
+[30Sep2026 05:24:34.933] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -20.84841272438271,-1.6107223854078256E-4,0.005667918006120716
+[30Sep2026 05:24:35.188] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -22.423376708482806,-1.5301984061011353E-4,0.00527272778883834
+[30Sep2026 05:24:35.437] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -24.80487966032382,-1.453704012419621E-4,0.004699188563414593
+[30Sep2026 05:24:35.738] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -27.90142625381452,-1.3810286625925983E-4,0.003915163598149626
+[30Sep2026 05:24:35.992] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -29.661760183228637,-1.311982607887785E-4,0.0029136973265820668
+[30Sep2026 05:24:36.293] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -32.20757141494977,-1.2463924838357343E-4,0.0016741821201752063
+[30Sep2026 05:24:36.595] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -34.464652867954555,-1.184073996398638E-4,2.0329319090030967E-4
+[30Sep2026 05:24:36.897] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -36.46571057353299,-1.1248819211573391E-4,-0.0014783948476369477
+[30Sep2026 05:24:37.198] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -38.239731806838904,-1.0686541375548586E-4,-0.003338880679838979
+[30Sep2026 05:24:37.497] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -39.81240986332659,-1.0152390535722589E-4,-0.005337136952579834
+[30Sep2026 05:24:37.804] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -41.2065205157225,-9.644933717822823E-5,-0.007425414949854561
+[30Sep2026 05:24:38.101] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -42.44225559434818,-9.162803326034918E-5,-0.009551429364278094
+[30Sep2026 05:24:38.405] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -43.53751852493025,-8.704683273208502E-5,-0.011660407088535399
+[30Sep2026 05:24:38.707] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -44.508186112853025,-8.26953648527251E-5,-0.013696982631399165
+[30Sep2026 05:24:38.985] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -35.517950901290305,-7.856068907585723E-5,-0.014870925652298347
+[30Sep2026 05:24:41.367] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -26.56250566455651,-7.463260828899365E-5,-0.015231772289933262
+[30Sep2026 05:24:41.459] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -18.62307427835512,-7.090070292292694E-5,-0.014928996738709989
+[30Sep2026 05:24:41.563] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -14.539529576043293,-6.735437824545443E-5,-0.014318768362721904
+[30Sep2026 05:24:41.664] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: audit-12 (vehicle of AuditPilot) moved too quickly! -10.919307966695072,-6.398528554996119E-5,-0.013476442332827805
+[30Sep2026 05:24:48.681] [Server thread/ERROR] [magnetization/aircraft-network-audit/]: AIRCRAFT_NETWORK_FAILED
+java.lang.IllegalStateException: Repulsion did not reverse piloted motion for immersive_aircraft:quadrocopter; before=-168.32518721852944 after=-177.0200703454011

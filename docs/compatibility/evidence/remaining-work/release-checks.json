@@ -1,0 +1,13 @@
+{
+  "command": "./gradlew test build verifyReleaseJar verifyNoRuntimeModpackCoupling --console=plain",
+  "status": "passed",
+  "unit_tests": {
+    "tests": 254,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "log_sha256": "c724bef9df4c8d649b13881a31dcd7ee8da9c599c3bfc62f53ab32f68de71dfb",
+  "artifact": "magnetization-1.4.6.jar",
+  "artifact_sha256": "7f7e842c1e61bb72195b1390cdb87b03374eaca5bba3ba8d67d127288055eeb6"
+}

@@ -77,6 +77,7 @@ configurations {
     topClientRuntime
     reiClientRuntime
     emiClientRuntime
+    uiAuditRuntime
     jerClientRuntime
     ponderCompatClientRuntime {
         extendsFrom steamRailsRuntime, copycatsRuntime
@@ -145,8 +146,9 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runstoragerestartauditserver', 'runuiauditserver', 'runuiauditclient',
         'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
-        'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver',
+        'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver', 'runsupplementariesworkflowgametestserver',
         'runmodulargolemsgametestserver', 'runquarkgametestserver',
         'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
         'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
@@ -405,6 +407,15 @@ if (wantsCoastersExtrasTests) {
 }
 if (wantsIronworksTests) {
     configurations.runtimeClasspath { extendsFrom configurations.ironworksRuntime }
+}
+if (lowered.any { it.endsWith('runsupplementariesworkflowgametestserver') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepSupplementariesRuntime)
+}
+if (lowered.any { it.contains('storagerestartaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepStorageRuntime)
+}
+if (lowered.any { it.contains('uiaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.uiAuditRuntime)
 }
 if (lowered.any { it.contains('aircraftaudit') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.sweepAircraftRuntime)
@@ -803,6 +814,12 @@ processResources {
         into 'data/magnetization_sweep/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_native_lightning/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_supplementaries_workflow/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_extra_golems_reborn/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -886,19 +903,35 @@ neoForge {
         // (Sodium/Iris/JEI/REI-adjacent/tag-coverage mods) rides along. Reach for
         // `smokeClientCompat` when that's what you mean.
         client { client() }
+        uiAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-ui-audit-server')
+            systemProperty 'magnetization.audit.ui', 'true'
+        }
+        uiAuditClient {
+            client(); gameDirectory = file('run-ui-audit-client')
+            systemProperty 'magnetization.audit.ui', 'true'
+            programArguments.addAll('--username', 'AuditUi', '--quickPlayMultiplayer', providers.gradleProperty('uiAuditEndpoint').getOrElse('127.0.0.1:25589'))
+        }
+        storageRestartAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-storage-restart-audit')
+            systemProperty 'magnetization.audit.storageRestart', providers.gradleProperty('storageAuditPhase').getOrElse('verify')
+        }
         aircraftAuditServer {
             server(); programArgument 'nogui'; gameDirectory = file('run-aircraft-audit-server')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
         }
         aircraftAuditPilot {
             client(); gameDirectory = file('run-aircraft-audit-pilot')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
-            programArguments.addAll('--username', 'AuditPilot', '--quickPlayMultiplayer', '127.0.0.1:25585')
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            programArguments.addAll('--username', 'AuditPilot', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
         }
         aircraftAuditObserver {
             client(); gameDirectory = file('run-aircraft-audit-observer')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
-            programArguments.addAll('--username', 'AuditObserver', '--quickPlayMultiplayer', '127.0.0.1:25585')
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            programArguments.addAll('--username', 'AuditObserver', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
         }
         // Same client, hard dependencies only — the classpath gate above drops
         // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
@@ -1180,6 +1213,12 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_storage_ship'
             systemProperty 'magnetization.audit.namespaces', 'sophisticatedstorage'
         }
+        // Deliberately separate reproducer: continuous pulley movement currently fails
+        // across Sable's automatic ship split. Do not report this as a passing gate.
+        supplementariesWorkflowGameTestServer {
+            type = 'gameTestServer'; gameDirectory = file('run-supplementaries-workflow-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_supplementaries_workflow'
+        }
         sweepSupplementariesGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-supplementaries-gametest')
@@ -1189,7 +1228,7 @@ neoForge {
         sweepBossGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-boss-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_native_lightning'
             systemProperty 'magnetization.audit.namespaces', 'cataclysm,bosses_of_mass_destruction,irons_spellbooks'
         }
         modularGolemsGameTestServer {
@@ -1783,6 +1822,7 @@ def extractModularGolemsApi = tasks.register('extractModularGolemsApi', Sync) {
 }
 dependencies {
     sweepTwilightRuntime("curse.maven:the-twilight-forest-227639:7797302") { transitive = false }
+    sweepStorageRuntime("curse.maven:ironchest-228756:5491156") { transitive = false }
     sweepStorageRuntime("maven.modrinth:sophisticated-storage:H7wGZ8Sl") { transitive = false }
     sweepStorageRuntime("maven.modrinth:sophisticated-core:PXl6rB3q") { transitive = false }
     sweepSupplementariesRuntime("maven.modrinth:supplementaries:WrZWfRjP") { transitive = false }
@@ -2011,6 +2051,9 @@ dependencies {
     // localRuntime lines above.
     compileOnly("maven.modrinth:emi:${emi_version}")
     emiClientRuntime("maven.modrinth:emi:${emi_version}")
+    uiAuditRuntime("maven.modrinth:emi:${emi_version}") { transitive = false }
+    uiAuditRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
+    uiAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
 
     // Curios API — slot extension framework. Soft-dep; our CurioItem capability
     // registration is gated on ModList.get().isLoaded("curios"), so the missing

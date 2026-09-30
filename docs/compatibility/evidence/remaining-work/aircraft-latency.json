@@ -1,0 +1,20 @@
+{
+  "ports": [
+    43539,
+    45845
+  ],
+  "upstream": "127.0.0.1:25585",
+  "delay_phases_ms": [
+    25,
+    75,
+    125,
+    40
+  ],
+  "jitter_ms": 5,
+  "udp_datagrams": 496,
+  "connections": 2,
+  "chunks": 31074,
+  "bytes": 6044670,
+  "min_delay_ms": 20.011323871585773,
+  "max_delay_ms": 129.99852563734748
+}

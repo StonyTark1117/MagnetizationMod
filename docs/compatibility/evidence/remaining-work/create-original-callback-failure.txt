@@ -1,0 +1,114 @@
+[30Sep2026 04:15:53.861] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[30Sep2026 04:15:53.861] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[30Sep2026 04:15:53.955] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23177!/assets/.mcassetsroot' uses unexpected schema
+[30Sep2026 04:15:53.956] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23177!/data/.mcassetsroot' uses unexpected schema
+[30Sep2026 04:15:53.967] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[30Sep2026 04:15:53.971] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: AuditPilot
+[30Sep2026 04:15:54.027] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.3+5
+[30Sep2026 04:15:54.234] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[30Sep2026 04:15:54.255] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[30Sep2026 04:15:54.300] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.11 initializing! Commit hash: 87b3c6a65fd00c023a07b37b0353144bc7e6a5bf
+[30Sep2026 04:15:55.227] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[30Sep2026 04:15:55.235] [modloading-worker-0/WARN] [dev.ryanhcode.sable.Sable/]: NOTE: Sable is loaded with Flywheel. Sable contains extensive shader overrides and a full light-storage replacement. Expect this to cause compatibility issues. If issues arise, please report them to the Sable issue tracker (https://github.com/ryanhcode/sable/issues) instead of the Flywheel issue tracker.
+[30Sep2026 04:15:55.420] [modloading-sync-worker/ERROR] [net.neoforged.fml.javafmlmod.FMLModContainer/]: Exception caught during firing event: Found unused register callbacks, see logs
+	Index: 0
+	Listeners:
+		0: com.tterrag.registrate.AbstractRegistrate$$Lambda/0x00007ffa64eabb18@552fd265
+		1: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@1be4856b
+		2: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@5dcfb96d
+		3: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@a8ade71
+		4: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@65134376
+		5: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@1a622930
+		6: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@79683c
+		7: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@1047a761
+		8: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@61892d53
+		9: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@aa012d
+		10: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@6865eea2
+		11: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@2aa9b9dd
+		12: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@49d01b70
+		13: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@18ab5576
+		14: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x00007ffa64e85878@db4eb7f
+		15: com.simibubi.create.Create$$Lambda/0x00007ffa65421db0@431dd14f
+		16: com.simibubi.create.Create$$Lambda/0x00007ffa65422878@1ad2ad01
+		17: net.neoforged.bus.EventListenerFactory$remap/0x00007ffa6547c800@58d26fd5
+java.lang.IllegalStateException: Found unused register callbacks, see logs
+	at TRANSFORMER/Registrate.MC1._21._67@1.3.0+67/com.tterrag.registrate.AbstractRegistrate.onRegister(AbstractRegistrate.java:262)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:27)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:360)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:342)
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177)
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:379)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174)
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:377)
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:368)
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:92)
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+[30Sep2026 04:15:55.421] [modloading-sync-worker/ERROR] [net.neoforged.fml.ModContainer/LOADING]: Caught exception during event net.neoforged.neoforge.registries.RegisterEvent@3ea04400 dispatch for modid create
+java.lang.IllegalStateException: Found unused register callbacks, see logs
+	at TRANSFORMER/Registrate.MC1._21._67@1.3.0+67/com.tterrag.registrate.AbstractRegistrate.onRegister(AbstractRegistrate.java:262) ~[Registrate-MC1.21-1.3.0+67.jar%23201!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:27) ~[bus-8.0.5.jar%23138!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:360) ~[bus-8.0.5.jar%23138!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:342) ~[bus-8.0.5.jar%23138!/:?]
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-4.0.44.jar%23134!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:379) ~[loader-4.0.44.jar%23134!/:4.0]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-4.0.44.jar%23134!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:377) ~[loader-4.0.44.jar%23134!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:368) ~[loader-4.0.44.jar%23134!/:4.0]
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:92) ~[neoforge-21.1.252.jar%23178!/:?]
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.1.252.jar%23178!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[30Sep2026 04:15:56.014] [modloading-sync-worker/ERROR] [net.neoforged.neoforge.registries.GameData/]: Failed to register some entries, see suppressed exceptions for details
+java.lang.RuntimeException: null
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:83) ~[neoforge-21.1.252.jar%23178!/:?]
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.1.252.jar%23178!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+	Suppressed: net.neoforged.fml.ModLoadingException: Loading errors encountered:
+	- Create (create) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+	  java.lang.IllegalStateException: Found unused register callbacks, see logs
+
+		at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:181) ~[loader-4.0.44.jar%23134!/:4.0]
+		at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:379) ~[loader-4.0.44.jar%23134!/:4.0]
+		at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+		at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-4.0.44.jar%23134!/:4.0]
+		at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:377) ~[loader-4.0.44.jar%23134!/:4.0]
+		at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:368) ~[loader-4.0.44.jar%23134!/:4.0]
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:92) ~[neoforge-21.1.252.jar%23178!/:?]
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.1.252.jar%23178!/:?]
+		at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+		at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[30Sep2026 04:15:56.018] [modloading-sync-worker/ERROR] [net.neoforged.neoforge.registries.GameData/]: Rolling back to VANILLA state
+[30Sep2026 04:15:56.022] [Render thread/FATAL] [net.neoforged.fml.ModLoader/LOADING]: Failed to wait for future Registry initialization, 1 errors found
+[30Sep2026 04:15:56.074] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.sound.SoundEngineLoadEvent to a broken mod state
+[30Sep2026 04:15:56.084] [Render thread/INFO] [Veil/]: GL Debug supported
+[30Sep2026 04:15:56.096] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterColorHandlersEvent$Block to a broken mod state
+[30Sep2026 04:15:56.097] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterColorHandlersEvent$Item to a broken mod state
+[30Sep2026 04:15:56.105] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterMaterialAtlasesEvent to a broken mod state
+[30Sep2026 04:15:56.120] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event foundry.veil.forge.event.ForgeVeilRegisterBlockLayersEvent to a broken mod state
+[30Sep2026 04:15:56.133] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent to a broken mod state
+[30Sep2026 04:15:56.183] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent to a broken mod state
+[30Sep2026 04:15:56.205] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RenderLevelStageEvent$RegisterStageEvent to a broken mod state
+[30Sep2026 04:15:56.243] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent to a broken mod state
+[30Sep2026 04:15:56.244] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterSpriteSourceTypesEvent to a broken mod state
+[30Sep2026 04:15:56.255] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterMenuScreensEvent to a broken mod state
+[30Sep2026 04:15:56.255] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent to a broken mod state
+[30Sep2026 04:15:56.255] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$RegisterLayerDefinitions to a broken mod state
+[30Sep2026 04:15:56.256] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$RegisterRenderers to a broken mod state
+[30Sep2026 04:15:56.256] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent to a broken mod state
+[30Sep2026 04:15:56.256] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterEntitySpectatorShadersEvent to a broken mod state
+[30Sep2026 04:15:56.256] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent to a broken mod state
+[30Sep2026 04:15:56.257] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent to a broken mod state

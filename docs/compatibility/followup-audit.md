@@ -38,6 +38,10 @@ The before-fix low-force airship trace fails after polarity reversal: its server
 
 Remaining boundaries: aircraft crafting, survival fuel consumption and variable-latency stress; every Sophisticated Storage upgrade’s production behavior and process restart (the tested persistence is a closed/reopened Sable disk round trip); complete cannon/pulley/machine production workflows beyond retained state and the explicitly exercised native interactions. Raw Gravitite floating is intentional upstream behavior. These limits are not advertised as verified compatibility. A new active-field adapter for Create: Magnetics remains separate proposed work; its existing crash option only works around the upstream dedicated-server sound-class failure.
 
+## Subsequent verification
+
+The [remaining-work audit](remaining-work-audit.md) supersedes the process-restart, native-lightning and fresh client-UI boundaries above. It also records the confirmed continuous-pulley ship-splitting failure and nominal-strength aircraft investigation. Historical passes retain their stated limits; new failures are not silently counted as successful compatibility.
+
 ## Post-push audit
 
 `402613e7b2d71f6a9973a83fcb90a33b4d4e454d` was pushed to `origin/main`, and the remote hash was read back successfully. The working tree was clean at that check. Re-audited current runtime tag references, evidence summaries, manual translation keys and all eight requested follow-up rows: 224 GameTests across 14 profiles and 251 unit tests passed; the real two-client trace analyzer passed all 15 tagged vehicles. Obsolete `extragolems:*` references remain absent and the corrected Steeleaf ID is present. Later scoped integrations, useful common tags and the default-off Magnetics crash workaround remain intact. [Machine-readable record](evidence/followup/post-push-audit.json).

@@ -82,8 +82,13 @@ public final class AlexsCavesGameTests {
 
 
     /** Invoke the actual private melee producer; never classify generic mob_attack as lightning. */
-    @GameTest(template = "empty", timeoutTicks = 40, batch = "alexNativeMelee")
-    public static void nativeMagnetronPunchesAndSlamArePhysical(final GameTestHelper helper) throws Exception {
+    @GameTest(template = "empty", timeoutTicks = 80, batch = "alexNativeMelee")
+    public static void nativeMagnetronPhysicalDefaultAndExperimentalLirm(final GameTestHelper helper) throws Exception {
+        final boolean compat = MagConfig.ALEXSCAVES_COMPAT_ENABLED.get();
+        final boolean lirm = MagConfig.LIRM_ENABLED.get();
+        final boolean experimental = MagConfig.ALEXSCAVES_MAGNETRON_LIRM_ENABLED.get();
+        final double petrify = MagConfig.LIRM_LOG_PETRIFY_CHANCE.get();
+        helper.assertTrue(!MagConfig.ALEXSCAVES_MAGNETRON_LIRM_ENABLED.getDefault(), "Experimental policy must default off");
         final var type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("alexscaves:magnetron"));
         final var source = (net.minecraft.world.entity.Mob) type.create(helper.getLevel());
         final var base = helper.absolutePos(new BlockPos(2, 3, 2));
@@ -92,6 +97,7 @@ public final class AlexsCavesGameTests {
         source.setNoAi(true); source.setNoGravity(true);
         helper.getLevel().addFreshEntity(source);
         try {
+            MagConfig.LIRM_LOG_PETRIFY_CHANCE.set(1.0);
             final var goalClass = Class.forName(source.getClass().getName() + "$MeleeGoal");
             final var poseClass = Class.forName(source.getClass().getName() + "$AttackPose");
             final var ctor = goalClass.getDeclaredConstructor(source.getClass());
@@ -99,23 +105,48 @@ public final class AlexsCavesGameTests {
             final var goal = ctor.newInstance(source);
             final var attack = goalClass.getDeclaredMethod("dealDamage", net.minecraft.world.entity.LivingEntity.class, poseClass);
             attack.setAccessible(true);
-            for (final Object pose : poseClass.getEnumConstants()) {
-                if (!java.util.Set.of("LEFT_PUNCH", "RIGHT_PUNCH", "SLAM").contains(pose.toString())) continue;
-                final var victim = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
-                victim.setNoAi(true); victim.setNoGravity(true);
-                victim.setPos(source.position().add(0, 0, 2));
-                final var armor = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE);
-                victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, armor);
-                helper.getLevel().addFreshEntity(victim);
-                try {
-                    final float before = victim.getHealth();
-                    attack.invoke(goal, victim, pose);
-                    helper.assertTrue(victim.getHealth() < before, "Native Magnetron " + pose + " missed fixture");
-                    helper.assertTrue(!armor.has(com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get()),
-                            "Physical Magnetron " + pose + " incorrectly caused LIRM");
-                } finally { victim.discard(); }
+            for (int mode = 0; mode < 6; mode++) {
+                MagConfig.ALEXSCAVES_MAGNETRON_LIRM_ENABLED.set(mode != 0 && mode != 4);
+                MagConfig.ALEXSCAVES_COMPAT_ENABLED.set(mode != 2);
+                MagConfig.LIRM_ENABLED.set(mode != 3);
+                for (final Object pose : poseClass.getEnumConstants()) {
+                    if (!java.util.Set.of("LEFT_PUNCH", "RIGHT_PUNCH", "SLAM").contains(pose.toString())) continue;
+                    final var victim = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+                    victim.setNoAi(true); victim.setNoGravity(true); victim.setInvulnerable(mode == 5);
+                    victim.setPos(source.position().add(0, 0, 2));
+                    final var armor = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE);
+                    final var helm = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_HELMET);
+                    victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, armor);
+                    victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, helm);
+                    helper.getLevel().addFreshEntity(victim);
+                    final var logPos = victim.blockPosition().below();
+                    helper.getLevel().setBlockAndUpdate(logPos, Blocks.OAK_LOG.defaultBlockState());
+                    try {
+                        final float before = victim.getHealth();
+                        attack.invoke(goal, victim, pose);
+                        helper.assertTrue((victim.getHealth() < before) == (mode != 5), "Native Magnetron hit/control failed " + pose + " mode " + mode);
+                        final var component = com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get();
+                        final int stamps = (armor.has(component) ? 1 : 0) + (helm.has(component) ? 1 : 0);
+                        helper.assertTrue(stamps == (mode == 1 ? 1 : 0), "Magnetron LIRM count " + stamps + " for " + pose + " mode " + mode);
+                        helper.assertTrue(helper.getLevel().getBlockState(logPos).is(mode == 1 ? MagBlocks.PETRIFIED_WOOD.get() : Blocks.OAK_LOG),
+                                "Magnetron log policy failed " + pose + " mode " + mode);
+                    } finally { victim.discard(); helper.getLevel().removeBlock(logPos, false); }
+                }
             }
-        } finally { source.discard(); helper.getLevel().removeBlock(base.below(), false); }
+            // Opting Magnetron in must not opt all mob_attack damage into LIRM.
+            MagConfig.ALEXSCAVES_MAGNETRON_LIRM_ENABLED.set(true);
+            MagConfig.ALEXSCAVES_COMPAT_ENABLED.set(true); MagConfig.LIRM_ENABLED.set(true);
+            final var other = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+            final var victim = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+            final var armor = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE);
+            victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, armor);
+            victim.hurt(helper.getLevel().damageSources().mobAttack(other), 3);
+            helper.assertTrue(!armor.has(com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get()), "Other mob gained experimental LIRM");
+        } finally {
+            source.discard(); helper.getLevel().removeBlock(base.below(), false);
+            MagConfig.ALEXSCAVES_COMPAT_ENABLED.set(compat); MagConfig.LIRM_ENABLED.set(lirm);
+            MagConfig.ALEXSCAVES_MAGNETRON_LIRM_ENABLED.set(experimental); MagConfig.LIRM_LOG_PETRIFY_CHANCE.set(petrify);
+        }
         helper.succeed();
     }
 

@@ -36,6 +36,7 @@ public class MagEmiPlugin implements EmiPlugin {
         // the information page works but is reported as a missing data recipe.
         final ResourceLocation syntheticId = ResourceLocation.fromNamespaceAndPath(
                 topic.id().getNamespace(), "/" + topic.id().getPath());
-        registry.addRecipe(new EmiInfoRecipe(ingredients, topic.descriptions(), syntheticId));
+        registry.addRecipe(new EmiInfoRecipe(ingredients, topic.descriptionKeys().stream()
+                .<net.minecraft.network.chat.Component>map(net.minecraft.network.chat.Component::translatable).toList(), syntheticId));
     }
 }

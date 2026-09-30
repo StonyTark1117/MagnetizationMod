@@ -1,0 +1,10 @@
+		Iron Chests 1.21-neoforge-16.0.7 (ironchest)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Sophisticated Core 1.5.1 (sophisticatedcore)
+		Sophisticated Storage 1.5.91 (sophisticatedstorage)
+[30Sep2026 04:56:34.995] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[30Sep2026 04:56:38.764] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting Minecraft server on 127.0.0.1:25586
+[30Sep2026 04:56:39.410] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Done (0.590s)! For help, type "help"
+[30Sep2026 04:56:43.436] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_CREATED ship=9a43b729-31fc-454b-b285-707f82ce383b cooked=0 pid=599765
+[30Sep2026 04:56:43.665] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved

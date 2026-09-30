@@ -31,6 +31,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,22 @@ public final class LightningRemnantMagnetism {
         onSyntheticLightningStrike(target, sourceLabel);
     }
 
-    /** A real upstream discharge that does not spawn a LightningBolt or fire the strike event. */
+    /** Explicit experimental gameplay policy; upstream Magnetron melee remains physical damage. */
+    @SubscribeEvent
+    public static void onExperimentalMagnetronDamage(final LivingDamageEvent.Post event) {
+        if (!MagConfig.alexsCavesMagnetronLirmEnabled() || !enabled() || event.getNewDamage() <= 0) return;
+        final var source = event.getSource();
+        if (!source.is(net.minecraft.world.damagesource.DamageTypes.MOB_ATTACK)) return;
+        // A datapack can already opt a damage type into the ordinary LIRM hook; don't stamp twice.
+        if (source.is(MagTags.LIGHTNING_SOURCES)) return;
+        final var attacker = source.getDirectEntity();
+        if (attacker == null || attacker != source.getEntity()) return;
+        final var id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(attacker.getType());
+        if (!id.equals(net.minecraft.resources.ResourceLocation.parse("alexscaves:magnetron"))) return;
+        onSyntheticLightningStrike(event.getEntity(), "alexscaves:magnetron-experimental");
+    }
+
+    /** Shared LIRM effects for synthetic discharges and explicit experimental attack policies. */
     public static void onSyntheticLightningStrike(final LivingEntity target, final String sourceLabel) {
         if (!enabled() || !(target.level() instanceof ServerLevel server)) return;
         applyLirmStamp(target, sourceLabel);

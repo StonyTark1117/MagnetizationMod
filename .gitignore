@@ -63,3 +63,12 @@ run-magnetics-workaround-client/
 
 # Isolated two-client compatibility audit runtimes
 /run-aircraft-audit-*/
+
+/run-storage-restart-audit
+
+/run-ui-audit-server
+/run-ui-audit-client
+
+/run-aircraft-audit-server
+
+tools/__pycache__/

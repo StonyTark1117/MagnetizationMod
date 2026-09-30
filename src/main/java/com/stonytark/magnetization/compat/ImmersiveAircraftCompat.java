@@ -14,7 +14,7 @@ public final class ImmersiveAircraftCompat {
     public static boolean applyPilotImpulse(final Entity entity, final Vec3 impulse) {
         if (!(entity.getControllingPassenger() instanceof ServerPlayer pilot)
                 || !ModList.get().isLoaded("immersive_aircraft") || !Loaded.isAircraft(entity)) return false;
-        PacketDistributor.sendToPlayer(pilot, new PilotedAircraftImpulsePayload(entity.getUUID(), impulse.x, impulse.y, impulse.z));
+        PacketDistributor.sendToPlayer(pilot, new PilotedAircraftImpulsePayload(entity.getUUID(), impulse.x, impulse.y, impulse.z, com.stonytark.magnetization.config.MagConfig.immersiveAircraftMagneticSpeedLimit()));
         return true;
     }
 

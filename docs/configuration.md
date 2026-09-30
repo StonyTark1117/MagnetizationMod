@@ -453,7 +453,9 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.immersiveEngineeringRecipesEnabled | boolean | true | Load IE Mixer Ferrofluid and Metal Press Magnetic Plate routes. Takes effect on data reload. |
 | COMMON | compat.immersiveEngineeringRailgunReaction | boolean | true | Allow launched Immersive Engineering Railgun Shot entities to receive magnetic field force. |
 | COMMON | compat.immersiveEngineeringFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by IE Electromagnets and Tesla Coils; 0 is a soft disable. |
+| COMMON | compat.immersiveAircraftMagneticSpeedLimit | number | 2.0; 0.1-4.0 | Limits added magnetic acceleration for piloted aircraft to 2 blocks/tick by default. Existing faster native flight is preserved and fields can still brake it. Uses the server value; config reload applies to subsequent impulses. |
 | COMMON | compat.alexsCavesCompatEnabled | boolean | true | Master switch for Alex's Caves field, material, effect, and supplemental recipe integration. |
+| COMMON | compat.alexsCavesMagnetronLirmEnabled | boolean | false | Default off. Successful physical Magnetron melee hits trigger LIRM equipment stamping and nearby log petrification. Requires Alex’s Caves compatibility and LIRM enabled; applies on config reload. |
 | COMMON | compat.alexsCavesFieldsEnabled | boolean | true | Project active Azure and Scarlet Magnet fields to physics ships. Alex's Caves keeps its own entity movement to prevent doubled force. |
 | COMMON | compat.alexsCavesRecipesEnabled | boolean | true | Load shared Neodymium, Permanent Magnet, levitation-rail, and Ferrofluid recipes. Takes effect on data reload. |
 | COMMON | compat.alexsCavesFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales the fields Alex's Caves magnets project to physics ships; 0 is a soft disable. |
