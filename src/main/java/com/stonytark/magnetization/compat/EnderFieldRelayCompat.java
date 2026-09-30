@@ -24,12 +24,13 @@ public final class EnderFieldRelayCompat {
     private EnderFieldRelayCompat() {}
 
     public static void apply(final ServerLevel destination) {
+        if (!MagConfig.enderTransmissionFieldRelayEnabled()) return;
         applyPositions(destination, EmitterRegistry.snapshot(destination));
     }
 
     /** Hot tick path: relay only transmitters close enough to an active target to matter. */
     public static void apply(final ServerLevel destination, final Collection<Long> targetChunks) {
-        if (targetChunks.isEmpty()) return;
+        if (!MagConfig.enderTransmissionFieldRelayEnabled() || targetChunks.isEmpty()) return;
         applyPositions(destination, EmitterRegistry.snapshotExternalInChunks(
                 destination, targetChunks, 4096));
     }

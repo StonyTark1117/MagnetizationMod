@@ -619,7 +619,10 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGame
         || it.name == 'runCreateOreExcavationGameTestServer'
         || it.name == 'runCuriosGameTestServer' }.configureEach {
     doFirst {
-        if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        // Isolated worktrees use their own supervised runtime; do not terminate
+        // another workspace's live GameTest server in that mode.
+        if (!providers.gradleProperty('magSkipGameTestCleanup').isPresent()
+                && !org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
                 def killed = ['bash', '-c',
                     "pids=\$(pgrep -f 'Dneoforge[.]gameTestServer=true' || true); " +
