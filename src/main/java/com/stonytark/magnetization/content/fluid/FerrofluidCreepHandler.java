@@ -240,6 +240,8 @@ public final class FerrofluidCreepHandler {
      *  opposing-pole pool (what it's attracted to) but never its own-pole pool;
      *  plain by any magnet. */
     private static void recedeUnsupported(final ServerLevel server, final List<Magnet> magnets) {
+        if (FerrofluidCreepRegistry.isEmpty(server)) return;
+        PerformanceDiagnostics.record(server, Work.RECESSION_SETUPS, 1);
         // The player's own fluid — source registry entries that aren't creep cells.
         final Set<BlockPos> originals = new HashSet<>();
         for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {

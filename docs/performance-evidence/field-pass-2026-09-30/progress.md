@@ -12,7 +12,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 5. Lazy redstone fallback | Both isRSPowered and Tesla canRun fallbacks are lazy. Live true/false results skip fallback; missing, invalid and throwing methods retain fallback behavior. Unit suite passed (256 tests). |
 | 6. Early Tesla pulse gate | Original two-in-ten pulse condition now precedes block entity, energy and redstone access. IE runtime 5/5 passed, including charged pulses and explicit zero energy-read counts off-pulse. |
 | 7. Cached adapter reflection metadata | ClassValue caches ordered field/method accessors and negative lookups, never instances or live results. Dynamic energy/storage replacement and inherited fallback unit tests passed (258 total). IE runtime 5/5 and Create Addition 3/3 passed. Addition watcher was given a misspelled run directory; authoritative runtime log confirms all assertions passed, and its lingering JVM was terminated separately. Correct directory is run-createaddition-gametest. |
-| 8. Empty recession gate | Pending |
+| 8. Empty recession gate | Recession returns before building originals or copying sources when the creep registry is empty. Added recession_setups counter. Compile passed; growth/recession integration reruns with item 9 and at final checkpoint. |
 | 9. Occupied emitter queries for ferrofluid | Pending |
 | 10. MR stored power first | Pending |
 | 11. Gallium occupancy first | Pending |
