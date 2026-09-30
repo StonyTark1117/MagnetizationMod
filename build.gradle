@@ -39,11 +39,17 @@ configurations {
     coastersAdditionsRuntime { extendsFrom simulatedCoastersRuntime }
     ironworksRuntime
     extraGolemsRebornRuntime
+    modularGolemsRuntime
+    modularGolemsLibraries
+    quarkRuntime
     sweepAircraftRuntime
     sweepMaterialsRuntime
     sweepEquipmentRuntime
     sweepMagneticsRuntime
     sweepBossRuntime
+    sweepTwilightRuntime
+    sweepStorageRuntime
+    sweepSupplementariesRuntime
     ironworksCoastersAdditionsRuntime {
         extendsFrom ironworksRuntime, coastersAdditionsRuntime
     }
@@ -139,6 +145,9 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
+        'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver',
+        'runmodulargolemsgametestserver', 'runquarkgametestserver',
         'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
         'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
         'runextragolemsreborngametestserver', 'runextragolemsrebornclient',
@@ -397,13 +406,22 @@ if (wantsCoastersExtrasTests) {
 if (wantsIronworksTests) {
     configurations.runtimeClasspath { extendsFrom configurations.ironworksRuntime }
 }
-['Aircraft', 'Materials', 'Equipment', 'Magnetics', 'Boss'].each { profile ->
+if (lowered.any { it.contains('aircraftaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepAircraftRuntime)
+}
+['Aircraft', 'Materials', 'Equipment', 'Magnetics', 'Boss', 'Twilight', 'Storage', 'Supplementaries'].each { profile ->
     if (lowered.any { it.endsWith("runSweep${profile}GameTestServer".toLowerCase()) }) {
         configurations.runtimeClasspath.extendsFrom(configurations.getByName("sweep${profile}Runtime"))
     }
 }
 if (lowered.any { it.endsWith('runmagneticsworkaroundgametestserver') || it.endsWith('runmagneticsworkaroundclient') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.sweepMagneticsRuntime)
+}
+['ModularGolems', 'Quark'].each { integration ->
+    if (lowered.any { it.endsWith("run${integration}GameTestServer".toLowerCase()) }) {
+        configurations.runtimeClasspath.extendsFrom(configurations.getByName(
+                integration[0].toLowerCase() + integration.substring(1) + 'Runtime'))
+    }
 }
 if (lowered.any { it.endsWith('runextragolemsreborngametestserver') || it.endsWith('runextragolemsrebornclient') }) {
     configurations.runtimeClasspath { extendsFrom configurations.extraGolemsRebornRuntime }
@@ -788,6 +806,18 @@ processResources {
         into 'data/magnetization_extra_golems_reborn/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_material_entities/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_twilight/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_storage_ship/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_attached_ship/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createtracks/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -856,6 +886,20 @@ neoForge {
         // (Sodium/Iris/JEI/REI-adjacent/tag-coverage mods) rides along. Reach for
         // `smokeClientCompat` when that's what you mean.
         client { client() }
+        aircraftAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-aircraft-audit-server')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+        }
+        aircraftAuditPilot {
+            client(); gameDirectory = file('run-aircraft-audit-pilot')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            programArguments.addAll('--username', 'AuditPilot', '--quickPlayMultiplayer', '127.0.0.1:25585')
+        }
+        aircraftAuditObserver {
+            client(); gameDirectory = file('run-aircraft-audit-observer')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            programArguments.addAll('--username', 'AuditObserver', '--quickPlayMultiplayer', '127.0.0.1:25585')
+        }
         // Same client, hard dependencies only — the classpath gate above drops
         // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
         // compat pack?", which is the question every player report starts with.
@@ -1115,20 +1159,50 @@ neoForge {
         sweepEquipmentGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-equipment-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
             systemProperty 'magnetization.audit.namespaces', 'aether,mekanism,mekanismtools'
         }
         sweepMaterialsGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-materials-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
             systemProperty 'magnetization.audit.namespaces', 'simulated,magnetizing,ironchest,mcwdoors,mcwfences,mcwbridges,mcwtrpdoors,mcwlights,mcwwindows'
+        }
+        sweepTwilightGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-twilight-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_twilight'
+            systemProperty 'magnetization.audit.namespaces', 'twilightforest'
+        }
+        sweepStorageGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-storage-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_storage_ship'
+            systemProperty 'magnetization.audit.namespaces', 'sophisticatedstorage'
+        }
+        sweepSupplementariesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-supplementaries-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
+            systemProperty 'magnetization.audit.namespaces', 'supplementaries'
         }
         sweepBossGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-boss-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
             systemProperty 'magnetization.audit.namespaces', 'cataclysm,bosses_of_mass_destruction,irons_spellbooks'
+        }
+        modularGolemsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-modular-golems-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_material_entities'
+            systemProperty 'magnetization.audit.materialEntity', 'modulargolems'
+        }
+        quarkGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-quark-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_material_entities'
+            systemProperty 'magnetization.audit.materialEntity', 'quark'
         }
         extraGolemsRebornGameTestServer {
             type = 'gameTestServer'
@@ -1700,7 +1774,28 @@ tasks.register('performanceStress', Exec) {
     commandLine 'bash', 'scripts/run-performance-stress.sh'
 }
 
+// L2 Library ships its public API as nested JARs. Extract the pinned compile API;
+// NeoForge loads the original nested libraries at runtime. Never bundle copies.
+def extractModularGolemsApi = tasks.register('extractModularGolemsApi', Sync) {
+    from { zipTree(configurations.modularGolemsLibraries.singleFile) }
+    include 'META-INF/jarjar/l2core-*.jar', 'META-INF/jarjar/l2serial-*.jar'
+    into layout.buildDirectory.dir('modular-golems-compile-api')
+}
 dependencies {
+    sweepTwilightRuntime("curse.maven:the-twilight-forest-227639:7797302") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-storage:H7wGZ8Sl") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-core:PXl6rB3q") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:supplementaries:WrZWfRjP") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:moonlight:HTfE7eCk") { transitive = false }
+    modularGolemsLibraries("maven.modrinth:l2library:640EOvKh") { transitive = false }
+    compileOnly(files(layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2core-3.0.8+15.jar'),
+            layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2serial-3.1.1.jar')).builtBy(extractModularGolemsApi))
+    compileOnly("maven.modrinth:modular-golems:zNXsPDeF") { transitive = false }
+    modularGolemsRuntime("maven.modrinth:modular-golems:zNXsPDeF") { transitive = false }
+    modularGolemsRuntime("maven.modrinth:l2library:640EOvKh") { transitive = false }
+    compileOnly("maven.modrinth:quark:8uDGRJCr") { transitive = false }
+    quarkRuntime("maven.modrinth:quark:8uDGRJCr") { transitive = false }
+    quarkRuntime("maven.modrinth:zeta:9GjNW2Gf") { transitive = false }
     // Create + supporting libs
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
@@ -1764,6 +1859,7 @@ dependencies {
     coastersAdditionsRuntime("maven.modrinth:interiors:${create_interiors_test_version}") { transitive = false }
     ironworksRuntime("maven.modrinth:create-ironworks:${ironworks_test_version}") { transitive = false }
     // Exact upstream audit artifacts, isolated from shipped dependencies.
+    compileOnly("maven.modrinth:immersive-aircraft:ZZTlNkV9") { transitive = false }
     sweepAircraftRuntime("maven.modrinth:immersive-aircraft:ZZTlNkV9") { transitive = false }
     sweepAircraftRuntime("maven.modrinth:aviator-dreams-reloaded:4Aa8QEq9") { transitive = false }
     sweepMaterialsRuntime("dev.architectury:architectury-neoforge:13.0.8") { transitive = false }

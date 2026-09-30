@@ -25,6 +25,9 @@ config = "magnetization.immersive_aeronautics.mixins.json"
 [[mixins]]
 config = "magnetization.tfmg.mixins.json"
 
+[[mixins]]
+config = "magnetization.alexscaves.mixins.json"
+
 # Default-off, dedicated-server-only workaround for Create: Magnetics 0.0.4-alpha.
 [[mixins]]
 config = "magnetization.createmagnetics.mixins.json"

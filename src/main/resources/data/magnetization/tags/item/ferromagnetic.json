@@ -113,7 +113,7 @@
     {"id": "alexscaves:heart_of_iron", "required": false},
     {"id": "alexscaves:ferrouslime_ball", "required": false},
     {"id": "twilightforest:knightmetal_ingot", "required": false},
-    {"id": "twilightforest:steeleaf", "required": false},
+    {"id": "twilightforest:steeleaf_ingot", "required": false},
     {"id": "twilightforest:ironwood_ingot", "required": false},
     {"id": "twilightforest:fiery_ingot", "required": false},
     {"id": "#c:wires/iron", "required": false},

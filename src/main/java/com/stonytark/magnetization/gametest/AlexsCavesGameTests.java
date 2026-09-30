@@ -24,6 +24,101 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class AlexsCavesGameTests {
     private AlexsCavesGameTests() {}
 
+    @GameTest(template = "empty", timeoutTicks = 80, batch = "alexNativeLightning")
+    public static void nativeTeslaDischargeStampsOnceAndHonorsSwitches(final GameTestHelper helper) throws Exception {
+        final boolean compat = MagConfig.ALEXSCAVES_COMPAT_ENABLED.get();
+        final boolean lirm = MagConfig.LIRM_ENABLED.get();
+        final double petrify = MagConfig.LIRM_LOG_PETRIFY_CHANCE.get();
+        try {
+            MagConfig.LIRM_LOG_PETRIFY_CHANCE.set(1.0);
+            for (int mode = 0; mode < 6; mode++) {
+                MagConfig.ALEXSCAVES_COMPAT_ENABLED.set(mode % 3 != 1);
+                MagConfig.LIRM_ENABLED.set(mode % 3 != 2);
+                final var pos = helper.absolutePos(new BlockPos(1, 3, 1));
+                final var state = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("alexscaves:tesla_bulb")).defaultBlockState();
+                helper.getLevel().setBlockAndUpdate(pos, state);
+                final var bulb = helper.getLevel().getBlockEntity(pos);
+                helper.assertTrue(bulb != null, "Native Tesla bulb block entity missing");
+                final var victim = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+                victim.setNoAi(true); victim.setNoGravity(true);
+                victim.setPos(net.minecraft.world.phys.Vec3.atCenterOf(pos.east(2)));
+                final var chest = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE);
+                final var helm = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_HELMET);
+                victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, chest);
+                victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, helm);
+                helper.getLevel().addFreshEntity(victim);
+                final var logPos = victim.blockPosition().below();
+                helper.getLevel().setBlockAndUpdate(logPos, Blocks.OAK_LOG.defaultBlockState());
+                try {
+                    final float health = victim.getHealth();
+                    if (mode < 3) bulb.getClass().getMethod("explode").invoke(bulb);
+                    else {
+                        final var countdown = bulb.getClass().getDeclaredField("strikeTime");
+                        final var destination = bulb.getClass().getDeclaredField("lightningPos");
+                        countdown.setAccessible(true); destination.setAccessible(true);
+                        countdown.setInt(bulb, -3);
+                        destination.set(bulb, victim.position());
+                    }
+                    final var tick = bulb.getClass().getMethod("tick", net.minecraft.world.level.Level.class,
+                            BlockPos.class, net.minecraft.world.level.block.state.BlockState.class, bulb.getClass());
+                    tick.invoke(null, helper.getLevel(), pos, state, bulb);
+                    tick.invoke(null, helper.getLevel(), pos, state, bulb);
+                    helper.assertTrue(victim.getHealth() < health, "Native Tesla discharge did not hit the fixture");
+                    final int stamps = (chest.has(com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get()) ? 1 : 0)
+                            + (helm.has(com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get()) ? 1 : 0);
+                    helper.assertTrue(stamps == (mode % 3 == 0 ? 1 : 0), "Native Tesla discharge LIRM stamp count " + stamps + " mode " + mode);
+                    helper.assertTrue(helper.getLevel().getBlockState(logPos).is(mode % 3 == 0 ? MagBlocks.PETRIFIED_WOOD.get() : Blocks.OAK_LOG),
+                            "Native Tesla discharge log conversion ignored switches, mode " + mode);
+                } finally {
+                    victim.discard(); helper.getLevel().removeBlock(pos, false); helper.getLevel().removeBlock(logPos, false);
+                }
+            }
+        } finally {
+            MagConfig.ALEXSCAVES_COMPAT_ENABLED.set(compat); MagConfig.LIRM_ENABLED.set(lirm);
+            MagConfig.LIRM_LOG_PETRIFY_CHANCE.set(petrify);
+        }
+        helper.succeed();
+    }
+
+
+    /** Invoke the actual private melee producer; never classify generic mob_attack as lightning. */
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "alexNativeMelee")
+    public static void nativeMagnetronPunchesAndSlamArePhysical(final GameTestHelper helper) throws Exception {
+        final var type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("alexscaves:magnetron"));
+        final var source = (net.minecraft.world.entity.Mob) type.create(helper.getLevel());
+        final var base = helper.absolutePos(new BlockPos(2, 3, 2));
+        helper.getLevel().setBlockAndUpdate(base.below(), Blocks.STONE.defaultBlockState());
+        source.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(base));
+        source.setNoAi(true); source.setNoGravity(true);
+        helper.getLevel().addFreshEntity(source);
+        try {
+            final var goalClass = Class.forName(source.getClass().getName() + "$MeleeGoal");
+            final var poseClass = Class.forName(source.getClass().getName() + "$AttackPose");
+            final var ctor = goalClass.getDeclaredConstructor(source.getClass());
+            ctor.setAccessible(true);
+            final var goal = ctor.newInstance(source);
+            final var attack = goalClass.getDeclaredMethod("dealDamage", net.minecraft.world.entity.LivingEntity.class, poseClass);
+            attack.setAccessible(true);
+            for (final Object pose : poseClass.getEnumConstants()) {
+                if (!java.util.Set.of("LEFT_PUNCH", "RIGHT_PUNCH", "SLAM").contains(pose.toString())) continue;
+                final var victim = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+                victim.setNoAi(true); victim.setNoGravity(true);
+                victim.setPos(source.position().add(0, 0, 2));
+                final var armor = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE);
+                victim.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, armor);
+                helper.getLevel().addFreshEntity(victim);
+                try {
+                    final float before = victim.getHealth();
+                    attack.invoke(goal, victim, pose);
+                    helper.assertTrue(victim.getHealth() < before, "Native Magnetron " + pose + " missed fixture");
+                    helper.assertTrue(!armor.has(com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get()),
+                            "Physical Magnetron " + pose + " incorrectly caused LIRM");
+                } finally { victim.discard(); }
+            }
+        } finally { source.discard(); helper.getLevel().removeBlock(base.below(), false); }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 100)
     public static void activeAzureAndScarletMagnetsExposeOppositeShipFields(final GameTestHelper helper) {
         final boolean compat = MagConfig.ALEXSCAVES_COMPAT_ENABLED.get();

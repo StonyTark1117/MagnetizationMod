@@ -589,7 +589,9 @@ public final class FieldApplicator {
         final Vec3 impulse = forceAtPrecomputed(field, entityPos,
                 prepared.globalScalar(), prepared.cosHalfAngle())
                 .scale(target.susceptibility() * polaritySign);
-        entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(prepared.velocityScale())));
+        final Vec3 velocityImpulse = impulse.scale(prepared.velocityScale());
+        if (com.stonytark.magnetization.compat.ImmersiveAircraftCompat.applyPilotImpulse(entity, velocityImpulse)) return;
+        entity.setDeltaMovement(entity.getDeltaMovement().add(velocityImpulse));
         entity.hurtMarked = true;
     }
 
@@ -805,7 +807,9 @@ public final class FieldApplicator {
     /** One baseline even when both a datapack entity tag and a material adapter match. */
     private static boolean hasIntrinsicTagResponse(final Entity entity) {
         return entity.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
-                || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity);
+                || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity)
+                || com.stonytark.magnetization.compat.ModularGolemsCompat.isMagnetizable(entity)
+                || com.stonytark.magnetization.compat.QuarkToretoiseCompat.isMagnetizable(entity);
     }
 
     private static MagneticPolarity polarityOf(final Entity e) {

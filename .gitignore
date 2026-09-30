@@ -60,3 +60,6 @@ Thumbs.db
 # Isolated Reborn rendering and persistence profile
 run-extra-golems-reborn-client/
 run-magnetics-workaround-client/
+
+# Isolated two-client compatibility audit runtimes
+/run-aircraft-audit-*/

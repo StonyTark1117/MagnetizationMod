@@ -531,6 +531,8 @@ public final class MagConfig {
             "golems:weathered_copper", "golems:oxidized_copper", "golems:waxed_copper",
             "golems:waxed_exposed_copper", "golems:waxed_weathered_copper", "golems:waxed_oxidized_copper");
     public static final ModConfigSpec.BooleanValue EXTRA_GOLEMS_REBORN_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue MODULAR_GOLEMS_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue QUARK_TORETOISE_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue CREATE_MAGNETICS_SERVER_CRASH_WORKAROUND;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXTRA_GOLEMS_REBORN_MATERIALS;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
@@ -2430,6 +2432,16 @@ public final class MagConfig {
                 .translation("magnetization.configuration.compat.createMagneticsServerCrashWorkaround")
                 .gameRestart()
                 .define("createMagneticsServerCrashWorkaround", false);
+        MODULAR_GOLEMS_COMPAT_ENABLED = b
+                .comment("Recognize assembled Modular Golems with at least one material whose crafting ingredient is ferromagnetic.",
+                         "Reads current part materials on the next server tick. Equipment, explicit entity tags and the movement veto remain independent.")
+                .translation("magnetization.configuration.compat.modularGolemsCompatEnabled")
+                .define("modularGolemsCompatEnabled", true);
+        QUARK_TORETOISE_COMPAT_ENABLED = b
+                .comment("Recognize Quark Toretoises currently carrying iron or copper ore, following raw-metal item tags.",
+                         "Harvested shells, coal, redstone and lapis have no automatic response. Changes apply on the next server tick.")
+                .translation("magnetization.configuration.compat.quarkToretoiseCompatEnabled")
+                .define("quarkToretoiseCompatEnabled", true);
         EXTRA_GOLEMS_REBORN_COMPAT_ENABLED = b
                 .comment("Enable intrinsic material-based magnetic reaction for Extra Golems Reborn 21.1.0.1.",
                          "Explicit entity tags and magnetic equipment still work when disabled. Applied on the next server tick after config reload.")
@@ -3183,6 +3195,12 @@ public final class MagConfig {
     }
     public static boolean extraGolemsRebornCompatEnabled() {
         return booleanOr(EXTRA_GOLEMS_REBORN_COMPAT_ENABLED, true);
+    }
+    public static boolean modularGolemsCompatEnabled() {
+        return booleanOr(MODULAR_GOLEMS_COMPAT_ENABLED, true);
+    }
+    public static boolean quarkToretoiseCompatEnabled() {
+        return booleanOr(QUARK_TORETOISE_COMPAT_ENABLED, true);
     }
     public static List<? extends String> extraGolemsRebornMaterials() {
         try {

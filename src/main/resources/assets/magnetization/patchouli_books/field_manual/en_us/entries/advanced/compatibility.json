@@ -47,6 +47,21 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.magnetics.title",
       "text": "book.magnetization.entry.compatibility.magnetics.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.material_entities.title",
+      "text": "book.magnetization.entry.compatibility.material_entities.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.lightning.title",
+      "text": "book.magnetization.entry.compatibility.lightning.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.aircraft.title",
+      "text": "book.magnetization.entry.compatibility.aircraft.text"
     }
   ]
 }

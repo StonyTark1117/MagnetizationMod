@@ -95,14 +95,18 @@ public final class LightningRemnantMagnetism {
         final LivingEntity target = event.getEntity();
         final String sourceLabel = event.getSource().typeHolder().unwrapKey()
                 .map(k -> k.location().toString()).orElse("unknown-lightning");
+        onSyntheticLightningStrike(target, sourceLabel);
+    }
+
+    /** A real upstream discharge that does not spawn a LightningBolt or fire the strike event. */
+    public static void onSyntheticLightningStrike(final LivingEntity target, final String sourceLabel) {
+        if (!enabled() || !(target.level() instanceof ServerLevel server)) return;
         applyLirmStamp(target, sourceLabel);
 
         // Petrify nearby logs too — vanilla bolts get this via onLightningSpawn
         // (the bolt's spawn position), but modded lightning attacks don't spawn
         // a real LightningBolt, so we run petrification at the target's position.
-        if (target.level() instanceof ServerLevel server) {
-            petrifyLogsAround(server, target.blockPosition());
-        }
+        petrifyLogsAround(server, target.blockPosition());
     }
 
     /** Pick a random eligible armor/tool piece on the target and stamp it with
@@ -210,7 +214,8 @@ public final class LightningRemnantMagnetism {
     public static void onLightningSpawn(final EntityJoinLevelEvent event) {
         if (!enabled()) return;
         final Entity e = event.getEntity();
-        if (!(e instanceof LightningBolt)) return;
+        if (!(e instanceof LightningBolt bolt)) return;
+        if (((com.stonytark.magnetization.mixin.LightningBoltAccessor) bolt).magnetization$isVisualOnly()) return;
         if (!(event.getLevel() instanceof ServerLevel level)) return;
 
         // Note: EntityJoinLevelEvent fires before tick #1 — we run the conversion

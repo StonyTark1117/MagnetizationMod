@@ -86,7 +86,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "alexscaves",
@@ -421,7 +421,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "aviator_dream",
@@ -554,7 +554,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "bosses_of_mass_destruction",
@@ -2835,7 +2835,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "immersiveengineering",
@@ -4963,7 +4963,7 @@
         }
       ],
       "current_references": [],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "quark",
@@ -5026,7 +5026,7 @@
         }
       ],
       "current_references": [],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "railways",
@@ -5555,7 +5555,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "supplementaries",
@@ -5863,7 +5863,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     },
     {
       "mod_id_or_historical_namespace": "tfmg",
@@ -6571,7 +6571,7 @@
         },
         {
           "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
-          "id": "twilightforest:steeleaf",
+          "id": "twilightforest:steeleaf_ingot",
           "namespace": "twilightforest",
           "required": false
         },
@@ -6774,7 +6774,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "See audit-1.21.1.md and followup-audit.md for native behavior tests and boundaries; static asset matches alone do not establish compatibility."
     }
   ]
 }

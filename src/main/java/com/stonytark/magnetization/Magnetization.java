@@ -308,6 +308,7 @@ public final class Magnetization {
         com.stonytark.magnetization.network.GasDetectorStatusRequestPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusPayload.register(reg);
         com.stonytark.magnetization.network.CoastersMagnetizedPowerPayload.register(reg);
+        com.stonytark.magnetization.network.PilotedAircraftImpulsePayload.register(reg);
     }
 
     private static void onConfigLoading(final net.neoforged.fml.event.config.ModConfigEvent.Loading event) {

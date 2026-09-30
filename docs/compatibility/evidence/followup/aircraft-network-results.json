@@ -1,0 +1,217 @@
+{
+  "status": "passed",
+  "real_clients": 2,
+  "ticks_per_aircraft": 180,
+  "aircraft": [
+    {
+      "entity_type": "immersive_aircraft:airship",
+      "uuid": "24e8b307-1202-41c9-bfbd-1a68d14a4f15",
+      "pilot": {
+        "samples": 17,
+        "min_dx": -3.3627084377831116,
+        "max_dx": 3.040615000059651
+      },
+      "observer": {
+        "samples": 17,
+        "min_dx": -3.240305664736727,
+        "max_dx": 2.836360004378614
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:bamboo_hopper",
+      "uuid": "13e5908d-0a3e-4947-b674-86938fd12bfc",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -2.3134566363716944,
+        "max_dx": 2.595904329753706
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -2.1548554439965093,
+        "max_dx": 2.474669691334994
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:biplane",
+      "uuid": "c45c1f19-9d5f-49ea-b2d9-57c8132259b0",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -1.998583899828494,
+        "max_dx": 2.2381607156520014
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -1.976883412975627,
+        "max_dx": 2.0893251449219847
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:cargo_airship",
+      "uuid": "67942fa2-97a1-4590-ae69-ab7b876f04e5",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -4.895574936062516,
+        "max_dx": 1.8540192684753691
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -4.481064321629873,
+        "max_dx": 1.7311262526842235
+      }
+    },
+    {
+      "entity_type": "aviator_dream:dehavilland_dh106",
+      "uuid": "8aadadf8-06d6-4e8e-aa56-ec13a605447c",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -8.312890864476234,
+        "max_dx": 7.200557145439088
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.65488152284323,
+        "max_dx": 6.4292951455656
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_c47",
+      "uuid": "cd77b3bd-5bbb-4619-8f1c-5ab261622b8a",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -8.185914777194515,
+        "max_dx": 7.271080398480155
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.288061107665232,
+        "max_dx": 6.658641960742743
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_dc1",
+      "uuid": "c64bd8e3-ed02-4992-a7ea-9b696777bbb8",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -8.187162722879172,
+        "max_dx": 6.70718749602004
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.648077357020286,
+        "max_dx": 6.0953072009724885
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_dc2",
+      "uuid": "242df306-d64a-46d0-bea1-f6646d0f8807",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -7.911278394086612,
+        "max_dx": 7.257819601046217
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.114851385863577,
+        "max_dx": 6.644881242770291
+      }
+    },
+    {
+      "entity_type": "aviator_dream:fokker_fviia",
+      "uuid": "fbf889bc-36a9-4b62-970a-54381be0b1d2",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -8.249047261597635,
+        "max_dx": 6.2768580152074875
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.64330657593424,
+        "max_dx": 5.7552934837445875
+      }
+    },
+    {
+      "entity_type": "aviator_dream:fokker_fviib3m",
+      "uuid": "e747e399-e356-4970-9a00-409944a45efc",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -8.057397931746703,
+        "max_dx": 6.567675710066418
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.374604678719479,
+        "max_dx": 5.963635517855199
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:gyrodyne",
+      "uuid": "7cc959d1-8028-4e44-831a-5c56e465099d",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -2.5781756194354557,
+        "max_dx": 2.0407475218179036
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -2.518154161478985,
+        "max_dx": 1.9458696437305552
+      }
+    },
+    {
+      "entity_type": "aviator_dream:lockheed_l1049g",
+      "uuid": "92ef70f8-3284-4dea-ac4f-60e840245ecb",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -7.961993404895129,
+        "max_dx": 7.329704334898246
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -7.4244600242047785,
+        "max_dx": 6.718049602913105
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:quadrocopter",
+      "uuid": "6cb4c80c-f110-4c0b-af71-5ab49265d81d",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -3.903640206008685,
+        "max_dx": 3.8616711122613303
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -3.7974709201001744,
+        "max_dx": 3.5924460101086204
+      }
+    },
+    {
+      "entity_type": "aviator_dream:toyota_stout_k100",
+      "uuid": "8dff68eb-d22d-4c96-9d28-7980c39fa5b8",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -4.578753275846978,
+        "max_dx": 4.990187610518717
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -4.379669926962212,
+        "max_dx": 4.244869303184508
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:warship",
+      "uuid": "e6bebbdc-d3e1-43c5-b979-e9801092e798",
+      "pilot": {
+        "samples": 18,
+        "min_dx": -3.284675798576716,
+        "max_dx": 2.598866255952319
+      },
+      "observer": {
+        "samples": 18,
+        "min_dx": -3.141438174991732,
+        "max_dx": 2.4729427322282573
+      }
+    }
+  ]
+}

@@ -417,7 +417,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
-| COMMON | lightning.lirmEnabled | boolean | true | If true, every lightning bolt magnetizes one unstamped metal armor/tool piece on the struck entity and has a high chance of converting nearby log blocks to petrified wood. |
+| COMMON | lightning.lirmEnabled | boolean | true | If true, damaging lightning magnetizes one unstamped metal armor/tool piece on the struck entity and has a high chance of converting nearby log blocks to petrified wood. |
 
 ## Debug
 
@@ -479,6 +479,8 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.tfmgCompatEnabled | boolean | true | Master switch for Magnetization's TFMG recipes, materials, fluids, machines, and Polarizer integration. |
 | COMMON | compat.simulatedCoastersCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer behavior. |
 | COMMON | compat.createMagneticsServerCrashWorkaround | boolean | false | Default off. Fixes Create: Magnetics 0.0.4-alpha loading client SoundInstance classes on dedicated servers. Read early from config/magnetization-common.toml; requires a full server process restart. Has no effect on clients or other Magnetics versions. |
+| COMMON | compat.modularGolemsCompatEnabled | boolean | true | Default on. Any assembled part whose crafting ingredient is ferromagnetic enables one intrinsic body response. Reads current materials each tick; equipment, explicit entity tags and the administrative veto remain independent. |
+| COMMON | compat.quarkToretoiseCompatEnabled | boolean | true | Default on. Iron and copper ore react according to raw-metal item tags; harvested shells, coal, redstone and lapis do not. Reads current ore each tick. Equipment, explicit tags and the administrative veto remain independent. |
 | COMMON | compat.extraGolemsRebornCompatEnabled | boolean | true | Recognize material-based golems from Reborn 21.1.0.1. Server-authoritative; updates on the next tick after config reload. Explicit entity tags and magnetic equipment remain effective when disabled. |
 | COMMON | compat.extraGolemsRebornMaterials | list | [golems:raw_iron, golems:raw_gold, golems:raw_copper, golems:gold, golems:netherite, golems:ancient_debris, golems:copper, golems:exposed_copper, golems:weathered_copper, golems:oxidized_copper, golems:waxed_copper, golems:waxed_exposed_copper, golems:waxed_weathered_copper, golems:waxed_oxidized_copper] | Material IDs with intrinsic susceptibility 1.0. Defaults include raw iron/gold/copper, gold, netherite, ancient debris and all copper oxidation/waxing variants. Wood, stone and nether brick are excluded. Empty disables automatic recognition. Valid custom IDs may be supplied by golem datapacks; changes apply on the next tick after config reload. |
 | COMMON | compat.ironworksCompatEnabled | boolean | true | Master switch for Create: Ironworks metal armor and material tag integration. Takes effect on data reload. |

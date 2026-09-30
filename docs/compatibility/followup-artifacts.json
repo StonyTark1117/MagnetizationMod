@@ -1,0 +1,391 @@
+[
+  {
+    "artifact": "Quark-4.1-485.jar",
+    "modrinth_version": "8uDGRJCr",
+    "modrinth_project": "qnQsVE2z",
+    "version": "4.1-485",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "40808b4094b8e4987c14211f4c021ad42c3a4ac2543f6af4163b8020016b0925",
+    "files": [
+      {
+        "id": "lDS78rT7",
+        "hashes": {
+          "sha512": "997321fd43ebc45534e4b98b5a14e7cacf5425d135abbb8f5a720f39be746c23f57c113ecd8d49801047aa972e0327396434fac25f2ecfa4011f24da018542b1",
+          "sha1": "445fbf066be38aa1da59368a5386e906405c1907"
+        },
+        "url": "https://cdn.modrinth.com/data/qnQsVE2z/versions/8uDGRJCr/Quark-4.1-485.jar",
+        "filename": "Quark-4.1-485.jar",
+        "primary": true,
+        "size": 15590176,
+        "file_type": null
+      }
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "MVARlG2f",
+        "file_name": null,
+        "dependency_type": "required"
+      }
+    ]
+  },
+  {
+    "artifact": "Zeta-1.1-40.jar",
+    "modrinth_version": "9GjNW2Gf",
+    "modrinth_project": "MVARlG2f",
+    "version": "1.1-40",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "4f17d1a2b9fd6d18ddb7697aa451db7fb154053b8648f79de279ae0d7e68a2fa",
+    "files": [
+      {
+        "id": "RlnmhR0K",
+        "hashes": {
+          "sha512": "a81dcf44f2bfd0fc1a52f00d9ca47a84ad2baf067adedb35eec859f6b9cec7b61ca432e549a3342b10902f84e76d70224cd54400285c8b13a0926835a62c667c",
+          "sha1": "72f6efe421cfc0547c774ae8241d727b7d996754"
+        },
+        "url": "https://cdn.modrinth.com/data/MVARlG2f/versions/9GjNW2Gf/Zeta-1.1-40.jar",
+        "filename": "Zeta-1.1-40.jar",
+        "primary": true,
+        "size": 763725,
+        "file_type": null
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "artifact": "l2library-3.0.8.jar",
+    "modrinth_version": "640EOvKh",
+    "modrinth_project": "4Vh3BQ3F",
+    "version": "3.0.8",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "26038e30873cf505bc289e28f9dcf084561b8a4929b294dd0552ba5e52505dd6",
+    "files": [
+      {
+        "id": "IrI51X0H",
+        "hashes": {
+          "sha1": "b41ecb7b33335259265b1b4dfae806cab801aeb4",
+          "sha512": "fcae5931448a60ec2fedca5b04a6e9b489090b1b4b251be8aae216fbda4add9155bb6b1045c7171ef7c99cad979c4e88ed0acfa9ea10ac7fe4452d81f1a861cf"
+        },
+        "url": "https://cdn.modrinth.com/data/4Vh3BQ3F/versions/640EOvKh/l2library-3.0.8.jar",
+        "filename": "l2library-3.0.8.jar",
+        "primary": true,
+        "size": 973882,
+        "file_type": null
+      }
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "vvuO3ImH",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "8BmcQJ2H",
+        "file_name": null,
+        "dependency_type": "optional"
+      }
+    ]
+  },
+  {
+    "artifact": "modulargolems-3.1.43.jar",
+    "modrinth_version": "zNXsPDeF",
+    "modrinth_project": "gtGDlsAD",
+    "version": "3.1.43",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "aa46efba62595ad11daf41cae68ef9af91f79a7cc66e5046d96a32d052479971",
+    "files": [
+      {
+        "id": "3FDMQ10N",
+        "hashes": {
+          "sha512": "7ef533432d5ec91441e449cfadbd78b0e470c90a690c28e1e2cf3ce0de7374bef0a7e44ffcb399752bbef06b8dfa287ea5080e2f14c10ea2a120a493dc4af0d9",
+          "sha1": "d2d70743d28c3e299df974c09c9cd992a0dd8bdc"
+        },
+        "url": "https://cdn.modrinth.com/data/gtGDlsAD/versions/zNXsPDeF/modulargolems-3.1.43.jar",
+        "filename": "modulargolems-3.1.43.jar",
+        "primary": true,
+        "size": 3468785,
+        "file_type": null
+      }
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "6hD6YA2r",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "46KJle7n",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "LNytGWDc",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "CbV689EN",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "u6dRKJwZ",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "oPrh2Lz3",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "7q7kOZix",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "R0bDWFAW",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "1qkL7Png",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "pfjLUfGv",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "4Vh3BQ3F",
+        "file_name": null,
+        "dependency_type": "required"
+      },
+      {
+        "version_id": null,
+        "project_id": "nU0bVIaL",
+        "file_name": null,
+        "dependency_type": "optional"
+      }
+    ]
+  },
+  {
+    "artifact": "moonlight-1.21.1-3.6.8-neoforge.jar",
+    "modrinth_version": "HTfE7eCk",
+    "modrinth_project": "twkfQtEc",
+    "version": "1.21.1-3.6.8",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "e5a220558a2bcef67a2078b29a75030486484164d78bd2e011b007becfecb662",
+    "files": [
+      {
+        "id": "Ef20prRg",
+        "hashes": {
+          "sha1": "3aea31243fbf80661ff09fb8274a47d2cd85fb63",
+          "sha512": "8bca96add9551c827a6af721756e7333e0f6fe49b076587cbf55f02c91c2eeeacf7abdf5af38cadfddd8a9a0db97fea6fcd76070c8335adfe5e6e4347badae5f"
+        },
+        "url": "https://cdn.modrinth.com/data/twkfQtEc/versions/HTfE7eCk/moonlight-1.21.1-3.6.8-neoforge.jar",
+        "filename": "moonlight-1.21.1-3.6.8-neoforge.jar",
+        "primary": true,
+        "size": 2286560,
+        "file_type": null
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "artifact": "sophisticatedcore-1.21.1-1.5.1.2341.jar",
+    "modrinth_version": "PXl6rB3q",
+    "modrinth_project": "nmoqTijg",
+    "version": "1.21.1-1.5.1.2341",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "f627b497fc0a2b50da9f20b77e13073df9245718660259d8f559aa184c4418a1",
+    "files": [
+      {
+        "id": "BBbFVIki",
+        "hashes": {
+          "sha512": "0cb1ea870d3e76591935b8e6b0239c3cce598c57ac8cedcbc4e91a7b611d45df984b6b7d82037e5cf490b2c0731709b1efcb9455d2699eda0a8c378a857999dd",
+          "sha1": "6eeb6488cb183e502acda8d68b7334d356176b68"
+        },
+        "url": "https://cdn.modrinth.com/data/nmoqTijg/versions/PXl6rB3q/sophisticatedcore-1.21.1-1.5.1.2341.jar",
+        "filename": "sophisticatedcore-1.21.1-1.5.1.2341.jar",
+        "primary": true,
+        "size": 1785221,
+        "file_type": null
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "artifact": "sophisticatedstorage-1.21.1-1.5.91.2127.jar",
+    "modrinth_version": "H7wGZ8Sl",
+    "modrinth_project": "hMlaZH8f",
+    "version": "1.21.1-1.5.91.2127",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "a2c3521edd88196f2948ea9a3db08187907baaa4cdcb27c1b004069782c6bf8f",
+    "files": [
+      {
+        "id": "BQY84wPt",
+        "hashes": {
+          "sha1": "395b6111d6fa0117f2c540fca9fd5389ac7e339c",
+          "sha512": "d8548870cb96a6fd6f50b22dc4822a8acc68168c85efb7a1878d2e0f853334011ff3e17a14dfdf2a7f3f7dde0e995046650a5ca12b9b881dc378ff3c3275375b"
+        },
+        "url": "https://cdn.modrinth.com/data/hMlaZH8f/versions/H7wGZ8Sl/sophisticatedstorage-1.21.1-1.5.91.2127.jar",
+        "filename": "sophisticatedstorage-1.21.1-1.5.91.2127.jar",
+        "primary": true,
+        "size": 1869204,
+        "file_type": null
+      }
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "b1fMg6sH",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "vRYk0bv7",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "qnQsVE2z",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "nmoqTijg",
+        "file_name": null,
+        "dependency_type": "required"
+      },
+      {
+        "version_id": null,
+        "project_id": "BAscRYKm",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "u6dRKJwZ",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "WRaRZdTd",
+        "file_name": null,
+        "dependency_type": "optional"
+      },
+      {
+        "version_id": null,
+        "project_id": "DMu0oBKf",
+        "file_name": null,
+        "dependency_type": "optional"
+      }
+    ]
+  },
+  {
+    "artifact": "supplementaries-1.21.1-3.9.9-neoforge.jar",
+    "modrinth_version": "WrZWfRjP",
+    "modrinth_project": "fFEIiSDQ",
+    "version": "1.21.1-3.9.9",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "d6876ad959d0da4bab0ba182839a0af0e38ef3571345e5e7aea0be572f958e05",
+    "files": [
+      {
+        "id": "eHebRAc3",
+        "hashes": {
+          "sha512": "f341d0971e644255c063f0cb363bb93e312f4f005304f8af76d7249c3cbc0c258f415cf6e7bddcdf02115ade9ba9a205ec6d062e2626b414afaef5725667f079",
+          "sha1": "06ed05381a5653d90398dc6ebf3ad1154add6374"
+        },
+        "url": "https://cdn.modrinth.com/data/fFEIiSDQ/versions/WrZWfRjP/supplementaries-1.21.1-3.9.9-neoforge.jar",
+        "filename": "supplementaries-1.21.1-3.9.9-neoforge.jar",
+        "primary": true,
+        "size": 13548968,
+        "file_type": null
+      }
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "twkfQtEc",
+        "file_name": null,
+        "dependency_type": "required"
+      }
+    ]
+  },
+  {
+    "artifact": "twilightforest-1.21.1-4.8.3345-universal.jar",
+    "mod_id": "twilightforest",
+    "version": "4.8.3345",
+    "curseforge_project": 227639,
+    "curseforge_file": 7797302,
+    "upstream_url": "https://www.curseforge.com/minecraft/mc-mods/the-twilight-forest/files/7797302",
+    "gradle_coordinate": "curse.maven:the-twilight-forest-227639:7797302",
+    "game_versions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "sha256": "493da16d10210f9f53a3c33b3d8fcb4ae9b14016ee420d753c894562bd9aba35"
+  }
+]

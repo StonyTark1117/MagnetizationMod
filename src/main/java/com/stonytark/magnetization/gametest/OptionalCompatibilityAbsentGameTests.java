@@ -35,6 +35,9 @@ public final class OptionalCompatibilityAbsentGameTests {
         final var ironGolem = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(helper.getLevel());
         helper.assertTrue(ironGolem != null && !com.stonytark.magnetization.compat.ExtraGolemsRebornCompat
                         .isMagnetizable(ironGolem), "Reborn adapter must be inert without Reborn");
+        helper.assertTrue(!com.stonytark.magnetization.compat.ModularGolemsCompat.isMagnetizable(ironGolem)
+                        && !com.stonytark.magnetization.compat.QuarkToretoiseCompat.isMagnetizable(ironGolem),
+                "Material adapters must be inert without their optional providers");
         helper.assertTrue(!ExternalFieldCompat.isKnownEmitter(Blocks.AIR.defaultBlockState()),
                 "External emitter adapter matched a vanilla air block");
         helper.assertTrue(GasExcitationProfiles.size() == 0,
