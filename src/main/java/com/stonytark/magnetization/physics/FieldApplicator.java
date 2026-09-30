@@ -312,17 +312,12 @@ public final class FieldApplicator {
                 origin.x + range, origin.y + range, origin.z + range
         );
 
-        final double cap = maxAccelPerTick();
-        final int steps = Math.max(1, shipSampleSteps());
-        final double drag = shipLinearDrag();
-        final double angDrag = shipAngularDrag();
+        // Prepare once, only after an intersecting ship survives the live filters.
+        // Empty queries and excluded/invalid ships need no biome lookup or tuning.
+        boolean prepared = false;
+        double cap = 0, drag = 0, angDrag = 0, globalScalar = 0, cosHalfAngle = 0;
+        int steps = 0;
         final double rangeSqr = range * range;
-        // Per-tick constants — pull them out of the per-sample loop so we don't
-        // pay the biome lookup + config getters 27 times per ship per emitter.
-        // On a server with N emitters × M ships, that's a 27× reduction on the
-        // dominant fixed cost of the inner loop.
-        final double globalScalar = computeGlobalScalar(level, field);
-        final double cosHalfAngle = conicalHalfAngleCos();
 
         // Diagnostics — only allocated when the debug log gate is open.
         final boolean diag = MagConfig.debugLogging();
@@ -360,6 +355,16 @@ public final class FieldApplicator {
             // no flip), -1 for SOUTH (flip), 0 for NONE (never returned by the
             // scanner today, but if it ever does, the ship feels no force).
             if (shipSign == 0.0) continue;
+            if (!prepared) {
+                cap = maxAccelPerTick();
+                steps = Math.max(1, shipSampleSteps());
+                drag = shipLinearDrag();
+                angDrag = shipAngularDrag();
+                globalScalar = computeGlobalScalar(level, field);
+                cosHalfAngle = conicalHalfAngleCos();
+                prepared = true;
+                PerformanceDiagnostics.record(level, PerformanceDiagnostics.Work.SHIP_FIELD_PREPARATIONS, 1);
+            }
             final double shipSusc = shipState.susceptibility();
             // Diamagnetic ships react the SAME to both poles. By default they're
             // repelled by both (config diamagneticDefaultRepel); a Polarity
