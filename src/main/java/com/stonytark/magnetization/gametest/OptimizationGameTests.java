@@ -36,6 +36,54 @@ import java.util.UUID;
 public final class OptimizationGameTests {
     private OptimizationGameTests() {}
 
+    @GameTest(template = "empty", batch = "optimizationFluidGroups", timeoutTicks = 40)
+    public static void distantFluidPoolsRemainIndependentAndNearbyContributionsStayOrdered(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var lower = helper.absolutePos(new BlockPos(1, 40, 1));
+        final var upper = lower.above(160);
+        final int oldTicks = MagConfig.MAGNETIZED_FERROFLUID_TICKS.get();
+        final var fluid = com.stonytark.magnetization.registry.MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get();
+        final var target = new net.minecraft.world.entity.item.ItemEntity(level,
+                lower.getX() + .5, lower.getY() + 80, lower.getZ() + .5, new ItemStack(Items.IRON_INGOT));
+        target.setNoGravity(true);
+        final var cells = new BlockPos[]{lower, lower.east(), upper};
+        try {
+            MagConfig.MAGNETIZED_FERROFLUID_TICKS.set(1);
+            for (final var pos : cells) level.setBlockAndUpdate(pos, fluid.defaultBlockState());
+            level.addFreshEntity(target);
+            PerformanceDiagnostics.resetWork(level);
+            com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick(
+                    new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("fluid_field_applications") == 0L,
+                    "Entity between distant pools activated their source fields");
+            target.setPos(lower.getX() + .5, lower.getY() + 1.5, lower.getZ() + .5);
+            target.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            // Reference: original source order, applying every nearby cell.
+            for (final var e : com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel(level).entrySet()) {
+                if (!e.getKey().equals(lower) && !e.getKey().equals(lower.east())) continue;
+                FieldApplicator.apply(level, new com.stonytark.magnetization.api.MagneticField(
+                        net.minecraft.world.phys.Vec3.atCenterOf(e.getKey()), new net.minecraft.world.phys.Vec3(0, 1, 0),
+                        e.getValue(), com.stonytark.magnetization.api.MagneticStrength.MEDIUM,
+                        com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL));
+            }
+            final var expected = target.getDeltaMovement();
+            helper.assertTrue(expected.lengthSqr() > 0, "Reference pool did not move the target");
+            target.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            PerformanceDiagnostics.resetWork(level);
+            com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick(
+                    new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(target.getDeltaMovement().distanceToSqr(expected) < 1e-16,
+                    "Local grouping changed source contributions");
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("fluid_field_applications") == 2L,
+                    "Local target activated a distant pool or lost a nearby source");
+            helper.succeed();
+        } finally {
+            target.discard();
+            for (final var pos : cells) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            MagConfig.MAGNETIZED_FERROFLUID_TICKS.set(oldTicks);
+        }
+    }
+
     @GameTest(template = "empty", batch = "optimizationGallium", timeoutTicks = 40)
     public static void emptyGalliumSkipsFieldsAndOccupiedGalliumRetainsBothForceDirections(final GameTestHelper helper) {
         final var level = helper.getLevel();
@@ -132,7 +180,7 @@ public final class OptimizationGameTests {
     @GameTest(template = "empty", batch = "optimizationVerticalBounds", timeoutTicks = 40)
     public static void verticalCullingPreservesLiveMovementAndRotation(final GameTestHelper helper) {
         final var level = helper.getLevel();
-        final var lower = helper.absolutePos(new BlockPos(1, 40, 1));
+        final var lower = helper.absolutePos(new BlockPos(1, 120, 1));
         final var upper = lower.above(96);
         final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
         final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
@@ -155,13 +203,13 @@ public final class OptimizationGameTests {
                 PerformanceDiagnostics.resetWork(level);
                 ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
                 final var counts = PerformanceDiagnostics.workSnapshot(level);
-                helper.assertTrue(counts.get("field_bounds_rejections") == 1L, "Far vertical emitter was not culled: " + counts);
+                helper.assertTrue(counts.get("field_bounds_rejections") == counts.get("emitter_candidates") - 1L, "Far vertical emitter was not culled: " + counts);
                 helper.assertTrue(counts.get("field_evaluations") == 1L, "Culled emitter still evaluated its field");
                 helper.assertTrue(target.getDeltaMovement().lengthSqr() > 0, "Moving into range lost the native force");
             }
             MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(1);
             int applied = 0;
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0, candidates = ExternalEmitterTracker.lastCandidateCount(level); i < candidates; i++) {
                 ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
                 applied += ExternalEmitterTracker.lastAppliedCount(level);
             }

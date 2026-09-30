@@ -16,7 +16,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 9. Occupied emitter queries for ferrofluid | Ordered occupied X/Z rows replace empty chunk enumeration, retaining exact inclusive 32-/512-block expansion and candidate order. Unit suite 259/259; randomized 1,000-operation lifecycle checks cover row/category coherence. CNA integration 13/13, including attraction, repulsion and orphan recession. Chunk-attempt counters now count selected occupied bucket lookups; emitter_buckets_inspected records spatial traversal work. |
 | 10. MR stored power first | Stored positive power returns before field lookup; unpowered field/neighbor fallbacks are unchanged. CNA suite 14/14, including real hardening with zero field searches and restoration after power removal. |
 | 11. Gallium occupancy first | Powered empty cells skip field search and force setup. An O(1) source-presence gate avoids added entity queries in field-free levels. CNA 15/15: both plain/mixed gallium retain exact current speed and both polarity directions for a nonmagnetic item. Full-pack occupancy/no-field timing tradeoff remains for final comparison. |
-| 12. Local magnetized-fluid groups | Pending |
+| 12. Local magnetized-fluid groups | Recipient queries are cached per occupied 16³ section; application still follows the original source iteration order. CNA 16/16: a target between distant pools triggers zero applications, moving into one pool applies both nearby sources with exactly the reference combined velocity. |
 | 13. Nearby train carriage queries | Pending |
 | 14. Spatial magnetized-fluid field lookup | Pending |
 | Full Discopanel validation and completion audit | Pending |
