@@ -18,6 +18,12 @@ public final class ImmersivePortalFieldCompat {
 
     private ImmersivePortalFieldCompat() {}
 
+    /** Conservative source aperture for pre-evaluation field culling. Validity
+     * and destination checks still happen in the actual projection pass. */
+    public static boolean isFieldAperture(final net.minecraft.world.entity.Entity entity) {
+        return entity instanceof Portal;
+    }
+
     /**
      * Projects a source field through each portal aperture it can reach. Only ships
      * are handled on the destination side: vanilla entities already belong to a

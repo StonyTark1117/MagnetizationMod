@@ -77,6 +77,14 @@ public final class MagSteamRailsCompat {
         }
     }
 
+    /** Train reactions are independent of ordinary entity magnetizability. */
+    public static void forEachFieldTarget(final ServerLevel level, final java.util.function.Consumer<AABB> target) {
+        if (!ModList.get().isLoaded("railways") || !MagConfig.steamRailsFieldReaction()) return;
+        for (final CarriageContraptionEntity carriage : trackedCarriages(level)) {
+            if (carriage.isAlive()) target.accept(carriage.getBoundingBox());
+        }
+    }
+
     public static void onLevelUnload(final ServerLevel level) {
         CARRIAGES.remove(level);
     }

@@ -119,6 +119,17 @@ public final class ExternalFieldCompat {
         return id != null && "alexscaves".equals(id.getNamespace());
     }
 
+    /** Upper bound without querying power, energy, or a block entity. Adapters
+     * with a live custom radius (Alex's Caves) retain the uncullable fallback. */
+    public static double maximumFieldRange(final BlockState state) {
+        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        if (id == null) return Double.POSITIVE_INFINITY;
+        return switch (id.getNamespace()) {
+            case "create_new_age", "immersiveengineering", "createaddition", "tfmg" -> MagneticStrength.EXTREME.range();
+            default -> Double.POSITIVE_INFINITY;
+        };
+    }
+
     public static boolean isImmersiveEngineeringRailgunShot(final net.minecraft.world.entity.Entity entity) {
         final ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return id != null && id.getNamespace().equals("immersiveengineering")

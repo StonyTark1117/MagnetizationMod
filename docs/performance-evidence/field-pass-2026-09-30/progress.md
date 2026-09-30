@@ -5,7 +5,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | Item | Implementation / validation |
 |---|---|
 | 1. Disabled relay early exit | Both entrypoints check the live enable flag before copying the registry. Ender Transmission runtime suite: 3/3 required tests passed, including disabled/enabled one-hop projection. |
-| 2. Three-dimensional candidate rejection | Pending |
+| 2. Three-dimensional candidate rejection | Conservative inclusive 3D recipient bounds before field evaluation; unknown adapter ranges remain eligible. Includes ship hulls, fluid sections, portal apertures and enabled train carriages. Preserves candidate attempts/cursor and relay query. Unit suite passed; CNA runtime 13/13, including vertical target movement and budget rotation. Large-hull/aperture boundary unit cases passed; full optional runtime regression remains for final checkpoint. |
 | 3. Lazy ship field setup | Pending |
 | 4. Direct candidate list query | Pending |
 | First Discopanel checkpoint | Pending |

@@ -36,6 +36,62 @@ import java.util.UUID;
 public final class OptimizationGameTests {
     private OptimizationGameTests() {}
 
+    @GameTest(template = "empty", batch = "optimizationVerticalBounds", timeoutTicks = 40)
+    public static void verticalCullingPreservesLiveMovementAndRotation(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var lower = helper.absolutePos(new BlockPos(1, 40, 1));
+        final var upper = lower.above(96);
+        final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final int oldBudget = MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.get();
+        final var target = new net.minecraft.world.entity.item.ItemEntity(level,
+                upper.getX() + .5, upper.getY() + 1.5, upper.getZ() + .5, new ItemStack(Items.IRON_INGOT));
+        target.setNoGravity(true);
+        try {
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(256);
+            final var state = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create_new_age:magnetite_block")).defaultBlockState();
+            level.setBlockAndUpdate(lower, state);
+            level.setBlockAndUpdate(upper, state);
+            ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(lower));
+            level.addFreshEntity(target);
+            for (final BlockPos near : new BlockPos[]{upper, lower}) {
+                target.setPos(near.getX() + .5, near.getY() + 1.5, near.getZ() + .5);
+                target.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                PerformanceDiagnostics.resetWork(level);
+                ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                final var counts = PerformanceDiagnostics.workSnapshot(level);
+                helper.assertTrue(counts.get("field_bounds_rejections") == 1L, "Far vertical emitter was not culled: " + counts);
+                helper.assertTrue(counts.get("field_evaluations") == 1L, "Culled emitter still evaluated its field");
+                helper.assertTrue(target.getDeltaMovement().lengthSqr() > 0, "Moving into range lost the native force");
+            }
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(1);
+            int applied = 0;
+            for (int i = 0; i < 2; i++) {
+                ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                applied += ExternalEmitterTracker.lastAppliedCount(level);
+            }
+            helper.assertTrue(applied == 1, "Culling changed rotation or filled a skipped budget slot");
+            target.setPos(lower.getX() + .5, upper.getY() + 96, lower.getZ() + .5);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(256);
+            PerformanceDiagnostics.resetWork(level);
+            ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("field_evaluations") == 0L,
+                    "Far-only targets still caused field evaluation");
+            helper.succeed();
+        } finally {
+            target.discard();
+            for (final var pos : new BlockPos[]{lower, upper}) {
+                EmitterRegistry.unregisterExternal(level, pos);
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            }
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(oldBudget);
+        }
+    }
+
     @GameTest(template = "empty", batch = "optimizationEquipment", timeoutTicks = 40)
     public static void equipmentGatePreservesHandsArmorDisabledItemsAndExpiration(final GameTestHelper helper) {
         final var level = helper.getLevel();
