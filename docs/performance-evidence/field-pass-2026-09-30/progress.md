@@ -18,7 +18,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 11. Gallium occupancy first | Powered empty cells skip field search and force setup. An O(1) source-presence gate avoids added entity queries in field-free levels. CNA 15/15: both plain/mixed gallium retain exact current speed and both polarity directions for a nonmagnetic item. Full-pack occupancy/no-field timing tradeoff remains for final comparison. |
 | 12. Local magnetized-fluid groups | Recipient queries are cached per occupied 16³ section; application still follows the original source iteration order. CNA 16/16: a target between distant pools triggers zero applications, moving into one pool applies both nearby sources with exactly the reference combined velocity. |
 | 13. Nearby train carriage queries | Uses live Minecraft spatial queries above 16 tracked cars, then restores original iteration order. Small populations retain a short scan; unusual sizes/subclasses and not-yet-visible joins retain conservative fallbacks, invalidated on size/lifecycle changes. Steam Rails runtime 2/2: 40-car fixture verifies subset/order, exact coupled force, same-tick movement and removal. |
-| 14. Spatial magnetized-fluid field lookup | Pending |
+| 14. Spatial magnetized-fluid field lookup | Chunk-local lookup preserves the existing WEAK-radius membership query. Mutable registry views update the index; palette-gated chunk reload restores source polarity, while unload/removal removes membership. Unit/build checks passed (261 tests); CNA 17/17 includes exact boundary, flowing-cell exclusion, unload/reload and removal. |
 | Full Discopanel validation and completion audit | Pending |
 
 ## Validation commands

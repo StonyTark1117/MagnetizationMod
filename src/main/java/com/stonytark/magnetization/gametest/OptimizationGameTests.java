@@ -36,6 +36,38 @@ import java.util.UUID;
 public final class OptimizationGameTests {
     private OptimizationGameTests() {}
 
+    @GameTest(template = "empty", batch = "optimizationFluidIndex", timeoutTicks = 40)
+    public static void fluidIndexPreservesRangePolarityAndChunkReload(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var pos = helper.absolutePos(new BlockPos(1, 140, 1));
+        final var flowing = pos.east();
+        final var fluid = com.stonytark.magnetization.registry.MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get();
+        final var south = fluid.defaultBlockState().setValue(
+                com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock.POLARITY, MagneticPolarity.SOUTH);
+        try {
+            level.setBlockAndUpdate(pos, south);
+            level.setBlockAndUpdate(flowing, south.setValue(net.minecraft.world.level.block.LiquidBlock.LEVEL, 1));
+            final var center = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+            helper.assertTrue(MagneticFields.isInField(level, center.add(0, 4, 0)), "Fluid boundary lost its field");
+            helper.assertTrue(!MagneticFields.isInField(level, center.add(0, 4.01, 0)), "Fluid query range expanded");
+            final var chunk = level.getChunkAt(pos);
+            com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.onChunkUnload(
+                    new net.neoforged.neoforge.event.level.ChunkEvent.Unload(chunk));
+            helper.assertTrue(!MagneticFields.isInField(level, center), "Unloaded source left a phantom field");
+            com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.rebuildChunkIndex(level, chunk);
+            helper.assertTrue(MagneticFields.isInField(level, center), "Reload lost the fluid field");
+            final var sources = com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel(level);
+            helper.assertTrue(sources.get(pos) == MagneticPolarity.SOUTH && !sources.containsKey(flowing),
+                    "Reload changed polarity or indexed a flowing cell as a source");
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            helper.assertTrue(!MagneticFields.isInField(level, center), "Removed source left a phantom field");
+            helper.succeed();
+        } finally {
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(flowing, Blocks.AIR.defaultBlockState());
+        }
+    }
+
     @GameTest(template = "empty", batch = "optimizationFluidGroups", timeoutTicks = 40)
     public static void distantFluidPoolsRemainIndependentAndNearbyContributionsStayOrdered(final GameTestHelper helper) {
         final var level = helper.getLevel();
