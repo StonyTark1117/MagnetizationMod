@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
  * but a server owner can pick {@code OURS_ONLY} or {@code THEIRS_ONLY} to make
  * one mod the canonical source.
  *
- * <p>The swap fires on {@link MobEffectEvent.Added}: when the to-be-replaced
- * effect is freshly applied, we cancel it and apply the substitute at the same
+ * <p>The swap fires on {@link MobEffectEvent.Applicable}: when the to-be-replaced
+ * effect is about to be applied, we deny it and apply the substitute at the same
  * duration + amplifier so the player can't tell which mod owns the pull.
  *
  * <p>Wired in {@code Magnetization} only when {@code alexscaves} is loaded.
@@ -40,11 +40,12 @@ public final class MagAlexsCavesCompat {
 
     public static void wire(final IEventBus modBus) {
         // Game event, not mod event — listen on NeoForge bus.
-        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(MagAlexsCavesCompat::onEffectAdded);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(MagAlexsCavesCompat::onEffectApplicable);
     }
 
-    private static void onEffectAdded(final MobEffectEvent.Added event) {
-        if (!MagConfig.alexsCavesCompatEnabled()) return;
+    private static void onEffectApplicable(final MobEffectEvent.Applicable event) {
+        if (!MagConfig.alexsCavesCompatEnabled() || event.getEntity().level().isClientSide()
+                || event.getResult() == MobEffectEvent.Applicable.Result.DO_NOT_APPLY) return;
         final MagConfig.AlexsCavesPotionMode mode;
         try { mode = MagConfig.ALEXSCAVES_POTION_MODE.get(); }
         catch (final Throwable t) { return; } // config not loaded yet
@@ -59,15 +60,17 @@ public final class MagAlexsCavesCompat {
 
         if (mode == MagConfig.AlexsCavesPotionMode.OURS_ONLY && sameEffect(addedEffect, acMagnetizing)) {
             // Replace AC's pull with ours at the same duration / amplifier.
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             living.removeEffect(acMagnetizing);
             living.addEffect(new MobEffectInstance(
                     MagEffects.MAGNETIZED, added.getDuration(), added.getAmplifier(),
-                    added.isAmbient(), added.isVisible(), added.showIcon()));
+                    added.isAmbient(), added.isVisible(), added.showIcon()), event.getEffectSource());
         } else if (mode == MagConfig.AlexsCavesPotionMode.THEIRS_ONLY && sameEffect(addedEffect, MagEffects.MAGNETIZED)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             living.removeEffect(MagEffects.MAGNETIZED);
             living.addEffect(new MobEffectInstance(
                     acMagnetizing, added.getDuration(), added.getAmplifier(),
-                    added.isAmbient(), added.isVisible(), added.showIcon()));
+                    added.isAmbient(), added.isVisible(), added.showIcon()), event.getEffectSource());
         }
     }
 

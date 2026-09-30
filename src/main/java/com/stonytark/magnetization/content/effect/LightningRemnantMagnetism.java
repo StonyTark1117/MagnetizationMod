@@ -77,14 +77,9 @@ public final class LightningRemnantMagnetism {
      * tagged {@link MagTags#LIGHTNING_SOURCES}, treat it as a lightning strike
      * for LIRM purposes. Vanilla {@code minecraft:lightning_bolt} is already
      * in that tag, so {@link #onStruck} handles natural strikes — this hook
-     * picks up Iron's Spells Chain Lightning / Lightning Lance, Cataclysm's
-     * Scylla bolts, Alex's Caves Tesla arcs, etc., none of which spawn a
-     * vanilla {@code LightningBolt} entity.
-     *
-     * <p>Spawned-bolt spells (Iron's Spells Thunderstorm/Ascension, Twilight
-     * Lich) still go through {@link #onStruck} because they create a real
-     * {@code LightningBolt}. The two paths are guarded against double-stamping
-     * by {@link #alreadyMagnetized}.
+     * handles damage types explicitly listed by a datapack. Entries must be
+     * verified against upstream damage registries; spell names are not damage IDs.
+     * Real vanilla bolts use the separate strike/spawn hooks below.
      */
     @SubscribeEvent
     public static void onLightningDamage(final LivingIncomingDamageEvent event) {

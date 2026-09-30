@@ -1,0 +1,100 @@
+Compatibility audit recorded 2026-09-30; Minecraft 1.21.1, NeoForge 21.1.252, Java 21.
+Pinned coordinates: build.gradle / gradle.properties. Exact artifact hashes: matrix-details.json.
+Scope and limitations: audit-1.21.1.md. A passing launch alone is not a behavior result.
+Commands below run sequentially. Harness preserves logs and shuts down lingering Sable process groups.
+
+scripts/run-gametest-gate.sh runExtraGolemsRebornGameTestServer run-extra-golems-reborn-gametest 240
+Full log: evidence/runExtraGolemsRebornGameTestServer.log
+[30Sep2026 02:54:39.382] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 12 GAME TESTS COMPLETE IN 998.5 ms ======================
+[30Sep2026 02:54:39.382] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 12 required tests passed :)
+
+scripts/run-gametest-gate.sh runOptionalCompatibilityAbsentGameTestServer run-compat-absent-gametest 240
+Full log: evidence/runOptionalCompatibilityAbsentGameTestServer.log
+[30Sep2026 02:55:23.886] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 395.0 ms ======================
+[30Sep2026 02:55:23.886] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+
+scripts/run-gametest-gate.sh runSweepAircraftGameTestServer run-sweep-aircraft-gametest 240
+Full log: evidence/runSweepAircraftGameTestServer.log
+[30Sep2026 02:50:04.613] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[aviator_dream, immersive_aircraft] resolved=33 unresolved=[]
+[30Sep2026 02:50:04.620] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 225.1 ms ======================
+[30Sep2026 02:50:04.621] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+scripts/run-gametest-gate.sh runSweepMaterialsGameTestServer run-sweep-materials-gametest 240
+Full log: evidence/runSweepMaterialsGameTestServer.log
+[30Sep2026 02:50:24.918] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[mcwtrpdoors, ironchest, mcwlights, mcwbridges, mcwfences, simulated, magnetizing, mcwdoors, mcwwindows] resolved=64 unresolved=[]
+[30Sep2026 02:50:24.930] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 287.4 ms ======================
+[30Sep2026 02:50:24.930] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+scripts/run-gametest-gate.sh runSweepEquipmentGameTestServer run-sweep-equipment-gametest 240
+Full log: evidence/runSweepEquipmentGameTestServer.log
+[30Sep2026 02:42:59.393] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[aether, mekanismtools, mekanism] resolved=13 unresolved=[]
+[30Sep2026 02:42:59.424] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 220.6 ms ======================
+[30Sep2026 02:42:59.424] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+scripts/run-gametest-gate.sh runSweepBossGameTestServer run-sweep-boss-gametest 240
+Full log: evidence/runSweepBossGameTestServer.log
+[30Sep2026 02:50:46.589] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[irons_spellbooks, bosses_of_mass_destruction, cataclysm] resolved=15 unresolved=[]
+[30Sep2026 02:50:46.598] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 365.5 ms ======================
+[30Sep2026 02:50:46.599] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+scripts/run-gametest-gate.sh runSweepMagneticsGameTestServer run-sweep-magnetics-gametest 240 -PmagneticsCompatJar=<supplied-trial.jar; SHA256 pinned in build.gradle>
+Full log: evidence/runSweepMagneticsGameTestServer.log
+[30Sep2026 02:44:59.191] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[createmagnetics] resolved=4 unresolved=[]
+[30Sep2026 02:44:59.199] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 207.1 ms ======================
+[30Sep2026 02:44:59.200] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+scripts/run-gametest-gate.sh runAlexsCavesGameTestServer run-alexscaves-gametest 240
+Full log: evidence/runAlexsCavesGameTestServer.log
+[30Sep2026 02:51:11.037] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[alexscaves] resolved=27 unresolved=[]
+[30Sep2026 02:51:11.174] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 474.6 ms ======================
+[30Sep2026 02:51:11.174] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+
+scripts/run-gametest-gate.sh runImmersiveEngineeringGameTestServer run-immersive-engineering-gametest 240
+Full log: evidence/runImmersiveEngineeringGameTestServer.log
+[30Sep2026 02:51:32.163] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[immersiveengineering] resolved=78 unresolved=[]
+[30Sep2026 02:51:32.261] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 422.9 ms ======================
+[30Sep2026 02:51:32.261] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+
+scripts/run-gametest-gate.sh runCreateAdditionGameTestServer run-createaddition-gametest 240
+Full log: evidence/runCreateAdditionGameTestServer.log
+[30Sep2026 02:51:52.484] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 396.1 ms ======================
+[30Sep2026 02:51:52.484] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+
+scripts/run-gametest-gate.sh runCreateNewAgeGameTestServer run-create-new-age-gametest 240
+Full log: evidence/runCreateNewAgeGameTestServer.log
+[30Sep2026 02:52:13.972] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 12 GAME TESTS COMPLETE IN 826.6 ms ======================
+[30Sep2026 02:52:13.972] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 12 required tests passed :)
+
+scripts/run-gametest-gate.sh runIronworksCoastersAdditionsGameTestServer run-ironworks-coasters-additions-gametest 240
+Full log: evidence/runIronworksCoastersAdditionsGameTestServer.log
+[30Sep2026 02:52:44.510] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 554.1 ms ======================
+[30Sep2026 02:52:44.511] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+
+Total: 49 passing GameTests across 12 isolated profiles.
+
+Client visual/save-restart check:
+DISPLAY=:287 LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runExtraGolemsRebornClient -PrebornWorld=RebornAudit
+Spawned five native golems: raw_iron, copper, waxed_oxidized_copper, gold, netherite.
+Observed material-specific models/textures. Saved, quit the process, launched again, observed and queried all five saved Golem IDs.
+Screenshots: evidence/reborn-rendering.png, evidence/reborn-after-restart.png, evidence/reborn-rendering-after-restart.png.
+Full log: evidence/reborn-client.log
+Full log: evidence/reborn-client-reload.log
+
+Unmodified Create Magnetics 0.0.4-alpha dedicated-server failure:
+Full log: evidence/magnetics-unmodified-server-failure.log
+[30Sep2026 02:39:33.479] [modloading-sync-worker/ERROR] [net.neoforged.fml.common.asm.RuntimeDistCleaner/DISTXFORM]: Attempted to load class net/minecraft/client/resources/sounds/SoundInstance for invalid dist DEDICATED_SERVER
+[30Sep2026 02:39:33.481] [modloading-sync-worker/ERROR] [net.neoforged.fml.javafmlmod.FMLModContainer/]: Exception caught during firing event: java.lang.RuntimeException: Attempted to load class net/minecraft/client/resources/sounds/SoundInstance for invalid dist DEDICATED_SERVER
+java.lang.BootstrapMethodError: java.lang.RuntimeException: Attempted to load class net/minecraft/client/resources/sounds/SoundInstance for invalid dist DEDICATED_SERVER
+Caused by: java.lang.RuntimeException: Attempted to load class net/minecraft/client/resources/sounds/SoundInstance for invalid dist DEDICATED_SERVER
+The supplied trial is supporting evidence only; no production dependency is introduced.
+
+
+Targeted unit tests and release JAR:
+./gradlew test -PmagMinimalUnitTests --tests '*Golem*' --tests '*FieldApplicator*' jar
+31 tests, 0 failures, 0 errors. BUILD SUCCESSFUL.
+JUnit XML and full build log: evidence/
+JAR SHA256: dfce127dc3102f143a0fdda53c9c4e55ba7eb5c69dca36e82f53304787b9eedc (magnetization-1.4.6.jar)
+Archive check: no bundled com/mcmoddev/golems upstream classes; no extragolems:* entries in shipped Magnetization tags.
+Config reference check and git diff --check passed.
+
+Committed log copies normalize trailing whitespace only. Source-hash snapshots describe the tested workspace, including separate performance work present during those runs.

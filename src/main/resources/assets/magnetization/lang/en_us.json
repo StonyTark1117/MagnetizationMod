@@ -543,6 +543,12 @@
   "magnetization.configuration.compat.tfmgCompatEnabled.tooltip": "Master switch for Magnetization's TFMG recipes, materials, fluids, machines, and Polarizer integration.",
   "magnetization.configuration.compat.simulatedCoastersCompatEnabled": "Simulated Coasters Compatibility",
   "magnetization.configuration.compat.simulatedCoastersCompatEnabled.tooltip": "Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer behavior.",
+  "magnetization.configuration.compat.createMagneticsServerCrashWorkaround": "Create: Magnetics Server Crash Workaround",
+  "magnetization.configuration.compat.createMagneticsServerCrashWorkaround.tooltip": "Default off. Fixes Create: Magnetics 0.0.4-alpha loading client SoundInstance classes on dedicated servers. Read early from config/magnetization-common.toml; requires a full server process restart. Has no effect on clients or other Magnetics versions.",
+  "magnetization.configuration.compat.extraGolemsRebornCompatEnabled": "Extra Golems Reborn Compatibility",
+  "magnetization.configuration.compat.extraGolemsRebornCompatEnabled.tooltip": "Recognize material-based golems from Reborn 21.1.0.1. Server-authoritative; updates on the next tick after config reload. Explicit entity tags and magnetic equipment remain effective when disabled.",
+  "magnetization.configuration.compat.extraGolemsRebornMaterials": "Magnetic Reborn Materials",
+  "magnetization.configuration.compat.extraGolemsRebornMaterials.tooltip": "Material IDs with intrinsic susceptibility 1.0. Defaults include raw iron/gold/copper, gold, netherite, ancient debris and all copper oxidation/waxing variants. Wood, stone and nether brick are excluded. Empty disables automatic recognition. Valid custom IDs may be supplied by golem datapacks; changes apply on the next tick after config reload.",
   "magnetization.configuration.compat.ironworksCompatEnabled": "Create: Ironworks Compatibility",
   "magnetization.configuration.compat.ironworksCompatEnabled.tooltip": "Master switch for Create: Ironworks metal armor and material tag integration. Takes effect on data reload.",
   "magnetization.configuration.compat.coastersAdditionsCompatEnabled": "Coasters Simulated Additions Compatibility",
@@ -2322,5 +2328,11 @@
   "magnetization.ponder.steam_rails_magnetism.text_2": "Structural Inducers ignore assembled train entities; disassemble a train before treating its blocks as a structure.",
   "magnetization.ponder.copycat_magnetism.header": "Copy magnetic material properties",
   "magnetization.ponder.copycat_magnetism.text_1": "A Copycats+ block inherits magnetic susceptibility from its copied material, including after contraption assembly.",
-  "magnetization.ponder.copycat_magnetism.text_2": "Create goggles report whether the stored material is ferromagnetic, diamagnetic, excluded, or nonmagnetic."
+  "magnetization.ponder.copycat_magnetism.text_2": "Create goggles report whether the stored material is ferromagnetic, diamagnetic, excluded, or nonmagnetic.",
+  "book.magnetization.entry.compatibility.reborn.title": "Extra Golems Reborn",
+  "book.magnetization.entry.compatibility.reborn.text": "Reborn 21.1.0.1 is an optional, unofficial port. Raw iron/gold/copper, gold, netherite, ancient debris and all copper oxidation/waxing variants react to physical emitters and magnetic golems. Wood, stone and nether brick have no automatic body response; magnetic armor can still react.$(br2)The server controls $(o)compat.extraGolemsRebornCompatEnabled$() and $(o)compat.extraGolemsRebornMaterials$(). Changes apply next tick after config reload. Explicit entity tags act independently; the unmoveable tag always wins.",
+  "book.magnetization.entry.compatibility.audit.title": "Compatibility Evidence",
+  "book.magnetization.entry.compatibility.audit.text": "The README links the versioned compatibility matrix and its tests. Missing optional tag entries are harmless to loading but do not prove support.$(br2)Alex’s Caves support targets the unofficial 1.21.1 port; Bosses of Mass Destruction targets its NeoForge port. Legacy Extra Golems, Modular Golems and Quark entity guesses were removed. Shared material tags remain useful where populated. Twilight Forest, Sophisticated Storage and Supplementaries still have gaps in runtime verification.",
+  "book.magnetization.entry.compatibility.magnetics.title": "Magnetics Server Fix",
+  "book.magnetization.entry.compatibility.magnetics.text": "Create: Magnetics 0.0.4-alpha has an upstream dedicated-server crash caused by loading client sound classes.$(br2)Magnetization includes a default-off workaround: set $(o)compat.createMagneticsServerCrashWorkaround$() to $(o)true$() in $(o)config/magnetization-common.toml$() before starting the server. A full server restart is required.$(br2)It applies only to that version on dedicated servers. Client sounds and magnetic gameplay are unchanged."
 }

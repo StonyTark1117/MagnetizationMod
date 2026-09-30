@@ -56,3 +56,7 @@ Thumbs.db
 
 # Loose runtime logs at project root (gradle daemon, etc.)
 /logs/
+
+# Isolated Reborn rendering and persistence profile
+run-extra-golems-reborn-client/
+run-magnetics-workaround-client/

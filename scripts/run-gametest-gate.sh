@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-if [[ $# -lt 2 || $# -gt 3 ]]; then
-    echo "usage: $0 <gradle-run-task> <game-directory> [timeout-seconds]" >&2
+if [[ $# -lt 2 ]]; then
+    echo "usage: $0 <gradle-run-task> <game-directory> [timeout-seconds] [Gradle arguments...]" >&2
     exit 2
 fi
 
 run_task=$1
 game_directory=$2
 timeout_seconds=${3:-300}
+gradle_arguments=("${@:4}")
 log_file="$game_directory/logs/latest.log"
 runner_output=$(mktemp)
 runner_pid=''
@@ -84,7 +85,7 @@ PROPERTIES
 
 # A separate process group lets the supervisor terminate the nested Gradle JVM
 # and its lingering Minecraft/Sable child without touching any other Gradle run.
-setsid ./gradlew "$run_task" --no-daemon >"$runner_output" 2>&1 &
+setsid ./gradlew "$run_task" "${gradle_arguments[@]}" --no-daemon >"$runner_output" 2>&1 &
 runner_pid=$!
 deadline=$((SECONDS + timeout_seconds))
 passed=0

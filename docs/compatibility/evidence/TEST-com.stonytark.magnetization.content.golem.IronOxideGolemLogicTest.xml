@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-30T09:55:55.338Z" hostname="Hades" time="0.042">
+  <properties/>
+  <testcase name="polarityRestoreKeepsNorthAndSouthAndRejectsInvalidStates()" classname="com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest" time="0.041"/>
+  <testcase name="ownerAndTeamPolicyProtectsOnlyTheSpecifiedFriendlyTargets()" classname="com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest" time="0.001"/>
+  <testcase name="titanCaptureRejectsSelfAndEveryTitanSource()" classname="com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

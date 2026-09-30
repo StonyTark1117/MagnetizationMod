@@ -1,0 +1,12 @@
+{
+  "src/main/java/com/stonytark/magnetization/mixin/compat/CreateMagneticsServerMixin.java": "2923748aa8f2a9734afaa82e5ebe82eb23dc70e8d6d5daefb9fe114c1bc6d802",
+  "src/main/java/com/stonytark/magnetization/mixin/compat/CreateMagneticsServerMixinPlugin.java": "0fced413975dbe300c3656e80b9d4d7e4e2d86947e64a66d5d2eb8e2d851d188",
+  "src/main/resources/magnetization.createmagnetics.mixins.json": "53172f24566a1a68fb75ed5a64a1e9f3fbf3df24b501af70d6e7d8074d7a71a9",
+  "src/main/resources/META-INF/neoforge.mods.toml": "92ea0bc92945b9baacd7cbe5fe9d8cf03e731c2be1f161d9c27615546ee9a33d",
+  "src/main/java/com/stonytark/magnetization/config/MagConfig.java": "c05fbf3f95f4a9e6be795f43aee16e96bf4e81d4aff5b11375989b294131d2b0",
+  "src/main/java/com/stonytark/magnetization/gametest/SweepCompatibilityGameTests.java": "5c99a8679a48609698d7e1cf166c2c1013b6e9a3a3ec452c989571f315106bcc",
+  "src/main/java/com/stonytark/magnetization/gametest/OptionalCompatibilityAbsentGameTests.java": "6499362c6608021001a37464787ef20d87ca639894d840bfbcaf5b5dad70ef56",
+  "src/test/java/com/stonytark/magnetization/mixin/compat/CreateMagneticsServerMixinPluginTest.java": "18da47593b39eebcd52ea9969f5efef814d788fa3de10dcdaf4a45c0af7aad93",
+  "build.gradle": "66651e94ddee7a1b977533b36e41dfe5b26d49f8d3df5a50ad0e3f2a7996306c",
+  "gradle.properties": "ca6068b4603a28cbc85cf5bc786164478aed6d16662b75a3b6faafc392d71245"
+}

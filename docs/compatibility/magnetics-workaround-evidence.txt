@@ -1,0 +1,52 @@
+Create: Magnetics built-in server workaround — 2026-09-30
+Minecraft 1.21.1, NeoForge 21.1.252, Java 21, Magnetization 1.4.6.
+Upstream: curse.maven:createmagnetics-1457075:7667440 / 0.0.4-alpha.
+Upstream SHA256: 12a875cdc14200c3ea6e9d9ab14f754fbe4b5ad35521e6ac7daccc8b777e9b28.
+Option: compat.createMagneticsServerCrashWorkaround, default false, full process restart.
+The dedicated fixture tasks write [compat] createMagneticsServerCrashWorkaround=true
+in their disposable config/magnetization-common.toml; there is no JVM bypass.
+
+Built-in only, upstream installed, real TOML opt-in:
+scripts/run-gametest-gate.sh runMagneticsWorkaroundGameTestServer run-magnetics-workaround-gametest 240
+PASS 1/1 GameTest; 4 references resolved, no unresolved references.
+Tests item impulses, emitter membership, magnetite recipe ingredients, then native
+Kinetic Magnet block-entity construction, 10 server ticks and removal/cleanup.
+Log: evidence/magnetics-workaround/enabled-server.log
+Log confirms the built-in patch applied. Standalone trial is absent from mod list.
+
+Upstream absent, real TOML opt-in:
+scripts/run-gametest-gate.sh runMagneticsWorkaroundAbsentGameTestServer run-magnetics-workaround-absent-gametest 240
+PASS 2/2 optional-absence GameTests. No upstream target linkage or patch applied.
+Log: evidence/magnetics-workaround/absent-server.log
+
+Default-off control, upstream installed, no standalone trial:
+scripts/run-gametest-gate.sh runSweepMagneticsGameTestServer run-sweep-magnetics-gametest 120
+EXPECTED FAILURE: upstream SoundInstance invalid-dist crash. Harness rejected the run,
+even though Gradle reported BUILD SUCCESSFUL. The built-in patch was not applied.
+Log: evidence/magnetics-workaround/default-off-server.log
+
+Physical client, upstream installed, real TOML opt-in:
+DISPLAY=:287 LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runMagneticsWorkaroundClient
+PASS startup to rendered title screen, then normal Quit Game; BUILD SUCCESSFUL.
+No built-in server transformation log. Config file was true; server-only mixin did
+not apply on the physical client. This verifies client startup, not an auditory test.
+Evidence: evidence/magnetics-workaround/client-option-enabled.log and .png
+
+Targeted unit tests:
+./gradlew test -PmagMinimalUnitTests --tests '*CreateMagneticsServerMixinPluginTest'
+PASS 6 tests: default false/restart metadata, strict TOML boolean and section,
+malformed/missing file behavior, side/version/opt-in gates, preservation of unrelated
+bytecode, and rejection of changed upstream shape before mutation.
+JUnit XML and initial log: evidence/magnetics-workaround/
+
+Standalone trial coexistence, real TOML opt-in:
+scripts/run-gametest-gate.sh runMagneticsWorkaroundGameTestServer run-magnetics-workaround-gametest 180 -PmagneticsCompatJar=<supplied-trial.jar>
+Trial SHA256: 2bbb042c7ebcb11647b87adfecd5629aba216f9eccc4bdc0495956457dfc0194.
+PASS 1/1 GameTest; trial mod present, built-in transformation skipped.
+Log: evidence/magnetics-workaround/standalone-coexist-server.log
+
+Final build:
+./gradlew test -PmagMinimalUnitTests --tests '*CreateMagneticsServerMixinPluginTest' jar
+BUILD SUCCESSFUL; 6 tests passed. Config reference check and git diff --check passed.
+Archive includes the new mixin config and no upstream/trial classes.
+magnetization-1.4.6.jar SHA256: 91badbbdcb901f80c42077aed7b8e1b97c3d0045653048b24c72aef5c5d00cbf

@@ -593,7 +593,7 @@ public final class FieldApplicator {
         // it's a hard veto.
         if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
         if (e instanceof IMagnetizable) return true;
-        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)) {
+        if (hasIntrinsicTagResponse(e)) {
             if (com.stonytark.magnetization.compat.ExternalFieldCompat
                     .isImmersiveEngineeringRailgunShot(e)) {
                 return MagConfig.immersiveEngineeringRailgunReaction();
@@ -739,7 +739,7 @@ public final class FieldApplicator {
         // ferromagnetic-by-type, etc.) — counted before the armor pass so a
         // tagged mob wearing magnetized iron stacks both contributions.
         double sum = 0.0d;
-        if (e.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
+        if (hasIntrinsicTagResponse(e)
                 && (!com.stonytark.magnetization.compat.ExternalFieldCompat
                         .isImmersiveEngineeringRailgunShot(e)
                     || MagConfig.immersiveEngineeringRailgunReaction())) {
@@ -779,6 +779,12 @@ public final class FieldApplicator {
             }
         }
         return sum;
+    }
+
+    /** One baseline even when both a datapack entity tag and a material adapter match. */
+    private static boolean hasIntrinsicTagResponse(final Entity entity) {
+        return entity.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
+                || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity);
     }
 
     private static MagneticPolarity polarityOf(final Entity e) {

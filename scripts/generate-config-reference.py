@@ -56,7 +56,7 @@ def split_java_args(value: str) -> list[str]:
 
 
 def normalize_default(value: str) -> str:
-    value = value.strip().replace("_", "")
+    value = value.strip()
     if value in {"true", "false"}:
         return value
     if value.startswith("List.of(") and value.endswith(")"):
@@ -64,8 +64,9 @@ def normalize_default(value: str) -> str:
         return "[" + ", ".join(normalize_default(part) for part in split_java_args(inner)) + "]"
     if value.startswith('"'):
         return java_string(value)
-    if re.fullmatch(r"-?(?:\d+(?:\.\d*)?|\.\d+)[dDfFlL]?", value):
-        return value.rstrip("dDfFlL")
+    numeric = value.replace("_", "")
+    if re.fullmatch(r"-?(?:\d+(?:\.\d*)?|\.\d+)[dDfFlL]?", numeric):
+        return numeric.rstrip("dDfFlL")
     if re.fullmatch(r"[A-Za-z0-9_.]+", value):
         return value.rsplit(".", 1)[-1]
     return value
@@ -127,7 +128,15 @@ def parse_spec() -> list[dict[str, str]]:
             detail = default
             value_type = "enum"
         elif kind == "ListAllowEmpty":
-            default = normalize_default(arg_values[1])
+            raw_default = arg_values[1]
+            # Resolve named List.of constants as well as inline defaults, so the
+            # published table contains usable values instead of a Java symbol.
+            if re.fullmatch(r"[A-Z][A-Z0-9_]*", raw_default):
+                constant = re.search(r"\b" + re.escape(raw_default)
+                                     + r"\s*=\s*(List\.of\(.*?\));", SOURCE.read_text(), re.S)
+                if constant:
+                    raw_default = constant.group(1)
+            default = normalize_default(raw_default)
             detail = default
             value_type = "list"
         else:

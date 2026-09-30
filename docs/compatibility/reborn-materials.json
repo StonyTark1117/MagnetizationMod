@@ -1,0 +1,2170 @@
+{
+  "artifact_sha256": "adf8b2328a48791e2e7c2e52e17008c1c0d608f580ebdfbc97fe4d986278534d",
+  "policy": "14 allowlisted metal definitions. Hidden templates and every other material receive no automatic body response; equipment and explicit tags remain independent.",
+  "materials": [
+    {
+      "id": "golems:acacia_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:acacia_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:amethyst",
+      "parent": null,
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:amethyst_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:ancient_debris",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:ancient_debris"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:andesite",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:polished_andesite"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:bamboo_wood",
+      "parent": null,
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:bamboo_blocks",
+        "legs": "#minecraft:bamboo_blocks",
+        "body": "minecraft:bamboo_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:basalt",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:polished_basalt"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:bedrock",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:birch_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:birch_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:black_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:black_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:black_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:black_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:black_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/black"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:black_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/black"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:black_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:black_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blackstone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:polished_blackstone",
+          "minecraft:polished_blackstone_bricks",
+          "minecraft:chiseled_polished_blackstone",
+          "minecraft:cracked_polished_blackstone_bricks"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blue_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:blue_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blue_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:blue_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blue_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/blue"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blue_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/blue"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:blue_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:blue_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:bone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:bone_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:bookshelf",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:bookshelf"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brain_coral",
+      "parent": "golems:generic_coral",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:brain_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brick",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:bricks"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:brown_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:brown_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_mushroom",
+      "parent": "golems:generic_mushroom",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:mushroom_stem",
+          "minecraft:brown_mushroom_block"
+        ],
+        "legs": [
+          "minecraft:mushroom_stem",
+          "minecraft:brown_mushroom_block"
+        ],
+        "body": [
+          "minecraft:mushroom_stem",
+          "minecraft:brown_mushroom_block"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/brown"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/brown"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:brown_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:brown_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:bubble_coral",
+      "parent": "golems:generic_coral",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:bubble_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cherry_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:cherry_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:clay",
+      "parent": null,
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:clay",
+        "body": "minecraft:clay",
+        "legs": "minecraft:clay",
+        "arms": "minecraft:clay",
+        "left_arm": "minecraft:clay",
+        "right_arm": "minecraft:clay"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:coal",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/coal"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:copper_block"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:crafting",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:workbench"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:crimson_stem",
+      "parent": "golems:generic_stem",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "#minecraft:crimson_stems"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:crying_obsidian",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:crying_obsidian"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cyan_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:cyan_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cyan_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:cyan_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cyan_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/cyan"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cyan_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/cyan"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:cyan_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:cyan_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dark_oak_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:dark_oak_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dead_brain_coral",
+      "parent": "golems:generic_dead_coral",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:dead_brain_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dead_bubble_coral",
+      "parent": "golems:generic_dead_coral",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:dead_bubble_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dead_fire_coral",
+      "parent": "golems:generic_dead_coral",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:dead_fire_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dead_horn_coral",
+      "parent": "golems:generic_dead_coral",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:dead_horn_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dead_tube_coral",
+      "parent": "golems:generic_dead_coral",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:dead_tube_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:deepslate",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:polished_deepslate",
+          "minecraft:deepslate_tiles",
+          "minecraft:deepslate_bricks"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:diamond",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/diamond"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:diorite",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:polished_diorite"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dispenser",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:dispenser"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:dried_kelp",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:dried_kelp_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:emerald",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/emerald"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:end_stone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "#c:end_stones",
+          "minecraft:end_stone_bricks"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:exposed_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:exposed_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:fire_coral",
+      "parent": "golems:generic_coral",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:fire_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:furnace",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:furnace"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_concrete",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_copper",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_coral",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_dead_coral",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_froglight",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_glazed_terracotta",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_log",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_mushroom",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_stem",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:generic_wool",
+      "parent": null,
+      "hidden": true,
+      "construction_blocks": null,
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:glass",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/colorless"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:glowstone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:glowstone"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gold",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/gold"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:granite",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:polished_granite"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gray_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:gray_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gray_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:gray_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gray_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/gray"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gray_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/gray"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:gray_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:gray_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:green_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:green_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:green_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:green_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:green_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/green"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:green_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/green"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:green_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:green_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:hay",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:hay_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:honey",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:honey_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:honeycomb",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:honeycomb_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:horn_coral",
+      "parent": "golems:generic_coral",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:horn_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:ice",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#minecraft:ice"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:jungle_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:jungle_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lapis",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/lapis"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:leaves",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#minecraft:leaves"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_blue_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:light_blue_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_blue_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:light_blue_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_blue_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/light_blue"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_blue_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/light_blue"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_blue_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:light_blue_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_gray_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:light_gray_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_gray_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:light_gray_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_gray_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/light_gray"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_gray_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/light_gray"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:light_gray_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:light_gray_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lime_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:lime_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lime_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:lime_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lime_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/lime"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lime_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/lime"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:lime_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:lime_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magenta_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:magenta_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magenta_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:magenta_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magenta_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/magenta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magenta_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/magenta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magenta_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:magenta_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:magma",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:magma_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:mangrove_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:mangrove_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:mangrove_roots",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:mangrove_roots",
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "legs": [
+          "minecraft:mangrove_roots",
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "body": "minecraft:mangrove_roots"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:melon",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:melon"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:moss",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:moss_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:mud",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:mud"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:muddy_mangrove_roots",
+      "parent": "golems:mangrove_roots",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:mangrove_roots",
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "legs": [
+          "minecraft:mangrove_roots",
+          "minecraft:muddy_mangrove_roots"
+        ],
+        "body": "minecraft:muddy_mangrove_roots"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:nether_brick",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:nether_bricks",
+          "minecraft:red_nether_bricks",
+          "minecraft:cracked_nether_bricks",
+          "minecraft:chiseled_nether_bricks"
+        ],
+        "legs": [
+          "minecraft:nether_bricks",
+          "minecraft:red_nether_bricks",
+          "minecraft:cracked_nether_bricks",
+          "minecraft:chiseled_nether_bricks"
+        ],
+        "body": [
+          "minecraft:nether_bricks",
+          "minecraft:cracked_nether_bricks",
+          "minecraft:chiseled_nether_bricks"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:nether_wart",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:nether_wart_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:netherite",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/netherite"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:oak_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:oak_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:obsidian",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:obsidian"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:ochre_froglight",
+      "parent": "golems:generic_froglight",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "legs": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "body": "minecraft:ochre_froglight"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:orange_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:orange_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:orange_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:orange_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:orange_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/orange"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:orange_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/orange"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:orange_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:orange_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:oxidized_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:oxidized_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:packed_mud",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:packed_mud",
+          "minecraft:mud_bricks"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pearlescent_froglight",
+      "parent": "golems:generic_froglight",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "legs": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "body": "minecraft:pearlescent_froglight"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pink_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:pink_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pink_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:pink_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pink_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/pink"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pink_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/pink"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:pink_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:pink_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:prismarine",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:prismarine"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purple_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:purple_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purple_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:purple_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purple_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/purple"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purple_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/purple"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purple_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:purple_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:purpur",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:purpur_block",
+          "minecraft:purpur_pillar"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:quartz",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:quartz"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:raw_copper",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/raw_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:raw_gold",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/raw_gold"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:raw_iron",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/raw_iron"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:red_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:red_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:red_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_mushroom",
+      "parent": "golems:generic_mushroom",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:mushroom_stem",
+          "minecraft:red_mushroom_block"
+        ],
+        "legs": [
+          "minecraft:mushroom_stem",
+          "minecraft:red_mushroom_block"
+        ],
+        "body": "minecraft:red_mushroom_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_nether_brick",
+      "parent": "golems:nether_brick",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:nether_bricks",
+          "minecraft:red_nether_bricks",
+          "minecraft:cracked_nether_bricks",
+          "minecraft:chiseled_nether_bricks"
+        ],
+        "legs": [
+          "minecraft:nether_bricks",
+          "minecraft:red_nether_bricks",
+          "minecraft:cracked_nether_bricks",
+          "minecraft:chiseled_nether_bricks"
+        ],
+        "body": "minecraft:red_nether_bricks"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_sandstone",
+      "parent": "golems:sandstone",
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:red_sandstone",
+          "minecraft:cut_red_sandstone",
+          "minecraft:chiseled_red_sandstone",
+          "minecraft:smooth_red_sandstone"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/red"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/red"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:red_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:red_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:redstone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:storage_blocks/redstone"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:redstone_lamp",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:redstone_lamp"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:sandstone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:sandstone",
+          "minecraft:cut_sandstone",
+          "minecraft:chiseled_sandstone",
+          "minecraft:smooth_sandstone"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:sculk",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:sculk"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:sculk_catalyst",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:sculk_catalyst"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:sea_lantern",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:sea_lantern"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:shroomlight",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:shroomlight"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:slime",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:slime_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:smooth_stone",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:smooth_stone"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:sponge",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": [
+          "minecraft:sponge",
+          "minecraft:wet_sponge"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:spruce_log",
+      "parent": "golems:generic_log",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": "#minecraft:spruce_logs"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_acacia_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_acacia_log",
+          "minecraft:stripped_acacia_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_bamboo_wood",
+      "parent": "golems:bamboo_wood",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:bamboo_blocks",
+        "legs": "#minecraft:bamboo_blocks",
+        "body": "minecraft:stripped_bamboo_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_birch_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_birch_log",
+          "minecraft:stripped_birch_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_cherry_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_cherry_log",
+          "minecraft:stripped_cherry_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_crimson_stem",
+      "parent": "golems:generic_stem",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:crimson_stems",
+        "legs": "#minecraft:crimson_stems",
+        "body": [
+          "minecraft:stripped_crimson_stem",
+          "minecraft:stripped_crimson_hyphae"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_dark_oak_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_dark_oak_log",
+          "minecraft:stripped_dark_oak_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_jungle_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_jungle_log",
+          "minecraft:stripped_jungle_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_mangrove_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_mangrove_log",
+          "minecraft:stripped_mangrove_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_oak_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_oak_log",
+          "minecraft:stripped_oak_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_spruce_log",
+      "parent": "golems:generic_log",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:logs_that_burn",
+        "legs": "#minecraft:logs_that_burn",
+        "body": [
+          "minecraft:stripped_spruce_log",
+          "minecraft:stripped_spruce_wood"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:stripped_warped_stem",
+      "parent": "golems:generic_stem",
+      "hidden": true,
+      "construction_blocks": {
+        "arms": "#minecraft:warped_stems",
+        "legs": "#minecraft:warped_stems",
+        "body": [
+          "minecraft:stripped_warped_stem",
+          "minecraft:stripped_warped_hyphae"
+        ]
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:terracotta",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/colorless"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:tinted_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/tinted"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:tnt",
+      "parent": null,
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:tnt"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:tube_coral",
+      "parent": "golems:generic_coral",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "legs": [
+          "#minecraft:coral_blocks",
+          "#c:dead_coral_blocks"
+        ],
+        "body": "minecraft:tube_coral_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:verdant_froglight",
+      "parent": "golems:generic_froglight",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "legs": [
+          "minecraft:ochre_froglight",
+          "minecraft:verdant_froglight",
+          "minecraft:pearlescent_froglight"
+        ],
+        "body": "minecraft:verdant_froglight"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:warped_stem",
+      "parent": "golems:generic_stem",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "#minecraft:warped_stems"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:warped_wart",
+      "parent": "golems:nether_wart",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "minecraft:warped_wart_block"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:waxed_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:waxed_copper_block"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:waxed_exposed_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:waxed_exposed_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:waxed_oxidized_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:waxed_oxidized_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:waxed_weathered_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:waxed_weathered_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:weathered_copper",
+      "parent": "golems:generic_copper",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:storage_blocks/copper",
+        "legs": "#c:storage_blocks/copper",
+        "body": "minecraft:weathered_copper"
+      },
+      "default_intrinsic_response": true
+    },
+    {
+      "id": "golems:white_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:white_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:white_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:white_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:white_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/white"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:white_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/white"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:white_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:white_wool"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:yellow_concrete",
+      "parent": "golems:generic_concrete",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#c:concrete",
+        "legs": "#c:concrete",
+        "body": "minecraft:yellow_concrete"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:yellow_glazed_terracotta",
+      "parent": "golems:generic_glazed_terracotta",
+      "hidden": false,
+      "construction_blocks": {
+        "all": "minecraft:yellow_glazed_terracotta"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:yellow_stained_glass",
+      "parent": "golems:glass",
+      "hidden": null,
+      "construction_blocks": {
+        "arms": "#c:glass_blocks",
+        "legs": "#c:glass_blocks",
+        "body": "#c:glass_blocks/yellow"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:yellow_terracotta",
+      "parent": "golems:terracotta",
+      "hidden": null,
+      "construction_blocks": {
+        "all": "#c:terracotta/yellow"
+      },
+      "default_intrinsic_response": false
+    },
+    {
+      "id": "golems:yellow_wool",
+      "parent": "golems:generic_wool",
+      "hidden": false,
+      "construction_blocks": {
+        "arms": "#minecraft:wool",
+        "legs": "#minecraft:wool",
+        "body": "minecraft:yellow_wool"
+      },
+      "default_intrinsic_response": false
+    }
+  ]
+}

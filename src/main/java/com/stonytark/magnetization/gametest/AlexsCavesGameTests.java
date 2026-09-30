@@ -121,6 +121,27 @@ public final class AlexsCavesGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "alexPotionModes")
+    public static void potionModesReplaceRatherThanDuplicate(final GameTestHelper helper) {
+        final var original = MagConfig.ALEXSCAVES_POTION_MODE.get();
+        final var entity = net.minecraft.world.entity.EntityType.ZOMBIE.create(helper.getLevel());
+        final var theirs = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse("alexscaves:magnetizing")).orElseThrow();
+        final var ours = com.stonytark.magnetization.registry.MagEffects.MAGNETIZED;
+        try {
+            for (var mode : MagConfig.AlexsCavesPotionMode.values()) {
+                entity.removeAllEffects();
+                MagConfig.ALEXSCAVES_POTION_MODE.set(mode);
+                entity.addEffect(new net.minecraft.world.effect.MobEffectInstance(theirs, 200, 1));
+                entity.addEffect(new net.minecraft.world.effect.MobEffectInstance(ours, 200, 1));
+                helper.assertTrue(entity.hasEffect(ours) == (mode != MagConfig.AlexsCavesPotionMode.THEIRS_ONLY),
+                        "Wrong own effect state for " + mode);
+                helper.assertTrue(entity.hasEffect(theirs) == (mode != MagConfig.AlexsCavesPotionMode.OURS_ONLY),
+                        "Wrong upstream effect state for " + mode);
+            }
+            helper.succeed();
+        } finally { entity.discard(); MagConfig.ALEXSCAVES_POTION_MODE.set(original); }
+    }
+
     private static Block block(final String path) {
         final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("alexscaves", path);
         if (!BuiltInRegistries.BLOCK.containsKey(id)) throw new IllegalStateException("Missing Alex's Caves block " + id);

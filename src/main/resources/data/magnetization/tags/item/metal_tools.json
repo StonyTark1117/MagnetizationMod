@@ -93,21 +93,12 @@
     {"id": "immersiveengineering:drillhead_iron", "required": false},
     {"id": "immersiveengineering:drillhead_steel", "required": false},
 
-    {"id": "ironsspellbooks:cultist_sword", "required": false},
-    {"id": "ironsspellbooks:executioner_sword", "required": false},
-    {"id": "ironsspellbooks:knight_sword", "required": false},
 
-    {"id": "cataclysm:ignitium_sword", "required": false},
-    {"id": "cataclysm:ignitium_pickaxe", "required": false},
-    {"id": "cataclysm:ignitium_axe", "required": false},
-    {"id": "cataclysm:ignitium_shovel", "required": false},
-    {"id": "cataclysm:ignitium_hoe", "required": false},
-
-    {"id": "mekanism:steel_sword", "required": false},
-    {"id": "mekanism:steel_pickaxe", "required": false},
-    {"id": "mekanism:steel_axe", "required": false},
-    {"id": "mekanism:steel_shovel", "required": false},
-    {"id": "mekanism:steel_hoe", "required": false},
+    {"id": "mekanismtools:steel_sword", "required": false},
+    {"id": "mekanismtools:steel_pickaxe", "required": false},
+    {"id": "mekanismtools:steel_axe", "required": false},
+    {"id": "mekanismtools:steel_shovel", "required": false},
+    {"id": "mekanismtools:steel_hoe", "required": false},
 
     {"id": "tfmg:steel_sword", "required": false},
     {"id": "tfmg:steel_pickaxe", "required": false},

@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.stonytark.magnetization.mixin.compat",
+  "plugin": "com.stonytark.magnetization.mixin.compat.CreateMagneticsServerMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "server": ["CreateMagneticsServerMixin"],
+  "injectors": {"defaultRequire": 1}
+}

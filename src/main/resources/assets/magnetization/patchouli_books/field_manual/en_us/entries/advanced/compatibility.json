@@ -32,6 +32,21 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.controls.title",
       "text": "book.magnetization.entry.compatibility.controls.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.reborn.title",
+      "text": "book.magnetization.entry.compatibility.reborn.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.audit.title",
+      "text": "book.magnetization.entry.compatibility.audit.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.magnetics.title",
+      "text": "book.magnetization.entry.compatibility.magnetics.text"
     }
   ]
 }

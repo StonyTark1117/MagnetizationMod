@@ -1,0 +1,16 @@
+Commit validation — 2026-09-30
+Exported the staged index to an isolated directory, excluding the separate uncommitted performance work.
+The staged source built successfully; 37 targeted unit tests passed (0 failures/errors).
+Command: ./gradlew test -PmagMinimalUnitTests --tests '*Golem*' --tests '*FieldApplicator*' --tests '*CreateMagneticsServerMixinPluginTest' jar
+
+run-extra-golems-reborn-gametest
+[30Sep2026 03:36:25.266] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 12 required tests passed :)
+
+run-magnetics-workaround-gametest
+[30Sep2026 03:36:38.258] [modloading-sync-worker/INFO] [magnetization/CreateMagneticsServerFix/]: Applied opt-in Create: Magnetics 0.0.4-alpha dedicated-server SoundInstance crash workaround
+[30Sep2026 03:36:41.363] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[createmagnetics] resolved=4 unresolved=[]
+[30Sep2026 03:36:41.392] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+
+run-magnetics-workaround-absent-gametest
+[30Sep2026 03:36:57.473] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+

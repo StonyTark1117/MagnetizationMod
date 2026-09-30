@@ -28,10 +28,13 @@ public final class OptionalCompatibilityAbsentGameTests {
                 "createaddition", "createbigcannons", "createdieselgenerators", "createendertransmission",
                 "rocketnautics", "oreexcavation", "coasterssimulatedextratypes", "coastersmagnetized",
                 "coastersengineered", "coasters_extras", "coasterfins", "create_ironworks",
-                "cbcaeronauticsmissiles"}) {
+                "cbcaeronauticsmissiles", "golems", "createmagnetics"}) {
             helper.assertTrue(!ModList.get().isLoaded(mod),
                     "Minimal absent-mod profile unexpectedly contains " + mod);
         }
+        final var ironGolem = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(helper.getLevel());
+        helper.assertTrue(ironGolem != null && !com.stonytark.magnetization.compat.ExtraGolemsRebornCompat
+                        .isMagnetizable(ironGolem), "Reborn adapter must be inert without Reborn");
         helper.assertTrue(!ExternalFieldCompat.isKnownEmitter(Blocks.AIR.defaultBlockState()),
                 "External emitter adapter matched a vanilla air block");
         helper.assertTrue(GasExcitationProfiles.size() == 0,

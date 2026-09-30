@@ -525,6 +525,14 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue TFMG_COOLING_FLUID_ENABLED;
     public static final ModConfigSpec.BooleanValue TFMG_GAS_EXCITATION_ENABLED;
     public static final ModConfigSpec.BooleanValue SIMULATED_COASTERS_COMPAT_ENABLED;
+    public static final List<String> DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS = List.of(
+            "golems:raw_iron", "golems:raw_gold", "golems:raw_copper", "golems:gold", "golems:netherite",
+            "golems:ancient_debris", "golems:copper", "golems:exposed_copper",
+            "golems:weathered_copper", "golems:oxidized_copper", "golems:waxed_copper",
+            "golems:waxed_exposed_copper", "golems:waxed_weathered_copper", "golems:waxed_oxidized_copper");
+    public static final ModConfigSpec.BooleanValue EXTRA_GOLEMS_REBORN_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue CREATE_MAGNETICS_SERVER_CRASH_WORKAROUND;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> EXTRA_GOLEMS_REBORN_MATERIALS;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
@@ -2414,6 +2422,27 @@ public final class MagConfig {
                 .comment("Master switch for Create: Coasters Simulated magnetic-force and Structural Inducer integration.")
                 .translation("magnetization.configuration.compat.simulatedCoastersCompatEnabled")
                 .define("simulatedCoastersCompatEnabled", true);
+        CREATE_MAGNETICS_SERVER_CRASH_WORKAROUND = b
+                .comment("Work around Create: Magnetics 0.0.4-alpha loading client SoundInstance classes on dedicated servers.",
+                         "Default off. Isolates the Kinetic Magnet's client-only sound members; clients are unchanged.",
+                         "Read from this file before mod construction. Requires a full server process restart; config reload cannot apply it.",
+                         "Applies only to 0.0.4-alpha. Independent of magnetic gameplay compatibility controls.")
+                .translation("magnetization.configuration.compat.createMagneticsServerCrashWorkaround")
+                .gameRestart()
+                .define("createMagneticsServerCrashWorkaround", false);
+        EXTRA_GOLEMS_REBORN_COMPAT_ENABLED = b
+                .comment("Enable intrinsic material-based magnetic reaction for Extra Golems Reborn 21.1.0.1.",
+                         "Explicit entity tags and magnetic equipment still work when disabled. Applied on the next server tick after config reload.")
+                .translation("magnetization.configuration.compat.extraGolemsRebornCompatEnabled")
+                .define("extraGolemsRebornCompatEnabled", true);
+        EXTRA_GOLEMS_REBORN_MATERIALS = b
+                .comment("Reborn material IDs with intrinsic susceptibility 1.0. Empty disables automatic material recognition.",
+                         "Use material IDs, not entity IDs or tags. Unknown valid IDs are inert until provided by a golem datapack.",
+                         "Applied on the next server tick after config reload; wood, stone and nether brick are excluded by default.")
+                .translation("magnetization.configuration.compat.extraGolemsRebornMaterials")
+                .defineListAllowEmpty("extraGolemsRebornMaterials", DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS,
+                        () -> "golems:raw_iron", o -> o instanceof String id && id.matches("[a-z0-9_.-]+:[a-z0-9/._-]+")
+                                && net.minecraft.resources.ResourceLocation.tryParse(id) != null);
         IRONWORKS_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's optional Create: Ironworks material and armor tag integration.",
                          "Takes effect on data reload.")
@@ -3151,6 +3180,16 @@ public final class MagConfig {
     public static boolean allowRedstonePower() { return booleanOr(ALLOW_REDSTONE_POWER, true); }
     public static boolean simulatedCoastersCompatEnabled() {
         return booleanOr(SIMULATED_COASTERS_COMPAT_ENABLED, true);
+    }
+    public static boolean extraGolemsRebornCompatEnabled() {
+        return booleanOr(EXTRA_GOLEMS_REBORN_COMPAT_ENABLED, true);
+    }
+    public static List<? extends String> extraGolemsRebornMaterials() {
+        try {
+            return commonClientValue(EXTRA_GOLEMS_REBORN_MATERIALS, EXTRA_GOLEMS_REBORN_MATERIALS.get());
+        } catch (final IllegalStateException e) {
+            return DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS;
+        }
     }
     public static boolean ironworksCompatEnabled() {
         return booleanOr(IRONWORKS_COMPAT_ENABLED, true);

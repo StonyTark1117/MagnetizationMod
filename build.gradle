@@ -38,6 +38,12 @@ configurations {
     coastersExtrasRuntime { extendsFrom simulatedCoastersRuntime }
     coastersAdditionsRuntime { extendsFrom simulatedCoastersRuntime }
     ironworksRuntime
+    extraGolemsRebornRuntime
+    sweepAircraftRuntime
+    sweepMaterialsRuntime
+    sweepEquipmentRuntime
+    sweepMagneticsRuntime
+    sweepBossRuntime
     ironworksCoastersAdditionsRuntime {
         extendsFrom ironworksRuntime, coastersAdditionsRuntime
     }
@@ -133,6 +139,9 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
+        'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
+        'runextragolemsreborngametestserver', 'runextragolemsrebornclient',
         'runjammarrclient', 'runjammarrdedicatedclient', 'runjammarrlistener', 'runjammarrserver',
         'rundata',
         'runserver', 'rungametestserver', 'runregressiongametestserver',
@@ -194,7 +203,10 @@ def minimalProfileTasks = [
         'smokeserverminimal', 'smokegametest', 'smokeregressiongametest',
         'smokeclientnormal', 'releasegate'
 ]
-def wantsMinimalClasspath = lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
+// Allow focused unit checks without resolving the optional GUI/client pack.
+// Integrations needing upstream code retain their explicit runtime profiles.
+def wantsMinimalClasspath = project.hasProperty('magMinimalUnitTests')
+        || lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
 if (!wantsMinimalClasspath) {
     configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
 }
@@ -384,6 +396,17 @@ if (wantsCoastersExtrasTests) {
 }
 if (wantsIronworksTests) {
     configurations.runtimeClasspath { extendsFrom configurations.ironworksRuntime }
+}
+['Aircraft', 'Materials', 'Equipment', 'Magnetics', 'Boss'].each { profile ->
+    if (lowered.any { it.endsWith("runSweep${profile}GameTestServer".toLowerCase()) }) {
+        configurations.runtimeClasspath.extendsFrom(configurations.getByName("sweep${profile}Runtime"))
+    }
+}
+if (lowered.any { it.endsWith('runmagneticsworkaroundgametestserver') || it.endsWith('runmagneticsworkaroundclient') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepMagneticsRuntime)
+}
+if (lowered.any { it.endsWith('runextragolemsreborngametestserver') || it.endsWith('runextragolemsrebornclient') }) {
+    configurations.runtimeClasspath { extendsFrom configurations.extraGolemsRebornRuntime }
 }
 if (wantsCoastersAdditionsTests) {
     configurations.runtimeClasspath { extendsFrom configurations.coastersAdditionsRuntime }
@@ -759,6 +782,12 @@ processResources {
         into 'data/magnetization_alexscaves/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_sweep/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_extra_golems_reborn/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_createtracks/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -1045,12 +1074,71 @@ neoForge {
         immersiveEngineeringGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-immersive-engineering-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersiveengineering'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersiveengineering,magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'immersiveengineering'
         }
         alexsCavesGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-alexscaves-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_alexscaves'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_alexscaves,magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'alexscaves'
+        }
+        sweepAircraftGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-aircraft-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'immersive_aircraft,aviator_dream'
+        }
+        sweepMagneticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-magnetics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'createmagnetics'
+        }
+        magneticsWorkaroundGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetics-workaround-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'createmagnetics'
+        }
+        magneticsWorkaroundAbsentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetics-workaround-absent-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_compat_absent'
+        }
+        magneticsWorkaroundClient {
+            type = 'client'
+            gameDirectory = file('run-magnetics-workaround-client')
+        }
+        sweepEquipmentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-equipment-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'aether,mekanism,mekanismtools'
+        }
+        sweepMaterialsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-materials-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'simulated,magnetizing,ironchest,mcwdoors,mcwfences,mcwbridges,mcwtrpdoors,mcwlights,mcwwindows'
+        }
+        sweepBossGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-boss-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'cataclysm,bosses_of_mass_destruction,irons_spellbooks'
+        }
+        extraGolemsRebornGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-extra-golems-reborn-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_extra_golems_reborn'
+        }
+        extraGolemsRebornClient {
+            client()
+            gameDirectory = file('run-extra-golems-reborn-client')
+            if (providers.gradleProperty('rebornWorld').isPresent()) {
+                programArguments.addAll('--quickPlaySingleplayer', providers.gradleProperty('rebornWorld').get())
+            }
         }
         createTracksGameTestServer {
             type = 'gameTestServer'
@@ -1189,6 +1277,20 @@ def provisionSmokeEula = { File targetDir ->
 eula=true
 '''
     logger.lifecycle("smokeServerMinimal: created isolated EULA acceptance at ${target}")
+}
+
+// Dedicated disposable profiles test the real early TOML option, not a JVM bypass.
+def magneticsWorkaroundFixtures = [
+        runMagneticsWorkaroundGameTestServer: 'run-magnetics-workaround-gametest',
+        runMagneticsWorkaroundAbsentGameTestServer: 'run-magnetics-workaround-absent-gametest',
+        runMagneticsWorkaroundClient: 'run-magnetics-workaround-client'
+]
+tasks.matching { magneticsWorkaroundFixtures.containsKey(it.name) }.configureEach {
+    doFirst {
+        def fixtureConfig = file("${magneticsWorkaroundFixtures[name]}/config/magnetization-common.toml")
+        fixtureConfig.parentFile.mkdirs()
+        fixtureConfig.text = '[compat]\ncreateMagneticsServerCrashWorkaround = true\n'
+    }
 }
 
 // Minecraft logs a missing server.properties as ERROR before generating its
@@ -1659,6 +1761,50 @@ dependencies {
     coastersAdditionsRuntime("curse.maven:create-coasters-simulated-additions-1661497:${coasters_additions_test_file}") { transitive = false }
     coastersAdditionsRuntime("maven.modrinth:interiors:${create_interiors_test_version}") { transitive = false }
     ironworksRuntime("maven.modrinth:create-ironworks:${ironworks_test_version}") { transitive = false }
+    // Exact upstream audit artifacts, isolated from shipped dependencies.
+    sweepAircraftRuntime("maven.modrinth:immersive-aircraft:ZZTlNkV9") { transitive = false }
+    sweepAircraftRuntime("maven.modrinth:aviator-dreams-reloaded:4Aa8QEq9") { transitive = false }
+    sweepMaterialsRuntime("dev.architectury:architectury-neoforge:13.0.8") { transitive = false }
+    sweepMaterialsRuntime("maven.modrinth:magnetizing:az3hmBKl") { transitive = false }
+    // Optional local workaround is test evidence only; never a shipped dependency.
+    if (providers.gradleProperty('magneticsCompatJar').isPresent()) {
+        def workaround = file(providers.gradleProperty('magneticsCompatJar').get())
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(workaround.bytes).encodeHex().toString()
+        if (digest != '2bbb042c7ebcb11647b87adfecd5629aba216f9eccc4bdc0495956457dfc0194') {
+            throw new GradleException('Unexpected Create Magnetics compatibility trial artifact hash')
+        }
+        // The supplied path may contain ':' (a JVM classpath separator on Linux).
+        def stagedDirectory = layout.buildDirectory.dir('compat-audit/local')
+        def stageWorkaround = tasks.register('stageMagneticsCompat', Copy) {
+            from workaround
+            into stagedDirectory
+            rename { 'magnetics-compat-trial.jar' }
+        }
+        sweepMagneticsRuntime(files(stagedDirectory.map { it.file('magnetics-compat-trial.jar') }).builtBy(stageWorkaround))
+    }
+    sweepMagneticsRuntime("curse.maven:createmagnetics-1457075:7667440") { transitive = false }
+    sweepMaterialsRuntime("curse.maven:ironchest-228756:5491156") { transitive = false }
+    ["macaws-doors:u7BRX44F", "macaws-fences-and-walls:jVdb0r4W", "macaws-bridges:aQ7rY7ng",
+     "macaws-trapdoors:StnP0RNi", "macaws-lights-and-lamps:5U2kQZIL", "macaws-windows:rQUE4LCz"].each {
+        sweepMaterialsRuntime("maven.modrinth:${it}") { transitive = false }
+    }
+    sweepBossRuntime("maven.modrinth:l_enders-cataclysm:PsPYpoCC") { transitive = false }
+    sweepBossRuntime("maven.modrinth:bosses-of-mass-destruction-forge:snhDYBxP") { transitive = false }
+    sweepBossRuntime("maven.modrinth:cerbons-api:5wbxkBQ1") { transitive = false }
+    sweepBossRuntime("maven.modrinth:geckolib:Grwn5rUB") { transitive = false }
+    sweepBossRuntime("maven.modrinth:cloth-config:izKINKFg") { transitive = false }
+    sweepBossRuntime("maven.modrinth:irons-spells-n-spellbooks:slKLosTb") { transitive = false }
+    sweepBossRuntime("maven.modrinth:irons-lib:lUwUKYPl") { transitive = false }
+    sweepBossRuntime("maven.modrinth:playeranimator:HJZB6bmA") { transitive = false }
+    sweepBossRuntime("maven.modrinth:lionfish-api:fTRMVgyZ") { transitive = false }
+    sweepBossRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:owo-lib:NMCHU6DZ") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:aether:K5X5qMwG") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:mekanism:5KzzycBT") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:mekanism-tools:v5zlSE9s") { transitive = false }
+    // Published Reborn 21.1.0.1, Minecraft 1.21.1 NeoForge. Never bundled.
+    compileOnly("curse.maven:extra-golems-reborn-1456863:7922386") { transitive = false }
+    extraGolemsRebornRuntime("curse.maven:extra-golems-reborn-1456863:7922386") { transitive = false }
 
     compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
     createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
@@ -1813,10 +1959,10 @@ dependencies {
     // === 1.1.2 cross-mod tag-coverage smoke-test mods ===
     // localRuntime only — they need to be present so the ferromagnetic_blocks /
     // ferromagnetic tag refs in our datapack resolve to real blocks/items at
-    // tag-load time. Each entry tests a different category of integration
+    // tag-load time. Each entry covers a different category of integration
     // (decorative metalwork, falling blocks, tech metals, etc.). Twilight Forest
-    // and Iron Chests both lack 1.21.1 NeoForge ports on Modrinth so they're
-    // tag-supported but not dev-loadable.
+    // and Iron Chests have target-platform artifacts, but are not included in
+    // this profile. Optional tags alone do not verify their behavior.
     localRuntime("maven.modrinth:macaws-doors:u7BRX44F")
     localRuntime("maven.modrinth:macaws-fences-and-walls:jVdb0r4W")
     localRuntime("maven.modrinth:macaws-bridges:aQ7rY7ng")

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.IronOxideGolemResourceTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-09-30T09:55:55.383Z" hostname="Hades" time="0.079">
+  <properties/>
+  <testcase name="everyGolemToggleIsLocalized()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.019"/>
+  <testcase name="creativeEggsAreLocalizedModeledAndNeverCrafted()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.001"/>
+  <testcase name="mrFluidGolemHasDistinctSoftAndHardenedPresentation()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.043"/>
+  <testcase name="mrFluidGolemSoftStateCannotRegressToAStaticTextureSwap()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.001"/>
+  <testcase name="stateTexturesKeepIronGolemUvDimensions()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.003"/>
+  <testcase name="everyGolemHasLootAndLocalization()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.005"/>
+  <testcase name="manualAndAdvancementsAreValidJson()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.001"/>
+  <testcase name="everyCustomGolemSoundHasAnAccessibleSubtitle()" classname="com.stonytark.magnetization.data.IronOxideGolemResourceTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

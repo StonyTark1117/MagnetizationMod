@@ -125,7 +125,7 @@
     {"id": "createdieselgenerators:powered_engine_shaft", "required": false},
     {"id": "createdieselgenerators:sheet_metal_panel", "required": false},
     {"id": "createdieselgenerators:chemical_turret", "required": false},
-    {"id": "aether:gravitite_block", "required": false},
+    {"id": "aether:gravitite_ore", "required": false},
     {"id": "aether:enchanted_gravitite", "required": false},
     {"id": "ironchest:iron_chest", "required": false},
     {"id": "ironchest:gold_chest", "required": false},

@@ -1,0 +1,4185 @@
+{
+  "scope": "Static optional-tag inventory; registry resolution and behavior require runtime tests",
+  "references": [
+    {
+      "source": "src/main/resources/data/c/tags/fluid/hydrogen.json",
+      "id": "tfmg:hydrogen",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/c/tags/fluid/hydrogen.json",
+      "id": "tfmg:flowing_hydrogen",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/c/tags/item/buckets/hydrogen.json",
+      "id": "tfmg:hydrogen_bucket",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/c/tags/item/ingots/magnetic_alloy.json",
+      "id": "tfmg:magnetic_alloy_ingot",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/c/tags/item/plates/magnetic_alloy.json",
+      "id": "tfmg:magnetic_alloy_sheet",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:generator_coil",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:copper_wire_block",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:overcharged_iron_wire_block",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:overcharged_golden_wire_block",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:overcharged_diamond_wire_block",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:basic_motor",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:advanced_motor",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:reinforced_motor",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:basic_motor_extension",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:advanced_motor_extension",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:electrical_connector",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:basic_energiser",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:advanced_energiser",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:reinforced_energiser",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:heater",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_new_age:heat_pump",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:electric_motor",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:alternator",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:rolling_mill",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:modular_accumulator",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:tesla_coil",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:connector",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:large_connector",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:small_light_connector",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createaddition:portable_energy_interface",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:electromagnet",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:tesla_coil",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:transformer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:transformer_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:current_transformer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:capacitor_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:capacitor_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:capacitor_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:generator",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:thermoelectric_generator",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:coil_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:coil_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:coil_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_lv_relay",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_mv_relay",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_hv_relay",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_redstone",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_probe",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_bundled",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:connector_structural",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:post_transformer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "immersiveengineering:capacitor_creative",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "alexscaves:magnetic_levitation_rail",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "alexscaves:quarry",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "alexscaves:magnetic_activator",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "alexscaves:magnetic_light",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:large_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:huge_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:powered_engine_shaft",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:sheet_metal_panel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createdieselgenerators:chemical_turret",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:cast_iron_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:steel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:nethersteel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:cast_iron_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:steel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "createbigcannons:nethersteel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:laminated_magnetic_alloy_block",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:large_coil",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:transformer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:large_transformer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:generator",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:electric_motor",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:rotor",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:stator",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:electric_pump",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:converter",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:polarizer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "tfmg:accumulator",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:printer",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:mechanical_grindstone",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:grindstone_drain",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:experience_hatch",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:experience_lantern",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:blaze_enchanter",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/eddy_conductors.json",
+      "id": "create_enchantment_industry:blaze_forger",
+      "namespace": "create_enchantment_industry",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:laminated_magnetic_alloy_block",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:large_coil",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:transformer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:large_transformer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:generator",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:electric_motor",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:rotor",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:stator",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:electric_pump",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:converter",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tfmg:polarizer",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "create_ironworks:sturdy_sheet_block",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:azure_magnet",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:scarlet_magnet",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:block_of_azure_neodymium",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:block_of_scarlet_neodymium",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:azure_neodymium_node",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:scarlet_neodymium_node",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:azure_neodymium_pillar",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:scarlet_neodymium_pillar",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:galena_iron_ore",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:magnetic_levitation_rail",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:quarry",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:magnetic_activator",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:magnetic_light",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:heart_of_iron",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "alexscaves:galena",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "twilightforest:knightmetal_block",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "twilightforest:ironwood_block",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "twilightforest:fiery_block",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "#create_new_age:magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "create_new_age:generator_coil",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "rocketnautics:magnetic_stabilizer",
+      "namespace": "rocketnautics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createaddition:electric_motor",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createaddition:alternator",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createaddition:rolling_mill",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createaddition:tesla_coil",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createaddition:barbed_wire",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "tracks:track_mount",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "#railways:locometal",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:track_coupler",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:handcar",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:singleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:doubleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:medium_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "railways:tripleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:large_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:huge_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:powered_engine_shaft",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:sheet_metal_panel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createdieselgenerators:chemical_turret",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "aether:gravitite_ore",
+      "namespace": "aether",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "aether:enchanted_gravitite",
+      "namespace": "aether",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "ironchest:iron_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "ironchest:gold_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "ironchest:copper_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:iron_chest",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:gold_chest",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:netherite_chest",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:iron_barrel",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:gold_barrel",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "sophisticatedstorage:netherite_barrel",
+      "namespace": "sophisticatedstorage",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:storage_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:storage_aluminum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:ore_aluminum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:deepslate_ore_aluminum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:ore_uranium",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:deepslate_ore_uranium",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:ore_nickel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:deepslate_ore_nickel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:iron_gate",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:gold_door",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:gold_trapdoor",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:netherite_door",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:netherite_trapdoor",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:pulley_block",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:faucet",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:bellows",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:cog_block",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:spring_launcher",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:globe",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:wind_vane",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:hourglass",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "supplementaries:cannon",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:tesla_coil",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:electromagnet",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:floodlight",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:transformer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:transformer_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:current_transformer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:capacitor_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:capacitor_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:capacitor_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:generator",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:thermoelectric_generator",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:coil_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:coil_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:coil_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_fence",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_fence_gate",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_post",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_wallmount",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_slope",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_door",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_trapdoor",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_catwalk",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:steel_scaffolding_standard",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:alu_fence",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:alu_fence_gate",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:alu_post",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:metal_ladder_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:metal_ladder_alu",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:metal_barrel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "immersiveengineering:feedthrough",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:iron_portcullis",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:jail_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:metal_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:metal_hospital_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:metal_reinforced_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:metal_warning_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwdoors:metal_windowed_door",
+      "namespace": "mcwdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:acorn_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:bastion_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:bastion_metal_fence_gate",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:cathedral_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:curved_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:curved_metal_fence_gate",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:expanded_mesh_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:fortress_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:gothic_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:iron_cheval_de_frise",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:majestic_metal_fence_gate",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:mesh_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:mesh_metal_fence_gate",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:ornate_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:panelled_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:twilight_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwfences:vintage_metal_fence",
+      "namespace": "mcwfences",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:iron_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:iron_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:iron_framed_torch",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:iron_small_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:iron_wall_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:golden_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:golden_chain",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:golden_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:golden_small_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:golden_wall_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:copper_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:copper_chain",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:copper_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:copper_small_chandelier",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwlights:copper_wall_candle_holder",
+      "namespace": "mcwlights",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwbridges:iron_bridge",
+      "namespace": "mcwbridges",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwbridges:iron_bridge_pier",
+      "namespace": "mcwbridges",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwbridges:iron_bridge_stair",
+      "namespace": "mcwbridges",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwtrpdoors:metal_trapdoor",
+      "namespace": "mcwtrpdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwtrpdoors:metal_full_trapdoor",
+      "namespace": "mcwtrpdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwtrpdoors:metal_warning_trapdoor",
+      "namespace": "mcwtrpdoors",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:iron_shutter",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:metal_window",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:metal_four_window",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:metal_pane_window",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:metal_curtain_rod",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "mcwwindows:golden_curtain_rod",
+      "namespace": "mcwwindows",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:cast_iron_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:steel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:nethersteel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:cast_iron_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:steel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:nethersteel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:cast_iron_autocannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+      "id": "createbigcannons:steel_autocannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/gallium_bearing_ores.json",
+      "id": "tfmg:bauxite",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "simulated:redstone_magnet",
+      "namespace": "simulated",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "coasterfins:coaster_fin",
+      "namespace": "coasterfins",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "magnetizing:blue_block_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "magnetizing:red_block_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "magnetizing:blue_directional_block_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "magnetizing:red_directional_block_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "createmagnetics:kinetic_magnet",
+      "namespace": "createmagnetics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_emitter.json",
+      "id": "#create_new_age:magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:canister",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:distillation_tank",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:bulk_fermenter",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:oil_barrel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:pumpjack_bearing",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:pumpjack_bearing_b",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:pumpjack_head",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:pumpjack_crank",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:burner",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:crude_oil",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:diesel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:gasoline",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:biodiesel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:ethanol",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:plant_oil",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:white_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:orange_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:magenta_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:light_blue_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:yellow_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:lime_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:pink_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:gray_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:light_gray_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:cyan_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:purple_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:blue_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:brown_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:green_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:red_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/magnetic_susceptibility_excluded.json",
+      "id": "createdieselgenerators:black_concrete_encased_fluid_pipe",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/block/metallic_ores.json",
+      "id": "tfmg:bauxite",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "irons_spellbooks:lightning_magic",
+      "namespace": "irons_spellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "cataclysm:lightning_spear",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "cataclysm:electric_shock",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "alexscaves:tesla",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "alexscaves:magnetron_shock",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "twilightforest:lightning",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "immersiveengineering:tesla",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "immersiveengineering:tesla_primary",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "immersiveengineering:razor_shock",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "immersiveengineering:razor_wire",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+      "id": "createaddition:tesla_coil",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "alexscaves:magnetron",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "alexscaves:ferrouslime",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersiveengineering:railgun_shot",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "modulargolems:iron_golem_entity",
+      "namespace": "modulargolems",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "modulargolems:metal_golem_entity",
+      "namespace": "modulargolems",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "cataclysm:ignis",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "cataclysm:netherite_monstrosity",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "cataclysm:the_harbinger",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "bosses_of_mass_destruction:gauntlet",
+      "namespace": "bosses_of_mass_destruction",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "quark:iron_oretoise",
+      "namespace": "quark",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "quark:copper_oretoise",
+      "namespace": "quark",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:gyrodyne",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:biplane",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:airship",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:cargo_airship",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:warship",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:quadrocopter",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "immersive_aircraft:bamboo_hopper",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:douglas_dc1",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:douglas_dc2",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:douglas_c47",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:lockheed_l1049g",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:dehavilland_dh106",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:fokker_fviib3m",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:fokker_fviia",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+      "id": "aviator_dream:toyota_stout_k100",
+      "namespace": "aviator_dream",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/electrolyzer_coils.json",
+      "id": "immersiveengineering:coil_lv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/electrolyzer_coils.json",
+      "id": "immersiveengineering:coil_mv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/electrolyzer_coils.json",
+      "id": "immersiveengineering:coil_hv",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/electrolyzer_coils.json",
+      "id": "tfmg:large_coil",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tfmg:magnetic_alloy_ingot",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tfmg:magnetic_alloy_sheet",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tfmg:magnet",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tfmg:electromagnetic_coil",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tfmg:large_coil",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "magnetizing:blue_item_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "magnetizing:red_item_magnet",
+      "namespace": "magnetizing",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createmagnetics:magnetized_crystal",
+      "namespace": "createmagnetics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createmagnetics:pure_magnetized_crystal",
+      "namespace": "createmagnetics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createmagnetics:magnetic_induction_coil",
+      "namespace": "createmagnetics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "#create_new_age:magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "create_new_age:generator_coil",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "rocketnautics:magnetic_stabilizer",
+      "namespace": "rocketnautics",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:azure_neodymium_ingot",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:scarlet_neodymium_ingot",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:raw_azure_neodymium",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:raw_scarlet_neodymium",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:heart_of_iron",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "alexscaves:ferrouslime_ball",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "twilightforest:knightmetal_ingot",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "twilightforest:steeleaf",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "twilightforest:ironwood_ingot",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "twilightforest:fiery_ingot",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createaddition:capacitor",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createaddition:electric_motor",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createaddition:alternator",
+      "namespace": "createaddition",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:track_mount",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:small_suspension_track",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:suspension_track",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:large_suspension_track",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:small_track_drive_wheel",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:track_drive_wheel",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "tracks:large_track_drive_wheel",
+      "namespace": "tracks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:track_coupler",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:handcar",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:singleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:doubleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:medium_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "railways:tripleaxle_bogey",
+      "namespace": "railways",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:large_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:huge_diesel_engine",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:powered_engine_shaft",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:sheet_metal_panel",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createdieselgenerators:chemical_turret",
+      "namespace": "createdieselgenerators",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "aether:gravitite_ore",
+      "namespace": "aether",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "aether:enchanted_gravitite",
+      "namespace": "aether",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "ironchest:iron_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "ironchest:gold_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "ironchest:copper_chest",
+      "namespace": "ironchest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:ingot_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:ingot_aluminum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:ingot_electrum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:ingot_constantan",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:dust_iron",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:dust_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:plate_iron",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:plate_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:wirecoil_copper",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:wirecoil_electrum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:wirecoil_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:railgun",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "supplementaries:cannonball",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "supplementaries:rocket",
+      "namespace": "supplementaries",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_iron",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_aluminum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_nickel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_lead",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_silver",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_constantan",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_electrum",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersiveengineering:sheetmetal_uranium",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:engine",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:eco_engine",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:nether_engine",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:propeller",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:enhanced_propeller",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:boiler",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:steel_boiler",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:industrial_gears",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:sturdy_pipes",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:gyroscope",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:gyroscope_hud",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:gyroscope_dials",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:hull_reinforcement",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:improved_landing_gear",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:rotary_cannon",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:heavy_crossbow",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:telescope",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "immersive_aircraft:bomb_bay",
+      "namespace": "immersive_aircraft",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:cast_iron_ingot",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:steel_ingot",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:nethersteel_ingot",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:cast_iron_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:steel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:nethersteel_block",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:cast_iron_autocannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:steel_autocannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:cast_iron_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:steel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+      "id": "createbigcannons:nethersteel_cannon_barrel",
+      "namespace": "createbigcannons",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "tfmg:magnet",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "tfmg:magnetic_alloy_ingot",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "tfmg:magnetic_alloy_sheet",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "create_new_age:magnetite_block",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "create_new_age:redstone_magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "create_new_age:layered_magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "create_new_age:fluxuated_magnetite",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "create_new_age:netherite_magnet",
+      "namespace": "create_new_age",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "alexscaves:azure_magnet",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "alexscaves:scarlet_magnet",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "alexscaves:azure_neodymium_ingot",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/machine_magnets.json",
+      "id": "alexscaves:scarlet_neodymium_ingot",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:knightmetal_helmet",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:knightmetal_chestplate",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:knightmetal_leggings",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:knightmetal_boots",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:steeleaf_helmet",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:steeleaf_chestplate",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:steeleaf_leggings",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:steeleaf_boots",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:ironwood_helmet",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:ironwood_chestplate",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:ironwood_leggings",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:ironwood_boots",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:fiery_helmet",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:fiery_chestplate",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:fiery_leggings",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "twilightforest:fiery_boots",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:steel_helmet",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:steel_chestplate",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:steel_leggings",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:steel_boots",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:armor_faraday_head",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:armor_faraday_chest",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:armor_faraday_legs",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "immersiveengineering:armor_faraday_feet",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_iron_plated_helmet",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_iron_plated_chestplate",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_iron_plated_leggings",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_iron_plated_boots",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_netherite_plated_helmet",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_netherite_plated_chestplate",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_netherite_plated_leggings",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "ironsspellbooks:armor_netherite_plated_boots",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "cataclysm:ignitium_helmet",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "cataclysm:ignitium_chestplate",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "cataclysm:ignitium_leggings",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "cataclysm:ignitium_boots",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "cataclysm:ignitium_elytra_chestplate",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "alexscaves:hazmat_mask",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "alexscaves:hazmat_chestplate",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "alexscaves:hazmat_leggings",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "alexscaves:hazmat_boots",
+      "namespace": "alexscaves",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "mekanism:steel_helmet",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "mekanism:steel_chestplate",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "mekanism:steel_leggings",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "mekanism:steel_boots",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:copper_armor_helmet",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:copper_armor_chestplate",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:copper_armor_leggings",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:copper_armor_boots",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:bronze_armor_helmet",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:bronze_armor_chestplate",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:bronze_armor_leggings",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:bronze_armor_boots",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:brass_armor_helmet",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:brass_armor_chestplate",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:brass_armor_leggings",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:brass_armor_boots",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:steel_armor_helmet",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:steel_armor_chestplate",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:steel_armor_leggings",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:steel_armor_boots",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:sturdy_armor_helmet",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:sturdy_armor_chestplate",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:sturdy_armor_leggings",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_armor.json",
+      "id": "create_ironworks:sturdy_armor_boots",
+      "namespace": "create_ironworks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:knightmetal_sword",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:knightmetal_pickaxe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:knightmetal_axe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:steeleaf_sword",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:steeleaf_pickaxe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:steeleaf_axe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:steeleaf_shovel",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:steeleaf_hoe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:ironwood_sword",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:ironwood_pickaxe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:ironwood_axe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:ironwood_shovel",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:ironwood_hoe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:fiery_sword",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "twilightforest:fiery_pickaxe",
+      "namespace": "twilightforest",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:hammer",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:wirecutter",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:revolver",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:railgun",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:drillhead_iron",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "immersiveengineering:drillhead_steel",
+      "namespace": "immersiveengineering",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "ironsspellbooks:cultist_sword",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "ironsspellbooks:executioner_sword",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "ironsspellbooks:knight_sword",
+      "namespace": "ironsspellbooks",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "cataclysm:ignitium_sword",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "cataclysm:ignitium_pickaxe",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "cataclysm:ignitium_axe",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "cataclysm:ignitium_shovel",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "cataclysm:ignitium_hoe",
+      "namespace": "cataclysm",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "mekanism:steel_sword",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "mekanism:steel_pickaxe",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "mekanism:steel_axe",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "mekanism:steel_shovel",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "mekanism:steel_hoe",
+      "namespace": "mekanism",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "tfmg:steel_sword",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "tfmg:steel_pickaxe",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "tfmg:steel_axe",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "tfmg:steel_shovel",
+      "namespace": "tfmg",
+      "required": false
+    },
+    {
+      "source": "src/main/resources/data/magnetization/tags/item/metal_tools.json",
+      "id": "tfmg:steel_hoe",
+      "namespace": "tfmg",
+      "required": false
+    }
+  ],
+  "artifacts": [
+    {
+      "filename": "BOMD-NeoForge-1.21-1.3.3.jar",
+      "sha256": "93da8753a00229e41c5ed399e6cf849737e7bd9b4109d5d8e4ad3a20136deb82",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "bosses_of_mass_destruction",
+          "version": "1.3.3",
+          "displayName": "Bosses of Mass Destruction",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/bosses-of-mass-destruction-forge",
+          "logoFile": "logo.png",
+          "authors": "CerbonXD",
+          "description": "Adds high threat mobs for players to take on."
+        }
+      ],
+      "dependencies": {
+        "bosses_of_mass_destruction": [
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.0,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[1.21,1.22)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "cerbons_api",
+            "type": "required",
+            "versionRange": "[1.2.0,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "cloth_config",
+            "type": "required",
+            "versionRange": "[15.0.140,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "geckolib",
+            "type": "required",
+            "versionRange": "[4.5.8,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "resource_evidence": [
+        {
+          "id": "bosses_of_mass_destruction:gauntlet",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        }
+      ]
+    },
+    {
+      "filename": "aether-1.21.1-1.5.10-neoforge.jar",
+      "sha256": "a999a9265eb550a46a0f8eedfee7c3c75371d7f6cf34b7c09ff800e48633e9f8",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "aether",
+          "version": "1.5.10",
+          "displayName": "The Aether",
+          "updateJSONURL": "https://github.com/The-Aether-Team/The-Aether/raw/1.21.1-develop/update.json",
+          "displayURL": "https://modrinth.com/mod/aether",
+          "logoFile": "aether.png",
+          "credits": "The Aether Team, former Aether Team Collaborators for their prior work on The Aether Mod, Modding Legacy for their work on Aether Legacy, GitHub contributors for their additional help, and the Wisp Forest Team for Accessories, the source code of which can be found at https://github.com/wisp-forest",
+          "authors": "AlphaMode, baguchi, bconlon, Blodhgarm, Burning Cactus, Drullkus, Hugo Payn, Jaryt, Katie 'Oz' Payn, quek, Raptor, reetam, RENREN, sunsette",
+          "description": "The Aether Team presents the original Aether mod! Up to date for modern Minecraft versions and fully compatible with multiplayer. The Aether is a dimension of floating islands high in the sky. Ascend through a Glowstone portal and begin a new survival adventure packed with new ores, mythical creatures and perilous Dungeons!",
+          "enumExtensions": "META-INF/enumextensions.json"
+        }
+      ],
+      "dependencies": {
+        "aether": [
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.1.72,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[1.21.1,1.21.2)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "resource_evidence": [
+        {
+          "id": "aether:gravitite_ore",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/aether/blockstates/gravitite_ore.json"
+          ]
+        },
+        {
+          "id": "aether:enchanted_gravitite",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/aether/blockstates/enchanted_gravitite.json"
+          ]
+        },
+        {
+          "id": "aether:gravitite_ore",
+          "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+          "matching_resources": [
+            "assets/aether/models/item/gravitite_ore.json"
+          ]
+        },
+        {
+          "id": "aether:enchanted_gravitite",
+          "source": "src/main/resources/data/magnetization/tags/item/ferromagnetic.json",
+          "matching_resources": [
+            "assets/aether/models/item/enchanted_gravitite.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "aviator-dreams-reloaded-neoforge-1.2.7+1.21.1.jar",
+      "sha256": "d7317213b18e9f690a070c52ef4569dbfcdffe4abe98911cd9da001bcdbaa134",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "aviator_dream",
+          "version": "1.2.7+1.21.1",
+          "displayName": "Aviator Dreams (Reloaded)",
+          "displayURL": "https://modrinth.com/mod/aviator-dreams-reloaded",
+          "authors": "CerealCamera",
+          "description": "Realistic aircraft for Immersive Aircraft",
+          "logoFile": "icon.png",
+          "itemIcon": "aviator_dream:douglas_dc1",
+          "updateJSONURL": "https://api.modrinth.com/updates/aviator-dreams-reloaded/forge_updates.json?neoforge_only"
+        }
+      ],
+      "dependencies": {
+        "aviator_dream": [
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[@MINECRAFT_VERSION@,)",
+            "ordering": "AFTER",
+            "side": "BOTH"
+          },
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.1.194,)",
+            "ordering": "AFTER",
+            "side": "BOTH"
+          },
+          {
+            "modId": "immersive_aircraft",
+            "type": "required",
+            "versionRange": "[1.2.2,)",
+            "ordering": "AFTER",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "resource_evidence": [
+        {
+          "id": "aviator_dream:douglas_dc1",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:douglas_dc2",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:douglas_c47",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:lockheed_l1049g",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:dehavilland_dh106",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:fokker_fviib3m",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:fokker_fviia",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        },
+        {
+          "id": "aviator_dream:toyota_stout_k100",
+          "source": "src/main/resources/data/magnetization/tags/entity_type/magnetizable.json",
+          "matching_resources": []
+        }
+      ]
+    },
+    {
+      "filename": "irons_spellbooks-1.21.1-3.16.3.jar",
+      "sha256": "55a290db9b966e0c5d2f5c051d50775f3db6375cdb52730c4da528bcf5d5daa0",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "irons_spellbooks",
+          "version": "1.21.1-3.16.3",
+          "displayName": "Iron's Spells 'n Spellbooks",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/irons-spells-n-spellbooks",
+          "logoFile": "spellbooks title small background low res.png",
+          "credits": "\n  Crispytwig: Ring textures, Scroll textures, Arcane Cloth texture\n  Crydigo: Ink, Spellbook, Mithril, Hogskin, and Dragonskin textures; Priest Armor and Dead King models\n  Hazentouvel: Ice Spider Texture/Model\n  Cakeman: Spellbook models\n  RenovatedStudios: Various spell icons\n  Caner Crebes: Music (Flame Still Burns, King's Lullaby, Whispers of Ice, Tyros Bossfight, Dead King Bossfight) \n  Amo: Spellbook Apotheosis compat\n  Some assets remixed from J. W. Bjerk (eleazzaar)'s Painterly Spell Icon Packs -- www.jwbjerk.com/art  -- find this and other open art at: http://opengameart.org.",
+          "authors": "Iron431, Lab3",
+          "description": "A magic mod for Minecraft returning to the classic RPG spellcasting fantasy.",
+          "enumExtensions": "META-INF/enumextensions.json"
+        }
+      ],
+      "dependencies": {
+        "irons_spellbooks": [
+          {
+            "modId": "neoforge",
+            "type": "required",
+            "versionRange": "[21.0.0-beta,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "minecraft",
+            "type": "required",
+            "versionRange": "[1.21.1,1.21.2)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "geckolib",
+            "type": "required",
+            "versionRange": "[4.7.5.1,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "playeranimator",
+            "type": "required",
+            "versionRange": "[2.0.1+1.21.1,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "curios",
+            "type": "required",
+            "versionRange": "[9.0.5+1.21.0,)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          },
+          {
+            "modId": "irons_lib",
+            "type": "required",
+            "versionRange": "[1.21.1-2,1.21.1-3)",
+            "ordering": "NONE",
+            "side": "BOTH"
+          }
+        ]
+      },
+      "resource_evidence": [
+        {
+          "id": "irons_spellbooks:lightning_magic",
+          "source": "src/main/resources/data/magnetization/tags/damage_type/lightning_sources.json",
+          "matching_resources": [
+            "data/irons_spellbooks/damage_type/lightning_magic.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-bridges-3.1.2-mc1.21.1neoforge.jar",
+      "sha256": "070b817d3282760d9789b22ce13779613c8b558e02012fd5884d343175d88fd9",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwbridges",
+          "version": "3.1.2",
+          "displayName": "Macaw's Bridges",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-bridges",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/bridges.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Peachy Macaw",
+          "description": "Connect the world with bridges!"
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwbridges:iron_bridge",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwbridges/blockstates/iron_bridge.json"
+          ]
+        },
+        {
+          "id": "mcwbridges:iron_bridge_pier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwbridges/blockstates/iron_bridge_pier.json"
+          ]
+        },
+        {
+          "id": "mcwbridges:iron_bridge_stair",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwbridges/blockstates/iron_bridge_stair.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-doors-1.1.5-mc1.21.1neoforge.jar",
+      "sha256": "87261e309f5e10c9910169d5acbba613cab3a2d2270698b0bd47e657a45b0518",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwdoors",
+          "version": "1.1.5",
+          "displayName": "Macaw's Doors",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-doors",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/doors.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Sketch Peachy",
+          "description": "Adds a lot of new Doors! With vanila and unique styles."
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwdoors:iron_portcullis",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/iron_portcullis.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:jail_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/jail_door.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:metal_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/metal_door.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:metal_hospital_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/metal_hospital_door.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:metal_reinforced_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/metal_reinforced_door.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:metal_warning_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/metal_warning_door.json"
+          ]
+        },
+        {
+          "id": "mcwdoors:metal_windowed_door",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwdoors/blockstates/metal_windowed_door.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-lights-1.1.5-mc1.21.1neoforge.jar",
+      "sha256": "b27cd68a7673874b0f6d765bdef2a022666cc07ca0e5057209a16d1a535da9e4",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwlights",
+          "version": "1.1.5",
+          "displayName": "Macaw's Lights and Lamps",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-lights-and-lamps",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/lights.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Peachy Macaw",
+          "description": "Make your worlds brighter with lamps, tiki torches, paper lamps and more!"
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwlights:iron_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/iron_candle_holder.json"
+          ]
+        },
+        {
+          "id": "mcwlights:iron_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/iron_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:iron_framed_torch",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/iron_framed_torch.json"
+          ]
+        },
+        {
+          "id": "mcwlights:iron_small_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/iron_small_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:iron_wall_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/iron_wall_candle_holder.json"
+          ]
+        },
+        {
+          "id": "mcwlights:golden_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/golden_candle_holder.json"
+          ]
+        },
+        {
+          "id": "mcwlights:golden_chain",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/golden_chain.json"
+          ]
+        },
+        {
+          "id": "mcwlights:golden_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/golden_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:golden_small_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/golden_small_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:golden_wall_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/golden_wall_candle_holder.json"
+          ]
+        },
+        {
+          "id": "mcwlights:copper_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/copper_candle_holder.json"
+          ]
+        },
+        {
+          "id": "mcwlights:copper_chain",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/copper_chain.json"
+          ]
+        },
+        {
+          "id": "mcwlights:copper_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/copper_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:copper_small_chandelier",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/copper_small_chandelier.json"
+          ]
+        },
+        {
+          "id": "mcwlights:copper_wall_candle_holder",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwlights/blockstates/copper_wall_candle_holder.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-mcwfences-1.2.1-mc1.21.1neoforge.jar",
+      "sha256": "e4b0e5a5b67decc2285e71f017fb4f60284796fa0838de3edeaf6b7cb0395735",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwfences",
+          "version": "1.2.1",
+          "displayName": "Macaw's Fences and Walls",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-fences-and-walls",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/fences.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Peachy Macaw",
+          "description": "Adds new vanila styled fences, walls and gates."
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwfences:acorn_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/acorn_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:bastion_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/bastion_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:bastion_metal_fence_gate",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/bastion_metal_fence_gate.json"
+          ]
+        },
+        {
+          "id": "mcwfences:cathedral_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/cathedral_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:curved_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/curved_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:curved_metal_fence_gate",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/curved_metal_fence_gate.json"
+          ]
+        },
+        {
+          "id": "mcwfences:expanded_mesh_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/expanded_mesh_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:fortress_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/fortress_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:gothic_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/gothic_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:iron_cheval_de_frise",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/iron_cheval_de_frise.json"
+          ]
+        },
+        {
+          "id": "mcwfences:majestic_metal_fence_gate",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/majestic_metal_fence_gate.json"
+          ]
+        },
+        {
+          "id": "mcwfences:mesh_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/mesh_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:mesh_metal_fence_gate",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/mesh_metal_fence_gate.json"
+          ]
+        },
+        {
+          "id": "mcwfences:ornate_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/ornate_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:panelled_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/panelled_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:twilight_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/twilight_metal_fence.json"
+          ]
+        },
+        {
+          "id": "mcwfences:vintage_metal_fence",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwfences/blockstates/vintage_metal_fence.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-mcwwindows-2.4.2-mc1.21.1neoforge.jar",
+      "sha256": "8970c40ec622edd34c9b055226b403af08ab441c77303a6dc625ae18005f8184",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwwindows",
+          "version": "2.4.2",
+          "displayName": "Macaw's Windows",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-windows",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/window.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Peachy Macaw",
+          "description": "Build Windows, Sills, Blinds, Shutters, Mosaic Windows and more!"
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwwindows:iron_shutter",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/iron_shutter.json"
+          ]
+        },
+        {
+          "id": "mcwwindows:metal_window",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/metal_window.json"
+          ]
+        },
+        {
+          "id": "mcwwindows:metal_four_window",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/metal_four_window.json"
+          ]
+        },
+        {
+          "id": "mcwwindows:metal_pane_window",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/metal_pane_window.json"
+          ]
+        },
+        {
+          "id": "mcwwindows:metal_curtain_rod",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/metal_curtain_rod.json"
+          ]
+        },
+        {
+          "id": "mcwwindows:golden_curtain_rod",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwwindows/blockstates/golden_curtain_rod.json"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "mcw-trapdoors-1.1.5-mc1.21.1neoforge.jar",
+      "sha256": "1408d46bc2e7515b25b4da8393f8dbb3d79bcd9fb6d51fcf26fe84734c2597af",
+      "descriptor": "META-INF/neoforge.mods.toml",
+      "mods": [
+        {
+          "modId": "mcwtrpdoors",
+          "version": "1.1.5",
+          "displayName": "Macaw's Trapdoors",
+          "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-trapdoors",
+          "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/trapdoors.json",
+          "credits": "",
+          "authors": "Sketch Macaw & Peachy Macaw",
+          "description": "Adds lots of different Trapdoors! With vanila and unique styles."
+        }
+      ],
+      "dependencies": {},
+      "resource_evidence": [
+        {
+          "id": "mcwtrpdoors:metal_trapdoor",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwtrpdoors/blockstates/metal_trapdoor.json"
+          ]
+        },
+        {
+          "id": "mcwtrpdoors:metal_full_trapdoor",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwtrpdoors/blockstates/metal_full_trapdoor.json"
+          ]
+        },
+        {
+          "id": "mcwtrpdoors:metal_warning_trapdoor",
+          "source": "src/main/resources/data/magnetization/tags/block/ferromagnetic_blocks.json",
+          "matching_resources": [
+            "assets/mcwtrpdoors/blockstates/metal_warning_trapdoor.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "scan_errors": [],
+  "namespaces_without_artifact": [
+    "alexscaves",
+    "cataclysm",
+    "coasterfins",
+    "create_enchantment_industry",
+    "create_ironworks",
+    "create_new_age",
+    "createaddition",
+    "createbigcannons",
+    "createdieselgenerators",
+    "createmagnetics",
+    "golems",
+    "immersive_aircraft",
+    "immersiveengineering",
+    "ironchest",
+    "ironsspellbooks",
+    "magnetizing",
+    "mekanism",
+    "modulargolems",
+    "quark",
+    "railways",
+    "rocketnautics",
+    "simulated",
+    "sophisticatedstorage",
+    "supplementaries",
+    "tfmg",
+    "tracks",
+    "twilightforest"
+  ]
+}

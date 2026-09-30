@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.6 — Compatibility audit (unreleased)
+
+- Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.
+
+- Add optional Extra Golems Reborn **21.1.0.1** material recognition to both field eligibility and susceptibility. Default-on server controls expose 14 material IDs, including raw iron/gold/copper, gold, netherite, ancient debris and every copper oxidation/waxing variant. Intrinsic response counts once; equipment, polarity, status and administrative exclusions retain their roles.
+- Remove obsolete `extragolems:*` and invalid Modular Golems/Quark entity IDs. Their variant-aware adapters are separate proposed work.
+- Correct Aether Gravitite IDs, Iron's Spells namespace/armor/lightning IDs, Cataclysm lightning, Immersive Engineering steel/Faraday armor, and the Mekanism Tools namespace. Remove nonexistent guessed tools, armor, Supplementaries rocket and Alex's Caves/Twilight damage types.
+- Fix Alex's Caves potion replacement so `OURS_ONLY` and `THEIRS_ONLY` do not leave both effects active.
+- Add pinned registry/behavior profiles and distinguish official mods from unofficial ports. Record the Create: Magnetics server defect and conditional test evidence from the supplied local workaround; no new production dependency is added.
+- Reborn evidence covers native construction, material changes, equipment, effects, polarity, vetoes, physical emitters, magnetic golems, client rendering and save/reopen, plus our own golem construction/ownership/repair regressions. Detailed scope and remaining gaps: [compatibility matrix](docs/compatibility/audit-1.21.1.md).
+
+Historical integration bullets below describe the implementation intent at the time. Their current support status is superseded by the 1.21.1 NeoForge audit; silently ignored optional IDs do not establish compatibility.
+
 ## 1.4.5 — Ironworks materials and Coasters Additions compatibility
 
 ### Added
