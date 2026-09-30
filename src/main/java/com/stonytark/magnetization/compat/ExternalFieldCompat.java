@@ -199,7 +199,7 @@ public final class ExternalFieldCompat {
         final double ratio = energyRatio(blockEntity);
         if (ratio <= 0.0d) return null;
         if (path.equals("tesla_coil")) {
-            if (!invokeBooleanWithInt(blockEntity, "canRun", 1, redstoneEnabled(level, pos, blockEntity))) return null;
+            if (!invokeBooleanWithInt(blockEntity, "canRun", 1, () -> redstoneEnabled(level, pos, blockEntity))) return null;
             // IE's coil is a discharge machine, so project a brief field pulse rather
             // than turning stored FE into an uninterrupted permanent field.
             if (level.getGameTime() % 10L >= 2L) return null;
@@ -253,7 +253,7 @@ public final class ExternalFieldCompat {
     }
 
     private static boolean redstoneEnabled(final Level level, final BlockPos pos, final BlockEntity blockEntity) {
-        final boolean powered = invokeBoolean(blockEntity, "isRSPowered", hasNeighborSignal(level, pos));
+        final boolean powered = invokeBooleanOrElse(blockEntity, "isRSPowered", () -> hasNeighborSignal(level, pos));
         final boolean inverted = readBooleanField(blockEntity, "redstoneControlInverted", false);
         return powered != inverted;
     }
@@ -296,14 +296,19 @@ public final class ExternalFieldCompat {
         return value instanceof Boolean bool ? bool : fallback;
     }
 
-    private static boolean invokeBooleanWithInt(final Object target, final String name, final int arg,
-                                                final boolean fallback) {
+    static boolean invokeBooleanOrElse(final Object target, final String name,
+                                       final java.util.function.BooleanSupplier fallback) {
+        final Object value = invokeNoArgs(target, name);
+        return value instanceof Boolean bool ? bool : fallback.getAsBoolean();
+    }
+
+    static boolean invokeBooleanWithInt(final Object target, final String name, final int arg,
+                                        final java.util.function.BooleanSupplier fallback) {
         try {
             final Object value = target.getClass().getMethod(name, int.class).invoke(target, arg);
-            return value instanceof Boolean bool ? bool : fallback;
-        } catch (final ReflectiveOperationException | RuntimeException ignored) {
-            return fallback;
-        }
+            if (value instanceof Boolean bool) return bool;
+        } catch (final ReflectiveOperationException | RuntimeException ignored) { }
+        return fallback.getAsBoolean();
     }
 
     private static int invokeInt(final Object target, final String name, final int fallback) {
