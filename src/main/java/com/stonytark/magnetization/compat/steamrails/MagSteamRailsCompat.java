@@ -41,6 +41,7 @@ public final class MagSteamRailsCompat {
     public static void wire(final IEventBus gameBus) {
         gameBus.addListener(MagSteamRailsCompat::onEntityJoin);
         gameBus.addListener(MagSteamRailsCompat::onEntityLeave);
+        gameBus.addListener(MagSteamRailsCompat::onEntitySize);
     }
 
     private static void onEntityJoin(final EntityJoinLevelEvent event) {
@@ -58,13 +59,20 @@ public final class MagSteamRailsCompat {
         if (tracked != null && tracked.entities.remove(carriage)) tracked.dirty = true;
     }
 
+    private static void onEntitySize(final net.neoforged.neoforge.event.entity.EntityEvent.Size event) {
+        if (!(event.getEntity() instanceof CarriageContraptionEntity carriage)
+                || !(carriage.level() instanceof ServerLevel level)) return;
+        final LevelCarriages tracked = CARRIAGES.get(level);
+        if (tracked != null) tracked.dirty = true;
+    }
+
     public static void applyToTrains(final ServerLevel level, final MagneticField field) {
         if (!ModList.get().isLoaded("railways") || !MagConfig.steamRailsFieldReaction()) return;
-        final List<CarriageContraptionEntity> carriages = trackedCarriages(level);
-        PerformanceDiagnostics.recordTrainField(level, carriages.size());
-        if (carriages.isEmpty()) return;
         final double range = field.range();
         final AABB box = AABB.ofSize(field.origin(), range * 2.0d, range * 2.0d, range * 2.0d);
+        final List<CarriageContraptionEntity> carriages = nearbyCarriages(level, box);
+        PerformanceDiagnostics.recordTrainField(level, carriages.size());
+        if (carriages.isEmpty()) return;
         final Set<UUID> affected = new HashSet<>();
         for (final CarriageContraptionEntity carriage : carriages) {
             if (!carriage.isAlive() || !carriage.getBoundingBox().intersects(box)) continue;
@@ -75,6 +83,28 @@ public final class MagSteamRailsCompat {
             final Vec3 tangent = horizontalTangent(carriage.getLookAngle());
             applyProjectedForce(train, tangent, FieldApplicator.forceAt(level, field, sample), affected);
         }
+    }
+
+    /** Live engine spatial query, ordered like the previous tracked-carriage
+     * scan so coupled trains retain which carriage consumes their force first. */
+    public static List<CarriageContraptionEntity> nearbyCarriages(final ServerLevel level, final AABB box) {
+        final List<CarriageContraptionEntity> all = trackedCarriages(level);
+        if (all.isEmpty()) return List.of();
+        if (all.size() <= 16) {
+            return all.stream().filter(car -> car.isAlive() && car.getBoundingBox().intersects(box)).toList();
+        }
+        final LevelCarriages tracked = CARRIAGES.get(level);
+        final List<CarriageContraptionEntity> nearby = level.getEntitiesOfClass(CarriageContraptionEntity.class, box,
+                car -> car.isAlive() && tracked.order.containsKey(car));
+        // Vanilla section queries extend four blocks below the box. The force
+        // sample is position + half entity height, so ordinary (<=8 high) cars
+        // whose samples can react are covered, even with very wide hulls. Keep
+        // unusual dimensions and not-yet-visible join events on the full path.
+        for (final CarriageContraptionEntity car : tracked.fallback) {
+            if (car.isAlive() && car.getBoundingBox().intersects(box) && !nearby.contains(car)) nearby.add(car);
+        }
+        nearby.sort(java.util.Comparator.comparingInt(tracked.order::get));
+        return nearby;
     }
 
     /** Train reactions are independent of ordinary entity magnetizability. */
@@ -95,6 +125,17 @@ public final class MagSteamRailsCompat {
         final long now = level.getGameTime();
         if (tracked.dirty || tracked.snapshotTick != now) {
             tracked.snapshot = List.copyOf(tracked.entities);
+            tracked.order.clear();
+            final java.util.ArrayList<CarriageContraptionEntity> fallback = new java.util.ArrayList<>();
+            if (tracked.snapshot.size() > 16) {
+                for (int i = 0; i < tracked.snapshot.size(); i++) {
+                    final CarriageContraptionEntity car = tracked.snapshot.get(i);
+                    tracked.order.put(car, i);
+                    if (car.getClass() != CarriageContraptionEntity.class || car.getBbHeight() > 8
+                            || level.getEntity(car.getId()) != car) fallback.add(car);
+                }
+            }
+            tracked.fallback = fallback;
             tracked.snapshotTick = now;
             tracked.dirty = false;
         }
@@ -138,6 +179,8 @@ public final class MagSteamRailsCompat {
         private final Set<CarriageContraptionEntity> entities =
                 Collections.newSetFromMap(new IdentityHashMap<>());
         private List<CarriageContraptionEntity> snapshot = List.of();
+        private final Map<CarriageContraptionEntity, Integer> order = new IdentityHashMap<>();
+        private List<CarriageContraptionEntity> fallback = List.of();
         private long snapshotTick = Long.MIN_VALUE;
         private boolean dirty = true;
     }

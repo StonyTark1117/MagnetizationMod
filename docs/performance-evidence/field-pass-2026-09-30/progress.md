@@ -17,7 +17,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 10. MR stored power first | Stored positive power returns before field lookup; unpowered field/neighbor fallbacks are unchanged. CNA suite 14/14, including real hardening with zero field searches and restoration after power removal. |
 | 11. Gallium occupancy first | Powered empty cells skip field search and force setup. An O(1) source-presence gate avoids added entity queries in field-free levels. CNA 15/15: both plain/mixed gallium retain exact current speed and both polarity directions for a nonmagnetic item. Full-pack occupancy/no-field timing tradeoff remains for final comparison. |
 | 12. Local magnetized-fluid groups | Recipient queries are cached per occupied 16³ section; application still follows the original source iteration order. CNA 16/16: a target between distant pools triggers zero applications, moving into one pool applies both nearby sources with exactly the reference combined velocity. |
-| 13. Nearby train carriage queries | Pending |
+| 13. Nearby train carriage queries | Uses live Minecraft spatial queries above 16 tracked cars, then restores original iteration order. Small populations retain a short scan; unusual sizes/subclasses and not-yet-visible joins retain conservative fallbacks, invalidated on size/lifecycle changes. Steam Rails runtime 2/2: 40-car fixture verifies subset/order, exact coupled force, same-tick movement and removal. |
 | 14. Spatial magnetized-fluid field lookup | Pending |
 | Full Discopanel validation and completion audit | Pending |
 
