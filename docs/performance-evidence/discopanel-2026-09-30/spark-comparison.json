@@ -1,0 +1,470 @@
+[
+  {
+    "duration_ms": 90089,
+    "ticks": 1800,
+    "server_thread_sample_ms": 89988,
+    "magnetization_sample_ms": 2332,
+    "magnetization_sample_ms_per_tick": 1.2955555555555556,
+    "magnetization_roots": [
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        2148
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        52
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        32
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        20
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        20
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x00007e91d7905b58.accept",
+        12
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        12
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        8
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        8
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        8
+      ],
+      [
+        "com.stonytark.magnetization.command.MagCommands$$Lambda.0x00007e91da764840.run",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.physics.LoadedChunkAccess.directSignalTo",
+        4
+      ]
+    ],
+    "server_nodes": [
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$waitLongerForTasks",
+        72516
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitForTasks",
+        72516
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.managedBlock",
+        72528
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.mixinextras$bridge$managedBlock$325",
+        72528
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$managedBlock",
+        72528
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitUntilNextTick",
+        72540
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickChildren",
+        15264
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickServer",
+        17168
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.runServer",
+        89712
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.lambda$spin$2",
+        89712
+      ]
+    ],
+    "rolling_mspt": {
+      "gameMaxIdealMspt": 0,
+      "last1M": {
+        "mean": 8.682326381666666,
+        "max": 18.41977,
+        "min": 7.833773,
+        "median": 8.473022,
+        "percentile95": 10.29018
+      },
+      "last5M": {
+        "mean": 8.720443318666666,
+        "max": 163.50066,
+        "min": 7.28485,
+        "median": 8.456554,
+        "percentile95": 10.293996
+      }
+    },
+    "capture_windows": {
+      "29846084": {
+        "ticks": 1200,
+        "cpuProcess": 0.056537039494873105,
+        "cpuSystem": 0.061427850195747105,
+        "tps": 19.999989711671958,
+        "msptMedian": 8.486701,
+        "msptMax": 69.992926,
+        "players": 0,
+        "entities": 47,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790765084207,
+        "endTime": 1790765144216,
+        "duration": 60009
+      },
+      "29846085": {
+        "ticks": 600,
+        "cpuProcess": 0.056424842851484414,
+        "cpuSystem": 0.0614147552922028,
+        "tps": 19.99997895935547,
+        "msptMedian": 8.473022,
+        "msptMax": 18.41977,
+        "players": 0,
+        "entities": 47,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790765144216,
+        "endTime": 1790765174211,
+        "duration": 29995
+      }
+    },
+    "version": {
+      "name": "magnetization",
+      "version": "1.4.5",
+      "author": "",
+      "description": "A Create: Aeronautics addon adding magnetic ship machinery and propulsion, field-reactive tools and armor, ferromagnetic and rare-earth resource progression, and a noble-gas processing and excitation system. Includes configurable worldgen, two optional biomes, automation and compatibility bridges across the Create ecosystem, and live machine status through Create goggles, Jade, WTHIT, and The One Probe.",
+      "builtIn": false
+    },
+    "url": "https://spark.lucko.me/0jE8vM6aTA"
+  },
+  {
+    "duration_ms": 90094,
+    "ticks": 1800,
+    "server_thread_sample_ms": 89984,
+    "magnetization_sample_ms": 2348,
+    "magnetization_sample_ms_per_tick": 1.3044444444444445,
+    "magnetization_roots": [
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        2292
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        12
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        12
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        8
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x00007ade3f9854d8.accept",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+        4
+      ]
+    ],
+    "server_nodes": [
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$waitLongerForTasks",
+        74592
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitForTasks",
+        74592
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.managedBlock",
+        74592
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.mixinextras$bridge$managedBlock$325",
+        74592
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$managedBlock",
+        74592
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitUntilNextTick",
+        74600
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickChildren",
+        14368
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickServer",
+        15128
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.runServer",
+        89740
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.lambda$spin$2",
+        89740
+      ]
+    ],
+    "rolling_mspt": {
+      "gameMaxIdealMspt": 0,
+      "last1M": {
+        "mean": 8.4909561925,
+        "max": 65.892415,
+        "min": 7.238276,
+        "median": 8.22665,
+        "percentile95": 9.938396
+      },
+      "last5M": {
+        "mean": 9.92336784844159,
+        "max": 1066.201335,
+        "min": 7.213703,
+        "median": 8.427032,
+        "percentile95": 16.11313
+      }
+    },
+    "capture_windows": {
+      "29846109": {
+        "ticks": 1201,
+        "cpuProcess": 0.05859693267460821,
+        "cpuSystem": 0.07331021539234027,
+        "tps": 20.000003825334066,
+        "msptMedian": 8.256587,
+        "msptMax": 65.892415,
+        "players": 0,
+        "entities": 49,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790766544412,
+        "endTime": 1790766604419,
+        "duration": 60007
+      },
+      "29846110": {
+        "ticks": 600,
+        "cpuProcess": 0.05763668658823678,
+        "cpuSystem": 0.06586216454656611,
+        "tps": 19.999999834333334,
+        "msptMedian": 8.22665,
+        "msptMax": 65.892415,
+        "players": 0,
+        "entities": 49,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790766604419,
+        "endTime": 1790766634416,
+        "duration": 29997
+      }
+    },
+    "version": {
+      "name": "magnetization",
+      "version": "1.4.6",
+      "author": "",
+      "description": "A Create: Aeronautics addon adding magnetic ship machinery and propulsion, field-reactive tools and armor, ferromagnetic and rare-earth resource progression, and a noble-gas processing and excitation system. Includes configurable worldgen, two optional biomes, automation and compatibility bridges across the Create ecosystem, and live machine status through Create goggles, Jade, WTHIT, and The One Probe.",
+      "builtIn": false
+    },
+    "url": "https://spark.lucko.me/fdiW87vGp2"
+  },
+  {
+    "duration_ms": 90043,
+    "ticks": 1800,
+    "server_thread_sample_ms": 89912,
+    "magnetization_sample_ms": 1464,
+    "magnetization_sample_ms_per_tick": 0.8133333333333334,
+    "magnetization_roots": [
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        1208
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        124
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        28
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        24
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        24
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x00007ade3f9854d8.accept",
+        20
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        16
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        8
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        4
+      ]
+    ],
+    "server_nodes": [
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$waitLongerForTasks",
+        73624
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitForTasks",
+        73624
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.managedBlock",
+        73632
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.mixinextras$bridge$managedBlock$325",
+        73632
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.wrapOperation$zgh000$modernfix$managedBlock",
+        73632
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.waitUntilNextTick",
+        73656
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.saveAllChunks",
+        144
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.saveEverything",
+        144
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickChildren",
+        15328
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.tickServer",
+        16020
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.runServer",
+        89684
+      ],
+      [
+        "net.minecraft.server.MinecraftServer.lambda$spin$2",
+        89684
+      ]
+    ],
+    "rolling_mspt": {
+      "gameMaxIdealMspt": 0,
+      "last1M": {
+        "mean": 8.520974506666667,
+        "max": 48.01394,
+        "min": 7.518148,
+        "median": 8.197736,
+        "percentile95": 10.001354
+      },
+      "last5M": {
+        "mean": 8.538219038833333,
+        "max": 226.84658,
+        "min": 7.14724,
+        "median": 8.222762,
+        "percentile95": 9.937227
+      }
+    },
+    "capture_windows": {
+      "29846111": {
+        "ticks": 1200,
+        "cpuProcess": 0.06056219667346908,
+        "cpuSystem": 0.06249928703545776,
+        "tps": 20.00000750333615,
+        "msptMedian": 8.207973,
+        "msptMax": 226.84658,
+        "players": 0,
+        "entities": 49,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790766703185,
+        "endTime": 1790766763197,
+        "duration": 60012
+      },
+      "29846112": {
+        "ticks": 600,
+        "cpuProcess": 0.06159970247651266,
+        "cpuSystem": 0.067944471412287,
+        "tps": 20.000012141340704,
+        "msptMedian": 8.197736,
+        "msptMax": 48.01394,
+        "players": 0,
+        "entities": 49,
+        "tileEntities": -1,
+        "chunks": 846,
+        "startTime": 1790766763197,
+        "endTime": 1790766793188,
+        "duration": 29991
+      }
+    },
+    "version": {
+      "name": "magnetization",
+      "version": "1.4.6",
+      "author": "",
+      "description": "A Create: Aeronautics addon adding magnetic ship machinery and propulsion, field-reactive tools and armor, ferromagnetic and rare-earth resource progression, and a noble-gas processing and excitation system. Includes configurable worldgen, two optional biomes, automation and compatibility bridges across the Create ecosystem, and live machine status through Create goggles, Jade, WTHIT, and The One Probe.",
+      "builtIn": false
+    },
+    "url": "https://spark.lucko.me/pj9PsIAzoK"
+  }
+]

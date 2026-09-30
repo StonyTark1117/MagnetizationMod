@@ -1,0 +1,297 @@
+{
+  "passed": true,
+  "count": 58,
+  "scenarios": 18,
+  "checks": [
+    {
+      "scenario": "empty_start",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "empty_start",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "empty_start",
+      "assertion": "No external field applications",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_player",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_player",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_player",
+      "assertion": "No external field applications",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_player",
+      "assertion": "Unequipped MR checks skip all field searches",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_mobs",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_mobs",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_mobs",
+      "assertion": "No external field applications",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary_mobs",
+      "assertion": "Ordinary mobs inspected but not eligible",
+      "passed": true
+    },
+    {
+      "scenario": "external_no_targets",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "external_no_targets",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "external_no_targets",
+      "assertion": "No external field applications",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_pool",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_pool",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_pool",
+      "assertion": "512 sources in four chunks per pass",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_pool",
+      "assertion": "Native searches only in native fixture",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_pool",
+      "assertion": "External searches only in external fixture",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "512 sources in four chunks per pass",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "Native searches only in native fixture",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "External searches only in external fixture",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_external",
+      "assertion": "512 targets reduce to four regions per tick while fields apply",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_native",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_native",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_native",
+      "assertion": "512 sources in four chunks per pass",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_native",
+      "assertion": "Native searches only in native fixture",
+      "passed": true
+    },
+    {
+      "scenario": "ferrofluid_native",
+      "assertion": "External searches only in external fixture",
+      "passed": true
+    },
+    {
+      "scenario": "mr_armor",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "mr_armor",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "mr_armor",
+      "assertion": "Equipped MR queries remain active",
+      "passed": true
+    },
+    {
+      "scenario": "mr_mainhand",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "mr_mainhand",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "mr_mainhand",
+      "assertion": "Equipped MR queries remain active",
+      "passed": true
+    },
+    {
+      "scenario": "mr_offhand",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "mr_offhand",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "mr_offhand",
+      "assertion": "Equipped MR queries remain active",
+      "passed": true
+    },
+    {
+      "scenario": "equipment_changes",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "equipment_changes",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "equipment_changes",
+      "assertion": "Live equipment changes exercise skip and query paths",
+      "passed": true
+    },
+    {
+      "scenario": "dense_external",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "dense_external",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "dense_external",
+      "assertion": "Applications preserve 256-per-tick budget",
+      "passed": true
+    },
+    {
+      "scenario": "active_emitters",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "active_emitters",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "railgun_emitters",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "railgun_emitters",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "air_separators",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "air_separators",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "gas_volume",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "gas_volume",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "mixed_pack",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "mixed_pack",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "empty_end",
+      "assertion": "At least 150 real-time observed ticks",
+      "passed": true
+    },
+    {
+      "scenario": "empty_end",
+      "assertion": "No repeated adapter method lookup after warmup",
+      "passed": true
+    },
+    {
+      "scenario": "empty_end",
+      "assertion": "No external field applications",
+      "passed": true
+    }
+  ]
+}
