@@ -2,6 +2,8 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Add default-off experimental trajectory deflection for normal/dark Armashelt and Rammstone. Fields bend heading with a shared per-tick angular cap, preserve speed at application, update native flight vectors and exclude grounded/impact/ability states.
+
 - Connect fresh Slugterra electric shock to equipment-only temporary LIRM, with per-target cooldown, refresh suppression and nonplayer equipment expiration. Tazerling shocks do not petrify logs.
 
 - Add optional magnetic response for Slugterra/Bajoterra Burro, Perro and Toro mechanical mounts, including native ridden travel, configurable susceptibility and bounded impulses.

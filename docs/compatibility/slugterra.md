@@ -80,6 +80,39 @@ Tazerling, verify one temporary stamp, refresh/cooldown suppression, equipment
 expiration and unchanged nearby logs. Separate checks cover both integration
 switches, the global LIRM switch, generic damage and unrelated effects.
 
+## Experimental trajectory deflection
+
+`compat.slugterraDeflectionEnabled` defaults to **false**. When enabled under
+the master switch, these four flying entity types respond to fields:
+
+- `slugterra:armashelt_velocimorph`
+- `slugterra_dark:dark_armashelt_velocimorph`
+- `slugterra:rammstone_velocimorph`
+- `slugterra_dark:dark_rammstone_velocimorph`
+
+South fields bend their heading toward the source; north fields bend it away.
+`compat.slugterraDeflectionMaxTurn` defaults to 6 degrees per slug per game tick
+(range 0.1–30). All fields share the same turn budget, so stacking machines
+cannot multiply it. A field changes direction without changing current speed.
+Parallel forces do not invent a turn axis or stop/reverse the slug. Slugterra's
+own drag and speed rules continue afterward, including its different vertical
+and horizontal living-entity drag. Native abilities can compete with steering.
+
+Armashelt uses vanilla arrow motion. Rammstone reconstructs motion from its
+stored `v_x/v_y/v_z` values; the adapter rotates those too, retaining their
+magnitude. Stationary, grounded, embedded, transformed, hit-animating and active
+Rammstone special-ability states are excluded. The original stored slug data,
+owner, damage, combat level and return-to-protoform logic remain upstream-owned.
+Other slugs and living protoforms are excluded from this experiment.
+
+GameTests cover all four entities and both poles, stacked-field caps, unchanged
+speed at application, native flight ticks, entity save/load, native block-hit
+handlers and recovery with the same species, owner and custom name. Negative
+checks cover default-off, master-off, stationary, embedded, hit-animation and
+unselected-slug behavior. These are server GameTests; live client appearance and
+all combat-level/ability combinations are not established. Keep this option off
+unless testing the supplied port in your pack.
+
 ## Reproducing verification
 
 ```sh

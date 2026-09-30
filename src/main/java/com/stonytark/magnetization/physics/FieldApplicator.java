@@ -591,6 +591,7 @@ public final class FieldApplicator {
                 .scale(target.susceptibility() * polaritySign);
         final Vec3 velocityImpulse = com.stonytark.magnetization.compat.SlugterraMountCompat
                 .limitImpulse(entity, impulse.scale(prepared.velocityScale()));
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection(entity, velocityImpulse)) return;
         entity.setDeltaMovement(entity.getDeltaMovement().add(velocityImpulse));
         entity.hurtMarked = true;
     }
@@ -601,6 +602,8 @@ public final class FieldApplicator {
         // owners only need to curate one tag for both mods. Checked first because
         // it's a hard veto.
         if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles(e))
+            return com.stonytark.magnetization.compat.SlugterraProjectileCompat.isInFlight(e);
         if (e instanceof IMagnetizable) return true;
         if (hasIntrinsicTagResponse(e)) {
             if (com.stonytark.magnetization.compat.ExternalFieldCompat
@@ -747,6 +750,7 @@ public final class FieldApplicator {
     }
 
     private static double baseSusceptibility(final Entity e, final boolean affectsArmor) {
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.isInFlight(e)) return 1.0d;
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
         final double cbcSusceptibility = MagCreateBigCannonsCompat.projectileSusceptibility(e);
         if (cbcSusceptibility > 0.0d) return cbcSusceptibility;

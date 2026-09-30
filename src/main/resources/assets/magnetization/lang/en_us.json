@@ -2342,5 +2342,7 @@
   "magnetization.configuration.compat.slugterraMountSusceptibility": "Mechanical mount susceptibility",
   "magnetization.configuration.compat.slugterraMountMaxImpulse": "Mechanical mount impulse limit",
   "magnetization.configuration.compat.slugterraElectricEnabled": "Slugterra electric remnant magnetism",
-  "magnetization.configuration.compat.slugterraElectricCooldown": "Electric remnant magnetism cooldown"
+  "magnetization.configuration.compat.slugterraElectricCooldown": "Electric remnant magnetism cooldown",
+  "magnetization.configuration.compat.slugterraDeflectionEnabled": "Experimental Slugterra trajectory deflection",
+  "magnetization.configuration.compat.slugterraDeflectionMaxTurn": "Slug deflection degrees per tick"
 }

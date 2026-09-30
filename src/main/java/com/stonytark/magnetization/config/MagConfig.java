@@ -538,6 +538,8 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue SLUGTERRA_EQUIPMENT_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_MOUNTS_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_ELECTRIC_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_DEFLECTION_ENABLED;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_DEFLECTION_MAX_TURN;
     public static final ModConfigSpec.IntValue SLUGTERRA_ELECTRIC_COOLDOWN;
     public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_SUSCEPTIBILITY;
     public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_MAX_IMPULSE;
@@ -2455,6 +2457,14 @@ public final class MagConfig {
                 .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
                 .translation("magnetization.configuration.compat.slugterraCompatEnabled")
                 .define("slugterraCompatEnabled", true);
+        SLUGTERRA_DEFLECTION_ENABLED = b
+                .comment("EXPERIMENTAL: fields bend flying Armashelt/Rammstone (normal and dark) without accelerating them.")
+                .translation("magnetization.configuration.compat.slugterraDeflectionEnabled")
+                .define("slugterraDeflectionEnabled", false);
+        SLUGTERRA_DEFLECTION_MAX_TURN = b
+                .comment("Total maximum magnetic turn per slug per tick in degrees, shared by all fields.")
+                .translation("magnetization.configuration.compat.slugterraDeflectionMaxTurn")
+                .defineInRange("slugterraDeflectionMaxTurn", 6.0d, 0.1d, 30.0d);
         SLUGTERRA_ELECTRIC_ENABLED = b
                 .comment("Fresh Slugterra electric shock magnetizes one eligible equipped item using temporary LIRM, without petrifying logs.")
                 .translation("magnetization.configuration.compat.slugterraElectricEnabled")
@@ -3233,6 +3243,10 @@ public final class MagConfig {
     }
     public static boolean slugterraCompatEnabled() {
         return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraDeflectionEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_DEFLECTION_ENABLED, false);
     }
 
     public static boolean slugterraElectricEnabled() {

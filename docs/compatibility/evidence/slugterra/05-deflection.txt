@@ -1,0 +1,20 @@
+Slugterra experimental deflection — supplied local port SHA-256:
+bda9677991003fb9dbbdfef9a5ceb32f6b60eeb5f5f7a27261287458e51755f9
+present: all five integrations, including four flying entities through both poles
+present
+[30Sep2026 04:58:36.344] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 8 GAME TESTS COMPLETE IN 604.7 ms ======================
+[30Sep2026 04:58:36.344] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 8 required tests passed :)
+absent
+[30Sep2026 04:59:37.512] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 196.4 ms ======================
+[30Sep2026 04:59:37.512] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+./gradlew test build --offline
+JUnit: 50 suites; tests=251, failures=0, errors=0, skipped=0
+verifyReleaseJar: magnetization-1.4.6.jar contains required metadata, no build-only files, and no pack-specific runtime coupling.
+BUILD SUCCESSFUL in 8s
+
+Deflection checks: default-off/master-off; all four selected slugs; both poles;
+20 field applications share one angular budget; exact speed preservation at application;
+native flight; entity save/load; native impact handlers and protoform recovery;
+owner/species/name retained; stationary/embedded/hit-animation/unselected exclusions.
+GameTests verify server behavior, not two-client rendered motion or every native ability.
+The gate terminates the lingering Sable process only after Minecraft reports all tests passed.
