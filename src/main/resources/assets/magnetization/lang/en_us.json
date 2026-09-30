@@ -2336,5 +2336,6 @@
   "book.magnetization.entry.compatibility.magnetics.title": "Magnetics Server Fix",
   "book.magnetization.entry.compatibility.magnetics.text": "Create: Magnetics 0.0.4-alpha has an upstream dedicated-server crash caused by loading client sound classes.$(br2)Magnetization includes a default-off workaround: set $(o)compat.createMagneticsServerCrashWorkaround$() to $(o)true$() in $(o)config/magnetization-common.toml$() before starting the server. A full server restart is required.$(br2)It applies only to that version on dedicated servers. Client sounds and magnetic gameplay are unchanged.",
   "magnetization.configuration.compat.slugterraCompatEnabled": "Slugterra integration",
-  "magnetization.configuration.compat.slugterraOresEnabled": "Slugterra cavern ores"
+  "magnetization.configuration.compat.slugterraOresEnabled": "Slugterra cavern ores",
+  "magnetization.configuration.compat.slugterraEquipmentEnabled": "Slugterra magnetic equipment"
 }

@@ -19,6 +19,25 @@ including copper and gold. Nonmetallic cavern ores are excluded.
 to true. Reload data after changing these common settings; runtime material
 checks also honor the switches, including already-tuned compasses.
 
+## Capsules and blasters
+
+All 69 filled capsules from `slugterra:capsule` (46 base, 23 Dark Expansion),
+empty capsules, the Slug Energy Core, Overpass Shooter AVG-1 and Doctor Black
+Blaster respond to fields as dropped items. Capsule contents are never unpacked
+or rewritten by this integration. Living protoform slugs are not tagged.
+
+Both blasters fit the Electromagnet magnetization slot. South polarity attracts
+nearby metal drops when held in either hand; north polarity follows the existing
+tool behavior and repels. The original item components, including loaded slug
+data, remain intact. `compat.slugterraEquipmentEnabled` defaults to true and
+controls this package under the master switch. Reload data after changing it.
+Bandoliers are not part of this equipment package.
+
+Equipment GameTests exercise every listed item through both field polarities,
+item serialization and player pickup, retaining custom names and nested slug
+data. They also use the real emitter menu to stamp both blasters, test main-hand
+and off-hand attraction, exclude nonmetal drops, and verify disabled behavior.
+
 ## Reproducing verification
 
 ```sh

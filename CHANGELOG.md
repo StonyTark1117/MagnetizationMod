@@ -2,6 +2,8 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Add optional magnetic Slugterra capsules, energy cores and blasters. Both blasters accept electromagnet polarity stamping and attract metal drops while held with south polarity; stored slug data survives field movement and pickup.
+
 - Add optional Slugterra cavern ore integration: 45 iron/copper/gold variants support dowsing, compass tuning, magnetic extraction and dropped-item attraction, with master and ore-specific switches.
 
 - Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.

@@ -241,6 +241,11 @@
     {"id": "slugterra:epidote_copper_ore", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_ores"}]},
     {"id": "slugterra:icy_stone_copper_ore", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_ores"}]},
     {"id": "slugterra:turquenite_copper_ore", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_ores"}]},
-    {"id": "slugterra:limestone_copper_ore", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_ores"}]}
+    {"id": "slugterra:limestone_copper_ore", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_ores"}]},
+    {"id": "#slugterra:capsule", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_equipment"}]},
+    {"id": "slugterra:empty_capsule", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_equipment"}]},
+    {"id": "slugterra:slug_energy_core", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_equipment"}]},
+    {"id": "slugterra:overpass_shooter_avg_1", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_equipment"}]},
+    {"id": "slugterra_dark:doctor_black_blaster", "required": false, "neoforge:conditions": [{"type": "magnetization:compat_config", "feature": "slugterra_equipment"}]}
   ]
 }

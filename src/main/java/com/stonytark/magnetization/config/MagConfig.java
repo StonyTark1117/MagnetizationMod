@@ -535,6 +535,7 @@ public final class MagConfig {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXTRA_GOLEMS_REBORN_MATERIALS;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_ORES_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_EQUIPMENT_ENABLED;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
@@ -2449,6 +2450,10 @@ public final class MagConfig {
                 .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
                 .translation("magnetization.configuration.compat.slugterraCompatEnabled")
                 .define("slugterraCompatEnabled", true);
+        SLUGTERRA_EQUIPMENT_ENABLED = b
+                .comment("Capsules, blasters and energy cores respond to fields; blasters can be magnetized. Reload data after changing.")
+                .translation("magnetization.configuration.compat.slugterraEquipmentEnabled")
+                .define("slugterraEquipmentEnabled", true);
         SLUGTERRA_ORES_ENABLED = b
                 .comment("Cavern iron, copper and gold ores support magnetic extraction and dowsing. Reload data after changing.")
                 .translation("magnetization.configuration.compat.slugterraOresEnabled")
@@ -3203,6 +3208,10 @@ public final class MagConfig {
     }
     public static boolean slugterraCompatEnabled() {
         return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraEquipmentEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_EQUIPMENT_ENABLED, true);
     }
 
     public static boolean slugterraOresEnabled() {

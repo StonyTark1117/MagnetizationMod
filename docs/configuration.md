@@ -542,3 +542,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 `compat.slugterraOresEnabled` (default `true`) independently enables cavern
 iron/copper/gold dowsing, extraction and dropped-item magnetism. Reload data after
 changing these values. See [verification and local test setup](compatibility/slugterra.md).
+
+`compat.slugterraEquipmentEnabled` (default `true`) controls dropped capsule,
+blaster and energy-core response plus blaster magnetization/held item attraction.
+It is subordinate to `slugterraCompatEnabled`; reload data after changes.
