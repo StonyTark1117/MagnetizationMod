@@ -34,6 +34,17 @@ public final class EmitterRegistry {
     private static final class LevelIndex extends HashMap<Long, ChunkBucket> {
         private int nativeCount;
         private int externalCount;
+        private final java.util.NavigableMap<Integer, java.util.NavigableMap<Integer, ChunkBucket>> rows =
+                new java.util.TreeMap<>();
+
+        private ChunkBucket getOrCreate(final long key) {
+            return computeIfAbsent(key, ignored -> {
+                final ChunkBucket created = new ChunkBucket();
+                rows.computeIfAbsent(ChunkPos.getX(key), x -> new java.util.TreeMap<>())
+                        .put(ChunkPos.getZ(key), created);
+                return created;
+            });
+        }
     }
 
     private static final class ChunkBucket {
@@ -71,7 +82,7 @@ public final class EmitterRegistry {
                                                          final Collection<BlockPos> positions) {
         final long key = chunkPos.toLong();
         final LevelIndex chunks = BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex());
-        final ChunkBucket bucket = chunks.computeIfAbsent(key, ignored -> new ChunkBucket());
+        final ChunkBucket bucket = chunks.getOrCreate(key);
         chunks.externalCount -= bucket.externalEmitters.size();
         if (positions.isEmpty()) {
             bucket.externalEmitters = Collections.emptySet();
@@ -141,6 +152,33 @@ public final class EmitterRegistry {
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new HashSet<>();
         for (final ChunkBucket bucket : chunks.values()) result.addAll(bucket.nativeEmitters);
+        return result;
+    }
+
+    /** Occupied chunks within the same square expansion used by fluid discovery.
+     * Ordered rows retain anchor order, then ascending X/Z, including overlap
+     * deduplication. Only intersecting occupied buckets are visited. */
+    public static synchronized Set<Long> occupiedChunksNear(final Level level,
+            final Set<Long> anchors, final int radiusChunks, final boolean external) {
+        if (radiusChunks < 0) throw new IllegalArgumentException("Negative chunk radius");
+        final LevelIndex chunks = BY_LEVEL.get(level);
+        if (anchors.isEmpty() || chunks == null
+                || (external ? chunks.externalCount : chunks.nativeCount) == 0) return Set.of();
+        final Set<Long> result = new LinkedHashSet<>();
+        for (final long anchor : anchors) {
+            final int x = ChunkPos.getX(anchor), z = ChunkPos.getZ(anchor);
+            for (final var row : chunks.rows.subMap(x - radiusChunks, true, x + radiusChunks, true).entrySet()) {
+                for (final var entry : row.getValue().subMap(z - radiusChunks, true, z + radiusChunks, true).entrySet()) {
+                    if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                        PerformanceDiagnostics.record(server, PerformanceDiagnostics.Work.EMITTER_BUCKETS_INSPECTED, 1);
+                    }
+                    final ChunkBucket bucket = entry.getValue();
+                    if (!(external ? bucket.externalEmitters : bucket.nativeEmitters).isEmpty()) {
+                        result.add(ChunkPos.asLong(row.getKey(), entry.getKey()));
+                    }
+                }
+            }
+        }
         return result;
     }
 
@@ -264,12 +302,20 @@ public final class EmitterRegistry {
 
     private static ChunkBucket bucket(final Level level, final long chunkKey) {
         return BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex())
-                .computeIfAbsent(chunkKey, ignored -> new ChunkBucket());
+                .getOrCreate(chunkKey);
     }
 
     private static void removeEmpty(final Level level, final LevelIndex chunks,
                                     final long key, final ChunkBucket bucket) {
-        if (bucket.isEmpty()) chunks.remove(key);
+        if (bucket.isEmpty()) {
+            chunks.remove(key);
+            final int x = ChunkPos.getX(key);
+            final var row = chunks.rows.get(x);
+            if (row != null) {
+                row.remove(ChunkPos.getZ(key));
+                if (row.isEmpty()) chunks.rows.remove(x);
+            }
+        }
         if (chunks.isEmpty()) BY_LEVEL.remove(level);
     }
 }
