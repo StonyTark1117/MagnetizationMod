@@ -1,5 +1,7 @@
 package com.stonytark.magnetization.content.mrarmor;
 
+import com.stonytark.magnetization.physics.PerformanceDiagnostics;
+import com.stonytark.magnetization.physics.PerformanceDiagnostics.Work;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.physics.MagneticFields;
 import com.stonytark.magnetization.registry.MagDataComponents;
@@ -39,6 +41,12 @@ public final class MrArmorHandler {
         final Player player = event.getEntity();
         if (!(player.level() instanceof ServerLevel server)) return;
         if (server.getGameTime() % com.stonytark.magnetization.config.MagConfig.mrArmorRefreshTicks() != 0L) return;
+        if (pieces(player) == 0 && !isEnabledMrTool(player.getMainHandItem())
+                && !isEnabledMrTool(player.getOffhandItem())) {
+            PerformanceDiagnostics.record(server, Work.MR_EQUIPMENT_SKIPS, 1);
+            return;
+        }
+        PerformanceDiagnostics.record(server, Work.MR_FIELD_SEARCHES, 1);
         final boolean inField = MagneticFields.isInField(server, player.position());
         if (inField) {
             final long until = server.getGameTime() + com.stonytark.magnetization.config.MagConfig.mrArmorHardenTicks();
@@ -48,6 +56,11 @@ public final class MrArmorHandler {
             hardenHeldTool(player.getMainHandItem(), until);
             hardenHeldTool(player.getOffhandItem(), until);
         }
+    }
+
+    private static boolean isEnabledMrTool(final ItemStack stack) {
+        return stack.getItem() instanceof com.stonytark.magnetization.content.mrtools.MrFluidTools.Marker
+                && !MagConfig.isItemDisabled(stack);
     }
 
     /** Stamp the hardened window onto a held MR-fluid tool (no-op for anything else). */

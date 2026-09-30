@@ -36,6 +36,11 @@ public final class FerrofluidCreepRegistry {
         return set != null && set.contains(pos);
     }
 
+    public static boolean isEmpty(final Level level) {
+        final Set<BlockPos> set = BY_LEVEL.get(level);
+        return set == null || set.isEmpty();
+    }
+
     /** Snapshot of the creep cells in this level (safe to iterate + mutate during). */
     public static Set<BlockPos> snapshot(final Level level) {
         final Set<BlockPos> set = BY_LEVEL.get(level);

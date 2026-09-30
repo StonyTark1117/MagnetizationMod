@@ -29,7 +29,12 @@ import java.util.function.BiConsumer;
  */
 public final class EmitterRegistry {
 
-    private static final WeakHashMap<Level, Map<Long, ChunkBucket>> BY_LEVEL = new WeakHashMap<>();
+    private static final WeakHashMap<Level, LevelIndex> BY_LEVEL = new WeakHashMap<>();
+
+    private static final class LevelIndex extends HashMap<Long, ChunkBucket> {
+        private int nativeCount;
+        private int externalCount;
+    }
 
     private static final class ChunkBucket {
         private final Set<BlockPos> nativeEmitters = new HashSet<>();
@@ -44,17 +49,17 @@ public final class EmitterRegistry {
 
     /** Register a native block-entity emitter. */
     public static synchronized void register(final Level level, final BlockPos pos) {
-        bucket(level, ChunkPos.asLong(pos)).nativeEmitters.add(pos.immutable());
+        if (bucket(level, ChunkPos.asLong(pos)).nativeEmitters.add(pos.immutable())) BY_LEVEL.get(level).nativeCount++;
     }
 
     /** Unregister a native block-entity emitter. */
     public static synchronized void unregister(final Level level, final BlockPos pos) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null) return;
         final long key = ChunkPos.asLong(pos);
         final ChunkBucket bucket = chunks.get(key);
         if (bucket == null) return;
-        bucket.nativeEmitters.remove(pos);
+        if (bucket.nativeEmitters.remove(pos)) chunks.nativeCount--;
         removeEmpty(level, chunks, key, bucket);
     }
 
@@ -65,8 +70,9 @@ public final class EmitterRegistry {
     public static synchronized void replaceExternalChunk(final Level level, final ChunkPos chunkPos,
                                                          final Collection<BlockPos> positions) {
         final long key = chunkPos.toLong();
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.computeIfAbsent(level, ignored -> new HashMap<>());
+        final LevelIndex chunks = BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex());
         final ChunkBucket bucket = chunks.computeIfAbsent(key, ignored -> new ChunkBucket());
+        chunks.externalCount -= bucket.externalEmitters.size();
         if (positions.isEmpty()) {
             bucket.externalEmitters = Collections.emptySet();
         } else {
@@ -77,6 +83,7 @@ public final class EmitterRegistry {
             bucket.externalEmitters = replacement.isEmpty()
                     ? Collections.emptySet() : replacement;
         }
+        chunks.externalCount += bucket.externalEmitters.size();
         removeEmpty(level, chunks, key, bucket);
     }
 
@@ -84,28 +91,29 @@ public final class EmitterRegistry {
     public static synchronized void registerExternal(final Level level, final BlockPos pos) {
         final ChunkBucket bucket = bucket(level, ChunkPos.asLong(pos));
         if (bucket.externalEmitters.isEmpty()) bucket.externalEmitters = new HashSet<>();
-        bucket.externalEmitters.add(pos.immutable());
+        if (bucket.externalEmitters.add(pos.immutable())) BY_LEVEL.get(level).externalCount++;
     }
 
     /** Remove one external emitter after a break or stale-entry check. */
     public static synchronized void unregisterExternal(final Level level, final BlockPos pos) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null) return;
         final long key = ChunkPos.asLong(pos);
         final ChunkBucket bucket = chunks.get(key);
         if (bucket == null || bucket.externalEmitters.isEmpty()) return;
-        bucket.externalEmitters.remove(pos);
+        if (bucket.externalEmitters.remove(pos)) chunks.externalCount--;
         if (bucket.externalEmitters.isEmpty()) bucket.externalEmitters = Collections.emptySet();
         removeEmpty(level, chunks, key, bucket);
     }
 
     /** Unconditionally discard the external bucket for an unloading chunk. */
     public static synchronized void dropExternalChunk(final Level level, final ChunkPos chunkPos) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null) return;
         final long key = chunkPos.toLong();
         final ChunkBucket bucket = chunks.get(key);
         if (bucket == null) return;
+        chunks.externalCount -= bucket.externalEmitters.size();
         bucket.externalEmitters = Collections.emptySet();
         removeEmpty(level, chunks, key, bucket);
     }
@@ -117,7 +125,7 @@ public final class EmitterRegistry {
 
     /** Full union snapshot retained for commands and diagnostics. */
     public static synchronized Set<BlockPos> snapshot(final Level level) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new HashSet<>();
         for (final ChunkBucket bucket : chunks.values()) {
@@ -129,7 +137,7 @@ public final class EmitterRegistry {
 
     /** Native-only snapshot; native BE populations are normally small. */
     public static synchronized Set<BlockPos> snapshotNative(final Level level) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new HashSet<>();
         for (final ChunkBucket bucket : chunks.values()) result.addAll(bucket.nativeEmitters);
@@ -140,7 +148,7 @@ public final class EmitterRegistry {
     public static synchronized Set<BlockPos> snapshotNativeInChunks(
             final Level level, final Collection<Long> chunkKeys) {
         if (chunkKeys.isEmpty()) return Collections.emptySet();
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new HashSet<>();
         for (final long key : chunkKeys) {
@@ -152,7 +160,7 @@ public final class EmitterRegistry {
 
     /** External-only full snapshot for tests and diagnostics, never hot ticks. */
     public static synchronized Set<BlockPos> snapshotExternal(final Level level) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new HashSet<>();
         for (final ChunkBucket bucket : chunks.values()) result.addAll(bucket.externalEmitters);
@@ -167,7 +175,7 @@ public final class EmitterRegistry {
     public static synchronized Set<BlockPos> snapshotExternalInChunks(
             final Level level, final Collection<Long> chunkKeys, final int limit) {
         if (limit <= 0 || chunkKeys.isEmpty()) return Collections.emptySet();
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
+        final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new LinkedHashSet<>(Math.min(limit, 256));
         for (final long key : chunkKeys) {
@@ -184,6 +192,7 @@ public final class EmitterRegistry {
     /** External positions in a square chunk radius around one target. */
     public static Set<BlockPos> snapshotExternalNear(final Level level, final BlockPos target,
                                                      final int radiusBlocks, final int limit) {
+        if (limit <= 0 || !hasExternal(level)) return Collections.emptySet();
         final int minChunkX = Math.floorDiv(target.getX() - radiusBlocks, 16);
         final int maxChunkX = Math.floorDiv(target.getX() + radiusBlocks, 16);
         final int minChunkZ = Math.floorDiv(target.getZ() - radiusBlocks, 16);
@@ -198,8 +207,8 @@ public final class EmitterRegistry {
     /** Native positions in a square block radius around one target. */
     public static synchronized Set<BlockPos> snapshotNativeNear(final Level level, final BlockPos target,
                                                                final int radiusBlocks) {
-        final Map<Long, ChunkBucket> chunks = BY_LEVEL.get(level);
-        if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
+        final LevelIndex chunks = BY_LEVEL.get(level);
+        if (chunks == null || chunks.nativeCount == 0) return Collections.emptySet();
         final int minChunkX = Math.floorDiv(target.getX() - radiusBlocks, 16);
         final int maxChunkX = Math.floorDiv(target.getX() + radiusBlocks, 16);
         final int minChunkZ = Math.floorDiv(target.getZ() - radiusBlocks, 16);
@@ -219,15 +228,26 @@ public final class EmitterRegistry {
     }
 
     public static synchronized int externalSize(final Level level) {
-        return snapshotExternal(level).size();
+        final LevelIndex index = BY_LEVEL.get(level);
+        return index == null ? 0 : index.externalCount;
+    }
+
+    public static synchronized boolean hasNative(final Level level) {
+        final LevelIndex index = BY_LEVEL.get(level);
+        return index != null && index.nativeCount > 0;
+    }
+
+    public static synchronized boolean hasExternal(final Level level) {
+        final LevelIndex index = BY_LEVEL.get(level);
+        return index != null && index.externalCount > 0;
     }
 
     private static ChunkBucket bucket(final Level level, final long chunkKey) {
-        return BY_LEVEL.computeIfAbsent(level, ignored -> new HashMap<>())
+        return BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex())
                 .computeIfAbsent(chunkKey, ignored -> new ChunkBucket());
     }
 
-    private static void removeEmpty(final Level level, final Map<Long, ChunkBucket> chunks,
+    private static void removeEmpty(final Level level, final LevelIndex chunks,
                                     final long key, final ChunkBucket bucket) {
         if (bucket.isEmpty()) chunks.remove(key);
         if (chunks.isEmpty()) BY_LEVEL.remove(level);

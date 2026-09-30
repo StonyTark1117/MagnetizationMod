@@ -1,0 +1,345 @@
+package com.stonytark.magnetization.gametest;
+
+import com.mojang.authlib.GameProfile;
+import com.stonytark.magnetization.api.MagneticPolarity;
+import com.stonytark.magnetization.compat.ExternalEmitterTracker;
+import com.stonytark.magnetization.compat.ExternalFieldCompat;
+import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.content.mrarmor.MrArmorHandler;
+import com.stonytark.magnetization.physics.EmitterRegistry;
+import com.stonytark.magnetization.physics.FieldApplicator;
+import com.stonytark.magnetization.physics.MagneticFields;
+import com.stonytark.magnetization.physics.PerformanceDiagnostics;
+import com.stonytark.magnetization.registry.MagDataComponents;
+import com.stonytark.magnetization.registry.MagItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import java.util.List;
+import java.util.UUID;
+
+@GameTestHolder("magnetization_create_new_age")
+@PrefixGameTestTemplate(false)
+public final class OptimizationGameTests {
+    private OptimizationGameTests() {}
+
+    @GameTest(template = "empty", batch = "optimizationEquipment", timeoutTicks = 40)
+    public static void equipmentGatePreservesHandsArmorDisabledItemsAndExpiration(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        helper.assertTrue(PerformanceDiagnostics.enabled(), "Optimization tests require performance diagnostics");
+        final int oldRefresh = MagConfig.MR_ARMOR_REFRESH_TICKS.get();
+        final var disabled = MagConfig.DISABLED_ITEMS.get();
+        final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final var player = FakePlayerFactory.get(level, new GameProfile(
+                UUID.fromString("ef2e2056-1ce2-4419-883d-fd59045ec36f"), "MagEquipTest"));
+        final BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
+        try {
+            MagConfig.MR_ARMOR_REFRESH_TICKS.set(1);
+            MagConfig.DISABLED_ITEMS.set(List.of());
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            level.setBlockAndUpdate(pos, BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create_new_age:magnetite_block")).defaultBlockState());
+            EmitterRegistry.registerExternal(level, pos);
+            player.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+            clear(player);
+            PerformanceDiagnostics.resetWork(level);
+            MrArmorHandler.onPlayerTick(new PlayerTickEvent.Post(player));
+            player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+            MrArmorHandler.onPlayerTick(new PlayerTickEvent.Post(player));
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("mr_field_searches") == 0L,
+                    "Ordinary equipment triggered MR field searches");
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("mr_equipment_skips") == 2L,
+                    "Expected both unequipped and ordinary armor checks to skip");
+
+            for (final EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND, EquipmentSlot.CHEST}) {
+                clear(player);
+                final ItemStack stack = new ItemStack(slot == EquipmentSlot.CHEST
+                        ? MagItems.MR_LIQUID_CHESTPLATE.get() : MagItems.MR_FLUID_PICKAXE.get());
+                player.setItemSlot(slot, stack);
+                MrArmorHandler.onPlayerTick(new PlayerTickEvent.Post(player));
+                final Long until = stack.get(MagDataComponents.HARDENED_UNTIL.get());
+                helper.assertTrue(until != null && until > level.getGameTime(), "Equipment did not harden in slot " + slot);
+                // Leaving the field must not extend the timestamp: expiry still follows world time.
+                player.setPos(pos.getX() + 1000, pos.getY(), pos.getZ());
+                MrArmorHandler.onPlayerTick(new PlayerTickEvent.Post(player));
+                helper.assertTrue(until.equals(stack.get(MagDataComponents.HARDENED_UNTIL.get())), "Out-of-field refresh changed expiry");
+                player.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+                MagConfig.DISABLED_ITEMS.set(List.of(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()));
+                PerformanceDiagnostics.resetWork(level);
+                MrArmorHandler.onPlayerTick(new PlayerTickEvent.Post(player));
+                helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("mr_field_searches") == 0L,
+                        "Disabled equipment triggered field search in slot " + slot);
+                MagConfig.DISABLED_ITEMS.set(List.of());
+            }
+            final var horse = helper.spawn(EntityType.HORSE, new BlockPos(1, 3, 1));
+            try {
+                final ItemStack barding = new ItemStack(MagItems.MR_FLUID_HORSE_ARMOR.get());
+                horse.setItemSlot(EquipmentSlot.BODY, barding);
+                MrArmorHandler.onEntityTick(new EntityTickEvent.Post(horse));
+                helper.assertTrue(barding.has(MagDataComponents.HARDENED_UNTIL.get()), "Horse barding no longer hardens");
+            } finally { horse.discard(); }
+            helper.succeed();
+        } finally {
+            clear(player);
+            EmitterRegistry.unregisterExternal(level, pos);
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            MagConfig.MR_ARMOR_REFRESH_TICKS.set(oldRefresh);
+            MagConfig.DISABLED_ITEMS.set(disabled);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+        }
+    }
+
+    @GameTest(template = "empty", batch = "optimizationLiveFields", timeoutTicks = 40)
+    public static void cachedAdapterMetadataNeverCachesLiveFieldState(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
+        final var oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final var oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        try {
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            level.setBlockAndUpdate(pos, BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create_new_age:magnetite_block")).defaultBlockState());
+            EmitterRegistry.registerExternal(level, pos);
+            final var first = MagneticFields.fieldAtLoaded(level, pos);
+            helper.assertTrue(first != null && first.polarity() == MagneticPolarity.NORTH, "Expected initial live field");
+            level.setBlockAndUpdate(pos.east(), Blocks.REDSTONE_BLOCK.defaultBlockState());
+            helper.assertTrue(MagneticFields.fieldAtLoaded(level, pos).polarity() == MagneticPolarity.SOUTH,
+                    "Cached adapter hid same-tick redstone change");
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(false);
+            helper.assertTrue(MagneticFields.fieldAtLoaded(level, pos) == null, "Cached adapter hid config disable");
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            level.setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
+            helper.assertTrue(MagneticFields.fieldAtLoaded(level, pos) == null, "Cached adapter hid block replacement");
+            EmitterRegistry.dropExternalChunk(level, new net.minecraft.world.level.ChunkPos(pos));
+            helper.assertTrue(!EmitterRegistry.snapshotExternal(level).contains(pos), "Unload left a stale emitter");
+            helper.succeed();
+        } finally {
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
+            EmitterRegistry.unregisterExternal(level, pos);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+        }
+    }
+
+    @GameTest(template = "empty", batch = "optimizationDiscovery", timeoutTicks = 40)
+    public static void eligibilityDiscoveryDoesNotComputeForceDetails(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var cow = helper.spawn(EntityType.COW, new BlockPos(1, 2, 1));
+        final var item = new net.minecraft.world.entity.item.ItemEntity(level, 0, 90, 0, new ItemStack(Items.IRON_INGOT));
+        try {
+            PerformanceDiagnostics.resetWork(level);
+            final var predicate = FieldApplicator.magnetizableTargets(level);
+            helper.assertTrue(!predicate.test(cow), "Ordinary cow became a magnetic target");
+            helper.assertTrue(predicate.test(item), "Vanilla iron item lost magnetic reaction");
+            helper.assertTrue(predicate.test(item), "Repeated eligibility changed");
+            helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("target_details") == 0L,
+                    "Discovery eagerly calculated susceptibility or polarity");
+            helper.succeed();
+        } finally { cow.discard(); item.discard(); }
+    }
+
+    @GameTest(template = "empty", batch = "optimizationCreep", timeoutTicks = 40)
+    public static void chunkSearchPreservesCreepGrowthPolarityAndOrphanRecession(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final int oldMag = MagConfig.FERROFLUID_MAG_TICKS.get();
+        final int oldPlain = MagConfig.FERROFLUID_PLAIN_TICKS.get();
+        final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final BlockPos anchor = helper.absolutePos(new BlockPos(2, 2, 1));
+        final BlockPos emitter = anchor.offset(4, 0, 0);
+        final var plain = com.stonytark.magnetization.registry.MagBlocks.FERROFLUID_BLOCK.get();
+        final var magnetic = com.stonytark.magnetization.registry.MagBlocks.MAGNETIZED_FERROFLUID_BLOCK.get();
+        try {
+            MagConfig.FERROFLUID_MAG_TICKS.set(1);
+            MagConfig.FERROFLUID_PLAIN_TICKS.set(1);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            for (int x = -2; x <= 4; x++) {
+                level.setBlockAndUpdate(anchor.offset(x, -1, 0), Blocks.GLASS.defaultBlockState());
+                level.setBlockAndUpdate(anchor.offset(x, 0, 0), Blocks.AIR.defaultBlockState());
+            }
+            level.setBlockAndUpdate(emitter, BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create_new_age:netherite_magnet")).defaultBlockState());
+            EmitterRegistry.registerExternal(level, emitter);
+            for (int mode = 0; mode < 3; mode++) {
+                final var state = mode == 0 ? plain.defaultBlockState() : magnetic.defaultBlockState()
+                        .setValue(com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock.POLARITY,
+                                mode == 1 ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH);
+                level.setBlockAndUpdate(anchor, state);
+                com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                final BlockPos step = mode == 2 ? anchor.west() : anchor.east();
+                helper.assertTrue(level.getBlockState(step).is(state.getBlock()), "Creep grew in wrong direction for mode " + mode
+                        + "; step=" + level.getBlockState(step) + "; source=" + level.getBlockState(anchor)
+                        + "; field=" + MagneticFields.fieldAtLoaded(level, emitter)
+                        + "; registered=" + com.stonytark.magnetization.content.fluid.FerrofluidSourceRegistry.snapshot(level));
+                for (int x = -1; x <= 1; x++) {
+                    final BlockPos pos = anchor.offset(x, 0, 0);
+                    level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                    com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.remove(level, pos);
+                }
+            }
+            EmitterRegistry.unregisterExternal(level, emitter);
+            level.setBlockAndUpdate(emitter, Blocks.AIR.defaultBlockState());
+            // A flowing tracked creep cell has no source anchor, but still needs recession.
+            level.setBlockAndUpdate(anchor, plain.defaultBlockState().setValue(net.minecraft.world.level.block.LiquidBlock.LEVEL, 1));
+            com.stonytark.magnetization.content.fluid.FerrofluidSourceRegistry.remove(level, anchor);
+            com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.add(level, anchor);
+            com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+            helper.assertTrue(level.getBlockState(anchor).isAir(), "Orphan creep was skipped when no anchors remained");
+            helper.succeed();
+        } finally {
+            for (int x = -2; x <= 4; x++) {
+                final BlockPos pos = anchor.offset(x, 0, 0);
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.remove(level, pos);
+            }
+            EmitterRegistry.unregisterExternal(level, emitter);
+            MagConfig.FERROFLUID_MAG_TICKS.set(oldMag);
+            MagConfig.FERROFLUID_PLAIN_TICKS.set(oldPlain);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+        }
+    }
+
+    @GameTest(template = "empty", batch = "optimizationTargetRegions", timeoutTicks = 40)
+    public static void overlappingTargetsShareRegionsAndRespectApplicationBudget(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final int oldBudget = MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.get();
+        final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final java.util.List<net.minecraft.world.entity.item.ItemEntity> items = new java.util.ArrayList<>();
+        final BlockPos emitter = helper.absolutePos(new BlockPos(1, 2, 1));
+        final BlockPos second = emitter.west(2);
+        final net.minecraft.world.level.ChunkPos chunk = new net.minecraft.world.level.ChunkPos(emitter);
+        final boolean wasForced = level.getForcedChunks().contains(chunk.toLong());
+        final Runnable cleanup = () -> {
+            items.forEach(net.minecraft.world.entity.Entity::discard);
+            EmitterRegistry.unregisterExternal(level, emitter);
+            level.setBlockAndUpdate(emitter, Blocks.AIR.defaultBlockState());
+            EmitterRegistry.unregisterExternal(level, second);
+            level.setBlockAndUpdate(second, Blocks.AIR.defaultBlockState());
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(oldBudget);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+            if (!wasForced) level.setChunkForced(chunk.x, chunk.z, false);
+        };
+        try {
+            level.setChunkForced(chunk.x, chunk.z, true);
+            MagConfig.EXTERNAL_FIELD_APPLICATION_BUDGET.set(1);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            level.setBlockAndUpdate(emitter, BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create_new_age:magnetite_block")).defaultBlockState());
+            EmitterRegistry.registerExternal(level, emitter);
+            level.setBlockAndUpdate(second, level.getBlockState(emitter));
+            EmitterRegistry.registerExternal(level, second);
+            for (int i = 0; i < 16; i++) {
+                final var item = new net.minecraft.world.entity.item.ItemEntity(level,
+                        emitter.getX() + 0.1 + i * 0.01, emitter.getY() + 2, emitter.getZ() + 0.5,
+                        new ItemStack(Items.IRON_INGOT));
+                item.setNoGravity(true);
+                item.getItem().set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,
+                        net.minecraft.network.chat.Component.literal("Magnetic target " + i));
+                level.addFreshEntity(item);
+                items.add(item);
+            }
+            helper.runAfterDelay(5, () -> {
+                try {
+                    // Chunk-load replacement may occur after initial placement.
+                    ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(emitter));
+                    ExternalEmitterTracker.rebuildChunkIndex(level, level.getChunkAt(second));
+                    helper.assertTrue(EmitterRegistry.hasExternal(level), "Fixture emitters disappeared: "
+                            + level.getBlockState(emitter) + "; " + level.getBlockState(second));
+                    for (int i = 0; i < items.size(); i++) {
+                        items.get(i).setPos(emitter.getX() + 0.1 + i * 0.01, emitter.getY() + 2, emitter.getZ() + 0.5);
+                        items.get(i).setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                    }
+                    PerformanceDiagnostics.resetWork(level);
+                    ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                    final var counts = PerformanceDiagnostics.workSnapshot(level);
+                    helper.assertTrue(counts.get("eligible_entities") >= 16L, "Discovery missed ordinary iron items: " + counts
+                            + "; surviving=" + items.stream().filter(item -> !item.isRemoved()).count());
+                    helper.assertTrue(counts.get("target_regions") < counts.get("targets_discovered"),
+                            "Overlapping targets repeated identical search regions");
+                    helper.assertTrue(counts.get("fields_applied") <= 1L, "Application budget was exceeded");
+                    boolean left = false, right = false;
+                    for (int attempt = 0; attempt < 64 && !(left && right); attempt++) {
+                        items.forEach(item -> item.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO));
+                        ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                        final double x = items.getFirst().getDeltaMovement().x;
+                        left |= x < -1.0e-8;
+                        right |= x > 1.0e-8;
+                    }
+                    helper.assertTrue(left && right, "Budget of one starved one of the two opposite-side emitters");
+                    items.forEach(net.minecraft.world.entity.Entity::discard);
+                    PerformanceDiagnostics.resetWork(level);
+                    ExternalEmitterTracker.onLevelTick(new LevelTickEvent.Post(() -> true, level));
+                    helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("fields_applied") == 0L,
+                            "External fields applied with no eligible targets");
+                    helper.succeed();
+                } finally { cleanup.run(); }
+            });
+        } catch (final RuntimeException | Error failure) {
+            cleanup.run();
+            throw failure;
+        }
+    }
+
+    @GameTest(template = "empty", batch = "optimizationLoadedSignals", timeoutTicks = 40)
+    public static void signalReadsStayLiveAcrossChunkEdgesWithoutLoadingMissingChunks(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final BlockPos center = helper.absolutePos(new BlockPos(200, 20, 200));
+        final BlockPos pos = new BlockPos(Math.floorDiv(center.getX(), 16) * 16 + 15,
+                center.getY(), Math.floorDiv(center.getZ(), 16) * 16 + 15);
+        try {
+            for (int x = -2; x <= 2; x++) for (int y = -2; y <= 2; y++) for (int z = -2; z <= 2; z++) {
+                level.setBlockAndUpdate(pos.offset(x, y, z), Blocks.AIR.defaultBlockState());
+            }
+            for (final var direction : net.minecraft.core.Direction.values()) {
+                final BlockPos neighbor = pos.relative(direction);
+                level.setBlockAndUpdate(neighbor, Blocks.REDSTONE_BLOCK.defaultBlockState());
+                helper.assertTrue(com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal(level, pos)
+                        == level.hasNeighborSignal(pos), "Direct power differs at chunk boundary " + direction);
+                level.setBlockAndUpdate(neighbor, Blocks.STONE.defaultBlockState());
+                level.setBlockAndUpdate(neighbor.relative(direction), Blocks.REDSTONE_BLOCK.defaultBlockState());
+                helper.assertTrue(com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal(level, pos)
+                        == level.hasNeighborSignal(pos), "Conducted power differs at chunk boundary " + direction);
+                level.setBlockAndUpdate(neighbor, Blocks.AIR.defaultBlockState());
+                level.setBlockAndUpdate(neighbor.relative(direction), Blocks.AIR.defaultBlockState());
+                helper.assertTrue(!com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal(level, pos),
+                        "Power removal was cached");
+            }
+            final BlockPos missing = new BlockPos(1_000_000, 100, 1_000_000);
+            helper.assertTrue(com.stonytark.magnetization.physics.LoadedChunkAccess.chunkNow(level, missing) == null,
+                    "Missing-chunk fixture unexpectedly loaded");
+            helper.assertTrue(!com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal(level, missing),
+                    "Missing chunks contributed power");
+            helper.assertTrue(com.stonytark.magnetization.physics.LoadedChunkAccess.chunkNow(level, missing) == null,
+                    "Signal read loaded a missing chunk");
+            helper.succeed();
+        } finally {
+            for (final var direction : net.minecraft.core.Direction.values()) {
+                level.setBlockAndUpdate(pos.relative(direction), Blocks.AIR.defaultBlockState());
+                level.setBlockAndUpdate(pos.relative(direction, 2), Blocks.AIR.defaultBlockState());
+            }
+        }
+    }
+
+    private static void clear(final net.minecraft.world.entity.player.Player player) {
+        for (final EquipmentSlot slot : EquipmentSlot.values()) player.setItemSlot(slot, ItemStack.EMPTY);
+    }
+}

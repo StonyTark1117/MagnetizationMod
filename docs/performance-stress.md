@@ -1,6 +1,6 @@
 # Reproducible performance stress tests
 
-The performance harness measures dedicated-server tick cost without adding benchmark-only code to the shipped mod. It starts a fresh flat world with a broad server-safe Create compatibility pack, installs a generated datapack in that disposable world, and measures each scenario with Minecraft's built-in `tick sprint` command. The profile deliberately omits world-pregeneration tools and the Aeroportals/Immersive Aeronautics test stack: those perform unrelated background work or bundle Immersive Portals code that logs a third-party dedicated-server error every tick and would contaminate the result.
+The performance harness measures dedicated-server tick cost. It starts a fresh flat world with a broad server-safe Create compatibility pack, installs a generated datapack in that disposable world, and measures each scenario with Minecraft's built-in `tick sprint` command. Its fixture commands are enabled only by the stress run's `magnetization.performanceFixture` JVM property; ordinary servers do not register them. The profile deliberately omits world-pregeneration tools and the Aeroportals/Immersive Aeronautics test stack: those perform unrelated background work or bundle Immersive Portals code that logs a third-party dedicated-server error every tick and would contaminate the result.
 
 ## Run a benchmark
 
@@ -16,6 +16,7 @@ The default `standard` profile places 64 instances per grid, performs a 2,000-ti
 - `summary.json`: machine-readable metadata and aggregate statistics
 - `results.csv`: individual measurements
 - `raw-samples.tsv`: acquisition record
+- `work-counts.tsv`: per-sample activation/work counters when diagnostics are enabled
 - `latest.log`, `gradle.log`, and `stress-manifest.json`: diagnostic evidence
 
 The disposable world is removed after the run. Set `MAG_STRESS_KEEP_WORLD=1` to retain it for inspection.
@@ -54,9 +55,22 @@ Set `MAG_STRESS_JFR=1` to archive a profile-settings Java Flight Recording as `s
 | `air_separators` | Idle Air Separator block entities |
 | `gas_volume` | A sealed noble-gas volume with deterministic one-cell churn each tick, exercising bounded network recomputation |
 | `mixed_pack` | A deterministic blend of representative blocks and item targets |
+| `dense_external` | 1,024 Create: New Age netherite magnets and confined item targets, exercising the application budget |
+| `equipment_changes` | Synthetic player cycling through no equipment, MR chest armor, main hand, and off hand |
+| `ordinary_player` | Synthetic player with no MR equipment near external magnets |
+| `ordinary_mobs` | Ordinary cows near external magnets, with AI disabled |
+| `external_no_targets` | External magnets with no eligible targets |
+| `ferrofluid_pool` | Enclosed two-block-deep plain ferrofluid pool with no emitters |
+| `ferrofluid_external` | The same pool near external magnets |
+| `ferrofluid_native` | The same pool near a powered native electromagnet |
+| `mr_armor`, `mr_mainhand`, `mr_offhand` | Synthetic player with each relevant MR equipment configuration near external magnets |
 | `empty_end` | Final empty baseline used to quantify drift |
 
 Every scenario clears the same volume, removes tagged test entities, reuses the same forced chunks, disables random ticks and autosaves during measurement, and runs in the same server process. These choices minimize world generation, disk I/O, and JVM-startup variance while keeping the measured game code realistic.
+
+The synthetic player invokes the real MR tick handler but does not measure connected-player, network, or full player-tick costs. Fluid pools contain 512 sources in the quick profile and 2,048 in standard. External blocks placed by commands are explicitly reindexed, and external scenarios fail setup if the index is empty.
+
+With diagnostics enabled, `work-counts.tsv` records counters between explicit resets and snapshots. `observed_ticks` includes the short console delay after each sprint; use it for per-tick rates. `fluid_sources`, `source_chunks`, and `creep_cells` are population sums over `creep_passes`, not unique-world counts. Divide by the pass count to obtain mean populations. `targets_discovered` counts all eligible entities, ships and fluid entries before identical regions are deduplicated; `targets_scheduled` and `target_regions` count regions selected under the existing scheduling limit. Discovery itself remains uncapped. `emitter_candidates` and `fields_applied` describe the external tracker, while `field_evaluations` also includes external fields queried by other handlers. MR search/skip counters cover player refresh checks. Stable reflective metadata should require no additional `adapter_method_lookups` after warmup.
 
 ## Compare revisions
 
@@ -67,6 +81,6 @@ python3 scripts/compare-performance-stress.py \
   baseline/summary.json candidate/summary.json
 ```
 
-The default regression thresholds are 10 percent and the report's absolute noise floor (normally 0.1 MSPT); both must be exceeded. Use `--threshold-pct 5` or `--absolute-threshold-mspt 0.2` to change them and `--fail-on-regression` when a nonzero exit is useful in automation. The comparer refuses reports whose profile, grid, sample length, sample count, or scenario list differs.
+The default regression thresholds are 10 percent and the report's absolute noise floor (normally 0.1 MSPT); both must be exceeded. Use `--threshold-pct 5` or `--absolute-threshold-mspt 0.2` to change them and `--fail-on-regression` when a nonzero exit is useful in automation. The comparer refuses unstable reports and mismatches in profile, grid, warmup, sample length/count, scenarios, loader, JVM, configuration hash, or diagnostics/JFR settings. Reports also record a source hash so dirty working copies can be identified.
 
 Treat a result as actionable only when the summary is stable. The report retains ordinary coefficient of variation (CV), but stability warnings use robust CV derived from median absolute deviation so one transient sample does not hide agreement among the others. By default, robust CV above 10 percent or empty-baseline drift beyond plus or minus 10 percent produces a warning when the scaled median absolute deviation also exceeds the 0.1 MSPT noise floor. Repeat noisy runs after removing competing CPU, memory, and I/O load. Compare on the same machine, Java version, profile, and scenario parameters; the report embeds those values so mismatches are visible.

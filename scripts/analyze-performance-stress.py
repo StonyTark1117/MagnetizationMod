@@ -92,8 +92,29 @@ def main() -> None:
             f"empty baseline drift {drift_pct:+.2f}% ({drift_mspt:+.3f} MSPT) exceeds thresholds"
         )
 
+    # Work counters cover reset-to-snapshot intervals (reported explicitly),
+    # including the short console observation delay after each tick sprint.
+    work_by_scenario: dict[str, list[dict[str, int]]] = {}
+    counts_path = args.samples.parent / "work-counts.tsv"
+    if counts_path.exists():
+        with counts_path.open() as handle:
+            for scenario, sample, raw in csv.reader(handle, delimiter="\t"):
+                work_by_scenario.setdefault(scenario, []).append(json.loads(raw))
+    for summary in summaries:
+        samples = work_by_scenario.get(str(summary["scenario"]), [])
+        if samples:
+            summary["work_counts_median"] = {
+                key: statistics.median(row.get(key, 0) for row in samples) for key in samples[0]
+            }
+            valid = [row for row in samples if row.get("observed_ticks", 0) > 0]
+            if valid:
+                summary["work_per_observed_tick"] = {
+                    key: round_number(statistics.median(row.get(key, 0) / row["observed_ticks"] for row in valid))
+                    for key in valid[0] if key != "observed_ticks"
+                }
+
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "metadata": metadata,
         "empty_baseline_drift_pct": round_number(drift_pct),
         "empty_baseline_drift_mspt": round_number(drift_mspt),

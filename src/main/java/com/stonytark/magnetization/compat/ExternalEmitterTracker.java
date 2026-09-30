@@ -1,5 +1,7 @@
 package com.stonytark.magnetization.compat;
 
+import com.stonytark.magnetization.physics.PerformanceDiagnostics;
+import com.stonytark.magnetization.physics.PerformanceDiagnostics.Work;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticStrength;
@@ -44,7 +46,7 @@ public final class ExternalEmitterTracker {
     static final int MAX_EXTERNAL_FIELD_RANGE = (int) MagneticStrength.EXTREME.range();
     /** Hard scan bound before the smaller application budget is selected. */
     static final int MAX_CANDIDATES_PER_TICK = 2048;
-    /** Target collection is also bounded so entity piles cannot dominate a tick. */
+    /** Scheduling bound after full discovery and region deduplication; discovery itself is not capped. */
     static final int MAX_TARGETS_PER_TICK = 512;
 
     private static final WeakHashMap<ServerLevel, Integer> TARGET_CURSOR = new WeakHashMap<>();
@@ -89,10 +91,17 @@ public final class ExternalEmitterTracker {
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
+        if (!EmitterRegistry.hasExternal(server)) {
+            LAST_CANDIDATES.put(server, 0);
+            LAST_APPLIED.put(server, 0);
+            return;
+        }
         final TargetSchedule schedule = scheduleNearActiveTargets(server);
+        PerformanceDiagnostics.record(server, Work.EMITTER_CANDIDATES, schedule.candidates.size());
         LAST_CANDIDATES.put(server, schedule.candidates.size());
         final int applied = applyBudgeted(server, schedule.candidates, applicationBudget());
         LAST_APPLIED.put(server, applied);
+        PerformanceDiagnostics.record(server, Work.FIELDS_APPLIED, applied);
         EnderFieldRelayCompat.apply(server, schedule.chunkKeys);
     }
 
@@ -102,6 +111,8 @@ public final class ExternalEmitterTracker {
 
         final int start = Math.floorMod(TARGET_CURSOR.getOrDefault(server, 0), targets.size());
         final int targetCount = Math.min(MAX_TARGETS_PER_TICK, targets.size());
+        PerformanceDiagnostics.record(server, Work.TARGETS_SCHEDULED, targetCount);
+        PerformanceDiagnostics.record(server, Work.TARGET_REGIONS, targetCount);
         final Set<Long> chunkKeys = new LinkedHashSet<>();
         for (int i = 0; i < targetCount; i++) {
             addChunkKeys(chunkKeys, targets.get((start + i) % targets.size()));
@@ -112,9 +123,14 @@ public final class ExternalEmitterTracker {
     }
 
     private static List<ChunkBounds> gatherTargets(final ServerLevel server) {
-        final List<ChunkBounds> targets = new ArrayList<>();
+        final Set<ChunkBounds> targets = new LinkedHashSet<>();
+        int discovered = 0;
+        final java.util.function.Predicate<Entity> magnetizable = FieldApplicator.magnetizableTargets(server);
         for (final Entity entity : server.getAllEntities()) {
-            if (FieldApplicator.isMagnetizableTarget(entity)) {
+            PerformanceDiagnostics.record(server, Work.ENTITIES_INSPECTED, 1);
+            if (magnetizable.test(entity)) {
+                discovered++;
+                PerformanceDiagnostics.record(server, Work.ELIGIBLE_ENTITIES, 1);
                 targets.add(around(entity.getX(), entity.getZ(), MAX_EXTERNAL_FIELD_RANGE));
             }
         }
@@ -124,6 +140,7 @@ public final class ExternalEmitterTracker {
             for (final var subLevel : container.getAllSubLevels()) {
                 if (!(subLevel instanceof ServerSubLevel ship)
                         || ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0d) continue;
+                discovered++;
                 final BoundingBox3dc box = ship.boundingBox();
                 targets.add(bounds(box.minX() - MAX_EXTERNAL_FIELD_RANGE,
                         box.maxX() + MAX_EXTERNAL_FIELD_RANGE,
@@ -133,12 +150,15 @@ public final class ExternalEmitterTracker {
         }
 
         for (final BlockPos pos : FerrofluidSourceRegistry.snapshot(server)) {
+            discovered++;
             targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
         }
         for (final BlockPos pos : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
+            discovered++;
             targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
         }
-        return targets;
+        PerformanceDiagnostics.record(server, Work.TARGETS_DISCOVERED, discovered);
+        return new ArrayList<>(targets);
     }
 
     private static int applyBudgeted(final ServerLevel server, final List<BlockPos> candidates,

@@ -1,5 +1,7 @@
 package com.stonytark.magnetization.content.fluid;
 
+import com.stonytark.magnetization.physics.PerformanceDiagnostics;
+import com.stonytark.magnetization.physics.PerformanceDiagnostics.Work;
 import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
@@ -68,6 +70,15 @@ public final class FerrofluidCreepHandler {
         if (!growMag && !growPlain && !recede) return;
 
         final List<BlockPos> anchors = gatherAnchors(server); // fluid SOURCE cells
+        if (PerformanceDiagnostics.enabled()) {
+            final Set<Long> occupied = new HashSet<>();
+            for (final BlockPos anchor : anchors) occupied.add(ChunkPos.asLong(anchor));
+            PerformanceDiagnostics.record(server, Work.CREEP_PASSES, 1);
+            PerformanceDiagnostics.record(server, Work.FLUID_SOURCES, anchors.size());
+            PerformanceDiagnostics.record(server, Work.SOURCE_CHUNKS, occupied.size());
+            PerformanceDiagnostics.record(server, Work.CREEP_CELLS, FerrofluidCreepRegistry.snapshot(server).size());
+        }
+        if (anchors.isEmpty() && FerrofluidCreepRegistry.isEmpty(server)) return;
         final List<Magnet> magnets = gatherMagnets(server, anchors);
         if (recede) recedeUnsupported(server, magnets);
         if (anchors.isEmpty() || magnets.isEmpty() || (!growMag && !growPlain)) return;
@@ -124,10 +135,13 @@ public final class FerrofluidCreepHandler {
         final List<Magnet> magnets = new ArrayList<>();
         final Set<Long> nativeChunks = new LinkedHashSet<>();
         final Set<Long> externalChunks = new LinkedHashSet<>();
-        for (final BlockPos anchor : anchors) {
-            addChunkKeys(nativeChunks, anchor, 512);
-            addChunkKeys(externalChunks, anchor, (int) MagneticStrength.EXTREME.range());
-        }
+        final Set<Long> occupied = FerrofluidChunkSearch.occupiedChunks(anchors);
+        final boolean nativePresent = EmitterRegistry.hasNative(server);
+        final boolean externalPresent = EmitterRegistry.hasExternal(server);
+        if (nativePresent) FerrofluidChunkSearch.expand(nativeChunks, occupied, 512);
+        if (externalPresent) FerrofluidChunkSearch.expand(externalChunks, occupied, (int) MagneticStrength.EXTREME.range());
+        PerformanceDiagnostics.record(server, Work.NATIVE_CHUNK_ATTEMPTS, nativePresent ? 4225L * occupied.size() : 0L);
+        PerformanceDiagnostics.record(server, Work.EXTERNAL_CHUNK_ATTEMPTS, externalPresent ? 25L * occupied.size() : 0L);
         final Set<BlockPos> candidates = new HashSet<>(
                 EmitterRegistry.snapshotNativeInChunks(server, nativeChunks));
         candidates.addAll(EmitterRegistry.snapshotExternalInChunks(
@@ -142,16 +156,6 @@ public final class FerrofluidCreepHandler {
             magnets.add(new Magnet(Vec3.atCenterOf(e.getKey()), e.getValue(), MagneticStrength.WEAK.range(), false));
         }
         return magnets;
-    }
-
-    private static void addChunkKeys(final Set<Long> keys, final BlockPos target, final int radius) {
-        final int minX = Math.floorDiv(target.getX() - radius, 16);
-        final int maxX = Math.floorDiv(target.getX() + radius, 16);
-        final int minZ = Math.floorDiv(target.getZ() - radius, 16);
-        final int maxZ = Math.floorDiv(target.getZ() + radius, 16);
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) keys.add(ChunkPos.asLong(x, z));
-        }
     }
 
     /** Every ferrofluid SOURCE cell (plain + magnetized), pruning registry entries

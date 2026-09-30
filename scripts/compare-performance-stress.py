@@ -26,7 +26,9 @@ def main() -> None:
 
     baseline = load(args.baseline)
     candidate = load(args.candidate)
-    comparable_keys = ("profile", "grid_size", "sample_ticks", "samples_per_scenario", "scenarios")
+    comparable_keys = ("profile", "grid_size", "global_warmup_ticks", "warmup_ticks", "sample_ticks",
+                       "samples_per_scenario", "scenarios", "neoforge_version", "java_version",
+                       "jfr_enabled", "performance_diagnostics_enabled", "minecraft_jvm", "configuration_sha256")
     mismatches = [
         key for key in comparable_keys
         if baseline["metadata"].get(key) != candidate["metadata"].get(key)
@@ -41,6 +43,8 @@ def main() -> None:
         )
     if absolute_threshold < 0:
         parser.error("--absolute-threshold-mspt cannot be negative")
+    if not baseline.get("stable") or not candidate.get("stable"):
+        raise SystemExit("comparison requires stable baseline and candidate measurements")
     before = {row["scenario"]: row for row in baseline["scenarios"]}
     after = {row["scenario"]: row for row in candidate["scenarios"]}
     shared = [row["scenario"] for row in baseline["scenarios"] if row["scenario"] in after]

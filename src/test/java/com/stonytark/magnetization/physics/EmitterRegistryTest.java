@@ -169,4 +169,26 @@ class EmitterRegistryTest {
         assertEquals(Set.of(nearbyA, nearbyB), near);
         assertEquals(1, EmitterRegistry.snapshotExternalNear(LVL, BlockPos.ZERO, 32, 1).size());
     }
+    @Test
+    void categoryCountsTrackDuplicateRegistrationReplacementAndUnload() {
+        final java.util.Random random = new java.util.Random(451);
+        for (int step = 0; step < 1000; step++) {
+            final BlockPos pos = new BlockPos(random.nextInt(80) - 40, 5, random.nextInt(80) - 40);
+            switch (random.nextInt(6)) {
+                case 0 -> { EmitterRegistry.register(LVL, pos); EmitterRegistry.register(LVL, pos); }
+                case 1 -> EmitterRegistry.unregister(LVL, pos);
+                case 2 -> { EmitterRegistry.registerExternal(LVL, pos); EmitterRegistry.registerExternal(LVL, pos); }
+                case 3 -> EmitterRegistry.unregisterExternal(LVL, pos);
+                case 4 -> EmitterRegistry.replaceExternalChunk(LVL, new ChunkPos(pos),
+                        Set.of(pos, pos.above(), pos.offset(48, 0, 0)));
+                case 5 -> EmitterRegistry.dropExternalChunk(LVL, new ChunkPos(pos));
+            }
+            assertEquals(!EmitterRegistry.snapshotNative(LVL).isEmpty(), EmitterRegistry.hasNative(LVL));
+            assertEquals(!EmitterRegistry.snapshotExternal(LVL).isEmpty(), EmitterRegistry.hasExternal(LVL));
+            assertEquals(EmitterRegistry.snapshotExternal(LVL).size(), EmitterRegistry.externalSize(LVL));
+        }
+        clearBucket();
+        assertEquals(false, EmitterRegistry.hasNative(LVL));
+        assertEquals(false, EmitterRegistry.hasExternal(LVL));
+    }
 }

@@ -1,5 +1,6 @@
 package com.stonytark.magnetization.physics;
 
+import com.stonytark.magnetization.physics.PerformanceDiagnostics.Work;
 import com.stonytark.magnetization.api.IMagnetizable;
 import com.stonytark.magnetization.api.Lirm;
 import com.stonytark.magnetization.api.MagTags;
@@ -514,9 +515,15 @@ public final class FieldApplicator {
      */
     public static boolean isMagnetizableTarget(final Entity entity) {
         if (entity.level() instanceof ServerLevel level) {
-            return targetSnapshot(targetCache(level), level, entity, true, true).magnetizable();
+            return targetEligibility(targetCache(level), level, entity, true, true);
         }
         return isMagnetizableUncached(entity, true, true);
+    }
+
+    /** Capture configuration/cache setup once for a synchronous discovery pass. */
+    public static Predicate<Entity> magnetizableTargets(final ServerLevel level) {
+        final TargetTickCache cache = targetCache(level);
+        return entity -> targetEligibility(cache, level, entity, true, true);
     }
 
     private static void applyToEntities(final ServerLevel level, final MagneticField field,
@@ -660,6 +667,7 @@ public final class FieldApplicator {
             cache.cbcProjectilesEnabled = cbcProjectilesEnabled;
             cache.ieRailgunReactionEnabled = ieRailgunReactionEnabled;
             for (final Int2ObjectOpenHashMap<TargetSnapshot> variants : cache.variants) variants.clear();
+            for (final var eligibility : cache.eligibility) eligibility.clear();
         }
         return cache;
     }
@@ -672,17 +680,30 @@ public final class FieldApplicator {
         TargetSnapshot snapshot = snapshots.get(entity.getId());
         if (snapshot != null) return snapshot;
 
-        final boolean magnetizable = isMagnetizableUncached(entity, affectsArmor, affectsItems);
+        final boolean magnetizable = targetEligibility(cache, level, entity, affectsArmor, affectsItems);
         final boolean diamagnetic = magnetizable && entity instanceof ItemEntity item
                 && item.getItem().is(MagTags.DIAMAGNETIC_ITEMS);
+        if (magnetizable) PerformanceDiagnostics.record(level, Work.TARGET_DETAILS, 1);
         snapshot = magnetizable
                 ? new TargetSnapshot(true, diamagnetic,
                         diamagnetic ? DIAMAGNETIC_SUSCEPTIBILITY : susceptibilityOf(entity, affectsArmor),
                         diamagnetic ? MagneticPolarity.NONE : polarityOf(entity))
                 : TargetSnapshot.NOT_MAGNETIZABLE;
         snapshots.put(entity.getId(), snapshot);
-        PerformanceDiagnostics.recordTargetClassification(level);
         return snapshot;
+    }
+
+    private static boolean targetEligibility(final TargetTickCache cache, final ServerLevel level,
+                                             final Entity entity, final boolean affectsArmor,
+                                             final boolean affectsItems) {
+        final int variant = (affectsArmor ? 2 : 0) | (affectsItems ? 1 : 0);
+        final var eligibility = cache.eligibility[variant];
+        final byte previous = eligibility.get(entity.getId());
+        if (previous != 0) return previous == 2;
+        final boolean result = isMagnetizableUncached(entity, affectsArmor, affectsItems);
+        eligibility.put(entity.getId(), (byte) (result ? 2 : 1));
+        PerformanceDiagnostics.recordTargetClassification(level);
+        return result;
     }
 
     /** Drop entity snapshots before a dimension object can be reused or retained. */
@@ -826,8 +847,14 @@ public final class FieldApplicator {
         private boolean ieRailgunReactionEnabled;
         private final Int2ObjectOpenHashMap<TargetSnapshot>[] variants = new Int2ObjectOpenHashMap[4];
 
+        private final it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap[] eligibility =
+                new it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap[4];
+
         private TargetTickCache() {
-            for (int i = 0; i < variants.length; i++) variants[i] = new Int2ObjectOpenHashMap<>();
+            for (int i = 0; i < variants.length; i++) {
+                variants[i] = new Int2ObjectOpenHashMap<>();
+                eligibility[i] = new it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap();
+            }
         }
     }
 

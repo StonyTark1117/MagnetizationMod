@@ -953,6 +953,7 @@ neoForge {
             server()
             programArgument 'nogui'
             gameDirectory = file('run-performance-stress')
+            systemProperty 'magnetization.performanceFixture', 'true'
             if (project.hasProperty('stressJfrFile')) {
                 jvmArgument "-XX:StartFlightRecording=filename=${project.property('stressJfrFile')},settings=profile,dumponexit=true"
             }
@@ -1060,6 +1061,7 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-create-new-age-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_new_age'
+            systemProperty 'magnetization.performanceDiagnostics', 'true'
         }
         cosmonauticsGameTestServer {
             type = 'gameTestServer'

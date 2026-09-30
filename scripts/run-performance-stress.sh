@@ -54,7 +54,7 @@ global_warmup_ticks=${MAG_STRESS_GLOBAL_WARMUP_TICKS:-$default_global_warmup}
 warmup_ticks=${MAG_STRESS_WARMUP_TICKS:-$default_warmup}
 sample_ticks=${MAG_STRESS_SAMPLE_TICKS:-$default_sample_ticks}
 samples_per_scenario=${MAG_STRESS_SAMPLES:-$default_samples}
-default_scenarios='empty_start,block_item_control,idle_emitters,active_emitters,external_fields,railgun_emitters,air_separators,gas_volume,mixed_pack,empty_end'
+default_scenarios='empty_start,block_item_control,idle_emitters,active_emitters,external_fields,railgun_emitters,air_separators,gas_volume,mixed_pack,dense_external,equipment_changes,ordinary_player,ordinary_mobs,external_no_targets,ferrofluid_pool,ferrofluid_external,ferrofluid_native,mr_armor,mr_mainhand,mr_offhand,empty_end'
 scenario_csv=${MAG_STRESS_SCENARIOS:-$default_scenarios}
 IFS=',' read -r -a scenarios <<<"$scenario_csv"
 
@@ -89,10 +89,12 @@ stop_server() {
     local game_pids
     game_pids=$(pgrep -f 'stressServerRunVmArgs[.]txt' || true)
     if [[ -n "$game_pids" ]]; then
-        kill -TERM $game_pids 2>/dev/null || true
-        sleep 2
         local game_pid
         for game_pid in $game_pids; do
+            # Another checkout may be running its own experiment concurrently.
+            [[ "$(readlink -f "/proc/$game_pid/cwd" 2>/dev/null || true)" == "$run_dir" ]] || continue
+            kill -TERM "$game_pid" 2>/dev/null || true
+            sleep 2
             kill -0 "$game_pid" 2>/dev/null && kill -KILL "$game_pid" 2>/dev/null || true
         done
     fi
@@ -186,7 +188,7 @@ from pathlib import Path
 
 destination = Path(sys.argv[1])
 metadata = {
-    "schema_version": 1,
+    "schema_version": 2,
     "started_utc": "$timestamp",
     "git_revision": "$git_revision",
     "git_dirty": bool(subprocess.run(["git", "-C", "$repo_dir", "status", "--porcelain"], capture_output=True, text=True, check=True).stdout),
@@ -210,6 +212,12 @@ metadata = {
     "jfr_enabled": "$jfr_enabled" == "1",
     "performance_diagnostics_enabled": "$diagnostics_enabled" == "1",
 }
+import hashlib
+root = Path("$repo_dir")
+inputs = sorted(path for base in ("src", "scripts") for path in (root / base).rglob("*") if path.is_file() and "__pycache__" not in path.parts)
+inputs += [root / "build.gradle", root / "gradle.properties"]
+metadata["source_sha256"] = hashlib.sha256(b"".join(
+    str(path.relative_to(root)).encode() + b"\0" + path.read_bytes() for path in inputs)).hexdigest()
 destination.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
 PY
 
@@ -274,6 +282,27 @@ for mod_id in "${expected_mod_ids[@]}"; do
 done
 (( ${#missing_mods[@]} == 0 )) || fail "dedicated server did not load expected benchmark mods: ${missing_mods[*]}"
 
+python3 - "$run_dir" "$report_dir/metadata.json" <<'RUNTIME_PY'
+import hashlib
+import json
+import sys
+import tomllib
+from pathlib import Path
+runtime, metadata_path = map(Path, sys.argv[1:])
+metadata = json.loads(metadata_path.read_text())
+lines = (runtime / "logs/latest.log").read_text().splitlines()
+metadata["minecraft_jvm"] = next(line.split("JVM identified as ", 1)[1]
+                                 for line in lines if "JVM identified as " in line)
+configurations = {}
+for folder in (runtime / "config", runtime / "world/serverconfig"):
+    for path in sorted(folder.rglob("*.toml")):
+        with path.open("rb") as handle:
+            configurations[str(path.relative_to(runtime))] = tomllib.load(handle)
+metadata["configuration_sha256"] = hashlib.sha256(
+    json.dumps(configurations, sort_keys=True, default=str).encode()).hexdigest()
+metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
+RUNTIME_PY
+
 send_command 'save-off'
 send_command 'difficulty peaceful'
 send_command 'tick rate 20'
@@ -290,6 +319,7 @@ run_sprint() {
     local ticks=$3
     local before line parsed tps mspt
     before=$(grep -c 'Sprint completed with' "$run_dir/logs/latest.log" 2>/dev/null || true)
+    send_command "magperf reset"
     send_command "tick sprint $ticks"
     if ! wait_for_new_match 'Sprint completed with' "$before" "$timeout_seconds"; then
         fail "$scenario sample $sample did not finish its $ticks-tick sprint"
@@ -299,6 +329,12 @@ run_sprint() {
     [[ -n "$parsed" ]] || fail "could not parse tick sprint output: $line"
     IFS=$'\t' read -r tps mspt <<<"$parsed"
     printf '%s\t%s\t%s\t%s\t%s\n' "$scenario" "$sample" "$ticks" "$tps" "$mspt" >>"$report_dir/raw-samples.tsv"
+    local count_before count_line
+    count_before=$(grep -c 'MAG_PERF_COUNTS ' "$run_dir/logs/latest.log" 2>/dev/null || true)
+    send_command 'magperf counts'
+    wait_for_new_match 'MAG_PERF_COUNTS ' "$count_before" 30 || fail 'diagnostic snapshot missing'
+    count_line=$(grep 'MAG_PERF_COUNTS ' "$run_dir/logs/latest.log" | tail -n 1)
+    printf '%s\t%s\t%s\n' "$scenario" "$sample" "${count_line#*MAG_PERF_COUNTS }" >>"$report_dir/work-counts.tsv"
     echo "performance-stress: $scenario sample $sample/$samples_per_scenario = ${mspt} MSPT"
 }
 
@@ -308,6 +344,9 @@ for scenario in "${scenarios[@]}"; do
     send_command "function magnetization_stress:$scenario"
     if ! wait_for_new_match "$marker" "$before" "$timeout_seconds"; then
         fail "$scenario setup did not finish"
+    fi
+    if grep -q 'MAG_PERF_SETUP_FAIL' "$run_dir/logs/latest.log"; then
+        fail "$scenario fixture failed its activation check"
     fi
     echo "performance-stress: $scenario warmup ($warmup_ticks ticks)"
     warmup_before=$(grep -c 'Sprint completed with' "$run_dir/logs/latest.log" 2>/dev/null || true)

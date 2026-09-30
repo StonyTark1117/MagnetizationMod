@@ -22,6 +22,43 @@ public final class PerformanceDiagnostics {
 
     private PerformanceDiagnostics() {}
 
+    /** Activation and work counts, separate from elapsed-time sampling.
+     * Fluid sources, source chunks and creep cells are summed over CREEP_PASSES;
+     * divide by that count to obtain the average population per pass. */
+    public enum Work {
+        CREEP_PASSES, FLUID_SOURCES, SOURCE_CHUNKS, CREEP_CELLS,
+        NATIVE_CHUNK_ATTEMPTS, EXTERNAL_CHUNK_ATTEMPTS,
+        ENTITIES_INSPECTED, ELIGIBLE_ENTITIES, TARGETS_DISCOVERED, TARGETS_SCHEDULED,
+        TARGET_REGIONS, EMITTER_CANDIDATES, FIELD_EVALUATIONS, FIELDS_APPLIED,
+        MR_EQUIPMENT_SKIPS, MR_FIELD_SEARCHES, TARGET_DETAILS,
+        ADAPTER_METHOD_LOOKUPS
+    }
+
+    public static boolean enabled() { return ENABLED; }
+
+    public static void record(final ServerLevel level, final Work work, final long count) {
+        if (ENABLED) counters(level).work[work.ordinal()] += count;
+    }
+
+    /** Defensive cumulative counts since reset, useful for controlled experiments. */
+    public static Map<String, Long> workSnapshot(final ServerLevel level) {
+        final Counters counters = LEVEL_COUNTERS.get(level);
+        final Map<String, Long> result = new java.util.LinkedHashMap<>();
+        result.put("observed_ticks", counters == null ? 0L : level.getGameTime() - counters.workStartedAt);
+        for (final Work work : Work.values()) {
+            result.put(work.name().toLowerCase(java.util.Locale.ROOT),
+                    counters == null ? 0L : counters.work[work.ordinal()]);
+        }
+        return result;
+    }
+
+    public static void resetWork(final ServerLevel level) {
+        if (!ENABLED) return;
+        final Counters counters = counters(level);
+        java.util.Arrays.fill(counters.work, 0L);
+        counters.workStartedAt = level.getGameTime();
+    }
+
     public static void recordGasRecompute(final ServerLevel level, final int cells, final boolean deduplicated) {
         if (!ENABLED) return;
         final Counters counters = counters(level);
@@ -62,7 +99,10 @@ public final class PerformanceDiagnostics {
     private static Counters counters(final ServerLevel level) {
         final Counters counters = LEVEL_COUNTERS.computeIfAbsent(level, ignored -> new Counters());
         final long now = level.getGameTime();
-        if (counters.startedAt == Long.MIN_VALUE) counters.startedAt = now;
+        if (counters.startedAt == Long.MIN_VALUE) {
+            counters.startedAt = now;
+            counters.workStartedAt = now;
+        }
         if (now - counters.startedAt >= LOG_INTERVAL_TICKS) {
             LOGGER.info("MAG_PERF dimension={} ticks={} gas_requests={} gas_deduplicated={} gas_cells={} "
                             + "field_queries={} field_candidates={} target_classifications={} "
@@ -72,6 +112,7 @@ public final class PerformanceDiagnostics {
                     counters.fieldQueries, counters.fieldCandidates, counters.targetClassifications,
                     counters.trainFields, counters.trainCarriages,
                     counters.inventoryFullScans, counters.inventoryFacesChecked);
+            LOGGER.info("MAG_PERF_WORK dimension={} counts_since_reset={}", level.dimension().location(), workSnapshot(level));
             counters.reset(now);
         }
         return counters;
@@ -79,6 +120,7 @@ public final class PerformanceDiagnostics {
 
     private static final class Counters {
         private long startedAt = Long.MIN_VALUE;
+        private long workStartedAt;
         private long gasRequests;
         private long gasDeduplicated;
         private long gasCells;
@@ -89,6 +131,9 @@ public final class PerformanceDiagnostics {
         private long trainCarriages;
         private long inventoryFullScans;
         private long inventoryFacesChecked;
+        // These explicit experiment counters are reset by the harness, not by
+        // the periodic legacy log, so each sample has an exact boundary.
+        private final long[] work = new long[Work.values().length];
 
         private void reset(final long now) {
             startedAt = now;

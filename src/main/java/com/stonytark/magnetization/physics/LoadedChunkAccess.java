@@ -36,7 +36,34 @@ public final class LoadedChunkAccess {
      * Missing chunks contribute zero power rather than being synchronously loaded.
      */
     public static boolean hasNeighborSignal(final ServerLevel level, final BlockPos pos) {
-        return hasNeighborSignal(level, pos, candidate -> blockState(level, candidate));
+        return hasNeighborSignal(level, pos, new NeighborStateReader(level, pos));
+    }
+
+    /** Reuse the last loaded chunk within one read-only signal query, while
+     * reading each block state live. Nothing survives this evaluation. */
+    private static final class NeighborStateReader implements Function<BlockPos, BlockState> {
+        private final ServerLevel level;
+        private int chunkX;
+        private int chunkZ;
+        private LevelChunk chunk;
+
+        private NeighborStateReader(final ServerLevel level, final BlockPos origin) {
+            this.level = level;
+            chunkX = Math.floorDiv(origin.getX(), 16);
+            chunkZ = Math.floorDiv(origin.getZ(), 16);
+            chunk = level.getChunkSource().getChunkNow(chunkX, chunkZ);
+        }
+
+        @Override
+        public @Nullable BlockState apply(final BlockPos pos) {
+            final int x = Math.floorDiv(pos.getX(), 16), z = Math.floorDiv(pos.getZ(), 16);
+            if (x != chunkX || z != chunkZ) {
+                chunkX = x;
+                chunkZ = z;
+                chunk = level.getChunkSource().getChunkNow(x, z);
+            }
+            return chunk == null ? null : chunk.getBlockState(pos);
+        }
     }
 
     /** Package-visible core that keeps the loaded-state reader injectable. */

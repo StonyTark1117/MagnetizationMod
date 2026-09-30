@@ -1,5 +1,7 @@
 package com.stonytark.magnetization.compat;
 
+import com.stonytark.magnetization.physics.PerformanceDiagnostics;
+import com.stonytark.magnetization.physics.PerformanceDiagnostics.Work;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
@@ -35,6 +37,11 @@ public final class ExternalFieldCompat {
             "layered_magnet", 4.0f,
             "fluxuated_magnetite", 8.0f,
             "netherite_magnet", 24.0f);
+
+    // Only immutable class metadata lives here. The strength, configuration,
+    // redstone polarity, and damping are still read for every field evaluation.
+    private static final java.util.concurrent.ConcurrentMap<Class<?>, java.util.Optional<java.lang.reflect.Method>>
+            STRENGTH_METHOD = new java.util.concurrent.ConcurrentHashMap<>();
 
     private ExternalFieldCompat() {}
 
@@ -92,6 +99,7 @@ public final class ExternalFieldCompat {
     /** Evaluate an already-loaded emitter state without asking the level for its chunk. */
     public static @Nullable MagneticField currentField(final Level level, final BlockPos pos,
                                                        final BlockState state) {
+        if (level instanceof ServerLevel server) PerformanceDiagnostics.record(server, Work.FIELD_EVALUATIONS, 1);
         final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (id == null || !isSupportedEmitter(state)) return null;
         return switch (id.getNamespace()) {
@@ -141,7 +149,12 @@ public final class ExternalFieldCompat {
         if (multiplier <= 0.0d) return null;
         float nativeStrength = CNA_STRENGTH_FALLBACKS.getOrDefault(path, 0.0f);
         try {
-            final Object value = state.getBlock().getClass().getMethod("getStrength").invoke(state.getBlock());
+            final var method = STRENGTH_METHOD.computeIfAbsent(state.getBlock().getClass(), type -> {
+                if (level instanceof ServerLevel server) PerformanceDiagnostics.record(server, Work.ADAPTER_METHOD_LOOKUPS, 1);
+                try { return java.util.Optional.of(type.getMethod("getStrength")); }
+                catch (final NoSuchMethodException | SecurityException ignored) { return java.util.Optional.empty(); }
+            });
+            final Object value = method.isPresent() ? method.get().invoke(state.getBlock()) : null;
             if (value instanceof Number number) nativeStrength = Math.max(0.0f, number.floatValue());
         } catch (final ReflectiveOperationException | RuntimeException ignored) { }
         if (nativeStrength <= 0.0f) return null;

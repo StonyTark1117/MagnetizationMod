@@ -19,6 +19,17 @@ SCENARIOS = (
     "air_separators",
     "gas_volume",
     "mixed_pack",
+    "dense_external",
+    "equipment_changes",
+    "ordinary_player",
+    "ordinary_mobs",
+    "external_no_targets",
+    "ferrofluid_pool",
+    "ferrofluid_external",
+    "ferrofluid_native",
+    "mr_armor",
+    "mr_mainhand",
+    "mr_offhand",
     "empty_end",
 )
 
@@ -59,12 +70,16 @@ def cleanup_commands(size: int) -> list[str]:
     min_z = min(z for _, z in positions) - 4
     max_z = max(z for _, z in positions) + 4
     commands = [
+        "magperf clear",
         "gamerule doMobSpawning false",
+        "gamerule doMobLoot false",
+        "gamerule doEntityDrops false",
         "gamerule doDaylightCycle false",
         "gamerule doWeatherCycle false",
         "gamerule randomTickSpeed 0",
         "weather clear",
         "kill @e[tag=mag_stress]",
+        "kill @e[type=minecraft:item]",
         f"forceload add {min_x - 16} {min_z - 16} {max_x + 16} {max_z + 16}",
     ]
     # Keep each fill comfortably below Minecraft's 32,768-block command limit.
@@ -72,7 +87,7 @@ def cleanup_commands(size: int) -> list[str]:
     for stripe_start in range(min_z, max_z + 1, stripe_width):
         stripe_end = min(max_z, stripe_start + stripe_width - 1)
         commands.append(
-            f"fill {min_x} {BASE_Y - 2} {stripe_start} "
+            f"fill {min_x} {BASE_Y - 4} {stripe_start} "
             f"{max_x} {BASE_Y + 12} {stripe_end} minecraft:air"
         )
     return commands
@@ -92,6 +107,40 @@ def grid_scenario(size: int, block: str, *, powered: bool = False, items: bool =
 def scenario_commands(name: str, size: int) -> list[str]:
     if name in {"empty_start", "empty_end"}:
         return []
+    if name == "dense_external":
+        return [f"fill -8 {BASE_Y - 4} -8 7 {BASE_Y - 1} 7 create_new_age:netherite_magnet"] + [
+            command for x, z in grid_positions(size) for command in item_cell_commands(x, z)
+        ]
+    if name == "equipment_changes":
+        return grid_scenario(size, "create_new_age:magnetite_block", items=False) + ["magperf player cycle"]
+    if name == "ordinary_player":
+        return grid_scenario(size, "create_new_age:magnetite_block", items=False) + ["magperf player none"]
+    if name == "external_no_targets":
+        return grid_scenario(size, "create_new_age:magnetite_block", items=False)
+    if name == "ordinary_mobs":
+        return grid_scenario(size, "create_new_age:magnetite_block", items=False) + [
+            f'summon minecraft:cow {x} {BASE_Y + 2} {z} {{Tags:["mag_stress"],NoAI:1b,NoGravity:1b}}'
+            for x, z in grid_positions(size)
+        ]
+    if name in {"ferrofluid_pool", "ferrofluid_external", "ferrofluid_native"}:
+        # Enclosed two-block-deep pool, 16x16 at the quick grid, 32x32 at standard.
+        # Its walls keep flowing-fluid updates out of steady-state measurements.
+        side = size * 4
+        lo, hi = -(side // 2), side // 2 - 1
+        commands = [
+            f"fill {lo - 1} {BASE_Y - 1} {lo - 1} {hi + 1} {BASE_Y + 2} {hi + 1} minecraft:glass hollow",
+            f"fill {lo} {BASE_Y} {lo} {hi} {BASE_Y + 1} {hi} magnetization:ferrofluid",
+        ]
+        if name == "ferrofluid_external":
+            commands += [f"setblock {x} {BASE_Y - 2} {z} create_new_age:magnetite_block"
+                         for x, z in grid_positions(size)]
+        if name == "ferrofluid_native":
+            commands += [f"setblock 0 {BASE_Y - 3} 0 minecraft:redstone_block",
+                         f"setblock 0 {BASE_Y - 2} 0 magnetization:electromagnet"]
+        return commands
+    if name in {"mr_armor", "mr_mainhand", "mr_offhand"}:
+        equipment = {"mr_armor": "armor", "mr_mainhand": "main", "mr_offhand": "off"}[name]
+        return grid_scenario(size, "create_new_age:magnetite_block", items=False) + [f"magperf player {equipment}"]
     if name == "block_item_control":
         return grid_scenario(size, "minecraft:iron_block")
     if name == "idle_emitters":
@@ -182,6 +231,10 @@ def main() -> None:
     common = cleanup_commands(args.grid_size)
     for name in SCENARIOS:
         commands = common + scenario_commands(name, args.grid_size)
+        commands.append(f"magperf reindex {args.grid_size * 4 + 20}")
+        if name in {"dense_external", "equipment_changes", "ordinary_player", "ordinary_mobs", "external_no_targets", "ferrofluid_external",
+                    "external_fields", "mixed_pack", "mr_armor", "mr_mainhand", "mr_offhand"}:
+            commands.append("magperf verifyexternal")
         commands.append(f"say MAG_STRESS_READY_{name}")
         write_function(functions / f"{name}.mcfunction", commands)
 
