@@ -121,8 +121,8 @@ public final class ExternalEmitterTracker {
             addChunkKeys(chunkKeys, targets.get((start + i) % targets.size()));
         }
         TARGET_CURSOR.put(server, (start + targetCount) % targets.size());
-        return new TargetSchedule(new ArrayList<>(EmitterRegistry.snapshotExternalInChunks(
-                server, chunkKeys, MAX_CANDIDATES_PER_TICK)), chunkKeys, recipients);
+        return new TargetSchedule(EmitterRegistry.snapshotExternalListInChunks(
+                server, chunkKeys, MAX_CANDIDATES_PER_TICK), chunkKeys, recipients);
     }
 
     private static List<ChunkBounds> gatherTargets(final ServerLevel server, final ExternalFieldTargets recipients) {

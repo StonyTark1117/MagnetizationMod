@@ -189,6 +189,26 @@ public final class EmitterRegistry {
         return result;
     }
 
+    /** Bounded defensive candidate list in caller chunk order. A set of chunk
+     * keys guarantees uniqueness: each position belongs to exactly one bucket,
+     * so no intermediate position set is necessary. */
+    public static synchronized java.util.List<BlockPos> snapshotExternalListInChunks(
+            final Level level, final Set<Long> chunkKeys, final int limit) {
+        if (limit <= 0 || chunkKeys.isEmpty()) return java.util.List.of();
+        final LevelIndex chunks = BY_LEVEL.get(level);
+        if (chunks == null || chunks.externalCount == 0) return java.util.List.of();
+        final java.util.List<BlockPos> result = new java.util.ArrayList<>(Math.min(limit, 256));
+        for (final long key : chunkKeys) {
+            final ChunkBucket bucket = chunks.get(key);
+            if (bucket == null) continue;
+            for (final BlockPos pos : bucket.externalEmitters) {
+                result.add(pos);
+                if (result.size() >= limit) return result;
+            }
+        }
+        return result;
+    }
+
     /** External positions in a square chunk radius around one target. */
     public static Set<BlockPos> snapshotExternalNear(final Level level, final BlockPos target,
                                                      final int radiusBlocks, final int limit) {

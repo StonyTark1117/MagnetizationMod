@@ -40,6 +40,27 @@ class EmitterRegistryTest {
     }
 
     @Test
+    void directCandidatesRetainOldOrderLimitsAndDefensiveLifecycle() {
+        final java.util.LinkedHashSet<Long> keys = new java.util.LinkedHashSet<>();
+        for (int x : new int[]{-32, 32, 0, -32}) {
+            keys.add(ChunkPos.asLong(x >> 4, 0));
+            for (int y = 0; y < 8; y++) EmitterRegistry.registerExternal(LVL, new BlockPos(x, y, 0));
+        }
+        keys.add(ChunkPos.asLong(999, 999));
+        for (int limit : new int[]{-1, 0, 1, 7, 8, 9, 23, 24, 25, 256}) {
+            assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotExternalInChunks(LVL, keys, limit)),
+                    EmitterRegistry.snapshotExternalListInChunks(LVL, keys, limit));
+        }
+        final var snapshot = EmitterRegistry.snapshotExternalListInChunks(LVL, keys, 256);
+        EmitterRegistry.dropExternalChunk(LVL, new ChunkPos(-2, 0));
+        assertEquals(24, snapshot.size());
+        snapshot.clear();
+        assertEquals(16, EmitterRegistry.externalSize(LVL));
+        assertEquals(16, EmitterRegistry.snapshotExternalListInChunks(LVL, keys, 256).size());
+        assertTrue(EmitterRegistry.snapshotExternalListInChunks(LVL, Set.of(), 256).isEmpty());
+    }
+
+    @Test
     void emptyLevelReportsSizeZero() {
         assertEquals(0, EmitterRegistry.size(LVL));
         assertTrue(EmitterRegistry.snapshot(LVL).isEmpty());

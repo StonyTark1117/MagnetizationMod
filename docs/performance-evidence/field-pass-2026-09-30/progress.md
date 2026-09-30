@@ -7,7 +7,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 1. Disabled relay early exit | Both entrypoints check the live enable flag before copying the registry. Ender Transmission runtime suite: 3/3 required tests passed, including disabled/enabled one-hop projection. |
 | 2. Three-dimensional candidate rejection | Conservative inclusive 3D recipient bounds before field evaluation; unknown adapter ranges remain eligible. Includes ship hulls, fluid sections, portal apertures and enabled train carriages. Preserves candidate attempts/cursor and relay query. Unit suite passed; CNA runtime 13/13, including vertical target movement and budget rotation. Large-hull/aperture boundary unit cases passed; full optional runtime regression remains for final checkpoint. |
 | 3. Lazy ship field setup | Configuration and biome setup occurs once, after the first intersecting, registered, valid-mass, accepted, nonzero-polarity ship. Force integration and caps unchanged. Core gameplay suite: 173/173 required tests passed. Added opt-in ship_field_preparations counter for workload verification. |
-| 4. Direct candidate list query | Pending |
+| 4. Direct candidate list query | Direct bounded list from unique chunk keys; same bucket and caller order, cap, cursor behavior and defensive snapshot. Reference comparison covers limits, negative chunks, deduplication and unload. Full unit suite: 255 tests, 0 failures/errors; release build and artifact checks passed. |
 | First Discopanel checkpoint | Pending |
 | 5. Lazy redstone fallback | Pending |
 | 6. Early Tesla pulse gate | Pending |
