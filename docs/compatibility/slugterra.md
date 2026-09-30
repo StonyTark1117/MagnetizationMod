@@ -38,6 +38,26 @@ item serialization and player pickup, retaining custom names and nested slug
 data. They also use the real emitter menu to stamp both blasters, test main-hand
 and off-hand attraction, exclude nonmetal drops, and verify disabled behavior.
 
+## Mechanical mounts
+
+`bajoterrafn:burro_mecha`, `bajoterrafn:perro_mecha` and `bajoterrafn:toro_mecha`
+respond intrinsically to magnetic fields, including tractor beams, anchors and
+repulsors. Ridden mounts use the same force as empty mounts. The server changes
+the mount's velocity and vanilla tracking broadcasts it; no extra rider-force
+forwarding or client prediction is introduced. An unbound anchor also emits while a supported mount is in range, allowing
+mount docking without a Sable ship. Existing ship bindings keep priority; mounts
+receive the entity field, without introducing a persistent entity binding.
+
+- `compat.slugterraMountsEnabled`: true by default, under the master switch.
+- `compat.slugterraMountSusceptibility`: 1.0 by default; 0 disables intrinsic response.
+- `compat.slugterraMountMaxImpulse`: 0.25 blocks/tick per field, bounding strong impulses.
+
+The mount GameTest covers all three machines, all three mounts, ridden and
+unridden native travel, armored passenger attachment and outgoing server motion
+packets. This verifies server behavior and packet production, not rendered
+motion on two live clients. Ordinary equipment/status contributions and the
+shared unmoveable-by-magnets exclusion remain part of the standard field rules.
+
 ## Reproducing verification
 
 ```sh

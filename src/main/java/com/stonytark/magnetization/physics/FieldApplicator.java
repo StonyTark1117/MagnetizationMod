@@ -589,7 +589,9 @@ public final class FieldApplicator {
         final Vec3 impulse = forceAtPrecomputed(field, entityPos,
                 prepared.globalScalar(), prepared.cosHalfAngle())
                 .scale(target.susceptibility() * polaritySign);
-        entity.setDeltaMovement(entity.getDeltaMovement().add(impulse.scale(prepared.velocityScale())));
+        final Vec3 velocityImpulse = com.stonytark.magnetization.compat.SlugterraMountCompat
+                .limitImpulse(entity, impulse.scale(prepared.velocityScale()));
+        entity.setDeltaMovement(entity.getDeltaMovement().add(velocityImpulse));
         entity.hurtMarked = true;
     }
 
@@ -764,7 +766,8 @@ public final class FieldApplicator {
                 && (!com.stonytark.magnetization.compat.ExternalFieldCompat
                         .isImmersiveEngineeringRailgunShot(e)
                     || MagConfig.immersiveEngineeringRailgunReaction())) {
-            sum += 1.0d;
+            final double mountResponse = com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility(e);
+            sum += mountResponse > 0.0d ? mountResponse : 1.0d;
         }
         // Any LivingEntity wearing tagged metal armor is pulled in proportion to
         // how many pieces it has on. Magnetized pieces (stamped with a polarity
@@ -805,7 +808,8 @@ public final class FieldApplicator {
     /** One baseline even when both a datapack entity tag and a material adapter match. */
     private static boolean hasIntrinsicTagResponse(final Entity entity) {
         return entity.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
-                || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity);
+                || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity)
+                || com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility(entity) > 0.0d;
     }
 
     private static MagneticPolarity polarityOf(final Entity e) {

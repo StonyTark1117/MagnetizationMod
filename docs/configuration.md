@@ -546,3 +546,8 @@ changing these values. See [verification and local test setup](compatibility/slu
 `compat.slugterraEquipmentEnabled` (default `true`) controls dropped capsule,
 blaster and energy-core response plus blaster magnetization/held item attraction.
 It is subordinate to `slugterraCompatEnabled`; reload data after changes.
+
+`compat.slugterraMountsEnabled` (default `true`) enables intrinsic response for
+Bajoterra's three mechanical mounts. `slugterraMountSusceptibility` defaults to
+`1.0` (range 0–8); `slugterraMountMaxImpulse` defaults to `0.25` blocks/tick per
+field (range 0.001–1). All are subordinate to the Slugterra master switch.

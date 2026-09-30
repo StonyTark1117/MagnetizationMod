@@ -1,0 +1,7 @@
+present: ores, equipment, mounts
+[30Sep2026 04:40:37.023] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 426.3 ms ======================
+[30Sep2026 04:40:37.024] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+absent
+[30Sep2026 04:41:00.284] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 171.4 ms ======================
+[30Sep2026 04:41:00.284] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+Unit suite: {"tests": 251, "failures": 0, "errors": 0, "skipped": 0}

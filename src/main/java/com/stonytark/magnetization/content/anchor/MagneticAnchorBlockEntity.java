@@ -108,7 +108,10 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
 
         // No target → no field. Holding the binding but waiting for the ship to come back into range
         // also produces no field (the ship may be unloaded or far away).
-        if (boundShipId == null) return null;
+        if (boundShipId == null) {
+            return com.stonytark.magnetization.compat.SlugterraMountCompat.hasAnchorTarget(server, getBlockPos(), range)
+                    ? anchorField(strength, range) : null;
+        }
 
         final SubLevelContainer container = SubLevelContainer.getContainer(server);
         final SubLevel target = container.getSubLevel(boundShipId);
@@ -135,6 +138,10 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
             lastCoopTick = server.getGameTime();
             SableBridge.dampAngularVelocity(boundShip, COOP_ANGULAR_DAMP_FACTOR);
         }
+        return anchorField(strength, range);
+    }
+
+    private MagneticField anchorField(final MagneticStrength strength, final double range) {
         return new MagneticField(
                 Vec3.atCenterOf(getBlockPos()),
                 new Vec3(0, 1, 0),

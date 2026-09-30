@@ -536,6 +536,9 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue SLUGTERRA_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_ORES_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_EQUIPMENT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_MOUNTS_ENABLED;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_SUSCEPTIBILITY;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_MAX_IMPULSE;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
@@ -2450,6 +2453,18 @@ public final class MagConfig {
                 .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
                 .translation("magnetization.configuration.compat.slugterraCompatEnabled")
                 .define("slugterraCompatEnabled", true);
+        SLUGTERRA_MOUNTS_ENABLED = b
+                .comment("Mechanical Burro, Perro and Toro mounts respond to fields, including while ridden.")
+                .translation("magnetization.configuration.compat.slugterraMountsEnabled")
+                .define("slugterraMountsEnabled", true);
+        SLUGTERRA_MOUNT_SUSCEPTIBILITY = b
+                .comment("Intrinsic mechanical mount susceptibility; zero disables the intrinsic response.")
+                .translation("magnetization.configuration.compat.slugterraMountSusceptibility")
+                .defineInRange("slugterraMountSusceptibility", 1.0d, 0.0d, 8.0d);
+        SLUGTERRA_MOUNT_MAX_IMPULSE = b
+                .comment("Maximum velocity added to a mechanical mount by one field per tick (blocks/tick).")
+                .translation("magnetization.configuration.compat.slugterraMountMaxImpulse")
+                .defineInRange("slugterraMountMaxImpulse", 0.25d, 0.001d, 1.0d);
         SLUGTERRA_EQUIPMENT_ENABLED = b
                 .comment("Capsules, blasters and energy cores respond to fields; blasters can be magnetized. Reload data after changing.")
                 .translation("magnetization.configuration.compat.slugterraEquipmentEnabled")
@@ -3208,6 +3223,10 @@ public final class MagConfig {
     }
     public static boolean slugterraCompatEnabled() {
         return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraMountsEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_MOUNTS_ENABLED, true);
     }
 
     public static boolean slugterraEquipmentEnabled() {
