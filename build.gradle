@@ -1081,6 +1081,7 @@ neoForge {
             gameDirectory = file('run-immersive-engineering-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersiveengineering,magnetization_sweep'
             systemProperty 'magnetization.audit.namespaces', 'immersiveengineering'
+            systemProperty 'magnetization.performanceDiagnostics', 'true'
         }
         alexsCavesGameTestServer {
             type = 'gameTestServer'

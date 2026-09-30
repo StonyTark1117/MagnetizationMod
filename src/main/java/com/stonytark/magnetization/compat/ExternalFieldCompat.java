@@ -194,15 +194,15 @@ public final class ExternalFieldCompat {
 
     private static @Nullable MagneticField immersiveEngineeringField(final Level level, final BlockPos pos,
                                                                      final BlockState state, final String path) {
+        // The pulse schedule is independent of live energy/redstone state. Eight
+        // ticks out of ten cannot emit, so avoid even the block-entity lookup.
+        if (path.equals("tesla_coil") && level.getGameTime() % 10L >= 2L) return null;
         final BlockEntity blockEntity = blockEntity(level, pos);
         if (blockEntity == null) return null;
         final double ratio = energyRatio(blockEntity);
         if (ratio <= 0.0d) return null;
         if (path.equals("tesla_coil")) {
             if (!invokeBooleanWithInt(blockEntity, "canRun", 1, () -> redstoneEnabled(level, pos, blockEntity))) return null;
-            // IE's coil is a discharge machine, so project a brief field pulse rather
-            // than turning stored FE into an uninterrupted permanent field.
-            if (level.getGameTime() % 10L >= 2L) return null;
         } else if (!redstoneEnabled(level, pos, blockEntity)) {
             return null;
         }
@@ -271,6 +271,9 @@ public final class ExternalFieldCompat {
     }
 
     private static double energyRatio(final BlockEntity blockEntity) {
+        if (blockEntity.getLevel() instanceof ServerLevel server) {
+            PerformanceDiagnostics.record(server, Work.ADAPTER_ENERGY_READS, 1);
+        }
         for (Class<?> type = blockEntity.getClass(); type != null; type = type.getSuperclass()) {
             for (final Field field : type.getDeclaredFields()) {
                 try {
