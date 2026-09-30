@@ -2335,6 +2335,8 @@
   "book.magnetization.entry.compatibility.audit.text": "The README links the versioned compatibility matrix and its tests. Missing optional tag entries are harmless to loading but do not prove support.$(br2)Alex’s Caves support targets the unofficial 1.21.1 port; Bosses of Mass Destruction targets its NeoForge port. Legacy Extra Golems, Modular Golems and Quark entity guesses were removed. Shared material tags remain useful where populated. Twilight Forest, Sophisticated Storage and Supplementaries still have gaps in runtime verification.",
   "book.magnetization.entry.compatibility.magnetics.title": "Magnetics Server Fix",
   "book.magnetization.entry.compatibility.magnetics.text": "Create: Magnetics 0.0.4-alpha has an upstream dedicated-server crash caused by loading client sound classes.$(br2)Magnetization includes a default-off workaround: set $(o)compat.createMagneticsServerCrashWorkaround$() to $(o)true$() in $(o)config/magnetization-common.toml$() before starting the server. A full server restart is required.$(br2)It applies only to that version on dedicated servers. Client sounds and magnetic gameplay are unchanged.",
+  "tooltip.magnetization.slugterra.remaining": "Magnetic effect remaining: %s",
+  "tooltip.magnetization.slugterra.pinned": "Magnetic pinning: horizontal movement damped",
   "magnetization.configuration.compat.slugterraCompatEnabled": "Slugterra integration",
   "magnetization.configuration.compat.slugterraOresEnabled": "Slugterra cavern ores",
   "magnetization.configuration.compat.slugterraEquipmentEnabled": "Slugterra magnetic equipment",

@@ -1,9 +1,12 @@
 {
   "magnetization:plugin": {
     "entrypoints": {
-      "client": "com.stonytark.magnetization.compat.wthit.MagWthitClientPlugin"
+      "client": "com.stonytark.magnetization.compat.wthit.MagWthitClientPlugin",
+      "common": "com.stonytark.magnetization.compat.wthit.MagWthitCommonPlugin"
     },
-    "side": "client",
-    "required": ["magnetization"]
+    "side": "*",
+    "required": [
+      "magnetization"
+    ]
   }
 }

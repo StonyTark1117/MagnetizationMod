@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.Block;
  *
  * <p>This replaces the previously-used {@code MagWthitPlugin} (which
  * implemented the deprecated {@code IWailaPlugin}). The modern API splits
- * common + client entrypoints; tooltip rendering is client-side only, so
- * only the client entrypoint is registered.
+ * common + client entrypoints. Tooltip rendering stays here; the common
+ * entrypoint supplies authoritative magnetic-effect data for remote slugs.
  */
 public class MagWthitClientPlugin implements IWailaClientPlugin {
 
@@ -27,6 +27,7 @@ public class MagWthitClientPlugin implements IWailaClientPlugin {
     public void register(final IClientRegistrar registrar) {
         if (!MagConfig.wthitCompatEnabled()) return;
         registrar.body(EmitterBodyProvider.INSTANCE, Block.class);
+        registrar.body(SlugterraStatusBodyProvider.INSTANCE, net.minecraft.world.entity.LivingEntity.class);
         registrar.body(MachineBodyProvider.INSTANCE, Block.class);
         registrar.body(SaplingBodyProvider.INSTANCE, Block.class);
         registrar.body(CatalystBodyProvider.INSTANCE, Block.class);

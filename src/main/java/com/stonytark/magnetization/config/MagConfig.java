@@ -2460,7 +2460,7 @@ public final class MagConfig {
         SLUGTERRA_DEFLECTION_ENABLED = b
                 .comment("EXPERIMENTAL: fields bend flying Armashelt/Rammstone (normal and dark) without accelerating them.")
                 .translation("magnetization.configuration.compat.slugterraDeflectionEnabled")
-                .define("slugterraDeflectionEnabled", false);
+                .define("slugterraDeflectionEnabled", true);
         SLUGTERRA_DEFLECTION_MAX_TURN = b
                 .comment("Total maximum magnetic turn per slug per tick in degrees, shared by all fields.")
                 .translation("magnetization.configuration.compat.slugterraDeflectionMaxTurn")
@@ -3246,7 +3246,7 @@ public final class MagConfig {
     }
 
     public static boolean slugterraDeflectionEnabled() {
-        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_DEFLECTION_ENABLED, false);
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_DEFLECTION_ENABLED, true);
     }
 
     public static boolean slugterraElectricEnabled() {

@@ -2,7 +2,10 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
-- Add default-off experimental trajectory deflection for normal/dark Armashelt and Rammstone. Fields bend heading with a shared per-tick angular cap, preserve speed at application, update native flight vectors and exclude grounded/impact/ability states.
+- Enable experimental trajectory deflection by default after 64 two-client flight/ability cases, fluid/impact GameTests and multiplayer WTHIT status verification. Explicit opt-out remains available.
+- Add optional WTHIT server-sourced magnetic-effect countdowns and pinning details for normal/dark living slugs; no status is invented for direction-only deflection.
+
+- Add experimental trajectory deflection for normal/dark Armashelt and Rammstone. Fields bend heading with a shared per-tick angular cap, preserve speed at application, update native flight vectors and exclude grounded/impact/ability states.
 
 - Connect fresh Slugterra electric shock to equipment-only temporary LIRM, with per-target cooldown, refresh suppression and nonplayer equipment expiration. Tazerling shocks do not petrify logs.
 

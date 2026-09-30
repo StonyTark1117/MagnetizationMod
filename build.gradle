@@ -140,6 +140,7 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'runslugterragametestserver', 'runslugterraabsentgametestserver',
+        'runslugterraauditserver', 'runslugterraauditclient', 'runslugterraauditobserver',
         'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
         'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
         'runextragolemsreborngametestserver', 'runextragolemsrebornclient',

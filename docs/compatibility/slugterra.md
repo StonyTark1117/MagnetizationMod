@@ -82,7 +82,8 @@ switches, the global LIRM switch, generic damage and unrelated effects.
 
 ## Experimental trajectory deflection
 
-`compat.slugterraDeflectionEnabled` defaults to **false**. When enabled under
+`compat.slugterraDeflectionEnabled` defaults to **true** after the live audit.
+Existing explicit `false` settings are preserved. The feature remains experimental. When enabled under
 the master switch, these four flying entity types respond to fields:
 
 - `slugterra:armashelt_velocimorph`
@@ -108,10 +109,70 @@ Other slugs and living protoforms are excluded from this experiment.
 GameTests cover all four entities and both poles, stacked-field caps, unchanged
 speed at application, native flight ticks, entity save/load, native block-hit
 handlers and recovery with the same species, owner and custom name. Negative
-checks cover default-off, master-off, stationary, embedded, hit-animation and
-unselected-slug behavior. These are server GameTests; live client appearance and
-all combat-level/ability combinations are not established. Keep this option off
-unless testing the supplied port in your pack.
+checks cover default-on, explicit opt-out, master-off, stationary, embedded,
+hit-animation and unselected-slug behavior. Additional GameTests exercise water,
+lava, gravity and native impact/return states at levels 1 and 20.
+
+The live audit passed all 64 cases on a dedicated server with two real clients:
+four selected entities, both poles, levels 1/10/15/20 and native abilities on/off.
+Both clients observed and rendered every case. Armashelt retained its native
+swerve/steering; high-level Rammstone fired two fists and recovered its protoform.
+The final local position comparison had a maximum difference of 1.64 blocks
+within the documented latency/interpolation window. See
+[measured results](evidence/slugterra/live-final/analysis.json),
+[rendered flight recording](evidence/slugterra/live-final/high-level-flight.mp4)
+and the HUD/live harness details below. Other port versions, WAN latency and
+arbitrary modpack combinations remain outside this audit.
+
+## WTHIT magnetic status on slugs
+
+WTHIT remains optional. When installed on both the server and client, hovering
+an affected living slug shows WTHIT's native Magnetized level plus our remaining
+duration and, at level III or above, a horizontal-movement pinning explanation.
+The additional lines use WTHIT's server-data channel; vanilla does not send an
+observing client every mob's full effect list. Data is tied to the hovered
+entity UUID, and expired data is suppressed. Infinite effects display infinity.
+
+Trajectory deflection does not apply a potion effect or leave a timed magnetic
+status on the slug. These HUD lines appear only when an actual `magnetized`
+effect exists, for example from a potion or another effect source. Normal and
+Dark Rammstone were verified on two real clients with finite and infinite
+durations, pinning, expiry and explicit removal. The extra status lines vanish
+when the effect ends. See [HUD evidence](evidence/slugterra/live-final/).
+
+## Live verification harness
+
+The audit source set is separate from the release JAR. The private Slugterra
+artifact and WTHIT/Bad Packets are included only in the explicit audit profile.
+Two real clients connect to a loopback dedicated server and render the native
+Slugterra models, with automated camera tracking and position logs.
+
+```sh
+python3 scripts/run-slugterra-live-audit.py --slugterra-jar /absolute/path/to/slugterra.jar
+# In another terminal, after the script reports readiness:
+printf flight > build/slugterra-audit/server/control.txt
+python3 scripts/analyze-slugterra-live-audit.py build/slugterra-audit
+# HUD fixtures: hud, hud_dark, hud_infinite, hud_clear
+printf hud > build/slugterra-audit/server/control.txt
+# Stop all audit processes and private displays:
+touch build/slugterra-audit/stop
+```
+
+The server world is disposable and stored under `/tmp`; older runtimes are
+preserved. Display numbers are recorded in `build/slugterra-audit/processes.json`.
+The fixture tests four flight entities, both poles, combat levels 1/10/15/20,
+and native abilities enabled/disabled (64 cases). It checks magnetic speed and
+turn limits, high-level Armashelt steering, Rammstone's two fists and subsequent
+protoform recovery. The analyzer requires all 64 entities to be observed and
+visible on both clients, and reports latency-window position differences.
+This is local multiplayer verification, not a WAN latency or every-modpack test.
+
+A failed preliminary network gate is retained in
+[autosave-stall evidence](evidence/slugterra/live-autosave-stall/README.txt):
+Sable's synchronous save stalled the server for 3.7 seconds while clients kept
+predicting arrow motion. Moving the disposable test world to RAM isolates that
+storage stall; this integration does not change Sable saving or vanilla behavior
+under a stalled server. The experimental label remains appropriate.
 
 ## Reproducing verification
 
@@ -127,4 +188,4 @@ checks both disabled switches, and powers an excavator to extract representative
 iron/copper/gold blocks while leaving a nonmetal block outside the pull path.
 The absent suite loads the mod and optional data without Slugterra and verifies
 vanilla material support. Neither profile adds Slugterra to normal runtime or
-published dependencies. The tests do not establish client rendering behavior.
+published dependencies. The headless GameTests are complemented by the separate two-client live audit above.

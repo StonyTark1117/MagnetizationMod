@@ -556,7 +556,9 @@ field (range 0.001–1). All are subordinate to the Slugterra master switch.
 to equipment-only LIRM. `slugterraElectricCooldown` defaults to 100 ticks (range
 1–24,000). Both the Slugterra master and global LIRM setting must be enabled.
 
-`compat.slugterraDeflectionEnabled` defaults to `false`. This experimental option
+`compat.slugterraDeflectionEnabled` defaults to `true` after live multiplayer and
+ability verification. It retains its experimental label. Existing explicit
+`false` values are preserved; change the setting to opt in on those installations. This experimental option
 selects normal/dark Armashelt and Rammstone in flight.
 `compat.slugterraDeflectionMaxTurn` defaults to 6 degrees per slug per game tick
 (range 0.1–30), shared across all fields. Deflection changes direction while

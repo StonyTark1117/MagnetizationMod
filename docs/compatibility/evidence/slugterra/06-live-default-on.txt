@@ -1,0 +1,24 @@
+Final Slugterra default-on and optional WTHIT validation — 2026-09-30
+Target private jar SHA-256: bda9677991003fb9dbbdfef9a5ceb32f6b60eeb5f5f7a27261287458e51755f9
+NeoForge 21.1.252; GeckoLib 4.8.4; WTHIT neo-12.10.2; Bad Packets neo-0.8.2.
+The private jar was not bundled or published.
+
+Default-on present profile
+[30Sep2026 05:33:55.146] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 9 GAME TESTS COMPLETE IN 493.5 ms ======================
+[30Sep2026 05:33:55.146] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 9 required tests passed :)
+Absent Slugterra and WTHIT
+[30Sep2026 05:34:14.165] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 154.2 ms ======================
+[30Sep2026 05:34:14.165] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+JUnit {"tests": 251, "failures": 0, "errors": 0, "skipped": 0}
+verifyReleaseJar: magnetization-1.4.6.jar contains required metadata, no build-only files, and no pack-specific runtime coupling.
+BUILD SUCCESSFUL in 33s
+Release JAR excludes audit classes, Slugterra classes, and WTHIT classes.
+
+Live: 64 cases passed on two real clients; four flight types, both poles, combat levels 1/10/15/20, abilities enabled/disabled.
+Both clients observed and rendered all 64 cases. High-level Armashelt steering/swerve preserved; normal/dark Rammstone fired two fists and recovered protoforms.
+Measured maximum latency-window position difference: 1.639 blocks. Exact sample counts and window in live-final/analysis.json.
+HUD: finite and infinite effects, level-III pinning, natural expiration and explicit clearing verified on two clients for normal/dark slugs.
+Deflection itself applies no lingering status. Existing explicit opt-out values remain unchanged.
+Experimental label retained: supplied port and local multiplayer only; no WAN or arbitrary-modpack guarantee.
+One preliminary live gate failed during a 3.7-second Sable autosave stall; retained under live-autosave-stall. Final server used a disposable tmpfs world.
+All live audit processes stopped after validation.

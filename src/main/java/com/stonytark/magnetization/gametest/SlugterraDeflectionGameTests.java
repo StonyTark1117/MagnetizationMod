@@ -118,15 +118,21 @@ public final class SlugterraDeflectionGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 80)
-    public static void experimentalOptInAndStationaryExclusions(GameTestHelper h) {
+    public static void experimentalDefaultAndOptOutAndStationaryExclusions(GameTestHelper h) {
         final var origin = Vec3.atCenterOf(h.absolutePos(new BlockPos(1, 110, 1)));
         final var owner = FakePlayerFactory.get(h.getLevel(), new GameProfile(UUID.randomUUID(), "SlugOptIn"));
         final boolean old = MagConfig.SLUGTERRA_DEFLECTION_ENABLED.get();
-        h.assertTrue(!old, "Experimental deflection must default off in a fresh profile");
+        h.assertTrue(old, "Validated experimental deflection must default on in a fresh profile");
         try {
             for (String protoId : TYPES) {
                 var shot = shot(h, protoId, origin, owner);
-                try { h.assertTrue(!FieldApplicator.isMagnetizableTarget(shot), "Default-off slug was opted in"); }
+                try { h.assertTrue(FieldApplicator.isMagnetizableTarget(shot), "Default-on slug was not eligible"); }
+                finally { shot.discard(); }
+            }
+            MagConfig.SLUGTERRA_DEFLECTION_ENABLED.set(false);
+            for (String protoId : TYPES) {
+                var shot = shot(h, protoId, origin, owner);
+                try { h.assertTrue(!FieldApplicator.isMagnetizableTarget(shot), "Explicitly disabled slug was opted in"); }
                 finally { shot.discard(); }
             }
             MagConfig.SLUGTERRA_DEFLECTION_ENABLED.set(true);
@@ -161,6 +167,59 @@ public final class SlugterraDeflectionGameTests {
             } finally { MagConfig.SLUGTERRA_COMPAT_ENABLED.set(master); }
             h.succeed();
         } finally { MagConfig.SLUGTERRA_DEFLECTION_ENABLED.set(old); }
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 160)
+    public static void fluidsGravityAndImpactStatesKeepNativeLifecycle(GameTestHelper h) {
+        final var level = h.getLevel();
+        final var origin = Vec3.atCenterOf(h.absolutePos(new BlockPos(1, 110, 1)));
+        final var owner = FakePlayerFactory.get(level, new GameProfile(UUID.randomUUID(), "SlugFluids"));
+        owner.setPos(origin.add(-20, 0, 0)); owner.setOldPosAndRot(); level.addNewPlayer(owner);
+        final boolean old = MagConfig.SLUGTERRA_DEFLECTION_ENABLED.get();
+        final var liquids = List.of(Blocks.WATER, Blocks.LAVA);
+        try {
+            MagConfig.SLUGTERRA_DEFLECTION_ENABLED.set(true);
+            for (String protoId : TYPES) for (var liquid : liquids) for (int combat : List.of(1, 20)) {
+                var entity = shot(h, protoId, origin, owner);
+                entity.getPersistentData().getCompound("entityData").putInt("CombatLevel", combat);
+                var protoUuid = entity.getPersistentData().getCompound("entityData").getUUID("UUID");
+                final var center = BlockPos.containing(origin);
+                for (var pos : BlockPos.betweenClosed(center.offset(-3, -2, -3), center.offset(3, 2, 3)))
+                    level.setBlock(pos, liquid.defaultBlockState(), 2);
+                entity.setDeltaMovement(0.2, -0.03, 0.04);
+                entity.setNoGravity(false);
+                level.addFreshEntity(entity);
+                try {
+                    boolean touchedFluid = false;
+                    for (int tick = 0; tick < 28 && !entity.isRemoved(); tick++) {
+                        entity.tick();
+                        touchedFluid |= entity.isInWater() || entity.isInLava();
+                        final var before = entity.getDeltaMovement();
+                        SlugterraProjectileCompat.applyDeflection(entity, new Vec3(0, 0.1, tick % 2 == 0 ? 10 : -10));
+                        final var after = entity.getDeltaMovement();
+                        h.assertTrue(Double.isFinite(after.length()), "Nonfinite motion in " + liquid + ": " + protoId);
+                        h.assertTrue(Math.abs(before.length() - after.length()) < 1e-8, "Field changed native fluid speed");
+                        if (!SlugterraProjectileCompat.isInFlight(entity))
+                            h.assertTrue(before.equals(after), "Field changed stopped/impact-state movement");
+                    }
+                    h.assertTrue(touchedFluid, "Fixture did not enter fluid");
+                    h.assertTrue(entity.getPersistentData().getCompound("entityData").getInt("CombatLevel") == combat,
+                            "Field changed combat progression");
+                    var recovered = level.getEntity(protoUuid);
+                    if (recovered != null) {
+                        h.assertTrue(owner.getUUID().equals(ownerId(recovered)), "Fluid recovery lost owner");
+                        h.assertTrue(!(recovered instanceof LivingEntity living) || !living.hasEffect(com.stonytark.magnetization.registry.MagEffects.MAGNETIZED),
+                                "Deflection left an invented lingering magnetic effect");
+                        recovered.discard();
+                    }
+                } finally {
+                    entity.discard();
+                    for (var pos : BlockPos.betweenClosed(center.offset(-3, -2, -3), center.offset(3, 2, 3)))
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                }
+            }
+            h.succeed();
+        } finally { MagConfig.SLUGTERRA_DEFLECTION_ENABLED.set(old); owner.discard(); }
     }
 
     private static Entity shot(GameTestHelper h, String protoId, Vec3 pos, ServerPlayer owner) {

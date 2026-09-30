@@ -1,0 +1,1 @@
+The strict 64-case server ability audit passed. Client trajectory analysis failed: ~30-block maximum divergence during case 61. Server log records a 3705ms / 74-tick Sable autosave stall. This run is retained as failed client validation, not counted as a passing network gate. Final validation repeats all cases using a RAM-backed disposable server world.
