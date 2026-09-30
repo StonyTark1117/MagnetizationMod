@@ -34,3 +34,9 @@ The new optional Gradle flag disables the legacy global GameTest-process cleanup
 - [First four changes, repeat](https://spark.lucko.me/2O999PWEwE)
 
 Raw captures, decoded trees, original/candidate JARs and private server logs are retained in `build/reports/field-pass-2026-09-30/` (not committed). Baseline SHA256: `58d7a5cba43b582ed7d5312c1c739411a0c8135f174d35942cf61f004e307bd4`. Both artifact manifests still identify 1.4.6; use the commit and checksum to distinguish the checkpoint. The original world and panel settings are unchanged. The baseline was already warm; the candidate received two minutes of warmup after restart. These are sampling estimates, not direct handler timers.
+
+## Final local regression gate
+
+After all 14 implementations: 261 unit tests, release artifact checks, and 208 required GameTests passed (173 core, 17 CNA/optimization, 3 Ender Transmission, 2 Steam Rails, 5 Immersive Aeronautics/Portals, 5 Immersive Engineering, 3 Create Addition). Optional suites ran separately with their actual runtimes.
+
+The full comparison uses `scripts/generate-field-pass-fixtures.py` to extend the existing disposable stress pack with seven contained scenarios. It uses a separate flat lab dimension inside a copy of the server world, with diagnostic flags enabled equally for checkpoint-four and final builds. This includes the gallium occupied/no-field tradeoff, separated magnetized pools, distant-source queries, stored MR power and vertical external fields. Server results remain pending until both builds complete the same captures.

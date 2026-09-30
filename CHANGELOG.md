@@ -2,6 +2,10 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Reduce background external-field work with conservative recipient bounds, lazy ship preparation, direct candidate lists, and immediate disabled-relay exits. Candidate budgets and force order are retained.
+- Avoid redundant machine state/reflection work, query occupied emitter buckets for creep, and skip unnecessary MR/gallium/fluid processing. Magnetized-fluid sources now retain a coherent spatial index across removal and chunk reload.
+- Select nearby train carriages for large populations while preserving live movement and the once-per-train force rule. Detailed optimization and validation evidence: [field performance pass](docs/performance-evidence/field-pass-2026-09-30/progress.md).
+
 - Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.
 
 - Add optional Extra Golems Reborn **21.1.0.1** material recognition to both field eligibility and susceptibility. Default-on server controls expose 14 material IDs, including raw iron/gold/copper, gold, netherite, ancient debris and every copper oxidation/waxing variant. Intrinsic response counts once; equipment, polarity, status and administrative exclusions retain their roles.
