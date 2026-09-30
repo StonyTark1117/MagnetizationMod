@@ -537,6 +537,8 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue SLUGTERRA_ORES_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_EQUIPMENT_ENABLED;
     public static final ModConfigSpec.BooleanValue SLUGTERRA_MOUNTS_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_ELECTRIC_ENABLED;
+    public static final ModConfigSpec.IntValue SLUGTERRA_ELECTRIC_COOLDOWN;
     public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_SUSCEPTIBILITY;
     public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_MAX_IMPULSE;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
@@ -2453,6 +2455,14 @@ public final class MagConfig {
                 .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
                 .translation("magnetization.configuration.compat.slugterraCompatEnabled")
                 .define("slugterraCompatEnabled", true);
+        SLUGTERRA_ELECTRIC_ENABLED = b
+                .comment("Fresh Slugterra electric shock magnetizes one eligible equipped item using temporary LIRM, without petrifying logs.")
+                .translation("magnetization.configuration.compat.slugterraElectricEnabled")
+                .define("slugterraElectricEnabled", true);
+        SLUGTERRA_ELECTRIC_COOLDOWN = b
+                .comment("Minimum ticks between fresh electric-shock magnetization attempts on a target. Refreshes never stamp again.")
+                .translation("magnetization.configuration.compat.slugterraElectricCooldown")
+                .defineInRange("slugterraElectricCooldown", 100, 1, 24000);
         SLUGTERRA_MOUNTS_ENABLED = b
                 .comment("Mechanical Burro, Perro and Toro mounts respond to fields, including while ridden.")
                 .translation("magnetization.configuration.compat.slugterraMountsEnabled")
@@ -3223,6 +3233,10 @@ public final class MagConfig {
     }
     public static boolean slugterraCompatEnabled() {
         return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraElectricEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_ELECTRIC_ENABLED, true);
     }
 
     public static boolean slugterraMountsEnabled() {

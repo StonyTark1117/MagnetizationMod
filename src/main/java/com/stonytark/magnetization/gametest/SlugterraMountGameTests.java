@@ -44,10 +44,15 @@ public final class SlugterraMountGameTests {
                 for (boolean ridden : List.of(false, true)) {
                     final var mount = create(h, id);
                     mount.setPos(Vec3.atCenterOf(origin.east(3)));
+                    mount.setOldPosAndRot();
                     mount.setNoGravity(true);
                     level.addFreshEntity(mount);
                     try {
-                        if (ridden) h.assertTrue(rider.startRiding(mount, true), "Could not mount " + id);
+                        if (ridden) {
+                            rider.setPos(mount.position());
+                            rider.setOldPosAndRot();
+                            h.assertTrue(rider.startRiding(mount, true), "Could not mount " + id);
+                        }
                         mount.setDeltaMovement(Vec3.ZERO);
                         final List<Packet<?>> packets = new ArrayList<>();
                         final var tracker = new ServerEntity(level, mount, 1, true, packets::add);

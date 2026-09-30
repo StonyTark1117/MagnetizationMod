@@ -58,6 +58,28 @@ packets. This verifies server behavior and packet production, not rendered
 motion on two live clients. Ordinary equipment/status contributions and the
 shared unmoveable-by-magnets exclusion remain part of the standard field rules.
 
+## Tazerling remnant magnetism
+
+A fresh `slugterra:electric_shock` application stamps one eligible equipped metal
+armor/tool item using existing LIRM rules. Base Tazerling, its bolt, protoform
+shock and Dark Tazerling share this effect. Effect refreshes and Dark Tazerling's
+amplification do not stamp more gear. Removing and immediately reapplying the
+effect is subject to a per-target cooldown that persists with the entity.
+Generic damage and unrelated effects do not trigger the bridge. Commands that
+apply the same electric-shock effect intentionally follow the same rules.
+
+`compat.slugterraElectricEnabled` defaults to true, under the master switch and
+`lightning.lirmEnabled`. `compat.slugterraElectricCooldown` defaults to 100 ticks.
+Stamps use the existing 24,000-tick (20-minute) LIRM decay, preserve permanent
+magnetization, and do not petrify nearby logs. Players retain normal inventory
+expiration; affected nonplayer equipment is checked every 100 entity ticks,
+including when compatibility has been disabled after the strike.
+
+GameTests invoke native hit handlers for the bolt, normal Tazerling and Dark
+Tazerling, verify one temporary stamp, refresh/cooldown suppression, equipment
+expiration and unchanged nearby logs. Separate checks cover both integration
+switches, the global LIRM switch, generic damage and unrelated effects.
+
 ## Reproducing verification
 
 ```sh

@@ -63,7 +63,7 @@ public final class LirmDecayHandler {
     }
 
     /** @return true if a previously-stamped item just lost its LIRM. */
-    private static boolean clearIfExpired(final ItemStack stack, final long now) {
+    public static boolean clearIfExpired(final ItemStack stack, final long now) {
         if (stack.isEmpty()) return false;
         final Long createdAt = stack.get(MagDataComponents.LIRM_CREATED_AT.get());
         if (createdAt == null) return false;

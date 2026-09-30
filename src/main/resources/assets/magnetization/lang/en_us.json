@@ -2340,5 +2340,7 @@
   "magnetization.configuration.compat.slugterraEquipmentEnabled": "Slugterra magnetic equipment",
   "magnetization.configuration.compat.slugterraMountsEnabled": "Slugterra mechanical mounts",
   "magnetization.configuration.compat.slugterraMountSusceptibility": "Mechanical mount susceptibility",
-  "magnetization.configuration.compat.slugterraMountMaxImpulse": "Mechanical mount impulse limit"
+  "magnetization.configuration.compat.slugterraMountMaxImpulse": "Mechanical mount impulse limit",
+  "magnetization.configuration.compat.slugterraElectricEnabled": "Slugterra electric remnant magnetism",
+  "magnetization.configuration.compat.slugterraElectricCooldown": "Electric remnant magnetism cooldown"
 }

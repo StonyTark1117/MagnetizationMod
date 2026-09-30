@@ -1,0 +1,6 @@
+present: ores, equipment, mounts and native electric attacks
+[30Sep2026 04:47:21.237] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 6 GAME TESTS COMPLETE IN 498.0 ms ======================
+[30Sep2026 04:47:21.237] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 6 required tests passed :)
+absent
+[30Sep2026 04:46:44.059] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 138.6 ms ======================
+[30Sep2026 04:46:44.059] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)

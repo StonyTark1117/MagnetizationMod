@@ -551,3 +551,7 @@ It is subordinate to `slugterraCompatEnabled`; reload data after changes.
 Bajoterra's three mechanical mounts. `slugterraMountSusceptibility` defaults to
 `1.0` (range 0–8); `slugterraMountMaxImpulse` defaults to `0.25` blocks/tick per
 field (range 0.001–1). All are subordinate to the Slugterra master switch.
+
+`compat.slugterraElectricEnabled` (default `true`) connects fresh electric shock
+to equipment-only LIRM. `slugterraElectricCooldown` defaults to 100 ticks (range
+1–24,000). Both the Slugterra master and global LIRM setting must be enabled.
