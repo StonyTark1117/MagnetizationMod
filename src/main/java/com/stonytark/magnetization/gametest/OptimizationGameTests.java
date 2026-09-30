@@ -36,6 +36,65 @@ import java.util.UUID;
 public final class OptimizationGameTests {
     private OptimizationGameTests() {}
 
+    @GameTest(template = "empty", batch = "optimizationGallium", timeoutTicks = 40)
+    public static void emptyGalliumSkipsFieldsAndOccupiedGalliumRetainsBothForceDirections(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var pos = helper.absolutePos(new BlockPos(1, 140, 1));
+        final var magnet = pos.west(2);
+        final int oldTicks = MagConfig.GALLIUM_CURRENT_TICKS.get();
+        final boolean oldFields = MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.get();
+        final boolean oldCompat = MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.get();
+        final var target = new net.minecraft.world.entity.item.ItemEntity(level,
+                pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, new ItemStack(Items.DIRT));
+        target.setNoGravity(true);
+        try {
+            MagConfig.GALLIUM_CURRENT_TICKS.set(1);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(true);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(true);
+            level.setBlockAndUpdate(magnet, BuiltInRegistries.BLOCK.get(
+                    ResourceLocation.parse("create_new_age:netherite_magnet")).defaultBlockState());
+            EmitterRegistry.registerExternal(level, magnet);
+            level.setBlockAndUpdate(pos.below(), Blocks.REDSTONE_BLOCK.defaultBlockState());
+            for (final var fluid : new net.minecraft.world.level.block.Block[]{
+                    com.stonytark.magnetization.registry.MagBlocks.GALLIUM_BLOCK.get(),
+                    com.stonytark.magnetization.registry.MagBlocks.MIXED_GALLIUM_BLOCK.get()}) {
+                level.setBlockAndUpdate(pos, fluid.defaultBlockState());
+                level.setBlock(pos, level.getBlockState(pos).setValue(
+                        com.stonytark.magnetization.content.fluid.FluidRedstone.POWER, 15), 2);
+                target.setPos(pos.getX() + 8, pos.getY() + .5, pos.getZ() + .5);
+                PerformanceDiagnostics.resetWork(level);
+                com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick(
+                        new LevelTickEvent.Post(() -> true, level));
+                helper.assertTrue(PerformanceDiagnostics.workSnapshot(level).get("gallium_field_searches") == 0L,
+                        "Empty powered gallium searched fields");
+                target.setPos(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5);
+                if (!target.isAddedToLevel()) level.addFreshEntity(target);
+                for (boolean south : new boolean[]{false, true}) {
+                    level.setBlockAndUpdate(magnet.west(), (south ? Blocks.REDSTONE_BLOCK : Blocks.AIR).defaultBlockState());
+                    target.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                    com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick(
+                            new LevelTickEvent.Post(() -> true, level));
+                    final double expected = MagConfig.galliumCurrentSpeed() * (south ? -1 : 1);
+                    helper.assertTrue(Math.abs(target.getDeltaMovement().x - expected) < 1e-8,
+                            "Gallium force changed: " + target.getDeltaMovement() + " expected X=" + expected
+                                    + "; state=" + level.getBlockState(pos) + "; counts=" + PerformanceDiagnostics.workSnapshot(level)
+                                    + "; occupants=" + level.getEntities((net.minecraft.world.entity.Entity) null, new net.minecraft.world.phys.AABB(pos), e -> true).size()
+                                    + "; field=" + MagneticFields.nearestField(level, net.minecraft.world.phys.Vec3.atCenterOf(pos)));
+                }
+            }
+            helper.succeed();
+        } finally {
+            target.discard();
+            for (final var p : new BlockPos[]{pos, pos.below(), magnet, magnet.west()}) {
+                level.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
+            }
+            EmitterRegistry.unregisterExternal(level, magnet);
+            MagConfig.GALLIUM_CURRENT_TICKS.set(oldTicks);
+            MagConfig.CREATE_NEW_AGE_FIELDS_ENABLED.set(oldFields);
+            MagConfig.CREATE_NEW_AGE_COMPAT_ENABLED.set(oldCompat);
+        }
+    }
+
     @GameTest(template = "empty", batch = "optimizationMrFluid", timeoutTicks = 40)
     public static void storedPowerHardensAndReleasesMrFluidWithoutRedundantFieldSearch(final GameTestHelper helper) {
         final var level = helper.getLevel();

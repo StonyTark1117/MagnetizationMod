@@ -15,7 +15,7 @@ Scope: implement all 14 items in the user goal, retain gameplay, commit/push seq
 | 8. Empty recession gate | Recession returns before building originals or copying sources when the creep registry is empty. Added recession_setups counter. Compile passed; CNA growth/recession integration 13/13 passed after item 9. |
 | 9. Occupied emitter queries for ferrofluid | Ordered occupied X/Z rows replace empty chunk enumeration, retaining exact inclusive 32-/512-block expansion and candidate order. Unit suite 259/259; randomized 1,000-operation lifecycle checks cover row/category coherence. CNA integration 13/13, including attraction, repulsion and orphan recession. Chunk-attempt counters now count selected occupied bucket lookups; emitter_buckets_inspected records spatial traversal work. |
 | 10. MR stored power first | Stored positive power returns before field lookup; unpowered field/neighbor fallbacks are unchanged. CNA suite 14/14, including real hardening with zero field searches and restoration after power removal. |
-| 11. Gallium occupancy first | Pending |
+| 11. Gallium occupancy first | Powered empty cells skip field search and force setup. An O(1) source-presence gate avoids added entity queries in field-free levels. CNA 15/15: both plain/mixed gallium retain exact current speed and both polarity directions for a nonmagnetic item. Full-pack occupancy/no-field timing tradeoff remains for final comparison. |
 | 12. Local magnetized-fluid groups | Pending |
 | 13. Nearby train carriage queries | Pending |
 | 14. Spatial magnetized-fluid field lookup | Pending |
