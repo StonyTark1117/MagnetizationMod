@@ -46,6 +46,9 @@ public final class FerromagneticCompat {
     public static boolean integrationEnabled(final ResourceLocation id) {
         if (id == null) return true;
         return switch (id.getNamespace()) {
+            case "slugterra", "bajoterrafn", "slugterra_dark", "eatslugslos" ->
+                    MagConfig.slugterraCompatEnabled()
+                            && (!id.getPath().endsWith("_ore") || MagConfig.slugterraOresEnabled());
             case "tfmg" -> MagConfig.tfmgCompatEnabled();
             case "railways" -> MagConfig.steamRailsCompatEnabled();
             default -> true;

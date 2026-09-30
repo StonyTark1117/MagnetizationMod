@@ -535,3 +535,10 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.anomalyAffectsNaturesCompass | boolean | true | When true (default), Nature's Compass (if installed) also scrambles inside the anomaly. Set false to keep biome-search functional even inside the flux. |
 | COMMON | compat.anomalyAffectsExplorersCompass | boolean | true | When true (default), Explorer's Compass (if installed) also scrambles inside the anomaly. Set false to keep structure-search functional even inside the flux. |
 | COMMON | compat.ae2MeteoriteHookEnabled | boolean | true | If true and Applied Energistics 2 is installed, every AE2 meteor structure also emits a decaying magnetic field at its centre (same decay curve as our native meteorite_core, no extra block placed). Disable to skip the per-chunk AE2 scan if you don't want the cross-mod integration. |
+
+## Slugterra local-port compatibility
+
+`compat.slugterraCompatEnabled` (default `true`) gates all Slugterra integration.
+`compat.slugterraOresEnabled` (default `true`) independently enables cavern
+iron/copper/gold dowsing, extraction and dropped-item magnetism. Reload data after
+changing these values. See [verification and local test setup](compatibility/slugterra.md).

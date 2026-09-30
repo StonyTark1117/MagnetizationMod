@@ -533,6 +533,8 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue EXTRA_GOLEMS_REBORN_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue CREATE_MAGNETICS_SERVER_CRASH_WORKAROUND;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXTRA_GOLEMS_REBORN_MATERIALS;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_ORES_ENABLED;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
@@ -2443,6 +2445,14 @@ public final class MagConfig {
                 .defineListAllowEmpty("extraGolemsRebornMaterials", DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS,
                         () -> "golems:raw_iron", o -> o instanceof String id && id.matches("[a-z0-9_.-]+:[a-z0-9/._-]+")
                                 && net.minecraft.resources.ResourceLocation.tryParse(id) != null);
+        SLUGTERRA_COMPAT_ENABLED = b
+                .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
+                .translation("magnetization.configuration.compat.slugterraCompatEnabled")
+                .define("slugterraCompatEnabled", true);
+        SLUGTERRA_ORES_ENABLED = b
+                .comment("Cavern iron, copper and gold ores support magnetic extraction and dowsing. Reload data after changing.")
+                .translation("magnetization.configuration.compat.slugterraOresEnabled")
+                .define("slugterraOresEnabled", true);
         IRONWORKS_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's optional Create: Ironworks material and armor tag integration.",
                          "Takes effect on data reload.")
@@ -3191,6 +3201,14 @@ public final class MagConfig {
             return DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS;
         }
     }
+    public static boolean slugterraCompatEnabled() {
+        return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraOresEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_ORES_ENABLED, true);
+    }
+
     public static boolean ironworksCompatEnabled() {
         return booleanOr(IRONWORKS_COMPAT_ENABLED, true);
     }

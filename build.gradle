@@ -139,6 +139,7 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runslugterragametestserver', 'runslugterraabsentgametestserver',
         'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
         'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
         'runextragolemsreborngametestserver', 'runextragolemsrebornclient',
@@ -2197,3 +2198,6 @@ tasks.named('check') {
     dependsOn tasks.named('verifyReleaseJar'), tasks.named('verifyNoRuntimeModpackCoupling'),
             tasks.named('verifyRecommendedPackFixtures')
 }
+
+// Private local Slugterra port: never bundled or published as a dependency.
+apply from: 'gradle/slugterra-compat.gradle'

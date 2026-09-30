@@ -1,0 +1,36 @@
+# Slugterra local-port integration
+
+Target: `slugterra-1.3.4+1.21.1-unofficial.0.jar`, NeoForge 21.1.252,
+GeckoLib 4.8.4. SHA-256:
+`bda9677991003fb9dbbdfef9a5ceb32f6b60eeb5f5f7a27261287458e51755f9`.
+The private artifact is supplied by the developer, never downloaded, bundled or
+published by Magnetization. Its only declared mod ID is `slugterra`; bundled
+addon registries also use `bajoterrafn`, `slugterra_dark`, and `eatslugslos`.
+
+## Cavern ores
+
+All 15 stone variants of each of iron, copper and gold participate in Ore
+Dowsing Compass scanning/tuning, Magnetic Excavator extraction, and dropped-item
+attraction. This follows Magnetization's existing vanilla ore gameplay policy,
+including copper and gold. Nonmetallic cavern ores are excluded.
+
+`compat.slugterraCompatEnabled` is the master switch.
+`compat.slugterraOresEnabled` controls ore behavior independently. Both default
+to true. Reload data after changing these common settings; runtime material
+checks also honor the switches, including already-tuned compasses.
+
+## Reproducing verification
+
+```sh
+bash scripts/run-gametest-gate.sh runSlugterraGameTestServer run-slugterra-gametest 360 \
+  -PslugterraJar=/absolute/path/to/slugterra-1.3.4+1.21.1-unofficial.0.jar
+bash scripts/run-gametest-gate.sh runSlugterraAbsentGameTestServer run-slugterra-absent-gametest 300
+```
+
+The present suite resolves all 45 ore IDs through the upstream tags, posts anvil
+updates, scans placed ores with the compass scanner, checks the excavator cone,
+checks both disabled switches, and powers an excavator to extract representative
+iron/copper/gold blocks while leaving a nonmetal block outside the pull path.
+The absent suite loads the mod and optional data without Slugterra and verifies
+vanilla material support. Neither profile adds Slugterra to normal runtime or
+published dependencies. The tests do not establish client rendering behavior.

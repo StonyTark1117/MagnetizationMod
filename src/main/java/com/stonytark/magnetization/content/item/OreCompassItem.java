@@ -36,6 +36,15 @@ public class OreCompassItem extends Item {
         return block == net.minecraft.world.level.block.Blocks.AIR ? null : block;
     }
 
+    /** Shared by the needle and server-side compatibility verification. */
+    public static boolean matchesOre(final ItemStack compass,
+                                     final net.minecraft.world.level.block.state.BlockState state) {
+        if (!com.stonytark.magnetization.compat.FerromagneticCompat
+                .is(state, com.stonytark.magnetization.api.MagTags.METALLIC_ORES)) return false;
+        final Block tuned = tunedOre(compass);
+        return tuned == null || state.is(tuned);
+    }
+
     @Override
     public void appendHoverText(final ItemStack stack, final TooltipContext ctx,
                                 final List<Component> tooltip, final TooltipFlag flag) {

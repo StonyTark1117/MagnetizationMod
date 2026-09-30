@@ -1,0 +1,35 @@
+configurations { slugterraRuntime }
+
+def present = gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('runslugterragametestserver') }
+if (present) {
+    def jarPath = providers.gradleProperty('slugterraJar').orNull
+    if (jarPath == null || !file(jarPath).isFile()) {
+        throw new GradleException('Supply -PslugterraJar=/absolute/path/to/slugterra.jar for this private integration suite')
+    }
+    repositories.maven {
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup 'software.bernie.geckolib' }
+    }
+    dependencies {
+        slugterraRuntime files(jarPath)
+        slugterraRuntime('software.bernie.geckolib:geckolib-neoforge-1.21.1:4.8.4') { transitive = false }
+    }
+    configurations.runtimeClasspath.extendsFrom(configurations.slugterraRuntime)
+}
+neoForge.runs {
+    slugterraGameTestServer {
+        type = 'gameTestServer'
+        gameDirectory = file('run-slugterra-gametest')
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_slugterra'
+    }
+    slugterraAbsentGameTestServer {
+        type = 'gameTestServer'
+        gameDirectory = file('run-slugterra-absent-gametest')
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_slugterra_absent'
+    }
+}
+tasks.named('processResources', ProcessResources).configure {
+    ['magnetization_slugterra', 'magnetization_slugterra_absent'].each { namespace ->
+        from('src/main/resources/data/magnetization/structure/empty.nbt') { into "data/${namespace}/structure" }
+    }
+}

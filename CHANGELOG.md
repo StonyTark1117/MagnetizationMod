@@ -2,6 +2,8 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Add optional Slugterra cavern ore integration: 45 iron/copper/gold variants support dowsing, compass tuning, magnetic extraction and dropped-item attraction, with master and ore-specific switches.
+
 - Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.
 
 - Add optional Extra Golems Reborn **21.1.0.1** material recognition to both field eligibility and susceptibility. Default-on server controls expose 14 material IDs, including raw iron/gold/copper, gold, netherite, ancient debris and every copper oxidation/waxing variant. Intrinsic response counts once; equipment, polarity, status and administrative exclusions retain their roles.
