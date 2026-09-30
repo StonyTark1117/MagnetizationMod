@@ -1,0 +1,143 @@
+---- Minecraft Crash Report ----
+
+// ooprs
+Please make sure this issue is not caused by Sable before reporting it to other mod authors.
+If you cannot reproduce it without Sable, file a report on the issue tracker
+https://github.com/ryanhcode/sable/issues
+
+// Surprise! Haha. Well, this is awkward.
+
+Time: 2026-09-30 04:15:58
+Description: Mod loading failures have occurred; consult the issue messages for more details
+
+net.neoforged.neoforge.logging.CrashReportExtender$ModLoadingCrashException: Mod loading has failed
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.1.252.jar%23178!/:?] {re:mixin,re:classloading}
+-- Mod loading issue --
+Details:
+	Caused by 0: java.lang.ExceptionInInitializerError
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.NeoForgeRegistryCallbacks$AttributeCallbacks.onBake(NeoForgeRegistryCallbacks.java:100) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at TRANSFORMER/minecraft@1.21.1/net.minecraft.core.MappedRegistry.lambda$freeze$7(MappedRegistry.java:372) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,re:classloading,pl:mixin:APP:create.mixins.json:accessor.MappedRegistryAccessor from mod create,pl:mixin:APP:neoforge.mixins.json:MappedRegistryAccessor from mod neoforge,pl:mixin:A}
+		at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[?:?] {re:mixin}
+		at TRANSFORMER/minecraft@1.21.1/net.minecraft.core.MappedRegistry.freeze(MappedRegistry.java:372) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,re:classloading,pl:mixin:APP:create.mixins.json:accessor.MappedRegistryAccessor from mod create,pl:mixin:APP:neoforge.mixins.json:MappedRegistryAccessor from mod neoforge,pl:mixin:A}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.applySnapshot(RegistryManager.java:201) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.lambda$applySnapshot$1(RegistryManager.java:144) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[?:?] {}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.applySnapshot(RegistryManager.java:133) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.revertToVanilla(RegistryManager.java:116) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:100) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+		at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?] {}
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?] {}
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?] {}
+		at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?] {re:mixin}
+
+	Mod file: <No mod information provided>
+	Failure message: An uncaught parallel processing error has occurred.
+		java.lang.ExceptionInInitializerError: null
+	Mod version: <No mod information provided>
+	Mod issues URL: <No issues URL found>
+	Exception message: java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:attribute / neoforge:swim_speed]
+Stacktrace:
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.1.252.jar%23178!/:?] {re:mixin,re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.ai.attributes.AttributeInstance.<init>(AttributeInstance.java:37) ~[neoforge-21.1.252.jar%23177!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder.create(AttributeSupplier.java:89) ~[neoforge-21.1.252.jar%23177!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder.add(AttributeSupplier.java:99) ~[neoforge-21.1.252.jar%23177!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.LivingEntity.createLivingAttributes(LivingEntity.java:332) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,pl:accesstransformer:B,re:computing_frames,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B,pl:mixin:APP:create.mixins.json:CustomItemUseEffectsMixin from mod create,pl:mixin:APP:create.mixins.json:LavaSwimmingMixin from mod create,pl:mixin:APP:create.mixins.json:accessor.LivingEntityAccessor from mod create,pl:mixin:APP:sable.mixins.json:climbing_sub_levels.LivingEntityMixin from mod sable,pl:mixin:APP:sable.mixins.json:entity.entities_stick_sublevels.LivingEntityMixin from mod sable,pl:mixin:APP:sable.mixins.json:entity.entities_stick_sublevels.effects.LivingEntityMixin from mod sable,pl:mixin:APP:sable.mixins.json:entity.entity_rotations_and_riding.LivingEntityMixin from mod sable,pl:mixin:APP:sable.mixins.json:entity.entity_sublevel_collision.LivingEntityMixin from mod sable,pl:mixin:APP:sable.mixins.json:respawn_point.sleeping.LivingEntityMixin from mod sable,pl:mixin:APP:sable-neoforge.mixins.json:entities_stick_sublevels.effects.LivingEntityMixin from mod sable,pl:mixin:A}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.Mob.createMobAttributes(Mob.java:160) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,pl:accesstransformer:B,re:classloading,pl:accesstransformer:B,pl:mixin:APP:create.mixins.json:MobMixin from mod create,pl:mixin:APP:sable.mixins.json:entity.sublevels_block_sky.SubLevelsBlockSkyMixin from mod sable,pl:mixin:A}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.animal.allay.Allay.createAttributes(Allay.java:148) ~[neoforge-21.1.252.jar%23177!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.world.entity.ai.attributes.DefaultAttributes.<clinit>(DefaultAttributes.java:90) ~[neoforge-21.1.252.jar%23177!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.NeoForgeRegistryCallbacks$AttributeCallbacks.onBake(NeoForgeRegistryCallbacks.java:100) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.core.MappedRegistry.lambda$freeze$7(MappedRegistry.java:372) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,re:classloading,pl:mixin:APP:create.mixins.json:accessor.MappedRegistryAccessor from mod create,pl:mixin:APP:neoforge.mixins.json:MappedRegistryAccessor from mod neoforge,pl:mixin:A}
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596) ~[?:?] {re:mixin}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.core.MappedRegistry.freeze(MappedRegistry.java:372) ~[neoforge-21.1.252.jar%23177!/:?] {re:mixin,re:classloading,pl:mixin:APP:create.mixins.json:accessor.MappedRegistryAccessor from mod create,pl:mixin:APP:neoforge.mixins.json:MappedRegistryAccessor from mod neoforge,pl:mixin:A}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.applySnapshot(RegistryManager.java:201) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.lambda$applySnapshot$1(RegistryManager.java:144) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[?:?] {}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.applySnapshot(RegistryManager.java:133) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.RegistryManager.revertToVanilla(RegistryManager.java:116) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:100) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.1.252/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.1.252.jar%23178!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?] {}
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?] {re:mixin}
+
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.1
+	Minecraft Version ID: 1.21.1
+	Operating System: Linux (amd64) version 7.2.7-zen1-1-zen
+	Java Version: 21.0.12.1, Arch Linux
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Arch Linux
+	Memory: 275983128 bytes (263 MiB) / 1166016512 bytes (1112 MiB) up to 16609443840 bytes (15840 MiB)
+	CPUs: 24
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 9 7900X3D 12-Core Processor
+	Identifier: AuthenticAMD Family 25 Model 97 Stepping 2
+	Microarchitecture: Zen 3
+	Frequency (GHz): -0.00
+	Number of physical packages: 1
+	Number of physical CPUs: 12
+	Number of logical CPUs: 24
+	Graphics card #0 name: Navi 31 [Radeon RX 7900 XT/7900 XTX/7900 GRE/7900M]
+	Graphics card #0 vendor: Advanced Micro Devices, Inc. [AMD/ATI] (0x1002)
+	Graphics card #0 VRAM (MiB): 33024.00
+	Graphics card #0 deviceId: 0x744c
+	Graphics card #0 versionInfo: unknown
+	Graphics card #1 name: Raphael
+	Graphics card #1 vendor: Advanced Micro Devices, Inc. [AMD/ATI] (0x1002)
+	Graphics card #1 VRAM (MiB): 258.00
+	Graphics card #1 deviceId: 0x164e
+	Graphics card #1 versionInfo: unknown
+	Virtual memory max (MiB): 31672.82
+	Virtual memory used (MiB): 26323.55
+	Swap memory total (MiB): 0.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 30148.60, total: 31672.82
+	Space in storage for workdir (MiB): available: 276743.88, total: 975772.25
+	JVM Flags: 0 total;
+	ModLauncher: 11.0.5+main.901c6ea8
+	ModLauncher launch target: forgeclientdev
+	ModLauncher services:
+		sponge-mixin-0.15.2+mixin.0.8.7.jar mixin PLUGINSERVICE
+		loader-4.0.44.jar slf4jfixer PLUGINSERVICE
+		loader-4.0.44.jar runtime_enum_extender PLUGINSERVICE
+		at-modlauncher-10.0.1.jar accesstransformer PLUGINSERVICE
+		loader-4.0.44.jar runtimedistcleaner PLUGINSERVICE
+		modlauncher-11.0.5.jar mixin TRANSFORMATIONSERVICE
+		modlauncher-11.0.5.jar fml TRANSFORMATIONSERVICE
+	FML Language Providers:
+		javafml@4.0
+		lowcodefml@4.0
+		minecraft@4.0
+	Mod List:
+		aviator-dreams-reloaded-4Aa8QEq9.jar              |Aviator Dreams (Reloaded)     |aviator_dream                 |1.2.7+1.21.1        |Manifest: NOSIGNATURE
+		create-1.21.1-6.0.11-295.jar                      |Create                        |create                        |6.0.11              |Manifest: NOSIGNATURE
+		aeronautics-neoforge-1.21.1-1.3.0.jar             |Create Aeronautics            |aeronautics                   |1.3.0               |Manifest: NOSIGNATURE
+		simulated-neoforge-1.21.1-1.3.0.jar               |Create Simulated              |simulated                     |1.3.0               |Manifest: NOSIGNATURE
+		flywheel-neoforge-1.21.1-1.0.6.jar                |Flywheel                      |flywheel                      |1.0.6               |Manifest: NOSIGNATURE
+		immersive-aircraft-ZZTlNkV9.jar                   |Immersive Aircraft            |immersive_aircraft            |1.5.2+1.21.1        |Manifest: NOSIGNATURE
+		main                                              |Magnetization                 |magnetization                 |1.4.6               |Manifest: NOSIGNATURE
+		neoforge-21.1.252.jar                             |Minecraft                     |minecraft                     |1.21.1              |Manifest: NOSIGNATURE
+		neoforge-21.1.252.jar                             |NeoForge                      |neoforge                      |21.1.252            |Manifest: NOSIGNATURE
+		ponder-neoforge-1.0.87+mc1.21.1.jar               |Ponder                        |ponder                        |1.0.87+mc1.21.1     |Manifest: NOSIGNATURE
+		sable-neoforge-1.21.1-2.0.3.jar                   |Sable                         |sable                         |2.0.3               |Manifest: NOSIGNATURE
+		sable-companion-common-1.21.1-1.6.0.jar           |Sable Companion               |sablecompanion                |1.6.0               |Manifest: NOSIGNATURE
+		terrablender-6e8GCrLb.jar                         |TerraBlender                  |terrablender                  |4.1.0.8             |Manifest: NOSIGNATURE
+		veil-neoforge-1.21.1-4.1.4.jar                    |Veil                          |veil                          |4.1.4               |Manifest: NOSIGNATURE
+	Crash Report UUID: fedd0ee5-ddcf-4cb2-874a-9ed172357526
+	FML: 4.0.44
+	NeoForge: 21.1.252
+	Flywheel Backend: flywheel:off

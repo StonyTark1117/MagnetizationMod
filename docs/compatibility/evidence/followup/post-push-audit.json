@@ -1,0 +1,33 @@
+{
+  "audited_commit": "402613e7b2d71f6a9973a83fcb90a33b4d4e454d",
+  "remote_commit": "402613e7b2d71f6a9973a83fcb90a33b4d4e454d",
+  "working_tree_clean_at_audit": true,
+  "obsolete_extragolems_references": 0,
+  "game_test_profiles": {
+    "alexscaves-final.log": 7,
+    "compat-absent-final.log": 2,
+    "createaddition-gametest-final.log": 3,
+    "extra-golems-reborn-final.log": 12,
+    "gametest-final.log": 173,
+    "immersive-engineering-final.log": 5,
+    "modular-golems-final.log": 4,
+    "quark-final.log": 4,
+    "regression-final.log": 4,
+    "sweep-equipment-final.log": 2,
+    "sweep-materials-final.log": 2,
+    "sweep-storage-final.log": 2,
+    "sweep-supplementaries-final.log": 2,
+    "sweep-twilight-final.log": 2
+  },
+  "game_tests_passed": 224,
+  "unit_tests": {
+    "tests": 251,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "real_multiplayer_clients": 2,
+  "verified_tagged_vehicles": 15,
+  "ticks_per_vehicle": 180,
+  "scope": "Scoped behavioral verification; unresolved boundaries remain in followup-audit.md."
+}
