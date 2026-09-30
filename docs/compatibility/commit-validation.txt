@@ -13,4 +13,3 @@ run-magnetics-workaround-gametest
 
 run-magnetics-workaround-absent-gametest
 [30Sep2026 03:36:57.473] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
-
