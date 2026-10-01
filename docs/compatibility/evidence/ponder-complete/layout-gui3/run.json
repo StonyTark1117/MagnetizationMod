@@ -1,0 +1,201 @@
+{
+  "effective_gui_scale": 3,
+  "scenes": [
+    "railgun_remote",
+    "fusion_panel",
+    "railgun_pair",
+    "rare_earth_magnets",
+    "copycat_magnetism"
+  ],
+  "native_playback_complete": true,
+  "texts": [
+    {
+      "scene": "railgun_remote",
+      "index": 1,
+      "time": 33
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 2,
+      "time": 143
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 3,
+      "time": 253
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 4,
+      "time": 363
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 5,
+      "time": 473
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 6,
+      "time": 583
+    },
+    {
+      "scene": "fusion_panel",
+      "index": 1,
+      "time": 30
+    },
+    {
+      "scene": "fusion_panel",
+      "index": 2,
+      "time": 132
+    },
+    {
+      "scene": "fusion_panel",
+      "index": 3,
+      "time": 234
+    },
+    {
+      "scene": "railgun_pair",
+      "index": 1,
+      "time": 30
+    },
+    {
+      "scene": "railgun_pair",
+      "index": 2,
+      "time": 120
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "index": 1,
+      "time": 30
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "index": 2,
+      "time": 384
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "index": 3,
+      "time": 714
+    },
+    {
+      "scene": "copycat_magnetism",
+      "index": 1,
+      "time": 30
+    },
+    {
+      "scene": "copycat_magnetism",
+      "index": 2,
+      "time": 120
+    }
+  ],
+  "targets": [
+    {
+      "scene": "railgun_remote",
+      "item": "magnetization:railgun_remote"
+    },
+    {
+      "scene": "railgun_remote",
+      "item": "magnetization:railgun_emitter"
+    },
+    {
+      "scene": "fusion_panel",
+      "item": "magnetization:fusion_thruster"
+    },
+    {
+      "scene": "railgun_pair",
+      "item": "magnetization:railgun_emitter"
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "item": "magnetization:samarium_cobalt_magnet"
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "item": "magnetization:neodymium_magnet"
+    },
+    {
+      "scene": "copycat_magnetism",
+      "item": "copycats:copycat_block"
+    }
+  ],
+  "durations": [
+    {
+      "scene": "railgun_remote",
+      "elapsed": 675,
+      "total": 675
+    },
+    {
+      "scene": "fusion_panel",
+      "elapsed": 306,
+      "total": 306
+    },
+    {
+      "scene": "railgun_pair",
+      "elapsed": 272,
+      "total": 272
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "elapsed": 796,
+      "total": 796
+    },
+    {
+      "scene": "copycat_magnetism",
+      "elapsed": 202,
+      "total": 202
+    }
+  ],
+  "screenshot_count": 41,
+  "raw_log_sha256": {
+    "client.log": "8dd07d9e149532357509b202005e1a3fa56e2fd75d17a00a696bbf5bd52557c5",
+    "server.log": "b870b6a8605fe0211d461d73172e926c65870f76a95d6119f1cedab6413c36be"
+  },
+  "log_normalization": "Remove trailing line whitespace only; keep contents and line order.",
+  "files_sha256": {
+    "client.log": "54823fd2bfbef0a05897bcae9a98fd0844ab3ea4303eadd6dc50aeb234bd6433",
+    "server.log": "5ed54bede5d35d05132ed5a24e1531125575b5843065c2c7ebf0a1859112336b",
+    "validation-ponder-railgun_remote-first.png": "c98d6aef157285a3d047304058de7dbf4d7cc7b4870c5b34526568cd85bd15d5",
+    "validation-ponder-railgun_remote-input-magnetization-railgun_remote.png": "2f6386ce40b792051fea857ee053e61bdbd9c4d4383cd1c95bd8284d9d090e7e",
+    "validation-ponder-railgun_remote-last.png": "3435c74a1d2b3fbdbef4cfa4b089066f03de303325b5548e22d3c3579b50cc31",
+    "validation-ponder-railgun_remote-text-1.png": "ff93136496bdb67fce2d2e6a48941f91d842af1413505dbdf3c79d71085310f1",
+    "validation-ponder-railgun_remote-text-2.png": "ad594d337bc72192ca64bdb956592b7c345945c2fc97fa1ece6e82e97efc617b",
+    "validation-ponder-railgun_remote-text-3.png": "8a149aecde7ff6c95c12713002de596df640a11df7a70ec47851d6b00769d52d",
+    "validation-ponder-railgun_remote-text-4.png": "1200ff66d3040840b6745b140369d88953062f3d456b46e138a7e2219fd3353d",
+    "validation-ponder-railgun_remote-text-5.png": "fa04f3eea99d380ad0da81c578aa03da4c568006e878724f1d1cffbf0f7104e3",
+    "validation-ponder-railgun_remote-text-6.png": "d69f189dc74c3c64a0b00d65c7ad8d99b63b96aa87520ce58a11dcc107a34e37",
+    "validation-ponder-fusion_panel-first.png": "39aad8a60ff51eb1242f181112dac121f40ae67152a04d06aeae85a126e67e09",
+    "validation-ponder-fusion_panel-last.png": "06e7f4992e93793b810d6f1a568e4a077105d32f738674726af2d7881bea6f2b",
+    "validation-ponder-fusion_panel-text-1.png": "f583fc3dccddc3d8b44f83c5fa91f636b4bb6e2c013ca1454650c2bfcfba70ba",
+    "validation-ponder-fusion_panel-text-2.png": "03660669a9fb54dd0231cb91278381b4d25eab8a75d36f1e4957b1e25e11ffe7",
+    "validation-ponder-fusion_panel-text-3.png": "321f71062798267fbb55468015c226deef23b3815fb28a11c1c596813cd543ba",
+    "validation-ponder-railgun_pair-first.png": "6238ffd1964a4cee8e0f98ee7a7a8dbaa84f370932bf64a18c1e822637482169",
+    "validation-ponder-railgun_pair-last.png": "3865c55920b49b85996982dbb415ef333adb19474a0c266ac58b473d58b608da",
+    "validation-ponder-railgun_pair-text-1.png": "490f2e1330110e4e03820a9d417117572d90f7e34f4e806c1361360a37049a4f",
+    "validation-ponder-railgun_pair-text-2.png": "363e8ea4e3cb8e8d10867c41482f206e9212d3d6db41bf02d64b3efd5c567a26",
+    "validation-ponder-rare_earth_magnets-first.png": "d96d050ffc9440254382a536b99812b4085df41a4cd79a1691456ec056b29bb2",
+    "validation-ponder-rare_earth_magnets-input-magnetization-boron_dust.png": "8dbc3548f054727c3d5f4ac662df1e9f2c626258e2416906374399134dc1c9ab",
+    "validation-ponder-rare_earth_magnets-input-magnetization-dysprosium_oxide.png": "50c0c7f427d0cda40a7f4e0d383e869fd0eb8ae86ab9befd0792c78f46b69239",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_alloy_plate.png": "5524c091cfe54c41a661354109b390447972a174c7689c95deb44fd0f9949b39",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_magnet_blank.png": "964b763f9f54261b5c36504ce8820e98e4b12aee19955de59e4ae0f9c8f37f3f",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_oxide.png": "cb586b02d3e0cc4deeeb82aceed22d0228fd774a5f2431bab85dc8fab869bdb2",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy.png": "d3f37a08a3e16343fdebf3875ff2cc5ddda80f71e375e18e90d7663571579f69",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank.png": "fd90425b0b994cf167b3fef1be6106d09c1f00e6263176f8a746549f6bbdc18a",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate.png": "920c1da7ecabc4ca720c4f1bb4210b5f9f40d23f1ccd3f7fc9f1b8c1857d963e",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_oxide.png": "40ab76df48c800d2a2fd85d5bdaad0d0dc8f9515f3efbf3daedb09e3d270d9a9",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_powder.png": "f34741e6762c030a1c37a4ab51a0c13f967d06f7a5e116a3a4f0c494d4fe641f",
+    "validation-ponder-rare_earth_magnets-input-magnetization-sintered_neodymium.png": "b7ff3492422530a6d541e06db09663118b8f843f53e42b7cc6b8b5f8191a24e7",
+    "validation-ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt.png": "00ecd8db949d5edfd84f5bb5047aa0d33cc58115ce2cf09a953df6da40bcc7d5",
+    "validation-ponder-rare_earth_magnets-last.png": "a0a55105ed10fc7181b3d203a73c1d3363f856489c8a695a56488e6078db11b6",
+    "validation-ponder-rare_earth_magnets-text-1.png": "d4c1aba7f4c4ac0adf249ed48945b1b7576c495150e5bffd6937ab3a1b67866a",
+    "validation-ponder-rare_earth_magnets-text-2.png": "576b3941ea6c4c40bccf56aafb8a3163dbcc835fa69418fab0565819df818465",
+    "validation-ponder-rare_earth_magnets-text-3.png": "ea4192dc2b15317c46e445bf81270a6913b46da2dceb9e76d7e8d17e2e130dda",
+    "validation-ponder-copycat_magnetism-first.png": "c0b84da5e5d562a31a1175f2850f5c725effd1732918115a019c260fb5f99754",
+    "validation-ponder-copycat_magnetism-input-create-goggles.png": "93a3a321d1ada38edf4c81a9055f86fca40fa3e407487bde5077b020f6291717",
+    "validation-ponder-copycat_magnetism-input-minecraft-iron_block.png": "756ba02908483e552e0fefa506d39140a9dd8d81c939ae1f18f4c98c50274563",
+    "validation-ponder-copycat_magnetism-last.png": "b72d97a4b5bff45a8a8de2b2f45e58cd9903c4256ce59815310c3e728a4c2604",
+    "validation-ponder-copycat_magnetism-text-1.png": "2ad87c54ae78a9186447a38b0127eb30cb41dc9c4bd3f4adad67a816df67d939",
+    "validation-ponder-copycat_magnetism-text-2.png": "890feab529b1c937bb93960fa40acc3ecb72aafebe289cfd0fde89f0b340b2c7"
+  }
+}

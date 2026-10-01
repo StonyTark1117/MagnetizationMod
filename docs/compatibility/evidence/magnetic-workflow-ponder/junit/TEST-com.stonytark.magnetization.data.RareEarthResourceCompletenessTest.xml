@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:16.004Z" hostname="Hades" time="0.018">
+  <properties/>
+  <testcase name="processingChainsReachPowdersIngotsAlloysPlatesAndSinteredMagnets()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.004"/>
+  <testcase name="optionalIndustrialRecipesRemainConditionedAndProduceNativeParts()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.001"/>
+  <testcase name="magnetBlocksUseDedicatedModelsAndConfigGatedWorldgen()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.003"/>
+  <testcase name="createOreExcavationCoversEveryRareEarthFamilyWithIndependentGates()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.001"/>
+  <testcase name="oresAndIntermediatesHaveDedicatedAssetsAndTranslations()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.004"/>
+  <testcase name="rareEarthBlockAndItemOreTagsStayInParity()" classname="com.stonytark.magnetization.data.RareEarthResourceCompletenessTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

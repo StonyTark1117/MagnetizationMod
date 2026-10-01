@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.GuideInstructionContractsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:15.755Z" hostname="Hades" time="0.019">
+  <properties/>
+  <testcase name="reviewedCommonIngredientsActuallyIncludeOurGuideMaterials()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.0"/>
+  <testcase name="reviewedGuideDefaultsKeepMagnetConsumptionOptional()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.0"/>
+  <testcase name="bothRecipeSlotsAndRecipeArraysResolveForEveryBookPage()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.005"/>
+  <testcase name="reviewedProgressionRecipesKeepTheirIngredientsLayoutAndYield()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.001"/>
+  <testcase name="missingSecondaryRecipeFailsEvenWhenPrimaryResolves()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.002"/>
+  <testcase name="localizedBookStringsSupportPatchoulisNoArgumentFormatting()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.007"/>
+  <testcase name="rawPercentageFailsButEscapedPercentageKeepsItsVisibleValue()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.001"/>
+  <testcase name="referenceCollectorIncludesSecondaryAndArrayRecipes()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

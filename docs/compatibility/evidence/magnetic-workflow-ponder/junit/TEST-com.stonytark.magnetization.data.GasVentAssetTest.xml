@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.GasVentAssetTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:15.746Z" hostname="Hades" time="0.009">
+  <properties/>
+  <testcase name="recipeMatchesTheDocumentedUniquePattern()" classname="com.stonytark.magnetization.data.GasVentAssetTest" time="0.001"/>
+  <testcase name="allVentHudAndManualTextIsLocalized()" classname="com.stonytark.magnetization.data.GasVentAssetTest" time="0.004"/>
+  <testcase name="ventAndUnobtainableCloudHaveCompleteAssets()" classname="com.stonytark.magnetization.data.GasVentAssetTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

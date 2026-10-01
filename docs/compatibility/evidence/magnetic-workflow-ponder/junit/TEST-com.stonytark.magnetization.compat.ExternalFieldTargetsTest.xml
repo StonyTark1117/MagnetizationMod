@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.compat.ExternalFieldTargetsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.794Z" hostname="Hades" time="0.019">
+  <properties/>
+  <testcase name="retainsTouchingBoundsLargeShipsAndThinApertures()" classname="com.stonytark.magnetization.compat.ExternalFieldTargetsTest" time="0.018"/>
+  <testcase name="rejectsSeparationOnEveryAxisIncludingNegativeCoordinates()" classname="com.stonytark.magnetization.compat.ExternalFieldTargetsTest" time="0.0"/>
+  <testcase name="emptyRecipientsRejectKnownBoundsButNeverGuessUnknownAdapterRange()" classname="com.stonytark.magnetization.compat.ExternalFieldTargetsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

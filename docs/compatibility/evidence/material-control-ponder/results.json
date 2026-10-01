@@ -1,0 +1,324 @@
+{
+  "baseCommit": "00176d02756a1647fc9178ddda31db2aca32d3fa",
+  "scope": "Three material-control scenes, normal native playback at effective GUI scales2/3; every target compiled at scale2. Dedicated-server mechanics tested separately. Does not rerun other scenes or full manual sweep.",
+  "captures": 44,
+  "catalogTests": 4,
+  "requiredRegressionGameTests": 7,
+  "sources": {
+    "src/main/java/com/stonytark/magnetization/client/MaterialControlPonderScenes.java": "5f1dc027b111c3026eafe36cae285022f338100a537411901b2b80438ab213f3",
+    "src/main/java/com/stonytark/magnetization/gametest/MaterialControlPonderGameTests.java": "533e6942220e74d78606e4e58417e8e607df1a07b2d71bab48a80f3dd5124cad"
+  },
+  "pinnedRuntimeArtifacts": {
+    "dev.eriksonn.aeronautics.aeronautics-neoforge-1.21.1-1.3.2.jar": "97fbf1e27f38674145b8521b140613dc8258bea7efca456dc2686e22bd683933",
+    "dev.simulated_team.simulated.simulated-neoforge-1.21.1-1.3.2.jar": "fdf9d250996a084b52fced3a5b0089e879a5cac05dc7bcf295ac1f4ebe5e2bff",
+    "neoforge-21.1.252.jar": "4a30c4a8b092b6f9b114bad4b70e648acd8db7efe5cfea4dcd8d87a2aa7fad97",
+    "neoforge-21.1.252-client-extra-aka-minecraft-resources.jar": "8e9cf6f4b6eafb1c6bf745a67a61dd1736f31865cad409e5b2bec918667dab5e",
+    "coasters-magnetized-1642979-8668703.jar": "52314bdace976a41d7d0948d4505ef96561719616d50dfffddce33f8f014e32a",
+    "UT2M39wf-bPYeUWZx.jar": "d1efdd8688af6603dff9425299ac4547ef56a7d5cfee757716ead7853276694e",
+    "DevLaunch-1.0.2.jar": "366adc4e95ab9b32c8e33b9f449529c8937c6fc021ee0c6b25419ea2bb703740",
+    "sable-neoforge-1.21.1-2.0.5.jar": "c8710f85bc780bbf523e6726ceaaf76dd0b8c61479db497b382c6bb34317e7ab",
+    "create-1.21.1-6.0.11-312.jar": "f92f9cdb9fee46011a8fd5e0f2f9fea142b7cb7c0cae396aa358b4937433db28",
+    "ponder-neoforge-1.0.87+mc1.21.1.jar": "d6b7fdf94359f73dc1fee730eded898d51b3bf0d626710753253becd8e4e6bef",
+    "Registrate-MC1.21-1.3.0+67.jar": "510f4041c41739f1d8ea8850ab8364d3e3a5fada8529beed5d9f479e2523db52",
+    "sable-companion-common-1.21.1-1.6.0.jar": "873633e35046e3761b277ff8a1ecad0d55d9a3014fa81a0b084c9aecba1f3bed",
+    "terrablender-6e8GCrLb.jar": "0c49b5ef447a7f09100e9a210888a7347fbda0aa75322063991f6063b25fe3f9",
+    "flywheel-neoforge-1.21.1-1.0.6.jar": "31dda15c205eb596d3b3449ef03f6af7363a6cd35b3da4bfe916b304f9e5337e",
+    "create-coasters-simulated-1601871-8655742.jar": "f80b4c3cdf9fa6188804967147761b0373e150a6eadbdc53626e5ac9700b2049",
+    "coasters-simulated-track-styles-1642719-8672156.jar": "2db637054455c92111ffca910f242b48dfe6aa815028cd1be3c1bbad43f63276",
+    "steam-n-rails-neoforge-1414670-8243336.jar": "b7636c8b1b0352ed1a130dfe67f8bb574e2fc08803ed1cda4d3ea00505193914",
+    "patchouli-BIogJv2D.jar": "959af52ed6640c316c3a8469203420be4aeea11ad6603890ba83bf48f5d9f993",
+    "veil-neoforge-1.21.1-4.3.2.jar": "774b83887d882dc47cd4d29d140cef0c8677747a6fe7799649f490926a4e0265",
+    "sable-sable_rapier-1.21.1-2.0.5.jar": "f7a89044a47bf0b766b460c8784e5f81b255f6806177d8d357a8c3c01362961b",
+    "earlydisplay-4.0.44.jar": "96922d7589000af7550f42d437f05676eea6b9708823e47c78e882560746042e",
+    "loader-4.0.44.jar": "f2096cd86d605c0484971fc712208e0dc6cecfe53e056db61d44a98cadc19499",
+    "at-modlauncher-10.0.1.jar": "2a4b447c6944a2b89e383c1eed9a26bb5cc60330a5bb26ef0a912a38d52df935",
+    "accesstransformers-10.0.1.jar": "89fb0dc3d68f8a5961f309ee110dad7d2c1094ba204595602b71e02e104838a1",
+    "bus-8.0.5.jar": "705e24f37752809499a5cd0c7dd31eaabf3d933c5d3b2060168e94e9ef62593a",
+    "coremods-7.0.3.jar": "d24c0d3e31af23cac36a0f9f98654b875f678b27ddccd8b28d331c1878a6de4a",
+    "modlauncher-11.0.5.jar": "fd9b9fc7cf043d2264ea0113eac6b258f0a71fece5b00e831bfbdf9726c78a24",
+    "mergetool-2.0.0-api.jar": "0260881294d8b218afe3d673f084d3745a55c28b35205d07d5e62d7f22202a00",
+    "toml-3.8.3.jar": "ccb92882264bf071e3916ab122fe5ea3e211b8ebf199201698a1324f151f928f",
+    "core-3.8.3.jar": "971dc88c1c22085611ee1c300f5bbf8595938178e819befbb5e98c3cbd272b79",
+    "JarJarSelector-0.4.1.jar": "f34bab02a5e967650dc52b7cb37a200051a7078f7d1868597699d78697da2400",
+    "JarJarMetadata-0.4.1.jar": "05d7b89f09c6de1a9b61d0e786c8fd808aed044babf321653e14abd6740d5546",
+    "maven-artifact-3.8.5.jar": "91172bc294d6eab02fc9f45f4ea01fd0e418962d128cf489abea7b6957d988ee",
+    "typetools-0.6.3.jar": "408300867804be05d1083cc0287dd3a21295a9e76090e288013ba5a4182dc96d",
+    "terminalconsoleappender-1.3.0.jar": "1afea1bca095068f7f4483f061feed94753be34233ddb0df9ec380fc14d5a985",
+    "sponge-mixin-0.15.2+mixin.0.8.7.jar": "1d45cfe3ae4a2eab38dc74276803748cf799088986260d6d912e50ddb35d15c5",
+    "nashorn-core-15.4.jar": "6f816e84dfd63a81d4eaa7829c08337bbaff3ec683ff3bf6bbd90d017a00dc6f",
+    "commons-lang3-3.14.0.jar": "7b96bf3ee68949abb5bc465559ac270e0551596fa34523fddf890ec418dde13c",
+    "bootstraplauncher-2.0.2.jar": "d3f29309140540570fd6c709509706aa8fb133c1c8aef24491688f1a3f4e1d49",
+    "securejarhandler-3.0.8.jar": "945c63d6deafc821616b0380c23867d9b8c2852438f8a6df72732ab933fc587d",
+    "asm-commons-9.10.1.jar": "6d0abefb7cbf972ea16edb37ec14835372505063a45f976ab7ea889ed9497895",
+    "asm-util-9.10.1.jar": "1bb99d091fba2597dc6d51193e9bbcf0d8447e7ed96bd8f0198b18152f09655c",
+    "asm-analysis-9.10.1.jar": "dede75a21306b65974ecd8f87114ff6970f09fb794157a4ca09ab25c888c2bfc",
+    "molang-compiler-3.1.1.19.jar": "08567ae5964242a7cffa93697cd63de60078d8dd375fb89ce426a390a7634100",
+    "glsl-processor-0.2.3.jar": "f01a11101ce5b4a5230916707b13d89acf6abef6ee3ef6e92f2d788246b3507a",
+    "asm-tree-9.10.1.jar": "3dfb0d5b6a106cd40b5b250e39935fbf2f927f4477546a5369a3ac609cf0506b",
+    "asm-9.10.1.jar": "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb",
+    "JarJarFileSystems-0.4.1.jar": "d9f88af1223ff23395c64ff0b0fe367563288a37bd38709bf667b6b39944bfab",
+    "jopt-simple-5.0.4.jar": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28",
+    "commons-io-2.15.1.jar": "a58af12ee1b68cfd2ebb0c27caef164f084381a00ec81a48cc275fd7ea54e154",
+    "logging-1.2.7.jar": "3dc3190204bac5f4184d8405bfe1f724f73a6a15a0d3f36ec7f69e6872c1a76c",
+    "log4j-slf4j2-impl-2.22.1.jar": "1920cd69d8682c7ef249bb407a3d0685723aa1785867cf4c53258da6bf14da97",
+    "log4j-core-2.22.1.jar": "46dccecac556623d8e2ce8648496824a82951d139062a4e61148aff1a25ed18d",
+    "log4j-api-2.22.1.jar": "5d7beae7ff15d8516d6517121d7f12a79a6ac180df64b5fcec55d5be21056e53",
+    "guava-32.1.2-jre.jar": "bc65dea7cfd9e4dacf8419d8af0e741655857d27885bb35d943d7187fc3a8fce",
+    "gson-2.10.1.jar": "4241c14a7727c34feea6507ec801318a3d4a90f070e4525681079fb94ee4c593",
+    "slf4j-api-2.0.9.jar": "0818930dc8d7debb403204611691da58e49d42c50b6ffcfdce02dadb7c3c2b6c",
+    "antlr4-runtime-4.13.1.jar": "54665d2838cc66458343468efc539e454fc95b46a8a04b13c6ac43fc9be63505",
+    "srgutils-0.4.15.jar": "f6bdebb7fae108329acddfc812f237c7f6328a98e3f282a105edfc161d0215e3",
+    "plexus-utils-3.3.0.jar": "76d174792540e2775af94d03d10fb2d3c776e2cd0ac0ebf427d3e570072bb9ce",
+    "jline-reader-3.20.0.jar": "acd1c94d1e228aa7b7962f69b21ed3a9fd828eb3a63e4baf9086954e626af1f0",
+    "noexception-1.7.1.jar": "3d70aaea3904918587a21bdf99ab6ade9ab1dd0eaf6119344ba513f60f575816",
+    "failureaccess-1.0.1.jar": "a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26",
+    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
+    "jsr305-3.0.2.jar": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+    "checker-qual-3.33.0.jar": "e316255bbfcd9fe50d165314b85abb2b33cb2a66a93c491db648e498a82c2de1",
+    "error_prone_annotations-2.18.0.jar": "9e6814cb71816988a4fd1b07a993a8f21bb7058d522c162b1de849e19bea54ae",
+    "j2objc-annotations-2.8.jar": "f02a95fa1a5e95edb3ed859fd0fb7df709d121a35290eff8b74dce2ab7f4d6ed",
+    "jline-terminal-3.20.0.jar": "12125170e795519ba6dc8010c070b53c76aae92b485c1e37530e54ab5dd08d43",
+    "oshi-core-6.4.10.jar": "fef001a7a13515c273f30915915580782afbc45273cc07aa15994e51563ef310",
+    "icu4j-73.2.jar": "29280822f4b0796acef1f79b90b1d0c1edd86c10e876a848e04b8a6298a16bf9",
+    "authlib-6.0.54.jar": "319ea7b53b5e52f62ad3e2b81e9db7f0751240edac548bd74f5f19e35dc21a3b",
+    "blocklist-1.0.10.jar": "830bfd639c8db49236bbd8e45d3a2b8c96c56ff654a10118654958a6235d4c44",
+    "brigadier-1.3.10.jar": "c8ee4136e474ac7723ca2b432ec8d1a2bc88ef7d1ec57c314ba9e33cdc83dd75",
+    "datafixerupper-8.0.16.jar": "ffc138bc2596c291781b0d5e211ccac51f0f2345f27fc2742f335cedf7e2870d",
+    "patchy-2.2.10.jar": "16d70e7968b45caffc81576268eb000f473fb60bf257182d3447dea8ec919d5a",
+    "text2speech-1.17.9.jar": "c2a95b499e76fada7dd63e9b0ec797b678d411c2b0ee6f37f4dc674662bfb0af",
+    "commons-codec-1.16.0.jar": "56595fb20b0b85bc91d0d503dad50bb7f1b9afc0eed5dffa6cbb25929000484d",
+    "commons-logging-1.2.jar": "daddea1ea0be0f56978ab3006b8ac92834afeefbd9b7e4e6316fca57df0fa636",
+    "netty-buffer-4.1.97.Final.jar": "a4393f5b395486cc74d0325c9b41311abb9513ba0fd7ef8cf46e9345c3bffbea",
+    "netty-codec-4.1.97.Final.jar": "bcc96737a0f912fcf031cf8c45ebda352a90a40437db0832caad3d5a63618b38",
+    "netty-common-4.1.97.Final.jar": "a8aca0c8e9347acc75c885ecc749195d9775369aa520b9276f2d1128210a6c17",
+    "netty-handler-4.1.97.Final.jar": "bd4771d19149cbc9c7464ed2d58035d79cdfed7adb59d38718b0d8e7a3dcc2de",
+    "netty-resolver-4.1.97.Final.jar": "38a018c6d9fb2cb11b72881354782b45080bbd20b9a0ad6cde28b80d431ed0b1",
+    "netty-transport-classes-epoll-4.1.97.Final.jar": "ee65fa17fe65f18fd22269f92bddad85bfb3a263cf65eba01e116a2f30b86ff5",
+    "netty-transport-native-unix-common-4.1.97.Final.jar": "412fe140257c2dda5a5e15bee911298bd61928d03ee6be4db588e82c196c5dc6",
+    "netty-transport-4.1.97.Final.jar": "197fd2d6c6b4afe677d9e95bf2e36b49a0bcabdfce0583683fb73f29a3f5a407",
+    "fastutil-8.5.12.jar": "b5543ee08d062d551cf0a5c9bc0fb70588b0382079029ba48941fa9c9be8a5d4",
+    "jna-platform-5.14.0.jar": "ae4caceb3840730c2537f9b7fb55a01baba580286b4122951488bcee558c2449",
+    "jna-5.14.0.jar": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+    "commons-compress-1.26.0.jar": "051aceb8bbcc62d0f5b2b8ac72c53767f9c59bfbd050151e65bef6f51c8ed9c9",
+    "httpclient-4.5.13.jar": "6fe9026a566c6a5001608cf3fc32196641f6c1e5e1986d1037ccdbd5f31ef743",
+    "httpcore-4.4.16.jar": "6c9b3dd142a09dc468e23ad39aad6f75a0f2b85125104469f026e52a474e464f",
+    "jorbis-0.0.17.jar": "e067f29a3701426b67ed973036949c6e58ca5bb53eef7240b2e71e286d252a9e",
+    "joml-1.10.5.jar": "cac9f22f83a7aa33eebda73c16ff5261e3cb4911b6bafcf4c79ea486099d0c9a",
+    "lwjgl-freetype-3.3.3.jar": "e1a7ab07106349d9a8a68f6860b7b73b353c502b81e662aca77f931c6fdd3de8",
+    "lwjgl-freetype-3.3.3-natives-linux.jar": "9fc63518a27b8ff1ab78196343710ce28e8000ce88f60be851a2d3db5beab8e9",
+    "lwjgl-glfw-3.3.3.jar": "bedc757fd2b1b255146db26b74b9cbd1fcf5644b89b47b104fa721c741604259",
+    "lwjgl-glfw-3.3.3-natives-linux.jar": "b8306062b17741f34269088751421f1ac21a597bfbbd0c6c61226301cde744b8",
+    "lwjgl-jemalloc-3.3.3.jar": "e99e31269e6678a4bfc62ef24c50a481c01cbdd004861ece9a59ba12768c6516",
+    "lwjgl-jemalloc-3.3.3-natives-linux.jar": "4e4a13d7015d42605bbcf7ef9faead46deac6409e4377a8ed4aea815f14634b3",
+    "lwjgl-openal-3.3.3.jar": "ae0e82767cacf08921f578fba9d84753ddeb00ceada0510a2b4a882be28fbf95",
+    "lwjgl-openal-3.3.3-natives-linux.jar": "9030fed928a71eac2fdf4ce1643cc4ec724d8710e3b437bdce750bdc9e982b2a",
+    "lwjgl-opengl-3.3.3.jar": "5062da750e5f7ec89e27e8b67b7d40fa8c4b16890159e35f828116ce6c8eca1e",
+    "lwjgl-opengl-3.3.3-natives-linux.jar": "d823a92c6a2810b5112da304dcc6abcd4cb102706f74f7e934a223cea2051250",
+    "lwjgl-stb-3.3.3.jar": "0cff7aa46ea9d70fcc20857015293ea80fbf21adcac34600c84da9b81a44ca93",
+    "lwjgl-stb-3.3.3-natives-linux.jar": "c4489068ddc6dc44b103071943f801a2d076634d4b74db470927f84a308219e1",
+    "lwjgl-tinyfd-3.3.3.jar": "ee0515054ee19a3f4088426fee9d879eb2ee657b07e5064e4e2c851f6adcf14b",
+    "lwjgl-tinyfd-3.3.3-natives-linux.jar": "a076fa05a4d174762eab5852ee72c29d14ab10a5654f27fb00664ef1b52c0c05",
+    "lwjgl-3.3.3.jar": "dc9c7b2d48e8396d68895f8902ffa01e46253de44dfe927533ff09457ebfeec4",
+    "lwjgl-3.3.3-natives-linux.jar": "e663738c519a06f6d659882fa8e4e09af7f10e921929ee5cc54a7587f62ed4c9",
+    "lz4-java-1.8.0.jar": "d74a3334fb35195009b338a951f918203d6bbca3d1d359033dc33edd1cadc9ef",
+    "netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar": "93b5fe8f3829dcb5e033d8d40d59159366ff4cf8266c903bbd6a4aeed9e59bac",
+    "netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar": "1e83fc9f82e5415cdbb688c6a5c6bbbd7d198e9fdd6fdf64b3dc5d54dd1acfd0"
+  },
+  "evidence": {
+    "catalog-tests.xml": "40e1779f078f220f0058945cdcf7ff0fd6550a81e1bd738f997c6ab60fb8670c",
+    "client.log": "2a56f545da2e2bba73151ffc2f4b4f84f2c134a435f32e112697eb468249d1de",
+    "gametest.log": "b880b3a38700c950ce355115031f57535872963449bedc39444fab09f15df750",
+    "gui2/client.log": "28c36af107acae079c64db8b4378c101c6a9eff79bb943076ae3252d5efb41a2",
+    "gui2/screenshots/validation-ponder-field_strength_control-first.png": "dc5d03f61f1a335720371d4006c512ba69435eed4e6140de9748534a5d8f35d2",
+    "gui2/screenshots/validation-ponder-field_strength_control-last.png": "e5e0ca6b4da2c579e9cbf34a6e4b19bb7e35ffb265217dda2adbf4a233f6fbe4",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-1.png": "d7c71880cab6a9e56ecf0cf28f2a1024e143c73dcf9e7a25945be7921efbbff3",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-2.png": "a83effa2750690b3f2f7231884ec32c4a65b3104573eaa4a8d6f558197941bfa",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-3.png": "9b6eebcc050f8b29a4c8b5edd13235427b2eda37dd7edb4cea85df000b38e438",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-4.png": "4169f9c8b7484c185dacd74904c553d151ebf1446b10a16da04aa05ec9eb0dcb",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-5.png": "40f2e21112f12473fed217c19e23b75cce6f265e83e1b3c798e683edc93a41f9",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-6.png": "62ed42556b0021992db3f31cd3cca8a30038fff2c331c637ce7b07fb5dde871a",
+    "gui2/screenshots/validation-ponder-field_strength_control-text-7.png": "1d139a89e30e473fabf0cdc1f280cf5f5d37f570653bc954e30a439114393338",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-first.png": "4f9c81dd902bb8bd869825a3e286561fcfd1e08d07fd69d255bb6982798c7be1",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-input-minecraft-iron_helmet.png": "990277f2c1a20a9bf76f3bd0856f723bee0b07e79d5882aec8c627ac1a9b7d3d",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-last.png": "6c4dc6d755f9a901f47ea357b2479d02c61484d65b6f4aaa6ba6034dba16af2f",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-text-1.png": "990277f2c1a20a9bf76f3bd0856f723bee0b07e79d5882aec8c627ac1a9b7d3d",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-text-2.png": "04ea4bec4fa487268849b48dae1ee9ecd34d65dbd5da72e17c64e1492167e361",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-text-3.png": "035afd104248c23cf2574782051c02a9786113a8bda81cc5003d85a762b1d803",
+    "gui2/screenshots/validation-ponder-magnetizing_equipment-text-4.png": "7068278ccce70b31cb8aa8c7348e45e7669b645879e4fa8d5487eaab88ce0235",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-first.png": "ecad28caf3c6e384bc85cc4cc651f85e13a39879d77a870512607c20440692b2",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-last.png": "a626d0d580cdcaf486cb67e23ce27d7af832761d6ddd57493bd151aad85d53cd",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-text-1.png": "c84256110273ae804ba82ac8c0afa2df16508514d04e30c22c275a171ea11962",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-text-2.png": "ca9aed0950b8977df0a614de50d68a6308e49f650b201438975ae93d713eca51",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-text-3.png": "cec4150932387d61516466ffbbf95f60edba3c34991680a5a68e0844aea51e2d",
+    "gui2/screenshots/validation-ponder-mr_fluid_bridge-text-4.png": "d93a7414f82b0799923ad794708847036773e927489d269b4c534bd539b5fe54",
+    "gui2/server.log": "0ff9fdcdcaaed9911066d6ec076fbc1eebc6ca5f54b853b71d1a5bb317ccd2c4",
+    "screenshots/validation-ponder-field_strength_control-first.png": "0000779bd3e8ec57e5537d9386d4b058afc91c6bd5b4da67b85e0389e13331c5",
+    "screenshots/validation-ponder-field_strength_control-last.png": "2486987c297e07bf8bc1455937d3035147e45bec8d16a774c5567a31abdfbd64",
+    "screenshots/validation-ponder-field_strength_control-text-1.png": "62906083e2fd548739ef5c6d90708106ea7115bef851d74159fc4e8f8ad68800",
+    "screenshots/validation-ponder-field_strength_control-text-2.png": "a437cab21d6f30f43a681342cd2c441a37eab08f9d4b9bd7a77dd271b9a88182",
+    "screenshots/validation-ponder-field_strength_control-text-3.png": "6773bfa795a8fc5c9c427f12732c03926e15a1576a676b77054e30ed4f40b53b",
+    "screenshots/validation-ponder-field_strength_control-text-4.png": "82b1c4ff30b55d201e140723f43c087a050e72b0479b8dd3739ad9be0ed03fbf",
+    "screenshots/validation-ponder-field_strength_control-text-5.png": "c2d35708237dd7950f274e2d693b7221cd4055f2921cb116266c4272125d7cf3",
+    "screenshots/validation-ponder-field_strength_control-text-6.png": "ca31c6e781506c93bcce43f435de12743fb6cc620d7601b4442b2aa3be4639e5",
+    "screenshots/validation-ponder-field_strength_control-text-7.png": "fdec55ef37fa6e8fa735bd5cd19c5cb6609a5a5bafcf49e32036b242802a7da8",
+    "screenshots/validation-ponder-magnetizing_equipment-first.png": "bf6e08009d051207a88b58fc4cc5141484af90a1f185732db88b5e4ad0b0a17e",
+    "screenshots/validation-ponder-magnetizing_equipment-input-minecraft-iron_helmet.png": "135287729d2cc350ff3ff1acf4f93206616f1ceb065084034e437b5d1419e129",
+    "screenshots/validation-ponder-magnetizing_equipment-last.png": "f2eff4124a491d74cb6d62cf39471fb949b70117b05bb5e30ac6b1778e6aee54",
+    "screenshots/validation-ponder-magnetizing_equipment-text-1.png": "135287729d2cc350ff3ff1acf4f93206616f1ceb065084034e437b5d1419e129",
+    "screenshots/validation-ponder-magnetizing_equipment-text-2.png": "56e7573a0f9de5a137f08d87f7c45c58c0ebcaa5767815a51ef37c8b81e9158c",
+    "screenshots/validation-ponder-magnetizing_equipment-text-3.png": "60319d75cf05bf348241a0d93be629eab268d116e8a388dbb214550541b59d1b",
+    "screenshots/validation-ponder-magnetizing_equipment-text-4.png": "f0580daa58498c524ad2e6911fe4d7f996dc4c9dc6b9d2365dbd95fa523c0f92",
+    "screenshots/validation-ponder-mr_fluid_bridge-first.png": "4113ee7d9d283cf66d72f75910f8e4cabc54f27c6e9b0fcda4adb773448ef005",
+    "screenshots/validation-ponder-mr_fluid_bridge-last.png": "2a13a5dc60e878f631fac0d4704ea2ec83dbf64aeed8e819d9bd789f03095130",
+    "screenshots/validation-ponder-mr_fluid_bridge-text-1.png": "a1fd14f1568b46f8251c23ef4a326a7a6a36dc62a0de2c1171824fc25ce3aace",
+    "screenshots/validation-ponder-mr_fluid_bridge-text-2.png": "4898742a42a8d30757bdfc3dfede3fc9c9ce9fa536a1b60744ff51876e198bc5",
+    "screenshots/validation-ponder-mr_fluid_bridge-text-3.png": "d9bc9691570cfc4afda87ae07bb1c7125578b2524e95e4177c5ba1ce79c22087",
+    "screenshots/validation-ponder-mr_fluid_bridge-text-4.png": "bc1523e2f865d2e365bdc66786ce5759fc689b55df0c5bbbd29dadccf868afe9",
+    "server.log": "de064cb93d0ce7fdc8ba5dea8bb76be35ef48125b11f7feeb483f0f048636bfd",
+    "tests.txt": "2e34c11479dcd92912cd4965156c96a3d9351d046ec8377f655ada155d62d87a"
+  },
+  "gui3": {
+    "mr_fluid_bridge": {
+      "playbackTicks": 515,
+      "instructionStages": [
+        {
+          "index": 1,
+          "tick": 21
+        },
+        {
+          "index": 2,
+          "tick": 151
+        },
+        {
+          "index": 3,
+          "tick": 301
+        },
+        {
+          "index": 4,
+          "tick": 411
+        }
+      ],
+      "visualReview": "All instructions reviewed: readable text, no navigation overlap, correct shown blocks and equipment response."
+    },
+    "field_strength_control": {
+      "playbackTicks": 785,
+      "instructionStages": [
+        {
+          "index": 1,
+          "tick": 21
+        },
+        {
+          "index": 2,
+          "tick": 131
+        },
+        {
+          "index": 3,
+          "tick": 241
+        },
+        {
+          "index": 4,
+          "tick": 351
+        },
+        {
+          "index": 5,
+          "tick": 461
+        },
+        {
+          "index": 6,
+          "tick": 571
+        },
+        {
+          "index": 7,
+          "tick": 681
+        }
+      ],
+      "visualReview": "All instructions reviewed: readable text, no navigation overlap, correct shown blocks and equipment response."
+    },
+    "magnetizing_equipment": {
+      "playbackTicks": 455,
+      "instructionStages": [
+        {
+          "index": 1,
+          "tick": 21
+        },
+        {
+          "index": 2,
+          "tick": 131
+        },
+        {
+          "index": 3,
+          "tick": 241
+        },
+        {
+          "index": 4,
+          "tick": 351
+        }
+      ],
+      "visualReview": "All instructions reviewed: readable text, no navigation overlap, correct shown blocks and equipment response."
+    }
+  },
+  "gui2": {
+    "mr_fluid_bridge": {
+      "targets": [
+        "magnetization:mr_fluid_bucket"
+      ],
+      "playbackTicks": 515,
+      "instructionCount": 4,
+      "visualReview": "Every instruction reviewed; all text and geometry readable, no navigation overlap."
+    },
+    "field_strength_control": {
+      "targets": [
+        "magnetization:hematite_block",
+        "magnetization:permanent_magnet"
+      ],
+      "playbackTicks": 785,
+      "instructionCount": 7,
+      "visualReview": "Every instruction reviewed; all text and geometry readable, no navigation overlap."
+    },
+    "magnetizing_equipment": {
+      "targets": [
+        "magnetization:electromagnet",
+        "magnetization:kinetic_electromagnet"
+      ],
+      "playbackTicks": 455,
+      "instructionCount": 4,
+      "visualReview": "Every instruction reviewed; all text and geometry readable, no navigation overlap."
+    }
+  },
+  "finalSharedHelperSources": {
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": "6d4a29979bb5534346137dc9202c4f8a3c64b90163b1b3a4a9b3292e8c4de334",
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": "2f592e2696747993f161a316e94c0145c5ca26ac24d945cdf67e0504a5753b9e",
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "e0ffb90fad556e14d6b264ed8f996b3a65c65b9639bcc03f71406456e7894d33"
+  },
+  "reviewedSceneLanguage": {
+    "magnetization.ponder.mr_fluid_bridge.header": "Build a switchable MR Fluid bridge",
+    "magnetization.ponder.mr_fluid_bridge.text_1": "Pour MR Fluid over a temporary floor between the banks. With no redstone or magnetic field, the source spreads into flowing cells.",
+    "magnetization.ponder.mr_fluid_bridge.text_2": "Apply redstone to harden the fluid, then remove the temporary floor. The rigid cells form a walkable bridge and still conduct redstone.",
+    "magnetization.ponder.mr_fluid_bridge.text_3": "Add a nearby magnet, then remove redstone. The magnetic field keeps the bridge rigid on its own.",
+    "magnetization.ponder.mr_fluid_bridge.text_4": "Remove the magnet too. With both activations gone, original sources return and the fluid flows again. Flowing cells do not become extra sources.",
+    "magnetization.ponder.field_strength_control.header": "Balance field strength",
+    "magnetization.ponder.field_strength_control.text_1": "This Samarium-Cobalt magnet starts at MEDIUM. The examples use the default enabled Halbach bonus.",
+    "magnetization.ponder.field_strength_control.text_2": "One face-adjacent magnet with the same pole adds one tier: MEDIUM becomes STRONG.",
+    "magnetization.ponder.field_strength_control.text_3": "Two aligned neighbors still give only one bonus tier. The field remains STRONG.",
+    "magnetization.ponder.field_strength_control.text_4": "Three aligned neighbors give two bonus tiers: EXTREME. Four through six give the same bonus; EXTREME is the ceiling.",
+    "magnetization.ponder.field_strength_control.text_5": "Remove the aligned neighbors to return to the base MEDIUM field before adding dampeners.",
+    "magnetization.ponder.field_strength_control.text_6": "One face-adjacent Hematite block lowers MEDIUM to WEAK. Each additional touching face lowers another tier.",
+    "magnetization.ponder.field_strength_control.text_7": "A second Hematite block lowers WEAK to NONE: complete suppression. Dampeners must touch the emitter, not just each other.",
+    "magnetization.ponder.magnetizing_equipment.header": "Stamp equipment polarity",
+    "magnetization.ponder.magnetizing_equipment.text_1": "Open an Electromagnet and put metal equipment in its magnetizing slot. N, S and Clear act on that item, not on the emitter pole.",
+    "magnetization.ponder.magnetizing_equipment.text_2": "Choose N and equip the helmet. The NORTH magnet repels the NORTH-stamped wearer; an opposite SOUTH field attracts them.",
+    "magnetization.ponder.magnetizing_equipment.text_3": "Choose S and equip it again. The same NORTH field now attracts the SOUTH-stamped wearer. The arrows illustrate the response.",
+    "magnetization.ponder.magnetizing_equipment.text_4": "Choose Clear to remove the stamp. Metal armor still contributes susceptibility; without other stamps the wearer defaults to NORTH. Clear does not make metal nonmagnetic."
+  },
+  "logStorage": {
+    "normalization": "Trailing whitespace stripped; line order, timestamps and validation content preserved.",
+    "originalHashesOfNormalizedLogs": {
+      "client.log": "d1bc5b06ce6fe0fe08f4c8a9ba7acc6c6c6c24d623b7ad24bbf6e37f526eebcb",
+      "server.log": "9d9f9b7f14f737edc79f3b62ebcef26183e8a9d88aea52808aa51c68c48177cf",
+      "gametest.log": "a1b81e3c30199544d3be9e1801c97f86c41f04f2be41a9489763da902aa77174",
+      "gui2/client.log": "e1ed5133b7d953ada781fe61efc38a3e17f90f1c1c7b2dee5dd24d52ef0aee17",
+      "gui2/server.log": "438d6e17e21cd1ab1fcdff01426668375383ff086bdbc845060fe9c7f48c6b5e",
+      "tests.txt": "a4dcd1b4a90a8d014b5ff4e08765c2065f9d8808ded70cf045cd476ceeb459b7"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.api.FieldTooltipFormatterTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:57.907Z" hostname="Hades" time="0.017">
+  <properties/>
+  <testcase name="northAndSouthRenderDistinctLines()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.007"/>
+  <testcase name="weakStrengthRendersDistinctly()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.0"/>
+  <testcase name="verboseProducesMoreLinesThanNonVerbose()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.002"/>
+  <testcase name="nullFieldVerboseRendersInactiveLine()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.0"/>
+  <testcase name="nullFieldNonVerboseRendersInactiveLine()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.0"/>
+  <testcase name="strongStrengthRendersDistinctly()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.001"/>
+  <testcase name="customRangeChangesVerboseRangeLine()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.0"/>
+  <testcase name="activeNonVerboseMentionsStrengthAndPolarity()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.001"/>
+  <testcase name="allFourTiersProduceDistinctTopLines()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.0"/>
+  <testcase name="mediumStrengthRendersDistinctly()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.001"/>
+  <testcase name="dipoleRendersBothOppositePolesAndSharedDetails()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.001"/>
+  <testcase name="extremeStrengthRendersDistinctly()" classname="com.stonytark.magnetization.api.FieldTooltipFormatterTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

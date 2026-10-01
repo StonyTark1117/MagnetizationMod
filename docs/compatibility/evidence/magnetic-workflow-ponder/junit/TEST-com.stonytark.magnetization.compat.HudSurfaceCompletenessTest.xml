@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.813Z" hostname="Hades" time="0.015">
+  <properties/>
+  <testcase name="jadeRegistersEachSharedBlockProviderOnce()" classname="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" time="0.001"/>
+  <testcase name="everyGolemViewerHasAnExplicitRegistration()" classname="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" time="0.0"/>
+  <testcase name="gasExciterUsesSharedFourSurfaceMachineContract()" classname="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" time="0.002"/>
+  <testcase name="everyJadeProviderHasAConfigTranslation()" classname="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" time="0.011"/>
+  <testcase name="solidCustomGolemsCannotFallBackToVanillaModels()" classname="com.stonytark.magnetization.compat.HudSurfaceCompletenessTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

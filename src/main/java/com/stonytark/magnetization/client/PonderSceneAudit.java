@@ -19,6 +19,17 @@ final class PonderSceneAudit {
     static void verify(final PonderScene scene, final String id, final boolean last) {
         final var world = scene.getWorld();
         switch (id) {
+            case "docking_signals" -> DockControlPonderAudit.verify(scene, id, last ? 6 : 0);
+            case "railgun_remote" -> DockControlPonderAudit.verify(scene, id, last ? 5 : 0);
+            case "imprint_module", "tractor_beam" -> DockControlPonderAudit.verify(scene, id, last ? 3 : 0);
+            case "pyrrhotite_heat" -> ThermalPowerPonderAudit.verify(scene, id, last ? 9 : 0);
+            case "gyrostabilizer", "magnetic_shaft" -> ThermalPowerPonderAudit.verify(scene, id, last ? 3 : 0);
+            case "induction_pad" -> ThermalPowerPonderAudit.verify(scene, id, last ? 4 : 0);
+            case "magnetic_basics" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 6 : 0);
+            case "magnetic_excavator" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 5 : 0);
+            case "repulsor_transport" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 3 : 0);
+            case "mr_fluid_bridge", "magnetizing_equipment" -> verifyInstruction(scene, id, last ? 3 : 0);
+            case "field_strength_control" -> verifyInstruction(scene, id, last ? 6 : 0);
             case "tokamak_ring" -> {
                 final var result = TokamakRingPreview.previewExact(world, new BlockPos(2, 1, 2), 5, 7);
                 check(result.valid() && result.coreCount() == 9 && result.coilCount() == 16, "Ponder Tokamak cannot form: " + result + " bounds=" + world.getBounds());
@@ -137,4 +148,50 @@ final class PonderSceneAudit {
             default -> throw new IllegalArgumentException("No native scene-state audit for " + id);
         }
     }
+    /** Check every taught transition when its actual native instruction renders. */
+    static void verifyInstruction(final PonderScene scene, final String id, final int stage) {
+        final var world = scene.getWorld();
+        final var center = MaterialControlPonderScenes.CENTER;
+        switch (id) {
+            case "docking_signals", "railgun_remote", "imprint_module", "tractor_beam" -> DockControlPonderAudit.verify(scene, id, stage);
+            case "pyrrhotite_heat", "gyrostabilizer", "induction_pad", "magnetic_shaft" -> ThermalPowerPonderAudit.verify(scene, id, stage);
+            case "magnetic_basics", "magnetic_excavator", "repulsor_transport" -> MagneticWorkflowSceneAudit.verify(scene, id, stage);
+            case "mr_fluid_bridge" -> {
+                boolean hard = stage == 1 || stage == 2;
+                for (int x = 1; x <= 3; x++) {
+                    var state = world.getBlockState(new BlockPos(x, stage == 3 && x > 1 ? 1 : 2, 2));
+                    check(state.is(hard ? com.stonytark.magnetization.registry.MagBlocks.HARDENED_MR_FLUID.get()
+                            : com.stonytark.magnetization.registry.MagBlocks.MR_FLUID_BLOCK.get()), "MR bridge phase " + stage);
+                    check((hard ? state.getValue(com.stonytark.magnetization.content.fluid.HardenedMrFluidBlock.SOURCE)
+                            : state.getFluidState().isSource()) == (x == 1), "MR source/flow distinction lost");
+                }
+                check(world.getBlockState(new BlockPos(1, 2, 1)).is(Blocks.REDSTONE_BLOCK) == (stage == 1), "MR redstone phase mismatch");
+                check(world.getBlockState(new BlockPos(2, 2, 4)).is(com.stonytark.magnetization.registry.MagBlocks.PERMANENT_MAGNET.get()) == (stage == 2), "MR magnetic phase mismatch");
+                if (stage == 3) check(!world.getBlockState(new BlockPos(2, 1, 2)).getFluidState().isEmpty(), "MR restored flow missing");
+            }
+            case "field_strength_control" -> {
+                var base = com.stonytark.magnetization.api.MagneticStrength.MEDIUM;
+                var damped = com.stonytark.magnetization.content.hematite.HematiteBlock.dampenedStrength(world, center, base);
+                var actual = com.stonytark.magnetization.content.HalbachArray.boostedStrength(world, center,
+                        com.stonytark.magnetization.api.MagneticPolarity.NORTH, damped);
+                int[] expectedTiers = {2, 3, 3, 4, 2, 1, 0};
+                check(actual.ordinal() == expectedTiers[stage], "Field-strength scene teaches wrong tier at stage " + stage + ": " + actual);
+            }
+            case "magnetizing_equipment" -> {
+                var stands = new java.util.ArrayList<net.minecraft.world.entity.decoration.ArmorStand>();
+                scene.forEachWorldEntity(net.minecraft.world.entity.decoration.ArmorStand.class, stands::add);
+                check(stands.size() == 1, "Equipment wearer missing");
+                var helmet = stands.getFirst().getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD);
+                var component = com.stonytark.magnetization.registry.MagDataComponents.ARMOR_POLARITY.get();
+                var expected = stage == 1 ? com.stonytark.magnetization.api.MagneticPolarity.NORTH
+                        : stage == 2 ? com.stonytark.magnetization.api.MagneticPolarity.SOUTH : null;
+                check(helmet.is(net.minecraft.world.item.Items.IRON_HELMET) && helmet.get(component) == expected,
+                        "Equipment tutorial did not apply native N/S/Clear action " + stage);
+                if (stage > 0) check(stage == 2 ? stands.getFirst().getX() < 3 : stands.getFirst().getX() > 3,
+                        "Equipment response arrow/movement has wrong sign");
+            }
+            default -> { } // Existing scenes retain their first/final state assertions.
+        }
+    }
+
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:15.405Z" hostname="Hades" time="0.005">
+  <properties/>
+  <testcase name="negativeElapsedClampsToZero()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.001"/>
+  <testcase name="halfwayIsHalf()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.0"/>
+  <testcase name="zeroElapsedIsZero()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.0"/>
+  <testcase name="pastMatureClampsToOne()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.0"/>
+  <testcase name="monotonicIncreaseAcrossSampledTicks()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.003"/>
+  <testcase name="exactlyMatureIsOne()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

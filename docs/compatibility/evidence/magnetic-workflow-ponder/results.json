@@ -1,0 +1,868 @@
+{
+  "snapshotBaseCommit": "a03e6efc",
+  "commitBeforeIntegration": "00176d02756a1647fc9178ddda31db2aca32d3fa",
+  "scope": "Three requested magnetic workflow scenes; focused normal native playback at effective GUI scales 2 and 3. Full manual/coaster/pre-existing-scene sweep not repeated. Motion/mining/container arrival are scripted illustrations; existing forces are checked separately by server GameTests.",
+  "native": {
+    "gui2": {
+      "cases": {
+        "magnetic_basics": {
+          "targets": [
+            "magnetization:permanent_magnet",
+            "magnetization:electromagnet",
+            "magnetization:kinetic_electromagnet",
+            "magnetization:polarity_inverter"
+          ],
+          "playbackTicks": 686,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 18
+            },
+            {
+              "index": 2,
+              "tick": 108
+            },
+            {
+              "index": 3,
+              "tick": 210
+            },
+            {
+              "index": 4,
+              "tick": 312
+            },
+            {
+              "index": 5,
+              "tick": 402
+            },
+            {
+              "index": 6,
+              "tick": 492
+            },
+            {
+              "index": 7,
+              "tick": 602
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        },
+        "magnetic_excavator": {
+          "targets": [
+            "magnetization:magnetic_excavator"
+          ],
+          "playbackTicks": 576,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 42
+            },
+            {
+              "index": 2,
+              "tick": 132
+            },
+            {
+              "index": 3,
+              "tick": 222
+            },
+            {
+              "index": 4,
+              "tick": 312
+            },
+            {
+              "index": 5,
+              "tick": 402
+            },
+            {
+              "index": 6,
+              "tick": 492
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        },
+        "repulsor_transport": {
+          "targets": [
+            "magnetization:repulsor_coil",
+            "magnetization:vector_core",
+            "minecraft:copper_block"
+          ],
+          "playbackTicks": 434,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 18
+            },
+            {
+              "index": 2,
+              "tick": 108
+            },
+            {
+              "index": 3,
+              "tick": 198
+            },
+            {
+              "index": 4,
+              "tick": 350
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        }
+      },
+      "captures": 27,
+      "clientServerPass": true,
+      "cleanSave": true
+    },
+    "gui3": {
+      "cases": {
+        "magnetic_basics": {
+          "targets": [
+            "magnetization:permanent_magnet",
+            "magnetization:electromagnet",
+            "magnetization:kinetic_electromagnet",
+            "magnetization:polarity_inverter"
+          ],
+          "playbackTicks": 686,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 18
+            },
+            {
+              "index": 2,
+              "tick": 108
+            },
+            {
+              "index": 3,
+              "tick": 210
+            },
+            {
+              "index": 4,
+              "tick": 312
+            },
+            {
+              "index": 5,
+              "tick": 402
+            },
+            {
+              "index": 6,
+              "tick": 492
+            },
+            {
+              "index": 7,
+              "tick": 602
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        },
+        "magnetic_excavator": {
+          "targets": [
+            "magnetization:magnetic_excavator"
+          ],
+          "playbackTicks": 576,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 42
+            },
+            {
+              "index": 2,
+              "tick": 132
+            },
+            {
+              "index": 3,
+              "tick": 222
+            },
+            {
+              "index": 4,
+              "tick": 312
+            },
+            {
+              "index": 5,
+              "tick": 402
+            },
+            {
+              "index": 6,
+              "tick": 492
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        },
+        "repulsor_transport": {
+          "targets": [
+            "magnetization:repulsor_coil",
+            "magnetization:vector_core",
+            "minecraft:copper_block"
+          ],
+          "playbackTicks": 434,
+          "instructionStages": [
+            {
+              "index": 1,
+              "tick": 18
+            },
+            {
+              "index": 2,
+              "tick": 108
+            },
+            {
+              "index": 3,
+              "tick": 198
+            },
+            {
+              "index": 4,
+              "tick": 350
+            }
+          ],
+          "visualReview": "All instruction frames reviewed: readable text, visible tutorial configuration and item controls, no title/navigation overlap. First/final frames also captured."
+        }
+      },
+      "captures": 27,
+      "clientServerPass": true,
+      "cleanSave": true
+    }
+  },
+  "sources": {
+    "src/main/java/com/stonytark/magnetization/client/MagneticWorkflowScenes.java": "a818dca2f118d9fb0c9ada0fbd88d7f7583693b49a6fcb1e99ee12777ddf7481",
+    "src/main/java/com/stonytark/magnetization/client/MagneticWorkflowSceneAudit.java": "f11887fe995ec1eeaac5d4f73f28601e3682bffd434b6917ec1476ea3e574e0e",
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "e0ffb90fad556e14d6b264ed8f996b3a65c65b9639bcc03f71406456e7894d33",
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": "2f592e2696747993f161a316e94c0145c5ca26ac24d945cdf67e0504a5753b9e",
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": "6d4a29979bb5534346137dc9202c4f8a3c64b90163b1b3a4a9b3292e8c4de334",
+    "src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java": "f33099b845823fcc72b69f31442db3c5814a1de245c46ebbfc2b9e042f423555",
+    "src/main/resources/assets/magnetization/lang/en_us.json": "5900b67d5a2213c47ac1b0143296b892e05b5189f7efc1b5a016ca38d1e75860",
+    "src/test/java/com/stonytark/magnetization/compat/PonderSceneCatalogTest.java": "fd8aae3a3ee5e2d5f52e99ac6751d1a9165b107335fb849910d881e43842f236",
+    "scripts/run-lifecycle-presentation-audit.sh": "b2af742947441083a2385c7d9432d238d77b2c0d2e1abe067724bb9c99c66c13"
+  },
+  "unitTests": {
+    "totals": {
+      "tests": 292,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": {
+      "com.stonytark.magnetization.api.EmitterPresetTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.FieldTooltipFormatterTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.LirmTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.MagneticFieldTest": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.MagneticPolarityTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.MagneticStrengthScalingTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.MagneticStrengthTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.api.ShipMagneticStateTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.client.GasDetectorHudLayoutTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.AdapterReflectionTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.AircraftImpulseLimiterTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.ExternalFieldFallbackTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.ExternalFieldTargetsTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.HudSurfaceCompletenessTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.JerWorldgenCatalogTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.PonderSceneCatalogTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.compat.RecipeViewerInfoTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.docking.DockingStateTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.fluid.FluidDiscoveryTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistryTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.gas.GasExcitationProfileTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.golem.IronOxideGolemConfigTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.golem.MagnetiteGolemTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.golem.TitanomagnetiteGolemTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.hematite.HematiteDampenTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.item.BoundedTickCacheTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.jet.FusionCoolingMechanicsTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.jet.ThrusterPlumeTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.meteorite.AeMeteoriteScannerTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.meteorite.MeteoriteCoreDecayTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistryEntryTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteHeatTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.sail.AlfvenBackpackHandlerTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.content.shaft.ShaftRangeIndexTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.EmitterRosterResourceTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.GasExciterAssetTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.GasVentAssetTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.GuideInstructionContractsTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.IronOxideGolemResourceTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.MaterialFamilyCompletenessTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.NobleGasResourceCompletenessTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.OptionalCompatibilityTagConditionTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.PatchouliFieldManualTest": {
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.RareEarthResourceCompletenessTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.data.TrackStylesCompatibilityResourceTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.menu.AirSeparatorGuiLayoutTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.menu.MachineGuiLayoutTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.mixin.compat.CreateMagneticsServerMixinPluginTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.network.CosmicCompassTargetPayloadTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.network.GasDetectorStatusPayloadTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.physics.EmitterRegistryTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.physics.FieldApplicatorTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.physics.MobileFieldRegistryTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.physics.SableBridgePromoteTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.physics.ShipMagneticScannerTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.stonytark.magnetization.registry.MagTiersTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "coreGameTests": 173,
+  "releaseJar": {
+    "name": "magnetization-1.4.6.jar",
+    "sha256": "0b60795309032edfc092673ba99bb56c17e4c7eeda8440a6ca3b5840df5932a6",
+    "verifyReleaseJarPassed": true
+  },
+  "runtimeArtifacts": {
+    "dev.eriksonn.aeronautics.aeronautics-neoforge-1.21.1-1.3.2.jar": "97fbf1e27f38674145b8521b140613dc8258bea7efca456dc2686e22bd683933",
+    "dev.simulated_team.simulated.simulated-neoforge-1.21.1-1.3.2.jar": "fdf9d250996a084b52fced3a5b0089e879a5cac05dc7bcf295ac1f4ebe5e2bff",
+    "neoforge-21.1.252.jar": "4a30c4a8b092b6f9b114bad4b70e648acd8db7efe5cfea4dcd8d87a2aa7fad97",
+    "neoforge-21.1.252-client-extra-aka-minecraft-resources.jar": "8e9cf6f4b6eafb1c6bf745a67a61dd1736f31865cad409e5b2bec918667dab5e",
+    "coasters-magnetized-1642979-8668703.jar": "52314bdace976a41d7d0948d4505ef96561719616d50dfffddce33f8f014e32a",
+    "UT2M39wf-bPYeUWZx.jar": "d1efdd8688af6603dff9425299ac4547ef56a7d5cfee757716ead7853276694e",
+    "DevLaunch-1.0.2.jar": "366adc4e95ab9b32c8e33b9f449529c8937c6fc021ee0c6b25419ea2bb703740",
+    "sable-neoforge-1.21.1-2.0.5.jar": "c8710f85bc780bbf523e6726ceaaf76dd0b8c61479db497b382c6bb34317e7ab",
+    "create-1.21.1-6.0.11-312.jar": "f92f9cdb9fee46011a8fd5e0f2f9fea142b7cb7c0cae396aa358b4937433db28",
+    "ponder-neoforge-1.0.87+mc1.21.1.jar": "d6b7fdf94359f73dc1fee730eded898d51b3bf0d626710753253becd8e4e6bef",
+    "Registrate-MC1.21-1.3.0+67.jar": "510f4041c41739f1d8ea8850ab8364d3e3a5fada8529beed5d9f479e2523db52",
+    "sable-companion-common-1.21.1-1.6.0.jar": "873633e35046e3761b277ff8a1ecad0d55d9a3014fa81a0b084c9aecba1f3bed",
+    "terrablender-6e8GCrLb.jar": "0c49b5ef447a7f09100e9a210888a7347fbda0aa75322063991f6063b25fe3f9",
+    "flywheel-neoforge-1.21.1-1.0.6.jar": "31dda15c205eb596d3b3449ef03f6af7363a6cd35b3da4bfe916b304f9e5337e",
+    "create-coasters-simulated-1601871-8655742.jar": "f80b4c3cdf9fa6188804967147761b0373e150a6eadbdc53626e5ac9700b2049",
+    "coasters-simulated-track-styles-1642719-8672156.jar": "2db637054455c92111ffca910f242b48dfe6aa815028cd1be3c1bbad43f63276",
+    "steam-n-rails-neoforge-1414670-8243336.jar": "b7636c8b1b0352ed1a130dfe67f8bb574e2fc08803ed1cda4d3ea00505193914",
+    "patchouli-BIogJv2D.jar": "959af52ed6640c316c3a8469203420be4aeea11ad6603890ba83bf48f5d9f993",
+    "veil-neoforge-1.21.1-4.3.2.jar": "774b83887d882dc47cd4d29d140cef0c8677747a6fe7799649f490926a4e0265",
+    "sable-sable_rapier-1.21.1-2.0.5.jar": "f7a89044a47bf0b766b460c8784e5f81b255f6806177d8d357a8c3c01362961b",
+    "earlydisplay-4.0.44.jar": "96922d7589000af7550f42d437f05676eea6b9708823e47c78e882560746042e",
+    "loader-4.0.44.jar": "f2096cd86d605c0484971fc712208e0dc6cecfe53e056db61d44a98cadc19499",
+    "at-modlauncher-10.0.1.jar": "2a4b447c6944a2b89e383c1eed9a26bb5cc60330a5bb26ef0a912a38d52df935",
+    "accesstransformers-10.0.1.jar": "89fb0dc3d68f8a5961f309ee110dad7d2c1094ba204595602b71e02e104838a1",
+    "bus-8.0.5.jar": "705e24f37752809499a5cd0c7dd31eaabf3d933c5d3b2060168e94e9ef62593a",
+    "coremods-7.0.3.jar": "d24c0d3e31af23cac36a0f9f98654b875f678b27ddccd8b28d331c1878a6de4a",
+    "modlauncher-11.0.5.jar": "fd9b9fc7cf043d2264ea0113eac6b258f0a71fece5b00e831bfbdf9726c78a24",
+    "mergetool-2.0.0-api.jar": "0260881294d8b218afe3d673f084d3745a55c28b35205d07d5e62d7f22202a00",
+    "toml-3.8.3.jar": "ccb92882264bf071e3916ab122fe5ea3e211b8ebf199201698a1324f151f928f",
+    "core-3.8.3.jar": "971dc88c1c22085611ee1c300f5bbf8595938178e819befbb5e98c3cbd272b79",
+    "JarJarSelector-0.4.1.jar": "f34bab02a5e967650dc52b7cb37a200051a7078f7d1868597699d78697da2400",
+    "JarJarMetadata-0.4.1.jar": "05d7b89f09c6de1a9b61d0e786c8fd808aed044babf321653e14abd6740d5546",
+    "maven-artifact-3.8.5.jar": "91172bc294d6eab02fc9f45f4ea01fd0e418962d128cf489abea7b6957d988ee",
+    "typetools-0.6.3.jar": "408300867804be05d1083cc0287dd3a21295a9e76090e288013ba5a4182dc96d",
+    "terminalconsoleappender-1.3.0.jar": "1afea1bca095068f7f4483f061feed94753be34233ddb0df9ec380fc14d5a985",
+    "sponge-mixin-0.15.2+mixin.0.8.7.jar": "1d45cfe3ae4a2eab38dc74276803748cf799088986260d6d912e50ddb35d15c5",
+    "nashorn-core-15.4.jar": "6f816e84dfd63a81d4eaa7829c08337bbaff3ec683ff3bf6bbd90d017a00dc6f",
+    "commons-lang3-3.14.0.jar": "7b96bf3ee68949abb5bc465559ac270e0551596fa34523fddf890ec418dde13c",
+    "bootstraplauncher-2.0.2.jar": "d3f29309140540570fd6c709509706aa8fb133c1c8aef24491688f1a3f4e1d49",
+    "securejarhandler-3.0.8.jar": "945c63d6deafc821616b0380c23867d9b8c2852438f8a6df72732ab933fc587d",
+    "asm-commons-9.10.1.jar": "6d0abefb7cbf972ea16edb37ec14835372505063a45f976ab7ea889ed9497895",
+    "asm-util-9.10.1.jar": "1bb99d091fba2597dc6d51193e9bbcf0d8447e7ed96bd8f0198b18152f09655c",
+    "asm-analysis-9.10.1.jar": "dede75a21306b65974ecd8f87114ff6970f09fb794157a4ca09ab25c888c2bfc",
+    "molang-compiler-3.1.1.19.jar": "08567ae5964242a7cffa93697cd63de60078d8dd375fb89ce426a390a7634100",
+    "glsl-processor-0.2.3.jar": "f01a11101ce5b4a5230916707b13d89acf6abef6ee3ef6e92f2d788246b3507a",
+    "asm-tree-9.10.1.jar": "3dfb0d5b6a106cd40b5b250e39935fbf2f927f4477546a5369a3ac609cf0506b",
+    "asm-9.10.1.jar": "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb",
+    "JarJarFileSystems-0.4.1.jar": "d9f88af1223ff23395c64ff0b0fe367563288a37bd38709bf667b6b39944bfab",
+    "jopt-simple-5.0.4.jar": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28",
+    "commons-io-2.15.1.jar": "a58af12ee1b68cfd2ebb0c27caef164f084381a00ec81a48cc275fd7ea54e154",
+    "logging-1.2.7.jar": "3dc3190204bac5f4184d8405bfe1f724f73a6a15a0d3f36ec7f69e6872c1a76c",
+    "log4j-slf4j2-impl-2.22.1.jar": "1920cd69d8682c7ef249bb407a3d0685723aa1785867cf4c53258da6bf14da97",
+    "log4j-core-2.22.1.jar": "46dccecac556623d8e2ce8648496824a82951d139062a4e61148aff1a25ed18d",
+    "log4j-api-2.22.1.jar": "5d7beae7ff15d8516d6517121d7f12a79a6ac180df64b5fcec55d5be21056e53",
+    "guava-32.1.2-jre.jar": "bc65dea7cfd9e4dacf8419d8af0e741655857d27885bb35d943d7187fc3a8fce",
+    "gson-2.10.1.jar": "4241c14a7727c34feea6507ec801318a3d4a90f070e4525681079fb94ee4c593",
+    "slf4j-api-2.0.9.jar": "0818930dc8d7debb403204611691da58e49d42c50b6ffcfdce02dadb7c3c2b6c",
+    "antlr4-runtime-4.13.1.jar": "54665d2838cc66458343468efc539e454fc95b46a8a04b13c6ac43fc9be63505",
+    "srgutils-0.4.15.jar": "f6bdebb7fae108329acddfc812f237c7f6328a98e3f282a105edfc161d0215e3",
+    "plexus-utils-3.3.0.jar": "76d174792540e2775af94d03d10fb2d3c776e2cd0ac0ebf427d3e570072bb9ce",
+    "jline-reader-3.20.0.jar": "acd1c94d1e228aa7b7962f69b21ed3a9fd828eb3a63e4baf9086954e626af1f0",
+    "noexception-1.7.1.jar": "3d70aaea3904918587a21bdf99ab6ade9ab1dd0eaf6119344ba513f60f575816",
+    "failureaccess-1.0.1.jar": "a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26",
+    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
+    "jsr305-3.0.2.jar": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+    "checker-qual-3.33.0.jar": "e316255bbfcd9fe50d165314b85abb2b33cb2a66a93c491db648e498a82c2de1",
+    "error_prone_annotations-2.18.0.jar": "9e6814cb71816988a4fd1b07a993a8f21bb7058d522c162b1de849e19bea54ae",
+    "j2objc-annotations-2.8.jar": "f02a95fa1a5e95edb3ed859fd0fb7df709d121a35290eff8b74dce2ab7f4d6ed",
+    "jline-terminal-3.20.0.jar": "12125170e795519ba6dc8010c070b53c76aae92b485c1e37530e54ab5dd08d43",
+    "oshi-core-6.4.10.jar": "fef001a7a13515c273f30915915580782afbc45273cc07aa15994e51563ef310",
+    "icu4j-73.2.jar": "29280822f4b0796acef1f79b90b1d0c1edd86c10e876a848e04b8a6298a16bf9",
+    "authlib-6.0.54.jar": "319ea7b53b5e52f62ad3e2b81e9db7f0751240edac548bd74f5f19e35dc21a3b",
+    "blocklist-1.0.10.jar": "830bfd639c8db49236bbd8e45d3a2b8c96c56ff654a10118654958a6235d4c44",
+    "brigadier-1.3.10.jar": "c8ee4136e474ac7723ca2b432ec8d1a2bc88ef7d1ec57c314ba9e33cdc83dd75",
+    "datafixerupper-8.0.16.jar": "ffc138bc2596c291781b0d5e211ccac51f0f2345f27fc2742f335cedf7e2870d",
+    "patchy-2.2.10.jar": "16d70e7968b45caffc81576268eb000f473fb60bf257182d3447dea8ec919d5a",
+    "text2speech-1.17.9.jar": "c2a95b499e76fada7dd63e9b0ec797b678d411c2b0ee6f37f4dc674662bfb0af",
+    "commons-codec-1.16.0.jar": "56595fb20b0b85bc91d0d503dad50bb7f1b9afc0eed5dffa6cbb25929000484d",
+    "commons-logging-1.2.jar": "daddea1ea0be0f56978ab3006b8ac92834afeefbd9b7e4e6316fca57df0fa636",
+    "netty-buffer-4.1.97.Final.jar": "a4393f5b395486cc74d0325c9b41311abb9513ba0fd7ef8cf46e9345c3bffbea",
+    "netty-codec-4.1.97.Final.jar": "bcc96737a0f912fcf031cf8c45ebda352a90a40437db0832caad3d5a63618b38",
+    "netty-common-4.1.97.Final.jar": "a8aca0c8e9347acc75c885ecc749195d9775369aa520b9276f2d1128210a6c17",
+    "netty-handler-4.1.97.Final.jar": "bd4771d19149cbc9c7464ed2d58035d79cdfed7adb59d38718b0d8e7a3dcc2de",
+    "netty-resolver-4.1.97.Final.jar": "38a018c6d9fb2cb11b72881354782b45080bbd20b9a0ad6cde28b80d431ed0b1",
+    "netty-transport-classes-epoll-4.1.97.Final.jar": "ee65fa17fe65f18fd22269f92bddad85bfb3a263cf65eba01e116a2f30b86ff5",
+    "netty-transport-native-unix-common-4.1.97.Final.jar": "412fe140257c2dda5a5e15bee911298bd61928d03ee6be4db588e82c196c5dc6",
+    "netty-transport-4.1.97.Final.jar": "197fd2d6c6b4afe677d9e95bf2e36b49a0bcabdfce0583683fb73f29a3f5a407",
+    "fastutil-8.5.12.jar": "b5543ee08d062d551cf0a5c9bc0fb70588b0382079029ba48941fa9c9be8a5d4",
+    "jna-platform-5.14.0.jar": "ae4caceb3840730c2537f9b7fb55a01baba580286b4122951488bcee558c2449",
+    "jna-5.14.0.jar": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+    "commons-compress-1.26.0.jar": "051aceb8bbcc62d0f5b2b8ac72c53767f9c59bfbd050151e65bef6f51c8ed9c9",
+    "httpclient-4.5.13.jar": "6fe9026a566c6a5001608cf3fc32196641f6c1e5e1986d1037ccdbd5f31ef743",
+    "httpcore-4.4.16.jar": "6c9b3dd142a09dc468e23ad39aad6f75a0f2b85125104469f026e52a474e464f",
+    "jorbis-0.0.17.jar": "e067f29a3701426b67ed973036949c6e58ca5bb53eef7240b2e71e286d252a9e",
+    "joml-1.10.5.jar": "cac9f22f83a7aa33eebda73c16ff5261e3cb4911b6bafcf4c79ea486099d0c9a",
+    "lwjgl-freetype-3.3.3.jar": "e1a7ab07106349d9a8a68f6860b7b73b353c502b81e662aca77f931c6fdd3de8",
+    "lwjgl-freetype-3.3.3-natives-linux.jar": "9fc63518a27b8ff1ab78196343710ce28e8000ce88f60be851a2d3db5beab8e9",
+    "lwjgl-glfw-3.3.3.jar": "bedc757fd2b1b255146db26b74b9cbd1fcf5644b89b47b104fa721c741604259",
+    "lwjgl-glfw-3.3.3-natives-linux.jar": "b8306062b17741f34269088751421f1ac21a597bfbbd0c6c61226301cde744b8",
+    "lwjgl-jemalloc-3.3.3.jar": "e99e31269e6678a4bfc62ef24c50a481c01cbdd004861ece9a59ba12768c6516",
+    "lwjgl-jemalloc-3.3.3-natives-linux.jar": "4e4a13d7015d42605bbcf7ef9faead46deac6409e4377a8ed4aea815f14634b3",
+    "lwjgl-openal-3.3.3.jar": "ae0e82767cacf08921f578fba9d84753ddeb00ceada0510a2b4a882be28fbf95",
+    "lwjgl-openal-3.3.3-natives-linux.jar": "9030fed928a71eac2fdf4ce1643cc4ec724d8710e3b437bdce750bdc9e982b2a",
+    "lwjgl-opengl-3.3.3.jar": "5062da750e5f7ec89e27e8b67b7d40fa8c4b16890159e35f828116ce6c8eca1e",
+    "lwjgl-opengl-3.3.3-natives-linux.jar": "d823a92c6a2810b5112da304dcc6abcd4cb102706f74f7e934a223cea2051250",
+    "lwjgl-stb-3.3.3.jar": "0cff7aa46ea9d70fcc20857015293ea80fbf21adcac34600c84da9b81a44ca93",
+    "lwjgl-stb-3.3.3-natives-linux.jar": "c4489068ddc6dc44b103071943f801a2d076634d4b74db470927f84a308219e1",
+    "lwjgl-tinyfd-3.3.3.jar": "ee0515054ee19a3f4088426fee9d879eb2ee657b07e5064e4e2c851f6adcf14b",
+    "lwjgl-tinyfd-3.3.3-natives-linux.jar": "a076fa05a4d174762eab5852ee72c29d14ab10a5654f27fb00664ef1b52c0c05",
+    "lwjgl-3.3.3.jar": "dc9c7b2d48e8396d68895f8902ffa01e46253de44dfe927533ff09457ebfeec4",
+    "lwjgl-3.3.3-natives-linux.jar": "e663738c519a06f6d659882fa8e4e09af7f10e921929ee5cc54a7587f62ed4c9",
+    "lz4-java-1.8.0.jar": "d74a3334fb35195009b338a951f918203d6bbca3d1d359033dc33edd1cadc9ef",
+    "netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar": "93b5fe8f3829dcb5e033d8d40d59159366ff4cf8266c903bbd6a4aeed9e59bac",
+    "netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar": "1e83fc9f82e5415cdbb688c6a5c6bbbd7d198e9fdd6fdf64b3dc5d54dd1acfd0"
+  },
+  "evidence": {
+    "PonderSceneCatalogTest.xml": "10c7637174070de1bb53a455c061f4bb0f0f2a8ff6719eb9bd0d7465fcc5b096",
+    "ShipMagneticScannerTest.xml": "344b91946a5ccd4c2645db259fc8ef8d71b35e3e9520c44f1a7470bac3ee08b8",
+    "build.log": "c9d55cc0659a5edd93c33d2dbb6c24d7c38f5273e3506c615365c468c14b0dbd",
+    "core-gametest.log": "f49b35fd253c494155872dd8cb6a3d2e349e5edea0ddee251f804819e45a4396",
+    "core-gate.log": "615e7d18c4e02cbb72bc5457ed63f831f71a2d097a5ac2d9c8c215b67469e949",
+    "gui2/client.log": "8a9af81df97e324cbb64a64ce4b33291e18a38a58fbfb26e206378570684a4b0",
+    "gui2/screenshots/validation-ponder-magnetic_basics-first.png": "8b6168bb40fffa8672e9e70cb21ba75bbf95572b31aad484556c5e9ce24d59e6",
+    "gui2/screenshots/validation-ponder-magnetic_basics-last.png": "22bcae5226d019308f1fdb4f995b3abba06b248599a2750c87a2fe960570ee8f",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-1.png": "8c0c08059c0e329825b28650d9e3eaae5e9e36ce1a3883b08ae6b7cb18073476",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-2.png": "e1257ce20dbc771a89facbd4aed0c2d96e30830b13a90c8872016896d2794a2f",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-3.png": "7bc3e5ee1e67124bc0e79d2aa2f4b7a702af69a2979ad23e64413b409133ba99",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-4.png": "5710b5313619875ff6024cf65cf7afa5166451261a42be43e3739605482b349e",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-5.png": "45310db11339b686b399e8952943e8b4f4a3de43156afce147c569b984ea47dc",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-6.png": "96879b1786be0a7a9e353d4723f7f3a8a955e35b3274b4d24bc86d219ce4571b",
+    "gui2/screenshots/validation-ponder-magnetic_basics-text-7.png": "029ed7d05f287aa96e54cbcfa6947a2781808d2c31cca1549a3355c52342b21a",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-first.png": "73e5b26583aa56e5b33658aa3fc490b60202f442f8cbe89e57c977d57ec53281",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-input-create-wrench.png": "2abd5c4778b24297e33f52dde67a747765bb6c9edde0af81c7fd17b25d824f47",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-input-minecraft-raw_iron.png": "b57024c541ed442005d0f060da555e572adbc9877b3b274dbac5ca7572320ad9",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-input-minecraft-redstone.png": "5038af932a670d7d55461556b81f30c30b25df5568a30775e7cbac201ee3365d",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-last.png": "1c721f0f0d9b7b095fccfc85a994d57fe023f9b17e7a6e36a97a672be234fd61",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-1.png": "2abd5c4778b24297e33f52dde67a747765bb6c9edde0af81c7fd17b25d824f47",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-2.png": "ca05a607a3439d8779db5a6765193db56e31404386b7ecd0c9c959f2cff2597f",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-3.png": "5038af932a670d7d55461556b81f30c30b25df5568a30775e7cbac201ee3365d",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-4.png": "d49081f6005acd477a87b52256afabd5422949efac245bd24bf54b244dcd70b2",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-5.png": "b57024c541ed442005d0f060da555e572adbc9877b3b274dbac5ca7572320ad9",
+    "gui2/screenshots/validation-ponder-magnetic_excavator-text-6.png": "4754be89fb8c57281a95883f36a4f2176979b95ff79d436f4728994b7f487e95",
+    "gui2/screenshots/validation-ponder-repulsor_transport-first.png": "ada5f703e78cc764d0371f9a3c8e07097bfd40dfe443f50acfda872f4213df48",
+    "gui2/screenshots/validation-ponder-repulsor_transport-input-magnetization-vector_core.png": "d3af4a9a0bc6612d5d12dc30cbf1c938709477201c1c6a071a152ef585da2c26",
+    "gui2/screenshots/validation-ponder-repulsor_transport-last.png": "ae59a823b88fc858f06d617d090724e803c3f8717876e99f80baa6386ec27c81",
+    "gui2/screenshots/validation-ponder-repulsor_transport-text-1.png": "b76a59670985a181f2c605c636dd709224851639063114d93cc984b27f933f65",
+    "gui2/screenshots/validation-ponder-repulsor_transport-text-2.png": "d3af4a9a0bc6612d5d12dc30cbf1c938709477201c1c6a071a152ef585da2c26",
+    "gui2/screenshots/validation-ponder-repulsor_transport-text-3.png": "8cd94274d00ca3dc937844cf8abe43755a93c51a92fc8a11ab9f1a3b06a1c717",
+    "gui2/screenshots/validation-ponder-repulsor_transport-text-4.png": "c0d01b05701f02e321695d0b45fc7f8133f77f14afce031be4ae671ca620545f",
+    "gui2/server.log": "ee63a60b3732186cc03a046bda033b575dcbf6dd29812429ba633a581bfd26d2",
+    "gui3/client.log": "8712c57d726f4b9b5a04200b6f24eaaa981538d11472d4c10146f90cfd1672b1",
+    "gui3/screenshots/validation-ponder-magnetic_basics-first.png": "c35559637ca18504c324a207a8d3918e2784a7708e309e5b4f03d256c105c76b",
+    "gui3/screenshots/validation-ponder-magnetic_basics-last.png": "ca2c3d72f21d462398121a6dcc2cca1c22bb02d27e53f92e74c856301b1f6719",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-1.png": "1748a46b8867965c3ad0fa9f2253eb17529a15bdc6b76ba25ac9871d9f582ddc",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-2.png": "638fcaba363c28417ccb18d34a4c9940c81e9d7f93c18d1c9ccb9ddacb48cbf3",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-3.png": "2130306cb83a3a486e124cc69ecfe8616be52a01f39c151dd8804643c7e1c596",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-4.png": "a90111134cdde2354ca277a6be5a038c7a13bb67a69bb3db719f1052f8a3e152",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-5.png": "376d2a04ff0ee7335066f7a6a393fa53057303e05101943a181e5362c7775b67",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-6.png": "0938baab3728a01fbbdb96c527f4d15aa4efcd1467305420fb04ec24675e8608",
+    "gui3/screenshots/validation-ponder-magnetic_basics-text-7.png": "457fa3515e8045b289f36525f60b72da9e3dd700ecb87ced3a828f1c61227430",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-first.png": "160162b49c6ec8d724d82f7d7ea6440033bd79d81558fd7bac4a8e9bec90d065",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-input-create-wrench.png": "c5e37dd621aec4898dd9c6df200e72c1fdd392f3abee77e013b0fc9d8445622f",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-input-minecraft-raw_iron.png": "1ae6ced5a63a9e91c5a91b0f07661c193c5b6a2f0d65ac1135d3413a86175d84",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-input-minecraft-redstone.png": "1a7d9d238bb64cf10f279f6e716c871eb04435c580559b74eaadf2e2eb07d600",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-last.png": "a6b0722e26838cbeb36a001baacad6889e9bdba079448727ad2715b0ee824b2a",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-1.png": "c5e37dd621aec4898dd9c6df200e72c1fdd392f3abee77e013b0fc9d8445622f",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-2.png": "9f2fa6f3483fa782e17d8ee9aed708b11d43717425df215b8934845d00b8270a",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-3.png": "1a7d9d238bb64cf10f279f6e716c871eb04435c580559b74eaadf2e2eb07d600",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-4.png": "d4d5ca788b83daa9db09fda2ab0be1a407ee709c991554e4c4ce7c880f27c3f1",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-5.png": "1ae6ced5a63a9e91c5a91b0f07661c193c5b6a2f0d65ac1135d3413a86175d84",
+    "gui3/screenshots/validation-ponder-magnetic_excavator-text-6.png": "66caa582b3bb798a67654096e5e2dfe68a44854d49849acc06d76bbbaa033192",
+    "gui3/screenshots/validation-ponder-repulsor_transport-first.png": "5e066d7b8dc631ec220912c5ec2927c81bc40497dbe43b704816657309ba4ae0",
+    "gui3/screenshots/validation-ponder-repulsor_transport-input-magnetization-vector_core.png": "96ff44071bb1c6c77a02c831efcd32e5a0155f31be8033f566b8f71b0d2f9eec",
+    "gui3/screenshots/validation-ponder-repulsor_transport-last.png": "02f7645de48f4387f7124f740316c8100a30bbf38d578fc50d1b35d1827cef0c",
+    "gui3/screenshots/validation-ponder-repulsor_transport-text-1.png": "ea824f54d05c655914ba57fda016e8001d26a5297c02adb2ebf975f2bb293401",
+    "gui3/screenshots/validation-ponder-repulsor_transport-text-2.png": "96ff44071bb1c6c77a02c831efcd32e5a0155f31be8033f566b8f71b0d2f9eec",
+    "gui3/screenshots/validation-ponder-repulsor_transport-text-3.png": "4201291f41d1ab117c9d3c4d6520a4b2c0111378899fb46aae1e5fde50b33676",
+    "gui3/screenshots/validation-ponder-repulsor_transport-text-4.png": "26681a1d214fca0f0d336580a04e109fb437396a8c66520448032f501969ba97",
+    "gui3/server.log": "9f701c9a400467dfc7e0fce9c112220c1cde26635333a94d79fb3df796913112",
+    "junit/TEST-com.stonytark.magnetization.api.EmitterPresetTest.xml": "97deee0c4d74b54ecc2941cdb4414f9abb423f2f74623cf9281caa020558adcf",
+    "junit/TEST-com.stonytark.magnetization.api.FieldTooltipFormatterTest.xml": "f1b56136a132aaf57650bc936997a10cf94591bb57b62dd8152ea02b1a262ce3",
+    "junit/TEST-com.stonytark.magnetization.api.LirmTest.xml": "7aa68aa68b44553240b44e9fc77d7a72823257b1a6dbad86c148db5e1c6431af",
+    "junit/TEST-com.stonytark.magnetization.api.MagneticFieldTest.xml": "2c8138e969ad96293f2335b9f30414672f19fee54344f000161143b1e55b06ba",
+    "junit/TEST-com.stonytark.magnetization.api.MagneticPolarityTest.xml": "400c7782076ada5affcbf8b948f46fe3d18bfe86f42e094f989cb8fc93a4635a",
+    "junit/TEST-com.stonytark.magnetization.api.MagneticStrengthScalingTest.xml": "df6132517b95366c05e318a74f079edeb19cda3f4eb605d002fe5182380f5ee0",
+    "junit/TEST-com.stonytark.magnetization.api.MagneticStrengthTest.xml": "6affea321af6dd4d832bb17fdc27a1659b146d3630508c19e53dd9e7d09fee9a",
+    "junit/TEST-com.stonytark.magnetization.api.ShipMagneticStateTest.xml": "ae60289627c418b78960764d1040b269c0238f4ad741e2fc31f076837d4975f5",
+    "junit/TEST-com.stonytark.magnetization.client.GasDetectorHudLayoutTest.xml": "b33a351b3523e02ce7c824f4e53028582c725a5f0da4dda1a7fb6a4b5fe659ce",
+    "junit/TEST-com.stonytark.magnetization.compat.AdapterReflectionTest.xml": "800dc2ad57b5b20f16f9234b446faecd1d4a0888d1ce052b3636b6c6592e0bd8",
+    "junit/TEST-com.stonytark.magnetization.compat.AircraftImpulseLimiterTest.xml": "353ed145875e51b712a92d16f04cc312c5651c52bf2c8649b4605d12fb6f9d6a",
+    "junit/TEST-com.stonytark.magnetization.compat.ExternalFieldFallbackTest.xml": "f7063edeefd3f3dcb3dcd347d8c21a89a3d1eae471d8ec56dd108d8de9cf7892",
+    "junit/TEST-com.stonytark.magnetization.compat.ExternalFieldTargetsTest.xml": "54891429efd6d93a4a6b15084325f40a0be98c09e41436bb586836d919aa3cb2",
+    "junit/TEST-com.stonytark.magnetization.compat.HudSurfaceCompletenessTest.xml": "bf72cf6cc4a9c0e363c6bd4724acd509ef064ceb498ad9e6fdc28965508a2ae5",
+    "junit/TEST-com.stonytark.magnetization.compat.JerWorldgenCatalogTest.xml": "f7986c043c8268dc2f07c8b0475f6b9242bfa0098d60455a5b2902471cb1ca6c",
+    "junit/TEST-com.stonytark.magnetization.compat.PonderSceneCatalogTest.xml": "10c7637174070de1bb53a455c061f4bb0f0f2a8ff6719eb9bd0d7465fcc5b096",
+    "junit/TEST-com.stonytark.magnetization.compat.RecipeViewerInfoTest.xml": "52384b36ec46dbd48e4b2221406a689f5bc42f6b479c493e4703b99967862ace",
+    "junit/TEST-com.stonytark.magnetization.content.docking.DockingStateTest.xml": "421db6cc4f88e0b3897c919be4b2432a41ff3a300fc3cb81759a1880b76f793b",
+    "junit/TEST-com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest.xml": "c7e452014434f8457da15a92c74db90c64a99301168bc4ddf642fe0a4f4664ba",
+    "junit/TEST-com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest.xml": "6a0338e18f529c54549f3d960b2109f9b930f067fd49f2d7da0e04b8aed5fddf",
+    "junit/TEST-com.stonytark.magnetization.content.fluid.FluidDiscoveryTest.xml": "8c935b85ee65bf374738bee134fe522690058067d135e0d2b1e8c21b75c428be",
+    "junit/TEST-com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistryTest.xml": "c1c6cded9c56c3bc7c5374ec7eb7255c2d6bbb4ecbd321212aaef08da0d3c74b",
+    "junit/TEST-com.stonytark.magnetization.content.gas.GasExcitationProfileTest.xml": "92cdff4e74f3020f7871d841f40995e889c4943aa542b0fd30afe5fa3ca7e8dd",
+    "junit/TEST-com.stonytark.magnetization.content.golem.IronOxideGolemConfigTest.xml": "9d8f7659e1c2919f08b3b3579c4747c62be4ed1133c98247c129bacfdb7d3d85",
+    "junit/TEST-com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest.xml": "58a3a1fd3e2f7e6e698bbc585ec559b0a4c1c71a7757fc9088a2ec4f596eead3",
+    "junit/TEST-com.stonytark.magnetization.content.golem.MagnetiteGolemTest.xml": "f194392f15ba3eb6f3ee5674705074f056b874f1773db6c4488a1527b4a9d09c",
+    "junit/TEST-com.stonytark.magnetization.content.golem.TitanomagnetiteGolemTest.xml": "cbb05d85c360241331344d3778d4978396f8c2de704cffce3f0033d19a1c2780",
+    "junit/TEST-com.stonytark.magnetization.content.hematite.HematiteDampenTest.xml": "9465dbaebfa94bcf4c63f398d19004109605d9bcc045661544b3ef8b218b4b56",
+    "junit/TEST-com.stonytark.magnetization.content.item.BoundedTickCacheTest.xml": "17b4676fb320921f2dec4ef6a37888cd99b5bff8a6a63881f827c031abfea25c",
+    "junit/TEST-com.stonytark.magnetization.content.jet.FusionCoolingMechanicsTest.xml": "bece405e8c9281e0ac273e00ff4213ad3cbcfaa448bbbc8b9ed271bfdfbf6267",
+    "junit/TEST-com.stonytark.magnetization.content.jet.ThrusterPlumeTest.xml": "ef5678a4bc1a94b4bc2379b6d8ba726faad51825d0dbb1035a70d977e6083a1e",
+    "junit/TEST-com.stonytark.magnetization.content.meteorite.AeMeteoriteScannerTest.xml": "4573c261bc83c440a78ee2c5ae95ca141b1a70fc37f31cbfe72df09dcbc37c36",
+    "junit/TEST-com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest.xml": "450bec9a0a55a4e83b42470dcf8fba434661b033e15b5d8fe07642ac28acc66d",
+    "junit/TEST-com.stonytark.magnetization.content.meteorite.MeteoriteCoreDecayTest.xml": "a732a6cb0cd766e1ae5755df35f04a5c603aa817ecf6e0297e18c8ffede0bbd8",
+    "junit/TEST-com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistryEntryTest.xml": "0ec1a5f0c9bfd1715f6ec0daa422a7dbdeca25ac356cd6bc0a61bb2eac3844b3",
+    "junit/TEST-com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest.xml": "b6d87309c693070a6bef1743b077c997cc2bb2c3c0f42affe849edfadc5edbb0",
+    "junit/TEST-com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteHeatTest.xml": "455c49233d429adc53fd42e19328c250bd16bb15ebaa043fe3c8716e2bb81083",
+    "junit/TEST-com.stonytark.magnetization.content.sail.AlfvenBackpackHandlerTest.xml": "587662673d2e5c01cc4c2c9e94e442549187273ae23ce6b7c202b5d6ff61fcdb",
+    "junit/TEST-com.stonytark.magnetization.content.shaft.ShaftRangeIndexTest.xml": "77efc20791bcf2af248334cf22c0db9020aeb765bdbf6931616f85d19b0035eb",
+    "junit/TEST-com.stonytark.magnetization.data.EmitterRosterResourceTest.xml": "516c0713adbd95954ff4d6f8490a1450747db1171df46e7077b94db2860a7311",
+    "junit/TEST-com.stonytark.magnetization.data.GasExciterAssetTest.xml": "8c85244e91a72ffcefc7f7938ebde544a607e72e0ec83101b0ac9abc651fe59f",
+    "junit/TEST-com.stonytark.magnetization.data.GasVentAssetTest.xml": "fe894ef5a61caf8e13654cee8bdbac092cbc6f7407ede8263677c8c5b43fd320",
+    "junit/TEST-com.stonytark.magnetization.data.GuideInstructionContractsTest.xml": "b8283a4fa08f04456155fc940e706e19b589d91690be4974e161517c7cfed6e4",
+    "junit/TEST-com.stonytark.magnetization.data.IronOxideGolemResourceTest.xml": "88f1f935cc6b2faca02394915e2016596ae879c41619d0523453a9a4b6bc71eb",
+    "junit/TEST-com.stonytark.magnetization.data.MaterialFamilyCompletenessTest.xml": "7318abd78297f61d1b5fa45bb6d6945de287d320b101e53a1d5c061f791cc96e",
+    "junit/TEST-com.stonytark.magnetization.data.NobleGasResourceCompletenessTest.xml": "b7c992678a742bbb28c758abc4fe33f33254c09e7f6722e6ec5cbd9cef8e6b3e",
+    "junit/TEST-com.stonytark.magnetization.data.OptionalCompatibilityTagConditionTest.xml": "6a3965e8dee417a8f4289fdf6e865ba923a42ef96933632ab497239e7e7c3ff2",
+    "junit/TEST-com.stonytark.magnetization.data.PatchouliFieldManualTest.xml": "6325a45b04d3f491c196c068e2b433082c86fe86c89889eeedbc168829b8fa80",
+    "junit/TEST-com.stonytark.magnetization.data.RareEarthResourceCompletenessTest.xml": "8b3c2853bb64b7c806cacc8d99dbc773406ba7294364911f4aa3b1df89952e20",
+    "junit/TEST-com.stonytark.magnetization.data.TrackStylesCompatibilityResourceTest.xml": "6d7acdc22d132ca28cbf304dca790d1dd929d3a08ab640eb9289b4414987e37f",
+    "junit/TEST-com.stonytark.magnetization.menu.AirSeparatorGuiLayoutTest.xml": "74c7633037b05ac97d6dcb65563208fddd23c7db4d672a9562b4f3581aa16381",
+    "junit/TEST-com.stonytark.magnetization.menu.MachineGuiLayoutTest.xml": "1510819cff0b7b4f1cdfcb951f6ad304f24bbb73c970e69094ab29d2a42eaaab",
+    "junit/TEST-com.stonytark.magnetization.mixin.compat.CreateMagneticsServerMixinPluginTest.xml": "ac9726d35f28679e866d15633cfff689249bb755d2362807c3741213efdec59f",
+    "junit/TEST-com.stonytark.magnetization.network.CosmicCompassTargetPayloadTest.xml": "1d57a37d28870f11cdf4c2e8e9e62317fe6d21b6e0814c71e3f7d13e028c8aa5",
+    "junit/TEST-com.stonytark.magnetization.network.GasDetectorStatusPayloadTest.xml": "9ce3a508a74ee8eddfcce255e7d8a8f2dcc7dde309d9f596612fb177a092c713",
+    "junit/TEST-com.stonytark.magnetization.physics.EmitterRegistryTest.xml": "1cf0c674bce88254e4b8793a59e8da26107c6517b1611a79376ff9bf5d7d1127",
+    "junit/TEST-com.stonytark.magnetization.physics.FieldApplicatorTest.xml": "76af93a3de0e3f6091edf6b017f5acbeecab14f7003433cd9d207915f1d9c33a",
+    "junit/TEST-com.stonytark.magnetization.physics.MobileFieldRegistryTest.xml": "2cfd71230e34e6fa707eb7ef434a311b4679addbbc425b58a2c7f6d0abc77e87",
+    "junit/TEST-com.stonytark.magnetization.physics.SableBridgePromoteTest.xml": "add14c42adca489c4c6d314af6755325a6a8c52893c999ea1bef5fce2489f19d",
+    "junit/TEST-com.stonytark.magnetization.physics.ShipMagneticScannerTest.xml": "344b91946a5ccd4c2645db259fc8ef8d71b35e3e9520c44f1a7470bac3ee08b8",
+    "junit/TEST-com.stonytark.magnetization.registry.MagTiersTest.xml": "0e369f4a784bc219b11bf3524f9edca6e7eec1c0ab24c1face22e8074b04a2dd"
+  },
+  "logStorage": {
+    "normalization": "Trailing whitespace stripped; line order, timestamps and validation content preserved.",
+    "originalHashesOfNormalizedLogs": {
+      "build.log": "c748a0b8db167741523036aa0cebc96cc987efc2b3e644d11b186483553ce0a1",
+      "core-gate.log": "ed618b460bae820c25adc941c01b79daeabcca0e826b18b33d4136e7379d3682",
+      "core-gametest.log": "6da5a11b345805d1df8d70aa34f6e225a34fb8e60cc0f0404bef1c3351b10fcc",
+      "gui3/client.log": "14995ada1d2aa73d1a399b4a070deed9fd754ca1f01f63a69ed0f43667862230",
+      "gui3/server.log": "ec1d90fd4a37a1a4f4512540fcae764248c0c359d202b4001daa1f5e90ad00bd",
+      "gui2/client.log": "40ad891746cf68dc88310b5b6934235d4c93af8a363a705ea984d003f4ffefae",
+      "gui2/server.log": "f85dc7a299c13e870b06fb135a651c6a8176a6eaef3aea868ae5c1acc61ad1d7"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.physics.SableBridgePromoteTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:59.460Z" hostname="Hades" time="0.009">
+  <properties/>
+  <testcase name="ninetyDegreePitchRotatesUpAxisToSouth()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.007"/>
+  <testcase name="preservesPolarityStrengthAndShape()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <testcase name="rotationAlsoMovesOriginAroundShipCenter()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <testcase name="identityPoseReturnsFieldUnchanged()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <testcase name="preservesCustomRange()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <testcase name="translatedPoseTranslatesOrigin()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <testcase name="ninetyDegreeYawRotatesNorthAxisToWest()" classname="com.stonytark.magnetization.physics.SableBridgePromoteTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

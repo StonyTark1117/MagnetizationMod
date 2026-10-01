@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.physics.FieldApplicatorTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:59.453Z" hostname="Hades" time="0.007">
+  <properties/>
+  <testcase name="noneProducesZeroForce()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.003"/>
+  <testcase name="omnidirectionalForceIsRadiallyOriented()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.001"/>
+  <testcase name="omnidirectionalFalloffIsInverseSquare()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="directionalNoForceBehindEmitter()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="weakStrengthHasShorterRangeThanStrong()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="directionalForceParallelToAxis()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.001"/>
+  <testcase name="outOfRangeProducesZero()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="conicalGatesByHalfAngle()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="omnidirectionalNorthRepels()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="omnidirectionalSouthAttracts()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="zeroDistanceProducesZero()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="conicalForcePointsAlongAxisRegardlessOfSampleOffset()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <testcase name="directionalFalloffIsLinear()" classname="com.stonytark.magnetization.physics.FieldApplicatorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

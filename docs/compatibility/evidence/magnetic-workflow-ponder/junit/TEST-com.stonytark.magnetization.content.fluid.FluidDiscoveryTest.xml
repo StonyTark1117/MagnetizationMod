@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.fluid.FluidDiscoveryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:15.186Z" hostname="Hades" time="0.118">
+  <properties/>
+  <testcase name="cachedRegionsFollowMembershipChangesAndWritableViews()" classname="com.stonytark.magnetization.content.fluid.FluidDiscoveryTest" time="0.098"/>
+  <testcase name="regionBoundsMatchOriginalCellCenteredBoundsIncludingNegatives()" classname="com.stonytark.magnetization.content.fluid.FluidDiscoveryTest" time="0.005"/>
+  <testcase name="lazyAnchorsKeepOriginalBucketAndTieOrder()" classname="com.stonytark.magnetization.content.fluid.FluidDiscoveryTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

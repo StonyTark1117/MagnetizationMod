@@ -1,0 +1,9 @@
+{
+  "normalization": "Remove trailing line whitespace only; keep diagnostic contents and line order.",
+  "sha256_before_normalization": {
+    "build.log": "063502a63d61ab6ca5520477793c482d3dbe96ad67e577aad8b8c63a24e3bd93",
+    "core-gametest.log": "56a065ef5b50f2b3f979776f3e414be9b444fc056963364db8301962294666b4",
+    "regression-gametest.log": "970769fa4f8d507e857a8b14bf516929eae5b9bbba7a46e8dbcbd6f5b44131b7",
+    "engineering-gametest.log": "10a6d7ff628caffb7f594ea934e57d97e7ae764c58957c297660e8a22691fe06"
+  }
+}

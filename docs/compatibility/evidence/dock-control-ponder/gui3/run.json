@@ -1,0 +1,263 @@
+{
+  "effective_gui_scale": 3,
+  "scenes": [
+    "docking_signals",
+    "railgun_remote",
+    "imprint_module",
+    "tractor_beam",
+    "magnetic_shaft"
+  ],
+  "native_playback_complete": true,
+  "texts": [
+    {
+      "scene": "railgun_remote",
+      "index": 1,
+      "time": 33
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 2,
+      "time": 143
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 3,
+      "time": 253
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 4,
+      "time": 363
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 5,
+      "time": 473
+    },
+    {
+      "scene": "railgun_remote",
+      "index": 6,
+      "time": 583
+    },
+    {
+      "scene": "imprint_module",
+      "index": 1,
+      "time": 33
+    },
+    {
+      "scene": "imprint_module",
+      "index": 2,
+      "time": 143
+    },
+    {
+      "scene": "imprint_module",
+      "index": 3,
+      "time": 253
+    },
+    {
+      "scene": "imprint_module",
+      "index": 4,
+      "time": 363
+    },
+    {
+      "scene": "tractor_beam",
+      "index": 1,
+      "time": 33
+    },
+    {
+      "scene": "tractor_beam",
+      "index": 2,
+      "time": 143
+    },
+    {
+      "scene": "tractor_beam",
+      "index": 3,
+      "time": 253
+    },
+    {
+      "scene": "tractor_beam",
+      "index": 4,
+      "time": 363
+    },
+    {
+      "scene": "magnetic_shaft",
+      "index": 1,
+      "time": 30
+    },
+    {
+      "scene": "magnetic_shaft",
+      "index": 2,
+      "time": 132
+    },
+    {
+      "scene": "magnetic_shaft",
+      "index": 3,
+      "time": 222
+    },
+    {
+      "scene": "magnetic_shaft",
+      "index": 4,
+      "time": 312
+    },
+    {
+      "scene": "docking_signals",
+      "index": 1,
+      "time": 33
+    },
+    {
+      "scene": "docking_signals",
+      "index": 2,
+      "time": 188
+    },
+    {
+      "scene": "docking_signals",
+      "index": 3,
+      "time": 298
+    },
+    {
+      "scene": "docking_signals",
+      "index": 4,
+      "time": 408
+    },
+    {
+      "scene": "docking_signals",
+      "index": 5,
+      "time": 518
+    },
+    {
+      "scene": "docking_signals",
+      "index": 6,
+      "time": 628
+    },
+    {
+      "scene": "docking_signals",
+      "index": 7,
+      "time": 798
+    }
+  ],
+  "targets": [
+    {
+      "scene": "railgun_remote",
+      "item": "magnetization:railgun_remote"
+    },
+    {
+      "scene": "railgun_remote",
+      "item": "magnetization:railgun_emitter"
+    },
+    {
+      "scene": "imprint_module",
+      "item": "magnetization:imprint_module"
+    },
+    {
+      "scene": "imprint_module",
+      "item": "magnetization:electromagnet"
+    },
+    {
+      "scene": "imprint_module",
+      "item": "magnetization:repulsor_coil"
+    },
+    {
+      "scene": "tractor_beam",
+      "item": "magnetization:tractor_beam"
+    },
+    {
+      "scene": "tractor_beam",
+      "item": "magnetization:polarity_inverter"
+    },
+    {
+      "scene": "magnetic_shaft",
+      "item": "magnetization:magnetic_shaft"
+    },
+    {
+      "scene": "magnetic_shaft",
+      "item": "magnetization:samarium_cobalt_magnetic_shaft"
+    },
+    {
+      "scene": "magnetic_shaft",
+      "item": "magnetization:neodymium_magnetic_shaft"
+    },
+    {
+      "scene": "docking_signals",
+      "item": "magnetization:magnetic_switch"
+    },
+    {
+      "scene": "docking_signals",
+      "item": "magnetization:magnetic_anchor"
+    }
+  ],
+  "durations": [
+    {
+      "scene": "railgun_remote",
+      "elapsed": 675,
+      "total": 675
+    },
+    {
+      "scene": "imprint_module",
+      "elapsed": 455,
+      "total": 455
+    },
+    {
+      "scene": "tractor_beam",
+      "elapsed": 455,
+      "total": 455
+    },
+    {
+      "scene": "magnetic_shaft",
+      "elapsed": 384,
+      "total": 384
+    },
+    {
+      "scene": "docking_signals",
+      "elapsed": 890,
+      "total": 890
+    }
+  ],
+  "screenshot_count": 38,
+  "raw_log_sha256": {
+    "client.log": "3c3a46a972d546758f7d7a414080f8ce2eff5b921170fa4ca2e577e510c56cf1",
+    "server.log": "7b597afcb8b60e473bee49f718723b548713d4117d23d00c1083e6a6f19d1add"
+  },
+  "log_normalization": "Remove trailing line whitespace only; keep contents and line order.",
+  "files_sha256": {
+    "client.log": "6a2519ad8a5d8238ee6889eeadf47338f261958fdd8557dc987156834628e0f4",
+    "server.log": "c42299dd503cc6b4cf5db7db58dd4bed85d8ab776365ddf97f9b38ef76af2c42",
+    "validation-ponder-docking_signals-first.png": "e18cf8a2f1e7ccb9fa3cb778bb4c2c9db4483aaf7dba421fc0b0d5d281de9aa2",
+    "validation-ponder-docking_signals-last.png": "59d5072017b12fe6b1a4308bb9c2d9eb1d6b598b669acb12e81d295250f09c91",
+    "validation-ponder-docking_signals-text-1.png": "958afd8d92faabc3dab49be10e2443f8417ac9ccc3ca8872114b154247c3926f",
+    "validation-ponder-docking_signals-text-2.png": "fa8ef08cf4f67f7471af32ccc183fb86880adf1db71560b2d6490ba34f782a3c",
+    "validation-ponder-docking_signals-text-3.png": "3a5aa769568f44781dcd94026f537dfebc83c43af51c3a82e79050a0e4d827f2",
+    "validation-ponder-docking_signals-text-4.png": "a34aec97b977cc94784a5023372040c845b5af033a0de723915b246403b960f4",
+    "validation-ponder-docking_signals-text-5.png": "c381f2f7affa9e9f2c155a55e5827f5364ac2de71804f7cf42af4f580491645a",
+    "validation-ponder-docking_signals-text-6.png": "50d6f46941b0b9e37db6b7dcba336dd58ac0ea58d7f6f027745fb4869ab3ee93",
+    "validation-ponder-docking_signals-text-7.png": "18a6ad5bf53197fcca2cf736b130491a0e9908d6ca445e74e2c6f58a9a41df7e",
+    "validation-ponder-railgun_remote-first.png": "1a96b359504637c9f99e5d2fc3292cfd41ddd1d57cc57e6a00387a44069e36b7",
+    "validation-ponder-railgun_remote-input-magnetization-railgun_remote.png": "71439f7b4dce0146e18dea89a61b3a965b7aa9dfd1877d099600ed9add5c53a8",
+    "validation-ponder-railgun_remote-last.png": "6bc8ac95506c35490051a7de0f54a60b704823623584b2ef9de20deeeb6eac52",
+    "validation-ponder-railgun_remote-text-1.png": "1f8e769a352012225e56a40691cc5654ee1a9a07095822574038e25e6edf4b09",
+    "validation-ponder-railgun_remote-text-2.png": "df266943a432d1edf957e1b22c817ca73cdbca5ff020dc671fc18e725c685eae",
+    "validation-ponder-railgun_remote-text-3.png": "f817c5992ec98dfb00d6069231103520dd5386e39a27d775b91fc9408e3a362a",
+    "validation-ponder-railgun_remote-text-4.png": "89db8ea5feb886d22c0c8827ec1e90ae8937d8367068ddf794f46f9ebf50af5f",
+    "validation-ponder-railgun_remote-text-5.png": "5486f304332fe53fceb528c9db51d7a6af725f39c5ed12027ffbab1ae0dbb1a5",
+    "validation-ponder-railgun_remote-text-6.png": "c1a3682ac50fb3fe4f13989e53e4934b85048dd3eb1e1a31966f6838192281d4",
+    "validation-ponder-imprint_module-first.png": "680523cdfb27ec9ba294d3588a4c6ce1f53e1e897fbd20bd9906695219edddfa",
+    "validation-ponder-imprint_module-input-magnetization-imprint_module.png": "33edd71c278b216ece520ab20a4eb01f8fc50a17451b0b3d0c1af1d1fd44e8d8",
+    "validation-ponder-imprint_module-last.png": "3c127a5cc6a0aa09a7eafd909342223975d572d637691828754fb229d4f4723a",
+    "validation-ponder-imprint_module-text-1.png": "54dfe2dc2bc45337c4794720b2cd5594175f3b4b448b8675403ee92266b20c7b",
+    "validation-ponder-imprint_module-text-2.png": "45dac3cafa7a64d277e667a2e988465d53da9bbfa08367bb626b6d1838484255",
+    "validation-ponder-imprint_module-text-3.png": "0a2fd2cf036eddceedb7442fa96939b78a9d3a6b1150fd90a0361292be2e6bb5",
+    "validation-ponder-imprint_module-text-4.png": "0028a45fab8704c55d5d850a4d0fb7073fd9abb06f055b77e646b713ce8fd5f9",
+    "validation-ponder-tractor_beam-first.png": "3075913ec898c6c8ccc4f6d3e3c043e13b9b9913ae1fc2bf0ef8342e2de0d74e",
+    "validation-ponder-tractor_beam-input-create-wrench.png": "83996319f24b2d1c8e343807190cd00a151d427ee4612f2dbe20f095db07bb20",
+    "validation-ponder-tractor_beam-last.png": "d3182e1fe126f85907a66d98fd844d9b86ea8dfd3164231b2666c01decf1e93c",
+    "validation-ponder-tractor_beam-text-1.png": "98e13ac0d28576e68400936fd2fe94663852186ea9b37fa54b6f5470b80483fa",
+    "validation-ponder-tractor_beam-text-2.png": "eea203bb176a1a4fabd6217605a74143261eceef2bdbf33676db7436cb552703",
+    "validation-ponder-tractor_beam-text-3.png": "7f30e3e6343ca9179bd54da2c07e03eb574fccc2fe5df1ba0f5e90e16b90cc4f",
+    "validation-ponder-tractor_beam-text-4.png": "bc10424d704e6d6da47c6cd90d9a25acd7a214de4ac1f2ea3c67f6d72c0f69de",
+    "validation-ponder-magnetic_shaft-first.png": "9542a8e4346958f4e62ab167c6c7791859f9c5f2eaab92ebeaf92a1da9ec5f7a",
+    "validation-ponder-magnetic_shaft-last.png": "e72e3df9c54347e1771e2d04388815a94a28c9f46e0d433ab084700a0bb5e345",
+    "validation-ponder-magnetic_shaft-text-1.png": "737aa3925b690406baf17c3dcac8a0801d2c7038244dc9c609d134b2d64fc30b",
+    "validation-ponder-magnetic_shaft-text-2.png": "f556ee1c5e9901982161987367fa59885161076d4f4aede5f48df62bbacea1c4",
+    "validation-ponder-magnetic_shaft-text-3.png": "6eebbc349d870dea10ce8648458464d30441ae72e522ebaf9db12cc07faa8b18",
+    "validation-ponder-magnetic_shaft-text-4.png": "b5b59302ff6c28b802581f7d6b7dd8c90ee6ef9e41991532e6c955a01064f666"
+  }
+}
