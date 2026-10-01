@@ -72,3 +72,6 @@ run-magnetics-workaround-client/
 /run-aircraft-audit-server
 
 tools/__pycache__/
+
+/run-validation-audit-server
+/run-validation-audit-client

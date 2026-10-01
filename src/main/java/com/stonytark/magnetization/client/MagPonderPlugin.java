@@ -231,18 +231,18 @@ public final class MagPonderPlugin implements PonderPlugin {
     private static void gasExciter(final SceneBuilder scene, final SceneBuildingUtil util,
                                    final PonderSceneCatalog.Scene definition) {
         prepare(scene, definition);
+        // These native gas/cloud volumes are invisible in Ponder's block sections.
+        // Explicitly described glass markers keep the tutorial volume visible.
         final BlockPos exciter = util.grid().at(1, 1, 2);
         scene.world().setBlock(exciter, MagBlocks.GAS_EXCITER.get().defaultBlockState(), false);
         for (int x = 2; x <= 4; x++) {
-            scene.world().setBlock(util.grid().at(x, 1, 2), MagBlocks.XENON_BLOCK.get().defaultBlockState()
-                    .setValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED, false), false);
+            scene.world().setBlock(util.grid().at(x, 1, 2), Blocks.PURPLE_STAINED_GLASS.defaultBlockState(), false);
         }
         show(scene, util, exciter, util.grid().at(4, 1, 2));
         text(scene, util, util.grid().at(2, 1, 2), util.grid().at(4, 1, 2),
                 definition.text(0));
         for (int x = 2; x <= 4; x++) {
-            scene.world().setBlock(util.grid().at(x, 1, 2), MagBlocks.XENON_BLOCK.get().defaultBlockState()
-                    .setValue(com.stonytark.magnetization.content.fluid.ExcitableGasBlock.EXCITED, true), false);
+            scene.world().setBlock(util.grid().at(x, 1, 2), Blocks.PINK_STAINED_GLASS.defaultBlockState(), false);
         }
         scene.overlay().showOutlineWithText(util.select().position(exciter), 90)
                 .colored(PonderPalette.OUTPUT)
@@ -263,8 +263,7 @@ public final class MagPonderPlugin implements PonderPlugin {
         text(scene, util, vent, vent,
                 definition.text(0));
         for (int x = 3; x <= 4; x++) {
-            scene.world().setBlock(util.grid().at(x, 1, 2), MagBlocks.PROXY_GAS_CLOUD.get().defaultBlockState()
-                    .setValue(com.stonytark.magnetization.content.gas.ProxyGasCloudBlock.EXCITED, true), false);
+            scene.world().setBlock(util.grid().at(x, 1, 2), Blocks.PINK_STAINED_GLASS.defaultBlockState(), false);
         }
         show(scene, util, util.grid().at(3, 1, 2), util.grid().at(4, 1, 2));
         text(scene, util, exciter, util.grid().at(4, 1, 2),
@@ -314,9 +313,9 @@ public final class MagPonderPlugin implements PonderPlugin {
         final BlockPos helium = util.grid().at(1, 1, 1);
         final BlockPos xenon = util.grid().at(2, 1, 1);
         final BlockPos radon = util.grid().at(3, 1, 1);
-        scene.world().setBlock(helium, MagBlocks.HELIUM_BLOCK.get().defaultBlockState(), false);
-        scene.world().setBlock(xenon, MagBlocks.XENON_BLOCK.get().defaultBlockState(), false);
-        scene.world().setBlock(radon, MagBlocks.RADON_BLOCK.get().defaultBlockState(), false);
+        scene.world().setBlock(helium, Blocks.WHITE_STAINED_GLASS.defaultBlockState(), false);
+        scene.world().setBlock(xenon, Blocks.PURPLE_STAINED_GLASS.defaultBlockState(), false);
+        scene.world().setBlock(radon, Blocks.LIME_STAINED_GLASS.defaultBlockState(), false);
         show(scene, util, helium, radon);
         show(scene, util, thruster, thruster);
         text(scene, util, helium, radon,

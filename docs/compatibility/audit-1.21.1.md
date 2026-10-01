@@ -145,3 +145,7 @@ Client evidence used the isolated `runExtraGolemsRebornClient` profile on an Xvf
 - [Original Extra Golems](https://www.curseforge.com/minecraft/mc-mods/extra-golems) and [Reborn 21.1.0.1](https://www.curseforge.com/minecraft/mc-mods/extra-golems-reborn/files/7922386), [Reborn source](https://github.com/bigenergy/extra-golems-reborn).
 - [BOMD NeoForge port](https://modrinth.com/mod/bosses-of-mass-destruction-forge/version/snhDYBxP), [Aviator Dreams Reloaded](https://modrinth.com/mod/aviator-dreams-reloaded/version/4Aa8QEq9), [Immersive Aircraft](https://modrinth.com/mod/immersive-aircraft/version/ZZTlNkV9).
 - [Cataclysm target](https://modrinth.com/mod/l_enders-cataclysm/version/PsPYpoCC), [Iron's Spells target](https://modrinth.com/mod/irons-spells-n-spellbooks/version/slKLosTb), [Aether target](https://modrinth.com/mod/aether/version/K5X5qMwG).
+
+## Lifecycle and presentation follow-up
+
+The [native lifecycle and rendered presentation audit](lifecycle-presentation-validation.md) closes the Patchouli recovery/gift/reload/restart gaps and verifies all 37 Track Styles addon selections, eight Magnetized field transitions, and full playback of all 18 advertised Ponder scenes on the refreshed development pins. It records 86 original captures and the config-synchronization and gas-diagram repairs.

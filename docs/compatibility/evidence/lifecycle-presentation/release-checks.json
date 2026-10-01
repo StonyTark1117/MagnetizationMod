@@ -1,0 +1,25 @@
+{
+  "baseCommit": "46b682eb077f4ab01a51b1ee9bafd8ce488ca7d1",
+  "unit": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "gameTests": 173,
+  "checks": {
+    "release": {
+      "fullLogSha256": "1c6c15bc80f29295d357de75181b6483dfdf4fb4db814f77c6a3a700bc5b11f1",
+      "excerptSha256": "afab2bb546c461287ff9ec838b2c161b6fd5507373781aa550647a8d5f8e140c"
+    },
+    "gametest": {
+      "fullLogSha256": "993f69aad6ca59c0b9b5fa836e7f21ef71d5f2c2b3f9a748e000dc524b25eea7",
+      "excerptSha256": "90abf2edc3395647aad54b2c53d5e07a45a04e301f375416e3ab1b630dd90902"
+    },
+    "client-minimal": {
+      "fullLogSha256": "c3e9d88baf7bb665669148caeb74404ebf6ebd2e85102969a94f6ae760115ca3",
+      "excerptSha256": "c3e9d88baf7bb665669148caeb74404ebf6ebd2e85102969a94f6ae760115ca3"
+    }
+  },
+  "screenshots": 86
+}

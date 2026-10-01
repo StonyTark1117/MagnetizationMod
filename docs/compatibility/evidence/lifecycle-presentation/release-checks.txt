@@ -1,0 +1,3 @@
+verifyNoRuntimeModpackCoupling: runtime source/resources contain no recommended-modpack names, slugs, or project IDs.
+verifyReleaseJar: magnetization-1.4.6.jar contains required metadata, no build-only files, and no pack-specific runtime coupling.
+BUILD SUCCESSFUL in 8s

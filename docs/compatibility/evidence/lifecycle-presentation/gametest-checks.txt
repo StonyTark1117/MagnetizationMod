@@ -1,0 +1,4 @@
+[01Oct2026 04:51:17.860] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 173 GAME TESTS COMPLETE IN 15.46 s ======================
+[01Oct2026 04:51:17.860] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 173 required tests passed :)
+runGameTestServer: assertions passed; terminating only its lingering process group
+BUILD SUCCESSFUL in 35s

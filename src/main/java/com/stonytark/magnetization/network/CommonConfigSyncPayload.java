@@ -29,6 +29,11 @@ public record CommonConfigSyncPayload(CompoundTag values) implements CustomPacke
     }
 
     private static void handle(final CommonConfigSyncPayload payload, final IPayloadContext context) {
-        context.enqueueWork(() -> MagConfig.applyClientSnapshot(payload.values()));
+        context.enqueueWork(() -> {
+            MagConfig.applyClientSnapshot(payload.values());
+            // A server snapshot can change COMMON values without a local config
+            // reload event. Apply the book master after the authoritative values.
+            com.stonytark.magnetization.compat.patchouli.MagPatchouliCompat.applyMasterToggle();
+        });
     }
 }

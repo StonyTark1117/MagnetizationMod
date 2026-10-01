@@ -31,11 +31,11 @@ public final class PonderSceneCatalog {
                     "Feed it water and FE; it produces hydrogen for the fusion-fuel chain.", true,
                     "magnetization:electrolyzer"),
             custom("gas_exciter", "Excite a connected gas volume", Kind.GAS_EXCITER, List.of(
-                            "One powered Gas Exciter elects itself to energize the entire connected same-gas volume.",
+                            "Purple markers show connected gas; pink shows excitation. One powered Gas Exciter energizes the entire connected same-gas volume.",
                             "Supply FE and keep redstone off. Adjacent redstone can excite gas directly, but disables this machine."),
                     "magnetization:gas_exciter"),
             custom("gas_vent", "Vent a compatibility gas", Kind.GAS_VENT, List.of(
-                            "Pipe exactly 1000 mB of a profiled addon gas into any face and leave the wrench-aimed outlet clear.",
+                            "Colored markers represent the gas cloud. Pipe exactly 1000 mB of a profiled addon gas into any face and leave the wrench-aimed outlet clear.",
                             "The source cloud keeps its fluid identity and is recoverable. An Exciter directly behind the vent can illuminate it."),
                     "magnetization:gas_vent"),
             custom("air_separator", "Route an Air Separator", Kind.AIR_SEPARATOR, List.of(
@@ -51,7 +51,7 @@ public final class PonderSceneCatalog {
                     "Point the thruster with a wrench, fill its ferrofluid tank, and supply FE.", true,
                     "magnetization:micro_thruster"),
             custom("ion_thruster", "Choose an Ion Thruster propellant", Kind.ION_THRUSTER, List.of(
-                            "Helium favors efficiency and cruising speed; Xenon gives strong safe thrust; Radon is strongest but hazardous.",
+                            "White, purple, and green markers represent Helium, Xenon, and Radon. Helium favors efficiency; Xenon gives strong safe thrust; Radon is strongest but hazardous.",
                             "Mount it on a ship, aim the exhaust with a wrench, then supply FE and one accepted gas propellant."),
                     "magnetization:ion_thruster"),
             generic("solar_sail", "Use a Solar Sail",

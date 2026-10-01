@@ -77,6 +77,9 @@ configurations {
     topClientRuntime
     reiClientRuntime
     emiClientRuntime
+    validationAuditRuntime {
+        extendsFrom simulatedCoastersTrackStylesRuntime, coastersMagnetizedRuntime, steamRailsRuntime, copycatsRuntime
+    }
     uiAuditRuntime
     jerClientRuntime
     ponderCompatClientRuntime {
@@ -146,6 +149,7 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // Task-name suffixes that must run against hard dependencies only. Matched on the
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
+        'runvalidationauditserver', 'runvalidationauditclient',
         'runstoragerestartauditserver', 'runuiauditserver', 'runuiauditclient',
         'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
         'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver', 'runsupplementariesworkflowgametestserver',
@@ -413,6 +417,9 @@ if (lowered.any { it.endsWith('runsupplementariesworkflowgametestserver') }) {
 }
 if (lowered.any { it.contains('storagerestartaudit') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.sweepStorageRuntime)
+}
+if (lowered.any { it.contains('validationaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.validationAuditRuntime)
 }
 if (lowered.any { it.contains('uiaudit') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.uiAuditRuntime)
@@ -920,6 +927,19 @@ neoForge {
         // (Sodium/Iris/JEI/REI-adjacent/tag-coverage mods) rides along. Reach for
         // `smokeClientCompat` when that's what you mean.
         client { client() }
+        validationAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-validation-audit-server')
+            systemProperty 'magnetization.audit.validation', providers.gradleProperty('validationPhase').getOrElse('initial')
+            systemProperty 'magnetization.audit.validationDir', file('build/validation-audit/control').absolutePath
+        }
+        validationAuditClient {
+            programArguments.addAll('--width', '1280', '--height', '720')
+            client(); gameDirectory = file('run-validation-audit-client')
+            systemProperty 'magnetization.audit.validation', providers.gradleProperty('validationPhase').getOrElse('initial')
+            systemProperty 'magnetization.audit.validationDir', file('build/validation-audit/control').absolutePath
+            programArguments.addAll('--username', providers.gradleProperty('validationUser').getOrElse('Validation'),
+                    '--quickPlayMultiplayer', providers.gradleProperty('validationEndpoint').getOrElse('127.0.0.1:25589'))
+        }
         uiAuditServer {
             server(); programArgument 'nogui'; gameDirectory = file('run-ui-audit-server')
             systemProperty 'magnetization.audit.ui', 'true'
@@ -2114,6 +2134,7 @@ dependencies {
     emiClientRuntime("maven.modrinth:emi:${emi_version}")
     uiAuditRuntime("maven.modrinth:emi:${emi_version}") { transitive = false }
     uiAuditRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
+    validationAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
     uiAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
 
     // Curios API — slot extension framework. Soft-dep; our CurioItem capability
