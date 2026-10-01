@@ -1,0 +1,58 @@
+[
+  {
+    "profile": "createaddition",
+    "passed": 7,
+    "runtime_summary_time": "01Oct2026 04:37:53.587",
+    "log": "createaddition.log",
+    "sha256": "c49975d9b88de10e430da242c352acfce87aefdd7011d574080c97bc13c6315f"
+  },
+  {
+    "profile": "create-new-age",
+    "passed": 15,
+    "runtime_summary_time": "01Oct2026 04:46:11.841",
+    "log": "create-new-age.log",
+    "sha256": "2fda7920054668c9e1697eb1faf9661aa431ba2487f8b6c75610eba233c65057"
+  },
+  {
+    "profile": "immersive-engineering",
+    "passed": 10,
+    "runtime_summary_time": "01Oct2026 04:46:36.647",
+    "log": "immersive-engineering.log",
+    "sha256": "5cfef36726737b8fa1d7f13b6d5fda9fc8ef841d72e90e4c3a2acdb7904a7c1e"
+  },
+  {
+    "profile": "tfmg-community-1.3.2a",
+    "passed": 20,
+    "runtime_summary_time": "01Oct2026 04:45:36.173",
+    "log": "tfmg-community-1.3.2a.log",
+    "sha256": "51668cd35faa1a0aa596abba28c7006e54076baa995af1df3f9e9b4097418152"
+  },
+  {
+    "profile": "tfmg-original-1.2.0",
+    "passed": 20,
+    "runtime_summary_time": "01Oct2026 04:44:54.255",
+    "log": "tfmg-original-1.2.0.log",
+    "sha256": "823865b085e8b944fb40e7fdface54404880136b0910121954ba0417bb3c8969"
+  },
+  {
+    "profile": "cosmonautics",
+    "passed": 6,
+    "runtime_summary_time": "01Oct2026 03:36:03.979",
+    "log": "cosmonautics.log",
+    "sha256": "ad8e9620d84ee4ab88bf229932ce44aadea24e565c0a07d3f2717396f90db8c5"
+  },
+  {
+    "profile": "create-ore-excavation",
+    "passed": 4,
+    "runtime_summary_time": "01Oct2026 03:26:37.190",
+    "log": "create-ore-excavation.log",
+    "sha256": "73433c3b4f8d803c9281a192b9c0fe40f7bab094219cca128f4a1b27bf374fb5"
+  },
+  {
+    "profile": "compat-absent",
+    "passed": 2,
+    "runtime_summary_time": "01Oct2026 04:41:29.740",
+    "log": "compat-absent.log",
+    "sha256": "ac38c0ab909fc8c51adefa6104fedb7329719d0192b5ea188c069a8c271f8bb2"
+  }
+]

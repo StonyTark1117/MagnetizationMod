@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "compat.TfmgEmitterLifecycleMixin",
+    "compat.TfmgCastingBasinMixin",
     "compat.TfmgPolarizerBlockEntityMixin"
   ],
   "client": [],

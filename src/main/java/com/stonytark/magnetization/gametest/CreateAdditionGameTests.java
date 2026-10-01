@@ -132,6 +132,28 @@ public final class CreateAdditionGameTests {
         });
     }
 
+
+    @GameTest(template = "empty", timeoutTicks = 160, batch = "caNativeTesla")
+    public static void nativeTeslaAttackConsumesFeAndStampsEquipment(GameTestHelper helper) {
+        NativeElectricalDamageTestSupport.tesla(helper, "createaddition");
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 350, batch = "nativeMotorCraftingConsumesPermanentMagnet")
+    public static void nativeMotorCraftingConsumesPermanentMagnet(GameTestHelper h) {
+        NativeRecipeProductionTestSupport.mechanicalCraft(h, "createaddition_electric_motor_from_permanent_magnet", "createaddition:electric_motor");
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 350, batch = "nativeAlternatorCraftingConsumesPermanentMagnet")
+    public static void nativeAlternatorCraftingConsumesPermanentMagnet(GameTestHelper h) {
+        NativeRecipeProductionTestSupport.mechanicalCraft(h, "createaddition_alternator_from_permanent_magnet", "createaddition:alternator");
+    }
+
+
+    @GameTest(template = "empty", timeoutTicks = 260, batch = "caNativeMixing")
+    public static void nativeMixerConsumesSeedOilAndProducesFerrofluid(GameTestHelper h) {
+        NativeRecipeProductionTestSupport.mixing(h, "createaddition:seed_oil");
+    }
+
     private static void assertBlockRole(final GameTestHelper helper, final String path,
                                         final boolean ferromagnetic, final boolean conductive) {
         final Block block = block(path);
