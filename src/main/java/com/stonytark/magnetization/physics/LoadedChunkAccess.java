@@ -14,6 +14,19 @@ import java.util.function.Function;
 /** Non-loading reads used by tracked-emitter hot paths. */
 public final class LoadedChunkAccess {
     private static final Direction[] DIRECTIONS = Direction.values();
+    // Weak neighbors and their direct neighbors occupy only the 25 cells at
+    // Manhattan distance <= 2, not all 125 cells of the enclosing cube.
+    private static final int[] SIGNAL_CACHE_INDICES = signalCacheIndices();
+
+    private static int[] signalCacheIndices() {
+        final int[] indices = new int[125];
+        java.util.Arrays.fill(indices, -1);
+        int index = 0;
+        for (int x = -2; x <= 2; x++) for (int y = -2; y <= 2; y++) for (int z = -2; z <= 2; z++) {
+            if (Math.abs(x) + Math.abs(y) + Math.abs(z) <= 2) indices[((x + 2) * 5 + y + 2) * 5 + z + 2] = index++;
+        }
+        return indices;
+    }
     private LoadedChunkAccess() {}
 
     /** Returns the already-full chunk or {@code null}; never creates a ticket. */
@@ -48,8 +61,8 @@ public final class LoadedChunkAccess {
         private int chunkZ;
         private LevelChunk chunk;
         private final int originX, originY, originZ;
-        private final BlockState[] states = new BlockState[125];
-        private final boolean[] read = new boolean[125];
+        private final BlockState[] states = new BlockState[25];
+        private int read;
 
         private NeighborStateReader(final ServerLevel level, final BlockPos origin) {
             this.level = level;
@@ -64,8 +77,8 @@ public final class LoadedChunkAccess {
             final int dx = pos.getX() - originX + 2, dy = pos.getY() - originY + 2,
                     dz = pos.getZ() - originZ + 2;
             final int index = dx >= 0 && dx < 5 && dy >= 0 && dy < 5 && dz >= 0 && dz < 5
-                    ? (dx * 5 + dy) * 5 + dz : -1;
-            if (index >= 0 && read[index]) return states[index];
+                    ? SIGNAL_CACHE_INDICES[(dx * 5 + dy) * 5 + dz] : -1;
+            if (index >= 0 && (read & (1 << index)) != 0) return states[index];
             final int x = Math.floorDiv(pos.getX(), 16), z = Math.floorDiv(pos.getZ(), 16);
             if (x != chunkX || z != chunkZ) {
                 chunkX = x;
@@ -73,7 +86,7 @@ public final class LoadedChunkAccess {
                 chunk = level.getChunkSource().getChunkNow(x, z);
             }
             final BlockState result = chunk == null ? null : chunk.getBlockState(pos);
-            if (index >= 0) { read[index] = true; states[index] = result; }
+            if (index >= 0) { read |= 1 << index; states[index] = result; }
             return result;
         }
     }

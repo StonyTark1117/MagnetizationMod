@@ -41,6 +41,23 @@ public final class FluidRedstone {
 
     private static final Direction[] DIRECTIONS = Direction.values();
     private static boolean recomputing = false;
+    private static final ThreadLocal<Scratch> SCRATCH = ThreadLocal.withInitial(Scratch::new);
+
+    /** Capacity reuse only: no topology, block states or power survive a call. */
+    private static final class Scratch {
+        final it.unimi.dsi.fastutil.longs.LongArrayList queue = new it.unimi.dsi.fastutil.longs.LongArrayList();
+        final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap indices = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+        final List<BlockPos> cells = new ArrayList<>(), written = new ArrayList<>();
+        final it.unimi.dsi.fastutil.ints.IntArrayList external = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        final it.unimi.dsi.fastutil.ints.IntArrayList edges = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states =
+                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+        Scratch() { indices.defaultReturnValue(-1); }
+        void clear() {
+            queue.clear(); indices.clear(); cells.clear(); written.clear();
+            external.clear(); edges.clear(); states.clear();
+        }
+    }
 
     private FluidRedstone() {}
 
@@ -87,9 +104,10 @@ public final class FluidRedstone {
      * recompute; signal methods still receive the actual level and live BEs. */
     private static final class ReadCache {
         private final Level level;
-        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states =
-                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
-        private ReadCache(final Level level) { this.level = level; }
+        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states;
+        private ReadCache(final Level level, final Scratch scratch) {
+            this.level = level; this.states = scratch.states;
+        }
         private BlockState state(final BlockPos pos) {
             final long key = pos.asLong();
             BlockState state = states.get(key);
@@ -127,17 +145,17 @@ public final class FluidRedstone {
      * components (lamps, repeaters, …) re-read the fresh signal.
      */
     private static void recomputeNetwork(final Level level, final BlockPos start, final Block block) {
+        final Scratch scratch = SCRATCH.get();
         recomputing = true;
         try {
             // Retain the original breadth-first discovery order and exact cap.
             // Queue entries beyond the cap have zero power, just as before.
-            final it.unimi.dsi.fastutil.longs.LongArrayList queue = new it.unimi.dsi.fastutil.longs.LongArrayList();
-            final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap indices = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
-            indices.defaultReturnValue(-1);
-            final List<BlockPos> cells = new ArrayList<>();
-            final it.unimi.dsi.fastutil.ints.IntArrayList external = new it.unimi.dsi.fastutil.ints.IntArrayList();
-            final it.unimi.dsi.fastutil.ints.IntArrayList edges = new it.unimi.dsi.fastutil.ints.IntArrayList();
-            final ReadCache reads = new ReadCache(level);
+            final var queue = scratch.queue;
+            final var indices = scratch.indices;
+            final List<BlockPos> cells = scratch.cells;
+            final var external = scratch.external;
+            final var edges = scratch.edges;
+            final ReadCache reads = new ReadCache(level, scratch);
             final long seed = start.asLong();
             queue.add(seed);
             indices.put(seed, 0);
@@ -160,7 +178,7 @@ public final class FluidRedstone {
             final int[] power = FluidSignalSolver.solve(external.toIntArray(), edges.toIntArray());
 
             // 3. Write changed cells (clients only; we notify neighbours ourselves).
-            final List<BlockPos> written = new ArrayList<>();
+            final List<BlockPos> written = scratch.written;
             for (int index = 0; index < cells.size(); index++) {
                 final BlockPos p = cells.get(index);
                 final BlockState s = level.getBlockState(p);
@@ -174,6 +192,7 @@ public final class FluidRedstone {
             // 4. Notify every component touching the network so it re-reads us.
             for (final BlockPos p : written) level.updateNeighborsAt(p, block);
         } finally {
+            scratch.clear();
             recomputing = false;
         }
     }
