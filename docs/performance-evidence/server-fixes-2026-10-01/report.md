@@ -1,8 +1,15 @@
 # Full-pack stress optimizations — 2026-10-01
 
-Status: final updated-pack measurements and restoration in progress. This file
-must not be read as a completed performance validation until the result tables
-and restoration evidence are recorded below.
+**Gas churn improves by 21.4% in matched sprint medians, and the bulk-fluid peak
+falls 38.8%, from 15.26 to 9.33 seconds. The bulk hitch remains severe.** Coaster
+classification is bypassed when reactions are enabled; the final measurements
+do not demonstrate overall dense-field, Lenz-scan or shaft speedups.
+
+Completed on the updated full pack: 30 final-candidate stress scenarios / 150
+samples, matched baseline measurements, normal-speed profiles, and 37 immediate
+fluid assertions. All 293 unit tests and 264 GameTest cases passed in their
+recorded profiles. The original world and server settings are restored with the
+tested Magnetization build and Slugterra 1.0 installed.
 
 ## Scope and build identity
 
@@ -98,6 +105,72 @@ spawns, random ticks, weather/daylight changes, drops and autosaves are disabled
 for controlled measurement. This does not establish survival, terrain-generation,
 client/network, long-soak or all-mod compatibility performance.
 
+## Updated-pack performance results
+
+Both columns use Slugterra 1.0 and the same full pack. Percentages describe this
+measured pair, not a guaranteed speedup on other hardware or saves. Method costs
+are inclusive sampled execution time divided by ticks; rows overlap and must
+not be summed. One normal-speed capture per workload/build was collected, so
+small differences and individual worst ticks require caution.
+
+| Finding / measured quantity | Baseline | Final candidate | Change |
+|---|---:|---:|---:|
+| Bulk setup, worst tick (ms) | 15257.956 | 9332.594 | -38.8% |
+| Gas recomputation (sampled ms/tick) | 3.796 | 1.919 | -49.4% |
+| External tracker (sampled ms/tick) | 1.549 | 1.956 | +26.3% |
+| Coaster structure classification (sampled ms/tick) | 0.468 | Not observed in samples | Classification bypassed when enabled |
+| Lenz conductor scan (sampled ms/tick) | 0.451 | 0.523 | +16.0% |
+| Shaft manager (sampled ms/tick) | 0.597 | 0.607 | +1.7% |
+
+Sprint values below are medians of five 1,200-tick sample averages. Brackets
+show the minimum–maximum sample averages, not individual tick percentiles.
+
+| Matched scenario | Baseline ms/tick [range] | Final ms/tick [range] | Change |
+|---|---:|---:|---:|
+| `empty_start` | 1.78 [1.77–1.86] | 1.90 [1.82–2.18] | +6.7% |
+| `block_item_control` | 1.78 [1.76–1.87] | 1.82 [1.74–1.91] | +2.2% |
+| `active_emitters` | 2.51 [2.46–2.78] | 2.44 [2.32–2.61] | -2.8% |
+| `dense_external` | 3.05 [2.90–3.15] | 3.05 [2.97–3.24] | +0.0% |
+| `gas_volume` | 5.23 [5.13–5.32] | 4.11 [4.07–4.24] | -21.4% |
+| `gas_stable` | 1.69 [1.60–1.71] | 1.69 [1.66–1.79] | +0.0% |
+| `ferrofluid_external` | 2.08 [2.00–2.24] | 2.14 [2.07–2.34] | +2.9% |
+| `shafts_256` | 2.76 [2.69–3.07] | 2.90 [2.73–3.10] | +5.1% |
+| `ships_16` | 7.10 [6.96–7.19] | 7.03 [6.92–7.19] | -1.0% |
+| `empty_end` | 1.70 [1.66–1.88] | 1.74 [1.72–1.98] | +2.4% |
+
+Normal-speed capture details:
+
+| Workload | Baseline minute-median range / worst tick (ms) | Final minute-median range / worst tick (ms) | Baseline / final Spark |
+|---|---:|---:|---|
+| `dense_external` | 4.10–4.17 / 36.51 | 4.07–4.09 / 33.96 | [baseline](https://spark.lucko.me/74GJs7Toc6) / [final](https://spark.lucko.me/fCzgWxmFXE) |
+| `gas_volume` | 5.96–5.97 / 73.84 | 5.46–5.51 / 41.33 | [baseline](https://spark.lucko.me/kSFbBF1prE) / [final](https://spark.lucko.me/aTqJcEfjKl) |
+| `shafts_256` | 3.20–3.26 / 44.77 | 3.22–3.26 / 37.55 | [baseline](https://spark.lucko.me/6lVuaRwUmH) / [final](https://spark.lucko.me/stvLu87sgr) |
+| `ships_16` | 7.75–7.85 / 90.09 | 7.65–7.70 / 149.24 | [baseline](https://spark.lucko.me/SlHxKXDpjE) / [final](https://spark.lucko.me/ujOSZ8neaF) |
+
+Bulk capture: [baseline](https://spark.lucko.me/fs0vE33gaX) / [final](https://spark.lucko.me/5CrVCl9D5V).
+
+All thirty final-candidate scenarios and their 150 samples are retained in
+[sprint-summary.json](sprint-summary.json). The twenty extra scenarios have no
+matched updated-pack baseline here and are throughput/activation checks, not
+evidence of a before/after speedup. Captures and hashes are indexed in
+[profile-manifest.json](profile-manifest.json); per-method costs are in
+[hotspots.json](hotspots.json). [analyze_profiles.py](analyze_profiles.py)
+recreates summaries from the locally retained decoded captures.
+
+## Remaining bulk-edit limit
+
+The 2,048-cell bulk-placement peak falls from 15,257.96 to 9,332.59 ms (38.8%).
+This is still a severe synchronous hitch. Reducing work within each recomputation
+does not remove the repeated traversals caused by dense edits. A future design
+would need precise invalidation or a defined bulk-update boundary; silently
+postponing updates would change the immediate redstone behavior tested here.
+
+Spark's final bulk capture reports 2,215 ticks in metadata and 2,216 when its
+window counters are summed. Both values and the one-tick discrepancy are retained
+in the manifest; normalization uses metadata (difference below 0.05%). The
+120-second duration, start timestamp, file hash and zero-player windows validate.
+This count discrepancy does not change the recorded 9,332.59 ms worst tick.
+
 ## Interpretation of the targeted paths
 
 The final dense-field sprint median is unchanged at 3.05 ms/tick. Its normal-speed
@@ -114,6 +187,17 @@ but do not use it to claim a final shaft speedup. Native kinetic discovery and
 other mods' hooks remain active; changing their cadence or bypassing them would
 need a separate behavior-preserving design.
 
+Lenz conductor scanning is 0.451→0.523 sampled ms/tick in the final pair; its
+older-port gain did not reproduce either. Within that scan, sampled
+`FerromagneticCompat.is` cost falls 0.188→0.010 ms/tick; reducing classification
+work did not translate to a demonstrated full-scan speedup. Coaster classification,
+0.468 ms/tick in the updated baseline, is absent from final samples when reactions
+are enabled. Total sampled Magnetization work in the moving-ship fixture falls
+1.399→0.882 ms/tick, while whole-tick minute medians improve only modestly. The
+candidate also records a 149.24 ms tick versus 90.09 ms in baseline. A single worst
+tick does not identify its cause, and this run is not evidence of hitch-free
+operation.
+
 ## Gameplay validation
 
 Build, release-JAR verification and all 293 unit tests pass. The new solver has
@@ -122,7 +206,8 @@ There are 264 passing GameTest cases across core, engineering, MR regressions,
 coasters, CNA, IE, Alexs Caves, CreateAddition, TFMG and Slugterra configurations.
 [Validation evidence](gameplay-validation.json) identifies which source revision
 and dependency each gate exercised; unchanged paths were not all rerun after
-every later edit.
+every later edit. Those GameTest gates use isolated dependency profiles; the
+30-scenario stress matrix and 37 fluid assertions run on the full 387-JAR server.
 
 The final fluid refinement passed all 176 core tests. The focused Slugterra test
 checks both projectile movement protocols, turning without speed gain, a live
@@ -133,4 +218,31 @@ fresh-flat supervisor subsequently passed the complete core suite.
 
 A separate full-pack function checks 37 immediate fluid states without yielding
 between source edits and assertions: direct sources, removal, split/rejoin,
-multiple sources and indirect lever power. Its result remains pending.
+multiple sources and indirect lever power. All 37 assertions passed with zero
+failures; [server evidence](fullpack-gameplay.json) pins the artifact and function
+hashes. No gameplay regression was found in these checked cases; this does not
+certify every interaction in the full pack.
+
+## Server restoration and retained artifacts
+
+The original `world` is running again, reporting the same 1,746 block emitters
+and five Sable ships as before testing. Before starting it, `world/level.dat`
+matched the pre-test backup byte for byte. All original server-property values,
+JVM arguments, whitelist and operator entries were restored and checked. The
+performance fixture command is disabled. Both installed JARs were read back and
+matched their recorded SHA-256 values; the old Slugterra JAR is retained with a
+`.disabled` suffix. The original world archive remains
+`/codex-before-fullpack-fixes-20261001.zip`.
+
+Evidence: [restoration checks](restoration-validation.json),
+[world preservation](world-preservation.json),
+[restored server state](restored.json), and
+[dependency readback](restored-dependency.json).
+
+The exact tested Magnetization artifact is retained locally as
+`build/reports/server-fixes-2026-10-01/candidate-v2.jar`; the Slugterra release is
+in that directory's `integration/slugterra-1.0.jar`. The private raw evidence also
+retains old JARs, original configuration backups and all decoded Spark captures.
+Configuration backups and credentials are not committed. The branch contains
+source changes, test additions, the changelog and sanitized audit evidence;
+concurrent Ponder/client work in the original checkout is separate.

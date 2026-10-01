@@ -517,5 +517,11 @@
   "initial_direct_core_run": "Unrelated separator visual test failed in terrain world; repository fresh-flat supervisor subsequently passed all176, including two later runs.",
   "latest_source": "8217baf4586d4e594967283cf483373381af63d4",
   "latest_artifact_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
-  "slugterra_broad_suite": "All 9 tests pass against updated port v1.0; previous 7 failures and control apply only to unofficial.1. See slugterra-control.json."
+  "slugterra_broad_suite": "All 9 tests pass against updated port v1.0; previous 7 failures and control apply only to unofficial.1. See slugterra-control.json.",
+  "fullpack_fluid_assertions": {
+    "passed": 37,
+    "artifact_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+    "function_sha256": "2a68a2782081cbe14f536d61c1d4f064157d913977629449aaa71e2c07bac883",
+    "result_file": "fullpack-gameplay.json"
+  }
 }

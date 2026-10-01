@@ -1,0 +1,12 @@
+{
+  "method": "com.stonytark.magnetization.compat.FerromagneticCompat.is",
+  "ancestor": "com.stonytark.magnetization.content.effect.LenzBrakingHandler",
+  "scenario": "ships_16",
+  "baseline_stage": "baseline-updated",
+  "candidate_stage": "candidate-v2",
+  "baseline_sampled_ms": 676,
+  "candidate_sampled_ms": 36,
+  "baseline_ticks": 3600,
+  "candidate_ticks": 3600,
+  "interpretation": "Classification cost decreases in samples, but full-scan cost does not improve. This is not an overall Lenz speedup."
+}

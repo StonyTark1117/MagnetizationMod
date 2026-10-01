@@ -39,5 +39,9 @@
     "server_status": "SERVER_STATUS_RUNNING",
     "resume": "Only unfinished sprint samples; no profile or artifact redeployment restart"
   },
-  "status": "Updated-pack matched sprints complete; final profiles, remaining stress cases, gameplay function and restoration pending"
+  "status": "Measurements, bounded gameplay checks and original-world restoration complete; dense-field, full Lenz-scan and shaft speedups not demonstrated.",
+  "final_stress_samples": 150,
+  "final_stress_scenarios": 30,
+  "fullpack_fluid_assertions": 37,
+  "restoration_evidence": "restoration-validation.json"
 }

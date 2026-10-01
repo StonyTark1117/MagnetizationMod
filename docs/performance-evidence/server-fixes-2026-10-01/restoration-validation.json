@@ -1,0 +1,15 @@
+{
+  "all_original_server_property_values_restored": true,
+  "temporary_panel_keys_restored": [
+    "level",
+    "jvmOpts",
+    "enableWhitelist"
+  ],
+  "restored_file_hashes": {
+    "user_jvm_args.txt": "ed1e81d341a27036c1ab1ad67b7b32f4bf36d6c494694925a14746cd90266274",
+    "whitelist.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "ops.json": "5e4d561253f1075da0da1eab8a75902773a8339025b3df9b553c45ba3716582e"
+  },
+  "fixture_disabled": true,
+  "candidate_jar_readback_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a"
+}

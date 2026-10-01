@@ -1,0 +1,10 @@
+{
+  "players": "There are 0 of a max of 5 players online: \n",
+  "stats": "Stats in minecraft:overworld: 1746 block emitters, 0 mobile golems, 5 Sable ships, 0 magnetized entities.\n",
+  "fixture_command": {
+    "success": true,
+    "output": "Unknown or incomplete command, see below for error\nmagperf counts<--[HERE]\n"
+  },
+  "jar_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+  "level_name": "world"
+}

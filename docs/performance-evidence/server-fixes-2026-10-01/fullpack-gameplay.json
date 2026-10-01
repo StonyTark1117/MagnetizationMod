@@ -1,0 +1,15 @@
+{
+  "artifact_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+  "function_sha256": "2a68a2782081cbe14f536d61c1d4f064157d913977629449aaa71e2c07bac883",
+  "assertions": 37,
+  "markers": [
+    {
+      "timestamp": "2026-10-01T22:02:09.593776920Z",
+      "message": "\u001b[K\u001b[32m[22:02:09] [Server thread/INFO] [minecraft/MinecraftServer]: [Not Secure] [Server] MAG_FULLPACK_REGRESSION_PASS",
+      "level": "info",
+      "source": "stdout"
+    }
+  ],
+  "score": "failures has 0 [mag_regress]\n",
+  "players": "There are 0 of a max of 5 players online: \n"
+}
