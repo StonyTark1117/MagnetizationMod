@@ -1,0 +1,44 @@
+[
+  {
+    "scenario": "bulk_ferrofluid_setup",
+    "sha256": "88a0fe58d272932fca484853f6d8e28273c64b3c66324dfcaa61b96ed6f0fd98",
+    "url": "https://spark.lucko.me/FpdJdb4daM",
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-bulk_ferrofluid_setup.spark",
+    "server_file": null
+  },
+  {
+    "scenario": "dense_external",
+    "sha256": "4fa12b7244f31d28169565d5602b0bee8f0daaef2aa42973ba64f938176cbbe9",
+    "url": "https://spark.lucko.me/Jy7ybRBntO",
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-dense_external.spark",
+    "server_file": null
+  },
+  {
+    "scenario": "empty_start",
+    "sha256": "efbac2bb82b137977606ef409109fb036f90491868343a7836ba603ce0705574",
+    "url": "https://spark.lucko.me/ccMErqYWdT",
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-empty_start.spark",
+    "server_file": null
+  },
+  {
+    "scenario": "gas_volume",
+    "sha256": "6963b0ca1e5e6f6902f2736d2684e0780253d08c0491afb7bd69e456b7616492",
+    "url": "https://spark.lucko.me/Va1IlNJsE4",
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-gas_volume.spark",
+    "server_file": null
+  },
+  {
+    "scenario": "shafts_256",
+    "sha256": "d0ec38e310c93bf458ce9a325043d15e70193beb4a1fd0aba67282f8df5ce9c8",
+    "url": null,
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-shafts_256.spark",
+    "server_file": "/config/spark/profile-2026-10-01_19.22.17.sparkprofile"
+  },
+  {
+    "scenario": "ships_16",
+    "sha256": "39270eebc5d6f0e908f54ceaf20be26c7733c200a0e01cf51525be2e0811affc",
+    "url": "https://spark.lucko.me/nRWkt80AeR",
+    "raw_local_file": "build/reports/server-stress-2026-10-01/profile-ships_16.spark",
+    "server_file": null
+  }
+]
