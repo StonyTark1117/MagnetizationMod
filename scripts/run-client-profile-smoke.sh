@@ -176,7 +176,7 @@ if [[ -n $unexpected_errors ]]; then
 fi
 
 if [[ $required_mods == 'ponder,railways,copycats' ]] \
-        && ! grep -Fq 'Registered 16 core and 2 optional Magnetization Ponder scenes' "$log_file"; then
+        && ! grep -Eq 'Registered [1-9][0-9]* core and 2 optional Magnetization Ponder scenes' "$log_file"; then
     echo "$run_task: Steam Rails and Copycats loaded, but both optional Ponder scenes did not register" >&2
     exit 1
 fi

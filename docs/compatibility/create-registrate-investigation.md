@@ -44,7 +44,19 @@ Create can be registering other classes on another worker.
 The [38 additional launch results](evidence/remaining-work/deeper-investigation/startup-followup-results.json)
 include 19 with Magnetization and 19 without it. Combined with the earlier 29,
 67 audited launches reached the connection screen without reproducing the
-original exception. One resource-rewrite collision was explicitly excluded and
+original exception. The 1.4.6 release audit later reproduced the same first
+`Found unused register callbacks` exception in the Ponder/Steam 'n' Rails/Copycats+
+client profile on 2026-10-01. Its [first-failure excerpt](evidence/remaining-work/registrate-recurrence-2026-10-01.txt)
+records the loaded versions and source-log checksum. The subsequent
+`neoforge:swim_speed` failure occurred during registry rollback, as in the
+original report. An isolated run of the same profile passed shortly before the
+recurrence, so this remains intermittent. The recurrence does not establish
+which component corrupted the callback state or verify the diagnostic candidate.
+For the 1.4.6 release audit, this development-client recurrence is tracked as a
+nonblocking upstream dependency issue: the unsafe path occurs without
+Magnetization, and the specific unused-callback exception is development-only.
+It does not prove the published JAR has a startup failure.
+One resource-rewrite collision was explicitly excluded and
 repeated from a frozen build snapshot; it is not a compatibility pass or a
 Registrate recurrence.
 
@@ -86,7 +98,7 @@ frequency. Neither controls nor candidates reproduced the historical failure.
 
 Do not suppress the unused-callback exception or attribute rollback failure as a
 fix. The recorded crash is consistent with the demonstrated upstream race, but
-capturing a corrupt callback state during an actual failing launch remains the
-missing causal evidence. No issue or message has been sent upstream.
+capturing the callback map's corrupt state during an actual failing launch remains
+the missing causal evidence. No issue or message has been sent upstream.
 
 Reproduction tooling and its limits: [diagnostic tools](../../tools/compatibility/README.md).

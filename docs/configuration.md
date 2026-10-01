@@ -46,7 +46,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | performance.pyrrhotiteResidualScanTicks | number | 60; 1-6000 | How often an already-hot pyrrhotite re-checks its heat. Longer than the cold interval, so a running pyrrhotite coasts on residual heat and stays warm briefly after its source is removed. |
 | COMMON | performance.armorVacuumTicks | number | 2; 1-100 | How often magnetized armor sweeps for nearby items. The per-pull impulse scales with this interval, so raising it stays visually identical while doing fewer scans. 1 = every tick. |
 | COMMON | performance.mrFluidHardenTicks | number | 5; 1-1200 | How often MR fluid / hardened MR fluid re-checks whether it's in a field to harden or revert. 5 = 4×/s. |
-| COMMON | performance.magnetizedFerrofluidTicks | number | 3; 1-1200 | How often magnetized ferrofluid pools re-emit their weak field. |
+| COMMON | performance.magnetizedFerrofluidTicks | number | 3; 1-1200 | How often magnetized Ferrofluid source blocks re-emit their MEDIUM field. |
 | COMMON | performance.galliumCurrentTicks | number | 2; 1-1200 | How often powered gallium in a field pushes entities. Lower = smoother flow, more entity scans. |
 | COMMON | performance.ferrofluidMagTicks | number | 4; 1-1200 | How often magnetized ferrofluid creeps one cell toward/away from a field. |
 | COMMON | performance.ferrofluidPlainTicks | number | 8; 1-1200 | How often plain ferrofluid creeps, and how often the recede pass runs. |
@@ -466,7 +466,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.immersiveEngineeringRecipesEnabled | boolean | true | Load IE Mixer Ferrofluid and Metal Press Magnetic Plate routes. Takes effect on data reload. |
 | COMMON | compat.immersiveEngineeringRailgunReaction | boolean | true | Allow launched Immersive Engineering Railgun Shot entities to receive magnetic field force. |
 | COMMON | compat.immersiveEngineeringFieldForceMultiplier | number | 1.0; 0.0-100.0 | Scales fields emitted by IE Electromagnets and Tesla Coils; 0 is a soft disable. |
-| COMMON | compat.immersiveAircraftMagneticSpeedLimit | number | 2.0; 0.1-4.0 | Limits added magnetic acceleration for piloted aircraft to 2 blocks/tick by default. Existing faster native flight is preserved and fields can still brake it. Uses the server value; config reload applies to subsequent impulses. |
+| COMMON | compat.immersiveAircraftMagneticSpeedLimit | number | 1.0; 0.1-4.0 | Limits added magnetic acceleration for piloted aircraft to 1 block/tick by default. Existing faster native flight is preserved and fields can still brake it. Uses the server value; config reload applies to subsequent impulses. |
 | COMMON | compat.alexsCavesCompatEnabled | boolean | true | Master switch for Alex's Caves field, material, effect, and supplemental recipe integration. |
 | COMMON | compat.alexsCavesMagnetronLirmEnabled | boolean | false | Default off. Successful physical Magnetron melee hits trigger LIRM equipment stamping and nearby log petrification. Requires Alex’s Caves compatibility and LIRM enabled; applies on config reload. |
 | COMMON | compat.alexsCavesFieldsEnabled | boolean | true | Project active Azure and Scarlet Magnet fields to physics ships. Alex's Caves keeps its own entity movement to prevent doubled force. |
@@ -498,6 +498,16 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.quarkToretoiseCompatEnabled | boolean | true | Default on. Iron and copper ore react according to raw-metal item tags; harvested shells, coal, redstone and lapis do not. Reads current ore each tick. Equipment, explicit tags and the administrative veto remain independent. |
 | COMMON | compat.extraGolemsRebornCompatEnabled | boolean | true | Recognize material-based golems from Reborn 21.1.0.1. Server-authoritative; updates on the next tick after config reload. Explicit entity tags and magnetic equipment remain effective when disabled. |
 | COMMON | compat.extraGolemsRebornMaterials | list | [golems:raw_iron, golems:raw_gold, golems:raw_copper, golems:gold, golems:netherite, golems:ancient_debris, golems:copper, golems:exposed_copper, golems:weathered_copper, golems:oxidized_copper, golems:waxed_copper, golems:waxed_exposed_copper, golems:waxed_weathered_copper, golems:waxed_oxidized_copper] | Material IDs with intrinsic susceptibility 1.0. Defaults include raw iron/gold/copper, gold, netherite, ancient debris and all copper oxidation/waxing variants. Wood, stone and nether brick are excluded. Empty disables automatic recognition. Valid custom IDs may be supplied by golem datapacks; changes apply on the next tick after config reload. |
+| COMMON | compat.slugterraCompatEnabled | boolean | true | Slugterra integration |
+| COMMON | compat.slugterraDeflectionEnabled | boolean | true | Experimental Slugterra trajectory deflection |
+| COMMON | compat.slugterraDeflectionMaxTurn | number | 6.0; 0.1-30.0 | Slug deflection degrees per tick |
+| COMMON | compat.slugterraElectricEnabled | boolean | true | Slugterra electric remnant magnetism |
+| COMMON | compat.slugterraElectricCooldown | number | 100; 1-24000 | Electric remnant magnetism cooldown |
+| COMMON | compat.slugterraMountsEnabled | boolean | true | Slugterra mechanical mounts |
+| COMMON | compat.slugterraMountSusceptibility | number | 1.0; 0.0-8.0 | Mechanical mount susceptibility |
+| COMMON | compat.slugterraMountMaxImpulse | number | 0.25; 0.001-1.0 | Mechanical mount impulse limit |
+| COMMON | compat.slugterraEquipmentEnabled | boolean | true | Slugterra magnetic equipment |
+| COMMON | compat.slugterraOresEnabled | boolean | true | Slugterra cavern ores |
 | COMMON | compat.ironworksCompatEnabled | boolean | true | Master switch for Create: Ironworks metal armor and material tag integration. Takes effect on data reload. |
 | COMMON | compat.coastersAdditionsCompatEnabled | boolean | true | Master switch for Create: Coasters Simulated Additions integration. Takes effect on data reload. |
 | COMMON | compat.coasterFinMagnetizationEnabled | boolean | true | Allow Track Control Fins from Coasters Simulated Additions to count as magnetic emitters and add ship susceptibility. Requires Coasters Simulated Additions Compatibility; takes effect on data reload. |
@@ -508,7 +518,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.simulatedMissilesCompatEnabled | boolean | true | Master switch for Magnetization's CBC Aeronautics Missiles integration. |
 | COMMON | compat.simulatedMissilesGuidanceEmpEnabled | boolean | true | Permanently disable guidance on Sable missiles intersecting an EMP Flux Charge pulse. Propulsion, payloads, fuzes, and ordinary Sable physics remain unchanged. |
 | COMMON | compat.steamNRailsCompatEnabled | boolean | true | Master switch for Steam 'n' Rails materials, projected train forces, Structural Inducer exclusions, and Ponder integration. |
-| COMMON | compat.patchouliCompatEnabled | boolean | true | Master switch for the Patchouli Field Manual book, recipes, and automatic first-login gift. Restart after re-enabling it. |
+| COMMON | compat.patchouliCompatEnabled | boolean | true | Master switch for the Patchouli Field Manual book, recipes, and automatic first-login gift. Restart both client and server after re-enabling it. |
 | COMMON | compat.justEnoughResourcesCompatEnabled | boolean | true | Master switch for registering Magnetization's naturally generated ores and geodes with Just Enough Resources. Takes effect on restart. |
 | COMMON | compat.jadeCompatEnabled | boolean | true | Master switch for Magnetization field and machine information in Jade. Takes effect on restart. |
 | COMMON | compat.wthitCompatEnabled | boolean | true | Master switch for Magnetization field, machine, fluid, and material information in WTHIT. Takes effect on restart. |
@@ -532,7 +542,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.tfmgPolarizerVoltageForExtreme | number | 500; 1-1000000 | TFMG voltage mapped to the EXTREME field tier; lower positive voltages scale geometrically upward from WEAK. |
 | COMMON | compat.tfmgPolarizerForceMultiplier | number | 1.0; 0.0-100.0 | Scales the voltage-derived Polarizer force. Set 0 for a soft disable. |
 | COMMON | compat.allowRedstonePower | boolean | true | Whether redstone signal activates the addon's redstone-powered field emitters and Railgun Emitters. Default true. Does not affect propulsion machines; use propulsion.allowRedstoneThrustPower for those. Set false to force players to feed FE/RF — useful on hardcore servers. |
-| COMMON | compat.allowEnergyPower | boolean | true | Whether FE/RF energy activates the addon's emitters. Default true. Any FE-providing mod (C&A, Mekanism, Thermal, IE, AE2) works. Set false to disable energy-driven emitters. |
+| COMMON | compat.allowEnergyPower | boolean | true | Allow supported machines and emitters to use NeoForge FE. Requires a source that transfers FE into their energy capability; not every energy mod or storage item can do this. |
 | COMMON | compat.requireRedstoneAndEnergy | boolean | false | Require BOTH redstone and energy at once to run an emitter, instead of either-or. Default off (redstone OR FE runs it). When on: the emitter still accepts and buffers FE/RF at all times, but stays off — and burns no energy — until it also receives a redstone signal; with both present it runs and drains energy. Lets you pre-charge a magnet and gate its activation with redstone. Needs both Allow Redstone Power and Allow FE/RF Power on. |
 | COMMON | compat.analogRedstoneElectromagnet | boolean | false | Scale the Electromagnet's field force with the analog redstone level (1-15) instead of running at full strength for any signal. Default off. Signal 1 gives 200 N (the Weak tier's force) and signal 15 gives 8000 N (the Extreme tier's force), ramped geometrically in between, so every redstone level is an equal proportional step — wire a comparator, an analog sensor, or a run of redstone dust to get a real throttle. The strength tier picked in the GUI is unchanged and still sets the field's RANGE; only force is scaled. Only applies while redstone is driving — on FE/RF the emitter always runs at full configured strength, and a partial signal still consumes no FE. Adjacent hematite and Halbach arrays scale the throttled force proportionally, so both keep working as usual. |
 | COMMON | compat.analogRedstoneDipole | boolean | false | Scale the Dipole Electromagnet's field force with the analog redstone level (1-15). Default off. Both poles scale together. See Analog Redstone — Electromagnet for the full description. |
@@ -552,32 +562,3 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | compat.anomalyAffectsNaturesCompass | boolean | true | When true (default), Nature's Compass (if installed) also scrambles inside the anomaly. Set false to keep biome-search functional even inside the flux. |
 | COMMON | compat.anomalyAffectsExplorersCompass | boolean | true | When true (default), Explorer's Compass (if installed) also scrambles inside the anomaly. Set false to keep structure-search functional even inside the flux. |
 | COMMON | compat.ae2MeteoriteHookEnabled | boolean | true | If true and Applied Energistics 2 is installed, every AE2 meteor structure also emits a decaying magnetic field at its centre (same decay curve as our native meteorite_core, no extra block placed). Disable to skip the per-chunk AE2 scan if you don't want the cross-mod integration. |
-
-## Slugterra local-port compatibility
-
-`compat.slugterraCompatEnabled` (default `true`) gates all Slugterra integration.
-`compat.slugterraOresEnabled` (default `true`) independently enables cavern
-iron/copper/gold dowsing, extraction and dropped-item magnetism. Reload data after
-changing these values. See [verification and local test setup](compatibility/slugterra.md).
-
-`compat.slugterraEquipmentEnabled` (default `true`) controls dropped capsule,
-blaster and energy-core response plus blaster magnetization/held item attraction.
-It is subordinate to `slugterraCompatEnabled`; reload data after changes.
-
-`compat.slugterraMountsEnabled` (default `true`) enables intrinsic response for
-Bajoterra's three mechanical mounts. `slugterraMountSusceptibility` defaults to
-`1.0` (range 0–8); `slugterraMountMaxImpulse` defaults to `0.25` blocks/tick per
-field (range 0.001–1). All are subordinate to the Slugterra master switch.
-
-`compat.slugterraElectricEnabled` (default `true`) connects fresh electric shock
-to equipment-only LIRM. `slugterraElectricCooldown` defaults to 100 ticks (range
-1–24,000). Both the Slugterra master and global LIRM setting must be enabled.
-
-`compat.slugterraDeflectionEnabled` defaults to `true` after live multiplayer and
-ability verification. It retains its experimental label. Existing explicit
-`false` values are preserved; change the setting to opt in on those installations. This experimental option
-selects normal/dark Armashelt and Rammstone in flight.
-`compat.slugterraDeflectionMaxTurn` defaults to 6 degrees per slug per game tick
-(range 0.1–30), shared across all fields. Deflection changes direction while
-preserving current speed; native drag and abilities still run. Both controls
-are subordinate to the Slugterra master switch.

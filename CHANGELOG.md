@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — Magnetic engineering
+## 1.4.6 — Compatibility audit and magnetic engineering
 
 - Expand docking into a seven-stage capture/link/output/cooperative-anchor tutorial; add Railgun Remote, Imprint Module, Tractor Beam, Pyrrhotite heat/catalysts, Gyrostabilizer and Induction Pad scenes. Add the missing Magnetic Shaft and docking playback assertions, with native interaction and physics GameTests behind the new tutorials. Validate all 32 catalog scenes and 125 instructions; fix camera/caption/hint overlap in five tutorials and wait for stable visible captions before audit capture.
 - Add six native Ponder tutorials: magnetic basics and ship polarity, Magnetic Excavator, repulsor transport with Vector Core and copper braking, switchable MR Fluid bridges, field-strength control, and equipment magnetization. Register item targets as well as blocks, including Vector Core and the MR Fluid bucket. Validate each new instruction and every advertised target in native playback.
@@ -8,8 +8,6 @@
 - Add Create-goggles ship inspection using server-calculated applied forces, turning torque, individual sources and shared force-cap limiting. Keep the Field Compass unchanged.
 - Add anchor-linked Magnetic Switch outputs for target presence, settled state, target loss and analog distance, with dwell, hysteresis and motion measured relative to moving docks. Preserve proximity mode and show docking reasons through goggles.
 - Add distinct Ferromagnetic, Samarium–Cobalt and Neodymium Magnetic Shafts with independent server-configurable ranges: nearby receivers share an independently driven source's signed RPM and original Create stress capacity, without retransmission or self-sustaining loops. Support drive handoff, visible conflicts, range loss and source removal; include an original rotor model, recipe, loot and guides.
-
-## 1.4.6 — Compatibility audit (unreleased)
 
 - Reduce synchronous conductive-fluid redstone work with indexed graph traversal and a queued signal solver; reuse gas identity reads within each recomputation. Preserve signal ordering, topology changes, caps and energy behavior.
 - Skip coaster classification when field reactions are enabled, reuse conductor classification within each Lenz scan, consolidate loaded-shaft lookups, and reuse projectile-type classification within existing target snapshots. See the [full-pack stress comparison and remaining limits](docs/performance-evidence/server-fixes-2026-10-01/report.md).
@@ -47,7 +45,7 @@
 - Verify nine native Iron’s Spells casts and Scylla’s storm, spear goal and electric whip deliver damage and LIRM. Keep physical Magnetron attacks non-LIRM by default.
 - Verify native Supplementaries cannon firing, projectile travel and fuel/ammo consumption aboard moving ships. Verify a native bellows/furnace/hopper/chest production line against ground controls. Localize continuous pulley payload loss to missing destination block-entity reconstruction during Sable assembly; retain it as a separate adapter proposal.
 - Refresh Patchouli, Curios and EMI client interactions; fix low-contrast EMI information text and missing material-tag names. Rerun 40 pinned compatibility profiles on Sable 2.0.5; final checks pass 320 required GameTests across 44 profiles and 255 unit tests. Keep the separate pulley diagnostic failures explicit.
-- Investigate the intermittent Create/Registrate startup failure across 67 audited launches without recurrence. Demonstrate concurrent upstream Registrate access with Magnetization absent and reproduce the empty-callback symptom in a pinned-library model. A separate six-control/six-candidate diagnostic comparison preserves registry contents while removing observed registration overlap. The original crash’s corrupt mutation remains uncaptured; no production startup fix is claimed.
+- Investigate the intermittent Create/Registrate startup failure: 67 earlier audited launches passed, but the final release matrix reproduced the original first exception. Demonstrate concurrent upstream Registrate access with Magnetization absent and reproduce the empty-callback symptom in a pinned-library model. A separate six-control/six-candidate diagnostic comparison preserves registry contents while removing observed registration overlap. The corrupt mutation remains uncaptured; no production startup fix is claimed.
 - Fix Alex's Caves potion replacement so `OURS_ONLY` and `THEIRS_ONLY` do not leave both effects active.
 - Add pinned registry/behavior profiles and distinguish official mods from unofficial ports. Record the Create: Magnetics server defect and conditional test evidence from the supplied local workaround; no new production dependency is added.
 - Reborn evidence covers native construction, material changes, equipment, effects, polarity, vetoes, physical emitters, magnetic golems, client rendering and save/reopen, plus our own golem construction/ownership/repair regressions. Detailed scope and remaining gaps: [compatibility matrix](docs/compatibility/audit-1.21.1.md).

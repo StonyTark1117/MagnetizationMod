@@ -2,7 +2,7 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
-Development release: **1.4.6**. This release adds native Extra Golems Reborn 21.1.0.1 support and corrects compatibility defects found by auditing the original integration sweep. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The later Ironworks and Coasters Additions integrations remain intact.
+Release candidate: **1.4.6**. This release adds magnetic shaft networks, docking controls, ship-force inspection, and Ponder tutorials alongside native Extra Golems Reborn 21.1.0.1 support, compatibility corrections, and performance improvements. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The Ironworks and Coasters Additions integrations remain intact.
 
 ## Requirements
 
@@ -519,6 +519,7 @@ without it, which is how you tell "our bug" from "the compat pack's bug".
 
 ## Known issues
 
+- An intermittent upstream Create/Registrate registry failure crashed a development client during the 1.4.6 audit's Ponder/Steam 'n' Rails/Copycats+ profile; an isolated run of that profile passed. Concurrent access to the same Registrate instance was observed with Magnetization absent. The first exception and investigation are [recorded here](docs/compatibility/create-registrate-investigation.md). The exact corrupt mutation and a production fix remain unverified.
 - Sable may log `Received a sub-level movement packet for a non-existent sub-level` on the client at low frequency while the Magnetic Excavator is actively pulling. This is a packet-ordering race during the excavator's rapid sub-level assemble→remove cycle for blocks Sable couldn't initialize a body for; it's non-fatal and only affects log noise.
 - Headless Sable physics GameTests can be timing-sensitive under load. If a physics assertion fails, rerun the named isolated batch to establish whether it is reproducible; repeated failure of the same assertion should be treated as a regression, while different one-off failures across runs point to harness timing or isolation.
 
