@@ -1,0 +1,679 @@
+{
+  "method": "Server-thread JFR events restricted to the three measured sprint intervals for each scenario. Warmup, setup, and startup excluded. Inclusive frames overlap; allocation weights are statistical estimates, not exact bytes. Profiled quick run is attribution only, not directly comparable to standard timings.",
+  "scenarios": {
+    "empty_start": {
+      "sample_seconds": 0.4659998416900635,
+      "execution_samples": 0,
+      "mod_execution_samples": 0,
+      "inclusive_mod_frames": [],
+      "nearest_mod_frames": [],
+      "allocation_weight": 105720624,
+      "mod_allocation_weight": 2763520,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+          2763520
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          2763520
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          2763520
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.mrFluidHardenTicks",
+          2763520
+        ]
+      ]
+    },
+    "block_item_control": {
+      "sample_seconds": 1.815000295639038,
+      "execution_samples": 133,
+      "mod_execution_samples": 1,
+      "inclusive_mod_frames": [
+        [
+          "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+          1
+        ]
+      ],
+      "nearest_mod_frames": [
+        [
+          "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+          1
+        ]
+      ],
+      "allocation_weight": 243193624,
+      "mod_allocation_weight": 5622584,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          5622584
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.temporaryLirmApplyTicks",
+          95496
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          95496
+        ]
+      ]
+    },
+    "active_emitters": {
+      "sample_seconds": 3.066999912261963,
+      "execution_samples": 209,
+      "mod_execution_samples": 7,
+      "inclusive_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          5
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          5
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraMountsEnabled",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraCompatEnabled",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraDeflectionEnabled",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.targetSnapshot",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.apply",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility",
+          1
+        ]
+      ],
+      "nearest_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          5
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.targetSnapshot",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          1
+        ]
+      ],
+      "allocation_weight": 801243712,
+      "mod_allocation_weight": 395466728,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          319890520
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          206863320
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraDeflectionEnabled",
+          80913704
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraMountsEnabled",
+          76961928
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraCompatEnabled",
+          65567768
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+          61661768
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+          57375112
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyPreparedToEntity",
+          50321048
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility",
+          39317608
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.apply",
+          35167336
+        ],
+        [
+          "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.tickEmitter",
+          19632472
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+          13914704
+        ],
+        [
+          "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.serverTick",
+          13914440
+        ],
+        [
+          "com.stonytark.magnetization.content.HalbachArray.boostedStrength",
+          11150880
+        ],
+        [
+          "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.applyFieldModifiers",
+          11150880
+        ]
+      ]
+    },
+    "dense_external": {
+      "sample_seconds": 3.6700000762939453,
+      "execution_samples": 293,
+      "mod_execution_samples": 114,
+      "inclusive_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          58
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          58
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+          27
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal",
+          26
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.directSignalTo",
+          22
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraCompatEnabled",
+          21
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+          19
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraDeflectionEnabled",
+          15
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.apply",
+          14
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraMountsEnabled",
+          13
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyPreparedToEntity",
+          11
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+          10
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+          9
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.createNewAgeFieldsEnabled",
+          6
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.isSupportedEmitter",
+          6
+        ]
+      ],
+      "nearest_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          58
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.directSignalTo",
+          21
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+          6
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+          5
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyPreparedToEntity",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.targetSnapshot",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.physics.PerformanceDiagnostics.counters",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToSubLevels",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.isKnownEmitter",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.maximumFieldRange",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess$NeighborStateReader.apply",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.MobileFieldRegistry.snapshotNear",
+          1
+        ]
+      ],
+      "allocation_weight": 5191506256,
+      "mod_allocation_weight": 4122307472,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          3073880552
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.booleanOr",
+          1786500368
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+          805191416
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.applyPreparedToEntity",
+          725510944
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraCompatEnabled",
+          637438960
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraMountsEnabled",
+          478070992
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.apply",
+          461307056
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.slugterraDeflectionEnabled",
+          457114440
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.createNewAgeFieldsEnabled",
+          222266656
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility",
+          213867088
+        ],
+        [
+          "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+          176135760
+        ],
+        [
+          "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+          176135648
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+          167748792
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal",
+          167748624
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.steamRailsFieldReaction",
+          163554728
+        ]
+      ]
+    },
+    "gas_volume": {
+      "sample_seconds": 0.7680001258850098,
+      "execution_samples": 35,
+      "mod_execution_samples": 18,
+      "inclusive_mod_frames": [
+        [
+          "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.tick",
+          17
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.GasExcitation.recompute",
+          17
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.GasExcitation.fluidAt",
+          4
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+          1
+        ]
+      ],
+      "nearest_mod_frames": [
+        [
+          "com.stonytark.magnetization.content.fluid.GasExcitation.recompute",
+          13
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.GasExcitation.fluidAt",
+          4
+        ],
+        [
+          "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+          1
+        ]
+      ],
+      "allocation_weight": 343956632,
+      "mod_allocation_weight": 303521040,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.tick",
+          295418960
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.GasExcitation.recompute",
+          295418960
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          8102080
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          8102080
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.railgunTicks",
+          4193712
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks",
+          3908368
+        ]
+      ]
+    },
+    "ferrofluid_external": {
+      "sample_seconds": 1.7230000495910645,
+      "execution_samples": 19,
+      "mod_execution_samples": 14,
+      "inclusive_mod_frames": [
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+          4
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.scheduleNearActiveTargets",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.gatherTargets",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.gatherMagnets",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.doubleOr",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.createNewAgeFieldForceMultiplier",
+          2
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.ferrofluidMagTicks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.grow",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalListInChunks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidChunkSearch.occupiedChunks",
+          1
+        ]
+      ],
+      "nearest_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.gatherTargets",
+          3
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.grow",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalListInChunks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidChunkSearch.occupiedChunks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalInChunks",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+          1
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.gatherAnchors",
+          1
+        ]
+      ],
+      "allocation_weight": 347978928,
+      "mod_allocation_weight": 247419368,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+          75486624
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+          75477784
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.anchorsNear",
+          67090352
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          58712056
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.scheduleNearActiveTargets",
+          54518320
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.gatherTargets",
+          54518320
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+          37743168
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.around",
+          29356008
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.bounds",
+          29356008
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+          29355728
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.currentField",
+          29355728
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.gatherAnchors",
+          20968048
+        ],
+        [
+          "com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal",
+          16774864
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.hasNeighborSignal",
+          16774864
+        ],
+        [
+          "com.stonytark.magnetization.compat.ExternalFieldCompat.field",
+          12580896
+        ]
+      ]
+    },
+    "mr_armor": {
+      "sample_seconds": 0.367999792098999,
+      "execution_samples": 4,
+      "mod_execution_samples": 0,
+      "inclusive_mod_frames": [],
+      "nearest_mod_frames": [],
+      "allocation_weight": 100639296,
+      "mod_allocation_weight": 12581112,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          12581112
+        ]
+      ]
+    },
+    "empty_end": {
+      "sample_seconds": 0.3600001335144043,
+      "execution_samples": 0,
+      "mod_execution_samples": 0,
+      "inclusive_mod_frames": [],
+      "nearest_mod_frames": [],
+      "allocation_weight": 75483256,
+      "mod_allocation_weight": 4193704,
+      "allocation_mod_frames": [
+        [
+          "com.stonytark.magnetization.config.MagConfig.ferrofluidPlainTicks",
+          4193704
+        ],
+        [
+          "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+          4193704
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+          4193704
+        ],
+        [
+          "com.stonytark.magnetization.config.MagConfig.intOr",
+          4193704
+        ]
+      ]
+    }
+  }
+}
