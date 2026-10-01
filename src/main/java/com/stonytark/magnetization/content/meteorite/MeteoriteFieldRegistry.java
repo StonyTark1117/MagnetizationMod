@@ -4,19 +4,21 @@ import com.stonytark.magnetization.Magnetization;
 import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticPolarity;
 import com.stonytark.magnetization.api.MagneticStrength;
+import com.stonytark.magnetization.config.MagConfig;
+import com.stonytark.magnetization.network.CosmicCompassTargetPayload;
 import com.stonytark.magnetization.physics.FieldApplicator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,14 +84,55 @@ public final class MeteoriteFieldRegistry {
         }
     }
 
+    /** Select virtual sources without requiring their chunks on the client. */
+    static @Nullable Entry nearestActive(final Iterable<Entry> entries, final Vec3 from,
+                                         final double range, final long now, final long decay) {
+        Entry best = null;
+        double bestDistance = range * range;
+        for (final Entry entry : entries) {
+            if (MeteoriteCoreBlockEntity.tierForElapsed(now - entry.chargedAtTick(), decay) == null) continue;
+            final double distance = entry.pos().getCenter().distanceToSqr(from);
+            if (distance >= bestDistance) continue;
+            best = entry;
+            bestDistance = distance;
+        }
+        return best;
+    }
+
+    /** Authoritative reading for this dimension, including the integration switch. */
+    public static CosmicCompassTargetPayload compassTarget(final ServerLevel level, final Vec3 from) {
+        return compassTarget(level, from, AeMeteoriteScanner.isEnabled() ? snapshot(level) : List.of());
+    }
+
+    private static CosmicCompassTargetPayload compassTarget(final ServerLevel level, final Vec3 from,
+                                                             final Collection<Entry> entries) {
+        final long now = level.getGameTime();
+        final long decay = MeteoriteCoreBlockEntity.decayTicks();
+        final Entry target = nearestActive(entries, from, cosmicCompassRange(), now, decay);
+        final long expiresAt = target == null ? now : Math.min(now + 60L, target.chargedAtTick() + decay);
+        return new CosmicCompassTargetPayload(level.dimension().location(),
+                java.util.Optional.ofNullable(target == null ? null : target.pos()), expiresAt);
+    }
+
     @SubscribeEvent
     public static void onLevelTick(final LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
+        if (!net.neoforged.fml.ModList.get().isLoaded("ae2")) return;
+        final boolean enabled = AeMeteoriteScanner.isEnabled();
+        final long now = server.getGameTime();
+        // Refresh one small target per player once a second. Empty updates also
+        // clear a previous target after the hook is disabled or the source decays.
+        if (now % 20L == 0L && !server.players().isEmpty()) {
+            final Collection<Entry> entries = enabled ? snapshot(server) : List.of();
+            for (final var player : server.players()) {
+                PacketDistributor.sendToPlayer(player, compassTarget(server, player.position(), entries));
+            }
+        }
+        if (!enabled) return;
         if ((server.getGameTime() % com.stonytark.magnetization.config.MagConfig.meteoriteFieldTicks()) != 0L) return;
         final State state = State.get(server);
         if (state.entries.isEmpty()) return;
 
-        final long now = server.getGameTime();
         final long decay = MeteoriteCoreBlockEntity.decayTicks();
         synchronized (state.entries) {
             for (final Entry e : state.entries) {
@@ -105,6 +148,11 @@ public final class MeteoriteFieldRegistry {
                 FieldApplicator.apply(server, field);
             }
         }
+    }
+
+    private static double cosmicCompassRange() {
+        try { return MagConfig.COSMIC_COMPASS_RANGE.get(); }
+        catch (final Throwable t) { return 512.0; }
     }
 
     /** Per-level SavedData. Lives in {@code <level>/data/magnetization_meteorite_fields.dat}. */

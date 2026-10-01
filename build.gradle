@@ -25,6 +25,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     localRuntime
     gameTestRuntime
+    aeMeteoriteRuntime
     aeroportalsRuntime
     aeroportalsLegacyRuntime
     immersiveAeronauticsRuntime
@@ -160,6 +161,7 @@ def minimalProfileTasks = [
         'runjammarrclient', 'runjammarrdedicatedclient', 'runjammarrlistener', 'runjammarrserver',
         'rundata',
         'runserver', 'rungametestserver', 'runregressiongametestserver',
+        'runaemeteoritegametestserver',
         'runoptionalcompatibilityabsentgametestserver',
         'runaeroportalsgametestserver', 'runaeroportalslegacygametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
@@ -234,6 +236,10 @@ if (wantsStandardGameTests) {
     // that optional API explicit in this profile rather than receiving it
     // accidentally from Aeronautics/Simulated's over-broad POM transitives.
     configurations.runtimeClasspath { extendsFrom configurations.gameTestRuntime }
+}
+def wantsAeMeteoriteTests = lowered.any { it.endsWith('runaemeteoritegametestserver') }
+if (wantsAeMeteoriteTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.aeMeteoriteRuntime }
 }
 def wantsCuriosTests = lowered.any {
     it.endsWith('runcuriosgametestserver') || it.endsWith('smokecuriosgametest')
@@ -366,7 +372,7 @@ def wantsPonderCompatClient = lowered.any {
 def wantsMinimalVerification = lowered.any {
     it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
 }
-def optionalTestProfiles = [wantsAeroPortalsTests, wantsAeroPortalsLegacyTests,
+def optionalTestProfiles = [wantsAeMeteoriteTests, wantsAeroPortalsTests, wantsAeroPortalsLegacyTests,
                             wantsImmersiveAeronauticsTests,
                             wantsSimulatedCoastersTests, wantsSimulatedCoastersLegacyTests,
                             wantsSimulatedCoastersTrackStylesTests,
@@ -890,6 +896,9 @@ processResources {
         into 'data/magnetization_curios/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ae_meteorite/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_ore_excavation/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -1356,6 +1365,11 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-curios-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_curios'
+        }
+        aeMeteoriteGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ae-meteorite-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ae_meteorite'
         }
         data {
             data()
@@ -2195,6 +2209,8 @@ dependencies {
     // deps on GuideME, which has to come along too.
     localRuntime("maven.modrinth:guideme:${guideme_test_version}")
     localRuntime("maven.modrinth:ae2:${ae2_test_version}")
+    aeMeteoriteRuntime("maven.modrinth:ae2:${ae2_test_version}")
+    aeMeteoriteRuntime("maven.modrinth:guideme:${guideme_test_version}")
 
     // === 1.1.2 cross-mod tag-coverage smoke-test mods ===
     // localRuntime only — they need to be present so the ferromagnetic_blocks /

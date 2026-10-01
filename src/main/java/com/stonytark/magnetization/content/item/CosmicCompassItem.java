@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Long-range compass that tracks the nearest active {@code meteorite_core}
  * within a much wider radius than the standard Field Compass (default 512
- * blocks vs Field Compass's 16). Targets only meteorite cores — emitters
- * and field sources are ignored.
+ * blocks vs Field Compass's 16). Also tracks server-registered AE2 meteorites
+ * when the optional integration is enabled. Other emitters are ignored.
  *
  * <p>Unlike the Field Compass, the Cosmic Compass is <b>not</b> scrambled
  * by the anomaly biome — the meteorite cores ARE the cosmic signal and

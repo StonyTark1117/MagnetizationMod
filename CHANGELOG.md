@@ -2,6 +2,8 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Fix the Cosmic Compass ignoring optional AE2 meteorites: synchronize the nearest active saved AE2 source from the server and compare it with native cores. Respect range, decay and dimension changes; disabling `compat.ae2MeteoriteHookEnabled` now also stops persisted AE2 field emission and compass tracking without deleting saved sources.
+
 - Refresh development/test dependency pins and align the development pack with isolated compatibility profiles while retaining published user minimums. Use the official Aeronautics 1.3.2 bundle for development APIs and adapt the Engineered test fixture to both supported API shapes. See [version and validation details](docs/compatibility/dev-pin-refresh.md).
 
 - Update the development/test TFMG pin to Community Edition 1.3.2a (CurseForge file 9013465), while retaining the optional original-TFMG minimum `[1.2.0,)`. Correct the September 30 test attribution to original 1.2.0; retain separate evidence for each distribution and assert the loaded version in the test profile. Keep original Converter material tags: CE removed that block. See the [TFMG pin audit](docs/compatibility/tfmg-pin-update.md).

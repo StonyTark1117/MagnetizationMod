@@ -443,6 +443,7 @@ public final class MagClientRegistration {
 
     @SubscribeEvent
     public static void onClientLogout(final ClientPlayerNetworkEvent.LoggingOut event) {
+        com.stonytark.magnetization.network.CosmicCompassTargetPayload.clearClientSnapshot();
         // Stop any looping emitter hums and clear their static state when leaving a
         // world, so the loops don't outlive the level and a reload re-plays them.
         EmitterHumSound.clearAll();

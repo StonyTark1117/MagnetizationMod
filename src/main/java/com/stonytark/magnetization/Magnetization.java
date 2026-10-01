@@ -305,6 +305,7 @@ public final class Magnetization {
                 event.registrar(MOD_ID).versioned("1");
         com.stonytark.magnetization.network.UseCurioPayload.register(reg);
         com.stonytark.magnetization.network.CommonConfigSyncPayload.register(reg);
+        com.stonytark.magnetization.network.CosmicCompassTargetPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusRequestPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusPayload.register(reg);
         com.stonytark.magnetization.network.CoastersMagnetizedPowerPayload.register(reg);

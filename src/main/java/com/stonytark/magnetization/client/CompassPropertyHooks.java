@@ -4,6 +4,7 @@ import com.stonytark.magnetization.api.MagneticField;
 import com.stonytark.magnetization.api.MagneticFieldSource;
 import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.item.GasDetectorScanner;
+import com.stonytark.magnetization.network.CosmicCompassTargetPayload;
 import com.stonytark.magnetization.physics.EmitterRegistry;
 import com.stonytark.magnetization.registry.MagItems;
 import com.stonytark.magnetization.worldgen.AnomalyBiome;
@@ -269,14 +270,14 @@ public final class CompassPropertyHooks {
         return (float) Mth.positiveModulo(angleRad / (Math.PI * 2.0), 1.0);
     }
 
-    /** Walk the emitter registry for any MeteoriteCoreBlockEntity within
-     *  range whose {@code currentField()} is non-null (i.e. still has charge
+    /** Combine the server's nearest active AE2 source with local native cores
+     *  in range whose {@code currentField()} is non-null (i.e. still has charge
      *  remaining). Cosmic Compass intentionally ignores inert / decayed
      *  cores so the player isn't sent on a wild goose chase to a dead one. */
     private static @Nullable BlockPos findNearestActiveMeteorite(final Level level, final Vec3 from) {
-        BlockPos best = null;
         final double range = liveCosmicRange();
-        double bestDistSqr = range * range;
+        BlockPos best = CosmicCompassTargetPayload.latestTarget(level, from, range);
+        double bestDistSqr = best == null ? range * range : best.getCenter().distanceToSqr(from);
         for (final BlockPos pos : EmitterRegistry.snapshot(level)) {
             final double d2 = pos.getCenter().distanceToSqr(from);
             if (d2 >= bestDistSqr) continue;

@@ -60,8 +60,7 @@ public final class AeMeteoriteScanner {
     @SubscribeEvent
     public static void onChunkLoad(final ChunkEvent.Load event) {
         if (!(event.getLevel() instanceof ServerLevel server)) return;
-        if (!ModList.get().isLoaded("ae2")) return;
-        if (!liveEnabled()) return;
+        if (!isEnabled()) return;
 
         final LevelChunk chunk;
         if (event.getChunk() instanceof LevelChunk lc) chunk = lc;
@@ -118,7 +117,9 @@ public final class AeMeteoriteScanner {
         SCANNED_CHUNKS.clear();
     }
 
-    private static boolean liveEnabled() {
+    /** Shared gate for discovery, persisted field emission and compass targets. */
+    static boolean isEnabled() {
+        if (!ModList.get().isLoaded("ae2")) return false;
         try { return MagConfig.AE2_METEORITE_HOOK_ENABLED.get(); }
         catch (final Throwable t) { return true; }
     }
