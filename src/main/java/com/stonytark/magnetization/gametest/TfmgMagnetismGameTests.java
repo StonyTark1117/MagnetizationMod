@@ -41,7 +41,7 @@ import net.neoforged.neoforge.common.conditions.ICondition;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/** Full magnetic, recipe, fluid, and active-field contract against TFMG 1.2.0. */
+/** Scoped magnetic, recipe, fluid, and field checks for original TFMG and Community Edition. */
 @GameTestHolder("magnetization_tfmg")
 @PrefixGameTestTemplate(false)
 public final class TfmgMagnetismGameTests {
@@ -49,6 +49,16 @@ public final class TfmgMagnetismGameTests {
             Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "plates/magnetic_alloy"));
 
     private TfmgMagnetismGameTests() {}
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void loadedArtifactMatchesProfile(final GameTestHelper helper) {
+        final String expected = System.getProperty("magnetization.test.tfmgVersion");
+        final String actual = net.neoforged.fml.ModList.get().getModContainerById("tfmg")
+                .orElseThrow().getModInfo().getVersion().toString();
+        helper.assertTrue(expected != null && expected.equals(actual),
+                "TFMG artifact attribution mismatch: expected " + expected + ", loaded " + actual);
+        helper.succeed();
+    }
 
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void tfmgMasterSuppressesRuntimeBridges(final GameTestHelper helper) {
@@ -89,12 +99,25 @@ public final class TfmgMagnetismGameTests {
 
         for (final String path : new String[]{
                 "laminated_magnetic_alloy_block", "large_coil", "transformer", "large_transformer",
-                "generator", "electric_motor", "rotor", "stator", "electric_pump", "converter", "polarizer"}) {
+                "generator", "electric_motor", "rotor", "stator", "electric_pump", "polarizer"}) {
             final Block block = block(path);
             helper.assertTrue(block.defaultBlockState().is(MagTags.FERROMAGNETIC_BLOCKS),
                     "TFMG " + path + " is not a ferromagnetic block");
             helper.assertTrue(block.defaultBlockState().is(MagTags.EDDY_CONDUCTORS),
                     "TFMG " + path + " is not an eddy-current conductor");
+        }
+        // Original 1.2.0 has a Converter; CE 1.3.2a removed it. Retain its optional
+        // material entries for original users, and assert each pinned registry
+        // contract explicitly rather than silently skipping missing references.
+        final ResourceLocation converterId = ResourceLocation.fromNamespaceAndPath("tfmg", "converter");
+        if ("1.2.0".equals(System.getProperty("magnetization.test.tfmgVersion"))) {
+            final Block converter = block("converter");
+            helper.assertTrue(converter.defaultBlockState().is(MagTags.FERROMAGNETIC_BLOCKS)
+                            && converter.defaultBlockState().is(MagTags.EDDY_CONDUCTORS),
+                    "Original TFMG Converter lost its magnetic/conductive roles");
+        } else {
+            helper.assertTrue(!BuiltInRegistries.BLOCK.containsKey(converterId),
+                    "Community Edition Converter registry contract changed; review its material coverage");
         }
         final Block accumulator = block("accumulator");
         helper.assertTrue(accumulator.defaultBlockState().is(MagTags.EDDY_CONDUCTORS),

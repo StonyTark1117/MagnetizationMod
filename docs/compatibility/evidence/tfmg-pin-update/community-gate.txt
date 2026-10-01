@@ -1,0 +1,5 @@
+runTfmgGameTestServer: moved previous generated run directory to /tmp/magnetization-run-tfmg-gametest-1790849385-2436250
+runTfmgGameTestServer: using tmpfs runtime /tmp/magnetization-run-tfmg-gametest-runtime.CACPSI
+[01Oct2026 03:10:04.188] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 16 GAME TESTS COMPLETE IN 561.2 ms ======================
+[01Oct2026 03:10:04.188] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 16 required tests passed :)
+runTfmgGameTestServer: assertions passed; terminating only its lingering process group

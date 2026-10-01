@@ -85,6 +85,10 @@ checkout and non-GameTest controls remain alive. Reproduce with
 complete diagnostic failure profile using `MAGNETIZATION_AUDIT_COLLECT_FAILURES=1`;
 it still returns failure.
 
+## TFMG artifact attribution correction
+
+The September 30 Sable 2.0.5 TFMG result (15 required tests) used **original TFMG 1.2.0**, Modrinth `uDi14nbt`, not Community Edition 1.3.1. Its preserved [runtime log](evidence/tfmg-pin-update/historical-original-1.2.0.txt) declares 1.2.0 and hashes to the exact `log_sha256` recorded in the final regression matrix. The static inventory's Community Edition jar is separate evidence and does not establish a runtime pass. Original results and counts are retained; the [pin update](tfmg-pin-update.md) records subsequent runs separately.
+
 ## Experimental Magnetron policy
 
 Physical left/right punches and slams remain **non-LIRM by default**. The separately requested experimental server option `compat.alexsCavesMagnetronLirmEnabled = false` can add LIRM after successful physical melee damage without changing its damage type. Native attack tests cover default/off, enabled, master disabled, LIRM disabled, config reload and invulnerable targets, plus another mob as a control. Exactly one eligible equipment piece is stamped when enabled; log petrification shares the existing LIRM rules. This is an optional gameplay policy, not a claim that upstream Magnetron melee is lightning.

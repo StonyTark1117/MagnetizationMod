@@ -1309,6 +1309,7 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-tfmg-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_tfmg'
+            systemProperty 'magnetization.test.tfmgVersion', tfmg_test_mod_version
         }
         oreExcavationGameTestServer {
             type = 'gameTestServer'
@@ -2172,8 +2173,9 @@ dependencies {
     // Create: The Factory Must Grow (TFMG) — soft dep for gallium's aluminium
     // sourcing and bidirectional Hydrogen/gas-tag compatibility. Present in the
     // client pack and an isolated GameTest runtime; neither configuration ships.
-    localRuntime("maven.modrinth:create-tfmg:uDi14nbt")
-    tfmgRuntime("maven.modrinth:create-tfmg:uDi14nbt")
+    // Original and Community Edition share mod id tfmg: load exactly one.
+    localRuntime(tfmg_test_dependency) { transitive = false }
+    tfmgRuntime(tfmg_test_dependency) { transitive = false }
 
     // Create Ore Excavation — isolated recipe/data compatibility profile.
     createOreExcavationRuntime("curse.maven:create-ore-excavation-649832:${create_ore_excavation_test_file}") {

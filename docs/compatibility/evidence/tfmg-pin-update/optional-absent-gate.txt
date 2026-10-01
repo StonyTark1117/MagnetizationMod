@@ -1,0 +1,5 @@
+runOptionalCompatibilityAbsentGameTestServer: moved previous generated run directory to /tmp/magnetization-run-compat-absent-gametest-1790849629-2451221
+runOptionalCompatibilityAbsentGameTestServer: using tmpfs runtime /tmp/magnetization-run-compat-absent-gametest-runtime.zICVN9
+[01Oct2026 03:14:06.133] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 268.6 ms ======================
+[01Oct2026 03:14:06.133] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runOptionalCompatibilityAbsentGameTestServer: assertions passed; terminating only its lingering process group

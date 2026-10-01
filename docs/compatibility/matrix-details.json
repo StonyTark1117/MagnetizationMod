@@ -6016,6 +6016,132 @@
               }
             ]
           }
+        },
+        {
+          "filename": "tfmg-1.21.1-1.3.2a-community.jar",
+          "sha256": "e9e84f7507b0b482d176c7f04eb924ed1396637f480d596a8b2d266fa51640d0",
+          "descriptor": "META-INF/neoforge.mods.toml",
+          "mods": [
+            {
+              "modId": "tfmg",
+              "version": "1.3.2a-community",
+              "displayName": "Create: The Factory Must Grow",
+              "updateJSONURL": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/raw/refs/heads/1.21.1/updates.json",
+              "displayURL": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE",
+              "logoFile": "tfmg.png",
+              "credits": "Anyone who has contributed on the Community Edition GitHub",
+              "authors": "DrMangoTea, Pepa, Luna",
+              "description": "Create: The Factory Must Grow brings the age of steel, oil and electricity to the Create mod"
+            }
+          ],
+          "dependencies": {
+            "tfmg": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[21,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[1.21.1,1.22)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "create",
+                "type": "required",
+                "versionRange": "[6.0.6,)",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "jei",
+                "type": "optional",
+                "versionRange": "[{jei_version},)",
+                "side": "BOTH"
+              },
+              {
+                "modId": "createbigcannons",
+                "type": "optional",
+                "versionRange": "[5.11.7,)",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmgtweaks",
+                "type": "incompatible",
+                "reason": "TFMW adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmgfixfuel",
+                "type": "incompatible",
+                "reason": "tfmgfixfuel adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "warvior_tfmg_pondus_fix",
+                "type": "incompatible",
+                "reason": "warvior_tfmg_pondus_fix adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmgelectricalfix",
+                "type": "incompatible",
+                "reason": "tfmgelectricalfix adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "plastic_fix",
+                "type": "incompatible",
+                "reason": "plastic_fix is not needed anymore as the plastic sheet recipe has been fixed.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "fix_tfmgcontroller",
+                "type": "incompatible",
+                "reason": "fix_tfmgcontroller is not needed anymore as the engine controller does not exist anymore.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "sable_weighted_tfmg",
+                "type": "incompatible",
+                "reason": "sable_weighted_tfmg is not needed anymore as TFMG: CE now uses it's own weights.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmg_liquid_fuel_compat",
+                "type": "incompatible",
+                "reason": "tfmg_liquid_fuel_compat is not needed anymore TFMG: CE now uses it's own fuel maps.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmg_patch",
+                "type": "incompatible",
+                "reason": "tfmg_patch adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              },
+              {
+                "modId": "tfmgfix",
+                "type": "incompatible",
+                "reason": "tfmgfix adds mixins to fix bugs that we have already fixed ourselves.",
+                "ordering": "AFTER",
+                "side": "BOTH"
+              }
+            ]
+          }
         }
       ],
       "original_0a28d31_references": [],
@@ -6285,7 +6411,7 @@
           "required": false
         }
       ],
-      "classification_and_behavior_evidence": "See audit-1.21.1.md; asset matches alone do not establish compatibility."
+      "classification_and_behavior_evidence": "September 30 runtime: original TFMG 1.2.0 (MR uDi14nbt), 15/15, not the inventoried CE 1.3.1. October 1: original 1.2.0 and CE 1.3.2a (CF 9013465) each pass 16/16 including artifact attribution. See tfmg-pin-update.md and evidence/tfmg-pin-update/results.json for exact coordinates/hashes, original-only Converter coverage and recipe-test limits. CE 1.3.1 remains historical static inventory only."
     },
     {
       "mod_id_or_historical_namespace": "tracks",

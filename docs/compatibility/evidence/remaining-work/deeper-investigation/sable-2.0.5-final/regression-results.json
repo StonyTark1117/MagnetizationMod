@@ -337,7 +337,12 @@
       "sable_version": "2.0.5",
       "required_tests_passed": 15,
       "failures": [],
-      "log_sha256": "3f87a7d77a58f7c127f88a2023e932ad144a6089fd47b0aa9483237a99cb1aab"
+      "log_sha256": "3f87a7d77a58f7c127f88a2023e932ad144a6089fd47b0aa9483237a99cb1aab",
+      "tfmg_version": "1.2.0",
+      "tfmg_distribution": "original",
+      "tfmg_artifact": "maven.modrinth:create-tfmg:uDi14nbt",
+      "tfmg_artifact_sha256": "fc824a91cfe22e137c9014ed608ee9bf35f16490d2162b687666332c6eb3a555",
+      "attribution_evidence": "../../../tfmg-pin-update/historical-original-1.2.0.txt"
     },
     {
       "task": "runOreExcavationGameTestServer",
