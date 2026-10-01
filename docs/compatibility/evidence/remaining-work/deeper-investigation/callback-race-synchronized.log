@@ -1,0 +1,2 @@
+RACE_RESULT synchronized=true attempts=10000 inconsistent=0 nonemptyWithoutEntries=0
+SEQUENTIAL_CONTROL_PASS

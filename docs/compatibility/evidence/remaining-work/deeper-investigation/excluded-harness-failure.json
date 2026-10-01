@@ -1,0 +1,4 @@
+{
+  "log_sha256": "4d7927a536b17896d1a5142af61acf6d69d55f6066deffb9a4b870b56ceac5e0",
+  "reason": "Shared build/resources was rewritten by simultaneous Gradle processResources; missing magnetization.mixins.json. Not counted as an upstream startup failure or as a successful launch. Runs 46-67 were restarted from a frozen classes/resources/argument-file snapshot."
+}

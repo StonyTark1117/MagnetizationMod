@@ -1,0 +1,30 @@
+{
+  "source": "ownership-magnetization-absent.txt",
+  "overlapping_entries": [
+    {
+      "key": "addRegisterCallback/active=2/thread=106modloading-worker-0",
+      "instrumented_stack_frames": [
+        "addRegisterCallback"
+      ]
+    },
+    {
+      "key": "accept/active=2/thread=106modloading-worker-0",
+      "instrumented_stack_frames": [
+        "accept"
+      ]
+    },
+    {
+      "key": "accept/active=2/thread=104modloading-worker-0",
+      "instrumented_stack_frames": [
+        "accept"
+      ]
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=104modloading-worker-0",
+      "instrumented_stack_frames": [
+        "addRegisterCallback"
+      ]
+    }
+  ],
+  "nested_instrumented_calls": false
+}

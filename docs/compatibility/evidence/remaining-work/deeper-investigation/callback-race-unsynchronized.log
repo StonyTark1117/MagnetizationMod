@@ -1,0 +1,5 @@
+RACE_STATE round=0 reportedSize=2 entries={}
+RACE_STATE round=3 reportedSize=-1 entries={}
+RACE_STATE round=10 reportedSize=4 entries={}
+RACE_RESULT synchronized=false attempts=10000 inconsistent=526 nonemptyWithoutEntries=233
+SEQUENTIAL_CONTROL_PASS

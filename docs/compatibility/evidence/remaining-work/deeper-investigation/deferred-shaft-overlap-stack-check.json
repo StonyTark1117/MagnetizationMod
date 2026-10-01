@@ -1,0 +1,57 @@
+{
+  "scope": "Active-two stacks in first Create ownership snapshots; each contains one instrumented frame, excluding nested instrumented calls as the overlap explanation",
+  "stacks": [
+    {
+      "key": "addRegisterCallback/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=104modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=105modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "accept/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    },
+    {
+      "key": "addRegisterCallback/active=2/thread=103modloading-worker-0",
+      "instrumented_frames": 1
+    }
+  ]
+}
