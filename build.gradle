@@ -162,6 +162,7 @@ def minimalProfileTasks = [
         'rundata',
         'runserver', 'rungametestserver', 'runregressiongametestserver',
         'runaemeteoritegametestserver',
+        'runaemeteoriteauditserver', 'runaemeteoriteauditclient',
         'runoptionalcompatibilityabsentgametestserver',
         'runaeroportalsgametestserver', 'runaeroportalslegacygametestserver',
         'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
@@ -237,7 +238,10 @@ if (wantsStandardGameTests) {
     // accidentally from Aeronautics/Simulated's over-broad POM transitives.
     configurations.runtimeClasspath { extendsFrom configurations.gameTestRuntime }
 }
-def wantsAeMeteoriteTests = lowered.any { it.endsWith('runaemeteoritegametestserver') }
+def wantsAeMeteoriteTests = lowered.any {
+    it.endsWith('runaemeteoritegametestserver') || it.endsWith('runaemeteoriteauditserver')
+            || it.endsWith('runaemeteoriteauditclient')
+}
 if (wantsAeMeteoriteTests) {
     configurations.runtimeClasspath { extendsFrom configurations.aeMeteoriteRuntime }
 }
@@ -1370,6 +1374,18 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = file('run-ae-meteorite-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ae_meteorite'
+        }
+        aeMeteoriteAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-ae-meteorite-audit-server')
+            systemProperty 'magnetization.audit.aeMeteorite', providers.gradleProperty('aeMeteoritePhase').getOrElse('create')
+            systemProperty 'magnetization.audit.aeMeteoriteDir', file('build/ae-meteorite-audit/control').absolutePath
+        }
+        aeMeteoriteAuditClient {
+            client(); gameDirectory = file('run-ae-meteorite-audit-client')
+            systemProperty 'magnetization.audit.aeMeteorite', providers.gradleProperty('aeMeteoritePhase').getOrElse('create')
+            systemProperty 'magnetization.audit.aeMeteoriteDir', file('build/ae-meteorite-audit/control').absolutePath
+            programArguments.addAll('--width', '1280', '--height', '720', '--username', 'AeCompassAudit',
+                    '--quickPlayMultiplayer', providers.gradleProperty('aeMeteoriteEndpoint').getOrElse('127.0.0.1:25589'))
         }
         data {
             data()

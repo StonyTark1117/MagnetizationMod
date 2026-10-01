@@ -1,0 +1,194 @@
+{
+  "phases": {
+    "create": {
+      "stages": [
+        {
+          "stage": 0,
+          "selection": "ae2",
+          "hook": true,
+          "angle": 0.75,
+          "frame": 24,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 580,
+          "clientTime": 521,
+          "clientPid": 439547,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "create/screenshots/ae-compass-create-0-ae2.png"
+        },
+        {
+          "stage": 1,
+          "selection": "native",
+          "hook": true,
+          "angle": 0.5,
+          "frame": 16,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 660,
+          "clientTime": 613,
+          "clientPid": 439547,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "create/screenshots/ae-compass-create-1-native.png"
+        },
+        {
+          "stage": 2,
+          "selection": "native",
+          "hook": false,
+          "angle": 0.5,
+          "frame": 16,
+          "packet": "Optional.empty",
+          "packetExpires": 700,
+          "clientTime": 712,
+          "clientPid": 439547,
+          "forceSamples": 24,
+          "aeVelocityDelta": 0.0,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "create/screenshots/ae-compass-create-2-native.png"
+        },
+        {
+          "stage": 3,
+          "selection": "none",
+          "hook": false,
+          "angle": 0.0,
+          "frame": 0,
+          "packet": "Optional.empty",
+          "packetExpires": 800,
+          "clientTime": 813,
+          "clientPid": 439547,
+          "forceSamples": 24,
+          "aeVelocityDelta": 0.0,
+          "nativeVelocityDelta": 0.0,
+          "screenshot": "create/screenshots/ae-compass-create-3-none.png"
+        },
+        {
+          "stage": 4,
+          "selection": "ae2",
+          "hook": true,
+          "angle": 0.75,
+          "frame": 24,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 960,
+          "clientTime": 914,
+          "clientPid": 439547,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "create/screenshots/ae-compass-create-4-ae2.png"
+        }
+      ],
+      "savedSources": [
+        [
+          [
+            -40,
+            100,
+            0
+          ],
+          -756
+        ],
+        [
+          [
+            5,
+            100,
+            0
+          ],
+          -11556
+        ]
+      ],
+      "savedGameTime": 944
+    },
+    "verify": {
+      "stages": [
+        {
+          "stage": 0,
+          "selection": "ae2",
+          "hook": true,
+          "angle": 0.75,
+          "frame": 24,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 1520,
+          "clientTime": 1460,
+          "clientPid": 443056,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "verify/screenshots/ae-compass-verify-0-ae2.png"
+        },
+        {
+          "stage": 1,
+          "selection": "native",
+          "hook": true,
+          "angle": 0.5,
+          "frame": 16,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 1600,
+          "clientTime": 1555,
+          "clientPid": 443056,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "verify/screenshots/ae-compass-verify-1-native.png"
+        },
+        {
+          "stage": 2,
+          "selection": "native",
+          "hook": false,
+          "angle": 0.5,
+          "frame": 16,
+          "packet": "Optional.empty",
+          "packetExpires": 1640,
+          "clientTime": 1655,
+          "clientPid": 443056,
+          "forceSamples": 24,
+          "aeVelocityDelta": 0.0,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "verify/screenshots/ae-compass-verify-2-native.png"
+        },
+        {
+          "stage": 3,
+          "selection": "ae2",
+          "hook": true,
+          "angle": 0.75,
+          "frame": 24,
+          "packet": "Optional[BlockPos{x=-40, y=100, z=0}]",
+          "packetExpires": 1800,
+          "clientTime": 1755,
+          "clientPid": 443056,
+          "forceSamples": 24,
+          "aeVelocityDelta": 44.36741767764299,
+          "nativeVelocityDelta": 44.36741767764299,
+          "screenshot": "verify/screenshots/ae-compass-verify-3-ae2.png"
+        }
+      ],
+      "savedSources": [
+        [
+          [
+            -40,
+            100,
+            0
+          ],
+          -756
+        ],
+        [
+          [
+            5,
+            100,
+            0
+          ],
+          -11556
+        ]
+      ],
+      "savedGameTime": 1786
+    }
+  },
+  "restart": {
+    "creatorPid": 438591,
+    "verifierPid": 442128,
+    "activeChargedAt": -756,
+    "deadChargedAt": -11556,
+    "nativeChargedAt": 844,
+    "restoredGameTime": 1386
+  },
+  "result": "pass"
+}
