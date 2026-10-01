@@ -1,0 +1,11 @@
+{
+  "scope": "Synthetic positive/negative controls for native guide evidence analyzer; not Minecraft runtime evidence.",
+  "tests": 22,
+  "failures": 0,
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-guide-book-audit.py",
+  "sha256": {
+    "scripts/analyze-guide-book-audit.py": "0a8e351e329751c2a2ebc28d2f909f2c7ba45d3e8bc2a8ccda0774f860ee517e",
+    "scripts/test-guide-book-audit.py": "36146fa328f720403c7c108aee167d15a7823e3a4d3a6654a00e5e8ad6d8913c",
+    "docs/compatibility/evidence/guide-content-supplement/analyzer-tests.log": "7a86ba93982ec850a0fd22de237b470fbf05abb04b7ae18befb570cba845a46f"
+  }
+}

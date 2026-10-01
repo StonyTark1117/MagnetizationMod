@@ -4,10 +4,38 @@
   "icon": "magnetization:air_separator",
   "advancement": "minecraft:recipes/root",
   "pages": [
-    { "type": "patchouli:spotlight", "item": "magnetization:air_separator", "text": "book.magnetization.entry.air_separator.operation", "link_recipe": true },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.air_separator.ports.title", "text": "book.magnetization.entry.air_separator.ports.text" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.air_separator.isotopes.title", "text": "book.magnetization.entry.air_separator.isotopes.text" },
-    { "type": "patchouli:crafting", "title": "book.magnetization.entry.air_separator.filter.title", "text": "book.magnetization.entry.air_separator.filter.text", "recipe": "magnetization:air_filter" },
-    { "type": "patchouli:crafting", "title": "book.magnetization.entry.air_separator.module.title", "text": "book.magnetization.entry.air_separator.module.text", "recipe": "magnetization:isotope_separation_module" }
+    {
+      "type": "patchouli:spotlight",
+      "item": "magnetization:air_separator",
+      "text": "book.magnetization.entry.air_separator.operation",
+      "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.air_separator.ports.title",
+      "text": "book.magnetization.entry.air_separator.ports.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.air_separator.isotopes.title",
+      "text": "book.magnetization.entry.air_separator.isotopes.text"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "book.magnetization.entry.air_separator.filter.title",
+      "text": "book.magnetization.entry.air_separator.filter.text",
+      "recipe": "magnetization:air_filter"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.air_separator.filter.text.readable1.title",
+      "text": "book.magnetization.entry.air_separator.filter.text.readable1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "book.magnetization.entry.air_separator.module.title",
+      "text": "book.magnetization.entry.air_separator.module.text",
+      "recipe": "magnetization:isotope_separation_module"
+    }
   ]
 }

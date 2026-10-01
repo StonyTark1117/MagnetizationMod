@@ -25,6 +25,8 @@ public final class LifecyclePresentationAuditClient {
     private static int ticks, state, row, viewAge, sceneIndex, previousTime;
     private static boolean done, finalCaptured;
     private static String requested;
+    private static final java.util.Set<Integer> capturedTexts = new java.util.HashSet<>();
+    private static final java.util.Set<String> capturedInputs = new java.util.HashSet<>();
     private static final List<PonderSceneCatalog.Scene> SCENES = new ArrayList<>();
     @SubscribeEvent
     public static void tick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
@@ -50,6 +52,16 @@ public final class LifecyclePresentationAuditClient {
                 LOG.info("VALIDATION_MANUAL_OPEN_PASS phase={}", phase); mc.setScreen(null);
                 if (!phase.equals("initial")) { clientDone(); state = 8; return; }
                 SCENES.addAll(PonderSceneCatalog.coreScenes()); SCENES.addAll(PonderSceneCatalog.optionalScenes());
+                String focusedScene = System.getenv("MAGNETIZATION_AUDIT_SCENE");
+                if (focusedScene != null && !focusedScene.isBlank()) {
+                    SCENES.removeIf(scene -> !scene.id().equals(focusedScene));
+                    check(SCENES.size() == 1, "Unknown focused audit scene: " + focusedScene);
+                    mc.options.guiScale().set(3); mc.resizeDisplay();
+                    LOG.info("VALIDATION_PONDER_FOCUS scene={} guiScale={}", focusedScene, mc.getWindow().getGuiScale());
+                    openScene(mc); state = 3;
+                } else state = 9;
+            } else if (state == 9) {
+                if (!GuideBookAudit.tick(mc)) return;
                 mc.options.hideGui = true; requestView(0, false); state = 2;
             } else if (state == 2) {
                 if (!Files.exists(control.resolve("view-ready")) || !Files.readString(control.resolve("view-ready")).equals(requested)) return;
@@ -100,7 +112,11 @@ public final class LifecyclePresentationAuditClient {
                 var ui = (AuditPonderUI) mc.screen; var scene = ui.getActiveScene();
                 check(scene.getId().equals(ResourceLocation.parse("magnetization:" + SCENES.get(sceneIndex).id())), "Wrong scene played");
                 check(scene.getCurrentTime() >= previousTime, "Playback moved backwards");
-                if (previousTime < 65 && scene.getCurrentTime() >= 65) capture(mc, "ponder-" + SCENES.get(sceneIndex).id() + "-first");
+                captureVisibleInstructions(mc, scene, SCENES.get(sceneIndex));
+                if (previousTime < 65 && scene.getCurrentTime() >= 65) {
+                    PonderSceneAudit.verify(scene, SCENES.get(sceneIndex).id(), false);
+                    capture(mc, "ponder-" + SCENES.get(sceneIndex).id() + "-first");
+                }
                 if (!finalCaptured && scene.getCurrentTime() >= scene.getTotalTime() - 50) {
                     switch (SCENES.get(sceneIndex).id()) {
                         case "gas_exciter", "gas_vent" -> check(scene.getWorld().getBlockState(new BlockPos(3, 1, 2))
@@ -112,11 +128,14 @@ public final class LifecyclePresentationAuditClient {
                         }
                         default -> { }
                     }
+                    PonderSceneAudit.verify(scene, SCENES.get(sceneIndex).id(), true);
+                    LOG.info("VALIDATION_PONDER_SEMANTIC_PASS id={}", SCENES.get(sceneIndex).id());
                     capture(mc, "ponder-" + SCENES.get(sceneIndex).id() + "-last"); finalCaptured = true;
                 }
                 previousTime = scene.getCurrentTime();
                 if (scene.isFinished()) {
                     check(previousTime >= scene.getTotalTime(), "Scene finished before total time");
+                    check(capturedTexts.size() == SCENES.get(sceneIndex).texts().size(), "Some advertised instructions never rendered");
                     LOG.info("VALIDATION_PONDER_PASS id={} elapsed={} total={} title={}", scene.getId(), previousTime, scene.getTotalTime(), scene.getTitle());
                     if (++sceneIndex < SCENES.size()) openScene(mc);
                     else { mc.setScreen(null); clientDone(); state = 4; }
@@ -149,8 +168,39 @@ public final class LifecyclePresentationAuditClient {
                 .compile(ResourceLocation.parse(definition.targets().getFirst())).stream()
                 .filter(scene -> scene.getId().equals(ResourceLocation.parse("magnetization:" + definition.id()))).toList();
         check(compiled.size() == 1, "Expected one advertised scene for " + definition.id());
+        capturedTexts.clear(); capturedInputs.clear();
         mc.setScreen(new AuditPonderUI(new ArrayList<>(compiled))); previousTime = 0; finalCaptured = false;
         LOG.info("VALIDATION_PONDER_START id={} duration={}", definition.id(), compiled.getFirst().getTotalTime());
+    }
+    private static void captureVisibleInstructions(final Minecraft mc, final net.createmod.ponder.foundation.PonderScene scene,
+                                                   final PonderSceneCatalog.Scene definition) {
+        scene.forEachVisible(net.createmod.ponder.foundation.element.TextWindowElement.class, element -> {
+            if (element.getFade(0) < 0.95f) return;
+            try {
+                final var field = element.getClass().getDeclaredField("bakedText"); field.setAccessible(true);
+                final String rendered = (String) field.get(element);
+                if (rendered == null) return; // Await an actual rendered frame.
+                final int index = definition.texts().indexOf(rendered);
+                check(index >= 0, "Ponder rendered stale/unlocalized instruction: " + rendered);
+                if (capturedTexts.add(index)) {
+                    capture(mc, "ponder-" + definition.id() + "-text-" + (index+1));
+                    LOG.info("VALIDATION_PONDER_TEXT_PASS id={} index={} time={}", definition.id(), index+1, scene.getCurrentTime());
+                }
+            } catch (ReflectiveOperationException error) { throw new IllegalStateException(error); }
+        });
+        scene.forEachVisible(net.createmod.ponder.foundation.element.InputWindowElement.class, element -> {
+            if (element.getFade(0) < 0.95f) return;
+            try {
+                final var field = element.getClass().getDeclaredField("item"); field.setAccessible(true);
+                final var item = (net.minecraft.world.item.ItemStack) field.get(element);
+                if (item.isEmpty()) return;
+                final String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.getItem()).toString();
+                if (capturedInputs.add(id)) {
+                    capture(mc, "ponder-" + definition.id() + "-input-" + id.replace(':','-').replace('/','-'));
+                    LOG.info("VALIDATION_PONDER_INPUT_PASS id={} item={} time={}", definition.id(), id, scene.getCurrentTime());
+                }
+            } catch (ReflectiveOperationException error) { throw new IllegalStateException(error); }
+        });
     }
     private static final class AuditPonderUI extends net.createmod.ponder.foundation.ui.PonderUI {
         AuditPonderUI(List<net.createmod.ponder.foundation.PonderScene> scenes) { super(scenes); setComfyReadingEnabled(false); }

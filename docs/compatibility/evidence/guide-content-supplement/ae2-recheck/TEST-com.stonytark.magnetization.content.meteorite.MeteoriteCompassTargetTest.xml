@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-01T13:26:05.252Z" hostname="Hades" time="0.001">
+  <properties/>
+  <testcase name="noSourcesProducesNoTarget()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest" time="0.0"/>
+  <testcase name="nearestVirtualMeteoriteNeedsNoCoreBlockEntity()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest" time="0.001"/>
+  <testcase name="skipsDecayedNearestSourceButKeepsWeakSource()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest" time="0.0"/>
+  <testcase name="honorsConfiguredRangeIncludingVerticalDistance()" classname="com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

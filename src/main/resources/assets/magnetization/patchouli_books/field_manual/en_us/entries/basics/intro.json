@@ -4,7 +4,20 @@
   "category": "magnetization:basics",
   "priority": true,
   "pages": [
-    { "type": "patchouli:text", "title": "book.magnetization.entry.intro.page1.title", "text": "book.magnetization.entry.intro.page1.text" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.intro.page2.title", "text": "book.magnetization.entry.intro.page2.text" }
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.intro.page1.title",
+      "text": "book.magnetization.entry.intro.page1.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.intro.page2.title",
+      "text": "book.magnetization.entry.intro.page2.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.intro.page2.text.readable1.title",
+      "text": "book.magnetization.entry.intro.page2.text.readable1"
+    }
   ]
 }

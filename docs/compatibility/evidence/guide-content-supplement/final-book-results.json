@@ -1,0 +1,3582 @@
+{
+  "authoredPages": 299,
+  "renderedPages": 1196,
+  "spreads": 692,
+  "clickedLinks": 15,
+  "minimumTextScale": 1.0,
+  "captures": {
+    "validation-guide-0-magnetization-advanced-armor_tools-0.png": {
+      "sha256": "f03afe718c6b015739011d83c2031d57f4ad2b0c2879f77461aa4abaa9d59f44",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-armor_tools-1.png": {
+      "sha256": "c245bbc32ae5e3eaa9eaa0c18a4d69dfc475291712eec531474d2c92f6af37dd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-armor_tools-2.png": {
+      "sha256": "eacd06abeafc27b3ac4243788713f49533ef7a3d88522846665da98a00fb1041",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-armor_tools-3.png": {
+      "sha256": "15d3efba99c22ad073b1b817df66ce351cb04c7ca58befb53e191535e8c94649",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-armor_tools-4.png": {
+      "sha256": "28c773e84236fc77f24e5a41d1257fd29fa233ed4517def29cb4508d8ce508b6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-armor_tools-5.png": {
+      "sha256": "ea1ff224086a6b7def51ee6154c21373590bb2bd3a774f3067edc78bc14c1edd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-biomes-0.png": {
+      "sha256": "e5dcdde77f120c89379e4780f742a9b868c967c0c82a7a585d234df98870caa7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compass_grapple-0.png": {
+      "sha256": "4a26f4cf054cd89065cdb130ccb049bfe9a0a2bc66252e944f6da2684c17b592",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-0.png": {
+      "sha256": "3e2aaf6da080eec3adf8dc6022bfd4176ead6461d716bd79eee23d78fd419640",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-1.png": {
+      "sha256": "d5a81d4d380ba7a9919b1cd434b43eb4335dd2473a3d93a609230b5df89edda2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-2.png": {
+      "sha256": "e52d367d9a7f3cfacc1c8120036106ac70d13a7fdaf0a0937ea4a9e4335b2335",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-3.png": {
+      "sha256": "e32bfe4d2f071292cc932e31148614b07bc533dee59dc9813b4af462bd0bf4fe",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-4.png": {
+      "sha256": "fad432d0bca05512a10b9c0409e9324848b9034e81f6cad56bfa375d2ef385af",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-5.png": {
+      "sha256": "0a5ce19ed1aac6c8c9c5fa0bc79323080312b5ded16297c82a6fa0f0e4088804",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-6.png": {
+      "sha256": "0fd212b753bb8258b2f2dc6447eceb8fd34d92270d41bc772093682a1cce80f3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-7.png": {
+      "sha256": "7ef084172eafb120af941399f61135435736c16bdd41e8e6d5d3ccabf8e2b083",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-8.png": {
+      "sha256": "938fe070400ff3518738cea563a1b02597f02052ff9d1ec51cff0a52a9700921",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-9.png": {
+      "sha256": "509d4f41e2585e28824c68d45c47a70c61c880139282c6119c3814b55ee622a6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-compatibility-10.png": {
+      "sha256": "e1327bff0276644d60cc4cc9958dcedcd61ec15b991398cbb721fc5042804d0d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-configuration-0.png": {
+      "sha256": "279a37b32bb5c958459b5b6ac636a9e85b7f6a682a87b4b9e9612839c047fb27",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-configuration-1.png": {
+      "sha256": "4eaef9bbc213cda7eb184072fea39221ca527ea9bcdc305a0b50c474d3006338",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-cosmic_compass-0.png": {
+      "sha256": "107144a9bf7058a450bb8caaf2227aeabac596e7b10a49311c2ed94dc52f2c5a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-cosmic_compass-1.png": {
+      "sha256": "d22286d727e8bfe24ff6b141aeb3b66c884bc6f6bf33a89905f293fa6c1bc5c4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-deuterium_oxide-0.png": {
+      "sha256": "3cfab77c144bc7e251f3d800b5252e4d2d207917187ec0d53cd1444796d06efb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-diamagnetic-0.png": {
+      "sha256": "fba176f6d058bf0dabc442e6f761589596322f06256b16852a9192bb5299309b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-fe_rf_power-0.png": {
+      "sha256": "ed243b44b2337b6ae1addbd5da052f577393ec5e39809e54b70f83c76a440644",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-fe_rf_power-1.png": {
+      "sha256": "0313a9a52c32abf115810b638efa87d8d117190bf36c90eb60dfdcfdb39ed353",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-fe_rf_power-2.png": {
+      "sha256": "c1575aeeca2e9477e01686a021c457afbc8f34aab5ed8107eb27e8529816fa08",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-ferrofluid-0.png": {
+      "sha256": "aba91db6ac08663f0992d646b461c9c6bed6a0f85d68430249bb24533a68ac35",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-g_force_cushion-0.png": {
+      "sha256": "79898de09f6a3b4b43f1052a2bb0ef55ca2bc233483326f8c51fd8a86614cfe1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-hematite_block-0.png": {
+      "sha256": "a2342aff93ec0a29c70b4d79b5069c522c198ea06aedbbd7c91a4e0174b1aed5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-hematite_lens-0.png": {
+      "sha256": "605a38ec051a5c65261b39904eefb896ff3e6fd2467d915ab596f97a137c01d2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-hematite_lens-1.png": {
+      "sha256": "a81f9d9b6fe2a21124414b3ddb2a82ca2d323c72cfdc5875f57d11e98ab2a8a1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-imprint_module-0.png": {
+      "sha256": "962e6a1c9017604694e4eaaf12e7900c2f67bccabba167670156c28a74cf6685",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-imprint_module-1.png": {
+      "sha256": "ec49552bd9c8255e965e0ab6865ce3acea51f659cc5332f089dd014ffa986089",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-imprint_module-2.png": {
+      "sha256": "8866952456ee953e9b78a3354f1ff4edca26baa580fbf84ef4b26c4e153eeba3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-lirm-0.png": {
+      "sha256": "2917f581feb7e6c4cabb01a4754880d4e640dc6724a89a2fe977c177e02e0e42",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnet_burning-0.png": {
+      "sha256": "45bab0fa18576d444e05576111a79aeb4e121cd0c5aeccec442913586e8ff431",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetic_anvils-0.png": {
+      "sha256": "1471b1ecebca14b37a04330ea9f3130305883461bc50081f86ea54d5b11663f3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetic_elytra-0.png": {
+      "sha256": "e6a776996d2bdd074e4641b36da2f379daf19c803c5536f726e376b09733fe76",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetic_elytra-1.png": {
+      "sha256": "34732ec0cd64b0a12f9992720906bfed91ad59fd1de186f3186c8e683b28fc7d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetic_item_frame-0.png": {
+      "sha256": "b57e2dd3fdae5d8077ab4e0a455759b7ca2571a6afcd5e08219a2432f328c1c3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetized_ferrofluid-0.png": {
+      "sha256": "d4384a12c4e0ec6507fca5e55ccb194e19a5d9cb0231d70cf7fea3afd220c5fc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-magnetoresistive_boots-0.png": {
+      "sha256": "27cc3673fa34a282ece9bae49caa96d48ecd4a9985faaddf86292d7627dd9bea",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_core-0.png": {
+      "sha256": "3c817a23afda453b14968e9a749fb206c2111648f48c179d3c25cc44ef234fe4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_core-1.png": {
+      "sha256": "39a96d0fcbd49015508c6387f2b80159e9b3b701823f9e64cce045b0ef07ee40",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_core-2.png": {
+      "sha256": "bd0c92b8a002a4184abda967d1772e43792c3482b1cdd7d3117f3fee542893df",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_fragment-0.png": {
+      "sha256": "b5d08044df2aadc2bdef054b6938f7bf5f0969398d7a0452b0380f6900df7d41",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_fragment-1.png": {
+      "sha256": "63d49f809d515404376622b51dcb511585a10b2ca0e3505dfb2cd2b082a2155f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_sapling-0.png": {
+      "sha256": "95890eca286b76e400d08484eedfabea88db32cc9a32f8cc9a1865617738bf7f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-meteorite_sapling-1.png": {
+      "sha256": "ccc0999f526b366acec88003a77f0c61e6e12f8deeb582b7d01efa376ee46686",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-mr_armor-0.png": {
+      "sha256": "a0a48be0ee4a777cbfbbb71283ddf8ffa11cfe60bcd64951b858c9355b869773",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-mr_fluid-0.png": {
+      "sha256": "65a79e132445a199215d1d56cf25d907c204e5c83501732b1d6ac8eeaaf4614a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-mr_fluid_golem-0.png": {
+      "sha256": "ab06ee73856f2df1bc26e892cbadb66f02d90e2d6f4d08cc9b4ef3541212c340",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-ore_compass-0.png": {
+      "sha256": "b16ef8af372fe5480339a4139391d3c436e3ef2cb8a1cf13680048834fc71e09",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_block-0.png": {
+      "sha256": "d3e07abe16195f4755ba52940f325dd41aaab22171e4aea117ddb8eac7868c0e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_block-1.png": {
+      "sha256": "49e15667dce63bb1574fb55518414294e9bc92cd36f95420e769e55e252596ba",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_catalyst-0.png": {
+      "sha256": "cffa952296eeb709176796e4467ac3a28dd3bae98c7c62aa5a910012f16ed42c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_catalyst-1.png": {
+      "sha256": "47553edad90dd928c8f55be6bce626610f1077f9804d363d216fe2e47c0071e4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_catalyst-2.png": {
+      "sha256": "e9e61b4972fa25df835cb237236e57ffcca57f097a25700d0b45d77a61d3177b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-pyrrhotite_catalyst-3.png": {
+      "sha256": "fe60e8692eed104a4ec076b1a795147902c10888d6f20c13e1cba8c50adc9671",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-repulsor_gun-0.png": {
+      "sha256": "df70aec9017e2e89fb8163f53d62023085f95dd063d8b6fb21d16edc9b7ec859",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-repulsor_gun-1.png": {
+      "sha256": "73ed2d498938456383c5ddcf9a8edddafe80d50c5bbd821921de78baf0693028",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-titanomagnetite_block-0.png": {
+      "sha256": "86187ef375ad7391bfbe3a31fdd2b7fe139506afc689ae09a5ed05ba61c2b0f9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-tokamak-0.png": {
+      "sha256": "8ffd506a490ccd5cec91b06f0ac4644009c6ad37fc7ad44d43bf1869dc17d318",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-tokamak-1.png": {
+      "sha256": "8dddb8909eeb40fdd01ebf65adb50bd32eb1b3ca47129b1201279b1e5cfc69e8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-tokamak-2.png": {
+      "sha256": "3ebf4e87cf349d45133d262c2fbebba807a36453136ba36cbe831762a2965526",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-advanced-tokamak-3.png": {
+      "sha256": "bf2a5fe86fd07b4b41c0a80ad7893d75cab7afd36d2470d639d58fdfbaed6eb3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-0.png": {
+      "sha256": "708d6cc87e40cc727055f8a10f23f86800fc42e375edbf72afbdfcbf10cd91d9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-1.png": {
+      "sha256": "fad4d6d0a8e5995cf18e760a61b7a63e8a864da6e86234be74728013c656f479",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-2.png": {
+      "sha256": "999eb403f61d4e42617aad86b0ac91a9efbb44941138c68deca2e89580ed5139",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-3.png": {
+      "sha256": "ade2d913171874a0e9693d109a32e6b38ebfa990001a6c5ff1a4302e9ab8f965",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-4.png": {
+      "sha256": "42741873085a7e8eefab7e45f20c4a8b3c8d0dd4cb254b737952368656cb996c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-anomaly_terrain-5.png": {
+      "sha256": "71c56d8f3287b52e2f17609781562b085c50e0056d242c2e1c0764df0f4c3cfb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-ferromagnetic_ingot-0.png": {
+      "sha256": "863fc0f0537b2237c3965383a622f71b25eb19657528d6aedcf6c008d94fadf4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-intro-0.png": {
+      "sha256": "a740c4aaa1f6e68d23cf82a859d9739c950c2bb003c871700219e3d770d6d049",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-intro-1.png": {
+      "sha256": "d7c22d4e63cd60c8ff0ae1ed97e23ba367a1c1a9c971f1880b60866a270e342c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-0.png": {
+      "sha256": "73221275a32ec13dac1cdf857fddf77ffa01ace7217111de4b16af20ed61cab6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-1.png": {
+      "sha256": "80ce55392830f0ca6429ef2cb203fcd1c8046815162f15ef03444b259b1ab035",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-2.png": {
+      "sha256": "58b17b59d739425bc8cc5332eac01c3296e592f960540a01c018904957083747",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-3.png": {
+      "sha256": "523395e5ea55da0201338518f1af2cface6565054c0e1ad18d2457c022b4e32e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-4.png": {
+      "sha256": "b8a67c29f961e39764b41794ca74e284564ed63c8ec6f7754bf31288e958c7a2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-5.png": {
+      "sha256": "cf1f7a4014bd5504d136653b7d087448c7697203293dca57fa1a7518a6d4e2be",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-6.png": {
+      "sha256": "05a8192a194d1ad154003da15d5bae38066bc508936bfbb9f58618bf7e0b0bd9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-iron_oxide_family-7.png": {
+      "sha256": "d1a3a9691120e380e0bd9adec6ae221510ac66791dbce0276dc3fea33872f46f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-lodestone_core-0.png": {
+      "sha256": "ee15ba2e64ccf7fc3bbc4c25cc5bc605c6ae6c027dca02884ee1c93a2d83010b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-magnetic_plate-0.png": {
+      "sha256": "7879fd2c0a366a3a884c27f9922cfb7baf6c4e5e4a417b44781a998d6449f6f1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-magnetite-0.png": {
+      "sha256": "f26c20fe69b47477f565edc55a1ff84c0b43f7494995a69878b5834efd8d2d3f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-magnetite-1.png": {
+      "sha256": "878c766c7134681eb27eaf1ec7eb1a95f9d0812d9b126fab2593e15677eb87b4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-magnetite-2.png": {
+      "sha256": "309f57c05bb35ae35400254eebaf731871a369ab2892786487e10ee981c93f8c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-manual_access-0.png": {
+      "sha256": "ce839d08b96dd7b052b6fb1a32b4f7030e9ec02863d4fff21f9becd5b0a86bbf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-manual_access-1.png": {
+      "sha256": "3cb03533f02b27b2b95aa43c1c1c537fe66a6d3604c291c5332d1cd1edb5d91f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-basics-polarity-0.png": {
+      "sha256": "da758fddc34fa75a6d0ebee787751d0d2183a8e78c9073c2217fd65a8cb4e70e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-anchor-0.png": {
+      "sha256": "6670c83612a00e4d0797860b140802c465bc4078a424d5b32b03d979a208155d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-barkhausen-0.png": {
+      "sha256": "a10e44ef0ec1cd4e95960dbea40c561e101d0132a70ff07ed24c84bc19d9b8c6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-dipole_electromagnet-0.png": {
+      "sha256": "e95f633e48315015edb41a84b1a56d0410728ecdfe831b197b75731944ed0470",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-dipole_electromagnet-1.png": {
+      "sha256": "c2a857c2af16d875ecbc16087cb33e5b5ba93b084a016ea85f12ff6a2f107835",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-electromagnet-0.png": {
+      "sha256": "b137dea9c304ef568432c4c23bcc920bf27f561b7e3a3ac1fcb1355a14bc17d9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-emp_charge-0.png": {
+      "sha256": "2764407b56ed5a0a1f8a9784c71cdb4c0334982482d4f441b5d5cc695348c116",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-excavator-0.png": {
+      "sha256": "bb693b600992c41c89f397809a1b78012ec32010cd85ff8847ba6139c9fc04b3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-gyrostabilizer-0.png": {
+      "sha256": "8887e45117c268645f59180e96f66d493ac8ad97dc7da68be42a1583ce0a7e9f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-halbach-0.png": {
+      "sha256": "eae2938ff49930f895a1961078c4e4be1fc57bb955c80f29a595a05fec15353d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-induction_pad-0.png": {
+      "sha256": "165d0a3dd17a5fe2f1bb7dcbb73964e73525f1e4695f1f1ecfa3a1df32b022be",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-kinetic_coil-0.png": {
+      "sha256": "59636bfdd87d7e8d970bf28efe821bb1e110f061bd04593acb4e31771b9e1d12",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-kinetic_electromagnet-0.png": {
+      "sha256": "f5cf8e9e70012e895bfde8eb3f5939871992b16748a5853bac9d8cc688a92963",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-magnetostrictive_sensor-0.png": {
+      "sha256": "a84ffcf72ce2c5845f82122084b9e66615ee20340cc8650d8559376b10d0d0ed",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-permanent-0.png": {
+      "sha256": "0ee2d9462a8ec0f5ef7737e4bf307eb102dc02148c43d654b2afc83c8fddcb8d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-repulsor-0.png": {
+      "sha256": "8da8f5307f899943f20f1735077270da5665bcb15ffa599ad44b8fb2fd3a6a2d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-structural_inducer-0.png": {
+      "sha256": "2fc3ea36f5a714c83d79d7d735129cfca181c79a642ddf1b3c6cab99aa1da452",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-switch-0.png": {
+      "sha256": "38691b9cf44c121be5df34e35ec3ba5d4ff6815fbc663032472a87d5a2a293d8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-emitters-tractor-0.png": {
+      "sha256": "9fe304e5ddb6b82afd69acf04c0140ab4dd4888364db51f9d651673fd673d537",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-0.png": {
+      "sha256": "d568bee1f74c010d542012d241c78635a4bdc989f95765da94304e9909a78fa7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-1.png": {
+      "sha256": "9df6d1d7bc6b8eb3725d1c431c5cba871a7044c518e3e24969b1ac3f8e80a5d7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-2.png": {
+      "sha256": "9b7e5b382cea0041a85bde4eae5814ce9bc3ae462f090670b1a839082db58020",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-3.png": {
+      "sha256": "bb143de202961b138868aea0637f877738286ee3fb6b7038fa4c15420ae50e3d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-4.png": {
+      "sha256": "b57a6b215798b8b073ebcb6a742623fe817813120e61651a0f0460eb6a6996cc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-fusion_fuels-5.png": {
+      "sha256": "117f9ffa52160d0569e222b96e6fa0b6a10e3457fe4e44eb1ba7d5c316f27ba1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-gallium-0.png": {
+      "sha256": "4e2af3f95c26060a9712485a265c40358817036615f8962d075b11dff19c5db5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-lithium-0.png": {
+      "sha256": "b23c1d026387a780892a9ced23da44cfe33f7363f7ffab4ba92b88f014a6eb68",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-mixed_gallium-0.png": {
+      "sha256": "f9c449b67e32a12e6fd763b8d3d3758c6018dd14a4a4d7e8c85fec7dddc7203c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-noble_gases-0.png": {
+      "sha256": "a727eabdd64180ad30ca05f6f22121f86b1993cf09602e65dddd77c287008839",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-noble_gases-1.png": {
+      "sha256": "b21c8c889fb7ab1dc059d78789ca53e8bb9251adee6860346fe76bdac31c67b0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-fluids-solid_gallium-0.png": {
+      "sha256": "5a6c3a0937ba2e3b7aa45d7f110d1a5fce792251aa7a0d2656dae197e96e42b0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-gallium_gear-0.png": {
+      "sha256": "a6b3030d7f64fe7988fdd0826def32054efec4dee6fd035f4805ec4472f1e9d2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-gallium_gear-1.png": {
+      "sha256": "d6782c2e38503eb47fb40fe99ee5b4c24df61f0a502bf1bc5ae4550b0972f69f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-gas_detector-0.png": {
+      "sha256": "bd8fe0f52103f3abd075355a3a0701b707e280b10fdb6c51cc4cf37f986a8f10",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-gas_detector-1.png": {
+      "sha256": "ba14dbf134c2764aaf225b61a51a8e14d56b66f9eed2546df32f50d42d530865",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-0.png": {
+      "sha256": "12e69a0cea0ee7350219d121656449091bad3b0083785da0162369ba64fb42d3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-1.png": {
+      "sha256": "eb8d6a503234f1f24e46d2c2f9898927f6cacb5ff4586406b45089c4245b108b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-2.png": {
+      "sha256": "7ebc239968bdc91efe95c4944587e11645ed8fb663fa5909649658ceeffea556",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-3.png": {
+      "sha256": "fb862dae0df0eedb6db147e03b961bb248d71363f5c886baa31ab631348d1a38",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-4.png": {
+      "sha256": "2145e8bf84f565800e0f3e58422ac3e8b9f915cf585ee4ff6e952bbb5421278e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-5.png": {
+      "sha256": "77a3ce542213ddb87083681e89e6bee730f219f1ac377cf7305de849272a1345",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-6.png": {
+      "sha256": "b74ffa951460f2b1266d64d9711d9abd05aa72c3513011fc988a3b85e2b3efab",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-7.png": {
+      "sha256": "c366ec769a701c0ed3f8ce16e2480c408ce93385332c63f2cbd61d9496c4fcd9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-gear-rare_earth_magnets-8.png": {
+      "sha256": "df40964af96618f94759672910fa52d20f49e780348324885c5439207114d3bd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-air_separator-0.png": {
+      "sha256": "4a4213405542e50bc4a9c36927cb39fd5d8c37433eec4ec6ba906bacc92ab91a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-air_separator-1.png": {
+      "sha256": "6a7534e188b66863a45a8c6c81751ca28526171999e9bdb68b4ffead6d0ca80f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-air_separator-2.png": {
+      "sha256": "307f9845bedddc35dd09e538f22cc4e5b3ea9b2d78265c0f902f2625fd86e7c3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-automation-0.png": {
+      "sha256": "3508f77c6d202f4b04c0eb311004f235440fc4446d86b671f5dc67f7ed9ad63b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-automation-1.png": {
+      "sha256": "db8258baf2f827b785841e894a5745d97e0bfb8d311689682e7ad2a723ad7ac5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-automation-2.png": {
+      "sha256": "c89c7dfe6711ffea97c1e0751047dcf269d7823342e942656d04727bd3fda36a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-electrolyzer-0.png": {
+      "sha256": "539126b52426e35aa9fb5f3b53fd60031b134a700ecde3f4dd6f31f15de7b61b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-gallium_golem-0.png": {
+      "sha256": "ca3738e308005255583fd67f9f77b5c4bd2571d2f059fefa8fdaac5d80596dc1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-gas_exciter-0.png": {
+      "sha256": "065fe8fad5848e1dc5ccb23654cf028c8bb2d63ea3324b963754a424bcd79c7e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-gas_vent-0.png": {
+      "sha256": "b5d38396294009516f0b22cabe54a83df23aab876827e4ec08c8f143cce8a24c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-gas_vent-1.png": {
+      "sha256": "41f5f7217ced828f388d8ae05a77317983e248a5f7977af6a83d6505925182be",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-iron_oxide_golems-0.png": {
+      "sha256": "80ca3b57261f4096675c6cfcef634ff882520ab39c59a121a56e3d318a279024",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-iron_oxide_golems-1.png": {
+      "sha256": "9132fd89a4e49c79521a344995329865af29489a9fa05f5dcbd608d2696c8157",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-iron_oxide_golems-2.png": {
+      "sha256": "55fe7e03ac823e05b3331fd963815510fada5de3b4f10711d03e1a98840a3e82",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-machines-iron_oxide_golems-3.png": {
+      "sha256": "407b02d273adc3c8a096da47932587e8dc24b10a69cf84c1144f8e14940bc2e0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-alfven_backpack-0.png": {
+      "sha256": "4660cdb64cf5ae8ede7045ca81fa1c9c40bf7b85fc0489f350dffe4f708a5051",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-anchor_docking-0.png": {
+      "sha256": "7343f88032899b130cde17a772c2c22cda252d861d429ac8947b1fc836a3fccb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-fusion_thruster-0.png": {
+      "sha256": "1d06776b7daf3202a28e91ec9e0c6afc1b8b38f854856923c935e164518d7670",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-fusion_thruster-1.png": {
+      "sha256": "0f0f16faec683f3653db2eb587f263ecc4e5d3f3c60bbc24a591dc364ae85acd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-fusion_thruster-2.png": {
+      "sha256": "fcc3e9d683b4c21aec03633e130a30d3229d5a25cc54f6a3c58df0b89663d239",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-fusion_thruster-3.png": {
+      "sha256": "a91c2ef66c89972cb58893cd4f1b1b388c0e84193486f7860b9fef2659d617ff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-fusion_thruster-4.png": {
+      "sha256": "8d10c6250058f07e4999d3264c073d44e9fab6724856edee165f0933c49f9594",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-homopolar_motor-0.png": {
+      "sha256": "788f555d880273ffa405331ec9247046e9a84e676206d7ed7880bbd410d6b8e2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-ion_thruster-0.png": {
+      "sha256": "5d21d2ea9d09adaf07a2269eb1c1711716e4316e3507ba39db02bc85e2871738",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-ion_thruster-1.png": {
+      "sha256": "68b0f83357689f2f7226997c6ff4056682e13d006614a73c6024bf9aa51cdc8b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-lenz-0.png": {
+      "sha256": "9651f61d0692d33b9e97b8b2937e3fd58a86b8e4adcda96889a17036e56eeb2c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-mhd_jet-0.png": {
+      "sha256": "ccc0078d01dbbd2927d2720e4ad907c00534f602831f29b01324a6ed6d5ce2f4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-micro_thruster-0.png": {
+      "sha256": "bd8678a4f213b4cc5d3f619937a4a7b67158b9aa85393fdc78a0a8a27f2c9653",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-propulsion-0.png": {
+      "sha256": "b779bc40068d9bb4d732edc20a8cb79ff9f00d58a0ece6bb012821d578b4a343",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-railgun-0.png": {
+      "sha256": "42a88d2ab28839d0e56ef4825f8aa3a36642f9be8472f09f2dc7024520bd80ab",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-railgun-1.png": {
+      "sha256": "07bf464c00225653947ec614b286130b376b0940b04722c8af94759062bf9b93",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-railgun-2.png": {
+      "sha256": "8fdb284b9d407f41e47ed1fe151eed246f530a0f690db8601faaa337bb1fe1ff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-railgun-3.png": {
+      "sha256": "3397c6a35d1ab7cf5d73a0b220c33c5b8a0846742fcdb875b2f48074afdb179c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-ship_polarity-0.png": {
+      "sha256": "2c9a407ac52badeb1df561382f36dd4e76f1cb0e8c0174a54e586a593d94c0c3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-solar_sail-0.png": {
+      "sha256": "5a7f958abd5ccac7f84932c639f72352999d6adbc3810e5db1e576d718acf8ac",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-thrust_controls-0.png": {
+      "sha256": "e8d9508d9d2f428ab81c67af4851ca15a3e8509394e258fe60eb9a3b97559447",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-0-magnetization-ships-vector_core-0.png": {
+      "sha256": "70a1cb9e4bbcad1d1ea596487640a3ba445c556811ec25fae502baa7a6f281c2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-0.png": {
+      "sha256": "a74105704500cd4e673744964aa715d45dded965c461312187d379172495629d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-1.png": {
+      "sha256": "8443af4967b7d8c9e89f1eb19cf1cf630af2ec8b9500105e12a10b74ebabe979",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-2.png": {
+      "sha256": "82ff91ebf5d2bf31c4aaf5bf5ab7933119b3dd72de9653036c5b7d3d98355f73",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-3.png": {
+      "sha256": "d1eb0cd2bd5daab10649424abb85e8421e01e68080b20558039aa2289c928ca3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-4.png": {
+      "sha256": "e6d25862b02d6c411a6ed4506b144cc826f7aadf10510891e37e6182c8240cdb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-armor_tools-5.png": {
+      "sha256": "6be4dcdc674e569ce94f4f03095d4397c902b9dd9288b38775b372087e3b765b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-biomes-0.png": {
+      "sha256": "d4a84f0f48d936a67d9bc56f7640793de7646756aed1a5313612d20d02a6b5d8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compass_grapple-0.png": {
+      "sha256": "a5b777d55fe51a50970d504ca9a54c01bf5cada88c6c7187c93343751599403d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-0.png": {
+      "sha256": "c1e5323eee48a72178221bb3acc1c63db78a806389e9a8e58b9cb88cb40b5af6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-1.png": {
+      "sha256": "00df2b0922fc4dfb76d0dec962b4d671c361dcaff92cd000b0018b0120e67dd5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-2.png": {
+      "sha256": "527f183f2519a7847234fe2b98d82970ffd989449d4ead41821ef52cb5ac21da",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-3.png": {
+      "sha256": "726c02d13dbbdd75a23a96a1f2cf0d57f22aef04f41ddd22a44bef121986946d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-4.png": {
+      "sha256": "4bc1c27d853428a4e5700961581c25e53b809bb5bde1d0cd20b7bdf27a58866a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-5.png": {
+      "sha256": "449ebf83a64016660b9a07d457d5af7e6b610d96a1dabbbdb40e2cd1d19f946f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-6.png": {
+      "sha256": "87a3c0b207660c600533f5ec2e294503ef42d04d06246b947065bd306c74627d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-7.png": {
+      "sha256": "09b2927a962aeb0b6f15da3665d40f53da89428d174bdcf669517e1c63571e71",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-8.png": {
+      "sha256": "3123909ec965c9c5851ad741cda200db0d06055c6cada72cd3d8172062ac1e0f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-9.png": {
+      "sha256": "f909f135d98e6726f77f85e3955345cec1c0c80f63577dc2ae4d311bb5b0a462",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-compatibility-10.png": {
+      "sha256": "2c1661730169206d29c12bb0bd7b8ab780c279f9ca8272ec67a92c8bbe6a4184",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-configuration-0.png": {
+      "sha256": "e1729165b8685a28337da10648fc1ada15a4b4e47fa713edbdfbb650f6cc472d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-configuration-1.png": {
+      "sha256": "9321d49b849b65d112ea449a8ad4c81f18c73198f7f2e84db6e4d801453e4a55",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-cosmic_compass-0.png": {
+      "sha256": "0e2e55b29be92afd2c69fd0f3362de0b49743d45f9338c08519aad8e01099908",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-cosmic_compass-1.png": {
+      "sha256": "45a10fa9048f49adf9845af82f33d86b68a4bb8dc36fd99f1f23d8896f834238",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-deuterium_oxide-0.png": {
+      "sha256": "f0dfab05f80a03d6458d6bdcac660a75d29e0fdd20b7facbac56cf53904b0157",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-diamagnetic-0.png": {
+      "sha256": "9a313a624b486635a6e35d67fcd0acb978d2117087203b723dee160833a928d6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-fe_rf_power-0.png": {
+      "sha256": "251ad7bcf3e231ab71b6298e468a869a27bb5f1d18dffb09ec58fc4258bad3ef",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-fe_rf_power-1.png": {
+      "sha256": "6cc169d8bc6a3f4e3d928516ae31330bebc7d8f6d6ebfb02df6c1e3e44709a05",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-fe_rf_power-2.png": {
+      "sha256": "773b6336816e563ca4b47f36c220416ff060e3866199995f23cb60b3577d503d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-ferrofluid-0.png": {
+      "sha256": "fc10b8296b2229373dc64dd60f4adb5b6e5dbc73481a5b33a942a2393d6c1a60",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-g_force_cushion-0.png": {
+      "sha256": "a49b948958472a1e96d7673c81f2c3ed9da83ea4637fb9d5f9d9c74af455c834",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-hematite_block-0.png": {
+      "sha256": "bbbe4516f54859ce9cd6e1e6c401ea232955fe90791cfb208d76718337ba65b2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-hematite_lens-0.png": {
+      "sha256": "16f43537084fc091622ae90b63a622c1902864275e7abed6beb8df85a745e19a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-hematite_lens-1.png": {
+      "sha256": "5402f82c3e302aa7f99dd1a1218b5318f85f47d63929341bf44e6e4f3c9b5303",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-imprint_module-0.png": {
+      "sha256": "f373eb48bf96f1f0b7b0f97b5dcc80c15507571278c2b5af0969648fe56ea11d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-imprint_module-1.png": {
+      "sha256": "2a18d2574ff287bf0da69174501e055766c3d5578341c0a3ee12912e00e722d8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-imprint_module-2.png": {
+      "sha256": "2c5e23b4da59c08d60d5f3ac246b4c3a73063257a019621fc32597a91b12c004",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-lirm-0.png": {
+      "sha256": "fb3b8fadc3c0a0d14e7de7405bc29bdcb7e0f457ffee0d9f51e631e423694530",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnet_burning-0.png": {
+      "sha256": "8984d3dd2b55558b8fdec8cf1ffbf98aba721ecf49ea79f1d364f85ec73da0c0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetic_anvils-0.png": {
+      "sha256": "07edbcdd659f7b0954ae58aed252c5143d0326d6a1b61f7149536bd3f0260e17",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetic_elytra-0.png": {
+      "sha256": "c85bb6ee098f7723d65e69c8bce737d9ce3c2db99b5d0742dcadfa03443600fd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetic_elytra-1.png": {
+      "sha256": "542a686bb7d78c51dd22bdcf938f12827dd902e131dce726ada793e4f9534599",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetic_item_frame-0.png": {
+      "sha256": "353a5594e42b3e08f235915530baea1bd97f6827a57abcc785b713f59799a77a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetized_ferrofluid-0.png": {
+      "sha256": "006a1b1f601d6062affc43d934fc49d2315fa0e35cfccdd97b04b768a273feb3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-magnetoresistive_boots-0.png": {
+      "sha256": "b2930078cade8fc0662b570db170439aaca3d4419518a7b001f8320417e83a6a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_core-0.png": {
+      "sha256": "55a9629a6dd9b0d00618d62edb1c9c25021361ace53fc8d51b637920352ff456",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_core-1.png": {
+      "sha256": "9e78dbbb910f4e339b23956172fc5eede3f80c6ac7a5a30090340ef867f2f926",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_core-2.png": {
+      "sha256": "95bdbbbb7e6b648168e7c3eb261239dbaac07fb17276fa4f5f7aeeed21cd9c69",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_fragment-0.png": {
+      "sha256": "ab5d51a6fde1e59056295f582e823700e0e483d2e46fc172e705e1c4055094aa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_fragment-1.png": {
+      "sha256": "b0edd34a436961f6dfb11d53ea3cd734f48ff88f74bd5596fc691953de3a5c27",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_sapling-0.png": {
+      "sha256": "141d40de9fab225f0c091aa020f53bdc88597df268c25dadfef1446c7c106fea",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-meteorite_sapling-1.png": {
+      "sha256": "1d6e9f757ae156a07abb0d3b3c48ed88f3c60e0b0ff567f5169a6a4dc0e68aef",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-mr_armor-0.png": {
+      "sha256": "838fa42a5c276100e8ee3bf14400770872175205fb9f04b4509b04ee53da576d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-mr_fluid-0.png": {
+      "sha256": "ae9d06890cd5895bc5a56ea14dab6ad78d378374c7cb28257920106f2c63d504",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-mr_fluid_golem-0.png": {
+      "sha256": "168da827a6321ec5d28d53fef5c0db75e5cb6b29b7377efa5b94eca51e277943",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-ore_compass-0.png": {
+      "sha256": "a2543d4b497cc737e0a73ea0914d082a3ee2f090095bfe7e36680821a9b88400",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_block-0.png": {
+      "sha256": "7c89177251221166d722f74719e9d11d060d5c08ab69f6e3640f800f4db41073",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_block-1.png": {
+      "sha256": "c319925d3fceac2521138f028e37c5a221be21aa90dd3c16fb758511217d622f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_catalyst-0.png": {
+      "sha256": "301a92e1b063b93ba54292252d4f6c577189a97a775278e71c5f292edeed180d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_catalyst-1.png": {
+      "sha256": "96ddcfd0adb396b05a71be4769565ea8cb5445ab2cb9b4b9f283b9e4e1a6d09e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_catalyst-2.png": {
+      "sha256": "e0fdbb8dd27d90cee52479ce77026d5204104d20051166eac303b541839e10d7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-pyrrhotite_catalyst-3.png": {
+      "sha256": "75c806abdbebb15ee2944b9234f71e4eec38ba46fc079d832bba2be46854af3e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-repulsor_gun-0.png": {
+      "sha256": "3ceb93c8c1b99853d3092b127dfa525a1206d9ede730a7a66b733045c1641af8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-repulsor_gun-1.png": {
+      "sha256": "8f304e90c60e72dfb09ccc94c1b54aeafed9d436946ad71fb4b8bff150bbe496",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-titanomagnetite_block-0.png": {
+      "sha256": "fde0a6db9de528fb05c1ddbd6c3457e32f4f70cfa7a0c2e78e01159bc73cedd4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-tokamak-0.png": {
+      "sha256": "c990a8081c59aa7a2c254901b30ee2e0378d724e2fbef038efc178ed53bb8c2d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-tokamak-1.png": {
+      "sha256": "299f88690cfefd7bdef79eede6f6bc2a29ff6c2dfda3dcf8cb59d8da26664019",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-tokamak-2.png": {
+      "sha256": "a1cea97899a432ad443b7b6e89c9eca013ac582dfb276932acc0583d76aa3f0b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-advanced-tokamak-3.png": {
+      "sha256": "6d6d754ff3ba6f931f6d2ef4b86217937e40f8b3e7b71151b6d40fda16d774a9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-0.png": {
+      "sha256": "099e9637b368a4716d3bec06962dc10a068a53712b0b7b4093c139f7a0c5820f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-1.png": {
+      "sha256": "eb11c12bee70c8ebcdd9e6625e9913654a1bd38f30caab40b1ee28dc4c38296d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-2.png": {
+      "sha256": "52266dd5ee223dc98c8076194381ef5abdaca749993774683ca4a337d360081c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-3.png": {
+      "sha256": "bed7f81cf3244e40b93042bc5d436afcacfbeba84c88c298baa51b33bbaff001",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-4.png": {
+      "sha256": "e5ddf2a577ffa71d7c470e591aeca26d686a725bb5f70b7d69a7730cd6abbd50",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-anomaly_terrain-5.png": {
+      "sha256": "68a5fca2d6dcf00e16449d2d03fd65bdcaf281c333df528157ea94da7074becc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-ferromagnetic_ingot-0.png": {
+      "sha256": "2795dabb049aae64f2e37c9064b5b1665804342f8fdce13ee57b8d8b75b4531c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-intro-0.png": {
+      "sha256": "4470192200a643651dd02cad37752bdd6993659842973041fb59e11bad5b05ea",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-intro-1.png": {
+      "sha256": "800868bbe052e6a47bfffe344d894fb02c9bc7a235e9f9e9cff8fe91bb61d7e4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-0.png": {
+      "sha256": "9c0622c8b67fb5099cebaf672d4acb7c844e96516a6507ed7e25c6e489f63ba2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-1.png": {
+      "sha256": "4f03f83134041b99c7f3ae109170029fce8c17bf349dbd5fc706bd1075b10e35",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-2.png": {
+      "sha256": "c37580e33901fe74bc8a9ab7fe87fd4fbe2bbd071a168e1f84c73e5c78c8c155",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-3.png": {
+      "sha256": "f692b055c184c6147414198ffe7d845884d1ae7552a4d7c36f5bdf3ec550bee4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-4.png": {
+      "sha256": "cb9896d0752ef6a8e1b17b45963f6ec00908a1d67559dd0588a2f21f8bd3790f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-5.png": {
+      "sha256": "1bf0c913f911628034f94b63cd46988f1b08a7d5aea26ef8db6aef24024e39f0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-6.png": {
+      "sha256": "2e94354b26cf78dad3845d2c20275070a86a46b2da24a247f844823ccfa226a1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-iron_oxide_family-7.png": {
+      "sha256": "e6dc7b0155a6472b1890325a106c37fcf5f6efc7fc3bf39036bc4dda8d2193fa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-lodestone_core-0.png": {
+      "sha256": "622e1548a12a9911519bd78f6a1d4957c73caf4379c35fea30db9d4cc676e610",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-magnetic_plate-0.png": {
+      "sha256": "6899e89f86aa8e3976b6465b25dd96e935bd7fd6a473e27992b41e4430d73990",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-magnetite-0.png": {
+      "sha256": "72cef3f9c9b589071ced3e6ede53c070ac0e37b98bcf517051238c48a89f06e4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-magnetite-1.png": {
+      "sha256": "5fc00e2e716cb7233f141f2e1fefdef488e32ec467f85449a0235bce2ab14bb8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-magnetite-2.png": {
+      "sha256": "7b3a4b9619707e9ce81d1a594e76a2a5ba2e26bd972e9f066d6d1e8986437f8b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-manual_access-0.png": {
+      "sha256": "f0f09b3c4fb8678877219f201683cfb7303ccfbcbf842af50e059838722831b5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-manual_access-1.png": {
+      "sha256": "ab6627744d29f59d72f97b164defef96d24fbc8704864cdef1c80aa4859b0037",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-basics-polarity-0.png": {
+      "sha256": "1f60ae9d19621433ce6b17950a4536655784b83b8bedf5834cd288475ed2bca5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-anchor-0.png": {
+      "sha256": "e54768f3842f23e26db824f26c7b6c17a5efe3e05b6192a2fed6cac2a188a19f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-barkhausen-0.png": {
+      "sha256": "8a557df9d1bfc81fa6c7111b6675870df580fcebc9c9e1db51d598111b754832",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-dipole_electromagnet-0.png": {
+      "sha256": "a8148989f6ef0526f3271b071ba5421959598f39afad026d4ae701e725c0b404",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-dipole_electromagnet-1.png": {
+      "sha256": "5b4cbbb4b77471b336b62162b22288ce1bc96473c752fe8d3f9ce8cde589e92c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-electromagnet-0.png": {
+      "sha256": "6ecde4e0b8ea2a76ee89c92b909acf4916faaf6ffb4e9c0dfbf6ff20f97a3746",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-emp_charge-0.png": {
+      "sha256": "76016ebd62fb60f2e73bed1ea0185aebdfee6f70f5885a8fa15be19fe8b14f34",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-excavator-0.png": {
+      "sha256": "0bb0c6993434ae5733b1da3cd50fb9be81e02b1fc02c33144d0175c443301c34",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-gyrostabilizer-0.png": {
+      "sha256": "9d10e1657051967df4bf6c85996f0446ab54f32cb17f8af8ab9b3f31cb9dc035",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-halbach-0.png": {
+      "sha256": "2241aac4164bda6b46e361673b182bec5d76b6f9bf8bbb64894ea9850a532c93",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-induction_pad-0.png": {
+      "sha256": "26ffc2fd1d13d432cddaf68645c211c1a1efc877d26fa9a5b9b9ba7e2305dc48",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-kinetic_coil-0.png": {
+      "sha256": "5dd799043c87994e4fa3e22a90f4a4e20b682d5518c9a3fc8374d7608a54994c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-kinetic_electromagnet-0.png": {
+      "sha256": "0b9acf0733019ad8fb4cc202d699705c2b61230691c486e9c6880b1689ef7223",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-magnetostrictive_sensor-0.png": {
+      "sha256": "18d9ce8fa7eb0ec1ab7e92d71587660e7d35ef3d93989f60ff6d9d7f948da0c2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-permanent-0.png": {
+      "sha256": "81d6d3466b70a07fa840a01084d0d8557a7bc20bd15153dd5ce4aba616aed782",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-repulsor-0.png": {
+      "sha256": "7f08f103f4e2dec175d343aeebdc38c1202adf6cc80a7a8dd540273a4e7969fb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-structural_inducer-0.png": {
+      "sha256": "5b6c703b18729e0a481ff64ad1c856c16823cfb526105efdf99b58efd0d946ef",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-switch-0.png": {
+      "sha256": "24838aa6eaa129c51b0739700227bf1d54e61d73440936893b89c3f2b0a0bf02",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-emitters-tractor-0.png": {
+      "sha256": "b07e837e4f8d8b7b88976c26771db60b54fbcd9656f8ece365bb84a7d31834d1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-0.png": {
+      "sha256": "b07f3778ca4ca0ac2633b0dc160e955096f3ce036dd3cbea54972147b9c5aa7a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-1.png": {
+      "sha256": "93d4fa921750781a0c0d35c1164ad63ac607047cddcbaffcb675579500befd03",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-2.png": {
+      "sha256": "1ff9c98cd8ae7ccfc3d2f31331e1c91170c8aebf72f9e249a2a383fdb4539673",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-3.png": {
+      "sha256": "7aff9464e62094407d14fab981cd037b684cf8b9c304faade074140f809821e7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-4.png": {
+      "sha256": "0316ab5cf105dbf16ba51a8c6b828224e3353291b4094cccd9a085561ce65c78",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-fusion_fuels-5.png": {
+      "sha256": "428b066e4d76a1bc38c72cc3d27054e17c25ba9acb16185e772dfa9047d321cd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-gallium-0.png": {
+      "sha256": "be7f697e0fed0503c5b14427b8cbf3863ef533c831188d5aa5687f6bf385ae26",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-lithium-0.png": {
+      "sha256": "6b2cdbafd34ea51130f87f0481e418abebea2823e919d016df1354c3d538416a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-mixed_gallium-0.png": {
+      "sha256": "7418da89bd27146243441a4b00917edc76ce14e1622c2193127dd273183842db",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-noble_gases-0.png": {
+      "sha256": "e4880fc01090306b11b07fe10013a929786ad96ac7140110dd62b67163cea2de",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-noble_gases-1.png": {
+      "sha256": "467c24f907ab1373799a85049cba70d8009e92d6cd0c1bfc22d93aa0d102cf38",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-fluids-solid_gallium-0.png": {
+      "sha256": "8275a3e8ae774bcacf39645b51b189d6249b910b3d76af8f927af0a4dc4908af",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-gallium_gear-0.png": {
+      "sha256": "f4798d8a2fc9c9926fd8d412189f0bebb83801bb59054371c85a2e8efa8ff973",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-gallium_gear-1.png": {
+      "sha256": "3cb3e71fbc4ebab0752160d0cfc86d96dafd87add19a5146955196e92689b7a6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-gas_detector-0.png": {
+      "sha256": "b587bcb8a7a2be31406fb05b4f62630ac133934634dad4f51b7a88e19e337863",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-gas_detector-1.png": {
+      "sha256": "3f47122837e4e5bc823a01f6dc707d0e4d01af9db5574f153b2bbffc99c0ec8a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-0.png": {
+      "sha256": "ed953fc1cb8b59bd464cfc2deef9cb3d44a08af489c876da3b90536353c803fe",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-1.png": {
+      "sha256": "1b0dccc1a544e89926d7381ae64bb325ce2fae7b940ed83a8ca3ab35c1481856",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-2.png": {
+      "sha256": "b1d0b780ed4e3ea7ce8985e84065b879306b60a5616e644efae0a01a50f570d1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-3.png": {
+      "sha256": "7669423d23af6f9ab4d6c8415c385d94a1c5d9951147b67c31570b7f3f11a3f5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-4.png": {
+      "sha256": "2c75175105377d927975159345eadd0cebe40de4b00fe8b0b35f1dc75f310b3d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-5.png": {
+      "sha256": "b35f9ed49fe24897859685b94babbff788dca0f749361e3bc0c6ed1e064ca327",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-6.png": {
+      "sha256": "1f7df695f338c1fa7b99def8f5c942f573c9e89c226346c2baa6208879c4952a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-7.png": {
+      "sha256": "a6eed19265e8884553bbbd519346df49d1f985d196e74cc7a0a08c2fdff2bfdd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-gear-rare_earth_magnets-8.png": {
+      "sha256": "edf2ba43e2bedec79040360409d2a114a9eae6b61ee2d2a19dfcaf429061d336",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-air_separator-0.png": {
+      "sha256": "577dbcc4152fc3c7a1bebb941ceda6855949485bed23d721388bfc52a8158d6a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-air_separator-1.png": {
+      "sha256": "8e82db23c9560be78e535cc25588339d3a28e9cfaf265d4d2017fa8235cfce1b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-air_separator-2.png": {
+      "sha256": "6c58d55737fbbefe3a54bf2bd76b0d14c653f06978a1b166470c3395215ea70f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-automation-0.png": {
+      "sha256": "44ca6d864ee11a05fd8c17a3f1d0a7155ea0aed0bd21444e24c2953a08b0ed14",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-automation-1.png": {
+      "sha256": "545c8e02e2e2fade9fd771aa57696fddd7c101321df07db7d08a9d118309f8fe",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-automation-2.png": {
+      "sha256": "ca2349f896290c46a747f8c849fe8c26ccc45c17a4ed8919dc1139fb31b83cb2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-electrolyzer-0.png": {
+      "sha256": "a255fded2ba08b6d72e0c7a9b1a8249e73c590901406df591dd3e92db24d3cdf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-gallium_golem-0.png": {
+      "sha256": "6c4f2f4924f516d93e34415cc7d514aabce6b69a7f0658fa77e5d471cb488d3e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-gas_exciter-0.png": {
+      "sha256": "17ad78635b93403b3bd40574d8bfe02827e728065c21ce24be6a51640441ec79",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-gas_vent-0.png": {
+      "sha256": "b0f7ef47967dc4f82071b7acb0d4ab634379c2dee817b6da70ad1ac9e2245020",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-gas_vent-1.png": {
+      "sha256": "e915c5360452fd9665a7f7c042e38a298a5baabffc7706a824a93d1411ea4aa8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-iron_oxide_golems-0.png": {
+      "sha256": "68af118f33f7d53bc7fa9d99739125f158eb322e7ea6a725161b7245e0efc5d0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-iron_oxide_golems-1.png": {
+      "sha256": "4a2044d974e7b06c4a0d9cb0a74ac55f50212a1268366a432d4bd708b420f333",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-iron_oxide_golems-2.png": {
+      "sha256": "d5278cfa0319c7e6647b6b3024776708555d3434d52258bd5fa2ca156490eee3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-machines-iron_oxide_golems-3.png": {
+      "sha256": "4b49d7c050491d777b947c641a812c7119ee52653731dd81d4f231a0a8c0ed08",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-alfven_backpack-0.png": {
+      "sha256": "166bdfd6bdc3134f4bf8b8e3bda8cd6ae20c8a83d4ab7280d2961a99c4e3dbd1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-anchor_docking-0.png": {
+      "sha256": "3f705d5194217c2d19e661ee086b24071b9fd35f817f5488da628b39a9771af6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-fusion_thruster-0.png": {
+      "sha256": "7071c2c399e10ff4c0f5a3628f50cfb086489007c853a49618c263c185ce83ea",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-fusion_thruster-1.png": {
+      "sha256": "506d363212fc313adcc3fec5eab4083c0db462d9119de3fe57b3aa3fe35b717e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-fusion_thruster-2.png": {
+      "sha256": "8d9bef7e1e6310b23065add30e7e98e4cef6261a379bb6164e4e6f46d9b460c1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-fusion_thruster-3.png": {
+      "sha256": "a5659541dfcff8b1225f619241b8aa47118fe185756510d58968dbfd4f7cb591",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-fusion_thruster-4.png": {
+      "sha256": "5678de94c2751b7bbd3d63ae1be17f4c0624a87b6de19d97ea302f801d0793fa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-homopolar_motor-0.png": {
+      "sha256": "d873da65c65839511ef42aed1568a99b20dd84db8400549813208e4ab3aea121",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-ion_thruster-0.png": {
+      "sha256": "da14ec64033504546e4274e92112ca5d16e31301cd167683c7dc097fec5e37b0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-ion_thruster-1.png": {
+      "sha256": "32eb81382a37349ae8b0ae8c09fff8e6bc80fb3e0786f3711c6f0c5d9f3a0e7b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-lenz-0.png": {
+      "sha256": "4fd9321f94c499ccd45ddc2726343bc5e40e471361184b005e97ae6a5a4d60c0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-mhd_jet-0.png": {
+      "sha256": "41adc50cc342379d4bd2b5440a70dcfd033502e14053e31a59443154f23175cf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-micro_thruster-0.png": {
+      "sha256": "8d9dd268f8319a0661c3693acdcd01a5b099c2df2af92ba6e450ad1d1f4d06ff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-propulsion-0.png": {
+      "sha256": "dab547ceebc2652f6d87a923032c6b78bfaf87b9a0e7545b66092411936347da",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-railgun-0.png": {
+      "sha256": "2221890f60764f9584ceb1adee2f863264fdf14e6a2657ded30245f43c60f0c5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-railgun-1.png": {
+      "sha256": "9c6cc51ce5a634b70bc4b4e7153ef9ca1ef8cbd254726de1efeb394ffa7f6404",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-railgun-2.png": {
+      "sha256": "8f1f44079d35c133bff941a3618686751fe9d917d60b73698573843fd335eada",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-railgun-3.png": {
+      "sha256": "ab525f015bd9c2d54bdbbba4be87a70929e5e781bc29b149f1d7498d4c8c2f55",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-ship_polarity-0.png": {
+      "sha256": "a93316ff902436335c89c3711fc0b2a100f660f5241a0aa985007d1788417297",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-solar_sail-0.png": {
+      "sha256": "7c5cf650b4149f9d7fc9a8f5c77ba12131f8932cdfddfb46473d5c0b94263d78",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-thrust_controls-0.png": {
+      "sha256": "b01a298e23b03aa97fb08912a77e468a7d7b5bd033a0b21e699d327a843fa07c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-1-magnetization-ships-vector_core-0.png": {
+      "sha256": "8112fc50ef95131ca099ac96127fbcc806599e37cba9aa11c53c7d1a172d2a6a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-0.png": {
+      "sha256": "67b08cf2929cb6867431b5a03ee78fd594389ff55fadfe1101e94923bc3371ab",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-1.png": {
+      "sha256": "0ca63583e213d4e83e1fd8c25445ac3a1d7c557b9737ba218123109d4388fc72",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-2.png": {
+      "sha256": "ac0ffa1a0137857730fc1d3eddcc92d1bf3b8f7a600c781e4003d182ba1fb5bf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-3.png": {
+      "sha256": "a9cae67d7b997b3eb0bd10b99a117c2d34c805f66f094a39047b18ef42584b8e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-4.png": {
+      "sha256": "de97d0d8b1009c744326fe611657371f13cfa7b78ec1758944442dd42951dc33",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-armor_tools-5.png": {
+      "sha256": "1079242f71d2e828e81813e45922ca1491bde4eefe7aba003414647e26f94e83",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-biomes-0.png": {
+      "sha256": "5593c9f05840a164353d89c57dedbfb962483df445bb60398e79dd8cd078fac9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compass_grapple-0.png": {
+      "sha256": "b91f14d878866d60d809cfb7d3b07ba6abb614e771f7e52731c88a3fa5d4665a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-0.png": {
+      "sha256": "0443a3a7700056497733ab730cc9fe73d5c5689772767a538d29349f2f3237ff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-1.png": {
+      "sha256": "ebf42eb4c0058deb5b0e9be9385e0565bd100753c7951b4d7b67c53ede907d7c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-2.png": {
+      "sha256": "2f5ba872443e988cdeb7a987b59eb15726e62783105077d93b5a23aa21cbd251",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-3.png": {
+      "sha256": "4fc4ef54c93b2562e89fcc7e9b142cfc97bbf9bf2ff44715dde58e6426506831",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-4.png": {
+      "sha256": "d0b993ccd2759408f1ddc5631bdac377e917f309d3954d7f54a626c9231fefda",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-5.png": {
+      "sha256": "8c2eb2913bfe7cbc874a2c49a1c1c4b23d962e3f8cf074b054bc2b86b7462e80",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-6.png": {
+      "sha256": "2fea6b3bf0fe888733031300f749dd6512c9627e3d24d78d105d0f473c67d697",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-7.png": {
+      "sha256": "148d180f6919ac34abce45999ce32e17ea178c63882799a41b8929c067c33340",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-8.png": {
+      "sha256": "e9dddb850e2eb1e0559fae6880eda226682711c425a0b7d60ed9ffd58712a21a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-9.png": {
+      "sha256": "ac0987fa880d7a4294149a3d8e54591385966a1ff66377a4fc8d0dfab08f1c72",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-compatibility-10.png": {
+      "sha256": "6ee4c7303ee63fd0316e01b7f6ff4e64e4b2295bd0f2d5b4d11e05ff75e815fc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-configuration-0.png": {
+      "sha256": "15d5c0694e5fb51a02a5b49310df2a006d41f8a4cdc95f391192261b270bbcc7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-configuration-1.png": {
+      "sha256": "d95ba9b1e04360bf3b6c0f946ad862b4d72f41dad31a0956ab03a5993f178522",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-cosmic_compass-0.png": {
+      "sha256": "2069625dac0b999bc813dbab8bf13136d1dacbeb6c5e807379eb5c37f8856f8d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-cosmic_compass-1.png": {
+      "sha256": "36a37eb62095cd131d1e37b72d62d3a8e44e54eef59690830e2dc577a48a86a7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-deuterium_oxide-0.png": {
+      "sha256": "5f53476283fd3af29a9bc8fca280d9c46de6a6c9a6e5a2a0b374f8c3b8572802",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-diamagnetic-0.png": {
+      "sha256": "ecb2058c394dd9b2f68b30ce9db6f2bc9b46bd6781aff06d1f70c1a8cd47fecd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-fe_rf_power-0.png": {
+      "sha256": "89523754cc599b8502ce7ccaad0534abf6655fbb85aee9e48476078c24899a1f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-fe_rf_power-1.png": {
+      "sha256": "ee7a0994dfb964e1b1d73701aabf4bdc885f0f587ef0694754b693e28d09e8e2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-fe_rf_power-2.png": {
+      "sha256": "96fbcc3aab7710cbf21a556d0c85e983cec65b42895c13cb9d80829a52fe1647",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-ferrofluid-0.png": {
+      "sha256": "82a6c2ee3dde1991d996c2a7bcb08671dba88ad9cccebb051262076c1a20f353",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-g_force_cushion-0.png": {
+      "sha256": "cdd0c4855c6513a69e19fe0b4465d7c700a270e9627c51f509341a1811c61e95",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-hematite_block-0.png": {
+      "sha256": "b85160fad8726f9d7d63c5c380b1bb7207a5f0ff895917c135bb07f717c885ff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-hematite_lens-0.png": {
+      "sha256": "1b18c90109e22e923d5b266e14799e3eacc1388b6a74793561ee0bb535b60d37",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-hematite_lens-1.png": {
+      "sha256": "6f4e3eff7a4a7e4e5aa50eab2b28722623e361f8139feabae069f280d01d4782",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-imprint_module-0.png": {
+      "sha256": "ed51418b7b3315042b42f874618d944e2857e72a68aee6bf7df9195333b2bccb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-imprint_module-1.png": {
+      "sha256": "e5d11eb7655394be56c62a75c4e520c4827eb508b340011c12bdf981dc425693",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-imprint_module-2.png": {
+      "sha256": "86daebb02c5697403703cfa2bc81c669bae249ad5b413bd7d23c26be8af974ec",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-lirm-0.png": {
+      "sha256": "83bf67faca6796c38a8a5fb656b98be96462d8f6a9057f66202a8defceb8a454",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnet_burning-0.png": {
+      "sha256": "128f8ce78632930a47a10bdb246430a4cf8d1e781e33822dfed64c36d4f35058",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetic_anvils-0.png": {
+      "sha256": "a3cd7625a49b4faf5697c3c409ed292a9bd37acc451a3b13355b93c43fa827d3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetic_elytra-0.png": {
+      "sha256": "5f1ca3fa365dbbb0d263ef94f6f8fdcbc8667a39c91e29e10fa03e137ebc7a5f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetic_elytra-1.png": {
+      "sha256": "23a372baea68db4408d71b976a2585dfe44b81059764183c2049d4f7d455a9cc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetic_item_frame-0.png": {
+      "sha256": "a237c6a112586fbc92348a4ff2bb54a4d2dc7da144ba4e5b8af53e0372a662f2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetized_ferrofluid-0.png": {
+      "sha256": "bea6fa6afa5fa2200f6d68e17c12b8576f821c8565bfd96e7a6c131c3cf97338",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-magnetoresistive_boots-0.png": {
+      "sha256": "92c471dbe8066e52b6d493f81da1a0bf129c72422d9c6ae9f288f67b92a6ad0a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_core-0.png": {
+      "sha256": "4285c3e6419efbdb8871eaf3c5059accc29452b0850900267230ea9dee11773d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_core-1.png": {
+      "sha256": "a9bca4cdcdd924d53cb4aafc0e8be26c3f5aafcd2a5ecc9ea97c0c069e8c4f7d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_core-2.png": {
+      "sha256": "56640b69e8fb2c3c22d2191f42891591d9a0b59088c430e55fb0ac668112f6a3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_fragment-0.png": {
+      "sha256": "f1688b0e1b963e364f0793f8f1909a563c1321ee2a29f86b871784f2d6ba6e73",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_fragment-1.png": {
+      "sha256": "26631b4793039c923ac537e159f8b159c4752dcd3c400049a13e8ea76946440a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_sapling-0.png": {
+      "sha256": "ff975478d576d8e389d4e5d6c73b932614d9602c72ef3bfc6c0628641e3852b2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-meteorite_sapling-1.png": {
+      "sha256": "dd7e70444b8283ac568dc82ee7ced1a4a3d2f4c29d2d5995e4d59682f8165d72",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-mr_armor-0.png": {
+      "sha256": "cf22b542af20eb5270695cfdbe44caa10645381d67211ed36e612a892b033477",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-mr_fluid-0.png": {
+      "sha256": "92df9ade51a11f75e5e9b99a16ab0cf08cd25a8c00cce0e53bac21b73044166b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-mr_fluid_golem-0.png": {
+      "sha256": "c0543ac03eae8ed96277fca0b544ba3e03d8e39d649a50e904f5d615428a31ee",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-ore_compass-0.png": {
+      "sha256": "43a209ce6a6c43a237dd420fb62e09a0573fc0991be08d1b2a3fe2050f94c7d3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_block-0.png": {
+      "sha256": "18412d0af056c806c188b1662a69c70d45f6e3a4d4aba524187f9717d6d861b3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_block-1.png": {
+      "sha256": "ba71449465e7c11451c157518b56499dfbdf028a07084e176d7c3fc70cc0d5ed",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_catalyst-0.png": {
+      "sha256": "bae3e9fbc5e9987c854231171d3d2ec3fe87b725169f0f606c8295d2e3872630",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_catalyst-1.png": {
+      "sha256": "1b129b94c50ced582f464069f8b5fd1741b49c1e854b347668ab131999afa2f5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_catalyst-2.png": {
+      "sha256": "c8c19e4619041db2c3bcabccc8f8efdb7a14e3cf2e636f6f2ca02f249e0972de",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-pyrrhotite_catalyst-3.png": {
+      "sha256": "b33423f776fc039c1b9918daf75fcb61b962e66aa253fec29aee198c03e551b4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-repulsor_gun-0.png": {
+      "sha256": "30fcca008af1ca4e903a248bcd5ee3a90f55fda67f16fe422a1cacc68077a17f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-repulsor_gun-1.png": {
+      "sha256": "65249dd1333beef4bdaa1c2f95e1461fce59ad3fb4095ee64bef6e4933938205",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-titanomagnetite_block-0.png": {
+      "sha256": "8c7ba63602cf7241e6abc1efa39ac3418126c51ba7ec736379b78210c6905755",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-tokamak-0.png": {
+      "sha256": "04c577153852acc91ceefd359b7035b3b1d622dec1e0708fbcc5840fd1a743b5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-tokamak-1.png": {
+      "sha256": "02a27aeb004c1f26c13f07cad7a6bcdd16bab597d5f9bf948fd4c28387e862ab",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-tokamak-2.png": {
+      "sha256": "227f648a3f4fb393339ab2d13a8c3f24c7c0c0d5fd9a5dc64e5eca5a7821db09",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-advanced-tokamak-3.png": {
+      "sha256": "9c65c04862a70e3c253b7cb3989528973f8832373a536262039f92bae2bcf884",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-0.png": {
+      "sha256": "ee3bc0b3cf4aed9eb878d61d1d37f232e5fd86ca1a6d68cebb9082626b1b85b7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-1.png": {
+      "sha256": "6096923461dfea1e5deac1a4eb563e6c4cc7f0ab8047eb4f9ce311076c23aacc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-2.png": {
+      "sha256": "f22d5c5e6705ab1fdfbcbfc7a5926f9d267c79678cc004033afc36daef158969",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-3.png": {
+      "sha256": "d968319bfe581c2ea2033c53134d72cf2760e71c01b95d2617a1fc61ed6b0bb8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-4.png": {
+      "sha256": "7ac416076adaac3cd2afaf08a9c9237ddfd88ec36123f713ecd46f35401bedc9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-anomaly_terrain-5.png": {
+      "sha256": "e04eb8d13d6bf69ac82b66ccf3e35555ef687183ea5df2410ad7022fdad32270",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-ferromagnetic_ingot-0.png": {
+      "sha256": "3a1e00d7576e8c44fcfd40bf2463adcdbf192b0b7963910712a5c8247c7930df",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-intro-0.png": {
+      "sha256": "a432030ea5a0c475782fa42d4cd94c562c97a95e218560f859bd06bd4dff9a38",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-intro-1.png": {
+      "sha256": "2a88b9b960e0e719aab6f13e3836f8796165e8b1ee84a74d5e1ae7e59b91e186",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-0.png": {
+      "sha256": "242158368f76cc02075378eedb135ccd63a1fb4650c6cc2e92464737ad94ea44",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-1.png": {
+      "sha256": "9a0823e0070ebe5f1eff277e68f6635e3ec0f1fb393cab078a9b491a972dc75e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-2.png": {
+      "sha256": "47a29fc1974b1c1c2f25c9760691f3384382b2e42a89af8bd1324e1fab30e5aa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-3.png": {
+      "sha256": "dd962f587e9b101063e2e1a11afcdf7a5fc5528bab724c8da47ce0ad04e2a37f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-4.png": {
+      "sha256": "432f965d0eb5bca1561144d2a3b059359d1d0136c876f6f98d177512f935aa53",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-5.png": {
+      "sha256": "d7be113e8f12c9098b0456f0092a28bf977c2ada911a580e0e2665b7a8ced19c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-6.png": {
+      "sha256": "7b00c979c880e27033b8a748a8e03492f6448fcfc9fa69671586038d99e07c7f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-iron_oxide_family-7.png": {
+      "sha256": "e679f5422bbaf7d094258c6a4ee2fdcdc57161612f3286ede1559e306793fe21",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-lodestone_core-0.png": {
+      "sha256": "ce835505f11013e5aeac358b9c173daa0448d90e7afa6acc01b92337da86f2a7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-magnetic_plate-0.png": {
+      "sha256": "8da4118f278357a276f53b6f2b855a3a29daec23dcc4fd497729db56a9ec75fa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-magnetite-0.png": {
+      "sha256": "a36ed6edc0f5790879e7cdf5d2b4d77ab853ad3cba7e095d0ff73f8039482d9f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-magnetite-1.png": {
+      "sha256": "3a17c125b40d87f3469844119b9e390c9569ace6bd9d56f867bff5ca74990c52",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-magnetite-2.png": {
+      "sha256": "2d03cfa5db3a678ccb1c0adb8d3f5533a0ae1aef97ea6bdb29a5e7a98ecbc93f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-manual_access-0.png": {
+      "sha256": "a73e753590ad42e3ccd1d651195e42e3298fba4dff391936a63fc83b3b190618",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-manual_access-1.png": {
+      "sha256": "057297124e586eaf12d2dc9ceb78b50d98a59ecba1f6edd0bf1a257fb10d13fa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-basics-polarity-0.png": {
+      "sha256": "598336ca38c2da26e0784317dea1bf8354864ed819bc08c267151fd979a2ff14",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-anchor-0.png": {
+      "sha256": "010dfc984b473820344156d9bccfd3c3de913aa4ad7d5d3ec2f011a86b9930c9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-barkhausen-0.png": {
+      "sha256": "0d9c0876697bdcf42ba1b1f8d807146ea974b3b628f079f988a967d1842339a3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-dipole_electromagnet-0.png": {
+      "sha256": "343cc07530b2a99f057fb7f5ef1718fc322d6d467be3e46c2b09e35c3dcd6bac",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-dipole_electromagnet-1.png": {
+      "sha256": "bdd6b13df08666733e4c674eee40d1dfc25d314205e20882c4f9bb1a2d9a2f3c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-electromagnet-0.png": {
+      "sha256": "a6fb3cc9d7441ac808b56741615fba1c9b67d0c3d052a29f0bc45d4d54188888",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-emp_charge-0.png": {
+      "sha256": "c3e71b4f772759529d76798c41cf72df24bb3188b649098734e348dc21cf5370",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-excavator-0.png": {
+      "sha256": "0b5d39bd830e3094b77babb3e21e6a91331dae5e566651325bc140e9971d98ba",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-gyrostabilizer-0.png": {
+      "sha256": "8891153d07bcf9b6c942c5365e66c953804b25db27bcce1bb050c5faf3123ecd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-halbach-0.png": {
+      "sha256": "848b6399aa3ad1c40757b815e6daa8002899857509e60dab6e45a773540e97c2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-induction_pad-0.png": {
+      "sha256": "f7a1aced6907110c3c32c36ec80f0c971293f7be191ee3e16ecd1afaa02716e4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-kinetic_coil-0.png": {
+      "sha256": "60f4556dab0e3b9e324f03805a35c58511b4b5d91b9ef20fb3ec99f2cdddb4f2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-kinetic_electromagnet-0.png": {
+      "sha256": "9f9f71089462abc060f668e874575a1607f15bc38371c8ab0cc17b2caa95f665",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-magnetostrictive_sensor-0.png": {
+      "sha256": "529816961fa0ec30f0b24cdadb697a9f8e3fdafc2654d3ec44416cb26ae0787e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-permanent-0.png": {
+      "sha256": "57dce0dc1a1f952de889e665c125c2cd1f4930f1e020e445da8d2ba6b56c1442",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-repulsor-0.png": {
+      "sha256": "4dd550c6d225f5bda0c451ccd95140ba29040a69b077c3dd50f1aabccb957e46",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-structural_inducer-0.png": {
+      "sha256": "f164bda11b38771ddb9c26af38b670b17f561f0398b152bab6e22d2927da6390",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-switch-0.png": {
+      "sha256": "5da45ff2e0b53a079e399ba3ee762fc3d2a4c058859270a76c04d6255dd94a53",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-emitters-tractor-0.png": {
+      "sha256": "ecd09de521ebcec343b9590feebe11565f3d198d447cbd92e91407a25acb0d8f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-0.png": {
+      "sha256": "1232cea359ff940a916388639f251372ea1bfd4464e6cc12b0f7750d9862365d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-1.png": {
+      "sha256": "76ba4aa07c4c65a6453ddc2c6611a07ece51b472f45d6ad51daa8048649c6d92",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-2.png": {
+      "sha256": "539b678b989e435fb83fc7f2512446a0a4d450daa4d41213cebb54994e321b71",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-3.png": {
+      "sha256": "e127d33236643d80b8fd3f2719ea0daf53a48b1f83a32feca2d611c3d1321e6c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-4.png": {
+      "sha256": "2aaecd2dc597efb2dbe6934bd2d37afccf0f0566c6e07b11738c35a467ae78d6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-fusion_fuels-5.png": {
+      "sha256": "ce9f4d2b9cbfadf87ac5bbb5f79a282c50ac5d8f3a4e2666899436c6f592182c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-gallium-0.png": {
+      "sha256": "d363c013f20d4a725a16c38d8e664549f6ae07b543d7dda3747f60d5fa3a7497",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-lithium-0.png": {
+      "sha256": "3fde56843a68f038b8eb9b174fb18130ee038a8623eea20ad4b5e6ce7fab8762",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-mixed_gallium-0.png": {
+      "sha256": "bd94d207e13ab984a4e76649a278bfaeee18ff7729fd70e502c5ad3468901577",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-noble_gases-0.png": {
+      "sha256": "212521d6eee83dcdda9cac90644f4d3c5ef0ef9f991b3ba93450231884d6f6d9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-noble_gases-1.png": {
+      "sha256": "6fa1fd17f73bddd8d05d07dff63df7f3a0812ae5f414b6519c8e8ac62e8e752a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-fluids-solid_gallium-0.png": {
+      "sha256": "9bcb5b535117362f2e282bdb2bb2266cebf650f3cefc8f707a4de78cfed1e720",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-gallium_gear-0.png": {
+      "sha256": "b189f8947c78be6f28868bc30dab45b05c5e6ffd4059f3d6253f61842968f744",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-gallium_gear-1.png": {
+      "sha256": "894a6b193be0c1c87f8ceb9ad92b3d2f619b29752edcd971b52bf92c1ae6de72",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-gas_detector-0.png": {
+      "sha256": "534e8ba1e6910e5293aedb613ac7913dd6648a48e771522e1f0afd61f2f22f26",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-gas_detector-1.png": {
+      "sha256": "bb87efdd08b1bc9b6c7d9485a7dec53baef37df6c855dcf6e8ae8485c59ef209",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-0.png": {
+      "sha256": "363ba560777b4749e2680f00ff445379282c835741cefa28fbc648b058671873",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-1.png": {
+      "sha256": "e0cb4e2dbe2832847525f5be332ea769c15c03f53278e1697c532913266aaaa3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-2.png": {
+      "sha256": "e4c14fde9fa3ca376b99871c1f1b38131906000112ff59a1762f0f0940390783",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-3.png": {
+      "sha256": "c259b0137053cc67457c54c7e2a7816402c256e88b4ad6d65880326c4aa51ef6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-4.png": {
+      "sha256": "b48f28a712d557477d0e64d2c2b730d84f6f2e52d45fcba8807a9295917bcb06",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-5.png": {
+      "sha256": "4452dabf130ad82e9cfe2103243b40ec91ddb6088a4ecbc83e759c40327565c8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-6.png": {
+      "sha256": "6caf175b4f41d1fd14a56b0bb980624a9bf9b03e5f2e87051a07659804b37765",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-7.png": {
+      "sha256": "fb09aa605516bcc1b91935b92ceece3354fa2799a013a89f016d46ac4b91bc85",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-gear-rare_earth_magnets-8.png": {
+      "sha256": "fe0d27372201df22680ee635b3752741b78b7dd35f45150740ada5d38ae1c317",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-air_separator-0.png": {
+      "sha256": "1573da3f4cc02cb62e41a65ea73d6324b6d1efd989a58b1c723bc9e63d57f984",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-air_separator-1.png": {
+      "sha256": "77c477101ff7dcb9d8d1070123e69fba02282f9d8fd8ed4c6257e9f4889793b3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-air_separator-2.png": {
+      "sha256": "c0cb68e779fa31de8e75fddbb892ed89c7fee16f6a36af1b5fd6f8c63aebd880",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-automation-0.png": {
+      "sha256": "fbf0149df08b3e6ab67a716734e07c23d98f33c0fb9cafcc72e46dce30f62e5a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-automation-1.png": {
+      "sha256": "271eabbd3d3dcab6df696e703df09c0d7f9189a30689d45032fc76dffb49a78d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-automation-2.png": {
+      "sha256": "7b775b254a6d5b0cf3aa3edad9cc47e7619825b3c79f4a37880c39931f6cedd5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-electrolyzer-0.png": {
+      "sha256": "ecbf0b6485b540fab61dbc7d6249f6c8a0436121db2f30e68e0b88d168edd4a0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-gallium_golem-0.png": {
+      "sha256": "50dd3d13985b22ff2aa9736c2b1637e6637fa9abdcfcc911561b4ffbd2e97201",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-gas_exciter-0.png": {
+      "sha256": "78c1ce7dd96b9c7f37954e0255c1a5b9e7f8914bc7d2f225cf4096e9f0a08182",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-gas_vent-0.png": {
+      "sha256": "6e85cc745b1d8e7e9e0e906d3e9807b5cd2040729d8b016da676a586fe4d3555",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-gas_vent-1.png": {
+      "sha256": "9c77726efb122bfcee223c5cefdc701cf57a202d626c7c5f8e867a23c5039251",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-iron_oxide_golems-0.png": {
+      "sha256": "9c9233cd5d94a7a080225e13363639fb3ef94b30e45bbd26f3b2d0973ecd5bcc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-iron_oxide_golems-1.png": {
+      "sha256": "fc86adb7eb741559d9d510a6dd5801bccc037c309503b90f595517a051ba0105",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-iron_oxide_golems-2.png": {
+      "sha256": "dace8a04902389e2340e7838b5a81080244caf363ecdd82c1e9b86967c6e6da7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-machines-iron_oxide_golems-3.png": {
+      "sha256": "b33987f1301455db758f2e242b86b26082b6e5b3a33100645a48aa6a22b49a48",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-alfven_backpack-0.png": {
+      "sha256": "6cac68df0635165945eb7a6434cf88a34c2aac21d9a958d54dab8dffb878963e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-anchor_docking-0.png": {
+      "sha256": "382f997b1639d9652f28fc6eac010e8c103315d8a546f4daa5344b9669353b56",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-fusion_thruster-0.png": {
+      "sha256": "66576da472b5fea732690b86c461da2e3a41131b0ee9454fd4c249ab0855f68e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-fusion_thruster-1.png": {
+      "sha256": "136a67fd74d97b87a7743c8e99fffd096691952b447798034fc9f2770feae0e9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-fusion_thruster-2.png": {
+      "sha256": "3dada432218f07c3489a33cec9e47120176213979ba78a4ee5b0664b8f0641a1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-fusion_thruster-3.png": {
+      "sha256": "c6d903d2751fe6e642bc8158c1c3840b938d46ffb73d5339648641cd11ffd5ee",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-fusion_thruster-4.png": {
+      "sha256": "ac7ca32bfa82d3d6eb0cc21e4a0dc836417d01ae52b0552400e2a610aae43c3c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-homopolar_motor-0.png": {
+      "sha256": "c7a2fc98f858e675c2aa5398d08328a4587d3ae447bb93145a9b7c8afb18c037",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-ion_thruster-0.png": {
+      "sha256": "545570219a431f65807ac4821ba900299d5bca1a9bc28b8012fda80a76cd607b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-ion_thruster-1.png": {
+      "sha256": "bb0b506765cf335e959653cf6f920e4beced49a4a6ed52ed910478bb9cb2bbfb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-lenz-0.png": {
+      "sha256": "580e949234aaf985cdf9e0b6ee174adf97c916cb9966ea07887e722a33c91986",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-mhd_jet-0.png": {
+      "sha256": "039e5f2edf07004aa86cb26deb1de5c7449715b101b2fd10acc781e31256ca63",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-micro_thruster-0.png": {
+      "sha256": "efe5accc0ed12e3385c2b2a676e594479efa60255f0c2468e9d122f8a21f0bdf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-propulsion-0.png": {
+      "sha256": "8afd76fe990c135f6b6777de833d8b614b2c8b91fe1b9b6e600564dda2a1cf7f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-railgun-0.png": {
+      "sha256": "f0dd135c7ebcf256e6ba9c7fc48b17725d3a6f10dfc54bb31c1c20fb3cafc7ac",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-railgun-1.png": {
+      "sha256": "ceebce8be45032bcf7e9869b0ec1538b22c8219c1f96f55adae6fbdee0192b09",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-railgun-2.png": {
+      "sha256": "439312d4e689840c0553b28c63d10b4c6b6794171b485d372c36cb1ee4fd944d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-railgun-3.png": {
+      "sha256": "3c7ddd55096cfb2cc028e563dd38e1e4de2e5a0e087bce3fc3b7c60e92da8118",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-ship_polarity-0.png": {
+      "sha256": "0c2631ec1ba77b357e1e99c1ee8bf18860085ee173ecc0c0176473fc9f1452b7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-solar_sail-0.png": {
+      "sha256": "b85357e32d334558460d398ca43fea073bd88047b80f8d89e161292b315e9ed0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-thrust_controls-0.png": {
+      "sha256": "ac39972e09a15e3ecf76570b0582a6424bd4f39d75242b1dbccd7c044b8bdeee",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-2-magnetization-ships-vector_core-0.png": {
+      "sha256": "b74a9b6ce93d35c2b43a962fed0ae961e318c6e32fd8348c3b7e1c39aff21bad",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-0.png": {
+      "sha256": "67c1800b6e8d5ebedeb85eda2f05e177595551db3e0db572cc49e7254680ebb5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-1.png": {
+      "sha256": "12d1fec3153f88484315dccf14da4d7fd34dbdbb678b3ee40996e1a8a04f52d0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-2.png": {
+      "sha256": "136404fa1069b1d00e5c1fad69d428eb3b1a6b91966cc1deef4607354775cee7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-3.png": {
+      "sha256": "81c0acd1d1a372600f77866b0eb096d469f0cdf7a07e1f000d43493ff0a30579",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-4.png": {
+      "sha256": "9f27c66b55e026ca205dbc75a29d9d460a4601390bcb9f45f67c170961cd7d90",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-armor_tools-5.png": {
+      "sha256": "77e6ca492135fa24e7ada14cfbe8b1579ed789770081c5d634af473d64db9060",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-biomes-0.png": {
+      "sha256": "9a0fa202e5bd05e57b17ffe5bcb680472c370f3d035e00a10c46e5f915133c11",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compass_grapple-0.png": {
+      "sha256": "0feb93d61d674d9aa0b8e486db17ea41d57e7bcba8be08d4a55f4da655138ec3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-0.png": {
+      "sha256": "5e01ab86ef4a8cc754d52e04a8d085452bcccc1c09bd6d5758705c50bb519090",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-1.png": {
+      "sha256": "29c8370985c8171d4a0112aa5279f589339f4dc2159eeadc8376e3ad3a19391f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-2.png": {
+      "sha256": "9256ac5f172d8dad041faf3a75c0ea7f984739e7977bccbaf8697b301f7faf72",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-3.png": {
+      "sha256": "ad2a468e66a314d0d21b95f04a5778e613dafa67f3acdbb0f12f7bbf349dba6d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-4.png": {
+      "sha256": "efc1a7db35b0ea648bb953c4c7effa584cbd3d3973324bafcf23112489f75945",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-5.png": {
+      "sha256": "85ccc98457b1855ef50068f3a5a14d1c61ea103dee0d9b9df6fdbe539c5b24e8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-6.png": {
+      "sha256": "64a2611ef7cdbe833d10365951b219b78e5f73e04085fd116630870fd550404f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-7.png": {
+      "sha256": "c4b9076c4e62af39a4268f15a2c1a535e4d41529c8d36bc1dac5f9266b6aca39",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-8.png": {
+      "sha256": "891ef3620b17a449f3d78b33a726e924b4278a5274f390d83b6c0d70253f698c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-9.png": {
+      "sha256": "97fa2d5a6e4d239b6251d61c79293cb47ba52f940ca14c444c847736fb75af82",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-compatibility-10.png": {
+      "sha256": "a43ba6708c16307d2c393b5a8c3f8b951443ab8534ca7da5362cbd9fdafaf201",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-configuration-0.png": {
+      "sha256": "533a537d4a3f5d814d1a0f506ee219a7d09b62fa1187d59610cc995a7f3acaf4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-configuration-1.png": {
+      "sha256": "e02dc87a637544598c1ac356f377d821870d7ed823f2db86ed47befd4295343f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-cosmic_compass-0.png": {
+      "sha256": "51dc9b5f9485a32433b677d1fb496dea46f70680c951523d8b512068ac9873d5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-cosmic_compass-1.png": {
+      "sha256": "f7d3a43cd54d22ecfa314e3988742ae6e5e17d5cf39dd266746e7f6c5e7ff1de",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-deuterium_oxide-0.png": {
+      "sha256": "bb2e1813d47d2b6981ff90dd3a27ae0bddb47b9d4bb0f53e0fc274329e8f247c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-diamagnetic-0.png": {
+      "sha256": "162b4a6a0a9ab57b4fba6eabe483c7743d65c8b4e8f119829359d4ce06063155",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-fe_rf_power-0.png": {
+      "sha256": "6ac398f4635f3e3edb5a517a6dbc00f772d7a5916af7f01cb0d1d615a961f681",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-fe_rf_power-1.png": {
+      "sha256": "4432589f305dd1a396f6325bff15984d4d5fa6a7e8cde3d593359b67f6f80926",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-fe_rf_power-2.png": {
+      "sha256": "b742b3ee68faee02dae6ae92997419ee6c6cefc53a43587c372ffdd7b5749b18",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-ferrofluid-0.png": {
+      "sha256": "871df804463935e09b5a669cddb1888663a66f40fc0281990864e41e0a68bbbc",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-g_force_cushion-0.png": {
+      "sha256": "49a4f3a70d36536acc8cf24cc3e51cf525841932d4361672e9b933c789e60f46",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-hematite_block-0.png": {
+      "sha256": "0acb57aa2c7d503f308414cb8e2632fe8f825864d20ffa31210789668ab17ede",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-hematite_lens-0.png": {
+      "sha256": "6ddb15b341d63812194e946b18539f2aab3b7d17a98ce78d9221ce15df6fe39c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-hematite_lens-1.png": {
+      "sha256": "7754fd1de3f15966703b2d7ae8044f2ad202218ea98a54580888cbe948426f3e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-imprint_module-0.png": {
+      "sha256": "7c664249b82f584c3f00cc65de63520f4d01c847d889e925faf5e363fd09f0d3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-imprint_module-1.png": {
+      "sha256": "d3b5b13948e8e8d010e9547e030e40758d38ccbf8a5b6fadaff512f1fa9a6eb6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-imprint_module-2.png": {
+      "sha256": "f65f380a00ded1690755f7fe9cdec7f16c157941af03981d1c275007c988a910",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-lirm-0.png": {
+      "sha256": "012629d8a567216952bae56ec6f40a08cd93a8b9342793490975943373d798ca",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnet_burning-0.png": {
+      "sha256": "0dd62162da72d595c66b02f562274fa5661841713efbd3595503ec50ad60ee75",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetic_anvils-0.png": {
+      "sha256": "cd2c272be88142c48a8bce753a3181bad5dd1ba77f1a31d220120b2a68bce709",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetic_elytra-0.png": {
+      "sha256": "4871f5df1e60104b83701b6daab87d25160b899e0581eec2369e3bb2436a6d3a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetic_elytra-1.png": {
+      "sha256": "8a0d285a4f9050447e8513fb6878d9b05160c87cc4758b3a8bd644bb578f011d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetic_item_frame-0.png": {
+      "sha256": "765fa6a20e454b4d0e5ae3f75dc689aa8e6658209156343ffd56389d2787c9e0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetized_ferrofluid-0.png": {
+      "sha256": "d584b6e0be603fb9edc63e39e9709a43ecaa09a4f15af0d627794daba35944e5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-magnetoresistive_boots-0.png": {
+      "sha256": "2fa3fd13d763fcb5219618b605251a4752aceb41fe55f6c2c6c3569e5ebea403",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_core-0.png": {
+      "sha256": "3d473cbb4cf474b7fd15b72fb0d07e5d6b60b0d962e9b93b24003e438d40806b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_core-1.png": {
+      "sha256": "4abe9ed9a405cba36bd8a882b5a59c522d048d5397fa9aed3b9e9582703ff18e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_core-2.png": {
+      "sha256": "f895708cea37b105d4e6b941c1c11c851bba2024ac332a27625cfa45faa67c47",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_fragment-0.png": {
+      "sha256": "53f65a328e283ef2972f9755a23c811e6f63c2557a29f630e1923f05bc9eb7bf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_fragment-1.png": {
+      "sha256": "c8e5d891fc167b10bf15eda3dba619208f5dd94aef8973b722b422f6b5b6e9fa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_sapling-0.png": {
+      "sha256": "4a18b5a20617e48fab5353ed293fc1be2fa378c63264850fb060a633ffc49564",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-meteorite_sapling-1.png": {
+      "sha256": "cb44e19b91a98401803984bff14aa77252b692c39135c7a7988d49961aedccc3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-mr_armor-0.png": {
+      "sha256": "bbed20d8f024c14cfcec09ee8dfcdc5f095f822886d62535d6dd984a2b614746",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-mr_fluid-0.png": {
+      "sha256": "37fe2e1e0d781ed7d0476bfe4c0891252884a5856236b11201d56244ade70c5f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-mr_fluid_golem-0.png": {
+      "sha256": "eb6117fd85ce7abd1e68aaf014555c824370c38c8a4c9125a9897f05c80ac9df",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-ore_compass-0.png": {
+      "sha256": "18599c0e37cc22d0475ccbb599796cb1683b8f770cbb1939867ca707f76c5e3f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_block-0.png": {
+      "sha256": "b2ce11b4d39909a1db7c91d4d1e750ada8b9699baacf71a7ea233c4b6db168ca",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_block-1.png": {
+      "sha256": "e744c9fa95e6255e9a9c3fdafdf96052f318857892786391f782b1850e072cf7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_catalyst-0.png": {
+      "sha256": "aaa5a3a4f6e03d711581bca3de1555f0a3033c602f40af6e61413561556af847",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_catalyst-1.png": {
+      "sha256": "918b5f0715252920a3ce40f842d4fc17ffd7250a78700281bbc9f94d1facdaa5",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_catalyst-2.png": {
+      "sha256": "2294a861abf78a2459ee997c09dfee3d8a25d53812da4b0bf21876547768095b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-pyrrhotite_catalyst-3.png": {
+      "sha256": "c07c181d8c7b3d270dc854a4aeaf9fa24342c12d7828b17a53b1eb25c02fda7d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-repulsor_gun-0.png": {
+      "sha256": "5924aebc10486d483c156a5bbc640da89b620b7776ae41ed0062b0e66c247628",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-repulsor_gun-1.png": {
+      "sha256": "e038a0da9732b3d397fff2e725ac0554adf1d5292d8d222a6f2af981b0a64a11",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-titanomagnetite_block-0.png": {
+      "sha256": "30e28d7d5beccc8255a26a3994ea535417370ed7dc2eb750a24f3d7a6e6e52f0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-tokamak-0.png": {
+      "sha256": "af5a25dbd9482cfe9174413673d8cdc76b33f3b18c514d74a2939d843774e406",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-tokamak-1.png": {
+      "sha256": "6f8dbaa239b605bb4a294d0b1a565210af7b38f1a78924347d5e868eccccddff",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-tokamak-2.png": {
+      "sha256": "605c5ffa20e3dd5a977e4d7616be5141dd7c90f9a9cc50e9793f904e7f613c47",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-advanced-tokamak-3.png": {
+      "sha256": "3fba70d61a0e2bbc72cd88401156398a2acaadb8030a15e8eb4daaaa4b767cca",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-0.png": {
+      "sha256": "8034457d48c79ba4cad3522b86fded2597847bdd5bb6169688000a4614a4febd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-1.png": {
+      "sha256": "b0fce403835f14c1b207b6ead46865a680e2000cd1e2cfcaa2ff50bb6eadb39d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-2.png": {
+      "sha256": "3150b1f52d7740de9cca1ed917e26106c18c5003fdcc7e46f0491397910e6bfb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-3.png": {
+      "sha256": "932b28eac9ddaf107db9866c2e262ad94d109fa4bbd2b4cfc977712efc743ceb",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-4.png": {
+      "sha256": "dc8405b9b99a71afabc6c226938b5a539ba85e4bc6110a2fec14ba86880d4d91",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-anomaly_terrain-5.png": {
+      "sha256": "966accb2f711b5687e5aea013425b74f8eda4271f3db51299b380f6fc9d3f091",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-ferromagnetic_ingot-0.png": {
+      "sha256": "0d7d4638280dfca81d3287e029cc896caf2a464ca891c97bb918d2ebcb01ec85",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-intro-0.png": {
+      "sha256": "e39893b8d4137dd1d9c87302af5b7d34a3ec5362bf2896a451f0c9b8c2219def",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-intro-1.png": {
+      "sha256": "b1bfcdf6fac0000002d0cbb3ab02e8766c05805c73f69efc645e796634342d81",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-0.png": {
+      "sha256": "ede496d1e0007c29fe092f17575dfac18fe0efc8748c49bf921c2779b2ba034f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-1.png": {
+      "sha256": "b2c9f6acf3a8e76d0033e7756aca53a55fc0e4c44026f61e7a6fc5c399027cd8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-2.png": {
+      "sha256": "9bd2cebd5cc440a33a0f36dc88eaab0daa85e87c36aa4a0b98858c1f6997a063",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-3.png": {
+      "sha256": "d099bbe81f3a86ec2b062f3fd51ccfadeb6d5668ed90d6c0bd0e7fb0ba6986ae",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-4.png": {
+      "sha256": "8c7d0a071d97d9c84f30177f6ff3afdb5b9a9ca4de6e8c68d6a572888c8fd971",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-5.png": {
+      "sha256": "649c466a353a2da94c15149ca74c4e59269e3a164c009a0bc9b8ad75e15562e9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-6.png": {
+      "sha256": "906ff40babcc0a900dc5cbac3589321ad6608916b18f230ccdea572b33165d86",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-iron_oxide_family-7.png": {
+      "sha256": "f041d5e34c586fa0b166b9029f5eb8353ffdc106e5ac8b20b252375ee1eac814",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-lodestone_core-0.png": {
+      "sha256": "70733a61f29bceaeffbe9f79f8edba40362ac1252ad0b21508e541d7e438f25f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-magnetic_plate-0.png": {
+      "sha256": "ad4aeff94d64560a3418ecab9907edeed525fc3af6e2434f26270d9eec51997b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-magnetite-0.png": {
+      "sha256": "0121a5336efa54f7b00a9dc57a5e588fe144869e6c39cb98bffe2e9e1b78b427",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-magnetite-1.png": {
+      "sha256": "787404f0d9ccbfa3c46370ec87f292c8e46ea88af8aa0a358248bf1b12fc8ecf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-magnetite-2.png": {
+      "sha256": "e77d0b31200607d5edfc43ffb53422a5f07d7364af5d2a26ff31fccd387a5f50",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-manual_access-0.png": {
+      "sha256": "fd646677103d1bba34ff3af6531735dc4cb5e194ded57676e6888d746885d3bf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-manual_access-1.png": {
+      "sha256": "80e1b930664f8b90b2ea4a42816229c85da226684611b244ae25af076ab0b0a0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-basics-polarity-0.png": {
+      "sha256": "84fa3eef32bdc1d9e3c4ba176bc07f8fb81e32ab30c2817b034f97ce47123eab",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-anchor-0.png": {
+      "sha256": "57dd4008fbb7943429b5dfe604f317c46c4b74123b9f541a408916e7ba1c2448",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-barkhausen-0.png": {
+      "sha256": "4728523edd5a63e36e59bb25f977f1abb4d00b319aff2eba1d5c009b990ad1e8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-dipole_electromagnet-0.png": {
+      "sha256": "7a2cb4a814a4bf9652c1131045df80484ad08569b28cb208cdd098a98728609f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-dipole_electromagnet-1.png": {
+      "sha256": "7e33f97b6d04dcbad55cfb7d6053f00b11c10410d092e0734afb8cb9ecf4fe75",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-electromagnet-0.png": {
+      "sha256": "7cbf9a97594d2b46fe6b2d6e010107c453a0f3f90b3a31790b5d825fa8a8d2b4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-emp_charge-0.png": {
+      "sha256": "36051736518628ede0e822597794e93e49854cc985896d2a76babb750dc9da52",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-excavator-0.png": {
+      "sha256": "ab0c6863662eb9bdd2f145d239ac29116dcca8311b66c601c10c95c97aa54d78",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-gyrostabilizer-0.png": {
+      "sha256": "6b7b25f450ca32b8729767081c938e4512398e3deecde75409fc115767ee97c3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-halbach-0.png": {
+      "sha256": "4ce9f8c9d12528c8651e04537d2e277428f035e3f812e9d06126b3468ed9c93b",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-induction_pad-0.png": {
+      "sha256": "a1184aac0843bb0f3a5713b090432acf99dcdfa34d1dec60186d13d633b18de4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-kinetic_coil-0.png": {
+      "sha256": "36c9717313f9ee45c65395032315034f7d7851bb537c7b52bbc4efaf4d0311b6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-kinetic_electromagnet-0.png": {
+      "sha256": "4171d1487535813a2e7eac565c834a0b13f03da640f12ebcad727df0069b5196",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-magnetostrictive_sensor-0.png": {
+      "sha256": "05cc5cb52dfcf436dad8ef03a166df8f269754f5fa41522aa6c7632124b42506",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-permanent-0.png": {
+      "sha256": "59bd2a2b8699d654e80297f0893a9543d0e03ec59f4aca1a5ba49a96ed3e1f0a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-repulsor-0.png": {
+      "sha256": "3bcfee5010920a3ff023d11c867ff81e6cb36c06bf281ca1bf7476fb63c7b3b9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-structural_inducer-0.png": {
+      "sha256": "be22c3a8ca2dea61d8685653b7e8e202ae17a2d0f05840d5c01603d6e81238a7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-switch-0.png": {
+      "sha256": "4fe28a3b5f863884b604730c2c18867611a26c07b5aafafcc335c9b26fe31307",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-emitters-tractor-0.png": {
+      "sha256": "b02551ab4e39039cc43c2b8a36a7e38d02c730a4afc2df721eb07ce7a86ad429",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-0.png": {
+      "sha256": "a6be3367b932faa34bdd33b6c2e71cf00f980dcb2007400fb0f5cbe7dac11a20",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-1.png": {
+      "sha256": "89779be318785c20437baa11c42ac66c15e75c9dc2c30f7e9bcf43f13b971cef",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-2.png": {
+      "sha256": "605640250dd74b7a6561357d480a927e8dcb70a13e7efc4d2f741f61ecbc8c6d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-3.png": {
+      "sha256": "9057fb3c4fba2d9e2accca6d325e40affe399664cb5a84b52a362cee16869c60",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-4.png": {
+      "sha256": "114c38ef0a980006f0c5be70dd18281d9843c78e66a167e6d7ccd724d1bd6c4c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-fusion_fuels-5.png": {
+      "sha256": "97f73dc43567f1d908d93340584106ad7bc35ce6735d48519acb4dcb41418199",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-gallium-0.png": {
+      "sha256": "5f9ebd541738580cec17499b77a490fed8f8abe07bbd7081a551a4774c9bcdf2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-lithium-0.png": {
+      "sha256": "c914f7ab87fb7c9fe52336d85a5452c876435d7981e61e04e126bb5b9a7d3972",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-mixed_gallium-0.png": {
+      "sha256": "667b6306d548fed333495be7ae6ae32b6e65c479317e7acacc8fb6ba6b613b1a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-noble_gases-0.png": {
+      "sha256": "79ec7cd639a214772a4793372d2756a93ee61fb4f758fb76631fffd5a9dc1ab1",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-noble_gases-1.png": {
+      "sha256": "6e53bcf7a6a8a677a74159ef4c05d90bd336abff13c3351ff2a3ed24039a1cc0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-fluids-solid_gallium-0.png": {
+      "sha256": "4dc05a1b16820b7a891ecbd0593bd06fb389f9ffb76164828e69aaceb373efe8",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-gallium_gear-0.png": {
+      "sha256": "89db2bd4d9292308a186295262c6a90d664fa39aff6ab5f06f958281ea440b75",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-gallium_gear-1.png": {
+      "sha256": "9588b0f88587b80cbdd4b3ed07c5f605d0a4fde211245d1338743d6e64947ffa",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-gas_detector-0.png": {
+      "sha256": "cfe0d7483c883c180de4cfd84883d0689834c6747694b3fbad2c56345baed31f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-gas_detector-1.png": {
+      "sha256": "bc5ae3afbb33464ad1fd40435396be8bd04f1c946617d735dd36d6aa49822875",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-0.png": {
+      "sha256": "fe6569b859c837a494129d914250889c026d6772241ef11f5c20709b88ab1a42",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-1.png": {
+      "sha256": "23d586b7e01445ddacc9077c9cd1faa4b18ba7b07edcc5e0169ad1ff70377b60",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-2.png": {
+      "sha256": "ac0e73a7f13872a3bc277990ad37c4f2634cf10b6e7aba67fb26d73f9ab21de2",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-3.png": {
+      "sha256": "efe5927cae4d6726776c7f4c4c45ebad4066a5d995f3294efdc5c6c76be55505",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-4.png": {
+      "sha256": "6c09d4d43000b32e27e957c126f846c62bcf60fee0686156cf430a71856032ba",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-5.png": {
+      "sha256": "ae2c6171529f7899898a044c3654b6e3045ce4c1a6867666d66d49dfc00e019e",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-6.png": {
+      "sha256": "6cb28ec3757bb2e04afef18b1e3fa94af073565258325bf612dd74aef8ede556",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-7.png": {
+      "sha256": "08b50ca9850a0978c7551f8f132737c8325c24ce987d00657ce7c9ec8de3f4a7",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-gear-rare_earth_magnets-8.png": {
+      "sha256": "e941c2cde8ca3969a60c22cb89cb9fdb6aa05ba486ab3d0cdd36bee1b66dbb74",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-air_separator-0.png": {
+      "sha256": "2a92062b4a6f590488f24e88722338985846e30182f0535e94ebff52bf883121",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-air_separator-1.png": {
+      "sha256": "bcd067244b0dac21c69d329d397a90d3bf5763e62df1476acb2fc03454738274",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-air_separator-2.png": {
+      "sha256": "b100dfa666494b00c6887ba49916cc1daf2271bd5369ccbaebe8906d666823c9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-automation-0.png": {
+      "sha256": "0275e1c23c4600380c248d91d65c0ba1d611a0f2208e757c6b6f9511546a4689",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-automation-1.png": {
+      "sha256": "5a04a65ee7192c23f52b14abeed0075205d5efd2f80484364c13ffa1880323b6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-automation-2.png": {
+      "sha256": "62cbfd1ab9752783490248cca0163d9ab1fd4fe14ace4a6ada0c6d3c4f6fe6a4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-electrolyzer-0.png": {
+      "sha256": "12e35670c15737ddba854d4b414875f3afe704d027420dde4a544199e605c5f3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-gallium_golem-0.png": {
+      "sha256": "b8fcfb1d3ca93fc858d9c0f29124fc67f6278ab953e852d63c42332528a87938",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-gas_exciter-0.png": {
+      "sha256": "8089e729ec50d8f730b3e8983493b3d9cd12fc8b0660f5eb7784cc6026148030",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-gas_vent-0.png": {
+      "sha256": "a3e1f0131acfdcbf4d0aab0c7496bffbbc96b5a4b9a72dbcf0c1729569779159",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-gas_vent-1.png": {
+      "sha256": "e8f312325c2a9d7f096129037d3682d951015614ea94a633b56fb231fcc6fc1a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-iron_oxide_golems-0.png": {
+      "sha256": "653960b66b112faa6e896cc521c91c67438b32db6d9ecb6a6fc2ce8d0470848c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-iron_oxide_golems-1.png": {
+      "sha256": "5eda81e03dd71da370b8707c0fde1e535fc10a499d887c33fb71f27d33d18c6c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-iron_oxide_golems-2.png": {
+      "sha256": "6176b1b60652406db2ad2b2d1a1951fe9abfc3c47b7804a9436e2d3414fb7bbd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-machines-iron_oxide_golems-3.png": {
+      "sha256": "936afe0321424c68748d4450a61f2eb63f944fc9dfd3aa07149e8542f93b153f",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-alfven_backpack-0.png": {
+      "sha256": "b72ac7dfedb15529ab7e63eb92decd5c9b44a1f285a5431c3d6b802cefd57a9a",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-anchor_docking-0.png": {
+      "sha256": "c47f58a4e4281c56fe2f606cf4665ef3a1dfcec26f9ec0fe09f93b3e639014b3",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-fusion_thruster-0.png": {
+      "sha256": "05ab8cefe3f08667bc698632b97f39b64ad97a61a75e1b7682506b439a2dadc9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-fusion_thruster-1.png": {
+      "sha256": "77879cbab7cee71bf005489d42cfc9415aacefac28f9f859f8180561a18b2b63",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-fusion_thruster-2.png": {
+      "sha256": "82570bf785b0769dc9be27b5226658ccfe01f51ae2d0a36bf2e7c53badba85e9",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-fusion_thruster-3.png": {
+      "sha256": "ce995d87b3430eaf9559b138bfbaec65edb69742b89c01493069f639711f8f6c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-fusion_thruster-4.png": {
+      "sha256": "44ec79e826592c0a7f7b16fcb5eb144978eda0e896ac8c394f6e07cee78470d4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-homopolar_motor-0.png": {
+      "sha256": "fd5a357133a3fb94a6c0b2c40794a4073c84bdcaf765634789d5346f42f65db4",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-ion_thruster-0.png": {
+      "sha256": "361c31f72987147b0b32e65902052b7db385b6c1e3f2e293694376e5b88c483c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-ion_thruster-1.png": {
+      "sha256": "bc49bc9caa67877bdf3d28a2d7a0ddeef594ec9523a3067a2e55655d3bdba2b0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-lenz-0.png": {
+      "sha256": "d9ebbfd7931e09eaf9bbd223555be976f2891d2086c231093e3a234da7fab87c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-mhd_jet-0.png": {
+      "sha256": "e11c6ec6159ac549973d03d37edabd6db1f5dd69ba7db049f05bcdeeedb6e2ed",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-micro_thruster-0.png": {
+      "sha256": "497832926523656e8f1a2779d18726e3d0eb810541fe6f23a707c47058c6f5cf",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-propulsion-0.png": {
+      "sha256": "1ce71074245a67594d03c93cd53e70f095358a5c78931892ea3403ac8ca4d279",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-railgun-0.png": {
+      "sha256": "079538c055939ad304f652e61d2761c3ff801402286a2238ce6be5d8e7c71cf6",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-railgun-1.png": {
+      "sha256": "7f03c22de37180f5135146932c72915e955d4680ca6cc4adfd1647af7e0c3c6c",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-railgun-2.png": {
+      "sha256": "c30d4679e3da5c6a2699760a3435f2cb20e52188c6eb54f03c8746850d57bebd",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-railgun-3.png": {
+      "sha256": "a326c7d731b07b8bc9c605ceeace9e8ba843d76ecc5cd78e1d757e6a2811c40d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-ship_polarity-0.png": {
+      "sha256": "311dc418aaa5d709ec4d3e50e2f26b6db5271519bba45eded7c2cf57dc3f34c0",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-solar_sail-0.png": {
+      "sha256": "e923b46a36b3bd2d8aaf6ff896d303532a72d42d9501fccc2aee55df3d7625be",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-thrust_controls-0.png": {
+      "sha256": "042d4e19a74aeb59ec3430773182e64f80277efb99b645aaf84b6cd36fc3492d",
+      "width": 1280,
+      "height": 720
+    },
+    "validation-guide-3-magnetization-ships-vector_core-0.png": {
+      "sha256": "007d04e612380537f09d04c7aa9b2e530b21fa392b745ab3e04270694a0d665b",
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "passes": {
+    "0": {
+      "locale": "en_us",
+      "guiScale": 2
+    },
+    "1": {
+      "locale": "en_us",
+      "guiScale": 3
+    },
+    "2": {
+      "locale": "de_de",
+      "guiScale": 2
+    },
+    "3": {
+      "locale": "de_de",
+      "guiScale": 3
+    }
+  },
+  "limits": "Checks complete native records, source definitions, effective GUI scale, text-scale threshold, visible word bounds, title width, reported clicks and capture provenance. Does not independently prove visual readability, item rendering, machine behavior or non-English translation quality.",
+  "recordsSha256": "9ef2dc0d359465b6d7a9b4c53781948e1c03c0097ab5e797e2b1e07f3e329c38",
+  "sources": {
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/armor_tools.json": "29a8ec082b528325e83174d2a903b7f97aade08e7efad589f47dd82a3e8a50d5",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/biomes.json": "88ff00719401ce25e9377c936cd1875ef6b6c9eeedaa35ef27a89fce5f008b67",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/compass_grapple.json": "462271a45456f7a023ceee15b6f9bf46a4f7c79eddf8b2be6830ac240bf1597b",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/compatibility.json": "fe909cbfaccdb3199188b2441f133cf93b9c41f5da6024c123dd72675a804e0b",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/configuration.json": "45a592b5e2329bc1f0143024bc912969141f8dd6728fdfcf8e3852a47671b76a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/cosmic_compass.json": "f403f7d3f44ffb831702b7a95c86b1c4aba6d6ed9ae09d07c2bd7d757b5d8845",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/deuterium_oxide.json": "f8cec54fca4a9b75805366f11855585027ee14c8c152d045d6696f5db2a60674",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/diamagnetic.json": "1fb8a3369d476373ea010e2cdfe28eada1560bada12e2324ea7b38b1b660ae76",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/fe_rf_power.json": "d2788eeb37156756dfc1e5916653be4e09f75d88c0ead2466dfb3baa2419e115",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/ferrofluid.json": "1d55c0b3e7954e92d855a6d7d716f653db8baa23d6cbb96cdf40209d3f7c7be0",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/g_force_cushion.json": "36a60ab43e698f57208f2f5e497e10e70460e7011dc93573ae7a0dd2802764bc",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/hematite_block.json": "c7060615fa146b9532db8b8c15b61c6e62033a8a5ad13b116c380211ecac4bf9",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/hematite_lens.json": "f59f83bfd57ec0db7b6557319d53e5f47dd07c39984f76c701cfc72903d5b9ad",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/imprint_module.json": "542b1592956534156b7948c69c986b7cd9fd5d09b99fb5f1b27c752cab4505d9",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/lirm.json": "1e006736ee4d3b00b416c827657c600ba849962ca22dfe0dc4194387fd3c00e0",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnet_burning.json": "e21c2347af9ad8e6331a97424da2fabca4dbd90d45d5c2e8dfd93032e8936297",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnetic_anvils.json": "1cecba870536dc2ce9b73d4e18985bbcf6ce91cf365df597d73fabbd4ef8a7c2",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnetic_elytra.json": "8b59f93b0c7a502b0456e4188f51c101a400bf69c459868554f9ada0348cae1e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnetic_item_frame.json": "68aa6c9f52467ff36d4c9ec626d3bea07118ae7c1c6de5716459fdaf2366484d",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnetized_ferrofluid.json": "692e8650627a946e63065f8922b32b08a7b233b575f0a52114e0920adb03518c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnetoresistive_boots.json": "abedff4aa5f221dff05355cc52aca06cfb05933e1e456cd2b9df768280fb330c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/meteorite_core.json": "9261dd40b9ff5d12a22f5131cb7e6e7c7b4e6e4bf025a748882a38bdea449821",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/meteorite_fragment.json": "38e13a7541097277f34e7994947bd1dc76301b1595184df0e5de4ddb410f4afd",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/meteorite_sapling.json": "17ba2ea2d00957b341ddda32e6ac88316e6ee1bf1296a55a3304770de7da4789",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_armor.json": "df60fa4c47569f9d233223f14e401d2fe6db802801c9d5751cd9d3645941a41a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_fluid.json": "3dcc12baf733c7f5989a0df8074f76cfd63c63f53062bf85017b70e96c5a1c18",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_fluid_golem.json": "6431cf885d5e623e1bfc653dd367da80cb57d0b3685878cad423c7ec9a28672e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/ore_compass.json": "2b6202b03d95c139f9b549f98e1015eb0d47a8323c4c0fbd622e696cb5756f3d",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/pyrrhotite_block.json": "89c8a2063cb9565b5634d4fe612d3fbc57930567143b864be36fc7fb9b9f9c44",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/pyrrhotite_catalyst.json": "7f89cac7dfe7ff9e6f4beeac5c198944be0bed551e1308c49b48b04fe8b90311",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/repulsor_gun.json": "7072ae2da7c562ec193edd4d387fb3c7db3722e8997a622215865e67e0515fc6",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/titanomagnetite_block.json": "e757ff2c46f03192d83fc680f8b415dcfb38cd7e76de0387af2040c14f692ba7",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/tokamak.json": "1c0edb500a6422a430934840cf508533a191135409263386d7d02bb2e42f5a82",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/anomaly_terrain.json": "a56f7bca667dd95bfcc5da57d8dc7792a4f8f5414e5bdfee0c905755c207e29d",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/ferromagnetic_ingot.json": "435bf503b20e3ef98846b2f859f0350b99a1ca6d97be0f0d3838698695fbb872",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/intro.json": "d358ba9b0460117b08e84947eae45af1fe392dde259c5005f7ed5a96e40b0820",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/iron_oxide_family.json": "0dbc16641aa6f5e0ccfb7ebd925eb7df612d1a857c34a484cd884cb560e222f1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/lodestone_core.json": "eeeb13871a9921d3d3b7d9edaa51a7bdf6dff945c9df13ba5d710bdb5f9dcdf9",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/magnetic_plate.json": "9fc459dc4b1be605564e4f1ff64427a68dbf7eced149f11f6caab4ddf3a08e97",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/magnetite.json": "96e9d52eeb2b63285dc1fb501fa2aef9c6d167ede0ed0ff23c64ceef25feef4d",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/manual_access.json": "e14b45467a0d9bf3484d4079fdca61214226213bc2792b8fa8c5cd5f50519577",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/polarity.json": "3095d9c2120c033a58aeeef661da278eeedc0d893afd79e825baf94af4e1759f",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/anchor.json": "f4f9c9d24b4dcbd3d064ac427b385058edd7895242011bb1ce824da0c58be6ed",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/barkhausen.json": "1b4b5c41f23e0ca0b1b2e898872aab7440d507529b9522a2387560c62917fc09",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/dipole_electromagnet.json": "bce1bcbee4575d1ee9d5cbe87fc2faa18a8865f9f61de8b192a473751ea769b1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/electromagnet.json": "6333b00eef9d522c7632ff7ac5bf27ae12bbb4c5db3bcb652a3386f90daba156",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/emp_charge.json": "67ed7683b62217fb20c85c35dba6f949b15688d65e2bfd9829fd1031b0b57f75",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/excavator.json": "8f59962b019d27eabeddb5d15737ac7108dbd7bab268cf85d1f5ea8c19f2775c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/gyrostabilizer.json": "c067a99e293d248f54a9b84e485a08b1197d2a14fd1b389e468f2a80aefeab31",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/halbach.json": "916214430c9fe352d4ee8011c122525e47a302574c76afad5362e8d24fcdf067",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/induction_pad.json": "5f1f4fa7859dc08d1fc4ebf73d766f04d4141e16a8abd1352062ed06b98b35c7",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/kinetic_coil.json": "dba0d511b1a2f2a3129f9137f503d97749c6fcbafbe6dd7cff2c3297376185c4",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/kinetic_electromagnet.json": "fee253a8b503273739473c88a9de797a51cae7b8afebddfe528f031b2cfc09e7",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/magnetostrictive_sensor.json": "4740e350001116612a2d21c80e6443983586f624eb9f44001cee7df8ba531f6c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/permanent.json": "7f9b2fac4505aa189888a22d9ff6c73602595944a346c8ceb628001c3486489e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/repulsor.json": "fe0bf3024dbedff27853f86ba735be71bd3db27c4e575a19820b295ddbd572b1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/structural_inducer.json": "2d8d843c0c5b01ade9ccfd489f2a1c4e31d855abb29c8ebcc205ab0630d07dd7",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/switch.json": "b9ce654184afa7df9b07e40e995260c6c15a22622dc856fff6f24a882a4ddd55",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/tractor.json": "6da4497555944e868aa0a676a0c250dbd65b69a80ebe495b7a5a409d9e08aca6",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/fusion_fuels.json": "1a18f6a11a11f17f0c78f1642a6369e8ea270eeee6b237eaeb8bd1c6339e5f61",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/gallium.json": "f9ee480b1fe0836a254db9931a682423d6583e87b9a4057959eb57447932b5c2",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/lithium.json": "48f7ca2107085cb8af6d53cf57b6e7dcb7409884320d153139bcc76e667f6ac8",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/mixed_gallium.json": "a1fbfd8695a266bdb8b2ca184fbf79d3ceec28a8e979f7853976e76ac4b2f6b7",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/noble_gases.json": "97316aa891e7f488633adb26ce605c03514cfc478457d77b6598eadcbd1d6796",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/solid_gallium.json": "3bfacfe9398e030cfac0b49f6959c837338b0dd257821e0c950f0546ec3a2296",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/gear/gallium_gear.json": "89af499fe991825969ed204305d875c877469fd6adbfa90218e861bb766e0967",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/gear/gas_detector.json": "aec20c6ba34d4642521985333d69d05ff773ef218f5c48b65bd5e531ee2556cb",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/gear/rare_earth_magnets.json": "8e53e39930299cffdf984207107db9c9fdeae59c8cfe7e9ae52d52f6d7bd46a1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/air_separator.json": "f95bfee876be399d9a2ab17ec7d235e946e778554f911ee0c5e1870e6ab8ac7a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/automation.json": "bf1a5c238a77294b484c63b42204f6a07526eeff6ff943aa93dce13fd57e28e3",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/electrolyzer.json": "6589a380cb46659a25a96b248388322b905944b4e2456b8a86c3d0a11a4d5e55",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/gallium_golem.json": "87d0cc7df7310747d2066ac4672e8bca7e57fc1acf6542370808a4d5a741632e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/gas_exciter.json": "1ede022e19ba182ef1a0bf9afa842e67847b1f3ae2b09e4a526332385c2eb07e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/gas_vent.json": "3bcd00c28689f4b28798f0175315c8b839ce2a4f4681d2d4f11a550396d4434c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/iron_oxide_golems.json": "25d412b7af15e0e20b988ed3cbe91159122f86884be6503ec5e24aa9b75ec334",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/alfven_backpack.json": "2ef5c15adc2e130b97fba196f8fbf997633bfe735b8a4a03520202e505153c76",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/anchor_docking.json": "7eeb3d0704c51e8e9a210cfe4401f0b0e7efe43b47f2a7114f1ac7f459726862",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/fusion_thruster.json": "7356233cae126bb867d0aeab46092c7f3fa7f5725404b40a5934fbb4b71384d6",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/homopolar_motor.json": "736de7770d8cc7f8b7ae56a15701e40f40590485a6d51ebb5e17b1922312b2e5",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/ion_thruster.json": "859795ea9780e68349becec63858baabf63289622511dc121db70381d5e4e869",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/lenz.json": "d8d996798b2252f40d050c62a2d364b81e9a09ff2501921876c565b5707a725e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/mhd_jet.json": "189fdfb8d1397ab6c2e41fc96bba15a25ee0147b259f8ff19cfdcb960dbc8313",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/micro_thruster.json": "9a4c4615cc6cdcbb41fcf268a6df92c41ebf2974bb439d543b68f1007fd9265c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/propulsion.json": "c66711131e0f2331a74eec7ad13275827a0e58e9d9988241adb09252c6a5d858",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/railgun.json": "520d553b784d3236f93ae997f9a57b26bb1b22d3aa9571d176b14e8925ad49f4",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/ship_polarity.json": "3a3b5c4820fb4da7d7be3c77892368f1bf1188df969c2a7b9cefddd7abbde7cb",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/solar_sail.json": "02d5b1a44ad2a9b04c529bd6feb2b4c44695aa712482e6886f38ae7bc8471465",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/thrust_controls.json": "08fa0fcf81ec2270453ed698c99dbb8de31ddbd5931721310ddea8ecf90604b1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/vector_core.json": "e0c149dc9557cecb4616901e15cedf00ad8c2e7c2477465984be4a86d2000831",
+    "src/main/resources/assets/magnetization/lang/en_us.json": "2743f2b4a0c08879af5d0461ee417d05fec1b12a5733a465f1e4f995ab6e6e9e"
+  },
+  "analyzerSha256": "0a8e351e329751c2a2ebc28d2f909f2c7ba45d3e8bc2a8ccda0774f860ee517e"
+}

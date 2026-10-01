@@ -7,7 +7,13 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:mr_fluid_golem_spawn_egg",
       "text": "book.magnetization.entry.mr_fluid_golem.spotlight",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.mr_fluid_golem_spawn_egg"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.mr_fluid_golem.spotlight.continued1.title",
+      "text": "book.magnetization.entry.mr_fluid_golem.spotlight.continued1"
     }
   ]
 }

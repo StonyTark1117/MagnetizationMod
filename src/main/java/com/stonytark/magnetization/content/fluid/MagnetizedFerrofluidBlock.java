@@ -21,13 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Magnetized ferrofluid — a fully flowing fluid (it pours and spreads like the
- * plain kind) that a player has charged with a polarity, so it acts as a weak
+ * plain kind) that a player has charged with a polarity, so it acts as a MEDIUM
  * magnetic field source. The pole is held in the {@code POLARITY} blockstate
  * (set at placement from the bucket's stamp). Only <em>source</em> blocks emit
  * a field; they register into {@link MagnetizedFerrofluidRegistry} so
  * {@link MagnetizedFerrofluidFieldHandler} can drive them without a block
- * entity. Plain (unmagnetized) ferrofluid emits nothing and is field-immune —
- * which is why the Anomaly biome's pools sit still instead of draining away.
+ * entity. Plain ferrofluid emits no field, but its transient tendrils react to
+ * either pole through FerrofluidCreepHandler and recede when the source changes.
  */
 public final class MagnetizedFerrofluidBlock extends LiquidBlock implements FluidRedstone.Conductor {
 

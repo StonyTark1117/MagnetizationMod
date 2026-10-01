@@ -1,0 +1,504 @@
+{
+  "scope": "Independent visual inspection of49 native instruction captures plus source review of all18 non-vacuous state validators. Not proof of full machine/ship/train simulation.",
+  "status": "18 native state/playback passes; all49instructions visually accepted after focused rareEarth2 correction; focused-run completed",
+  "fullRunClientLogSha256": "efa0b6c8163a26f3af715ccc3ae6f486fcae9c9e4bb516e35d38581ef5fb0ac0",
+  "scenes": [
+    {
+      "id": "tokamak_ring",
+      "elapsed": 306,
+      "total": 306
+    },
+    {
+      "id": "fusion_panel",
+      "elapsed": 306,
+      "total": 306
+    },
+    {
+      "id": "railgun_pair",
+      "elapsed": 272,
+      "total": 272
+    },
+    {
+      "id": "electrolyzer",
+      "elapsed": 306,
+      "total": 306
+    },
+    {
+      "id": "gas_exciter",
+      "elapsed": 202,
+      "total": 202
+    },
+    {
+      "id": "gas_vent",
+      "elapsed": 216,
+      "total": 216
+    },
+    {
+      "id": "air_separator",
+      "elapsed": 454,
+      "total": 454
+    },
+    {
+      "id": "mhd_jet",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "micro_thruster",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "ion_thruster",
+      "elapsed": 226,
+      "total": 226
+    },
+    {
+      "id": "solar_sail",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "kinetic_coil",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "homopolar_motor",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "structural_inducer",
+      "elapsed": 294,
+      "total": 294
+    },
+    {
+      "id": "dipole_electromagnet",
+      "elapsed": 306,
+      "total": 306
+    },
+    {
+      "id": "rare_earth_magnets",
+      "elapsed": 796,
+      "total": 796
+    },
+    {
+      "id": "steam_rails_magnetism",
+      "elapsed": 224,
+      "total": 224
+    },
+    {
+      "id": "copycat_magnetism",
+      "elapsed": 202,
+      "total": 202
+    }
+  ],
+  "captures": [
+    {
+      "scene": "tokamak_ring",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-tokamak_ring-text-1.png",
+      "sha256": "cf28105a5f1cdacdcf0bd6977dea80c4cced64cfe87e62c009bcc3260cdd51fd",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "tokamak_ring",
+      "instruction": 2,
+      "time": 132,
+      "file": "../guide-corrections/screenshots/validation-ponder-tokamak_ring-text-2.png",
+      "sha256": "f39e60faf004bab4dcf2fa5478a9023725e804c2c7dad4b909ce29eafbfe46d6",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "tokamak_ring",
+      "instruction": 3,
+      "time": 222,
+      "file": "../guide-corrections/screenshots/validation-ponder-tokamak_ring-text-3.png",
+      "sha256": "f0a22d4f313847ca4ead0ba640729bbe12b472bd3517e2a85a0134de6434e935",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "fusion_panel",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-fusion_panel-text-1.png",
+      "sha256": "fbe95092e7eac996521d9f15c88e476af488fe9c0fb3c89651a72cddd14b153a",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "fusion_panel",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-fusion_panel-text-2.png",
+      "sha256": "bff877abd0384e0189f1fda93c45abeee28d1ff57e3f6224d49dc2dc821ec4ff",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "fusion_panel",
+      "instruction": 3,
+      "time": 222,
+      "file": "../guide-corrections/screenshots/validation-ponder-fusion_panel-text-3.png",
+      "sha256": "e2d3559764543d91d5eb908f15fd22db14cb9e8f243f5c56bae7dda30e0f7b64",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "railgun_pair",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-railgun_pair-text-1.png",
+      "sha256": "2e8917000d55a98e22d675f90e9138f424215acf13a1a92ba4066a3d9ade268b",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "railgun_pair",
+      "instruction": 2,
+      "time": 108,
+      "file": "../guide-corrections/screenshots/validation-ponder-railgun_pair-text-2.png",
+      "sha256": "6917897230d09b14a7060ed6b10c364743abb23cf8f28c98b4fd37e31eb59f44",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "electrolyzer",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-electrolyzer-text-1.png",
+      "sha256": "943e8ccc9e052ed1e91fdbd4da04f44531afd66cea56f8ec31bb36bd8b820367",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "electrolyzer",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-electrolyzer-text-2.png",
+      "sha256": "e3dab04cb8b86d1e2b173dc2cb66fa39978d1cd11ae0cb5d6849a22efaa57d98",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "electrolyzer",
+      "instruction": 3,
+      "time": 222,
+      "file": "../guide-corrections/screenshots/validation-ponder-electrolyzer-text-3.png",
+      "sha256": "4b94e8fa9cc810d591ff0ce1be299b07aebe17313e4843429547f1dcd1f8803e",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "gas_exciter",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-gas_exciter-text-1.png",
+      "sha256": "54a151e66895f81e5741fc876a6322344b6d798b13fc6a559c28285955112e6d",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "gas_exciter",
+      "instruction": 2,
+      "time": 108,
+      "file": "../guide-corrections/screenshots/validation-ponder-gas_exciter-text-2.png",
+      "sha256": "c2008387a02b8c966d1c117c8a3826e6a8b48b4708216e8717906699a70d3994",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "gas_vent",
+      "instruction": 1,
+      "time": 30,
+      "file": "../guide-corrections/screenshots/validation-ponder-gas_vent-text-1.png",
+      "sha256": "500d7db44185c88895b7789c13ac794ac1595ca8e945b9f2b84627a12c082422",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "gas_vent",
+      "instruction": 2,
+      "time": 132,
+      "file": "../guide-corrections/screenshots/validation-ponder-gas_vent-text-2.png",
+      "sha256": "6651c8b7f0eb1bc1116ea81bbe793f2c239dc8bf682a5987a0940e756496a2e6",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "air_separator",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-air_separator-text-1.png",
+      "sha256": "c3c2f16e0e25e90d5374ba6e5b4616718255b49bc7261d6133a440d06facaf60",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "air_separator",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-air_separator-text-2.png",
+      "sha256": "be6094818ed5c0e504e3d948c91b485036ef26d0dccbe6c7e6ac744dafda73de",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "air_separator",
+      "instruction": 3,
+      "time": 270,
+      "file": "../guide-corrections/screenshots/validation-ponder-air_separator-text-3.png",
+      "sha256": "ef29326e4b687381cf201c7e3fc4c6f52cc8b431b67ee17ffcab580413df6974",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "air_separator",
+      "instruction": 4,
+      "time": 360,
+      "file": "../guide-corrections/screenshots/validation-ponder-air_separator-text-4.png",
+      "sha256": "4f34dfc3d8f61db3e5907c787df558bab382e6e21d9f766da47a60689e0e9ac6",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "mhd_jet",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-mhd_jet-text-1.png",
+      "sha256": "77d24808c0fbc1baa16573fdc3ab644f3e2968c5980487043951bee99fb03287",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "mhd_jet",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-mhd_jet-text-2.png",
+      "sha256": "5e781654c1b3c25427a0b8fb8b981af2ba3e7677ac91d4339402a95ac747695a",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "mhd_jet",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-mhd_jet-text-3.png",
+      "sha256": "55c17ac325a9451eaeb9a6f935a0c0707689a13c5b186df31bce762fc6633056",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "micro_thruster",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-micro_thruster-text-1.png",
+      "sha256": "1a7c9a700b625f61371e7daaf13a19aa88d5bda2789b37c161aa481bb6fe5073",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "micro_thruster",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-micro_thruster-text-2.png",
+      "sha256": "ffb23e952ca42155da2b3938dbf1f016f6461386f957d001e1a2bd0ce7f24207",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "micro_thruster",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-micro_thruster-text-3.png",
+      "sha256": "e7f33ab4b66b36d55f10b4b33cdf3e38345edcb56badef095e2fa50ea874aa65",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "ion_thruster",
+      "instruction": 1,
+      "time": 30,
+      "file": "../guide-corrections/screenshots/validation-ponder-ion_thruster-text-1.png",
+      "sha256": "00ef833cb2a2c52484c2026a50e6ca97263e352ff25d43d89b03d93bf9a2cffe",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "ion_thruster",
+      "instruction": 2,
+      "time": 132,
+      "file": "../guide-corrections/screenshots/validation-ponder-ion_thruster-text-2.png",
+      "sha256": "6f7f5daa7a29d33b98f508dad9d1e2385e6de25b0bef08070470117e2480e3a1",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "solar_sail",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-solar_sail-text-1.png",
+      "sha256": "a9c59627337f37b47af8bc0d927736fafb857ca85e94234c34a0fe4ba1e57f23",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "solar_sail",
+      "instruction": 2,
+      "time": 108,
+      "file": "../guide-corrections/screenshots/validation-ponder-solar_sail-text-2.png",
+      "sha256": "7ad37a66c7f3ba88f9f8ca326dbcbeed933d2aa9e428ec339e4d5cb3c1b5ced6",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "solar_sail",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-solar_sail-text-3.png",
+      "sha256": "9196210361989a471b0399593fdf206ed6d58291173105833787f6900678fca0",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "kinetic_coil",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-kinetic_coil-text-1.png",
+      "sha256": "282264528a4efe076a38db9004764619a613a8e9bcbff94dca0aa69c3ee54093",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "kinetic_coil",
+      "instruction": 2,
+      "time": 108,
+      "file": "../guide-corrections/screenshots/validation-ponder-kinetic_coil-text-2.png",
+      "sha256": "f977272dd2a2551e9aec2652745b7c4c6b1e1919d9dfd203ea8ae9941c30bbb0",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "kinetic_coil",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-kinetic_coil-text-3.png",
+      "sha256": "42986dafafeaa7ae78c447b534b8fd85a2185c5bf5154fa305395dc64a65357e",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "homopolar_motor",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-homopolar_motor-text-1.png",
+      "sha256": "791637a12cc6099bee086ec3be63520d534f8477861c18cfd3544680b00e99f3",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "homopolar_motor",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-homopolar_motor-text-2.png",
+      "sha256": "e1ccef95e013e759e091174388982efc16853ceb08f893492aabe588401ac89e",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "homopolar_motor",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-homopolar_motor-text-3.png",
+      "sha256": "c91c1b3c90c26ed2f498b0a5297faed52257a353290798d56c274888d106a2da",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "structural_inducer",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-structural_inducer-text-1.png",
+      "sha256": "6610e918145487ec35a5807458b1a9454d1efdc47b7e2dc85296987ae9369ac7",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "structural_inducer",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-structural_inducer-text-2.png",
+      "sha256": "46c9683135ecb9d259d1d33c0fa8b4342dd832e2c12495634aad8cffb5fc6721",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "structural_inducer",
+      "instruction": 3,
+      "time": 210,
+      "file": "../guide-corrections/screenshots/validation-ponder-structural_inducer-text-3.png",
+      "sha256": "bc719c992147aa0dd5859d381898a377127089dadb5298c0347c4ca80b9a0d18",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "dipole_electromagnet",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-dipole_electromagnet-text-1.png",
+      "sha256": "8806989719b4eaa6e84fcb436dfe0a24cfce64b0ccb2bb418ce45d6bf7e41b0a",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "dipole_electromagnet",
+      "instruction": 2,
+      "time": 132,
+      "file": "../guide-corrections/screenshots/validation-ponder-dipole_electromagnet-text-2.png",
+      "sha256": "6514a120453686adf1d26eed44bc6b4da178b802a16e28aac56e746d91f2baa6",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "dipole_electromagnet",
+      "instruction": 3,
+      "time": 222,
+      "file": "../guide-corrections/screenshots/validation-ponder-dipole_electromagnet-text-3.png",
+      "sha256": "aa4b7435ed07c20b7810888373c6053f1fc46c070183b997b2ae8ed6151f69d0",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-rare_earth_magnets-text-1.png",
+      "sha256": "be7ec626a3b88ddc66558d8a5075d14f1c55264fd71ffd1639eabc2f4da56bfb",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "instruction": 2,
+      "time": 372,
+      "file": "../guide-corrections/screenshots/validation-ponder-rare_earth_magnets-text-2.png",
+      "sha256": "4edf092a328ef9d983a7ffabb6cefb28b8323ea968384e0a778e24f557e69800",
+      "visualReview": "Historical navigation overlap, superseded by accepted focusedCorrection"
+    },
+    {
+      "scene": "rare_earth_magnets",
+      "instruction": 3,
+      "time": 702,
+      "file": "../guide-corrections/screenshots/validation-ponder-rare_earth_magnets-text-3.png",
+      "sha256": "8c5c2e2849e617671d95c4853fb96e7505a71cd24f42b6dfa4835e9acc231575",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "steam_rails_magnetism",
+      "instruction": 1,
+      "time": 30,
+      "file": "../guide-corrections/screenshots/validation-ponder-steam_rails_magnetism-text-1.png",
+      "sha256": "5aec0f70ae3a1ed165e658e7f126163eaab95cbc914b64acf922a878ab37f40a",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "steam_rails_magnetism",
+      "instruction": 2,
+      "time": 120,
+      "file": "../guide-corrections/screenshots/validation-ponder-steam_rails_magnetism-text-2.png",
+      "sha256": "0eba97debe2e5b5504c0e7e6d692e7496e3d3f9738d4df477c076c67a373b2a3",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "copycat_magnetism",
+      "instruction": 1,
+      "time": 18,
+      "file": "../guide-corrections/screenshots/validation-ponder-copycat_magnetism-text-1.png",
+      "sha256": "9db11dc75a4c74cb05cbd182f3f86491300d635a113b338643ba3681f13963bb",
+      "visualReview": "instruction and diagram legible within screen"
+    },
+    {
+      "scene": "copycat_magnetism",
+      "instruction": 2,
+      "time": 108,
+      "file": "../guide-corrections/screenshots/validation-ponder-copycat_magnetism-text-2.png",
+      "sha256": "1553d969d2ca80c6e76c6a52fd448e6a443d9837b3abc850e032d0478d0e3403",
+      "visualReview": "instruction and diagram legible within screen"
+    }
+  ],
+  "focusedCorrection": {
+    "scene": "rare_earth_magnets",
+    "instruction": 2,
+    "capture": "final-visual/rare-earth-annotation-corrected.png",
+    "sha256": "1ba6cbfe2338d9115936c5fda8845d515d0b1e95acd0334b7c7e5c92e1b57b25",
+    "visualReview": "Complete instruction including Samarium-Cobalt MEDIUM is above navigation controls and readable",
+    "clientLogSha256": "ffa515661a0113037b709ef9fb676d0e83df1af201e94dcbf6ad3047dc113ced",
+    "serverLogSha256": "14f36de6c22852f2ec93073cc7ccbf8cde71b4ffe902292500903e71f887b360",
+    "playbackTicks": 796,
+    "renderedInstructions": 3,
+    "serverAndClientPassed": true
+  },
+  "rareEarthInputVisualReview": "All12processing inputicons inspected; correct textured items rendered"
+}

@@ -1,0 +1,25 @@
+{
+  "scope": "Eight supplemental source-contract tests; full suite counts supporting only. Not native presentation proof",
+  "snapshot": "/home/braydon/Magnetization-API/build/guide-validation-893l5w5r",
+  "tests": {
+    "name": "com.stonytark.magnetization.data.GuideInstructionContractsTest",
+    "tests": "8",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-10-01T14:20:43.433Z",
+    "hostname": "Hades",
+    "time": "0.017"
+  },
+  "fullSuiteCounts": {
+    "tests": 271,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sources": {
+    "src/test/java/com/stonytark/magnetization/data/GuideInstructionContractsTest.java": "87d54da5a32aee0ed16f160aac9edbfedf9bc98e481bb7bb2f5acdfec64199f0",
+    "src/main/resources/assets/magnetization/lang/en_us.json": "2743f2b4a0c08879af5d0461ee417d05fec1b12a5733a465f1e4f995ab6e6e9e"
+  },
+  "xmlSha256": "c87bf4f232213f35226af5ffa3759174ed1132fba2160eaed6c4038cd824d78f"
+}

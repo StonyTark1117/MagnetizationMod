@@ -15,6 +15,16 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.automation.fluids.text.readable1.title",
+      "text": "book.magnetization.entry.automation.fluids.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.automation.fluids.text.readable2.title",
+      "text": "book.magnetization.entry.automation.fluids.text.readable2"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.automation.safety.title",
       "text": "book.magnetization.entry.automation.safety.text"
     }

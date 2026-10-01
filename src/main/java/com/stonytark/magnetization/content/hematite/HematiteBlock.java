@@ -44,7 +44,7 @@ public final class HematiteBlock extends Block {
     }
 
     /** Pure tier-arithmetic helper. Extracted so the ordinal-clamp behaviour
-     *  ({@code WEAK} as the floor, additive stacking, no-op at zero) can be
+     *  ({@code NONE} as the floor, additive stacking, no-op at zero) can be
      *  regression-tested without a {@link BlockGetter}. Public so tests in a
      *  different package can call it directly. */
     public static MagneticStrength stepDown(final MagneticStrength base, final int count) {

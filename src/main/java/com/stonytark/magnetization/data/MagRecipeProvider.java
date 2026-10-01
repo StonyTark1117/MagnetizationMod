@@ -380,7 +380,7 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
                 .save(out, id("deuterium_oxide_from_blasting"));
 
-        // -------- Meteorite Sapling (fragment + 4 raw_magnetite cradle) --------
+        // -------- Meteorite Sapling (2 fragments + 3 raw_magnetite cradle) --------
         // Plantable; takes ~30 in-game min to grow into a fresh meteorite_core.
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.METEORITE_SAPLING.get())
                 .pattern(" F ").pattern("RFR").pattern(" R ")
@@ -432,7 +432,7 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .define('C', MagItems.PYRRHOTITE_CATALYST.get())
                 .unlockedBy("has_catalyst", has(MagItems.PYRRHOTITE_CATALYST.get()))
                 .save(out, id("enhanced_pyrrhotite_catalyst"));
-        // Cosmic: enhanced + 1 meteorite_fragment (radius 7)
+        // Cosmic: enhanced + 2 meteorite fragments + 2 pyrrhotite ingots (radius 7)
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MagItems.COSMIC_PYRRHOTITE_CATALYST.get())
                 .pattern(" F ").pattern("PCP").pattern(" F ")
                 .define('F', MagItems.METEORITE_FRAGMENT.get())

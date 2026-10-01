@@ -1,0 +1,28 @@
+{
+  "name": "book.magnetization.entry.manual_access.name",
+  "icon": "minecraft:book",
+  "category": "magnetization:basics",
+  "sortnum": -1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.manual_access.obtain.title",
+      "text": "book.magnetization.entry.manual_access.obtain.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.manual_access.obtain.text.readable1.title",
+      "text": "book.magnetization.entry.manual_access.obtain.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.manual_access.recipes.title",
+      "text": "book.magnetization.entry.manual_access.recipes.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.manual_access.lifecycle.title",
+      "text": "book.magnetization.entry.manual_access.lifecycle.text"
+    }
+  ]
+}

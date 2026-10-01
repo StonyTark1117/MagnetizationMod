@@ -7,7 +7,13 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:mr_liquid_chestplate",
       "text": "book.magnetization.entry.mr_armor.spotlight",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.mr_liquid_chestplate"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.mr_armor.spotlight.readable1.title",
+      "text": "book.magnetization.entry.mr_armor.spotlight.readable1"
     }
   ]
 }

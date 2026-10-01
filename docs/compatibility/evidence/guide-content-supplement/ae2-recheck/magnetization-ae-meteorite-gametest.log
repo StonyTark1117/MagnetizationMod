@@ -1,0 +1,190 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :extractAeronauticsBundle
+> Task :extractModularGolemsApi UP-TO-DATE
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources
+> Task :classes
+> Task :downloadAssets UP-TO-DATE
+> Task :writeAeMeteoriteGameTestServerLegacyClasspath
+> Task :prepareAeMeteoriteGameTestServerRun
+
+> Task :runAeMeteoriteGameTestServer
+WARN StatusConsoleListener Advanced terminal features are not available in this environment
+[06:24:58] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.44, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.252, --fml.neoFormVersion, 20240808.144430]
+[06:24:58] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: JVM identified as Arch Linux OpenJDK 64-Bit Server VM 21.0.12.1+1
+[06:24:58] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Arch Linux; OS Linux arch amd64 version 7.2.7-zen1-1-zen
+[06:24:58] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[06:24:58] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/braydon/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:Registrate.MC1._21._67. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/com.tterrag.registrate/Registrate/MC1.21-1.3.0+67/66ddc4cd56472fea1ea1a24182901e6c92a51c0a/Registrate-MC1.21-1.3.0+67.jar
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: veil. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/foundry.veil/veil-neoforge-1.21.1/4.3.2/3d4056e31dd8a06e35901c3b82210c3d471e1e48/veil-neoforge-1.21.1-4.3.2.jar
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.engine-room.flywheel/flywheel-neoforge-1.21.1/1.0.6/a943872ad0bdd4458d818d8d7dc123fb250eb744/flywheel-neoforge-1.21.1-1.0.6.jar
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+[06:24:58] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/net.createmod.ponder/ponder-neoforge/1.0.87+mc1.21.1/7783eeff0389f8c6003457133b9dd98e903266c6/ponder-neoforge-1.0.87+mc1.21.1.jar
+[06:24:58] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 4 dependencies adding them to mods collection
+[06:24:58] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Applied Energistics 2 19.2.18 (ae2)
+		Create 6.0.11 (create)
+		Create Aeronautics 1.3.2 (aeronautics)
+		Create Simulated 1.3.2 (simulated)
+		Flywheel 1.0.6 (flywheel)
+		GuideME 21.1.19 (guideme)
+		Magnetization 1.4.6 (magnetization)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Ponder 1.0.87+mc1.21.1 (ponder)
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+		TerraBlender 4.1.0.8 (terrablender)
+		Veil 4.3.2 (veil)
+[06:24:59] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[06:24:59] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[06:24:59] [main/WARN] [mixin/]: Reference map 'simulated.refmap.json' for simulated.mixins.json could not be read. If this is a development environment you can ignore this message
+[06:24:59] [main/WARN] [mixin/]: Reference map 'aeronautics.refmap.json' for aeronautics.mixins.json could not be read. If this is a development environment you can ignore this message
+[06:24:59] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[06:24:59] [main/INFO] [de.ry.sa.mi.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[06:24:59] [main/INFO] [de.ry.sa.mi.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[06:24:59] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender.mixins.json could not be read. If this is a development environment you can ignore this message
+[06:24:59] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender_neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[06:24:59] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/CCCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.CCCopycatBlockEntity)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/multistate/MultiStateCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.multistate.MultiStateCopycatBlockEntity)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: com/jesz/createdieselgenerators/content/tools/ChemicalSprayerProjectileEntity (java.lang.ClassNotFoundException: com.jesz.createdieselgenerators.content.tools.ChemicalSprayerProjectileEntity)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: qouteall/imm_ptl/core/compat/sable_integration/IPSableBridge (java.lang.ClassNotFoundException: qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: com/github/alexmodguy/alexscaves/server/block/blockentity/TeslaBulbBlockEntity (java.lang.ClassNotFoundException: com.github.alexmodguy.alexscaves.server.block.blockentity.TeslaBulbBlockEntity)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/orbit/DeepSpaceData (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.orbit.DeepSpaceData)
+[06:24:59] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[06:24:59] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[06:25:03] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[06:25:03] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[06:25:03] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[06:25:03] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[06:25:03] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[06:25:03] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[06:25:03] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[06:25:03] [modloading-worker-0/INFO] [co.si.cr.Create/]: Create 6.0.11 initializing! Commit hash: fc9535d82a29419164a1e9dc9c678bdcddeab30d
+[06:25:03] [modloading-worker-0/INFO] [de.ry.sa.Sable/]: Sable loaded!
+[06:25:04] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:overworld to index 0 for type OVERWORLD
+[06:25:04] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:nether to index 0 for type NETHER
+[06:25:04] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:anomaly_region to index 1 for type OVERWORLD
+[06:25:04] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:petrified_forest_region to index 2 for type OVERWORLD
+[06:25:04] [modloading-sync-worker/INFO] [magnetization/]: Surface rules registered for OVERWORLD category (anomaly + petrified_forest)
+[06:25:05] [main/ERROR] [minecraft/Settings]: Failed to load properties from file: server.properties
+java.nio.file.NoSuchFileException: server.properties
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:261) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:380) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:432) ~[?:?] {}
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:420) ~[?:?] {}
+	at java.base/java.nio.file.Files.newInputStream(Files.java:160) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.Settings.loadFromFile(Settings.java:38) ~[neoforge-21.1.252.jar%23125!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerProperties.fromFile(DedicatedServerProperties.java:132) ~[neoforge-21.1.252.jar%23125!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.dedicated.DedicatedServerSettings.<init>(DedicatedServerSettings.java:12) ~[neoforge-21.1.252.jar%23125!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.main(Main.java:125) ~[neoforge-21.1.252.jar%23125!/:?] {re:classloading}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:136) ~[loader-4.0.44.jar%23102!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.loading.targets.CommonLaunchHandler.serverService(CommonLaunchHandler.java:128) ~[loader-4.0.44.jar%23102!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.loading.targets.NeoForgeServerDevLaunchHandler.runService(NeoForgeServerDevLaunchHandler.java:23) ~[loader-4.0.44.jar%23102!/:4.0] {}
+	at MC-BOOTSTRAP/fml_loader@4.0.44/net.neoforged.fml.loading.targets.CommonLaunchHandler.lambda$launchService$4(CommonLaunchHandler.java:118) ~[loader-4.0.44.jar%23102!/:4.0] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.run(Launcher.java:103) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.5.jar%2382!/:?] {}
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?] {}
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?] {}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?] {}
+	at net.neoforged.devlaunch.Main.main(Main.java:57) [DevLaunch-1.0.2.jar:?] {}
+[06:25:05] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[06:25:05] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[06:25:05] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[06:25:05] [main/INFO] [co.si.cr.Create/]: Created 157 recipes which will be injected into the game
+[06:25:05] [main/INFO] [co.si.cr.Create/]: Created 0 tags which will be injected into the game
+[06:25:05] [main/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: [magnetization_ae_meteorite]
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.SpawnExtraGridTestTools for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.QnbTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.InscriberTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.AnnihilationPlaneTests for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.TestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.P2PTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.PatternProviderPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.SubnetPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.GuidebookPlot for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.CrystalResonanceGeneratorTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.InterfaceTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.PatternProviderLockModePlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.InvalidPatternTestPlot for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.ChannelTests for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.AutoCraftingTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.ExternalEnergyTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.ItemP2PTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.MemoryCardTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.SpatialTestPlots for plots
+[06:25:05] [Worker-Main-3/INFO] [AE2:C/]: Scanning class appeng.server.testplots.CraftingTerminalTestPlots for plots
+[06:25:06] [main/INFO] [minecraft/RecipeManager]: Loaded 3733 recipes
+[06:25:06] [main/INFO] [minecraft/AdvancementTree]: Loaded 3347 advancements
+[06:25:06] [main/INFO] [co.st.ma.co.ga.GasExcitationProfiles/]: Loaded 0 gas excitation fluid profile bindings
+[06:25:06] [main/WARN] [minecraft/MappedRegistry]: Not all defined tags for registry ResourceKey[minecraft:root / minecraft:item] are present in data pack: c:ingots/aluminum
+[06:25:06] [Server thread/INFO] [terrablender/]: Initialized TerraBlender biomes for level stem minecraft:the_nether
+[06:25:06] [Server thread/INFO] [de.ry.sa.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:overworld] using RapierPhysicsPipelineProvider
+[06:25:06] [Server thread/INFO] [de.ry.sa.Sable/]: Using game directory relative Sable Rapier native directory /home/braydon/Magnetization-API/run-ae-meteorite-gametest/.sable/natives
+[2026-10-01T13:25:07.033902562Z] [[32mINFO[0m] (sable_rapier) Rapier scene initialized
+[06:25:07] [Server thread/INFO] [de.ry.sa.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_end] using RapierPhysicsPipelineProvider
+[2026-10-01T13:25:07.263156578Z] [[32mINFO[0m] (sable_rapier) Rapier scene initialized
+[06:25:07] [Server thread/INFO] [de.ry.sa.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_nether] using RapierPhysicsPipelineProvider
+[2026-10-01T13:25:07.287940968Z] [[32mINFO[0m] (sable_rapier) Rapier scene initialized
+[06:25:07] [Server thread/INFO] [de.ry.sa.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / ae2:spatial_storage] using RapierPhysicsPipelineProvider
+[2026-10-01T13:25:07.297684809Z] [[32mINFO[0m] (sable_rapier) Rapier scene initialized
+[06:25:07] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[06:25:07] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[06:25:07] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 94 ms
+[06:25:07] [Server thread/INFO] [minecraft/GameTestServer]: Started game test server
+[06:25:07] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[06:25:07] [Server thread/INFO] [magnetization/]: Stripped 1 recipe(s) producing disabled magnetization content.
+[06:25:07] [Server thread/INFO] [minecraft/GameTestServer]: 1 tests are now running at position -7036416, -59, 3054815!
+[06:25:20] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'defaultBatch:0' (1 tests)...
+[06:25:20] [Server thread/WARN] [minecraft/MinecraftServer]: Can't keep up! Is the server overloaded? Running 12724ms or 254 ticks behind
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: [ ]
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: [ ]
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: [+]
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: ========= 1 GAME TESTS COMPLETE IN 12.80 s ======================
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: All 1 required tests passed :)
+[06:25:20] [Server thread/INFO] [minecraft/GameTestServer]: ====================================================
+[06:25:20] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[06:25:20] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[06:25:20] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[06:25:20] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[06:25:20] [Server thread/INFO] [de.ry.sa.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:overworld
+
+> Task :runAeMeteoriteGameTestServer FAILED
+
+[Incubating] Problems report is available at: file:///home/braydon/Magnetization-API/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':runAeMeteoriteGameTestServer' (registered in build file 'build.gradle').
+> Process 'command '/usr/lib/jvm/java-21-openjdk/bin/java'' finished with non-zero exit value 143 (this value may indicate that the process was terminated with the SIGTERM signal)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3m 47s
+9 actionable tasks: 6 executed, 3 up-to-date

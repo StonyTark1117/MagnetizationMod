@@ -15,12 +15,37 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.build.readable1.title",
+      "text": "book.magnetization.entry.fusion_thruster.build.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.build.readable2.title",
+      "text": "book.magnetization.entry.fusion_thruster.build.readable2"
+    },
+    {
+      "type": "patchouli:text",
       "text": "book.magnetization.entry.fusion_thruster.fuel"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.fuel.readable1.title",
+      "text": "book.magnetization.entry.fusion_thruster.fuel.readable1"
     },
     {
       "type": "patchouli:text",
       "title": "book.magnetization.entry.fusion_thruster.cooling.title",
       "text": "book.magnetization.entry.fusion_thruster.cooling.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.cooling.text.readable1.title",
+      "text": "book.magnetization.entry.fusion_thruster.cooling.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_thruster.cooling.text.readable2.title",
+      "text": "book.magnetization.entry.fusion_thruster.cooling.text.readable2"
     }
   ]
 }

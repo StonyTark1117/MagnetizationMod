@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * polarity. Mirrors {@code EmitterRegistry}, but for a fluid that has no block
  * entity: {@link MagnetizedFerrofluidBlock} adds source positions as they're
  * placed, and {@link MagnetizedFerrofluidFieldHandler} walks the set each tick
- * to emit a weak field from each (pruning any entry that's no longer a
+ * to emit a MEDIUM field from each (pruning any entry that's no longer a
  * magnetized source, so the set self-heals across fluid flow).
  */
 public final class MagnetizedFerrofluidRegistry {

@@ -7,7 +7,13 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:solar_sail",
       "text": "book.magnetization.entry.solar_sail.spotlight",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.solar_sail"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.solar_sail.spotlight.readable1.title",
+      "text": "book.magnetization.entry.solar_sail.spotlight.readable1"
     }
   ]
 }

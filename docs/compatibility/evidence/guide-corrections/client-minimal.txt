@@ -1,0 +1,1 @@
+runClientMinimal: rendered main menu with required mods [magnetization] on isolated display :905

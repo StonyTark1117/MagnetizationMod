@@ -9,10 +9,20 @@
       "text": "book.magnetization.entry.meteorite_core.intro.text"
     },
     {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.meteorite_core.intro.text.readable1.title",
+      "text": "book.magnetization.entry.meteorite_core.intro.text.readable1"
+    },
+    {
       "type": "patchouli:spotlight",
       "item": "magnetization:meteorite_core",
       "text": "book.magnetization.entry.meteorite_core.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.meteorite_core.spotlight.readable1.title",
+      "text": "book.magnetization.entry.meteorite_core.spotlight.readable1"
     },
     {
       "type": "patchouli:text",

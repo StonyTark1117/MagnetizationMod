@@ -10,8 +10,18 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.ships.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.ships.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.vehicles.title",
       "text": "book.magnetization.entry.compatibility.vehicles.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.vehicles.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.vehicles.text.readable1"
     },
     {
       "type": "patchouli:text",
@@ -20,8 +30,18 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.create.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.create.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.fuels.title",
       "text": "book.magnetization.entry.compatibility.fuels.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.fuels.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.fuels.text.readable1"
     },
     {
       "type": "patchouli:text",
@@ -30,8 +50,18 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.overlays.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.overlays.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.controls.title",
       "text": "book.magnetization.entry.compatibility.controls.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.controls.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.controls.text.readable1"
     },
     {
       "type": "patchouli:text",
@@ -40,13 +70,28 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.reborn.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.reborn.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.audit.title",
       "text": "book.magnetization.entry.compatibility.audit.text"
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.audit.text.continued1.title",
+      "text": "book.magnetization.entry.compatibility.audit.text.continued1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.compatibility.magnetics.title",
       "text": "book.magnetization.entry.compatibility.magnetics.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.compatibility.magnetics.text.readable1.title",
+      "text": "book.magnetization.entry.compatibility.magnetics.text.readable1"
     },
     {
       "type": "patchouli:text",

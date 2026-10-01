@@ -161,7 +161,7 @@ class PatchouliFieldManualTest {
         )), "Field Manual omits a rare-earth source or required magnet-processing stage");
 
         final JsonObject translations = parse(EN_US).getAsJsonObject();
-        final String viewers = translations.get("book.magnetization.entry.compatibility.overlays.text").getAsString();
+        final String viewers = GuideTextContents.chapter("advanced/compatibility", translations);
         assertTrue(viewers.contains("Just Enough Resources, a JEI add-on"),
                 "Field Manual must describe JER as a JEI add-on");
         assertTrue(viewers.contains("Ponder"), "Field Manual must identify its animated Ponder guidance");
@@ -180,12 +180,9 @@ class PatchouliFieldManualTest {
                 "Tokamak Field Manual entry must include construction, connection, and cooling pages");
 
         final JsonObject translations = parse(EN_US).getAsJsonObject();
-        final String construction = translations
-                .get("book.magnetization.entry.tokamak.construction.text").getAsString();
-        final String connections = translations
-                .get("book.magnetization.entry.tokamak.io.text").getAsString();
-        final String cooling = translations
-                .get("book.magnetization.entry.tokamak.cooling.text").getAsString();
+        final String construction = GuideTextContents.chapter("advanced/tokamak", translations);
+        final String connections = GuideTextContents.chapter("advanced/tokamak", translations);
+        final String cooling = GuideTextContents.chapter("advanced/tokamak", translations);
         assertTrue(construction.contains("3x3:") && construction.contains("8 coils + 1 core")
                         && construction.contains("5x5:") && construction.contains("16 coils + 9 cores")
                         && construction.contains("7x7:") && construction.contains("24 coils + 25 cores")
@@ -210,8 +207,7 @@ class PatchouliFieldManualTest {
         assertTrue(strings.contains("book.magnetization.entry.fusion_thruster.cooling.text"),
                 "Fusion Thruster Field Manual entry must include its cooling page");
 
-        final String cooling = parse(EN_US).getAsJsonObject()
-                .get("book.magnetization.entry.fusion_thruster.cooling.text").getAsString();
+        final String cooling = GuideTextContents.chapter("ships/fusion_thruster", parse(EN_US).getAsJsonObject());
         assertTrue(cooling.contains("previous thrust") && cooling.contains("liquid Gallium")
                         && cooling.contains("frame coil") && cooling.contains("fuel-efficiency"),
                 "Fusion Thruster cooling page must preserve baseline and explain coolant routing/curves");

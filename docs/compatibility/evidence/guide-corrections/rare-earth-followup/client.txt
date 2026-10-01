@@ -1,0 +1,41 @@
+[01Oct2026 07:33:49.547] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_MANUAL_OPEN_PASS phase=initial
+[01Oct2026 07:33:49.579] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_FOCUS scene=rare_earth_magnets guiScale=3.0
+[01Oct2026 07:33:49.606] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE manual-initial Saved screenshot as validation-manual-initial.png
+[01Oct2026 07:33:49.645] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_START id=rare_earth_magnets duration=796
+[01Oct2026 07:33:50.450] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_TEXT_PASS id=rare_earth_magnets index=1 time=18
+[01Oct2026 07:33:50.523] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-text-1 Saved screenshot as validation-ponder-rare_earth_magnets-text-1.png
+[01Oct2026 07:33:52.874] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-first Saved screenshot as validation-ponder-rare_earth_magnets-first.png
+[01Oct2026 07:33:55.564] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_oxide time=120
+[01Oct2026 07:33:55.632] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_oxide Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_oxide.png
+[01Oct2026 07:33:57.576] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_powder time=160
+[01Oct2026 07:33:57.660] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_powder Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_powder.png
+[01Oct2026 07:33:59.562] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_alloy time=200
+[01Oct2026 07:33:59.650] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy.png
+[01Oct2026 07:34:01.526] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_plate time=240
+[01Oct2026 07:34:01.603] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate.png
+[01Oct2026 07:34:03.606] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_magnet_blank time=280
+[01Oct2026 07:34:03.673] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank.png
+[01Oct2026 07:34:05.539] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:sintered_samarium_cobalt time=320
+[01Oct2026 07:34:05.612] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt.png
+[01Oct2026 07:34:08.134] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_TEXT_PASS id=rare_earth_magnets index=2 time=372
+[01Oct2026 07:34:08.212] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-text-2 Saved screenshot as validation-ponder-rare_earth_magnets-text-2.png
+[01Oct2026 07:34:12.664] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:neodymium_oxide time=462
+[01Oct2026 07:34:12.747] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-neodymium_oxide Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-neodymium_oxide.png
+[01Oct2026 07:34:14.700] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:dysprosium_oxide time=502
+[01Oct2026 07:34:14.793] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-dysprosium_oxide Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-dysprosium_oxide.png
+[01Oct2026 07:34:16.658] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:boron_dust time=542
+[01Oct2026 07:34:16.728] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-boron_dust Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-boron_dust.png
+[01Oct2026 07:34:18.669] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:neodymium_alloy_plate time=582
+[01Oct2026 07:34:18.746] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-neodymium_alloy_plate Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-neodymium_alloy_plate.png
+[01Oct2026 07:34:20.717] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:neodymium_magnet_blank time=622
+[01Oct2026 07:34:20.799] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-neodymium_magnet_blank Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-neodymium_magnet_blank.png
+[01Oct2026 07:34:22.674] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:sintered_neodymium time=662
+[01Oct2026 07:34:22.763] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-sintered_neodymium Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-sintered_neodymium.png
+[01Oct2026 07:34:24.636] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_TEXT_PASS id=rare_earth_magnets index=3 time=702
+[01Oct2026 07:34:24.716] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-text-3 Saved screenshot as validation-ponder-rare_earth_magnets-text-3.png
+[01Oct2026 07:34:26.820] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_SEMANTIC_PASS id=rare_earth_magnets
+[01Oct2026 07:34:26.896] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-last Saved screenshot as validation-ponder-rare_earth_magnets-last.png
+[01Oct2026 07:34:29.348] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_PASS id=magnetization:rare_earth_magnets elapsed=796 total=796 title=Refine rare-earth permanent magnets
+[01Oct2026 07:34:43.939] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_CLIENT_PACKAGE_OFF_PASS registry=absent
+[01Oct2026 07:34:47.817] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_CLIENT_PACKAGE_ON_PASS registry=absent restart=required
+[01Oct2026 07:34:47.817] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_CLIENT_PASS phase=initial

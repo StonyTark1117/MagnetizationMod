@@ -1,0 +1,27 @@
+[01Oct2026 07:33:44.997] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=magnetization:raw_magnetite consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:33:45.019] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:lodestone consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:33:45.020] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=true iron=false lodestone=true
+[01Oct2026 07:33:45.020] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_LOGIN_PASS phase=initial uuid=70dfa897-1a6d-3a43-bf7e-1931340b2da0 manuals=1 persistedFlag=true pid=539518
+[01Oct2026 07:33:45.309] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_PRESENTATION_READY styles=37 modes=magnet,brake
+[01Oct2026 07:34:29.384] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualIronRecipeEnabled=true
+[01Oct2026 07:34:33.149] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=magnetization:raw_magnetite consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:33.154] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:iron_ingot consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:33.155] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:lodestone consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:33.155] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=true iron=true lodestone=true
+[01Oct2026 07:34:33.160] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualMagnetiteRecipeEnabled=false
+[01Oct2026 07:34:37.180] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:iron_ingot consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:37.182] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:lodestone consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:37.182] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=false iron=true lodestone=true
+[01Oct2026 07:34:37.185] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualLodestoneRecipeEnabled=false
+[01Oct2026 07:34:40.238] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:iron_ingot consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:40.239] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=false iron=true lodestone=false
+[01Oct2026 07:34:40.242] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT patchouliCompatEnabled=false
+[01Oct2026 07:34:43.122] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=false iron=false lodestone=false
+[01Oct2026 07:34:43.970] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT patchouliCompatEnabled=true
+[01Oct2026 07:34:43.972] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualMagnetiteRecipeEnabled=true
+[01Oct2026 07:34:43.973] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualLodestoneRecipeEnabled=true
+[01Oct2026 07:34:43.975] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_CONFIG_EDIT fieldManualIronRecipeEnabled=false
+[01Oct2026 07:34:46.971] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=magnetization:raw_magnetite consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:46.973] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_NATIVE_CRAFT_PASS material=minecraft:lodestone consumed=book+material output=1 patchouli:guide_book
+[01Oct2026 07:34:46.973] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_RECIPES_PASS magnetite=true iron=false lodestone=true
+[01Oct2026 07:34:47.819] [Server thread/INFO] [magnetization/validation-audit/]: VALIDATION_SERVER_PASS phase=initial

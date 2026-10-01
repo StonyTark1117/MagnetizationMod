@@ -1,0 +1,52 @@
+{
+  "reviewedCommit": "6966e850219a5c437df72b92bd21091464abf993",
+  "remoteVerified": "origin/main",
+  "reviewDate": "2026-10-01",
+  "scope": "Independent review of repair-agent source and recorded runs; no new client run",
+  "artifact": {
+    "coordinate": "maven.modrinth:ae2:KDnFUmMm",
+    "version": "19.2.18",
+    "modId": "ae2",
+    "structure": "ae2:meteorite",
+    "sha256": "df15a07f86ca1ca93aa66373f9d5d84dd3d4586631fceb38f4fbc85dad591e39"
+  },
+  "recordedUnitTotals": {
+    "tests": 269,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "newUnitTests": 8,
+  "requiredGameTestsPassed": 1,
+  "gameTestProcessExit": 143,
+  "gameTestLifecycle": "assertions passed, stalled saving chunks, terminated",
+  "remainingValidation": [
+    "natural AE2 meteorite discovery",
+    "client packet delivery and rendered needle",
+    "native vs AE2 target competition in client",
+    "disabled field force suppression",
+    "full process save/restart persistence"
+  ],
+  "evidence": {
+    "magnetization-cosmic-compass-build.log": {
+      "source": "/tmp/magnetization-cosmic-compass-build.log",
+      "sha256": "ebbbf5526aee2ff56e63756a4ec924805e860e0ce5782e99cd9f1821aed42680"
+    },
+    "magnetization-ae-meteorite-gametest.log": {
+      "source": "/tmp/magnetization-ae-meteorite-gametest.log",
+      "sha256": "518ea0310cbd183a7f781f4ee338d4b90ee969530961d99030dd415527836fc6"
+    },
+    "latest.log": {
+      "source": "/home/braydon/Magnetization-API/run-ae-meteorite-gametest/logs/latest.log",
+      "sha256": "21782ccf4dbb68b304e9035005f5e68280d4f1ec737e7a3d3ce145edae710c57"
+    },
+    "TEST-com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest.xml": {
+      "source": "/home/braydon/Magnetization-API/build/test-results/test/TEST-com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest.xml",
+      "sha256": "4ad78abbd0ef677648ff0ef1533e57cb1d0bc0e160c9d4c979f9abcb61723513"
+    },
+    "TEST-com.stonytark.magnetization.network.CosmicCompassTargetPayloadTest.xml": {
+      "source": "/home/braydon/Magnetization-API/build/test-results/test/TEST-com.stonytark.magnetization.network.CosmicCompassTargetPayloadTest.xml",
+      "sha256": "a635a748593e1aaaef00965f1526ae18373d7117ff09365bea0c6dba9fc2147b"
+    }
+  }
+}

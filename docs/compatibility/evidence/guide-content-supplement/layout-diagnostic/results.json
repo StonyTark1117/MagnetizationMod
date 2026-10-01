@@ -1,0 +1,75 @@
+{
+  "scope": "Diagnostic native guide sweep before layout corrections; not final validation",
+  "date": "2026-10-01",
+  "sourceRun": "build/guide-validation-893l5w5r/build/validation-audit/runtime-client.oRmTxR",
+  "renderedPages": 964,
+  "clickedLinks": 17,
+  "undersizedUniquePages": [
+    {
+      "entry": "magnetization:advanced/armor_tools",
+      "page": "3",
+      "textScale": "0.70731705"
+    },
+    {
+      "entry": "magnetization:advanced/compatibility",
+      "page": "8",
+      "textScale": "0.82857144"
+    },
+    {
+      "entry": "magnetization:advanced/hematite_lens",
+      "page": "3",
+      "textScale": "0.82857144"
+    },
+    {
+      "entry": "magnetization:advanced/imprint_module",
+      "page": "3",
+      "textScale": "0.61702126"
+    },
+    {
+      "entry": "magnetization:advanced/magnet_burning",
+      "page": "1",
+      "textScale": "0.8405797"
+    },
+    {
+      "entry": "magnetization:advanced/mr_fluid_golem",
+      "page": "1",
+      "textScale": "0.8055556"
+    },
+    {
+      "entry": "magnetization:basics/anomaly_terrain",
+      "page": "10",
+      "textScale": "0.725"
+    },
+    {
+      "entry": "magnetization:basics/iron_oxide_family",
+      "page": "11",
+      "textScale": "0.7733333"
+    },
+    {
+      "entry": "magnetization:fluids/fusion_fuels",
+      "page": "7",
+      "textScale": "0.8405797"
+    },
+    {
+      "entry": "magnetization:ships/railgun",
+      "page": "2",
+      "textScale": "0.82857144"
+    }
+  ],
+  "independentlyViewedCaptures": [
+    {
+      "file": "validation-guide-0-magnetization-advanced-armor_tools-1.png",
+      "sha256": "22e9d70e272a0bf307e967abf26976dcade21b492302a124829e753c1f23661f"
+    },
+    {
+      "file": "validation-guide-0-magnetization-advanced-imprint_module-1.png",
+      "sha256": "0bc77dcb3d7dc70ba6fbdd7218c03ec739d3557acc40c7fceb87bbaebf73b9cd"
+    },
+    {
+      "file": "validation-guide-0-magnetization-basics-anomaly_terrain-4.png",
+      "sha256": "48138202f25035e9c38082a38dad968d81459210d3f8508783826d1582cf18fb"
+    }
+  ],
+  "eventsSha256": "53ebbe2bfd0891e4981a81dc0c8d48f399a87d38b5e1430c4481fcee9dedad1f",
+  "limits": "Diagnostic JSONL was reset for next run. Preserved native log events and screenshots substantiate this summary. Old horizontal bounds include trailing whitespace; title bounds absent. Final corrected-layout validation is separate."
+}

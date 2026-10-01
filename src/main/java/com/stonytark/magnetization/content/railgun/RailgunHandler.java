@@ -529,6 +529,14 @@ public final class RailgunHandler {
 
     /** Count contiguous {@code #railgun_rails} blocks stepping from the emitter in FACING. */
     public static int walkRail(final ServerLevel level, final BlockPos emitter, final Direction facing) {
+        return walkRail(level, emitter, facing,
+                pos -> level.isInWorldBounds(pos) && level.hasChunkAt(pos));
+    }
+
+    /** Same tag/length rules for construction diagnostics and Ponder's virtual world.
+     * The caller supplies its readable bounds; the server path never loads chunks. */
+    public static int walkRail(final net.minecraft.world.level.BlockGetter level, final BlockPos emitter,
+                               final Direction facing, final java.util.function.Predicate<BlockPos> readable) {
         int len = 0;
         final BlockPos.MutableBlockPos cur = emitter.relative(facing).mutable();
         // Stop at unloaded chunks rather than loading terrain from the tick
@@ -536,7 +544,7 @@ public final class RailgunHandler {
         // server admins may opt into a shared length/power ceiling.
         final int maxLength = MagConfig.railgunLengthLimitEnabled()
                 ? MagConfig.railgunMaxLength() : Integer.MAX_VALUE;
-        while (len < maxLength && level.isInWorldBounds(cur) && level.hasChunkAt(cur)
+        while (len < maxLength && readable.test(cur)
                 && level.getBlockState(cur).is(MagTags.RAILGUN_RAILS)) {
             len++;
             cur.move(facing);
@@ -587,21 +595,24 @@ public final class RailgunHandler {
             if (MagConfig.isBlockDisabled(s)) continue;
             if (!s.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)
                     || s.getValue(net.minecraft.world.level.block.DirectionalBlock.FACING) != facing) continue;
-            final int dx = other.getX() - pos.getX();
-            final int dy = other.getY() - pos.getY();
-            final int dz = other.getZ() - pos.getZ();
-            // Same along-FACING coordinate (breech lines aligned).
-            if (along(facing, dx, dy, dz) != 0) continue;
-            // Offset on exactly ONE perpendicular axis within the gap range.
-            final int[] perp = perpComponents(facing, dx, dy, dz);
-            final int a = Math.abs(perp[0]), b = Math.abs(perp[1]);
-            final boolean oneAxis = (a >= 1 && a <= maxGap && b == 0) || (b >= 1 && b <= maxGap && a == 0);
-            if (!oneAxis) continue;
+            if (!parallelBreeches(pos, other, facing, maxGap)) continue;
             count++;
             found = other;
         }
         countOut[0] = count;
         return found;
+    }
+
+    /** Shared geometric pairing rule after owner/facing/registry eligibility checks. */
+    public static boolean parallelBreeches(final BlockPos first, final BlockPos second,
+                                          final Direction facing, final int maxGap) {
+        final int dx = second.getX() - first.getX();
+        final int dy = second.getY() - first.getY();
+        final int dz = second.getZ() - first.getZ();
+        if (along(facing, dx, dy, dz) != 0) return false;
+        final int[] perp = perpComponents(facing, dx, dy, dz);
+        final int a = Math.abs(perp[0]), b = Math.abs(perp[1]);
+        return (a >= 1 && a <= maxGap && b == 0) || (b >= 1 && b <= maxGap && a == 0);
     }
 
     /** World AABB of the channel: effL blocks along FACING from the emitter line,

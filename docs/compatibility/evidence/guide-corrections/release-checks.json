@@ -1,0 +1,97 @@
+{
+  "baseCommit": "96cd10113b1bea55270ff1d95f01fdeca9455227",
+  "unit": {
+    "tests": 271,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "gameTests": 173,
+  "checks": {
+    "release": {
+      "sha256": "9011a196fec296a232d276f9c88946c1abc894abb8bc05b60982b6c55ccfc6a3",
+      "scope": "Final shared checkout"
+    },
+    "gametest": {
+      "sha256": "0764413d88fdf9fc3a6fe2f9379fe5beef73e44980244bf3e2648e16b3cdf1d6",
+      "scope": "Isolated production snapshot; RailgunHandler hash matches final source. Later edits affect guides/native audit only."
+    },
+    "client-minimal": {
+      "sha256": "415cd44819aed65e0a4a819445cfc4b2cfcc56facd2113d573e98728b93030c3",
+      "scope": "Final shared checkout"
+    }
+  },
+  "sources": {
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": "28fb7a27300caae6efd04cf039f2cf4c3d48c9816070baab33042bc49b255162",
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "93d9e71d5ec073cabfb84ef0440daf26ce7a5b4f85c5fc90b34d1c8c836431d7",
+    "src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java": "c9347c528446723bb30b5c9ade4f592bb7ac2a7de51ac41e12c961ac618f184c",
+    "src/main/java/com/stonytark/magnetization/config/MagConfig.java": "1271e381ba3315ed7fcf2ae39487e3323c1494ec4f3e4994d13e6d963900c5a8",
+    "src/main/java/com/stonytark/magnetization/content/fluid/FerrofluidBucketItem.java": "8de1b72845cb982ebfb69c5c3f6dc24a942ac796746a8168d1ae684e2c025e61",
+    "src/main/java/com/stonytark/magnetization/content/fluid/MagnetizedFerrofluidBlock.java": "3149e1df06e6f871045ae7577d958f272f7b5ad6588e2266840343fa050015ea",
+    "src/main/java/com/stonytark/magnetization/content/fluid/MagnetizedFerrofluidFieldHandler.java": "0d6c81637001316ad391ea360c642215f71c4de656a216a6272680b0733da180",
+    "src/main/java/com/stonytark/magnetization/content/fluid/MagnetizedFerrofluidRegistry.java": "75ce7c570a2cb66d88792585a64bc102b4ec19cfa97c9534f706b0afc4581287",
+    "src/main/java/com/stonytark/magnetization/content/hematite/HematiteBlock.java": "93810c1ae383737c8639b71d9622d62eaa46c52d5f0fc5a74ba5839e5bb2b211",
+    "src/main/java/com/stonytark/magnetization/content/inducer/StructuralInducerBlockEntity.java": "8d150b356a4a95346104ef063174c26b6bc03382cce3871509657caebfd55a9a",
+    "src/main/java/com/stonytark/magnetization/content/item/RepulsorGunItem.java": "6d3fd227655ab8254f0d7edb59256576346eac5d91a4632126f8f546915dc548",
+    "src/main/java/com/stonytark/magnetization/content/meteorite/MeteoriteCoreBlock.java": "5da22d13cdd795c0ab640d69a127627fa18ea74c998682e616425b96a3d67e6c",
+    "src/main/java/com/stonytark/magnetization/content/railgun/RailgunHandler.java": "6ca58d8334040bf117b3958b4fd385eb12ce74c3b5a4972d8c762314ebeb8034",
+    "src/main/java/com/stonytark/magnetization/data/MagRecipeProvider.java": "8875429dc14070facc4d982a48b653bd6c4e8577117ecd020bcfdc065a6fc8f9",
+    "src/main/resources/assets/magnetization/lang/en_us.json": "bbe92e53467aa0ff273962cd1a88cb133538d1d8b4d2f74a3e56ee749f01d59e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/armor_tools.json": "29a8ec082b528325e83174d2a903b7f97aade08e7efad589f47dd82a3e8a50d5",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/compatibility.json": "fe909cbfaccdb3199188b2441f133cf93b9c41f5da6024c123dd72675a804e0b",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/configuration.json": "45a592b5e2329bc1f0143024bc912969141f8dd6728fdfcf8e3852a47671b76a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/cosmic_compass.json": "f403f7d3f44ffb831702b7a95c86b1c4aba6d6ed9ae09d07c2bd7d757b5d8845",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/fe_rf_power.json": "d2788eeb37156756dfc1e5916653be4e09f75d88c0ead2466dfb3baa2419e115",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/hematite_lens.json": "f59f83bfd57ec0db7b6557319d53e5f47dd07c39984f76c701cfc72903d5b9ad",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/imprint_module.json": "542b1592956534156b7948c69c986b7cd9fd5d09b99fb5f1b27c752cab4505d9",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/magnet_burning.json": "e21c2347af9ad8e6331a97424da2fabca4dbd90d45d5c2e8dfd93032e8936297",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/meteorite_core.json": "9261dd40b9ff5d12a22f5131cb7e6e7c7b4e6e4bf025a748882a38bdea449821",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/meteorite_sapling.json": "17ba2ea2d00957b341ddda32e6ac88316e6ee1bf1296a55a3304770de7da4789",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_armor.json": "df60fa4c47569f9d233223f14e401d2fe6db802801c9d5751cd9d3645941a41a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_fluid.json": "3dcc12baf733c7f5989a0df8074f76cfd63c63f53062bf85017b70e96c5a1c18",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/mr_fluid_golem.json": "6431cf885d5e623e1bfc653dd367da80cb57d0b3685878cad423c7ec9a28672e",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/pyrrhotite_catalyst.json": "7f89cac7dfe7ff9e6f4beeac5c198944be0bed551e1308c49b48b04fe8b90311",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/advanced/tokamak.json": "1c0edb500a6422a430934840cf508533a191135409263386d7d02bb2e42f5a82",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/anomaly_terrain.json": "a56f7bca667dd95bfcc5da57d8dc7792a4f8f5414e5bdfee0c905755c207e29d",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/intro.json": "d358ba9b0460117b08e84947eae45af1fe392dde259c5005f7ed5a96e40b0820",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/iron_oxide_family.json": "0dbc16641aa6f5e0ccfb7ebd925eb7df612d1a857c34a484cd884cb560e222f1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/barkhausen.json": "1b4b5c41f23e0ca0b1b2e898872aab7440d507529b9522a2387560c62917fc09",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/emp_charge.json": "67ed7683b62217fb20c85c35dba6f949b15688d65e2bfd9829fd1031b0b57f75",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/gyrostabilizer.json": "c067a99e293d248f54a9b84e485a08b1197d2a14fd1b389e468f2a80aefeab31",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/emitters/magnetostrictive_sensor.json": "4740e350001116612a2d21c80e6443983586f624eb9f44001cee7df8ba531f6c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/fluids/fusion_fuels.json": "1a18f6a11a11f17f0c78f1642a6369e8ea270eeee6b237eaeb8bd1c6339e5f61",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/gear/gas_detector.json": "aec20c6ba34d4642521985333d69d05ff773ef218f5c48b65bd5e531ee2556cb",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/gear/rare_earth_magnets.json": "8e53e39930299cffdf984207107db9c9fdeae59c8cfe7e9ae52d52f6d7bd46a1",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/air_separator.json": "f95bfee876be399d9a2ab17ec7d235e946e778554f911ee0c5e1870e6ab8ac7a",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/automation.json": "bf1a5c238a77294b484c63b42204f6a07526eeff6ff943aa93dce13fd57e28e3",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/machines/iron_oxide_golems.json": "25d412b7af15e0e20b988ed3cbe91159122f86884be6503ec5e24aa9b75ec334",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/fusion_thruster.json": "7356233cae126bb867d0aeab46092c7f3fa7f5725404b40a5934fbb4b71384d6",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/mhd_jet.json": "189fdfb8d1397ab6c2e41fc96bba15a25ee0147b259f8ff19cfdcb960dbc8313",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/micro_thruster.json": "9a4c4615cc6cdcbb41fcf268a6df92c41ebf2974bb439d543b68f1007fd9265c",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/railgun.json": "520d553b784d3236f93ae997f9a57b26bb1b22d3aa9571d176b14e8925ad49f4",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/ships/solar_sail.json": "02d5b1a44ad2a9b04c529bd6feb2b4c44695aa712482e6886f38ae7bc8471465",
+    "src/main/resources/data/magnetization/patchouli_books/field_manual/book.json": "5463abf953a70fa8eb8bbd20fb78009df2a59dbd11d663d77699311633801b58",
+    "src/test/java/com/stonytark/magnetization/compat/PonderSceneCatalogTest.java": "a15118f3921818fde78411f7c9ab3bf4cd76a24afe8c58cee2fae4df58b34d8d",
+    "src/test/java/com/stonytark/magnetization/data/NobleGasResourceCompletenessTest.java": "33fcc786205c003db80eff49fc61d675aef3ffb9ff64bf050c93da7d306d4002",
+    "src/test/java/com/stonytark/magnetization/data/PatchouliFieldManualTest.java": "140cde6c380bf0930562efcd51c66e1252e19f7219197f902681f85e0b217b27",
+    "src/main/java/com/stonytark/magnetization/client/GuideBookAudit.java": "d7f83d4f7a6f65e71fb59442e7920c4b5a481e462c4752dcb3b954083f785f51",
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": "f0bc62228178e20807feb74350bace90151ac9cfbf0895b9c99f069a63efff8d",
+    "src/main/java/com/stonytark/magnetization/client/CopycatsPonderMaterials.java": "539233c74e26140473de9bb521f49e80a4b493f6d741c06f991095f542aa8ddd",
+    "src/test/java/com/stonytark/magnetization/data/GuideInstructionContractsTest.java": "87d54da5a32aee0ed16f160aac9edbfedf9bc98e481bb7bb2f5acdfec64199f0",
+    "src/test/java/com/stonytark/magnetization/data/GuideTextContents.java": "240f47fb5e8ce73e63211e8954e6a7e62434c546866f6280981d19cd825fb19f",
+    "src/main/resources/assets/magnetization/ponder/empty_workshop.nbt": "ffcda66d27b0b8e57f65354c0c2990d0f8ad43d99a11ac59011113d3cbcb47ed",
+    "src/main/resources/assets/magnetization/patchouli_books/field_manual/en_us/entries/basics/manual_access.json": "e14b45467a0d9bf3484d4079fdca61214226213bc2792b8fa8c5cd5f50519577"
+  },
+  "jar": {
+    "name": "magnetization-1.4.6.jar",
+    "sha256": "9ea2d6a315d2b9b2e9b7f90dceb9b29720c37dcf568e883d81bf5070a62acb1c",
+    "verifiedResources": 37
+  },
+  "screenshots": 846,
+  "nativeSchematicSha256": "ffcda66d27b0b8e57f65354c0c2990d0f8ad43d99a11ac59011113d3cbcb47ed",
+  "readerEvidenceGateTests": {
+    "tests": 22,
+    "failures": 0,
+    "logSha256": "69fbb40a717c63ef256511cef15a266cd4721b88f5afd4cc34993b42589168fa"
+  }
+}

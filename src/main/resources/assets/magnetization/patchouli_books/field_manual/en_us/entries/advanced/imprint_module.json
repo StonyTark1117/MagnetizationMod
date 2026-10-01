@@ -3,8 +3,30 @@
   "icon": "magnetization:imprint_module",
   "category": "magnetization:advanced",
   "pages": [
-    { "type": "patchouli:text", "title": "book.magnetization.entry.imprint_module.intro.title", "text": "book.magnetization.entry.imprint_module.intro.text" },
-    { "type": "patchouli:crafting", "recipe": "magnetization:imprint_module", "text": "book.magnetization.entry.imprint_module.recipe" },
-    { "type": "patchouli:text", "title": "book.magnetization.entry.imprint_module.usage.title", "text": "book.magnetization.entry.imprint_module.usage.text" }
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.imprint_module.intro.title",
+      "text": "book.magnetization.entry.imprint_module.intro.text"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:imprint_module",
+      "text": "book.magnetization.entry.imprint_module.recipe"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.imprint_module.usage.title",
+      "text": "book.magnetization.entry.imprint_module.usage.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.imprint_module.usage.text.continued1.title",
+      "text": "book.magnetization.entry.imprint_module.usage.text.continued1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.imprint_module.usage.text.continued2.title",
+      "text": "book.magnetization.entry.imprint_module.usage.text.continued2"
+    }
   ]
 }

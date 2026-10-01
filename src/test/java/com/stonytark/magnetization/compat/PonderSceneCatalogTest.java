@@ -33,8 +33,8 @@ class PonderSceneCatalogTest {
         for (final PonderSceneCatalog.Scene scene : scenes) {
             assertFalse(scene.title().isBlank(), () -> scene.id() + " has no title");
             assertFalse(scene.targets().isEmpty(), () -> scene.id() + " has no targets");
-            if (scene.kind() == PonderSceneCatalog.Kind.GENERIC) {
-                assertEquals(1, scene.texts().size(), () -> scene.id() + " needs one explanatory text");
+            if (scene.kind() == PonderSceneCatalog.Kind.MACHINE) {
+                assertEquals(3, scene.texts().size(), () -> scene.id() + " needs setup and two demonstration stages");
             }
             for (final String target : scene.targets()) {
                 assertTrue(targets.add(target), () -> target + " has more than one Ponder scene definition");
@@ -61,9 +61,9 @@ class PonderSceneCatalogTest {
         }
 
         assertEquals(18, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
-        assertEquals(33, PonderSceneCatalog.allScenes().stream()
+        assertEquals(49, PonderSceneCatalog.allScenes().stream()
                 .mapToInt(scene -> scene.texts().size()).sum(), "Unexpected Ponder instruction count");
-        assertEquals(51, expected.size(), "Unexpected Ponder localization count");
+        assertEquals(67, expected.size(), "Unexpected Ponder localization count");
         expected.forEach((key, value) -> {
             assertTrue(lang.has(key), () -> "Missing Ponder localization: " + key);
             assertEquals(value, lang.get(key).getAsString(), () -> "Stale Ponder localization: " + key);

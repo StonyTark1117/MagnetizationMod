@@ -1,0 +1,22 @@
+{
+  "scope": "Independent full-size visual inspection of these three captures from299-page candidate; not full native acceptance",
+  "observations": [
+    "No disappearing body glyph strokes at textScale1",
+    "Ordinary word wrapping restored on OxidationDecay",
+    "CosmicCompass and access/command pages legible; long configuration keys break at dottedsection"
+  ],
+  "captures": [
+    {
+      "path": "validation-guide-0-magnetization-basics-iron_oxide_family-5.png",
+      "sha256": "cf1f7a4014bd5504d136653b7d087448c7697203293dca57fa1a7518a6d4e2be"
+    },
+    {
+      "path": "validation-guide-0-magnetization-advanced-cosmic_compass-0.png",
+      "sha256": "107144a9bf7058a450bb8caaf2227aeabac596e7b10a49311c2ed94dc52f2c5a"
+    },
+    {
+      "path": "validation-guide-0-magnetization-basics-manual_access-0.png",
+      "sha256": "ce839d08b96dd7b052b6fb1a32b4f7030e9ec02863d4fff21f9becd5b0a86bbf"
+    }
+  ]
+}

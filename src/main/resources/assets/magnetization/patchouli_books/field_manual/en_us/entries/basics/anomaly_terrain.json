@@ -38,23 +38,31 @@
     {
       "type": "patchouli:crafting",
       "recipe": "magnetization:cobbled_anomaly_stone_stairs",
-      "text": ""
+      "text": "",
+      "title": "book.magnetization.short_title.cobbled_anomaly_stone_stairs"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "magnetization:cobbled_anomaly_stone_slab",
-      "text": ""
+      "text": "",
+      "title": "book.magnetization.short_title.cobbled_anomaly_stone_slab"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "magnetization:cobbled_anomaly_stone_wall",
-      "text": ""
+      "text": "",
+      "title": "book.magnetization.short_title.cobbled_anomaly_stone_wall"
     },
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:magnetic_gravel",
       "text": "book.magnetization.entry.anomaly_terrain.gravel",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.anomaly_terrain.gravel.continued1.title",
+      "text": "book.magnetization.entry.anomaly_terrain.gravel.continued1"
     }
   ]
 }

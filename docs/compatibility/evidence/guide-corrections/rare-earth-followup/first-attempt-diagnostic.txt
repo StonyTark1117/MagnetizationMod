@@ -1,0 +1,21 @@
+[01Oct2026 07:31:00.868] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_MANUAL_OPEN_PASS phase=initial
+[01Oct2026 07:31:00.901] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_FOCUS scene=rare_earth_magnets guiScale=3.0
+[01Oct2026 07:31:00.939] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE manual-initial Saved screenshot as validation-manual-initial.png
+[01Oct2026 07:31:00.972] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_START id=rare_earth_magnets duration=796
+[01Oct2026 07:31:01.761] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_TEXT_PASS id=rare_earth_magnets index=1 time=18
+[01Oct2026 07:31:01.841] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-text-1 Saved screenshot as validation-ponder-rare_earth_magnets-text-1.png
+[01Oct2026 07:31:04.176] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-first Saved screenshot as validation-ponder-rare_earth_magnets-first.png
+[01Oct2026 07:31:06.844] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_oxide time=120
+[01Oct2026 07:31:06.908] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_oxide Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_oxide.png
+[01Oct2026 07:31:08.851] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_powder time=160
+[01Oct2026 07:31:08.919] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_powder Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_powder.png
+[01Oct2026 07:31:10.851] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_alloy time=200
+[01Oct2026 07:31:10.918] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy.png
+[01Oct2026 07:31:12.890] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_plate time=240
+[01Oct2026 07:31:12.962] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate.png
+[01Oct2026 07:31:14.864] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:samarium_cobalt_magnet_blank time=280
+[01Oct2026 07:31:14.927] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank.png
+[01Oct2026 07:31:16.851] [Render thread/INFO] [magnetization/validation-client/]: VALIDATION_PONDER_INPUT_PASS id=rare_earth_magnets item=magnetization:sintered_samarium_cobalt time=320
+[01Oct2026 07:31:16.914] [IO-Worker-1/INFO] [magnetization/validation-client/]: VALIDATION_CAPTURE ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt Saved screenshot as validation-ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt.png
+[01Oct2026 07:31:19.470] [Render thread/ERROR] [magnetization/validation-client/]: VALIDATION_CLIENT_FAILED
+java.lang.IllegalStateException: Ponder rendered stale/unlocalized instruction: Controls show each processing stage. Mix and press branch ingredients, superheat the blanks, then craft with Lodestones and a matching plate. Samarium-Cobalt is MEDIUM.

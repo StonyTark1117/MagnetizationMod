@@ -1,0 +1,8 @@
+{
+  "finding": "A13",
+  "status": "historical diagnostic; not corrected acceptance evidence",
+  "runtime": "runtime-client.y8bInU",
+  "capture": "magnetic-gravel-format-error.png",
+  "sha256": "ac0a56a60c16e7960896fd34a0fd11132e466b825059be74cb07ec3e9a894a16",
+  "observation": "Visible Format error: prefix on Magnetic Gravel text; raw percent reaches String.format through Patchouli i18n BookTextRenderer. Escape literal percent as %% and validate native rendering again."
+}

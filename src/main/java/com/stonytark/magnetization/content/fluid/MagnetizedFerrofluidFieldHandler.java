@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Drives the weak magnetic field emitted by every magnetized-ferrofluid source.
+ * Drives the MEDIUM magnetic field emitted by every magnetized-ferrofluid source.
  * The fluid has no block entity, so source positions live in
  * {@link MagnetizedFerrofluidRegistry}; each tick window this walks that set,
  * prunes any position that's no longer a magnetized source (so flow that drains
- * a cell heals the registry), and applies a {@code WEAK} omnidirectional field
+ * a cell heals the registry), and applies a {@code MEDIUM} omnidirectional field
  * via {@link FieldApplicator#apply} — which pulls/pushes ferromagnetic items and
- * Sable ships exactly like a real emitter, just gently. Plain ferrofluid is
- * never registered, so it stays inert and field-immune.
+ * Sable ships according to their susceptibility and pole. Plain ferrofluid
+ * emits no field, but FerrofluidCreepHandler moves its transient tendrils.
  */
 @EventBusSubscriber(modid = Magnetization.MOD_ID)
 public final class MagnetizedFerrofluidFieldHandler {

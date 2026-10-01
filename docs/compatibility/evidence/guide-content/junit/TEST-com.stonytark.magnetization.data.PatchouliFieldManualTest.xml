@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.PatchouliFieldManualTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-01T12:21:23.441Z" hostname="Hades" time="0.488">
+  <properties/>
+  <testcase name="manualRecipesHaveIndependentConfigConditionsAndSafeDefaults()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.404"/>
+  <testcase name="fusionThrusterInstructionsExplainOptionalCooling()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.006"/>
+  <testcase name="newGasSystemsAndTheirRecipesRemainDocumented()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.013"/>
+  <testcase name="tokamakInstructionsRequireAndCountTheSolidCoreInterior()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.006"/>
+  <testcase name="everyBookTranslationAndCategoryResolves()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.019"/>
+  <testcase name="everyLocalManualLinkResolves()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.013"/>
+  <testcase name="everyReaderFacingFieldUsesBookTranslations()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.007"/>
+  <testcase name="releaseCriticalEntriesRemainPresent()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.001"/>
+  <testcase name="everyLocalItemAndRecipeReferenceResolves()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.012"/>
+  <testcase name="completeRareEarthProgressionRemainsDocumented()" classname="com.stonytark.magnetization.data.PatchouliFieldManualTest" time="0.003"/>
+  <system-out><![CDATA[WARN StatusConsoleListener Advanced terminal features are not available in this environment
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

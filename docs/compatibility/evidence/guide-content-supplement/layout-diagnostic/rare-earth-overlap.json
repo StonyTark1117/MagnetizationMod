@@ -1,0 +1,9 @@
+{
+  "scope": "Diagnostic visual finding, not accepted final layout",
+  "capture": "rare-earth-annotation-controls-overlap.png",
+  "sha256": "4edf092a328ef9d983a7ffabb6cefb28b8323ea968384e0a778e24f557e69800",
+  "scene": "rare_earth_magnets",
+  "instruction": 2,
+  "effectiveGuiScale": 3,
+  "finding": "Text extends over native navigation controls; final Samarium-Cobalt MEDIUM statement is obscured. Shorten/reposition and capture again."
+}

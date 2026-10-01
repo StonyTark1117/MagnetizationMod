@@ -6,6 +6,11 @@
     {
       "type": "patchouli:text",
       "text": "book.magnetization.entry.magnet_burning.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.magnet_burning.text.continued1.title",
+      "text": "book.magnetization.entry.magnet_burning.text.continued1"
     }
   ]
 }

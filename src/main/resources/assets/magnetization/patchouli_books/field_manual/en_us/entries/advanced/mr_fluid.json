@@ -7,7 +7,8 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:mr_fluid_bucket",
       "text": "book.magnetization.entry.mr_fluid.spotlight",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.mr_fluid_bucket"
     }
   ]
 }

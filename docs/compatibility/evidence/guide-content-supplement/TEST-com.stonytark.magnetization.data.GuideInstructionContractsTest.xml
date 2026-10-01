@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.GuideInstructionContractsTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-01T13:16:27.649Z" hostname="Hades" time="0.262">
+  <properties/>
+  <testcase name="reviewedCommonIngredientsActuallyIncludeOurGuideMaterials()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.015"/>
+  <testcase name="reviewedGuideDefaultsKeepMagnetConsumptionOptional()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.23"/>
+  <testcase name="bothRecipeSlotsAndRecipeArraysResolveForEveryBookPage()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.007"/>
+  <testcase name="reviewedProgressionRecipesKeepTheirIngredientsLayoutAndYield()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.002"/>
+  <testcase name="missingSecondaryRecipeFailsEvenWhenPrimaryResolves()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.002"/>
+  <testcase name="referenceCollectorIncludesSecondaryAndArrayRecipes()" classname="com.stonytark.magnetization.data.GuideInstructionContractsTest" time="0.0"/>
+  <system-out><![CDATA[WARN StatusConsoleListener Advanced terminal features are not available in this environment
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

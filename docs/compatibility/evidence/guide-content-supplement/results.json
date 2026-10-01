@@ -1,0 +1,36 @@
+{
+  "base_commit": "3d1c78b3ff1c6492df5072024d399d5e5cb654e5",
+  "snapshot": "/home/braydon/.cache/magnetization-guide-contracts-2_gpfi5p",
+  "scope": "Audited shipping recipe contracts plus supplemental test; evolving guide/Ponder edits excluded. Requires combined final verification.",
+  "command": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew test --tests '*GuideInstructionContractsTest' --console=plain",
+  "tests": 6,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_cases": [
+    "reviewedCommonIngredientsActuallyIncludeOurGuideMaterials()",
+    "reviewedGuideDefaultsKeepMagnetConsumptionOptional()",
+    "bothRecipeSlotsAndRecipeArraysResolveForEveryBookPage()",
+    "reviewedProgressionRecipesKeepTheirIngredientsLayoutAndYield()",
+    "missingSecondaryRecipeFailsEvenWhenPrimaryResolves()",
+    "referenceCollectorIncludesSecondaryAndArrayRecipes()"
+  ],
+  "source_sha256": {
+    "src/test/java/com/stonytark/magnetization/data/GuideInstructionContractsTest.java": "39cc8b43145c823aa1c487af02acdd6556471aebc71c92f51812ca28d2e6b1ea",
+    "src/generated/resources/data/magnetization/recipe/ferromagnetic_ingot.json": "1ac46f2243f187ce8cb095541177e37070d24cd4afdc46a7b017115cba7ff934",
+    "src/generated/resources/data/magnetization/recipe/magnetic_plate.json": "56d6b1a61ef34d993435e3c7fa7b1c288d2d25dd4d7ea58380b72cc8a12dd4a2",
+    "src/generated/resources/data/magnetization/recipe/lodestone_core.json": "6d1044f8dbe05bbc47cf3e11cc287cbd98b9bc8fd1455791627e6244a25c7370",
+    "src/generated/resources/data/magnetization/recipe/meteorite_sapling.json": "cad80436746380e4d3e2875a84e4282c172b5fb0fea3786afe58bd35735a2df0",
+    "src/generated/resources/data/magnetization/recipe/magnetic_elytra.json": "6cbb87e2ef7602d865ea46f85dfdccfd3bb779155ff65130ea39846433ccac44",
+    "src/generated/resources/data/magnetization/recipe/ferromagnetic_horse_armor.json": "c8898a235db6c2c5db8416eb9e31cdb519237be96a4f74e458516c4cdba9d20f",
+    "src/generated/resources/data/magnetization/recipe/enhanced_pyrrhotite_catalyst.json": "69c8f75c97c15e3a2e67b82c1d7cc9adb9db86018977ba654676313e135df457",
+    "src/generated/resources/data/magnetization/recipe/cosmic_pyrrhotite_catalyst.json": "479521b3ae0d35b0ba55bbfc8bd97e372c199073db7791b252e47a8af41a95eb",
+    "src/main/resources/data/c/tags/item/ingots/magnetic_alloy.json": "1e55f7a2b887f90e61609357a460db99c9609c469ed83f23ea59e058b06949d9",
+    "src/main/resources/data/c/tags/item/plates/magnetic_alloy.json": "2d71a4540e26a599f22ab4cf3156244e23c09a7030d81c891f394ccb854fe44f",
+    "src/main/java/com/stonytark/magnetization/config/MagConfig.java": "5a41f5987436de58ff8c1e02fffa3b25e433d1617d58331965264081d94ca0f8"
+  },
+  "evidence_sha256": {
+    "unit-tests.log": "6c92ce8a26923bdd9e56b21f9b513858230ac7ed0863967b9612edbb0805cab3",
+    "TEST-com.stonytark.magnetization.data.GuideInstructionContractsTest.xml": "ce1502b8340f94c7e2fa5a8b1378ffa3d5b62c126e52867db703c982bbb830d7"
+  }
+}

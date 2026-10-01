@@ -40,23 +40,27 @@
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:samarium_cobalt_magnet_blank",
-      "text": "book.magnetization.entry.rare_earth_magnets.smco_blank"
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_blank",
+      "title": "book.magnetization.short_title.samarium_cobalt_magnet_blank"
     },
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:sintered_samarium_cobalt",
-      "text": "book.magnetization.entry.rare_earth_magnets.smco_sintered"
+      "text": "book.magnetization.entry.rare_earth_magnets.smco_sintered",
+      "title": "book.magnetization.short_title.sintered_samarium_cobalt"
     },
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:samarium_cobalt_magnet",
       "text": "book.magnetization.entry.rare_earth_magnets.smco_gear",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.samarium_cobalt_magnet"
     },
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:bastnasite_concentrate",
-      "text": "book.magnetization.entry.rare_earth_magnets.nd_processing"
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_processing",
+      "title": "book.magnetization.short_title.bastnasite_concentrate"
     },
     {
       "type": "patchouli:spotlight",
@@ -71,7 +75,8 @@
     {
       "type": "patchouli:spotlight",
       "item": "magnetization:neodymium_magnet_blank",
-      "text": "book.magnetization.entry.rare_earth_magnets.nd_blank"
+      "text": "book.magnetization.entry.rare_earth_magnets.nd_blank",
+      "title": "book.magnetization.short_title.neodymium_magnet_blank"
     },
     {
       "type": "patchouli:spotlight",

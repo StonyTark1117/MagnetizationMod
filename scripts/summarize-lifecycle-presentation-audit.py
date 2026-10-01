@@ -73,11 +73,25 @@ require(initial['server'].count('VALIDATION_RECIPES_PASS magnetite=true iron=fal
 require('VALIDATION_CLIENT_PACKAGE_OFF_PASS' in initial['client'] and 'VALIDATION_CLIENT_PACKAGE_ON_PASS' in initial['client'],
         'Missing connected-client lifecycle assertions')
 catalog = repo / 'src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java'
-expected_scenes = set(re.findall(r'(?:custom|generic)\("([a-z_]+)"', catalog.read_text()))
+expected_scenes = set(re.findall(r'(?:custom|machine|generic)\("([a-z_]+)"', catalog.read_text()))
 scenes = re.findall(r'VALIDATION_PONDER_PASS id=magnetization:(\S+) elapsed=(\d+) total=(\d+)', initial['client'])
 require(len(scenes) == len(expected_scenes) and {s[0] for s in scenes} == expected_scenes, 'Advertised Ponder scene coverage incomplete')
 require(all(int(elapsed) >= int(total) > 0 for _, elapsed, total in scenes), 'Incomplete Ponder playback')
+require(set(re.findall(r'VALIDATION_PONDER_SEMANTIC_PASS id=(\S+)', initial['client'])) == expected_scenes, 'Ponder scene state assertions incomplete')
 report['ponder'] = [{'id': name, 'elapsed': int(elapsed), 'total': int(total)} for name, elapsed, total in scenes]
+texts = re.findall(r'VALIDATION_PONDER_TEXT_PASS id=(\S+) index=(\d+) time=(\d+)', initial['client'])
+# The shipping catalog supplies the exact expected instruction count via the unit-checked localization keys.
+lang = json.loads((repo / 'src/main/resources/assets/magnetization/lang/en_us.json').read_text())
+expected_texts = {(scene, str(i)) for scene in expected_scenes for i in range(1, 20)
+                  if f'magnetization.ponder.{scene}.text_{i}' in lang}
+require(len(texts) == len(expected_texts) and {(scene, index) for scene, index, _ in texts} == expected_texts,
+        'Native Ponder instruction rendering incomplete')
+for scene, index, _ in texts:
+    require((args.output / 'screenshots' / f'validation-ponder-{scene}-text-{index}.png').is_file(), 'Missing native instruction capture')
+report['ponderInstructions'] = [dict(zip(['scene', 'index', 'time'], row)) for row in texts]
+report['ponderInputs'] = [dict(zip(['scene','item','time'], row)) for row in
+                         re.findall(r'VALIDATION_PONDER_INPUT_PASS id=(\S+) item=(\S+) time=(\d+)', initial['client'])]
+
 styles = re.findall(r'VALIDATION_STYLE_PASS style=(\S+)', initial['client'])
 fixture = (repo / 'src/main/java/com/stonytark/magnetization/gametest/LifecyclePresentationAudit.java').read_text()
 style_array = fixture.split('public static final String[] STYLES =', 1)[1].split(';', 1)[0]
@@ -96,10 +110,15 @@ for scene in expected_scenes:
         require((args.output / 'screenshots' / f'validation-ponder-{scene}-{frame}.png').is_file(), 'Missing scene frame: ' + scene)
 for source in ['build.gradle', 'gradle.properties', 'scripts/run-lifecycle-presentation-audit.sh', 'scripts/summarize-lifecycle-presentation-audit.py',
                'src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java',
+               'src/main/java/com/stonytark/magnetization/client/GuideBookAudit.java',
+               'src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java',
+               'src/main/java/com/stonytark/magnetization/client/CopycatsPonderMaterials.java',
+               'src/main/java/com/stonytark/magnetization/content/railgun/RailgunHandler.java',
                'src/main/java/com/stonytark/magnetization/gametest/LifecyclePresentationAudit.java',
                'src/main/java/com/stonytark/magnetization/network/CommonConfigSyncPayload.java',
                'src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java',
                'src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java',
+               'src/main/resources/assets/magnetization/ponder/empty_workshop.nbt',
                'src/main/resources/assets/magnetization/lang/en_us.json',
                'src/main/java/com/stonytark/magnetization/content/FieldManualGiver.java']:
     report['sources'][source] = digest(repo / source)

@@ -212,7 +212,7 @@ public class StructuralInducerBlockEntity extends AbstractEmitterBlockEntity
         }
     }
 
-    /** The direction the inducer grabs + pushes along (its facing; default up). */
+    /** The reel direction; capture scans the opposite direction (default reel up). */
     private Direction facing() {
         final BlockState s = getBlockState();
         return s.hasProperty(net.minecraft.world.level.block.DirectionalBlock.FACING)

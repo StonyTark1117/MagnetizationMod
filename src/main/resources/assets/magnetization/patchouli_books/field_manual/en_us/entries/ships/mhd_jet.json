@@ -8,6 +8,11 @@
       "item": "magnetization:mhd_jet",
       "text": "book.magnetization.entry.mhd_jet.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.mhd_jet.spotlight.readable1.title",
+      "text": "book.magnetization.entry.mhd_jet.spotlight.readable1"
     }
   ]
 }

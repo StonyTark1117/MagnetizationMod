@@ -27,9 +27,8 @@ import java.util.List;
  * player magnetizes it in the electromagnet GUI — which stamps a
  * {@link MagDataComponents#ARMOR_POLARITY} onto the stack. A magnetized bucket
  * reads as "Magnetized Ferrofluid Bucket", shows its pole + an enchant glint,
- * and (stage 2) places field-emitting magnetized ferrofluid instead of the
- * inert kind. Plain ferrofluid stays field-immune so the Anomaly biome's pools
- * don't drain themselves away.
+ * and places source blocks that emit a MEDIUM field. Plain ferrofluid emits
+ * nothing; both kinds react to fields through transient creep and recession.
  */
 public final class FerrofluidBucketItem extends BucketItem {
 

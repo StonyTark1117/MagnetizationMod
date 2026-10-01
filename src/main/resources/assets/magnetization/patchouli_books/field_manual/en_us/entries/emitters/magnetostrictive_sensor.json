@@ -7,7 +7,8 @@
       "type": "patchouli:spotlight",
       "item": "magnetization:magnetostrictive_sensor",
       "text": "book.magnetization.entry.magnetostrictive_sensor.spotlight",
-      "link_recipe": true
+      "link_recipe": true,
+      "title": "book.magnetization.short_title.magnetostrictive_sensor"
     }
   ]
 }

@@ -8,6 +8,11 @@
       "item": "magnetization:emp_charge",
       "text": "book.magnetization.entry.emp_charge.spotlight",
       "link_recipe": true
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.emp_charge.spotlight.readable1.title",
+      "text": "book.magnetization.entry.emp_charge.spotlight.readable1"
     }
   ]
 }

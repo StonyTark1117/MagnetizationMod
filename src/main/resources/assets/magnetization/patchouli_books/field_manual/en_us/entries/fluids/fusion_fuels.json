@@ -8,6 +8,11 @@
       "text": "book.magnetization.entry.fusion_fuels.intro"
     },
     {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.intro.readable1.title",
+      "text": "book.magnetization.entry.fusion_fuels.intro.readable1"
+    },
+    {
       "type": "patchouli:spotlight",
       "item": "magnetization:hydrogen_bucket",
       "text": "book.magnetization.entry.fusion_fuels.hydrogen"
@@ -26,8 +31,23 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.helium3.readable1.title",
+      "text": "book.magnetization.entry.fusion_fuels.helium3.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.fusion_fuels.compare_title",
       "text": "book.magnetization.entry.fusion_fuels.compare"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.compare.readable1.title",
+      "text": "book.magnetization.entry.fusion_fuels.compare.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.compare.readable2.title",
+      "text": "book.magnetization.entry.fusion_fuels.compare.readable2"
     },
     {
       "type": "patchouli:text",
@@ -38,6 +58,11 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.fusion_fuels.behavior_title",
       "text": "book.magnetization.entry.fusion_fuels.behavior"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.fusion_fuels.behavior.continued1.title",
+      "text": "book.magnetization.entry.fusion_fuels.behavior.continued1"
     }
   ]
 }

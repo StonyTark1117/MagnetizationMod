@@ -1,0 +1,10 @@
+{
+  "scope": "Fullbook native evidence remains valid after isolated Ponder annotation text edit; this is source continuity, not a rerun",
+  "renderedLanguageSha256": "2743f2b4a0c08879af5d0461ee417d05fec1b12a5733a465f1e4f995ab6e6e9e",
+  "currentLanguageSha256": "bbe92e53467aa0ff273962cd1a88cb133538d1d8b4d2f74a3e56ee749f01d59e",
+  "changedKeys": [
+    "magnetization.ponder.rare_earth_magnets.text_2"
+  ],
+  "bookTranslationsEqual": true,
+  "otherBookSourceHashesMatch": true
+}

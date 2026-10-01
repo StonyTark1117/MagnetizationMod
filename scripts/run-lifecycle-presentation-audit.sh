@@ -71,7 +71,12 @@ for role in ['server','client']:
   p.parent.mkdir(parents=True,exist_ok=True);p.write_text('[compat]\n'+sys.argv[1]+' = '+sys.argv[2]+'\n')
 PY
 }
-for phase in initial disabled reenabled repeat gift-off; do
+rm -f "$output/control/"{book-pages.jsonl,book-sweep-done}
+phases=(initial disabled reenabled repeat gift-off)
+# A focused visual repair reruns one real scene and the connected reload checks.
+# It does not replace the complete five-process acceptance run.
+[[ -z ${MAGNETIZATION_AUDIT_SCENE:-} ]] || phases=(initial)
+for phase in "${phases[@]}"; do
   mkdir -p "$output/$phase"
   rm -f "$output/control/"{server-ready,client-done,view-ready,view-request,package-off,package-on,client-package-off,client-package-on}
   user=Validation

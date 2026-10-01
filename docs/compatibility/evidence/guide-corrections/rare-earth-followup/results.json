@@ -1,0 +1,39 @@
+{
+  "reproduce": "MAGNETIZATION_AUDIT_SCENE=rare_earth_magnets bash scripts/run-lifecycle-presentation-audit.sh",
+  "scope": "Focused native GUI-scale-3 annotation repair; the separate complete run establishes all other scene, book, style and five-process assertions.",
+  "sources": {
+    "scripts/run-lifecycle-presentation-audit.sh": "b2af742947441083a2385c7d9432d238d77b2c0d2e1abe067724bb9c99c66c13",
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": "28fb7a27300caae6efd04cf039f2cf4c3d48c9816070baab33042bc49b255162",
+    "src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java": "c9347c528446723bb30b5c9ade4f592bb7ac2a7de51ac41e12c961ac618f184c",
+    "src/main/resources/assets/magnetization/lang/en_us.json": "bbe92e53467aa0ff273962cd1a88cb133538d1d8b4d2f74a3e56ee749f01d59e",
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "93d9e71d5ec073cabfb84ef0440daf26ce7a5b4f85c5fc90b34d1c8c836431d7",
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": "f0bc62228178e20807feb74350bace90151ac9cfbf0895b9c99f069a63efff8d"
+  },
+  "artifacts": {
+    "client.txt": "6e89fe4aa40d5dc21e4d5bc0590ac65d04d303356d1e924d6e90ffeb4de59ad9",
+    "server.txt": "9383960f7c8eea8cc77d50193561f150405f0d334fd0b4b1247d7a4308320e02",
+    "validation-manual-initial.png": "52e40322408b2ccb3589f808914e15c84ee5db1d3abc22446b696ff1acb595e5",
+    "validation-ponder-rare_earth_magnets-first.png": "2b39b597a3a0d6b5bfed6963763a042e356a62043617a98d77bdd7a35fff717d",
+    "validation-ponder-rare_earth_magnets-input-magnetization-boron_dust.png": "b8b4546eaa6aedc7def0370c700e0b2390ea100c7f32f70ddb77445da8f8c5a4",
+    "validation-ponder-rare_earth_magnets-input-magnetization-dysprosium_oxide.png": "25c19e78ec1071fbf953bb2d580917448e21657948ec81487ebfb2e4ead0462a",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_alloy_plate.png": "10d9b1b9d977b70833714c19e49ca020fc25a5cb38a3fe114172771589798734",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_magnet_blank.png": "ff9b9568695550be0a0e68f99b6cc59da19bdd4e646ee2cc6da13b5728c928b3",
+    "validation-ponder-rare_earth_magnets-input-magnetization-neodymium_oxide.png": "8599b5c3a2791ca2f585a35c0d8209abc71d551e48fc197b7566e11648847f03",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_alloy.png": "6c6a63f1b58a2e821417861fa3a3872b43e32cd21d6f867eae82d8bd71484b89",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_magnet_blank.png": "2a6db97e72563880df65dd3f7a3f0d09b5c1b28cd495491b3be47a8b053e1c88",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_cobalt_plate.png": "f8a4a1ce06e719847627d474dfa15524ea3330458d55db1758f5fb073361a482",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_oxide.png": "85d788ac8ed214e30b2b816b0f1e9ee542b64d2740615f6abbd4de10d6da0861",
+    "validation-ponder-rare_earth_magnets-input-magnetization-samarium_powder.png": "eab2b5d80083b001d6bdd31435b722d6215d8e4fcae17392fa02ebf69616a291",
+    "validation-ponder-rare_earth_magnets-input-magnetization-sintered_neodymium.png": "f1ed9da45906195fe9e170cd169d560e62e24ef9a0d7853a960b70d27cab6bf2",
+    "validation-ponder-rare_earth_magnets-input-magnetization-sintered_samarium_cobalt.png": "397798e98c885e60327e01d504be6574e097efeae10a680ce21b0c178c456e5a",
+    "validation-ponder-rare_earth_magnets-last.png": "3f41cda6a3ac53121f3ebe6efe4ebd22ade9ec36580ad3927d64d5843025ba8a",
+    "validation-ponder-rare_earth_magnets-text-1.png": "1f7464837dbde1e19e0d93670b10f0c89f6991e4ba38b8154c436b8094222180",
+    "validation-ponder-rare_earth_magnets-text-2.png": "1ba6cbfe2338d9115936c5fda8845d515d0b1e95acd0334b7c7e5c92e1b57b25",
+    "validation-ponder-rare_earth_magnets-text-3.png": "32fb9c9180c899b79073f3b6f3ae7c282e06ca70ab9874ed22542237f16e3b53"
+  },
+  "instructions": 3,
+  "elapsed": 796,
+  "total": 796,
+  "effectiveGuiScale": 3,
+  "visualReview": "Complete text, including Samarium-Cobalt/MEDIUM, fits above the navigation controls; stages still shown by twelve native input icons."
+}

@@ -1,0 +1,21 @@
+{
+  "finding": "Visible auto-shrink degradation despite numeric .85 threshold passing",
+  "status": "diagnostic; requires corrected native acceptance",
+  "entry": "basics/iron_oxide_family",
+  "page": 10,
+  "textScale": 0.9354839,
+  "observations": [
+    "At effective GUI scale2 several glyph strokes disappear",
+    "At both scales ordinary words split mid-word across lines after long configuration identifiers"
+  ],
+  "captures": [
+    {
+      "path": "oxidation-shrink-scale-2.png",
+      "sha256": "f21719c0d949985dcf09e9a00217ffd683f18e46316b920789477d7d47948209"
+    },
+    {
+      "path": "oxidation-shrink-scale-3.png",
+      "sha256": "a0797939c939efc6224a7cf0b318ee4f49b7d204e07b64e00b83d3793f65eb7d"
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Patchouli lifecycle and Coaster/Ponder presentation validation
 
+The corrected instructions and new native validation are accepted in the
+[correction report](guide-content-corrections.md) and [new evidence index](evidence/guide-corrections/README.md). The original run below remains historical evidence.
+
 Verified 2026-10-01: five audited server/client process pairs, native recovery
 crafting and gift persistence, 37 Track Styles selections in world, eight field transitions,
 and full playback of all 18 advertised Ponder scenes passed. The
@@ -8,6 +11,11 @@ captures; [results](evidence/lifecycle-presentation/results.json) record asserti
 and provenance. Also passed: 255 unit tests, 173 core GameTests, build/release
 checks and minimal client startup with optional mods absent, recorded in
 [release checks](evidence/lifecycle-presentation/release-checks.json).
+
+These results establish lifecycle behavior and scene playback. The subsequent
+[content accuracy audit](guide-content-audit.md) identifies incorrect book
+instructions and a Fusion panel scene whose depicted geometry does not form.
+Playback success does not establish instructional accuracy. The [correction report](guide-content-corrections.md) records the resulting instruction, geometry and complete-reader validation changes.
 
 The run used an isolated snapshot of `46b682eb` plus the scoped changes identified
 by the source hashes. Unrelated work in the shared checkout was excluded.

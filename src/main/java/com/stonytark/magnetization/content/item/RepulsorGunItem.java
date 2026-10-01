@@ -71,7 +71,7 @@ public class RepulsorGunItem extends Item {
      *  shot, cooldown, and sound all happen here so both paths are identical — a
      *  Curios fire can't bypass the rate limit (was: the keybind handler fired
      *  first and only added cooldown afterward), and it stamps/sounds the actual
-     *  charm-slot item. Returns false if it couldn't fire (on cooldown / not server).
+     *  hands-slot item. Returns false if it couldn't fire (on cooldown / not server).
      *
      * @param sourceStack the stack that fired — the held stack for hand use, the
      *                     Curios stack for the keybind — so FIRED_AT lands on it. */

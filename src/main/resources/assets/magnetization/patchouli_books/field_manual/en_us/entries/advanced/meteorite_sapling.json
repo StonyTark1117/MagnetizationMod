@@ -9,6 +9,11 @@
       "text": "book.magnetization.entry.meteorite_sapling.intro.text"
     },
     {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.meteorite_sapling.intro.text.readable1.title",
+      "text": "book.magnetization.entry.meteorite_sapling.intro.text.readable1"
+    },
+    {
       "type": "patchouli:crafting",
       "recipe": "magnetization:meteorite_sapling",
       "text": "book.magnetization.entry.meteorite_sapling.craft"

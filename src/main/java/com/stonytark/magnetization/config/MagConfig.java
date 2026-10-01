@@ -860,7 +860,7 @@ public final class MagConfig {
                 .translation("magnetization.configuration.performance.mrFluidHardenTicks")
                 .defineInRange("mrFluidHardenTicks", 5, 1, 1200);
         MAGNETIZED_FERROFLUID_TICKS = b
-                .comment("How often (ticks) magnetized ferrofluid pools re-emit their weak field.")
+                .comment("How often (ticks) magnetized ferrofluid pools re-emit their MEDIUM field.")
                 .translation("magnetization.configuration.performance.magnetizedFerrofluidTicks")
                 .defineInRange("magnetizedFerrofluidTicks", 3, 1, 1200);
         GALLIUM_CURRENT_TICKS = b

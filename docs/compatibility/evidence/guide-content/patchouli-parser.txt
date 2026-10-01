@@ -1,0 +1,70 @@
+Pinned runtime: Patchouli 1.21.1-93
+Artifact: patchouli-BIogJv2D.jar
+SHA256: 959af52ed6640c316c3a8469203420be4aeea11ad6603890ba83bf48f5d9f993
+Inspection: javap -p -c -classpath <jar> vazkii.patchouli.client.book.text.BookTextParser
+Excerpt: processCommand and colorCodeProcessor
+
+  private java.lang.String processCommand(vazkii.patchouli.client.book.text.SpanState, java.lang.String);
+    Code:
+         0: aload_1
+         1: iconst_0
+         2: putfield      #219                // Field vazkii/patchouli/client/book/text/SpanState.endingExternal:Z
+         5: invokestatic  #223                // Method java/util/Optional.empty:()Ljava/util/Optional;
+         8: astore_3
+         9: getstatic     #1                  // Field COMMAND_LOOKUPS:Ljava/util/List;
+        12: invokeinterface #229,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+        17: astore        4
+        19: aload         4
+        21: invokeinterface #104,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+        26: ifeq          64
+        29: aload         4
+        31: invokeinterface #110,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+        36: checkcast     #230                // class vazkii/patchouli/client/book/text/BookTextParser$CommandLookup
+        39: astore        5
+        41: aload         5
+        43: aload_2
+        44: aload_1
+        45: invokeinterface #232,  3          // InterfaceMethod vazkii/patchouli/client/book/text/BookTextParser$CommandLookup.process:(Ljava/lang/String;Lvazkii/patchouli/client/book/text/SpanState;)Ljava/util/Optional;
+        50: astore_3
+        51: aload_3
+        52: invokevirtual #236                // Method java/util/Optional.isPresent:()Z
+        55: ifeq          61
+        58: goto          64
+        61: goto          19
+        64: aload_3
+        65: aload_2
+        66: invokedynamic #239,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+        71: invokevirtual #243                // Method java/util/Optional.orElse:(Ljava/lang/Object;)Ljava/lang/Object;
+        74: checkcast     #125                // class java/lang/String
+        77: astore        4
+        79: aload_1
+        80: getfield      #219                // Field vazkii/patchouli/client/book/text/SpanState.endingExternal:Z
+        83: ifeq          101
+        86: aload         4
+        88: getstatic     #247                // Field net/minecraft/ChatFormatting.GRAY:Lnet/minecraft/ChatFormatting;
+        91: invokestatic  #253                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+        94: invokedynamic #256,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+        99: astore        4
+       101: aload         4
+       103: areturn
+
+  private static java.util.Optional<java.lang.String> colorCodeProcessor(java.lang.String, vazkii.patchouli.client.book.text.SpanState);
+    Code:
+         0: aload_0
+         1: invokevirtual #259                // Method java/lang/String.length:()I
+         4: iconst_1
+         5: if_icmpne     34
+         8: aload_0
+         9: ldc_w         #263                // String ^[0123456789abcdef]$
+        12: invokevirtual #265                // Method java/lang/String.matches:(Ljava/lang/String;)Z
+        15: ifeq          34
+        18: aload_1
+        19: aload_0
+        20: invokedynamic #269,  0            // InvokeDynamic #3:apply:(Ljava/lang/String;)Ljava/util/function/UnaryOperator;
+        25: invokevirtual #273                // Method vazkii/patchouli/client/book/text/SpanState.modifyStyle:(Ljava/util/function/UnaryOperator;)V
+        28: ldc           #169                // String
+        30: invokestatic  #277                // Method java/util/Optional.of:(Ljava/lang/Object;)Ljava/util/Optional;
+        33: areturn
+        34: invokestatic  #223                // Method java/util/Optional.empty:()Ljava/util/Optional;
+        37: areturn
+

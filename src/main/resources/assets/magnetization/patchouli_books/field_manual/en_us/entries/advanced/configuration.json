@@ -17,6 +17,11 @@
       "type": "patchouli:text",
       "title": "book.magnetization.entry.configuration.multiplayer.title",
       "text": "book.magnetization.entry.configuration.multiplayer.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.configuration.manual.title",
+      "text": "book.magnetization.entry.configuration.manual.text"
     }
   ]
 }

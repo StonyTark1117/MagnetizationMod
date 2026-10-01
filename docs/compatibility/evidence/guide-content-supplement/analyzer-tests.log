@@ -1,0 +1,27 @@
+test_changed_source_definition_is_rejected (__main__.GuideEvidenceGateTest.test_changed_source_definition_is_rejected) ... ok
+test_clamped_gui_scale_is_rejected (__main__.GuideEvidenceGateTest.test_clamped_gui_scale_is_rejected) ... ok
+test_complete_four_pass_fixture_is_accepted (__main__.GuideEvidenceGateTest.test_complete_four_pass_fixture_is_accepted) ... ok
+test_crafting_page_cannot_masquerade_as_text (__main__.GuideEvidenceGateTest.test_crafting_page_cannot_masquerade_as_text) ... ok
+test_crafting_title_overflow_is_rejected (__main__.GuideEvidenceGateTest.test_crafting_title_overflow_is_rejected) ... ok
+test_duplicate_spread_is_rejected (__main__.GuideEvidenceGateTest.test_duplicate_spread_is_rejected) ... ok
+test_fractional_shrink_is_rejected_even_above_old_threshold (__main__.GuideEvidenceGateTest.test_fractional_shrink_is_rejected_even_above_old_threshold) ... ok
+test_horizontal_and_vertical_overflow_are_rejected (__main__.GuideEvidenceGateTest.test_horizontal_and_vertical_overflow_are_rejected) ... ok
+test_invented_page_limit_is_rejected (__main__.GuideEvidenceGateTest.test_invented_page_limit_is_rejected) ... ok
+test_missing_capture_is_rejected (__main__.GuideEvidenceGateTest.test_missing_capture_is_rejected) ... ok
+test_missing_effective_gui_scale_is_rejected (__main__.GuideEvidenceGateTest.test_missing_effective_gui_scale_is_rejected) ... ok
+test_missing_link_click_is_rejected (__main__.GuideEvidenceGateTest.test_missing_link_click_is_rejected) ... ok
+test_missing_native_text_layout_is_rejected (__main__.GuideEvidenceGateTest.test_missing_native_text_layout_is_rejected) ... ok
+test_missing_spread_is_rejected (__main__.GuideEvidenceGateTest.test_missing_spread_is_rejected) ... ok
+test_missing_title_width_is_rejected (__main__.GuideEvidenceGateTest.test_missing_title_width_is_rejected) ... ok
+test_missing_word_bounds_is_rejected (__main__.GuideEvidenceGateTest.test_missing_word_bounds_is_rejected) ... ok
+test_non_png_capture_is_rejected (__main__.GuideEvidenceGateTest.test_non_png_capture_is_rejected) ... ok
+test_nonfinite_bounds_are_rejected (__main__.GuideEvidenceGateTest.test_nonfinite_bounds_are_rejected) ... ok
+test_overflowing_title_is_rejected (__main__.GuideEvidenceGateTest.test_overflowing_title_is_rejected) ... ok
+test_repeated_locale_is_not_a_second_locale_pass (__main__.GuideEvidenceGateTest.test_repeated_locale_is_not_a_second_locale_pass) ... ok
+test_truncated_png_is_rejected (__main__.GuideEvidenceGateTest.test_truncated_png_is_rejected) ... ok
+test_undersized_text_is_rejected (__main__.GuideEvidenceGateTest.test_undersized_text_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.126s
+
+OK

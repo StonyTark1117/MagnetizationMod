@@ -1,0 +1,2438 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.143'
+}
+
+group = mod_group
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+// Datagen output goes here; included in main resources so the built jar contains it.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// `localRuntime` lets us add an optional dependency to the in-dev run classpath
+// (so /gradlew runClient loads it) WITHOUT publishing that dep to the
+// runtimeElements variant — i.e. installed users won't be forced to also install
+// the optional mod. Use it for soft-dep compats we want to smoke-test in dev.
+configurations {
+    localRuntime
+    gameTestRuntime
+    aeroportalsRuntime
+    aeroportalsLegacyRuntime
+    immersiveAeronauticsRuntime
+    simulatedCoastersRuntime
+    simulatedCoastersLegacyRuntime
+    simulatedCoastersTrackStylesRuntime {
+        extendsFrom simulatedCoastersRuntime
+    }
+    coastersMagnetizedRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersEngineeredRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersExtrasRuntime { extendsFrom simulatedCoastersRuntime }
+    coastersAdditionsRuntime { extendsFrom simulatedCoastersRuntime }
+    ironworksRuntime
+    extraGolemsRebornRuntime
+    modularGolemsRuntime
+    modularGolemsLibraries
+    quarkRuntime
+    sweepAircraftRuntime
+    sweepMaterialsRuntime
+    sweepEquipmentRuntime
+    sweepMagneticsRuntime
+    sweepBossRuntime
+    sweepTwilightRuntime
+    sweepStorageRuntime
+    sweepSupplementariesRuntime
+    ironworksCoastersAdditionsRuntime {
+        extendsFrom ironworksRuntime, coastersAdditionsRuntime
+    }
+    simulatedMissilesRuntime
+    createBigCannonsRuntime
+    createNewAgeRuntime
+    cosmonauticsRuntime
+    createAdditionRuntime
+    immersiveEngineeringRuntime
+    alexsCavesRuntime
+    createTracksRuntime
+    steamRailsRuntime
+    dieselGeneratorsRuntime
+    copycatsRuntime
+    enchantmentIndustryRuntime
+    enderTransmissionRuntime
+    tfmgRuntime
+    oreExcavationRuntime
+    createOreExcavationRuntime
+    // Client-only compatibility profiles. HUD and recipe-viewer alternatives
+    // must stay isolated from localRuntime and from one another: loading two
+    // overlay/viewer implementations at once hides precisely the integration
+    // failures these profiles are meant to expose.
+    jadeClientRuntime
+    topClientRuntime
+    reiClientRuntime
+    emiClientRuntime
+    validationAuditRuntime {
+        extendsFrom simulatedCoastersTrackStylesRuntime, coastersMagnetizedRuntime, steamRailsRuntime, copycatsRuntime
+    }
+    uiAuditRuntime
+    jerClientRuntime
+    ponderCompatClientRuntime {
+        extendsFrom steamRailsRuntime, copycatsRuntime
+    }
+    // Dedicated-server-only aggregate used by the large-world regression
+    // reproducer. Keep it separate from localRuntime: that configuration also
+    // contains client-only renderers and recipe viewers.
+    largeWorldReproRuntime {
+        extendsFrom aeroportalsRuntime, immersiveAeronauticsRuntime,
+                simulatedCoastersRuntime, createBigCannonsRuntime,
+                createNewAgeRuntime, createAdditionRuntime,
+                immersiveEngineeringRuntime, alexsCavesRuntime,
+                createTracksRuntime, steamRailsRuntime,
+                dieselGeneratorsRuntime, copycatsRuntime,
+                enchantmentIndustryRuntime, enderTransmissionRuntime,
+                tfmgRuntime
+    }
+    // Uses the same mod set while every Magnetization compatibility boolean is
+    // disabled. This is essential: CNA's dense magnetite worldgen must exist in
+    // the saved fixture before the all-enabled reload can exercise issue #7.
+    largeWorldFixtureRuntime {
+        extendsFrom largeWorldReproRuntime
+    }
+    // Dedicated-server benchmark pack. It deliberately mirrors the broad
+    // server-safe compatibility stack used by large Create modpacks while
+    // remaining isolated from client-only localRuntime dependencies and the
+    // large-world reproducer's automatically active Chunky tooling.
+    stressRuntime {
+        extendsFrom simulatedCoastersRuntime, createBigCannonsRuntime,
+                createNewAgeRuntime, cosmonauticsRuntime,
+                createAdditionRuntime, immersiveEngineeringRuntime,
+                alexsCavesRuntime, createTracksRuntime, steamRailsRuntime,
+                dieselGeneratorsRuntime, copycatsRuntime,
+                enchantmentIndustryRuntime, enderTransmissionRuntime,
+                tfmgRuntime, oreExcavationRuntime, createOreExcavationRuntime
+    }
+    // Sodium's Modrinth NeoForge "jar" is a thin JarJar wrapper: all real code —
+    // including the net.caffeinemc.mods.sodium.api.* classes Iris hard-needs — lives
+    // in nested META-INF/jarjar/*.jar files. In a normal client FML extracts those
+    // from the mods folder, but the dev flat classpath does NOT: passing the wrapper
+    // as a localRuntime "source" jar makes FML's JarSelector pick it and SKIP JarJar
+    // extraction, so real Sodium never loads and Iris dies on a NoClassDefFoundError
+    // for VertexSerializer. We resolve the wrapper into this separate config, unwrap
+    // its nested jars (see unwrapSodium), and put the REAL jars on localRuntime.
+    sodiumWrapper
+    // Iris 1.8.14-beta.1 targets 1.21.1 but its published NeoForge metadata
+    // accidentally uses the exclusive upper bound [1.21,1.21.1). Keep the
+    // upstream artifact isolated so the dev-only copy below can repair that
+    // self-contradictory range without altering Magnetization's published JAR.
+    irisWrapper
+}
+configurations.simulatedMissilesRuntime.extendsFrom(configurations.createBigCannonsRuntime)
+// The soft-dep / smoke-test mods on localRuntime are the compatibility-heavy client
+// pack we validate against in `./gradlew runClient` (Sodium, Iris, JEI, the tag-
+// coverage mods, etc.). They must NOT be folded in for:
+//   - `runData`: several are client-only and NPE in the headless data run (sodium /
+//     immersive_aircraft call Minecraft.getInstance() during mod construction, null in datagen);
+//   - `runServer` / `runGameTestServer`: a dedicated-server dist shouldn't load client-only
+//     rendering mods — doing so spams `Attempted to load class .../client/... for invalid dist
+//     DEDICATED_SERVER` and makes the automated GameTest gate a poor stand-in for a real
+//     server. Keeping this classpath minimal (hard deps only) gives a clean physical-server run.
+//   - the `smokeClientNormal` / `smokeServerMinimal` release profiles, whose whole point
+//     is to prove the mod is healthy WITHOUT a compat pack propping it up.
+// So only extend runtimeClasspath with localRuntime for the compat client run (and plain `build`).
+def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
+// Task-name suffixes that must run against hard dependencies only. Matched on the
+// lowercased suffix so both `:runServer` and `runServer` forms hit.
+def minimalProfileTasks = [
+        'runvalidationauditserver', 'runvalidationauditclient',
+        'runstoragerestartauditserver', 'runuiauditserver', 'runuiauditclient',
+        'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
+        'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver', 'runsupplementariesworkflowgametestserver',
+        'runmodulargolemsgametestserver', 'runquarkgametestserver',
+        'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
+        'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
+        'runextragolemsreborngametestserver', 'runextragolemsrebornclient',
+        'runjammarrclient', 'runjammarrdedicatedclient', 'runjammarrlistener', 'runjammarrserver',
+        'rundata',
+        'runserver', 'rungametestserver', 'runregressiongametestserver',
+        'runoptionalcompatibilityabsentgametestserver',
+        'runaeroportalsgametestserver', 'runaeroportalslegacygametestserver',
+        'runimmersiveaeronauticsgametestserver', 'runsimulatedcoastersgametestserver',
+        'runsimulatedcoasterslegacygametestserver',
+        'runsimulatedcoasterstrackstylesgametestserver', 'runsimulatedcoasterstrackstylesclient',
+        'runcoastersmagnetizedgametestserver', 'runcoastersmagnetizedclient',
+        'runcoastersengineeredgametestserver', 'runcoastersengineeredclient',
+        'runcoastersextrasgametestserver', 'runcoastersextrasclient',
+        'runironworksgametestserver', 'runcoastersadditionsgametestserver',
+        'runironworkscoastersadditionsgametestserver',
+        'runsimulatedmissilesgametestserver', 'runsimulatedmissilesclient',
+        'runcreatebigcannonsgametestserver',
+        'runcreatenewagegametestserver',
+        'runcosmonauticsgametestserver',
+        'runcreateadditiongametestserver',
+        'runimmersiveengineeringgametestserver',
+        'runalexscavesgametestserver',
+        'runcreatetracksgametestserver',
+        'runsteamrailsgametestserver',
+        'rundieselgeneratorsgametestserver',
+        'runcopycatsgametestserver',
+        'runenchantmentindustrygametestserver',
+        'runendertransmissiongametestserver',
+        'runtfmggametestserver',
+        'runoreexcavationgametestserver',
+        'runcreateoreexcavationgametestserver',
+        'runcuriosgametestserver',
+        'runjadeclient', 'runtopclient', 'runreiclient', 'runemiclient',
+        'runjerclient',
+        'runpondercompatclient',
+        'runlargeworldbootstrapserver', 'runlargeworldfixtureserver',
+        'runlargeworldreproserver', 'reproducelargeworldissue',
+        'runstressserver', 'performancestress',
+        'smokeaeroportalsgametest', 'smokeaeroportalslegacygametest',
+        'smokeimmersiveaeronauticsgametest',
+        'smokesimulatedcoastersgametest', 'smokesimulatedcoasterslegacygametest',
+        'smokesimulatedcoasterstrackstylesgametest',
+        'smokecoastersmagnetizedgametest', 'smokeclientcoastersmagnetized',
+        'smokecoastersengineeredgametest', 'smokeclientcoastersengineered',
+        'smokecoastersextrasgametest', 'smokeclientcoastersextras',
+        'smokeironworksgametest', 'smokecoastersadditionsgametest',
+        'smokeironworkscoastersadditionsgametest',
+        'smokesimulatedmissilesgametest', 'smokeclientsimulatedmissiles',
+        'smokecreatebigcannonsgametest',
+        'smokecreatenewagegametest', 'smokecreateadditiongametest',
+        'smokecosmonauticsgametest',
+        'smokeimmersiveengineeringgametest', 'smokealexscavesgametest',
+        'smokecreatetracksgametest', 'smokesteamrailsgametest',
+        'smokedieselgeneratorsgametest', 'smokecopycatsgametest',
+        'smokeenchantmentindustrygametest', 'smokeendertransmissiongametest',
+        'smoketfmggametest', 'smokeoreexcavationgametest', 'smokecreateoreexcavationgametest', 'smokecuriosgametest', 'smokeoptionalcompatibilityabsentgametest',
+        'smokeclientjade', 'smokeclienttop', 'smokeclientrei', 'smokeclientemi',
+        'smokeclientjer', 'smokeclientpondercompat',
+        'smokeclientsimulatedcoasterstrackstyles',
+        'runserversmoke', 'runclientminimal',
+        'smokeserverminimal', 'smokegametest', 'smokeregressiongametest',
+        'smokeclientnormal', 'releasegate'
+]
+// Allow focused unit checks without resolving the optional GUI/client pack.
+// Integrations needing upstream code retain their explicit runtime profiles.
+def wantsMinimalClasspath = project.hasProperty('magMinimalUnitTests')
+        || lowered.any { t -> minimalProfileTasks.any { m -> t.endsWith(m) } }
+if (!wantsMinimalClasspath) {
+    configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
+}
+def wantsStandardGameTests = lowered.any {
+    it.endsWith('rungametestserver') && !it.endsWith('runaeroportalsgametestserver')
+            && !it.endsWith('runimmersiveaeronauticsgametestserver')
+}
+if (wantsStandardGameTests) {
+    // Two security-boundary GameTests exercise a real Curios capability. Keep
+    // that optional API explicit in this profile rather than receiving it
+    // accidentally from Aeronautics/Simulated's over-broad POM transitives.
+    configurations.runtimeClasspath { extendsFrom configurations.gameTestRuntime }
+}
+def wantsCuriosTests = lowered.any {
+    it.endsWith('runcuriosgametestserver') || it.endsWith('smokecuriosgametest')
+}
+if (wantsCuriosTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.gameTestRuntime }
+}
+def wantsAeroPortalsTests = lowered.any { it.endsWith('runaeroportalsgametestserver') || it.endsWith('smokeaeroportalsgametest') }
+if (wantsAeroPortalsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.aeroportalsRuntime }
+}
+def wantsAeroPortalsLegacyTests = lowered.any {
+    it.endsWith('runaeroportalslegacygametestserver')
+            || it.endsWith('smokeaeroportalslegacygametest')
+}
+if (wantsAeroPortalsLegacyTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.aeroportalsLegacyRuntime }
+}
+def wantsImmersiveAeronauticsTests = lowered.any {
+    it.endsWith('runimmersiveaeronauticsgametestserver') || it.endsWith('smokeimmersiveaeronauticsgametest')
+}
+def wantsSimulatedCoastersTests = lowered.any {
+    it.endsWith('runsimulatedcoastersgametestserver') || it.endsWith('smokesimulatedcoastersgametest')
+}
+def wantsSimulatedCoastersLegacyTests = lowered.any {
+    it.endsWith('runsimulatedcoasterslegacygametestserver')
+            || it.endsWith('smokesimulatedcoasterslegacygametest')
+}
+def wantsSimulatedCoastersTrackStylesTests = lowered.any {
+    it.endsWith('runsimulatedcoasterstrackstylesgametestserver')
+            || it.endsWith('smokesimulatedcoasterstrackstylesgametest')
+            || it.endsWith('runsimulatedcoasterstrackstylesclient')
+            || it.endsWith('smokeclientsimulatedcoasterstrackstyles')
+}
+def wantsCoastersMagnetizedTests = lowered.any {
+    it.endsWith('runcoastersmagnetizedgametestserver') || it.endsWith('smokecoastersmagnetizedgametest')
+            || it.endsWith('runcoastersmagnetizedclient') || it.endsWith('smokeclientcoastersmagnetized')
+}
+def wantsCoastersEngineeredTests = lowered.any {
+    it.endsWith('runcoastersengineeredgametestserver') || it.endsWith('smokecoastersengineeredgametest')
+            || it.endsWith('runcoastersengineeredclient') || it.endsWith('smokeclientcoastersengineered')
+}
+def wantsCoastersExtrasTests = lowered.any {
+    it.endsWith('runcoastersextrasgametestserver') || it.endsWith('smokecoastersextrasgametest')
+            || it.endsWith('runcoastersextrasclient') || it.endsWith('smokeclientcoastersextras')
+}
+def wantsIronworksTests = lowered.any {
+    it.endsWith('runironworksgametestserver') || it.endsWith('smokeironworksgametest')
+            || it.endsWith('runironworkscoastersadditionsgametestserver')
+            || it.endsWith('smokeironworkscoastersadditionsgametest')
+}
+def wantsCoastersAdditionsTests = lowered.any {
+    it.endsWith('runcoastersadditionsgametestserver') || it.endsWith('smokecoastersadditionsgametest')
+            || it.endsWith('runironworkscoastersadditionsgametestserver')
+            || it.endsWith('smokeironworkscoastersadditionsgametest')
+}
+def wantsSimulatedMissilesTests = lowered.any {
+    it.endsWith('runsimulatedmissilesgametestserver') || it.endsWith('smokesimulatedmissilesgametest')
+            || it.endsWith('runsimulatedmissilesclient') || it.endsWith('smokeclientsimulatedmissiles')
+}
+def wantsCreateBigCannonsTests = lowered.any {
+    it.endsWith('runcreatebigcannonsgametestserver') || it.endsWith('smokecreatebigcannonsgametest')
+}
+def wantsCreateNewAgeTests = lowered.any {
+    it.endsWith('runcreatenewagegametestserver') || it.endsWith('smokecreatenewagegametest')
+}
+def wantsCosmonauticsTests = lowered.any {
+    it.endsWith('runcosmonauticsgametestserver') || it.endsWith('smokecosmonauticsgametest')
+}
+def wantsCreateAdditionTests = lowered.any {
+    it.endsWith('runcreateadditiongametestserver') || it.endsWith('smokecreateadditiongametest')
+}
+def wantsImmersiveEngineeringTests = lowered.any {
+    it.endsWith('runimmersiveengineeringgametestserver') || it.endsWith('smokeimmersiveengineeringgametest')
+}
+def wantsAlexsCavesTests = lowered.any {
+    it.endsWith('runalexscavesgametestserver') || it.endsWith('smokealexscavesgametest')
+}
+def wantsCreateTracksTests = lowered.any {
+    it.endsWith('runcreatetracksgametestserver') || it.endsWith('smokecreatetracksgametest')
+}
+def wantsSteamRailsTests = lowered.any {
+    it.endsWith('runsteamrailsgametestserver') || it.endsWith('smokesteamrailsgametest')
+}
+def wantsDieselGeneratorsTests = lowered.any {
+    it.endsWith('rundieselgeneratorsgametestserver') || it.endsWith('smokedieselgeneratorsgametest')
+}
+def wantsCopycatsTests = lowered.any {
+    it.endsWith('runcopycatsgametestserver') || it.endsWith('smokecopycatsgametest')
+}
+def wantsEnchantmentIndustryTests = lowered.any {
+    it.endsWith('runenchantmentindustrygametestserver') || it.endsWith('smokeenchantmentindustrygametest')
+}
+def wantsEnderTransmissionTests = lowered.any {
+    it.endsWith('runendertransmissiongametestserver') || it.endsWith('smokeendertransmissiongametest')
+}
+def wantsTfmgTests = lowered.any {
+    it.endsWith('runtfmggametestserver') || it.endsWith('smoketfmggametest')
+}
+def wantsOreExcavationTests = lowered.any {
+    it.endsWith('runoreexcavationgametestserver') || it.endsWith('smokeoreexcavationgametest')
+}
+def wantsCreateOreExcavationTests = lowered.any {
+    it.endsWith('runcreateoreexcavationgametestserver') || it.endsWith('smokecreateoreexcavationgametest')
+}
+def wantsLargeWorldRepro = lowered.any {
+    it.endsWith('runlargeworldreproserver')
+}
+def wantsLargeWorldFixture = lowered.any {
+    it.endsWith('runlargeworldfixtureserver')
+}
+def wantsStressBenchmark = lowered.any {
+    it.endsWith('runstressserver') || it.endsWith('performancestress')
+}
+def wantsJadeClient = lowered.any { it.endsWith('runjadeclient') || it.endsWith('smokeclientjade') }
+def wantsTopClient = lowered.any { it.endsWith('runtopclient') || it.endsWith('smokeclienttop') }
+def wantsReiClient = lowered.any { it.endsWith('runreiclient') || it.endsWith('smokeclientrei') }
+def wantsEmiClient = lowered.any { it.endsWith('runemiclient') || it.endsWith('smokeclientemi') }
+def wantsJerClient = lowered.any { it.endsWith('runjerclient') || it.endsWith('smokeclientjer') }
+def wantsPonderCompatClient = lowered.any {
+    it.endsWith('runpondercompatclient') || it.endsWith('smokeclientpondercompat')
+}
+
+// These profiles alter the shared runtimeClasspath for the whole Gradle process.
+// Running two of them in one invocation silently contaminates the supposedly
+// isolated classpaths (for example, `releaseGate smokeImmersiveAeronauticsGameTest`
+// used to put Immersive Portals on the minimal dedicated server). Keep mixed
+// invocations impossible and route the complete matrix through `releaseMatrixGate`,
+// which launches a fresh Gradle process for each profile.
+def wantsMinimalVerification = lowered.any {
+    it.endsWith('releasegate') || it.endsWith('smokeserverminimal') || it.endsWith('smokegametest')
+}
+def optionalTestProfiles = [wantsAeroPortalsTests, wantsAeroPortalsLegacyTests,
+                            wantsImmersiveAeronauticsTests,
+                            wantsSimulatedCoastersTests, wantsSimulatedCoastersLegacyTests,
+                            wantsSimulatedCoastersTrackStylesTests,
+                            wantsCoastersMagnetizedTests, wantsCoastersEngineeredTests,
+                            wantsCoastersExtrasTests, wantsSimulatedMissilesTests,
+                            wantsCreateBigCannonsTests, wantsCreateNewAgeTests,
+                            wantsCosmonauticsTests,
+                            wantsCreateAdditionTests, wantsImmersiveEngineeringTests, wantsAlexsCavesTests,
+                            wantsCreateTracksTests, wantsSteamRailsTests,
+                            wantsDieselGeneratorsTests, wantsCopycatsTests, wantsEnchantmentIndustryTests,
+                            wantsEnderTransmissionTests, wantsTfmgTests, wantsOreExcavationTests,
+                            wantsCreateOreExcavationTests,
+                            wantsLargeWorldFixture, wantsLargeWorldRepro, wantsStressBenchmark,
+                            wantsJadeClient, wantsTopClient, wantsReiClient, wantsEmiClient,
+                            wantsJerClient, wantsPonderCompatClient]
+        .count { it }
+if ((wantsMinimalVerification && optionalTestProfiles > 0) || optionalTestProfiles > 1) {
+    throw new GradleException('Incompatible verification profiles were requested in one Gradle invocation. ' +
+            'Use ./gradlew releaseMatrixGate so minimal and optional compatibility profiles ' +
+            'run with isolated classpaths.')
+}
+if (wantsImmersiveAeronauticsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.immersiveAeronauticsRuntime }
+}
+if (wantsSimulatedCoastersTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersRuntime }
+}
+if (wantsSimulatedCoastersLegacyTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersLegacyRuntime }
+}
+if (wantsSimulatedCoastersTrackStylesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedCoastersTrackStylesRuntime }
+}
+if (wantsCoastersMagnetizedTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersMagnetizedRuntime }
+}
+if (wantsCoastersEngineeredTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersEngineeredRuntime }
+}
+if (wantsCoastersExtrasTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersExtrasRuntime }
+}
+if (wantsIronworksTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.ironworksRuntime }
+}
+if (lowered.any { it.endsWith('runsupplementariesworkflowgametestserver') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepSupplementariesRuntime)
+}
+if (lowered.any { it.contains('storagerestartaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepStorageRuntime)
+}
+if (lowered.any { it.contains('validationaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.validationAuditRuntime)
+}
+if (lowered.any { it.contains('uiaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.uiAuditRuntime)
+    def uiMode = providers.gradleProperty('uiAuditMode').getOrElse('legacy')
+    switch (uiMode) {
+        case 'jei': case 'jer': configurations.runtimeClasspath.extendsFrom(configurations.jerClientRuntime); break
+        case 'rei': configurations.runtimeClasspath.extendsFrom(configurations.reiClientRuntime); break
+        case 'jade': configurations.runtimeClasspath.extendsFrom(configurations.jadeClientRuntime); break
+        case 'top': configurations.runtimeClasspath.extendsFrom(configurations.topClientRuntime); break
+    }
+}
+if (lowered.any { it.contains('aircraftaudit') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepAircraftRuntime)
+}
+['Aircraft', 'Materials', 'Equipment', 'Magnetics', 'Boss', 'Twilight', 'Storage', 'Supplementaries'].each { profile ->
+    if (lowered.any { it.endsWith("runSweep${profile}GameTestServer".toLowerCase()) }) {
+        configurations.runtimeClasspath.extendsFrom(configurations.getByName("sweep${profile}Runtime"))
+    }
+}
+if (lowered.any { it.endsWith('runmagneticsworkaroundgametestserver') || it.endsWith('runmagneticsworkaroundclient') }) {
+    configurations.runtimeClasspath.extendsFrom(configurations.sweepMagneticsRuntime)
+}
+['ModularGolems', 'Quark'].each { integration ->
+    if (lowered.any { it.endsWith("run${integration}GameTestServer".toLowerCase()) }) {
+        configurations.runtimeClasspath.extendsFrom(configurations.getByName(
+                integration[0].toLowerCase() + integration.substring(1) + 'Runtime'))
+    }
+}
+if (lowered.any { it.endsWith('runextragolemsreborngametestserver') || it.endsWith('runextragolemsrebornclient') }) {
+    configurations.runtimeClasspath { extendsFrom configurations.extraGolemsRebornRuntime }
+}
+if (wantsCoastersAdditionsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.coastersAdditionsRuntime }
+}
+if (wantsSimulatedMissilesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.simulatedMissilesRuntime }
+}
+if (wantsCreateBigCannonsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createBigCannonsRuntime }
+}
+if (wantsCreateNewAgeTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createNewAgeRuntime }
+}
+if (wantsCosmonauticsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.cosmonauticsRuntime }
+}
+if (wantsCreateAdditionTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createAdditionRuntime }
+}
+if (wantsImmersiveEngineeringTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.immersiveEngineeringRuntime }
+}
+if (wantsAlexsCavesTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.alexsCavesRuntime }
+}
+if (wantsCreateTracksTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createTracksRuntime }
+}
+if (wantsSteamRailsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.steamRailsRuntime }
+}
+if (wantsDieselGeneratorsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.dieselGeneratorsRuntime }
+}
+if (wantsCopycatsTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.copycatsRuntime }
+}
+if (wantsEnchantmentIndustryTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.enchantmentIndustryRuntime }
+}
+if (wantsEnderTransmissionTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.enderTransmissionRuntime }
+}
+if (wantsTfmgTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.tfmgRuntime }
+}
+if (wantsOreExcavationTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.oreExcavationRuntime }
+}
+if (wantsCreateOreExcavationTests) {
+    configurations.runtimeClasspath { extendsFrom configurations.createOreExcavationRuntime }
+}
+if (wantsLargeWorldRepro) {
+    configurations.runtimeClasspath { extendsFrom configurations.largeWorldReproRuntime }
+}
+if (wantsLargeWorldFixture) {
+    configurations.runtimeClasspath { extendsFrom configurations.largeWorldFixtureRuntime }
+}
+if (wantsStressBenchmark) {
+    configurations.runtimeClasspath { extendsFrom configurations.stressRuntime }
+}
+if (wantsJadeClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.jadeClientRuntime }
+}
+if (wantsTopClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.topClientRuntime }
+}
+if (wantsReiClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.reiClientRuntime }
+}
+if (wantsEmiClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.emiClientRuntime }
+}
+if (wantsJerClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.jerClientRuntime }
+}
+if (wantsPonderCompatClient) {
+    configurations.runtimeClasspath { extendsFrom configurations.ponderCompatClientRuntime }
+}
+
+// CC:Tweaked rides in as an OPTIONAL Maven transitive of aeronautics + simulated at
+// 1.115.1. The dev test mod create-new-age 1.2.0 enforces computercraft >=1.116.2
+// (optional, but range-checked when present), so force CC to the current 1.21.1
+// build. CC is only an optional integration for every mod here, so this doesn't
+// affect aeronautics/simulated behaviour.
+configurations.all {
+    resolutionStrategy {
+        force 'cc.tweaked:cc-tweaked-1.21.1-forge:1.120.2'
+        // Curios arrives as a Maven transitive of aeronautics + simulated at 9.2.2,
+        // but neoforge.mods.toml declares `curios [9.5.1,)`. FML enforces an OPTIONAL
+        // dependency's range whenever that mod IS present, so 9.2.2 on the classpath
+        // is a hard "only supports curios 9.5.1 or above" load failure — caught by
+        // `smokeServerMinimal`. Force the dev classpath up to the declared floor so
+        // the runtime we test matches the runtime we advertise.
+        force 'top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1'
+    }
+}
+
+// Reconstruct a dev-loadable Sodium from the Modrinth wrapper.
+//
+// The wrapper is NOT a thin shell: its top-level classes hold Sodium's
+// compatibility/desktop/service layer (e.g. client.compatibility.workarounds.*),
+// while the BULK of the engine (api.*, client.render.*, the sodium-*.mixins.json
+// configs) lives in a nested META-INF/jarjar real jar that a custom
+// IModFileCandidateLocator self-loads in a normal client. On the dev flat
+// classpath that self-locate never fires, so half of Sodium is missing and its
+// own mixins crash on ClassNotFound. We therefore:
+//   1. explode the wrapper's nested jars (the real engine + 4 fabric-renderer shims),
+//   2. MERGE the wrapper's own classes with the real engine jar into one mod jar
+//      (dropping the self-locator service so it doesn't double-load), and
+//   3. put that merged jar + the fabric shims on localRuntime.
+def sodiumUnwrapDir = layout.buildDirectory.dir('sodium-unwrapped')
+def sodiumPartsDir = layout.buildDirectory.dir('sodium-parts')
+
+def explodeSodium = tasks.register('explodeSodium', Sync) {
+    description = 'Extracts the nested real Sodium engine + fabric shim jars from the Modrinth wrapper.'
+    from({ configurations.sodiumWrapper.collect { zipTree(it) } }) {
+        include 'META-INF/jarjar/*.jar'
+    }
+    eachFile { it.relativePath = new RelativePath(true, it.name) }
+    includeEmptyDirs = false
+    into sodiumPartsDir
+}
+
+// Merge the wrapper's own classes with the nested engine jar into ONE sodium mod jar.
+def mergeSodium = tasks.register('mergeSodium', Jar) {
+    description = 'Merges the Sodium wrapper classes with its nested engine jar into one dev mod jar.'
+    dependsOn explodeSodium
+    archiveFileName = 'sodium-merged.jar'
+    destinationDirectory = sodiumUnwrapDir
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Nested engine jar first → it wins ties (mods.toml, mixin configs, core classes).
+    from({ fileTree(sodiumPartsDir).matching { include 'net.caffeinemc.sodium-neoforge-*.jar' }.collect { zipTree(it) } })
+    // Wrapper classes second → adds the compatibility/desktop/service layer. Drop the
+    // jarjar payload (merged in) and the self-locator (we provide everything flat).
+    from({ configurations.sodiumWrapper.collect { zipTree(it) } }) {
+        exclude 'META-INF/jarjar/**'
+        exclude 'META-INF/services/net.neoforged.neoforgespi.locating.IModFileCandidateLocator'
+        exclude 'META-INF/MANIFEST.MF'
+    }
+}
+
+// Copy the fabric-renderer shims (separate forgified-fabric-api mods) alongside it.
+def copySodiumShims = tasks.register('copySodiumShims', Copy) {
+    dependsOn explodeSodium
+    from(sodiumPartsDir) { include 'fabric-*.jar' }
+    into sodiumUnwrapDir
+}
+
+def unwrapSodium = tasks.register('unwrapSodium') {
+    description = 'Assembles the dev-loadable Sodium (merged engine + fabric shims).'
+    dependsOn mergeSodium, copySodiumShims
+}
+
+def irisPatchedDir = layout.buildDirectory.dir('iris-patched')
+def patchIrisMetadata = tasks.register('patchIrisMetadata', Jar) {
+    description = 'Repairs the pinned Iris 1.21.1 artifact metadata for the dev compatibility client.'
+    archiveFileName = 'iris-1.8.14-beta.1-mc1.21.1-dev-fixed.jar'
+    destinationDirectory = irisPatchedDir
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from({ configurations.irisWrapper.collect { zipTree(it) } }) {
+        filesMatching('META-INF/neoforge.mods.toml') {
+            filter { line -> line.replace('versionRange = "[1.21,1.21.1)"',
+                    'versionRange = "[1.21,1.21.2)"') }
+        }
+        // Repacking invalidates any upstream archive signatures.
+        exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA'
+    }
+}
+
+// Only the compatibility-heavy client consumes the assembled Sodium jars.
+// Server, minimal-client, and GameTest profiles deliberately exclude localRuntime.
+tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
+        || it.name == 'runPlaytestSurvivalClient' || it.name == 'runPlaytestAutomationClient'
+        || it.name == 'runPlaytestAutomationSurvivalClient' }.configureEach {
+    dependsOn unwrapSodium, patchIrisMetadata
+}
+
+// GameTest hygiene: a previous gameTestServer JVM can LINGER (Sable's physics
+// thread drags out shutdown) and then starve the next run's CPU and/or hold
+// `run/world/session.lock`, which makes the new server crash on boot and/or
+// false-fail timing-sensitive tests. Before launching a fresh gametest server,
+// kill any leftover gametest JVM and clear a stale world lock. The match is
+// limited to this checkout's generated GameTest launch arguments. A GameTest
+// flag alone also matches other projects and must not be used for global cleanup.
+// doFirst runs before the JVM forks, so only PRIOR runs in this checkout match.
+tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGameTestServer'
+        || it.name == 'runAeroPortalsGameTestServer'
+        || it.name == 'runAeroPortalsLegacyGameTestServer'
+        || it.name == 'runImmersiveAeronauticsGameTestServer'
+        || it.name == 'runSimulatedCoastersGameTestServer'
+        || it.name == 'runSimulatedCoastersLegacyGameTestServer'
+        || it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
+        || it.name == 'runCoastersMagnetizedGameTestServer'
+        || it.name == 'runCoastersEngineeredGameTestServer'
+        || it.name == 'runCoastersExtrasGameTestServer'
+        || it.name == 'runSimulatedMissilesGameTestServer'
+        || it.name == 'runCreateBigCannonsGameTestServer'
+        || it.name == 'runCosmonauticsGameTestServer'
+        || it.name == 'runSteamRailsGameTestServer'
+        || it.name == 'runDieselGeneratorsGameTestServer'
+        || it.name == 'runCopycatsGameTestServer'
+        || it.name == 'runEnchantmentIndustryGameTestServer'
+        || it.name == 'runEnderTransmissionGameTestServer'
+        || it.name == 'runTfmgGameTestServer'
+        || it.name == 'runOreExcavationGameTestServer'
+        || it.name == 'runCreateOreExcavationGameTestServer'
+        || it.name == 'runCuriosGameTestServer' }.configureEach {
+    doFirst {
+        if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            try {
+                def argumentPrefix = '@' + layout.buildDirectory.dir('moddev').get().asFile.absolutePath + File.separator
+                def killed = []
+                ProcessHandle.allProcesses().withCloseable { processes ->
+                    processes.forEach { process ->
+                        def arguments = process.info().arguments().orElse(new String[0])
+                        def ownProgramArguments = arguments.any {
+                            it.startsWith(argumentPrefix) && it.endsWith('RunProgramArgs.txt')
+                        }
+                        // DevLaunch normally puts VM flags in an @argument file,
+                        // so they need not appear directly in the process arguments.
+                        def gameTest = ownProgramArguments && (arguments.contains('-Dneoforge.gameTestServer=true') || arguments.any {
+                            if (!it.startsWith(argumentPrefix) || !it.endsWith('RunVmArgs.txt')) { return false }
+                            def vmArguments = new File(it.substring(1))
+                            vmArguments.isFile() && vmArguments.readLines().contains('-Dneoforge.gameTestServer=true')
+                        })
+                        if (gameTest) {
+                            if (process.destroyForcibly()) { killed.add(process.pid()) }
+                        }
+                    }
+                }
+                if (killed) {
+                    Thread.sleep(500)
+                    logger.lifecycle("runGameTestServer: stopped this checkout's lingering GameTest JVM(s): ${killed}")
+                }
+            } catch (Exception e) {
+                logger.warn("runGameTestServer: zombie-kill step failed (continuing): ${e.message}")
+            }
+        }
+        def lock = file(it.name == 'runRegressionGameTestServer'
+                ? 'run-regression-gametest/world/session.lock'
+                : it.name == 'runAeroPortalsGameTestServer'
+                ? 'run-aeroportals-gametest/world/session.lock'
+                : it.name == 'runAeroPortalsLegacyGameTestServer'
+                ? 'run-aeroportals-legacy-gametest/world/session.lock'
+                : it.name == 'runImmersiveAeronauticsGameTestServer'
+                ? 'run-immersive-aeronautics-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersGameTestServer'
+                ? 'run-simulated-coasters-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersLegacyGameTestServer'
+                ? 'run-simulated-coasters-legacy-gametest/world/session.lock'
+                : it.name == 'runSimulatedCoastersTrackStylesGameTestServer'
+                ? 'run-simulated-coasters-track-styles-gametest/world/session.lock'
+                : it.name == 'runCoastersMagnetizedGameTestServer'
+                ? 'run-coasters-magnetized-gametest/world/session.lock'
+                : it.name == 'runCoastersEngineeredGameTestServer'
+                ? 'run-coasters-engineered-gametest/world/session.lock'
+                : it.name == 'runCoastersExtrasGameTestServer'
+                ? 'run-coasters-extras-gametest/world/session.lock'
+                : it.name == 'runSimulatedMissilesGameTestServer'
+                ? 'run-simulated-missiles-gametest/world/session.lock'
+                : it.name == 'runCosmonauticsGameTestServer'
+                ? 'run-cosmonautics-gametest/world/session.lock'
+                : it.name == 'runCreateBigCannonsGameTestServer'
+                ? 'run-createbigcannons-gametest/world/session.lock'
+                : it.name == 'runSteamRailsGameTestServer'
+                ? 'run-steam-rails-gametest/world/session.lock'
+                : it.name == 'runDieselGeneratorsGameTestServer'
+                ? 'run-diesel-generators-gametest/world/session.lock'
+                : it.name == 'runCopycatsGameTestServer'
+                ? 'run-copycats-gametest/world/session.lock'
+                : it.name == 'runEnchantmentIndustryGameTestServer'
+                ? 'run-enchantment-industry-gametest/world/session.lock'
+                : it.name == 'runEnderTransmissionGameTestServer'
+                ? 'run-ender-transmission-gametest/world/session.lock'
+                : it.name == 'runTfmgGameTestServer'
+                ? 'run-tfmg-gametest/world/session.lock'
+                : it.name == 'runOreExcavationGameTestServer'
+                ? 'run-ore-excavation-gametest/world/session.lock'
+                : it.name == 'runCreateOreExcavationGameTestServer'
+                ? 'run-create-ore-excavation-gametest/world/session.lock'
+                : it.name == 'runCuriosGameTestServer'
+                ? 'run-curios-gametest/world/session.lock'
+                : 'run/world/session.lock')
+        if (lock.exists()) {
+            logger.lifecycle("runGameTestServer: removing stale world lock ${lock}")
+            lock.delete()
+        }
+    }
+}
+
+// Substitute ${...} placeholders in neoforge.mods.toml at processResources time.
+// Without this, runClient/runServer fail with `ParsingException: Invalid bare key: '${mod_id}'`
+// because the toml is loaded literally from build/resources/main with no expansion.
+processResources {
+    // NeoForge's data generator stores incremental hashes beside generated
+    // resources. They are build metadata, not runtime assets, and must never be
+    // copied into the distributable jar.
+    exclude '.cache/**'
+
+    // src/main/resources can override src/generated/resources for hand-written
+    // files that supersede the data-generator output (e.g. loot tables that
+    // need minecraft:copy_components which the standard dropSelf builder
+    // doesn't emit). Without this Gradle hits a duplicate-resource error.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    final Map<String, String> replaceTokens = [
+        mod_id           : mod_id,
+        mod_name         : mod_name,
+        mod_version      : mod_version,
+        mod_group        : mod_group,
+        mod_authors      : mod_authors,
+        mod_description  : mod_description,
+        mod_license      : mod_license,
+        minecraft_version: minecraft_version,
+        neoforge_version : neoforge_version,
+        neoforge_min_version: neoforge_min_version,
+        create_mod_version: create_mod_version,
+        jade_min_version: jade_min_version,
+        jei_min_version: jei_min_version,
+        aeroportals_min_version: aeroportals_min_version,
+        simulated_coasters_min_version: simulated_coasters_min_version
+    ]
+    inputs.properties(replaceTokens)
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand replaceTokens
+    }
+    // The isolated optional-test namespace needs the same empty arena without
+    // committing a second binary NBT fixture.
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_aeroportals/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_aeroportals_legacy/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_regressions/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_compat_absent/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_immersive_aeronautics/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters_legacy/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulatedcoasters_track_styles/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_magnetized/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_engineered/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_extras/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ironworks/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_coasters_additions/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_simulated_missiles/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_createbigcannons/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_create_new_age/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_cosmonautics/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_createaddition/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_immersiveengineering/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_alexscaves/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_sweep/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_native_lightning/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_supplementaries_workflow/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_supplementaries_production/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_extra_golems_reborn/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_material_entities/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_twilight/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_storage_ship/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_attached_ship/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_createtracks/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_steam_rails/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_diesel_generators/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_copycats/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_enchantment_industry/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ender_transmission/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_tfmg/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_curios/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_ore_excavation/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_create_ore_excavation/structure'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.createmod.net' }
+    maven { url = 'https://maven.ithundxr.dev/snapshots' }
+    maven { url = 'https://maven.ryanhcode.dev/releases' }
+    maven { url = 'https://maven.theillusivec4.top/' }
+    maven { url = 'https://maven.blamejared.com/' }
+    maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked (optional Maven transitive of aeronautics + simulated)
+    maven { url = 'https://maven.shedaniel.me/' } // REI
+    maven { url = 'https://maven.terraformersmc.com/releases' } // EMI
+    maven { url = 'https://www.cursemaven.com' } // CurseForge-hosted compatibility test mods
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+neoForge {
+    version = neoforge_version
+
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+        // `client` is the COMPATIBILITY-HEAVY client: everything on localRuntime
+        // (Sodium/Iris/JEI/REI-adjacent/tag-coverage mods) rides along. Reach for
+        // `smokeClientCompat` when that's what you mean.
+        client { client() }
+        validationAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-validation-audit-server')
+            systemProperty 'magnetization.audit.validation', providers.gradleProperty('validationPhase').getOrElse('initial')
+            systemProperty 'magnetization.audit.validationDir', file('build/validation-audit/control').absolutePath
+        }
+        validationAuditClient {
+            programArguments.addAll('--width', '1280', '--height', '720')
+            client(); gameDirectory = file('run-validation-audit-client')
+            systemProperty 'magnetization.audit.validation', providers.gradleProperty('validationPhase').getOrElse('initial')
+            systemProperty 'magnetization.audit.validationDir', file('build/validation-audit/control').absolutePath
+            programArguments.addAll('--username', providers.gradleProperty('validationUser').getOrElse('Validation'),
+                    '--quickPlayMultiplayer', providers.gradleProperty('validationEndpoint').getOrElse('127.0.0.1:25589'))
+        }
+        uiAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-ui-audit-server')
+            systemProperty 'magnetization.audit.ui', 'true'
+            systemProperty 'magnetization.audit.uiControl', file('build/compat-audit/ui/hud-switch.txt').absolutePath
+            systemProperty 'magnetization.audit.uiMode', providers.gradleProperty('uiAuditMode').getOrElse('legacy')
+        }
+        uiAuditClient {
+            client(); gameDirectory = file('run-ui-audit-client')
+            systemProperty 'magnetization.audit.ui', 'true'
+            systemProperty 'magnetization.audit.uiControl', file('build/compat-audit/ui/hud-switch.txt').absolutePath
+            systemProperty 'magnetization.audit.uiMode', providers.gradleProperty('uiAuditMode').getOrElse('legacy')
+            programArguments.addAll('--username', 'AuditUi', '--quickPlayMultiplayer', providers.gradleProperty('uiAuditEndpoint').getOrElse('127.0.0.1:25589'))
+        }
+        storageRestartAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-storage-restart-audit')
+            systemProperty 'magnetization.audit.storageRestart', providers.gradleProperty('storageAuditPhase').getOrElse('verify')
+        }
+        aircraftAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-aircraft-audit-server')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
+        }
+        aircraftAuditPilot {
+            client(); gameDirectory = file('run-aircraft-audit-pilot')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
+            programArguments.addAll('--username', 'AuditPilot', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
+        }
+        aircraftAuditObserver {
+            client(); gameDirectory = file('run-aircraft-audit-observer')
+            systemProperty 'magnetization.audit.aircraftNetwork', 'true'
+            systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
+            programArguments.addAll('--username', 'AuditObserver', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
+        }
+        // Same client, hard dependencies only — the classpath gate above drops
+        // localRuntime for this task. Isolates "is this OUR bug?" from "is this the
+        // compat pack?", which is the question every player report starts with.
+        clientMinimal { client(); gameDirectory = file('run-smoke-client') }
+        jadeClient {
+            client(); gameDirectory = file('run-client-jade')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'lab'
+        }
+        topClient {
+            client(); gameDirectory = file('run-client-top')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'lab'
+        }
+        reiClient { client(); gameDirectory = file('run-client-rei') }
+        emiClient { client(); gameDirectory = file('run-client-emi') }
+        jerClient { client(); gameDirectory = file('run-client-jer') }
+        ponderCompatClient { client(); gameDirectory = file('run-client-ponder-compat') }
+        simulatedCoastersTrackStylesClient {
+            client()
+            gameDirectory = file('run-simulated-coasters-track-styles-client')
+        }
+        coastersMagnetizedClient {
+            client()
+            gameDirectory = file('run-client-coasters-magnetized')
+        }
+        coastersEngineeredClient {
+            client()
+            gameDirectory = file('run-client-coasters-engineered')
+        }
+        coastersExtrasClient {
+            client()
+            gameDirectory = file('run-client-coasters-extras')
+        }
+        simulatedMissilesClient {
+            client()
+            gameDirectory = file('run-client-simulated-missiles')
+        }
+        // Persistent, disposable manual-playtest worlds. Create one normal world
+        // in each game directory on first launch; the preset stages itself on the
+        // first player login and remains resettable through /magnetization playtest.
+        playtestLabClient {
+            client()
+            gameDirectory = file('run-playtest-lab')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'lab'
+        }
+        playtestSurvivalClient {
+            client()
+            gameDirectory = file('run-playtest-survival')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'survival'
+        }
+        // Automation gets its own worlds/logs so a manual playtest or another
+        // release repair cannot steer the same client or invalidate evidence.
+        playtestAutomationClient {
+            client()
+            gameDirectory = file('run-playtest-automation')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'lab'
+        }
+        playtestAutomationSurvivalClient {
+            client()
+            gameDirectory = file('run-playtest-automation-survival')
+            systemProperty 'magnetization.playtest', 'true'
+            systemProperty 'magnetization.playtestPreset', 'survival'
+        }
+        server { server(); programArgument 'nogui' }
+        // Minimal dedicated server for the release gate: own game directory (so its
+        // log is never a stale copy of a developer session), hard deps only, and
+        // stopped from stdin by `smokeServerMinimal` after a fixed boot window.
+        serverSmoke { server(); programArgument 'nogui'; gameDirectory = file('run-smoke-server') }
+        // Disposable dedicated server for GitHub issue #7. The script owning
+        // this run creates a fresh world, pregenerates it, captures evidence,
+        // and removes the generated data after each attempt.
+        largeWorldReproServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
+        largeWorldBootstrapServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
+        largeWorldFixtureServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-large-world-repro')
+        }
+        // Disposable, console-driven performance harness. Scenario content is
+        // generated into the world datapack by scripts/run-performance-stress.sh;
+        // none of it is compiled into or shipped with the mod.
+        stressServer {
+            server()
+            programArgument 'nogui'
+            gameDirectory = file('run-performance-stress')
+            systemProperty 'magnetization.performanceFixture', 'true'
+            if (project.hasProperty('stressJfrFile')) {
+                jvmArgument "-XX:StartFlightRecording=filename=${project.property('stressJfrFile')},settings=profile,dumponexit=true"
+            }
+            if (project.hasProperty('stressPerformanceDiagnostics')) {
+                systemProperty 'magnetization.performanceDiagnostics', 'true'
+            }
+        }
+        // Headless test runner — invoke via `./gradlew runGameTestServer`.
+        // moddev 2.0.143 doesn't expose a `gameTestServer()` convenience
+        // method (only client/server/data), so set the run type manually.
+        // The `neoforge.enabledGameTestNamespaces` system property (set in
+        // configureEach above) gates which mods' tests get registered.
+        gameTestServer {
+            type = 'gameTestServer'
+            // Keep GameTests isolated from the developer world. Sable sublevel
+            // files are not a safe fixture for a repeated headless test run.
+            gameDirectory = file('run-gametest')
+        }
+        regressionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-regression-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_regressions'
+        }
+        optionalCompatibilityAbsentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-compat-absent-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_compat_absent'
+        }
+        // Dedicated optional-integration suite. Its task-name profile adds only
+        // AeroPortals to the otherwise-minimal GameTest runtime, keeping the
+        // release gate independent of a soft dependency.
+        aeroPortalsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-aeroportals-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals'
+        }
+        aeroPortalsLegacyGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-aeroportals-legacy-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_aeroportals_legacy'
+        }
+        immersiveAeronauticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-immersive-aeronautics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersive_aeronautics'
+        }
+        simulatedCoastersGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters'
+        }
+        simulatedCoastersLegacyGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-legacy-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters_legacy'
+        }
+        simulatedCoastersTrackStylesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-coasters-track-styles-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulatedcoasters_track_styles'
+        }
+        coastersMagnetizedGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-magnetized-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_magnetized'
+        }
+        coastersEngineeredGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-engineered-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_engineered'
+        }
+        coastersExtrasGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-extras-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_coasters_extras'
+        }
+        ironworksGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ironworks-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ironworks'
+        }
+        coastersAdditionsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-coasters-additions-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces',
+                    'magnetization_simulatedcoasters,magnetization_coasters_additions'
+        }
+        ironworksCoastersAdditionsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ironworks-coasters-additions-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces',
+                    'magnetization_ironworks,magnetization_simulatedcoasters,magnetization_coasters_additions'
+        }
+        simulatedMissilesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-simulated-missiles-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_simulated_missiles'
+        }
+        createBigCannonsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-createbigcannons-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createbigcannons'
+        }
+        createNewAgeGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-create-new-age-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_new_age'
+            systemProperty 'magnetization.performanceDiagnostics', 'true'
+        }
+        cosmonauticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-cosmonautics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_cosmonautics'
+        }
+        createAdditionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-createaddition-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createaddition'
+        }
+        immersiveEngineeringGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-immersive-engineering-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_immersiveengineering,magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'immersiveengineering'
+        }
+        alexsCavesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-alexscaves-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_alexscaves,magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'alexscaves'
+        }
+        sweepAircraftGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-aircraft-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'immersive_aircraft,aviator_dream'
+        }
+        sweepMagneticsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-magnetics-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'createmagnetics'
+        }
+        magneticsWorkaroundGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetics-workaround-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep'
+            systemProperty 'magnetization.audit.namespaces', 'createmagnetics'
+        }
+        magneticsWorkaroundAbsentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetics-workaround-absent-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_compat_absent'
+        }
+        magneticsWorkaroundClient {
+            type = 'client'
+            gameDirectory = file('run-magnetics-workaround-client')
+        }
+        sweepEquipmentGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-equipment-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
+            systemProperty 'magnetization.audit.namespaces', 'aether,mekanism,mekanismtools'
+        }
+        sweepMaterialsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-materials-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
+            systemProperty 'magnetization.audit.namespaces', 'simulated,magnetizing,ironchest,mcwdoors,mcwfences,mcwbridges,mcwtrpdoors,mcwlights,mcwwindows'
+        }
+        sweepTwilightGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-twilight-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_twilight'
+            systemProperty 'magnetization.audit.namespaces', 'twilightforest'
+        }
+        sweepStorageGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-storage-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_storage_ship'
+            systemProperty 'magnetization.audit.namespaces', 'sophisticatedstorage'
+        }
+        // Deliberately separate reproducer: continuous pulley movement currently fails
+        // across Sable's automatic ship split. Do not report this as a passing gate.
+        supplementariesWorkflowGameTestServer {
+            type = 'gameTestServer'; gameDirectory = file('run-supplementaries-workflow-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_supplementaries_workflow'
+        }
+        sweepSupplementariesGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-supplementaries-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship,magnetization_supplementaries_production'
+            systemProperty 'magnetization.audit.namespaces', 'supplementaries'
+        }
+        sweepBossGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-sweep-boss-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_native_lightning'
+            systemProperty 'magnetization.audit.namespaces', 'cataclysm,bosses_of_mass_destruction,irons_spellbooks'
+        }
+        modularGolemsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-modular-golems-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_material_entities'
+            systemProperty 'magnetization.audit.materialEntity', 'modulargolems'
+        }
+        quarkGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-quark-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_material_entities'
+            systemProperty 'magnetization.audit.materialEntity', 'quark'
+        }
+        extraGolemsRebornGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-extra-golems-reborn-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_extra_golems_reborn'
+        }
+        extraGolemsRebornClient {
+            client()
+            gameDirectory = file('run-extra-golems-reborn-client')
+            if (providers.gradleProperty('rebornWorld').isPresent()) {
+                programArguments.addAll('--quickPlaySingleplayer', providers.gradleProperty('rebornWorld').get())
+            }
+        }
+        createTracksGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-create-tracks-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_createtracks'
+        }
+        steamRailsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-steam-rails-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_steam_rails'
+        }
+        dieselGeneratorsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-diesel-generators-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_diesel_generators'
+        }
+        copycatsGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-copycats-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_copycats'
+        }
+        enchantmentIndustryGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-enchantment-industry-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_enchantment_industry'
+        }
+        enderTransmissionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ender-transmission-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ender_transmission'
+        }
+        tfmgGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-tfmg-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_tfmg'
+            systemProperty 'magnetization.test.tfmgVersion', tfmg_test_mod_version
+        }
+        oreExcavationGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ore-excavation-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ore_excavation'
+        }
+        createOreExcavationGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-create-ore-excavation-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_create_ore_excavation'
+        }
+        curiosGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-curios-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_curios'
+        }
+        data {
+            data()
+            // moddev 2.0.143 + NeoForge 21.1.248 doesn't automatically wire our
+            // mod into the data-gatherer's mod list — the GatherDataEvent fires
+            // with an empty mod set otherwise. Passing --mod explicitly works
+            // around it. Also pass --existing so the providers see our
+            // hand-written resources (lang/textures referenced by JSONs).
+            programArguments.addAll('--mod', mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources').absolutePath,
+                    '--existing', file('src/main/resources').absolutePath)
+        }
+    }
+
+    mods {
+        "${mod_id}" { sourceSet sourceSets.main }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Release smoke-test profiles (1.3.0 audit #10)
+//
+//   ./gradlew smokeServerMinimal   dedicated server, hard deps only — RELEASE GATE
+//   ./gradlew smokeGameTest        headless GameTest suite          — RELEASE GATE
+//   ./gradlew smokeClientNormal    client, hard deps only           — manual
+//   ./gradlew smokeClientCompat    client + the whole compat pack   — manual
+//   ./gradlew releaseGate          build + both automated gates
+//
+// The two automated gates are the ones that can fail a build. `smokeServerMinimal`
+// boots a real dedicated server in its own directory, lets it run for a while, types
+// `stop` on its console, and then fails if the log carries a FATAL, a stack trace, or
+// (unless -PmagSmokeAllowErrors is passed) any ERROR line at all. Every dedicated-
+// server defect this mod has shipped — client-only classes loading on the server,
+// missing registry entries, capability registration order — announces itself in that
+// log long before a player does.
+// ---------------------------------------------------------------------------
+
+/**
+ * Stdin for the smoke server: blocks for a fixed window, then types `stop`.
+ * A dedicated server has no other clean self-shutdown, and a gate that needs a human
+ * to press a key is not a gate. The sleep happens on Gradle's stdin pump thread when
+ * the stream is first read, i.e. only once the server process is actually running.
+ */
+class DelayedStopInput extends InputStream {
+    private final long delayMs
+    private final byte[] payload = "stop\n".getBytes("UTF-8")
+    private int index = 0
+    private boolean waited = false
+
+    DelayedStopInput(long delayMs) { this.delayMs = delayMs }
+
+    @Override
+    int read() {
+        if (!waited) {
+            try { Thread.sleep(delayMs) } catch (InterruptedException ignored) { Thread.currentThread().interrupt() }
+            waited = true
+        }
+        return index >= payload.length ? -1 : (payload[index++] & 0xFF)
+    }
+}
+
+def smokeServerDir = file('run-smoke-server')
+def smokeServerSeconds = ((findProperty('magSmokeSeconds') ?: '210') as String) as int
+def smokeServerTimeoutSeconds = ((findProperty('magSmokeTimeoutSeconds')
+        ?: Integer.toString(smokeServerSeconds + 180)) as String) as int
+def smokeAllowErrors = findProperty('magSmokeAllowErrors') != null
+// The remaining hard-dependency mixin configs probe this one client class during
+// dedicated-server discovery. Match the complete logger + class + dist failure,
+// and cap the known count, so a different side violation cannot hide behind a broad
+// "invalid dist" substring. A lower count is accepted when upstream fixes probes.
+def knownClientProbe = '[net.neoforged.fml.common.asm.RuntimeDistCleaner/DISTXFORM]: ' +
+        'Attempted to load class net/minecraft/client/multiplayer/ClientLevel for invalid dist DEDICATED_SERVER'
+def maxKnownClientProbes = 12
+
+// The release smoke profile is disposable and must also work in a fresh checkout.
+// Invoking smokeServerMinimal is the explicit act that creates acceptance for this
+// isolated test server; it does not read from or modify the developer's normal run/.
+// See https://aka.ms/MinecraftEULA before running the gate.
+def provisionSmokeEula = { File targetDir ->
+    def target = new File(targetDir, 'eula.txt')
+    if (target.exists() && target.text.contains('eula=true')) return
+    targetDir.mkdirs()
+    target.text = '''# Generated for the disposable smokeServerMinimal profile.
+# By invoking this task you agree to https://aka.ms/MinecraftEULA for this test server.
+eula=true
+'''
+    logger.lifecycle("smokeServerMinimal: created isolated EULA acceptance at ${target}")
+}
+
+// Dedicated disposable profiles test the real early TOML option, not a JVM bypass.
+def magneticsWorkaroundFixtures = [
+        runMagneticsWorkaroundGameTestServer: 'run-magnetics-workaround-gametest',
+        runMagneticsWorkaroundAbsentGameTestServer: 'run-magnetics-workaround-absent-gametest',
+        runMagneticsWorkaroundClient: 'run-magnetics-workaround-client'
+]
+tasks.matching { magneticsWorkaroundFixtures.containsKey(it.name) }.configureEach {
+    doFirst {
+        def fixtureConfig = file("${magneticsWorkaroundFixtures[name]}/config/magnetization-common.toml")
+        fixtureConfig.parentFile.mkdirs()
+        fixtureConfig.text = '[compat]\ncreateMagneticsServerCrashWorkaround = true\n'
+    }
+}
+
+// Minecraft logs a missing server.properties as ERROR before generating its
+// defaults. That is harmless for an ordinary first launch, but it makes the
+// strict smoke-log gate fail from every fresh checkout. Give this disposable
+// profile an explicit minimal file so the first run is as clean and
+// deterministic as every later run. Port 0 also avoids colliding with a local
+// development server while still exercising a real listening socket.
+def provisionSmokeServerProperties = { File targetDir ->
+    def target = new File(targetDir, 'server.properties')
+    if (target.exists()) return
+    targetDir.mkdirs()
+    target.text = '''# Generated by smokeServerMinimal; this directory is disposable.
+enable-query=false
+enable-rcon=false
+level-name=world
+motd=Magnetization release smoke
+online-mode=false
+server-port=0
+'''
+    logger.lifecycle("smokeServerMinimal: created deterministic ${target}")
+}
+
+tasks.matching { it.name == 'runServerSmoke' }.configureEach {
+    standardInput = new DelayedStopInput(smokeServerSeconds * 1000L)
+    doFirst {
+        provisionSmokeEula(smokeServerDir)
+        provisionSmokeServerProperties(smokeServerDir)
+        // Delete the previous log so the gate can never pass by reading a stale clean
+        // run — an empty/missing log is treated as a failure below, not a pass.
+        delete new File(smokeServerDir, 'logs/latest.log')
+        logger.lifecycle("smokeServerMinimal: booting; will type `stop` after ${smokeServerSeconds}s")
+    }
+}
+
+// ModDev's run task otherwise replaces stdin when launched through a Gradle
+// daemon. The large-world supervisor owns this stream and uses it for Chunky
+// commands and clean server shutdowns between phases.
+tasks.matching {
+    it.name == 'runLargeWorldBootstrapServer'
+            || it.name == 'runLargeWorldFixtureServer'
+            || it.name == 'runLargeWorldReproServer'
+            || it.name == 'runStressServer'
+}.configureEach {
+    standardInput = System.in
+}
+
+tasks.register('verifyServerSmokeLog') {
+    group = 'verification'
+    description = 'Validates the minimal dedicated-server smoke log after its supervised run.'
+    doLast {
+        def log = new File(smokeServerDir, 'logs/latest.log')
+        if (!log.exists() || log.length() == 0L) {
+            throw new GradleException("smokeServerMinimal: no server log at ${log} — the server never got far enough to write one.")
+        }
+        def fatal = []
+        def errors = []
+        def knownProbes = 0
+        log.eachLine('UTF-8') { line ->
+            if (line.contains('/FATAL]') || line.contains('Exception in thread')
+                    || line.contains('Failed to start the minecraft server')) {
+                fatal << line
+            } else if (line.contains('/ERROR]')) {
+                if (line.contains(knownClientProbe)) knownProbes++
+                else errors << line
+            }
+        }
+        // Did it actually finish booting? A server killed early can leave a log with no
+        // errors in it, which would otherwise read as a clean pass.
+        def booted = log.text.contains('Done (') || log.text.contains('For help, type "help"')
+        if (!booted) {
+            throw new GradleException(
+                    "smokeServerMinimal: the server never reported 'Done' — it did not finish loading " +
+                    "within ${smokeServerSeconds}s. Raise the window with -PmagSmokeSeconds=<n> if the " +
+                    "machine is just slow, otherwise read ${log}.")
+        }
+        if (knownProbes > maxKnownClientProbes) {
+            throw new GradleException(
+                    "smokeServerMinimal: ${knownProbes} known client-class probes exceeded the audited maximum " +
+                    "of ${maxKnownClientProbes}; inspect dependency/runtime drift in ${log}.")
+        }
+        if (knownProbes > 0) {
+            logger.lifecycle("smokeServerMinimal: recognized ${knownProbes}/${maxKnownClientProbes} exact hard-dependency ClientLevel probe(s).")
+        }
+        fatal.each { logger.error("  FATAL  ${it}") }
+        errors.each { logger.error("  ERROR  ${it}") }
+        if (!fatal.isEmpty()) {
+            throw new GradleException("smokeServerMinimal: ${fatal.size()} fatal line(s) in the dedicated-server log (see above).")
+        }
+        if (!errors.isEmpty() && !smokeAllowErrors) {
+            throw new GradleException(
+                    "smokeServerMinimal: ${errors.size()} unexplained ERROR line(s) in the dedicated-server log (see above). " +
+                    "Fix them, add a justified entry to smokeIgnoredErrors, or re-run with -PmagSmokeAllowErrors.")
+        }
+        logger.lifecycle("smokeServerMinimal: clean dedicated-server boot" +
+                (errors.isEmpty() ? "." : " (${errors.size()} ERROR line(s) accepted via -PmagSmokeAllowErrors)."))
+    }
+}
+
+tasks.register('smokeServerMinimal', Exec) {
+    group = 'verification'
+    description = 'RELEASE GATE — supervises a minimal dedicated server and fails on a dirty log.'
+    commandLine 'bash', 'scripts/run-server-smoke-gate.sh',
+            smokeServerSeconds.toString(), smokeServerTimeoutSeconds.toString()
+    environment 'MAG_SMOKE_ALLOW_ERRORS', smokeAllowErrors ? '1' : '0'
+}
+
+tasks.register('smokeGameTest', Exec) {
+    group = 'verification'
+    description = 'RELEASE GATE — supervises the headless GameTest suite and exits after its passing summary.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runGameTestServer', 'run-gametest', '300'
+}
+
+tasks.register('smokeRegressionGameTest', Exec) {
+    group = 'verification'
+    description = 'Runs isolated behavioral coverage for restored shipped features.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runRegressionGameTestServer',
+            'run-regression-gametest', '300'
+}
+
+tasks.register('smokeOptionalCompatibilityAbsentGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the optional-compatibility absent-mod profile on the minimal runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runOptionalCompatibilityAbsentGameTestServer',
+            'run-compat-absent-gametest', '300'
+}
+
+tasks.register('smokeAeroPortalsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the optional AeroPortals compatibility GameTest runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAeroPortalsGameTestServer',
+            'run-aeroportals-gametest', '300'
+}
+
+tasks.register('smokeAeroPortalsLegacyGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the CreateSMP Polska AeroPortals 1.1.2 compatibility runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAeroPortalsLegacyGameTestServer',
+            'run-aeroportals-legacy-gametest', '300'
+}
+
+tasks.register('smokeImmersiveAeronauticsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Railgun/field compatibility tests with Immersive Aeronautics.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runImmersiveAeronauticsGameTestServer',
+            'run-immersive-aeronautics-gametest', '300'
+}
+
+tasks.register('smokeSimulatedCoastersGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises magnetic-field and Structural Inducer compatibility with Create: Coasters Simulated.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersGameTestServer',
+            'run-simulated-coasters-gametest', '300'
+}
+
+tasks.register('smokeSimulatedCoastersLegacyGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the CreateSMP Polska Coasters Simulated 0.1 runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersLegacyGameTestServer',
+            'run-simulated-coasters-legacy-gametest', '300'
+}
+
+tasks.register('smokeSimulatedCoastersTrackStylesGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Coasters magnetic compatibility with the optional Track Styles addon loaded.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedCoastersTrackStylesGameTestServer',
+            'run-simulated-coasters-track-styles-gametest', '300'
+}
+
+tasks.register('smokeCoastersMagnetizedGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises field-powered Coasters: Magnetized anchors.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersMagnetizedGameTestServer',
+            'run-coasters-magnetized-gametest', '300'
+}
+
+tasks.register('smokeCoastersEngineeredGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Coasters: Engineered recipe and FE/EMP compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersEngineeredGameTestServer',
+            'run-coasters-engineered-gametest', '300'
+}
+
+tasks.register('smokeCoastersExtrasGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: Coasters Extras through the parent Coasters bridge.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersExtrasGameTestServer',
+            'run-coasters-extras-gametest', '300'
+}
+
+tasks.register('smokeIronworksGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks optional Create: Ironworks materials and armor against its published 1.21.1 artifact.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runIronworksGameTestServer',
+            'run-ironworks-gametest', '300'
+}
+
+tasks.register('smokeCoastersAdditionsGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks Coasters Simulated Additions with the existing magnetic-cart and inducer bridge.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCoastersAdditionsGameTestServer',
+            'run-coasters-additions-gametest', '300'
+}
+
+tasks.register('smokeIronworksCoastersAdditionsGameTest', Exec) {
+    group = 'verification'
+    description = 'Checks Ironworks and Coasters Simulated Additions together.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runIronworksCoastersAdditionsGameTestServer',
+            'run-ironworks-coasters-additions-gametest', '300'
+}
+
+tasks.register('smokeSimulatedMissilesGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises EMP guidance loss for CBC Aeronautics Missiles.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSimulatedMissilesGameTestServer',
+            'run-simulated-missiles-gametest', '300'
+}
+
+tasks.register('smokeCreateBigCannonsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises the optional Create: Big Cannons projectile-field compatibility GameTest runtime.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateBigCannonsGameTestServer',
+            'run-createbigcannons-gametest', '300'
+}
+
+tasks.register('smokeCreateNewAgeGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: New Age magnetic tag and multiblock compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateNewAgeGameTestServer',
+            'run-create-new-age-gametest', '300'
+}
+
+tasks.register('smokeCosmonauticsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: Cosmonautics recipe, material, fuel, and dimension compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCosmonauticsGameTestServer',
+            'run-cosmonautics-gametest', '300'
+}
+
+tasks.register('smokeCreateAdditionGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create Crafts & Additions FE, kinetic, tag, and goggles compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateAdditionGameTestServer',
+            'run-createaddition-gametest', '300'
+}
+
+tasks.register('smokeImmersiveEngineeringGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Immersive Engineering field, railgun, recipe, and material compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runImmersiveEngineeringGameTestServer',
+            'run-immersive-engineering-gametest', '300'
+}
+
+tasks.register('smokeAlexsCavesGameTest', Exec) {
+    group = 'verification'
+    description = "Supervises Alex's Caves polarity, Neodymium, recipe, and duplicate-force compatibility."
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runAlexsCavesGameTestServer',
+            'run-alexscaves-gametest', '300'
+}
+
+tasks.register('smokeCreateTracksGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create: Tracks field and Structural Inducer compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateTracksGameTestServer',
+            'run-create-tracks-gametest', '300'
+}
+
+tasks.register('smokeSteamRailsGameTest', Exec) {
+    group = 'verification'
+    description = "Supervises Steam 'n' Rails train-field, coupling, inducer, tag, and Ponder compatibility."
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runSteamRailsGameTestServer',
+            'run-steam-rails-gametest', '300'
+}
+
+tasks.register('smokeDieselGeneratorsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Diesel Generators kinetic, multiblock, goggles, material, and exclusion compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runDieselGeneratorsGameTestServer',
+            'run-diesel-generators-gametest', '300'
+}
+
+tasks.register('smokeCopycatsGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Copycats+ material inference, assembled contraption, goggles, and Ponder compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCopycatsGameTestServer',
+            'run-copycats-gametest', '300'
+}
+
+tasks.register('smokeEnchantmentIndustryGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Enchantment Industry material-tag parity and intentional process isolation.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runEnchantmentIndustryGameTestServer',
+            'run-enchantment-industry-gametest', '300'
+}
+
+tasks.register('smokeEnderTransmissionGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Ender Transmission remote kinetics and chunk-loader compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runEnderTransmissionGameTestServer',
+            'run-ender-transmission-gametest', '300'
+}
+
+tasks.register('smokeTfmgGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises TFMG magnetic, recipe, fluid, field, and Fusion Thruster compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runTfmgGameTestServer',
+            'run-tfmg-gametest', '300'
+}
+
+tasks.register('smokeOreExcavationGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Ore Excavation event and Magnetization deposit compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runOreExcavationGameTestServer',
+            'run-ore-excavation-gametest', '300'
+}
+
+tasks.register('smokeCreateOreExcavationGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Create Ore Excavation infinite Magnetization vein recipes.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCreateOreExcavationGameTestServer',
+            'run-create-ore-excavation-gametest', '300'
+}
+
+tasks.register('smokeCuriosGameTest', Exec) {
+    group = 'verification'
+    description = 'Supervises Curios equipment activation and master-disable compatibility.'
+    commandLine 'bash', 'scripts/run-gametest-gate.sh', 'runCuriosGameTestServer',
+            'run-curios-gametest', '300'
+}
+
+tasks.register('smokeClientNormal') {
+    group = 'verification'
+    description = 'Manual smoke test — client with hard dependencies only (no compat pack).'
+    dependsOn 'runClientMinimal'
+}
+
+tasks.register('smokeClientCompat') {
+    group = 'verification'
+    description = 'Manual smoke test — client with the full compatibility pack (Sodium/Iris/JEI/...).'
+    dependsOn 'runClient'
+}
+
+def isolatedClientSmoke = { String taskName, String runTask, String gameDirectory, String requiredMods ->
+    tasks.register(taskName, Exec) {
+        group = 'verification'
+        description = "Boots the isolated ${requiredMods} client profile to a rendered main menu."
+        commandLine 'bash', 'scripts/run-client-profile-smoke.sh', runTask, gameDirectory, requiredMods
+    }
+}
+isolatedClientSmoke('smokeClientJade', 'runJadeClient', 'run-client-jade', 'jade')
+isolatedClientSmoke('smokeClientTop', 'runTopClient', 'run-client-top', 'theoneprobe')
+isolatedClientSmoke('smokeClientRei', 'runReiClient', 'run-client-rei', 'roughlyenoughitems')
+isolatedClientSmoke('smokeClientEmi', 'runEmiClient', 'run-client-emi', 'emi')
+isolatedClientSmoke('smokeClientJer', 'runJerClient', 'run-client-jer', 'jei,jeresources')
+isolatedClientSmoke('smokeClientPonderCompat', 'runPonderCompatClient',
+        'run-client-ponder-compat', 'ponder,railways,copycats')
+isolatedClientSmoke('smokeClientSimulatedCoastersTrackStyles',
+        'runSimulatedCoastersTrackStylesClient',
+        'run-simulated-coasters-track-styles-client', 'simulatedcoasters,coasterssimulatedextratypes')
+isolatedClientSmoke('smokeClientCoastersMagnetized', 'runCoastersMagnetizedClient',
+        'run-client-coasters-magnetized', 'coastersmagnetized')
+isolatedClientSmoke('smokeClientCoastersEngineered', 'runCoastersEngineeredClient',
+        'run-client-coasters-engineered', 'coastersengineered,jade')
+isolatedClientSmoke('smokeClientCoastersExtras', 'runCoastersExtrasClient',
+        'run-client-coasters-extras', 'coasters_extras')
+isolatedClientSmoke('smokeClientSimulatedMissiles', 'runSimulatedMissilesClient',
+        'run-client-simulated-missiles', 'cbcaeronauticsmissiles,createbigcannons,create_radar')
+
+tasks.register('smokeOptionalClientProfiles', Exec) {
+    group = 'verification'
+    description = 'Boots HUD, recipe-viewer, Ponder, coaster-addon, and missile clients on isolated classpaths.'
+    commandLine 'bash', 'scripts/run-optional-client-profiles.sh'
+}
+
+tasks.register('releaseGate') {
+    group = 'verification'
+    description = 'Everything that must be green before tagging a release: build + GameTests + minimal server.'
+    dependsOn 'build', 'smokeGameTest', 'smokeRegressionGameTest', 'smokeServerMinimal'
+}
+
+tasks.register('verifyPlaytestBaselines', Exec) {
+    group = 'verification'
+    description = 'Fails when an automated playtest station lacks a tracked immutable baseline.'
+    commandLine 'bash', 'scripts/verify-playtest-baselines.sh'
+}
+
+tasks.named('check') { dependsOn 'verifyPlaytestBaselines' }
+
+tasks.register('releaseMatrixGate', Exec) {
+    group = 'verification'
+    description = 'Runs the release gate and all optional compatibility suites in isolated Gradle processes.'
+    commandLine 'bash', 'scripts/run-release-matrix-gate.sh'
+    environment 'MAG_SMOKE_SECONDS', smokeServerSeconds.toString()
+}
+
+tasks.register('reproduceLargeWorldIssue', Exec) {
+    group = 'verification'
+    description = 'Generate a fresh 2,000-chunk world and verify the GitHub issue #7 fix on a full server compat stack.'
+    commandLine 'bash', 'scripts/run-large-world-repro.sh'
+}
+
+tasks.register('performanceStress', Exec) {
+    group = 'verification'
+    description = 'Runs reproducible server-tick stress scenarios and writes JSON/CSV benchmark reports.'
+    commandLine 'bash', 'scripts/run-performance-stress.sh'
+}
+
+// L2 Library ships its public API as nested JARs. Extract the pinned compile API;
+// NeoForge loads the original nested libraries at runtime. Never bundle copies.
+def extractModularGolemsApi = tasks.register('extractModularGolemsApi', Sync) {
+    from { zipTree(configurations.modularGolemsLibraries.singleFile) }
+    include 'META-INF/jarjar/l2core-*.jar', 'META-INF/jarjar/l2serial-*.jar'
+    into layout.buildDirectory.dir('modular-golems-compile-api')
+}
+// Aeronautics 1.3.2 is distributed as an official jar-in-jar bundle. Its
+// standalone Maven coordinates are not published. Extract the unmodified APIs
+// for development; none of these dependencies is bundled in the release JAR.
+configurations { aeronauticsBundle }
+def extractAeronauticsBundle = tasks.register('extractAeronauticsBundle', Sync) {
+    def bundle = configurations.aeronauticsBundle
+    inputs.property('sha256', aeronautics_bundle_sha256)
+    doFirst {
+        def actual = java.security.MessageDigest.getInstance('SHA-256')
+                .digest(bundle.singleFile.bytes).encodeHex().toString()
+        if (actual != aeronautics_bundle_sha256) {
+            throw new GradleException("Aeronautics bundle SHA-256 mismatch: ${actual}")
+        }
+    }
+    from({ zipTree(bundle.singleFile) }) {
+        include 'META-INF/jarjar/dev.eriksonn.aeronautics.*.jar'
+        include 'META-INF/jarjar/dev.simulated_team.simulated.*.jar'
+        include 'META-INF/jarjar/dev.ryanhcode.offroad.*.jar'
+        eachFile { path = name }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('aeronautics-bundle')
+}
+def bundledAeroJar = { name ->
+    files(layout.buildDirectory.file("aeronautics-bundle/${name}")).builtBy(extractAeronauticsBundle)
+}
+
+dependencies {
+    aeronauticsBundle("maven.modrinth:create-aeronautics:${aeronautics_bundle_version}") { transitive = false }
+    sweepTwilightRuntime("curse.maven:the-twilight-forest-227639:7797302") { transitive = false }
+    sweepStorageRuntime("curse.maven:ironchest-228756:5491156") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-storage:${sophisticated_storage_test_version}") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-core:${sophisticated_core_test_version}") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:supplementaries:${supplementaries_test_version}") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:moonlight:${moonlight_test_version}") { transitive = false }
+    modularGolemsLibraries("maven.modrinth:l2library:640EOvKh") { transitive = false }
+    compileOnly(files(layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2core-3.0.8+15.jar'),
+            layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2serial-3.1.1.jar')).builtBy(extractModularGolemsApi))
+    compileOnly("maven.modrinth:modular-golems:zNXsPDeF") { transitive = false }
+    modularGolemsRuntime("maven.modrinth:modular-golems:zNXsPDeF") { transitive = false }
+    modularGolemsRuntime("maven.modrinth:l2library:640EOvKh") { transitive = false }
+    compileOnly("maven.modrinth:quark:8uDGRJCr") { transitive = false }
+    quarkRuntime("maven.modrinth:quark:8uDGRJCr") { transitive = false }
+    quarkRuntime("maven.modrinth:zeta:9GjNW2Gf") { transitive = false }
+    // Create + supporting libs
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    // Sable physics
+    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
+    implementation("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}")
+
+    // Create: Aeronautics + Simulated
+    // Their POMs incorrectly publish optional integrations (Curios, JEI,
+    // compasses, CC:Tweaked) as runtime transitives. The actual required stack is
+    // already declared explicitly above, so keep these two artifacts isolated.
+    if (aeronautics_version == '1.3.2') {
+        implementation(bundledAeroJar("dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}") { transitive = false }
+    }
+    if (simulated_version == '1.3.2') {
+        implementation(bundledAeroJar("dev.simulated_team.simulated.simulated-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
+    }
+
+    // AeroPortals is optional for users. Compile against its public transfer
+    // event so bindings can follow a relocated Sable plot, and load it only in
+    // the dedicated compatibility GameTest profile.
+    compileOnly("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
+    aeroportalsRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_test_file}") { transitive = false }
+    aeroportalsLegacyRuntime("curse.maven:create-aeroportals-1549100:${aeroportals_legacy_test_file}") {
+        transitive = false
+    }
+
+    // Immersive Aeronautics is optional for users. Compile against its internal
+    // transfer bridge solely for the real integration GameTest; production code
+    // reaches it through an optional @Pseudo mixin.
+    compileOnly("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
+    immersiveAeronauticsRuntime("curse.maven:immersive-aeronautics-1629108:${immersive_aeronautics_test_file}") { transitive = false }
+    immersiveAeronauticsRuntime("me.shedaniel.cloth:cloth-config-neoforge:15.0.140")
+
+    // Create: Coasters Simulated is optional for users. Compile against its cart
+    // resolver and load the real release only in the dedicated compatibility suite.
+    compileOnly("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+    simulatedCoastersRuntime("curse.maven:create-coasters-simulated-1601871:${simulated_coasters_test_file}") { transitive = false }
+    simulatedCoastersLegacyRuntime(
+            "curse.maven:create-coasters-simulated-1601871:${simulated_coasters_legacy_test_file}") {
+        transitive = false
+    }
+    // Track Styles is a presentation-layer Coasters addon. It does not add a
+    // new vehicle type, so Magnetization's cart behavior remains owned by the
+    // core Coasters bridge. Load the published addon in a combined isolated
+    // profile to catch mixin/anchor-metadata regressions without shipping it.
+    simulatedCoastersTrackStylesRuntime(
+            "curse.maven:coasters-simulated-track-styles-1642719:${simulated_coasters_track_styles_test_file}") {
+        transitive = false
+    }
+    compileOnly("curse.maven:coasters-magnetized-1642979:${coasters_magnetized_test_file}") { transitive = false }
+    coastersMagnetizedRuntime("curse.maven:coasters-magnetized-1642979:${coasters_magnetized_test_file}") { transitive = false }
+    compileOnly("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
+    coastersEngineeredRuntime("curse.maven:coasters-engineered-1643631:${coasters_engineered_test_file}") { transitive = false }
+    // Engineered owns both its goggles and Jade presentation. Keep Jade in this
+    // isolated loaded-mod profile so its optional plugin is actually linked.
+    coastersEngineeredRuntime("maven.modrinth:jade:15.10.6+neoforge")
+    compileOnly("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
+    coastersExtrasRuntime("curse.maven:create-coasters-extras-1649197:${coasters_extras_test_file}") { transitive = false }
+    coastersAdditionsRuntime("curse.maven:create-coasters-simulated-additions-1661497:${coasters_additions_test_file}") { transitive = false }
+    coastersAdditionsRuntime("maven.modrinth:interiors:${create_interiors_test_version}") { transitive = false }
+    ironworksRuntime("maven.modrinth:create-ironworks:${ironworks_test_version}") { transitive = false }
+    // Exact upstream audit artifacts, isolated from shipped dependencies.
+    compileOnly("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}") { transitive = false }
+    sweepAircraftRuntime("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}") { transitive = false }
+    sweepAircraftRuntime("maven.modrinth:aviator-dreams-reloaded:4Aa8QEq9") { transitive = false }
+    sweepMaterialsRuntime("dev.architectury:architectury-neoforge:13.0.8") { transitive = false }
+    sweepMaterialsRuntime("maven.modrinth:magnetizing:az3hmBKl") { transitive = false }
+    // Optional local workaround is test evidence only; never a shipped dependency.
+    if (providers.gradleProperty('magneticsCompatJar').isPresent()) {
+        def workaround = file(providers.gradleProperty('magneticsCompatJar').get())
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(workaround.bytes).encodeHex().toString()
+        if (digest != '2bbb042c7ebcb11647b87adfecd5629aba216f9eccc4bdc0495956457dfc0194') {
+            throw new GradleException('Unexpected Create Magnetics compatibility trial artifact hash')
+        }
+        // The supplied path may contain ':' (a JVM classpath separator on Linux).
+        def stagedDirectory = layout.buildDirectory.dir('compat-audit/local')
+        def stageWorkaround = tasks.register('stageMagneticsCompat', Copy) {
+            from workaround
+            into stagedDirectory
+            rename { 'magnetics-compat-trial.jar' }
+        }
+        sweepMagneticsRuntime(files(stagedDirectory.map { it.file('magnetics-compat-trial.jar') }).builtBy(stageWorkaround))
+    }
+    sweepMagneticsRuntime("curse.maven:createmagnetics-1457075:7667440") { transitive = false }
+    sweepMaterialsRuntime("curse.maven:ironchest-228756:5491156") { transitive = false }
+    ["macaws-doors:u7BRX44F", "macaws-fences-and-walls:jVdb0r4W", "macaws-bridges:aQ7rY7ng",
+     "macaws-trapdoors:StnP0RNi", "macaws-lights-and-lamps:5U2kQZIL", "macaws-windows:rQUE4LCz"].each {
+        sweepMaterialsRuntime("maven.modrinth:${it}") { transitive = false }
+    }
+    sweepBossRuntime("maven.modrinth:l_enders-cataclysm:PsPYpoCC") { transitive = false }
+    sweepBossRuntime("maven.modrinth:bosses-of-mass-destruction-forge:snhDYBxP") { transitive = false }
+    sweepBossRuntime("maven.modrinth:cerbons-api:5wbxkBQ1") { transitive = false }
+    sweepBossRuntime("maven.modrinth:geckolib:Grwn5rUB") { transitive = false }
+    sweepBossRuntime("maven.modrinth:cloth-config:izKINKFg") { transitive = false }
+    sweepBossRuntime("maven.modrinth:irons-spells-n-spellbooks:slKLosTb") { transitive = false }
+    sweepBossRuntime("maven.modrinth:irons-lib:lUwUKYPl") { transitive = false }
+    sweepBossRuntime("maven.modrinth:playeranimator:HJZB6bmA") { transitive = false }
+    sweepBossRuntime("maven.modrinth:lionfish-api:fTRMVgyZ") { transitive = false }
+    sweepBossRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:owo-lib:NMCHU6DZ") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:aether:K5X5qMwG") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:mekanism:5KzzycBT") { transitive = false }
+    sweepEquipmentRuntime("maven.modrinth:mekanism-tools:v5zlSE9s") { transitive = false }
+    // Published Reborn 21.1.0.1, Minecraft 1.21.1 NeoForge. Never bundled.
+    compileOnly("curse.maven:extra-golems-reborn-1456863:7922386") { transitive = false }
+    extraGolemsRebornRuntime("curse.maven:extra-golems-reborn-1456863:7922386") { transitive = false }
+
+    compileOnly("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+    createNewAgeRuntime("curse.maven:create-new-age-905861:${create_new_age_test_file}") { transitive = false }
+
+    // Create: Cosmonautics is optional. Its exact published jar is loaded only
+    // in the isolated compatibility suite; the production integration is
+    // registry/tag/recipe based and has no hard linkage to addon classes.
+    cosmonauticsRuntime("curse.maven:create-cosmonautics-1595491:${cosmonautics_test_file}") { transitive = false }
+
+    compileOnly("maven.modrinth:createaddition:${createaddition_test_version}")
+    createAdditionRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
+
+    immersiveEngineeringRuntime("maven.modrinth:immersiveengineering:${ie_test_version}") { transitive = false }
+    alexsCavesRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}") { transitive = false }
+    alexsCavesRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}") { transitive = false }
+
+    compileOnly("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
+    createTracksRuntime("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
+    if (offroad_test_version == '1.3.2') {
+        createTracksRuntime(bundledAeroJar("dev.ryanhcode.offroad.offroad-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        createTracksRuntime("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_test_version}") { transitive = false }
+    }
+
+    compileOnly("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
+    steamRailsRuntime("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
+
+    compileOnly("curse.maven:create-diesel-generators-869316:${diesel_generators_test_file}") { transitive = false }
+    dieselGeneratorsRuntime("curse.maven:create-diesel-generators-869316:${diesel_generators_test_file}") { transitive = false }
+
+    compileOnly("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
+    copycatsRuntime("maven.modrinth:UT2M39wf:${copycats_test_version}") { transitive = false }
+
+    compileOnly("curse.maven:create-enchantment-industry-688768:${enchantment_industry_test_file}") { transitive = false }
+    enchantmentIndustryRuntime("curse.maven:create-enchantment-industry-688768:${enchantment_industry_test_file}") { transitive = false }
+    enchantmentIndustryRuntime("curse.maven:create-dragons-plus-1216624:${create_dragons_plus_test_file}") { transitive = false }
+
+    compileOnly("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
+    enderTransmissionRuntime("curse.maven:create-ender-transmission-737302:${ender_transmission_test_file}") { transitive = false }
+
+    // Ore Excavation is optional. Compile against its public excavation-start
+    // event and load the real jar only in the isolated compatibility suite.
+    compileOnly("curse.maven:ore-excavation-250898:${ore_excavation_test_file}") { transitive = false }
+    oreExcavationRuntime("curse.maven:ore-excavation-250898:${ore_excavation_test_file}") { transitive = false }
+
+    // Create: Big Cannons and its projectile library are optional. Keep both
+    // artifacts out of normal client/server/build classpaths; this isolated
+    // runtime exists only for the real CBC projectile GameTests.
+    createBigCannonsRuntime("maven.modrinth:GWp4jCJj:${create_big_cannons_test_version}") { transitive = false }
+    createBigCannonsRuntime("maven.modrinth:B3pb093D:${ritchies_projectile_test_version}") { transitive = false }
+    compileOnly("curse.maven:create-simulated-missiles-create-aeronautics-1654531:${simulated_missiles_test_file}") { transitive = false }
+    simulatedMissilesRuntime("curse.maven:create-simulated-missiles-create-aeronautics-1654531:${simulated_missiles_test_file}") { transitive = false }
+    simulatedMissilesRuntime("curse.maven:create-radars-1152836:${create_radars_test_file}") { transitive = false }
+
+    // TerraBlender — biome injection (gates the Magnetic Anomaly biome into the
+    // overworld). Hard dep so the region registers correctly on game load.
+    implementation("maven.modrinth:terrablender:${terrablender_version}")
+
+    // Jade — optional HUD overlay. compileOnly so we can write the plugin without
+    // forcing Jade as a runtime dependency; the plugin class loads only when Jade
+    // is present (its mod scans classes for @WailaPlugin).
+    compileOnly("maven.modrinth:jade:15.10.6+neoforge")
+    jadeClientRuntime("maven.modrinth:jade:15.10.6+neoforge")
+
+    // WTHIT — alternative HUD. Same soft-dep pattern; plugin entry is declared in
+    // waila_plugins.json so the class only loads when WTHIT is present.
+    compileOnly("maven.modrinth:wthit:neo-12.10.2")
+    // Loaded into runClient so the WTHIT plugin path can be tested in dev.
+    // WTHIT has a hard dep on Bad Packets — without it WTHIT fails to load.
+    localRuntime("maven.modrinth:wthit:neo-12.10.2")
+    localRuntime("maven.modrinth:badpackets:neo-0.8.2")
+
+    // The One Probe — third HUD. Soft-dep via IMC.
+    compileOnly("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+    topClientRuntime("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+
+    // JEI — recipe browser. Soft-dep, plugin auto-discovered. Pulled from
+    // BlameJared's maven (api-only artifact), which is published with NeoForge-
+    // compatible mappings; the Modrinth mirror has classpath baggage that pulls
+    // Yarn intermediary stubs.
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_test_version}")
+    // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_test_version}")
+
+    // REI — alternative recipe browser. Soft-dep; plugin discovered through
+    // REI's @REIPluginClient annotation scanner.
+    compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}")
+    compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}")
+    reiClientRuntime("me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}")
+
+    // Just Enough Resources (JER) — JEI add-on that shows ore distributions and
+    // mob loot tables. Soft-dep; Magnetization invokes its adapter explicitly
+    // behind a ModList presence gate, so the JER imports remain unloaded when
+    // this optional dependency is absent.
+    compileOnly("maven.modrinth:just-enough-resources-jer:${jer_version}")
+    localRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
+    // Reproduce the exact JEI floor used by CreateSMP Polska and prove that all
+    // 28 synchronized charts reach JER's live registry on a real client.
+    jerClientRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_min_version}")
+    jerClientRuntime("maven.modrinth:just-enough-resources-jer:${jer_version}")
+
+    // EMI — third recipe viewer, common alongside JEI/REI. Soft-dep, plugin
+    // discovered via @EmiEntrypoint. Modrinth maven (no separate api artifact —
+    // single jar is fine for our compile usage).
+    //
+    // localRuntime intentionally commented out: JEI and EMI both shipped in the
+    // same dev runtime produces duplicate recipe overlays and conflicting hotkey
+    // bindings. The EMI plugin has been validated separately. To re-test it,
+    // un-comment the localRuntime line below AND comment out the JEI + JER
+    // localRuntime lines above.
+    compileOnly("maven.modrinth:emi:${emi_version}")
+    emiClientRuntime("maven.modrinth:emi:${emi_version}")
+    if (providers.gradleProperty('uiAuditMode').getOrElse('legacy') in ['legacy', 'emi']) {
+        uiAuditRuntime("maven.modrinth:emi:${emi_version}") { transitive = false }
+    }
+    if (providers.gradleProperty('uiAuditMode').getOrElse('legacy') == 'wthit') {
+        uiAuditRuntime("maven.modrinth:wthit:neo-12.10.2") { transitive = false }
+        uiAuditRuntime("maven.modrinth:badpackets:neo-0.8.2") { transitive = false }
+    }
+    uiAuditRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
+    validationAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
+    uiAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
+
+    // Curios API — slot extension framework. Soft-dep; our CurioItem capability
+    // registration is gated on ModList.get().isLoaded("curios"), so the missing
+    // class never resolves when Curios isn't installed.
+    compileOnly("maven.modrinth:curios:${curios_version}")
+    localRuntime("maven.modrinth:curios:${curios_version}")
+    gameTestRuntime("maven.modrinth:curios:${curios_version}")
+
+    // Patchouli — guide-book framework. Soft-dep, pure data-driven (book.json,
+    // category JSONs, entry JSONs). No Java code needed — Patchouli auto-
+    // registers the book item from the data/<modid>/patchouli_books/<name>/book.json
+    // file on its own. We only need the dep at runtime so the book displays.
+    localRuntime("maven.modrinth:patchouli:${patchouli_version}")
+
+    // === Soft-dep test mods (localRuntime only — pulled in for runClient to
+    // validate cross-mod tag entries + code integrations in-world). Comment
+    // out any line to drop that mod from the test session. ===
+
+    // Create: Crafts & Additions — kinetic ↔ FE bridge. Lets us test the FE/RF
+    // alternative power source: build a windmill → Alternator → wire → Magnetic
+    // Anchor → anchor activates without a redstone signal.
+    localRuntime("maven.modrinth:createaddition:${createaddition_test_version}")
+
+    // Immersive Engineering — tests our railgun + tesla-coil entries in the
+    // lightning_sources damage-type tag, plus steel/aluminum/Faraday armor in
+    // metal_armor, hammer/wirecutter/revolver/railgun in metal_tools.
+    localRuntime("maven.modrinth:immersiveengineering:${ie_test_version}")
+
+    // Alex's Caves (Unofficial Port) + Citadel — tests Magnetron + Ferrouslime
+    // as magnetizable entities, azure/scarlet neodymium ores as ferromagnetic,
+    // and the alexsCavesPotionMode config (BOTH/OURS_ONLY/THEIRS_ONLY).
+    // Citadel is AC's hard dep (must come before AC in classpath order).
+    localRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}")
+    localRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}")
+
+    // Applied Energistics 2 — needed to dev-test the meteorite Phase B AE2
+    // scan hook (task #289). Pure reflection-based detection in our code, so
+    // no compileOnly needed; AE2 only has to be on the runClient classpath
+    // for the chunk-scan to find real AE2 meteorites to bind onto. AE2 hard-
+    // deps on GuideME, which has to come along too.
+    localRuntime("maven.modrinth:guideme:${guideme_test_version}")
+    localRuntime("maven.modrinth:ae2:${ae2_test_version}")
+
+    // === 1.1.2 cross-mod tag-coverage smoke-test mods ===
+    // localRuntime only — they need to be present so the ferromagnetic_blocks /
+    // ferromagnetic tag refs in our datapack resolve to real blocks/items at
+    // tag-load time. Each entry covers a different category of integration
+    // (decorative metalwork, falling blocks, tech metals, etc.). Twilight Forest
+    // and Iron Chests have target-platform artifacts, but are not included in
+    // this profile. Optional tags alone do not verify their behavior.
+    localRuntime("maven.modrinth:macaws-doors:u7BRX44F")
+    localRuntime("maven.modrinth:macaws-fences-and-walls:jVdb0r4W")
+    localRuntime("maven.modrinth:macaws-bridges:aQ7rY7ng")
+    localRuntime("maven.modrinth:macaws-trapdoors:StnP0RNi")
+    localRuntime("maven.modrinth:macaws-lights-and-lamps:5U2kQZIL")
+    localRuntime("maven.modrinth:macaws-windows:rQUE4LCz")
+    // Supplementaries + its Moonlight lib. These MUST stay current with Sodium:
+    // Sodium 0.8 is a large rewrite from 0.6, and older Supplementaries builds
+    // (we were pinned to 3.6.4) target the OLD Sodium fluid renderer, so their
+    // `compat.CompatSodiumFluidRendererMixin` (@Inject require=1) matches 0 targets
+    // against Sodium 0.8 and hard-crashes the client at world load. Bumped to a
+    // Sodium-0.8-aware build. If you bump Sodium again, bump these to match.
+    localRuntime("maven.modrinth:supplementaries:${supplementaries_test_version}")
+    localRuntime("maven.modrinth:moonlight:${moonlight_test_version}") // Supplementaries hard dep
+    // Sodium — the renderer most users run. localRuntime so we validate our
+    // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
+    // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
+    // The Modrinth jar is a JarJar wrapper that doesn't unpack on the dev flat
+    // classpath, so we resolve it into sodiumWrapper, unwrap the real nested mod
+    // jars (unwrapSodium task), and add THOSE to localRuntime. Without this Iris
+    // crashes runClient with NoClassDefFoundError on Sodium's api.* classes.
+    sodiumWrapper("maven.modrinth:sodium:${sodium_version}")
+    localRuntime(fileTree(sodiumUnwrapDir.get().asFile) { include '*.jar'; builtBy unwrapSodium })
+    // Iris — shaders, on top of Sodium. localRuntime (client-only) so we validate
+    // our render layers under shaders in dev. Declared optional/CLIENT in the
+    // mods.toml; the runningDatagen guard above keeps it out of runData.
+    irisWrapper("maven.modrinth:iris:${iris_version}")
+    localRuntime(files(patchIrisMetadata.flatMap { it.archiveFile }).builtBy(patchIrisMetadata))
+    // Aether intentionally disabled — its transitive `accessories` mod has a
+    // broken mixin against this NeoForge build (EntityRenderers lambda
+    // numbering mismatch crashes during render setup). Re-enable when the
+    // upstream mod fixes it; tag coverage remains in place either way.
+    // localRuntime("maven.modrinth:aether:K5X5qMwG")
+    // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
+    localRuntime("maven.modrinth:sophisticated-storage:${sophisticated_storage_test_version}")
+    localRuntime("maven.modrinth:sophisticated-core:${sophisticated_core_test_version}") // Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}")
+    // create-new-age 1.2.0 declares an OPTIONAL computercraft dep with range
+    // [1.116.2,); NeoForge still enforces that range when CC is present. CC:Tweaked
+    // arrives as an optional Maven POM transitive of aeronautics + simulated at
+    // 1.115.1, which is below the range -> fatal pre-load. We force CC up to 1.116.2
+    // (a 1.21.1 build; CC is only an optional integration for all involved mods) in
+    // the resolutionStrategy near the top, so 1.2.0 loads cleanly.
+    localRuntime("maven.modrinth:create-new-age:IwtuwMZy") // 1.2.0+mc1.21.1
+
+    // Create: The Factory Must Grow (TFMG) — soft dep for gallium's aluminium
+    // sourcing and bidirectional Hydrogen/gas-tag compatibility. Present in the
+    // client pack and an isolated GameTest runtime; neither configuration ships.
+    // Original and Community Edition share mod id tfmg: load exactly one.
+    localRuntime(tfmg_test_dependency) { transitive = false }
+    tfmgRuntime(tfmg_test_dependency) { transitive = false }
+
+    // Create Ore Excavation — isolated recipe/data compatibility profile.
+    createOreExcavationRuntime("curse.maven:create-ore-excavation-649832:${create_ore_excavation_test_file}") {
+        transitive = false
+    }
+
+    // Full dedicated-server compatibility stack for the large-world issue #7
+    // reproducer. Gameplay integrations are inherited from the isolated
+    // runtimes above; these are the server-safe integrations and diagnostics
+    // that do not otherwise have a dedicated runtime configuration.
+    largeWorldReproRuntime("maven.modrinth:curios:${curios_version}")
+    largeWorldReproRuntime("maven.modrinth:patchouli:${patchouli_version}")
+    largeWorldReproRuntime("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+    largeWorldReproRuntime("maven.modrinth:chunky:${chunky_test_version}")
+    largeWorldReproRuntime("maven.modrinth:chunky-offline:${chunky_offline_test_version}")
+    largeWorldReproRuntime("maven.modrinth:lithium:${lithium_repro_version}")
+    largeWorldReproRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
+    // Benchmark support mods intentionally omit Chunky and Chunky Offline:
+    // their background generation would contaminate tick-sprint measurements.
+    stressRuntime("maven.modrinth:curios:${curios_version}")
+    stressRuntime("maven.modrinth:patchouli:${patchouli_version}")
+    stressRuntime("maven.modrinth:the-one-probe:1.21_neo-12.0.8")
+    stressRuntime("maven.modrinth:lithium:${lithium_repro_version}")
+    stressRuntime("maven.modrinth:modernfix:${modernfix_repro_version}")
+    // === Crash-repro deps (player's modpack StackOverflowError in
+    // DependencySorter.isCyclic at world create). Spartan pushes a tag-ref
+    // `#spartan_weaponry_unofficial:quivers` into both curios:back and
+    // curios:quiver; accessories_compat_layer's RuntimeTagModifier mirrors
+    // curios↔accessories slot tags wholesale (including tag refs); the
+    // combination plus our entries in shared curios slot tags closes a cycle.
+    // Loaded only here so we can repro + verify the fix; comment out after
+    // ship if undesired. ===
+    localRuntime("maven.modrinth:accessories:Fb55Fgjz")
+    localRuntime("maven.modrinth:accessories-compat-layer:JMgVNypu")
+    localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // accessories-compat-layer hard dep
+    localRuntime("maven.modrinth:spartan-weaponry-unofficial:${spartan_weaponry_test_version}")
+
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// Run unit tests against the same Minecraft / dep classpath as main, so tests
+// can reference Vec3, BlockPos, etc. without us having to re-stage dependencies.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+apply from: 'gradle/jammarr-compat.gradle'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    from(rootProject.file('LICENSE'))
+    manifest {
+        attributes([
+            'Specification-Title'     : mod_id,
+            'Specification-Vendor'    : mod_authors,
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : version,
+            'Implementation-Vendor'   : mod_authors,
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.register('verifyReleaseJar') {
+    group = 'verification'
+    description = 'Fails when the distributable jar is missing metadata or contains local/build-only files.'
+    dependsOn tasks.named('jar')
+    doLast {
+        final File archive = tasks.named('jar').get().archiveFile.get().asFile
+        final List<String> leaked = []
+        final List<String> missing = []
+        final List<String> packCoupling = []
+        final List<String> forbiddenPackIds = [
+                'createsmp polska', 'createsmp-polska', '1303396',
+                'create ground and air', 'create: ground and air',
+                'create-ground-and-air', '1563081'
+        ]
+        final java.util.zip.ZipFile zip = new java.util.zip.ZipFile(archive)
+        try {
+            ['LICENSE', 'META-INF/MANIFEST.MF', 'META-INF/neoforge.mods.toml',
+             'pack.mcmeta', 'logo.png',
+             'data/magnetization/curios/entities/player.json'].each { required ->
+                if (zip.getEntry(required) == null) missing << required
+            }
+            zip.entries().each { entry ->
+                final String name = entry.name
+                if (name.startsWith('.cache/') || name.contains('/.cache/')
+                        || name.startsWith('.gradle/') || name.contains('/.gradle/')
+                        || name == '.DS_Store' || name.endsWith('/.DS_Store')
+                        || name == 'Thumbs.db' || name.endsWith('/Thumbs.db')) {
+                    leaked << name
+                }
+                forbiddenPackIds.each { packId ->
+                    if (name.toLowerCase(java.util.Locale.ROOT).contains(packId)) {
+                        packCoupling << "${name}: ${packId}"
+                    }
+                }
+                if (!entry.directory) {
+                    final String content = new String(zip.getInputStream(entry).bytes,
+                            java.nio.charset.StandardCharsets.ISO_8859_1).toLowerCase(java.util.Locale.ROOT)
+                    forbiddenPackIds.each { packId ->
+                        if (content.contains(packId)) packCoupling << "${name}: ${packId}"
+                    }
+                }
+            }
+        } finally {
+            zip.close()
+        }
+        if (!missing.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: ${archive} is missing required release files: ${missing}")
+        }
+        if (!leaked.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: build-only files leaked into ${archive}: ${leaked}")
+        }
+        if (!packCoupling.isEmpty()) {
+            throw new GradleException(
+                    "verifyReleaseJar: modpack-specific runtime coupling leaked into ${archive}: ${packCoupling}")
+        }
+        logger.lifecycle("verifyReleaseJar: ${archive.name} contains required metadata, no build-only files, and no pack-specific runtime coupling.")
+    }
+}
+
+tasks.register('verifyNoRuntimeModpackCoupling') {
+    group = 'verification'
+    description = 'Rejects recommended-modpack names, slugs, and project IDs from shipped source/resource trees.'
+    final List<String> forbiddenPackIds = [
+            'createsmp polska', 'createsmp-polska', '1303396',
+            'create ground and air', 'create: ground and air',
+            'create-ground-and-air', '1563081'
+    ]
+    final ConfigurableFileTree runtimeJava = fileTree('src/main/java')
+    final ConfigurableFileTree runtimeResources = fileTree('src/main/resources') {
+        exclude '.cache/**'
+    }
+    final ConfigurableFileTree generatedResources = fileTree('src/generated/resources') {
+        exclude '.cache/**'
+    }
+    inputs.files(runtimeJava, runtimeResources, generatedResources)
+    doLast {
+        final List<String> coupling = []
+        [runtimeJava, runtimeResources, generatedResources].each { tree ->
+            tree.files.findAll { it.isFile() }.each { file ->
+                final String relative = rootProject.projectDir.toPath().relativize(file.toPath()).toString()
+                final String path = relative.toLowerCase(java.util.Locale.ROOT)
+                final String content = new String(file.bytes,
+                        java.nio.charset.StandardCharsets.ISO_8859_1).toLowerCase(java.util.Locale.ROOT)
+                forbiddenPackIds.each { marker ->
+                    if (path.contains(marker) || content.contains(marker)) {
+                        coupling << "${relative}: ${marker}"
+                    }
+                }
+            }
+        }
+        if (!coupling.isEmpty()) {
+            throw new GradleException(
+                    "verifyNoRuntimeModpackCoupling: shipped runtime source/resource coupling found: ${coupling}")
+        }
+        logger.lifecycle('verifyNoRuntimeModpackCoupling: runtime source/resources contain no recommended-modpack names, slugs, or project IDs.')
+    }
+}
+
+tasks.register('verifyRecommendedPackFixtures', Exec) {
+    group = 'verification'
+    description = 'Validates complete development-only recommended-pack manifests and individual-addon pins.'
+    commandLine 'python', 'scripts/verify-recommended-pack-fixtures.py'
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('verifyReleaseJar'), tasks.named('verifyNoRuntimeModpackCoupling'),
+            tasks.named('verifyRecommendedPackFixtures')
+}

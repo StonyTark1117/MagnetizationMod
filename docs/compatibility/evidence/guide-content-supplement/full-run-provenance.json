@@ -1,0 +1,69 @@
+{
+  "scope": "Independent resolution of all16full-run manifest sourcehashes",
+  "sources": {
+    "build.gradle": {
+      "sha256": "9075635885a0178408610d4f775b17d9a7560b3a1bea9a069ad8050fdac4b44d",
+      "verifiedSource": "git:3d1c78b3:build.gradle"
+    },
+    "gradle.properties": {
+      "sha256": "308b969a971bf5f59495cb7f8bc0e7a5527f652817f1b15197c5eaf1949a899b",
+      "verifiedSource": "gradle.properties"
+    },
+    "scripts/run-lifecycle-presentation-audit.sh": {
+      "sha256": "2e2be8df67ab33db45d571066c8b905a7892bc22b943ba6bbf26eb0814cf6014",
+      "verifiedSource": "docs/compatibility/evidence/guide-corrections/full-run-sources/run-lifecycle-presentation-audit.sh"
+    },
+    "scripts/summarize-lifecycle-presentation-audit.py": {
+      "sha256": "e9d8ff039494b7e4d7f225147cef7b8595b0f3b9bbac016b94d01284b000d956",
+      "verifiedSource": "scripts/summarize-lifecycle-presentation-audit.py"
+    },
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": {
+      "sha256": "83c9849539534b3b482dcae922b096020f14b1a7610a213e8c36f36375ea7b94",
+      "verifiedSource": "docs/compatibility/evidence/guide-corrections/full-run-sources/LifecyclePresentationAuditClient.java"
+    },
+    "src/main/java/com/stonytark/magnetization/client/GuideBookAudit.java": {
+      "sha256": "d7f83d4f7a6f65e71fb59442e7920c4b5a481e462c4752dcb3b954083f785f51",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/client/GuideBookAudit.java"
+    },
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": {
+      "sha256": "f0bc62228178e20807feb74350bace90151ac9cfbf0895b9c99f069a63efff8d",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java"
+    },
+    "src/main/java/com/stonytark/magnetization/client/CopycatsPonderMaterials.java": {
+      "sha256": "539233c74e26140473de9bb521f49e80a4b493f6d741c06f991095f542aa8ddd",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/client/CopycatsPonderMaterials.java"
+    },
+    "src/main/java/com/stonytark/magnetization/content/railgun/RailgunHandler.java": {
+      "sha256": "6ca58d8334040bf117b3958b4fd385eb12ce74c3b5a4972d8c762314ebeb8034",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/content/railgun/RailgunHandler.java"
+    },
+    "src/main/java/com/stonytark/magnetization/gametest/LifecyclePresentationAudit.java": {
+      "sha256": "7d197d13f4b7769e057afc699264f5f52c758cc66780d15581ecf66c4e228711",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/gametest/LifecyclePresentationAudit.java"
+    },
+    "src/main/java/com/stonytark/magnetization/network/CommonConfigSyncPayload.java": {
+      "sha256": "16b9ad9c5e2b6e2ad23a673298430e7b72952f5fd96f7cb1da6a7454dcc8a0c8",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/network/CommonConfigSyncPayload.java"
+    },
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": {
+      "sha256": "93d9e71d5ec073cabfb84ef0440daf26ce7a5b4f85c5fc90b34d1c8c836431d7",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java"
+    },
+    "src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java": {
+      "sha256": "76ae1470f59e721e3ec7ef573407f61278b9b7c0ad3d483a8b47a4258137ab9b",
+      "verifiedSource": "docs/compatibility/evidence/guide-corrections/full-run-sources/PonderSceneCatalog.java"
+    },
+    "src/main/resources/assets/magnetization/ponder/empty_workshop.nbt": {
+      "sha256": "ffcda66d27b0b8e57f65354c0c2990d0f8ad43d99a11ac59011113d3cbcb47ed",
+      "verifiedSource": "src/main/resources/assets/magnetization/ponder/empty_workshop.nbt"
+    },
+    "src/main/resources/assets/magnetization/lang/en_us.json": {
+      "sha256": "2743f2b4a0c08879af5d0461ee417d05fec1b12a5733a465f1e4f995ab6e6e9e",
+      "verifiedSource": "docs/compatibility/evidence/guide-corrections/full-run-sources/en_us.json"
+    },
+    "src/main/java/com/stonytark/magnetization/content/FieldManualGiver.java": {
+      "sha256": "9a1adfb8151876939134fd8808650fea1770cf5127f34af4a1abd68121ab4f1d",
+      "verifiedSource": "src/main/java/com/stonytark/magnetization/content/FieldManualGiver.java"
+    }
+  }
+}

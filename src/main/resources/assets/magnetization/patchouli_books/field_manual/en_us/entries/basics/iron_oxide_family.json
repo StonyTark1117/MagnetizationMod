@@ -9,6 +9,11 @@
       "text": "book.magnetization.entry.iron_oxide_family.intro.text"
     },
     {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.iron_oxide_family.intro.text.readable1.title",
+      "text": "book.magnetization.entry.iron_oxide_family.intro.text.readable1"
+    },
+    {
       "type": "patchouli:spotlight",
       "item": "magnetization:raw_maghemite",
       "text": "book.magnetization.entry.iron_oxide_family.maghemite",
@@ -59,8 +64,23 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.iron_oxide_family.oxidation.text.readable1.title",
+      "text": "book.magnetization.entry.iron_oxide_family.oxidation.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.iron_oxide_family.variants.title",
       "text": "book.magnetization.entry.iron_oxide_family.variants.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.iron_oxide_family.variants.text.continued1.title",
+      "text": "book.magnetization.entry.iron_oxide_family.variants.text.continued1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.iron_oxide_family.variants.text.continued2.title",
+      "text": "book.magnetization.entry.iron_oxide_family.variants.text.continued2"
     }
   ]
 }

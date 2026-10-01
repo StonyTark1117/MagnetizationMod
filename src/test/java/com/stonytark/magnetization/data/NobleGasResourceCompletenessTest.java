@@ -138,7 +138,7 @@ class NobleGasResourceCompletenessTest {
     }
 
     @Test
-    void gasDetectorHasAnimatedAssetsAndRecipe() {
+    void gasDetectorHasAnimatedAssetsAndRecipe() throws java.io.IOException {
         final JsonObject lang = json("assets/magnetization/lang/en_us.json");
         resource("assets/magnetization/models/item/gas_detector.json");
         resource("assets/magnetization/models/item/gas_detector_00.json");
@@ -161,7 +161,7 @@ class NobleGasResourceCompletenessTest {
                 "message.magnetization.gas_detector.safety.radon_clearance")) {
             assertTrue(lang.has(key), () -> "Missing Gas Detector exposure/safety translation " + key);
         }
-        assertTrue(lang.get("book.magnetization.entry.gas_detector.readout.text").getAsString()
+        assertTrue(GuideTextContents.chapter("gear/gas_detector", lang)
                         .contains("distance to leave"),
                 "Field Manual no longer explains the Gas Detector's safety-distance readout");
     }

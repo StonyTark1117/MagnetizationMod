@@ -16,13 +16,33 @@
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.construction.text.readable1.title",
+      "text": "book.magnetization.entry.tokamak.construction.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.tokamak.io.title",
       "text": "book.magnetization.entry.tokamak.io.text"
     },
     {
       "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.io.text.readable1.title",
+      "text": "book.magnetization.entry.tokamak.io.text.readable1"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.io.text.readable2.title",
+      "text": "book.magnetization.entry.tokamak.io.text.readable2"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.magnetization.entry.tokamak.cooling.title",
       "text": "book.magnetization.entry.tokamak.cooling.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.magnetization.entry.tokamak.cooling.text.readable1.title",
+      "text": "book.magnetization.entry.tokamak.cooling.text.readable1"
     }
   ]
 }

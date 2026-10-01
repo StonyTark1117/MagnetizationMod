@@ -26,14 +26,10 @@ import org.jetbrains.annotations.Nullable;
  * block with any ferromagnetic item (consumes one item from the stack and
  * resets the decay to full).
  *
- * <p>Phase A MVP: standalone block, no surrounding crater structure. The
- * gameplay loop is the decaying-field-with-refill — players who find one
- * have a window to harvest its field before it goes inert, then maintain
- * it indefinitely by feeding it.
- *
- * <p>Phase B (deferred): surround with a jigsaw crater structure of mixed
- * magnetic raw materials; add ChunkEvent.Load hook to also treat AE2's
- * meteor structures as field sources. Tracked separately.
+ * <p>MeteoriteCraterFeature creates natural impact sites. Cores can also be
+ * crafted from fragments or grown from Meteorite Saplings. AeMeteoriteScanner
+ * recognizes AE2 meteor structures as optional field sources without replacing
+ * their blocks. Players maintain a core’s decaying field by feeding it.
  */
 public final class MeteoriteCoreBlock extends Block implements EntityBlock {
 
