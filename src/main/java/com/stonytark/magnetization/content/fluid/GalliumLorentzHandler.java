@@ -35,6 +35,11 @@ public final class GalliumLorentzHandler {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
         if (level.getGameTime() % com.stonytark.magnetization.config.MagConfig.galliumCurrentTicks() != 0L) return;
 
+        // Avoid adding occupancy queries to the entirely field-free case. These
+        // registries are exactly the source categories consulted by nearestField.
+        final boolean fieldsPresent = com.stonytark.magnetization.physics.EmitterRegistry.hasNative(level)
+                || com.stonytark.magnetization.physics.EmitterRegistry.hasExternal(level)
+                || com.stonytark.magnetization.physics.MobileFieldRegistry.size(level) > 0;
         for (final BlockPos pos : GalliumRegistry.snapshot(level)) {
             final BlockState state = level.getBlockState(pos);
             if (!(state.getBlock() instanceof GalliumBlock || state.getBlock() instanceof MixedGalliumBlock)) {
@@ -44,7 +49,15 @@ public final class GalliumLorentzHandler {
             final int power = FluidRedstone.signal(state);
             if (power <= 0) continue; // no current → no Lorentz force
 
+            if (!fieldsPresent) continue;
+            com.stonytark.magnetization.physics.PerformanceDiagnostics.record(level,
+                    com.stonytark.magnetization.physics.PerformanceDiagnostics.Work.GALLIUM_ENTITY_QUERIES, 1);
+            final List<Entity> entities = level.getEntities((Entity) null, new AABB(pos), e -> true);
+            if (entities.isEmpty()) continue;
+
             final Vec3 center = Vec3.atCenterOf(pos);
+            com.stonytark.magnetization.physics.PerformanceDiagnostics.record(level,
+                    com.stonytark.magnetization.physics.PerformanceDiagnostics.Work.GALLIUM_FIELD_SEARCHES, 1);
             final MagneticField field = MagneticFields.nearestField(level, center);
             if (field == null) continue; // no field → no force
 
@@ -55,8 +68,6 @@ public final class GalliumLorentzHandler {
             final Vec3 dir = flat.normalize().scale(field.polarity().sign());
             final double mag = com.stonytark.magnetization.config.MagConfig.galliumCurrentSpeed() * (power / 15.0);
 
-            final AABB box = new AABB(pos);
-            final List<Entity> entities = level.getEntities((Entity) null, box, e -> true);
             for (final Entity ent : entities) {
                 ent.setDeltaMovement(ent.getDeltaMovement().add(dir.scale(mag)));
                 ent.hurtMarked = true; // force a velocity sync to the client

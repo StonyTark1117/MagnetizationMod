@@ -25,6 +25,73 @@ import java.util.UUID;
 public final class SteamRailsGameTests {
     private SteamRailsGameTests() {}
 
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "steamRailsSpatial")
+    public static void spatialCarriagesPreserveLiveMovementOrderAndCoupledForce(final GameTestHelper helper) {
+        final var level = helper.getLevel();
+        final var origin = Vec3.atCenterOf(helper.absolutePos(new net.minecraft.core.BlockPos(1, 80, 1)));
+        final var cars = new java.util.ArrayList<CarriageContraptionEntity>();
+        final var train = new Train(UUID.randomUUID(), UUID.randomUUID(), null, new java.util.ArrayList<>(), List.of(), false, 0);
+        final boolean master = MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.get();
+        final boolean reaction = MagConfig.STEAM_N_RAILS_FIELD_REACTION.get();
+        final double susceptibility = MagConfig.STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY.get();
+        try {
+            MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.set(true);
+            MagConfig.STEAM_N_RAILS_FIELD_REACTION.set(true);
+            MagConfig.STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY.set(1.0);
+            for (int i = 0; i < 40; i++) {
+                final var bogey = new com.simibubi.create.content.trains.entity.CarriageBogey(
+                        com.simibubi.create.AllBlocks.SMALL_BOGEY.get(), false, new net.minecraft.nbt.CompoundTag());
+                final var model = new com.simibubi.create.content.trains.entity.Carriage(bogey, null, 0);
+                model.train = train;
+                train.carriages.add(model);
+                final var car = new CarriageContraptionEntity(AllEntityTypes.CARRIAGE_CONTRAPTION.get(), level);
+                car.setCarriage(model);
+                car.setPos(origin.x + (i < 2 ? i + 1 : 0), origin.y + (i < 2 ? 0 : 64 + i * 16), origin.z);
+                car.setYRot(-90);
+                level.addFreshEntity(car);
+                cars.add(car);
+            }
+            final var field = new com.stonytark.magnetization.api.MagneticField(origin, new Vec3(0, 1, 0),
+                    com.stonytark.magnetization.api.MagneticPolarity.NORTH,
+                    com.stonytark.magnetization.api.MagneticStrength.WEAK,
+                    com.stonytark.magnetization.api.MagneticField.Shape.OMNIDIRECTIONAL, 0, .1);
+            final var box = net.minecraft.world.phys.AABB.ofSize(origin, 8, 8, 8);
+            final var orderedBounds = new java.util.ArrayList<net.minecraft.world.phys.AABB>();
+            MagSteamRailsCompat.forEachFieldTarget(level, orderedBounds::add);
+            final var reference = cars.stream().filter(car -> car.getBoundingBox().intersects(box))
+                    .sorted(java.util.Comparator.comparingInt(car -> orderedBounds.indexOf(car.getBoundingBox()))).toList();
+            helper.assertTrue(reference.size() == 2, "Expected two nearby fixture carriages");
+            helper.assertTrue(MagSteamRailsCompat.nearbyCarriages(level, box).equals(reference),
+                    "Spatial selection changed carriage order or coverage");
+            final var affected = new HashSet<UUID>();
+            for (final var car : reference) {
+                final Vec3 sample = car.position().add(0, car.getBbHeight() * .5, 0);
+                MagSteamRailsCompat.applyProjectedForce(train, car.getLookAngle(),
+                        com.stonytark.magnetization.physics.FieldApplicator.forceAt(level, field, sample), affected);
+            }
+            final double expected = train.speed;
+            helper.assertTrue(Math.abs(expected) > 1e-9, "Reference carriage force was zero");
+            train.speed = 0;
+            MagSteamRailsCompat.applyToTrains(level, field);
+            helper.assertTrue(Math.abs(train.speed - expected) < 1e-10,
+                    "Spatial query changed the coupled train impulse");
+            cars.get(0).setPos(origin.x, origin.y + 300, origin.z);
+            cars.get(20).setPos(origin.x + 3, origin.y, origin.z);
+            final var moved = MagSteamRailsCompat.nearbyCarriages(level, box);
+            helper.assertTrue(moved.size() == 2 && moved.contains(cars.get(20)) && !moved.contains(cars.get(0)),
+                    "Same-tick movement left stale spatial candidates");
+            cars.get(20).discard();
+            helper.assertTrue(!MagSteamRailsCompat.nearbyCarriages(level, box).contains(cars.get(20)),
+                    "Removed carriage remained in spatial candidates");
+            helper.succeed();
+        } finally {
+            cars.forEach(net.minecraft.world.entity.Entity::discard);
+            MagConfig.STEAM_N_RAILS_COMPAT_ENABLED.set(master);
+            MagConfig.STEAM_N_RAILS_FIELD_REACTION.set(reaction);
+            MagConfig.STEAM_N_RAILS_TRAIN_SUSCEPTIBILITY.set(susceptibility);
+        }
+    }
+
     @GameTest(template = "empty", timeoutTicks = 40, batch = "steamRailsTrainCompat")
     public static void coupledTrainReceivesOneRailProjectedImpulse(final GameTestHelper helper) {
         final boolean originalEnabled = MagConfig.STEAM_N_RAILS_FIELD_REACTION.get();

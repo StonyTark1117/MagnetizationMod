@@ -7,6 +7,9 @@
 - Refresh development/test dependency pins and align the development pack with isolated compatibility profiles while retaining published user minimums. Use the official Aeronautics 1.3.2 bundle for development APIs and adapt the Engineered test fixture to both supported API shapes. See [version and validation details](docs/compatibility/dev-pin-refresh.md).
 
 - Update the development/test TFMG pin to Community Edition 1.3.2a (CurseForge file 9013465), while retaining the optional original-TFMG minimum `[1.2.0,)`. Correct the September 30 test attribution to original 1.2.0; retain separate evidence for each distribution and assert the loaded version in the test profile. Keep original Converter material tags: CE removed that block. See the [TFMG pin audit](docs/compatibility/tfmg-pin-update.md).
+- Reduce background external-field work with conservative recipient bounds, lazy ship preparation, direct candidate lists, and immediate disabled-relay exits. Candidate budgets and force order are retained.
+- Avoid redundant machine state/reflection work, query occupied emitter buckets for creep, and skip unnecessary MR/gallium/fluid processing. Magnetized-fluid sources now retain a coherent spatial index across removal and chunk reload.
+- Select nearby train carriages for large populations while preserving live movement and the once-per-train force rule. Detailed optimization and validation evidence: [field performance pass](docs/performance-evidence/field-pass-2026-09-30/progress.md).
 
 - Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.
 

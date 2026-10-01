@@ -34,6 +34,17 @@ public final class EmitterRegistry {
     private static final class LevelIndex extends HashMap<Long, ChunkBucket> {
         private int nativeCount;
         private int externalCount;
+        private final java.util.NavigableMap<Integer, java.util.NavigableMap<Integer, ChunkBucket>> rows =
+                new java.util.TreeMap<>();
+
+        private ChunkBucket getOrCreate(final long key) {
+            return computeIfAbsent(key, ignored -> {
+                final ChunkBucket created = new ChunkBucket();
+                rows.computeIfAbsent(ChunkPos.getX(key), x -> new java.util.TreeMap<>())
+                        .put(ChunkPos.getZ(key), created);
+                return created;
+            });
+        }
     }
 
     private static final class ChunkBucket {
@@ -71,7 +82,7 @@ public final class EmitterRegistry {
                                                          final Collection<BlockPos> positions) {
         final long key = chunkPos.toLong();
         final LevelIndex chunks = BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex());
-        final ChunkBucket bucket = chunks.computeIfAbsent(key, ignored -> new ChunkBucket());
+        final ChunkBucket bucket = chunks.getOrCreate(key);
         chunks.externalCount -= bucket.externalEmitters.size();
         if (positions.isEmpty()) {
             bucket.externalEmitters = Collections.emptySet();
@@ -144,6 +155,33 @@ public final class EmitterRegistry {
         return result;
     }
 
+    /** Occupied chunks within the same square expansion used by fluid discovery.
+     * Ordered rows retain anchor order, then ascending X/Z, including overlap
+     * deduplication. Only intersecting occupied buckets are visited. */
+    public static synchronized Set<Long> occupiedChunksNear(final Level level,
+            final Set<Long> anchors, final int radiusChunks, final boolean external) {
+        if (radiusChunks < 0) throw new IllegalArgumentException("Negative chunk radius");
+        final LevelIndex chunks = BY_LEVEL.get(level);
+        if (anchors.isEmpty() || chunks == null
+                || (external ? chunks.externalCount : chunks.nativeCount) == 0) return Set.of();
+        final Set<Long> result = new LinkedHashSet<>();
+        for (final long anchor : anchors) {
+            final int x = ChunkPos.getX(anchor), z = ChunkPos.getZ(anchor);
+            for (final var row : chunks.rows.subMap(x - radiusChunks, true, x + radiusChunks, true).entrySet()) {
+                for (final var entry : row.getValue().subMap(z - radiusChunks, true, z + radiusChunks, true).entrySet()) {
+                    if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                        PerformanceDiagnostics.record(server, PerformanceDiagnostics.Work.EMITTER_BUCKETS_INSPECTED, 1);
+                    }
+                    final ChunkBucket bucket = entry.getValue();
+                    if (!(external ? bucket.externalEmitters : bucket.nativeEmitters).isEmpty()) {
+                        result.add(ChunkPos.asLong(row.getKey(), entry.getKey()));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     /** Native positions from an explicit target-local chunk set. */
     public static synchronized Set<BlockPos> snapshotNativeInChunks(
             final Level level, final Collection<Long> chunkKeys) {
@@ -178,6 +216,26 @@ public final class EmitterRegistry {
         final LevelIndex chunks = BY_LEVEL.get(level);
         if (chunks == null || chunks.isEmpty()) return Collections.emptySet();
         final Set<BlockPos> result = new LinkedHashSet<>(Math.min(limit, 256));
+        for (final long key : chunkKeys) {
+            final ChunkBucket bucket = chunks.get(key);
+            if (bucket == null) continue;
+            for (final BlockPos pos : bucket.externalEmitters) {
+                result.add(pos);
+                if (result.size() >= limit) return result;
+            }
+        }
+        return result;
+    }
+
+    /** Bounded defensive candidate list in caller chunk order. A set of chunk
+     * keys guarantees uniqueness: each position belongs to exactly one bucket,
+     * so no intermediate position set is necessary. */
+    public static synchronized java.util.List<BlockPos> snapshotExternalListInChunks(
+            final Level level, final Set<Long> chunkKeys, final int limit) {
+        if (limit <= 0 || chunkKeys.isEmpty()) return java.util.List.of();
+        final LevelIndex chunks = BY_LEVEL.get(level);
+        if (chunks == null || chunks.externalCount == 0) return java.util.List.of();
+        final java.util.List<BlockPos> result = new java.util.ArrayList<>(Math.min(limit, 256));
         for (final long key : chunkKeys) {
             final ChunkBucket bucket = chunks.get(key);
             if (bucket == null) continue;
@@ -244,12 +302,20 @@ public final class EmitterRegistry {
 
     private static ChunkBucket bucket(final Level level, final long chunkKey) {
         return BY_LEVEL.computeIfAbsent(level, ignored -> new LevelIndex())
-                .computeIfAbsent(chunkKey, ignored -> new ChunkBucket());
+                .getOrCreate(chunkKey);
     }
 
     private static void removeEmpty(final Level level, final LevelIndex chunks,
                                     final long key, final ChunkBucket bucket) {
-        if (bucket.isEmpty()) chunks.remove(key);
+        if (bucket.isEmpty()) {
+            chunks.remove(key);
+            final int x = ChunkPos.getX(key);
+            final var row = chunks.rows.get(x);
+            if (row != null) {
+                row.remove(ChunkPos.getZ(key));
+                if (row.isEmpty()) chunks.rows.remove(x);
+            }
+        }
         if (chunks.isEmpty()) BY_LEVEL.remove(level);
     }
 }

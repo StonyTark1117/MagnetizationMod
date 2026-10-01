@@ -14,6 +14,8 @@ import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -99,15 +101,16 @@ public final class ExternalEmitterTracker {
         final TargetSchedule schedule = scheduleNearActiveTargets(server);
         PerformanceDiagnostics.record(server, Work.EMITTER_CANDIDATES, schedule.candidates.size());
         LAST_CANDIDATES.put(server, schedule.candidates.size());
-        final int applied = applyBudgeted(server, schedule.candidates, applicationBudget());
+        final int applied = applyBudgeted(server, schedule.candidates, applicationBudget(), schedule.recipients);
         LAST_APPLIED.put(server, applied);
         PerformanceDiagnostics.record(server, Work.FIELDS_APPLIED, applied);
         EnderFieldRelayCompat.apply(server, schedule.chunkKeys);
     }
 
     private static TargetSchedule scheduleNearActiveTargets(final ServerLevel server) {
-        final List<ChunkBounds> targets = gatherTargets(server);
-        if (targets.isEmpty()) return new TargetSchedule(List.of(), Set.of());
+        final ExternalFieldTargets recipients = new ExternalFieldTargets();
+        final List<ChunkBounds> targets = gatherTargets(server, recipients);
+        if (targets.isEmpty()) return new TargetSchedule(List.of(), Set.of(), recipients);
 
         final int start = Math.floorMod(TARGET_CURSOR.getOrDefault(server, 0), targets.size());
         final int targetCount = Math.min(MAX_TARGETS_PER_TICK, targets.size());
@@ -118,20 +121,25 @@ public final class ExternalEmitterTracker {
             addChunkKeys(chunkKeys, targets.get((start + i) % targets.size()));
         }
         TARGET_CURSOR.put(server, (start + targetCount) % targets.size());
-        return new TargetSchedule(new ArrayList<>(EmitterRegistry.snapshotExternalInChunks(
-                server, chunkKeys, MAX_CANDIDATES_PER_TICK)), chunkKeys);
+        return new TargetSchedule(EmitterRegistry.snapshotExternalListInChunks(
+                server, chunkKeys, MAX_CANDIDATES_PER_TICK), chunkKeys, recipients);
     }
 
-    private static List<ChunkBounds> gatherTargets(final ServerLevel server) {
+    private static List<ChunkBounds> gatherTargets(final ServerLevel server, final ExternalFieldTargets recipients) {
         final Set<ChunkBounds> targets = new LinkedHashSet<>();
         int discovered = 0;
         final java.util.function.Predicate<Entity> magnetizable = FieldApplicator.magnetizableTargets(server);
+        final boolean portalProjection = com.stonytark.magnetization.config.MagConfig.immersivePortalsCompatEnabled()
+                && net.neoforged.fml.ModList.get().isLoaded("immersive_portals_core");
         for (final Entity entity : server.getAllEntities()) {
+            if (portalProjection && com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat
+                    .isFieldAperture(entity)) recipients.add(entity.getBoundingBox());
             PerformanceDiagnostics.record(server, Work.ENTITIES_INSPECTED, 1);
             if (magnetizable.test(entity)) {
                 discovered++;
                 PerformanceDiagnostics.record(server, Work.ELIGIBLE_ENTITIES, 1);
                 targets.add(around(entity.getX(), entity.getZ(), MAX_EXTERNAL_FIELD_RANGE));
+                recipients.add(entity.getBoundingBox());
             }
         }
 
@@ -142,6 +150,7 @@ public final class ExternalEmitterTracker {
                         || ship.getMassTracker().isInvalid() || ship.getMassTracker().getMass() <= 0.0d) continue;
                 discovered++;
                 final BoundingBox3dc box = ship.boundingBox();
+                recipients.add(new AABB(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()));
                 targets.add(bounds(box.minX() - MAX_EXTERNAL_FIELD_RANGE,
                         box.maxX() + MAX_EXTERNAL_FIELD_RANGE,
                         box.minZ() - MAX_EXTERNAL_FIELD_RANGE,
@@ -149,20 +158,30 @@ public final class ExternalEmitterTracker {
             }
         }
 
+        final Set<Long> fluidSections = new java.util.HashSet<>();
         for (final BlockPos pos : FerrofluidSourceRegistry.snapshot(server)) {
             discovered++;
             targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
+            fluidSections.add(SectionPos.asLong(pos));
         }
         for (final BlockPos pos : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
             discovered++;
             targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
+            fluidSections.add(SectionPos.asLong(pos));
         }
+        for (final long key : fluidSections) {
+            final SectionPos section = SectionPos.of(key);
+            recipients.add(new AABB(section.minBlockX(), section.minBlockY(), section.minBlockZ(),
+                    section.minBlockX() + 16, section.minBlockY() + 16, section.minBlockZ() + 16));
+        }
+        com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat
+                .forEachFieldTarget(server, recipients::add);
         PerformanceDiagnostics.record(server, Work.TARGETS_DISCOVERED, discovered);
         return new ArrayList<>(targets);
     }
 
     private static int applyBudgeted(final ServerLevel server, final List<BlockPos> candidates,
-                                     final int budget) {
+                                     final int budget, final ExternalFieldTargets recipients) {
         if (budget <= 0 || candidates.isEmpty()) return 0;
         final int start = Math.floorMod(CANDIDATE_CURSOR.getOrDefault(server, 0), candidates.size());
         final int attempts = Math.min(budget, candidates.size());
@@ -175,6 +194,12 @@ public final class ExternalEmitterTracker {
                 continue;
             }
             if (!ExternalFieldCompat.isSupportedEmitter(state)) continue;
+            // Keep skipped attempts in the same rotating budget: culling must
+            // not increase the frequency/force of the remaining emitters.
+            if (!recipients.mayReach(pos, ExternalFieldCompat.maximumFieldRange(state))) {
+                PerformanceDiagnostics.record(server, Work.FIELD_BOUNDS_REJECTIONS, 1);
+                continue;
+            }
             final MagneticField field = ExternalFieldCompat.currentField(server, pos, state);
             if (field == null) continue;
             if (ExternalFieldCompat.shipsOnly(state)) {
@@ -217,7 +242,8 @@ public final class ExternalEmitterTracker {
     }
 
     private record ChunkBounds(int minX, int maxX, int minZ, int maxZ) {}
-    private record TargetSchedule(List<BlockPos> candidates, Collection<Long> chunkKeys) {}
+    private record TargetSchedule(List<BlockPos> candidates, Collection<Long> chunkKeys,
+                                  ExternalFieldTargets recipients) {}
 
     private static ChunkBounds around(final double x, final double z, final int radius) {
         return bounds(x - radius, x + radius, z - radius, z + radius);

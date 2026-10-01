@@ -89,9 +89,10 @@ public final class MrFluidHardenHandler {
      * later wireless hardening mode. The direct-neighbour query closes the brief
      * ordering window before the conductive-fluid network writes its POWER state. */
     private static boolean isActivated(final ServerLevel server, final BlockPos pos, final BlockState state) {
-        return MagneticFields.isInField(server, pos)
-                || FluidRedstone.signal(state) > 0
-                || server.hasNeighborSignal(pos);
+        if (FluidRedstone.signal(state) > 0) return true;
+        com.stonytark.magnetization.physics.PerformanceDiagnostics.record(server,
+                com.stonytark.magnetization.physics.PerformanceDiagnostics.Work.MR_FLUID_FIELD_SEARCHES, 1);
+        return MagneticFields.isInField(server, pos) || server.hasNeighborSignal(pos);
     }
 
     /** Flood the connected MR-fluid body from {@code start}, converting each cell

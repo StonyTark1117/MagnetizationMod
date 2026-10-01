@@ -24,7 +24,6 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,15 +132,12 @@ public final class FerrofluidCreepHandler {
      *  cells (so a path doesn't act as its own magnet). */
     private static List<Magnet> gatherMagnets(final ServerLevel server, final List<BlockPos> anchors) {
         final List<Magnet> magnets = new ArrayList<>();
-        final Set<Long> nativeChunks = new LinkedHashSet<>();
-        final Set<Long> externalChunks = new LinkedHashSet<>();
         final Set<Long> occupied = FerrofluidChunkSearch.occupiedChunks(anchors);
-        final boolean nativePresent = EmitterRegistry.hasNative(server);
-        final boolean externalPresent = EmitterRegistry.hasExternal(server);
-        if (nativePresent) FerrofluidChunkSearch.expand(nativeChunks, occupied, 512);
-        if (externalPresent) FerrofluidChunkSearch.expand(externalChunks, occupied, (int) MagneticStrength.EXTREME.range());
-        PerformanceDiagnostics.record(server, Work.NATIVE_CHUNK_ATTEMPTS, nativePresent ? 4225L * occupied.size() : 0L);
-        PerformanceDiagnostics.record(server, Work.EXTERNAL_CHUNK_ATTEMPTS, externalPresent ? 25L * occupied.size() : 0L);
+        final Set<Long> nativeChunks = EmitterRegistry.occupiedChunksNear(server, occupied, 512 / 16, false);
+        final Set<Long> externalChunks = EmitterRegistry.occupiedChunksNear(
+                server, occupied, (int) MagneticStrength.EXTREME.range() / 16, true);
+        PerformanceDiagnostics.record(server, Work.NATIVE_CHUNK_ATTEMPTS, nativeChunks.size());
+        PerformanceDiagnostics.record(server, Work.EXTERNAL_CHUNK_ATTEMPTS, externalChunks.size());
         final Set<BlockPos> candidates = new HashSet<>(
                 EmitterRegistry.snapshotNativeInChunks(server, nativeChunks));
         candidates.addAll(EmitterRegistry.snapshotExternalInChunks(
@@ -240,6 +236,8 @@ public final class FerrofluidCreepHandler {
      *  opposing-pole pool (what it's attracted to) but never its own-pole pool;
      *  plain by any magnet. */
     private static void recedeUnsupported(final ServerLevel server, final List<Magnet> magnets) {
+        if (FerrofluidCreepRegistry.isEmpty(server)) return;
+        PerformanceDiagnostics.record(server, Work.RECESSION_SETUPS, 1);
         // The player's own fluid — source registry entries that aren't creep cells.
         final Set<BlockPos> originals = new HashSet<>();
         for (final BlockPos p : FerrofluidSourceRegistry.snapshot(server)) {

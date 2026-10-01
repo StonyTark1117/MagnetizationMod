@@ -44,13 +44,10 @@ public final class MagnetizedFerrofluidFieldHandler {
         final Map<BlockPos, MagneticPolarity> sources = MagnetizedFerrofluidRegistry.forLevel(server);
         if (sources.isEmpty()) return;
 
-        // Broad-phase early-out: every cell emits the same MEDIUM-range field, so a pool
-        // of N source cells fires N independent FieldApplicator.apply() sweeps each pass.
-        // If nothing magnetisable (a Sable ship or an entity) lies within the pool's
-        // bounding box expanded by that range, all N sweeps are no-ops — detect that once
-        // and skip them. The registry-healing prune below still runs every pass. (Exact
-        // same result: when something IS in range, every cell applies as before.)
-        final boolean anyTarget = anyMagnetisableNear(server, sources.keySet());
+        // Cache a conservative recipient query per occupied 16x16x16 section.
+        // Iterate the original source view below: regrouping the application
+        // loop itself would change force ordering and shared ship budget usage.
+        final Map<Long, Boolean> activeSections = new java.util.HashMap<>();
 
         final List<BlockPos> stale = new ArrayList<>();
         for (final Map.Entry<BlockPos, MagneticPolarity> e : sources.entrySet()) {
@@ -61,30 +58,25 @@ public final class MagnetizedFerrofluidFieldHandler {
                 stale.add(pos);
                 continue;
             }
-            if (!anyTarget) continue; // nothing in reach — the apply would do nothing
+            if (!activeSections.computeIfAbsent(net.minecraft.core.SectionPos.asLong(pos),
+                    key -> anyMagnetisableNear(server, net.minecraft.core.SectionPos.of(key)))) continue;
             final MagneticField field = new MagneticField(
                     Vec3.atCenterOf(pos), new Vec3(0, 1, 0),
                     e.getValue(), MagneticStrength.MEDIUM, MagneticField.Shape.OMNIDIRECTIONAL);
+            com.stonytark.magnetization.physics.PerformanceDiagnostics.record(server,
+                    com.stonytark.magnetization.physics.PerformanceDiagnostics.Work.FLUID_FIELD_APPLICATIONS, 1);
             FieldApplicator.apply(server, field);
         }
         for (final BlockPos pos : stale) MagnetizedFerrofluidRegistry.remove(server, pos);
     }
 
-    /** True if any Sable ship or entity sits within the cells' bounding box expanded by
-     *  the MEDIUM field range — i.e. within reach of at least one cell's field. One union
-     *  query replaces the per-cell broad phase. Conservative on entities (any entity, not
-     *  just magnetisable) so it never under-reports and drops a real effect. */
-    private static boolean anyMagnetisableNear(final ServerLevel server, final java.util.Set<BlockPos> cells) {
-        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
-        for (final BlockPos p : cells) {
-            if (p.getX() < minX) minX = p.getX();
-            if (p.getX() > maxX) maxX = p.getX();
-            if (p.getY() < minY) minY = p.getY();
-            if (p.getY() > maxY) maxY = p.getY();
-            if (p.getZ() < minZ) minZ = p.getZ();
-            if (p.getZ() > maxZ) maxZ = p.getZ();
-        }
+    /** Conservative section bounds include all sources, ships and entities
+     * (including portal apertures), with no stale per-tick target cache. */
+    private static boolean anyMagnetisableNear(final ServerLevel server, final net.minecraft.core.SectionPos section) {
+        com.stonytark.magnetization.physics.PerformanceDiagnostics.record(server,
+                com.stonytark.magnetization.physics.PerformanceDiagnostics.Work.FLUID_TARGET_QUERIES, 1);
+        final int minX = section.minBlockX(), minY = section.minBlockY(), minZ = section.minBlockZ();
+        final int maxX = minX + 15, maxY = minY + 15, maxZ = minZ + 15;
         final double r = MagneticStrength.MEDIUM.range();
         final AABB box = new AABB(minX - r, minY - r, minZ - r, maxX + 1 + r, maxY + 1 + r, maxZ + 1 + r);
 

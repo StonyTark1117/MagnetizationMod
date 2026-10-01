@@ -37,7 +37,9 @@ public final class MagneticFields {
         }
 
         final double wr = MagneticStrength.WEAK.range();
-        for (final BlockPos p : MagnetizedFerrofluidRegistry.forLevel(level).keySet()) {
+        final var fluidSources = MagnetizedFerrofluidRegistry.snapshotNear(level, target, (int) Math.ceil(wr));
+        PerformanceDiagnostics.record(level, PerformanceDiagnostics.Work.FLUID_FIELD_CANDIDATES, fluidSources.size());
+        for (final BlockPos p : fluidSources) {
             if (Vec3.atCenterOf(p).distanceToSqr(pos) <= wr * wr) return true;
         }
         return false;

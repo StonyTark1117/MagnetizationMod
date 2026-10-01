@@ -21,8 +21,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -119,6 +117,17 @@ public final class ExternalFieldCompat {
         return id != null && "alexscaves".equals(id.getNamespace());
     }
 
+    /** Upper bound without querying power, energy, or a block entity. Adapters
+     * with a live custom radius (Alex's Caves) retain the uncullable fallback. */
+    public static double maximumFieldRange(final BlockState state) {
+        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        if (id == null) return Double.POSITIVE_INFINITY;
+        return switch (id.getNamespace()) {
+            case "create_new_age", "immersiveengineering", "createaddition", "tfmg" -> MagneticStrength.EXTREME.range();
+            default -> Double.POSITIVE_INFINITY;
+        };
+    }
+
     public static boolean isImmersiveEngineeringRailgunShot(final net.minecraft.world.entity.Entity entity) {
         final ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return id != null && id.getNamespace().equals("immersiveengineering")
@@ -183,15 +192,15 @@ public final class ExternalFieldCompat {
 
     private static @Nullable MagneticField immersiveEngineeringField(final Level level, final BlockPos pos,
                                                                      final BlockState state, final String path) {
+        // The pulse schedule is independent of live energy/redstone state. Eight
+        // ticks out of ten cannot emit, so avoid even the block-entity lookup.
+        if (path.equals("tesla_coil") && level.getGameTime() % 10L >= 2L) return null;
         final BlockEntity blockEntity = blockEntity(level, pos);
         if (blockEntity == null) return null;
         final double ratio = energyRatio(blockEntity);
         if (ratio <= 0.0d) return null;
         if (path.equals("tesla_coil")) {
-            if (!invokeBooleanWithInt(blockEntity, "canRun", 1, redstoneEnabled(level, pos, blockEntity))) return null;
-            // IE's coil is a discharge machine, so project a brief field pulse rather
-            // than turning stored FE into an uninterrupted permanent field.
-            if (level.getGameTime() % 10L >= 2L) return null;
+            if (!invokeBooleanWithInt(blockEntity, "canRun", 1, () -> redstoneEnabled(level, pos, blockEntity))) return null;
         } else if (!redstoneEnabled(level, pos, blockEntity)) {
             return null;
         }
@@ -242,7 +251,7 @@ public final class ExternalFieldCompat {
     }
 
     private static boolean redstoneEnabled(final Level level, final BlockPos pos, final BlockEntity blockEntity) {
-        final boolean powered = invokeBoolean(blockEntity, "isRSPowered", hasNeighborSignal(level, pos));
+        final boolean powered = invokeBooleanOrElse(blockEntity, "isRSPowered", () -> hasNeighborSignal(level, pos));
         final boolean inverted = readBooleanField(blockEntity, "redstoneControlInverted", false);
         return powered != inverted;
     }
@@ -260,24 +269,10 @@ public final class ExternalFieldCompat {
     }
 
     private static double energyRatio(final BlockEntity blockEntity) {
-        for (Class<?> type = blockEntity.getClass(); type != null; type = type.getSuperclass()) {
-            for (final Field field : type.getDeclaredFields()) {
-                try {
-                    field.setAccessible(true);
-                    final Object storage = field.get(blockEntity);
-                    if (storage == null) continue;
-                    final Method stored = storage.getClass().getMethod("getEnergyStored");
-                    final Method capacity = storage.getClass().getMethod("getMaxEnergyStored");
-                    final Object storedValue = stored.invoke(storage);
-                    final Object capacityValue = capacity.invoke(storage);
-                    if (storedValue instanceof Number have && capacityValue instanceof Number max
-                            && max.doubleValue() > 0.0d) {
-                        return Math.max(0.0d, Math.min(1.0d, have.doubleValue() / max.doubleValue()));
-                    }
-                } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-            }
+        if (blockEntity.getLevel() instanceof ServerLevel server) {
+            PerformanceDiagnostics.record(server, Work.ADAPTER_ENERGY_READS, 1);
         }
-        return 0.0d;
+        return AdapterReflection.energyRatio(blockEntity);
     }
 
     private static boolean invokeBoolean(final Object target, final String name, final boolean fallback) {
@@ -285,14 +280,16 @@ public final class ExternalFieldCompat {
         return value instanceof Boolean bool ? bool : fallback;
     }
 
-    private static boolean invokeBooleanWithInt(final Object target, final String name, final int arg,
-                                                final boolean fallback) {
-        try {
-            final Object value = target.getClass().getMethod(name, int.class).invoke(target, arg);
-            return value instanceof Boolean bool ? bool : fallback;
-        } catch (final ReflectiveOperationException | RuntimeException ignored) {
-            return fallback;
-        }
+    static boolean invokeBooleanOrElse(final Object target, final String name,
+                                       final java.util.function.BooleanSupplier fallback) {
+        final Object value = invokeNoArgs(target, name);
+        return value instanceof Boolean bool ? bool : fallback.getAsBoolean();
+    }
+
+    static boolean invokeBooleanWithInt(final Object target, final String name, final int arg,
+                                        final java.util.function.BooleanSupplier fallback) {
+        final Object value = AdapterReflection.withInt(target, name, arg);
+        return value instanceof Boolean bool ? bool : fallback.getAsBoolean();
     }
 
     private static int invokeInt(final Object target, final String name, final int fallback) {
@@ -306,25 +303,11 @@ public final class ExternalFieldCompat {
     }
 
     private static @Nullable Object invokeNoArgs(final Object target, final String name) {
-        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
-            try {
-                final Method method = type.getDeclaredMethod(name);
-                method.setAccessible(true);
-                return method.invoke(target);
-            } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-        }
-        return null;
+        return AdapterReflection.noArgs(target, name);
     }
 
     private static boolean readBooleanField(final Object target, final String name, final boolean fallback) {
-        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass()) {
-            try {
-                final Field field = type.getDeclaredField(name);
-                field.setAccessible(true);
-                return field.getBoolean(target);
-            } catch (final ReflectiveOperationException | RuntimeException ignored) { }
-        }
-        return fallback;
+        return AdapterReflection.booleanField(target, name, fallback);
     }
 
     private static boolean booleanProperty(final BlockState state, final String name, final boolean fallback) {

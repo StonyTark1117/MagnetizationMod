@@ -1,0 +1,342 @@
+{
+  "description": "Matched disposable-lab workload captures. Omitted counters are zero. New counters do not exist in the checkpoint-four binary; compare only shared counters directly. Native/external chunk attempts change from attempted expanded keys to occupied keys; emitter_buckets_inspected reports added index traversal.",
+  "versions": {
+    "full-four": "8e2b99d",
+    "full-fourteen": "bd8baf8"
+  },
+  "stages": {
+    "full-four": {
+      "scenarios": 25,
+      "assertions": 75,
+      "passed": true,
+      "counts": {
+        "empty_start": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "ordinary_player": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "mr_equipment_skips": 40
+        },
+        "ordinary_mobs": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "entities_inspected": 3216
+        },
+        "external_no_targets": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "ferrofluid_pool": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 25600,
+          "source_chunks": 200
+        },
+        "ferrofluid_external": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 25600,
+          "source_chunks": 200,
+          "external_chunk_attempts": 5000,
+          "targets_discovered": 102912,
+          "targets_scheduled": 804,
+          "target_regions": 804,
+          "emitter_candidates": 3216,
+          "field_evaluations": 4016,
+          "fields_applied": 3216
+        },
+        "ferrofluid_native": {
+          "observed_ticks": 202,
+          "creep_passes": 50,
+          "fluid_sources": 25600,
+          "source_chunks": 200,
+          "native_chunk_attempts": 845000
+        },
+        "mr_armor": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 640,
+          "mr_field_searches": 40
+        },
+        "mr_mainhand": {
+          "observed_ticks": 201,
+          "creep_passes": 51,
+          "field_evaluations": 640,
+          "mr_field_searches": 40
+        },
+        "mr_offhand": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "field_evaluations": 640,
+          "mr_field_searches": 40
+        },
+        "equipment_changes": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 448,
+          "mr_equipment_skips": 12,
+          "mr_field_searches": 28
+        },
+        "dense_external": {
+          "observed_ticks": 202,
+          "creep_passes": 50,
+          "entities_inspected": 3232,
+          "eligible_entities": 3232,
+          "targets_discovered": 3232,
+          "targets_scheduled": 808,
+          "target_regions": 808,
+          "emitter_candidates": 206848,
+          "field_evaluations": 51712,
+          "fields_applied": 51712,
+          "target_details": 3232
+        },
+        "active_emitters": {
+          "observed_ticks": 201,
+          "creep_passes": 51,
+          "target_details": 3216
+        },
+        "railgun_emitters": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "air_separators": {
+          "observed_ticks": 201,
+          "creep_passes": 51
+        },
+        "gas_volume": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "mixed_pack": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "entities_inspected": 2613,
+          "eligible_entities": 2613,
+          "targets_discovered": 2613,
+          "targets_scheduled": 804,
+          "target_regions": 804,
+          "emitter_candidates": 603,
+          "field_evaluations": 603,
+          "fields_applied": 603,
+          "target_details": 2613
+        },
+        "vertical_external": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "entities_inspected": 201,
+          "eligible_entities": 201,
+          "targets_discovered": 201,
+          "targets_scheduled": 201,
+          "target_regions": 201,
+          "emitter_candidates": 51456,
+          "field_bounds_rejections": 51456
+        },
+        "mr_powered": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "gallium_empty": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "gallium_occupied_no_field": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "gallium_no_sources": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "magfluid_separated": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 6400,
+          "source_chunks": 200
+        },
+        "magfluid_far_queries": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 3200,
+          "source_chunks": 50,
+          "mr_field_searches": 40
+        },
+        "empty_end": {
+          "observed_ticks": 200,
+          "creep_passes": 50
+        }
+      }
+    },
+    "full-fourteen": {
+      "scenarios": 25,
+      "assertions": 84,
+      "passed": true,
+      "counts": {
+        "empty_start": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "ordinary_player": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "mr_equipment_skips": 40
+        },
+        "ordinary_mobs": {
+          "observed_ticks": 201,
+          "creep_passes": 51,
+          "entities_inspected": 3216
+        },
+        "external_no_targets": {
+          "observed_ticks": 201,
+          "creep_passes": 51
+        },
+        "ferrofluid_pool": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "fluid_sources": 25600,
+          "source_chunks": 200
+        },
+        "ferrofluid_external": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 25600,
+          "source_chunks": 200,
+          "external_chunk_attempts": 200,
+          "targets_discovered": 102912,
+          "targets_scheduled": 804,
+          "target_regions": 804,
+          "emitter_candidates": 3216,
+          "field_evaluations": 4016,
+          "fields_applied": 3216,
+          "emitter_buckets_inspected": 800
+        },
+        "ferrofluid_native": {
+          "observed_ticks": 201,
+          "creep_passes": 51,
+          "fluid_sources": 26112,
+          "source_chunks": 204,
+          "native_chunk_attempts": 51,
+          "emitter_buckets_inspected": 204
+        },
+        "mr_armor": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 656,
+          "mr_field_searches": 41
+        },
+        "mr_mainhand": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 640,
+          "mr_field_searches": 40
+        },
+        "mr_offhand": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 640,
+          "mr_field_searches": 40
+        },
+        "equipment_changes": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "field_evaluations": 464,
+          "mr_equipment_skips": 12,
+          "mr_field_searches": 29
+        },
+        "dense_external": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "entities_inspected": 3216,
+          "eligible_entities": 3216,
+          "targets_discovered": 3216,
+          "targets_scheduled": 804,
+          "target_regions": 804,
+          "emitter_candidates": 205824,
+          "field_evaluations": 51456,
+          "fields_applied": 51456,
+          "target_details": 3216
+        },
+        "active_emitters": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "target_details": 3200
+        },
+        "railgun_emitters": {
+          "observed_ticks": 200,
+          "creep_passes": 50
+        },
+        "air_separators": {
+          "observed_ticks": 201,
+          "creep_passes": 51
+        },
+        "gas_volume": {
+          "observed_ticks": 201,
+          "creep_passes": 51
+        },
+        "mixed_pack": {
+          "observed_ticks": 201,
+          "creep_passes": 51,
+          "entities_inspected": 2613,
+          "eligible_entities": 2613,
+          "targets_discovered": 2613,
+          "targets_scheduled": 804,
+          "target_regions": 804,
+          "emitter_candidates": 603,
+          "field_evaluations": 603,
+          "fields_applied": 603,
+          "target_details": 2613
+        },
+        "vertical_external": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "entities_inspected": 200,
+          "eligible_entities": 200,
+          "targets_discovered": 200,
+          "targets_scheduled": 200,
+          "target_regions": 200,
+          "emitter_candidates": 51200,
+          "field_bounds_rejections": 51200
+        },
+        "mr_powered": {
+          "observed_ticks": 200,
+          "creep_passes": 50
+        },
+        "gallium_empty": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "gallium_entity_queries": 6464
+        },
+        "gallium_occupied_no_field": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "gallium_entity_queries": 6400,
+          "gallium_field_searches": 6400
+        },
+        "gallium_no_sources": {
+          "observed_ticks": 201,
+          "creep_passes": 50
+        },
+        "magfluid_separated": {
+          "observed_ticks": 201,
+          "creep_passes": 50,
+          "fluid_sources": 6400,
+          "source_chunks": 200,
+          "fluid_target_queries": 536
+        },
+        "magfluid_far_queries": {
+          "observed_ticks": 200,
+          "creep_passes": 50,
+          "fluid_sources": 3200,
+          "source_chunks": 50,
+          "mr_field_searches": 40,
+          "fluid_target_queries": 67
+        },
+        "empty_end": {
+          "observed_ticks": 200,
+          "creep_passes": 50
+        }
+      }
+    }
+  }
+}

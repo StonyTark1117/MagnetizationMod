@@ -84,8 +84,15 @@ public final class ImmersiveEngineeringGameTests {
         });
         for (int delay = 5; delay < 25; delay++) {
             helper.runAfterDelay(delay, () -> {
+                com.stonytark.magnetization.physics.PerformanceDiagnostics.resetWork(helper.getLevel());
                 final var field = ExternalFieldCompat.currentField(
                         helper.getLevel(), helper.absolutePos(coil));
+                if (helper.getLevel().getGameTime() % 10L >= 2L) {
+                    helper.assertTrue(field == null, "Tesla emitted outside the original pulse window");
+                    helper.assertTrue(com.stonytark.magnetization.physics.PerformanceDiagnostics
+                            .workSnapshot(helper.getLevel()).get("adapter_energy_reads") == 0L,
+                            "Off-pulse Tesla still read energy");
+                }
                 observed[field == null ? 1 : 0] = true;
             });
         }

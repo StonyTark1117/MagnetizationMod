@@ -40,6 +40,56 @@ class EmitterRegistryTest {
     }
 
     @Test
+    void occupiedQueriesPreserveExpandedCoverageAndIterationOrder() {
+        final var random = new java.util.Random(956);
+        for (int i = 0; i < 1500; i++) {
+            final var pos = new BlockPos(random.nextInt(4096) - 2048, i % 200, random.nextInt(4096) - 2048);
+            EmitterRegistry.registerExternal(LVL, pos);
+            if (i % 3 == 0) EmitterRegistry.register(LVL, pos);
+        }
+        final var anchors = new java.util.LinkedHashSet<Long>(java.util.List.of(
+                ChunkPos.asLong(-1, -1), ChunkPos.asLong(1, 1), ChunkPos.asLong(-60, 70)));
+        for (int radius : new int[]{0, 2, 32}) {
+            final var expanded = new java.util.LinkedHashSet<Long>();
+            for (long anchor : anchors) {
+                for (int x = ChunkPos.getX(anchor) - radius; x <= ChunkPos.getX(anchor) + radius; x++) {
+                    for (int z = ChunkPos.getZ(anchor) - radius; z <= ChunkPos.getZ(anchor) + radius; z++) {
+                        expanded.add(ChunkPos.asLong(x, z));
+                    }
+                }
+            }
+            final var external = EmitterRegistry.occupiedChunksNear(LVL, anchors, radius, true);
+            final var nativeKeys = EmitterRegistry.occupiedChunksNear(LVL, anchors, radius, false);
+            assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotExternalInChunks(LVL, expanded, Integer.MAX_VALUE)),
+                    new java.util.ArrayList<>(EmitterRegistry.snapshotExternalInChunks(LVL, external, Integer.MAX_VALUE)));
+            assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotNativeInChunks(LVL, expanded)),
+                    new java.util.ArrayList<>(EmitterRegistry.snapshotNativeInChunks(LVL, nativeKeys)));
+        }
+        assertTrue(EmitterRegistry.occupiedChunksNear(LVL, Set.of(ChunkPos.asLong(10000, 10000)), 32, false).isEmpty());
+    }
+
+    @Test
+    void directCandidatesRetainOldOrderLimitsAndDefensiveLifecycle() {
+        final java.util.LinkedHashSet<Long> keys = new java.util.LinkedHashSet<>();
+        for (int x : new int[]{-32, 32, 0, -32}) {
+            keys.add(ChunkPos.asLong(x >> 4, 0));
+            for (int y = 0; y < 8; y++) EmitterRegistry.registerExternal(LVL, new BlockPos(x, y, 0));
+        }
+        keys.add(ChunkPos.asLong(999, 999));
+        for (int limit : new int[]{-1, 0, 1, 7, 8, 9, 23, 24, 25, 256}) {
+            assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotExternalInChunks(LVL, keys, limit)),
+                    EmitterRegistry.snapshotExternalListInChunks(LVL, keys, limit));
+        }
+        final var snapshot = EmitterRegistry.snapshotExternalListInChunks(LVL, keys, 256);
+        EmitterRegistry.dropExternalChunk(LVL, new ChunkPos(-2, 0));
+        assertEquals(24, snapshot.size());
+        snapshot.clear();
+        assertEquals(16, EmitterRegistry.externalSize(LVL));
+        assertEquals(16, EmitterRegistry.snapshotExternalListInChunks(LVL, keys, 256).size());
+        assertTrue(EmitterRegistry.snapshotExternalListInChunks(LVL, Set.of(), 256).isEmpty());
+    }
+
+    @Test
     void emptyLevelReportsSizeZero() {
         assertEquals(0, EmitterRegistry.size(LVL));
         assertTrue(EmitterRegistry.snapshot(LVL).isEmpty());
@@ -186,6 +236,11 @@ class EmitterRegistryTest {
             assertEquals(!EmitterRegistry.snapshotNative(LVL).isEmpty(), EmitterRegistry.hasNative(LVL));
             assertEquals(!EmitterRegistry.snapshotExternal(LVL).isEmpty(), EmitterRegistry.hasExternal(LVL));
             assertEquals(EmitterRegistry.snapshotExternal(LVL).size(), EmitterRegistry.externalSize(LVL));
+            final Set<Long> nativeKeys = new HashSet<>(), externalKeys = new HashSet<>();
+            EmitterRegistry.snapshotNative(LVL).forEach(p -> nativeKeys.add(ChunkPos.asLong(p)));
+            EmitterRegistry.snapshotExternal(LVL).forEach(p -> externalKeys.add(ChunkPos.asLong(p)));
+            assertEquals(nativeKeys, EmitterRegistry.occupiedChunksNear(LVL, Set.of(0L), 4, false));
+            assertEquals(externalKeys, EmitterRegistry.occupiedChunksNear(LVL, Set.of(0L), 4, true));
         }
         clearBucket();
         assertEquals(false, EmitterRegistry.hasNative(LVL));
