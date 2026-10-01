@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:58.549Z" hostname="Hades" time="0.003">
+  <properties/>
+  <testcase name="activeThrustersUseFiringStatusAndFusionUsesVisibleState()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.001"/>
+  <testcase name="plumeAlwaysStartsBeyondAndMovesOutOfNozzle()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.001"/>
+  <testcase name="cooledFusionLayerHasAnIndependentPanelWideCap()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.0"/>
+  <testcase name="packedColourConvertsToNormalisedRgb()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.0"/>
+  <testcase name="fusionSamplingScalesWithPanelWithoutUnboundedParticleLoad()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.001"/>
+  <testcase name="clientConfigCanSuppressEveryExhaustLayer()" classname="com.stonytark.magnetization.content.jet.ThrusterPlumeTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

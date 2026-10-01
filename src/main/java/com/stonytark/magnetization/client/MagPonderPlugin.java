@@ -113,13 +113,22 @@ public final class MagPonderPlugin implements PonderPlugin {
             return false;
         }
         helper.forComponents(targets.toArray(ResourceLocation[]::new))
-                .addStoryBoard(SCHEMATIC, storyBoard(definition, BuiltInRegistries.BLOCK.get(targets.getFirst())));
+                .addStoryBoard(definition.kind() == PonderSceneCatalog.Kind.PYRRHOTITE_HEAT
+                        ? ResourceLocation.fromNamespaceAndPath("magnetization", "thermal_workshop") : SCHEMATIC,
+                        storyBoard(definition, BuiltInRegistries.BLOCK.get(targets.getFirst())));
         return true;
     }
 
     private static PonderStoryBoard storyBoard(final PonderSceneCatalog.Scene definition,
                                                 final Block primaryTarget) {
         return switch (definition.kind()) {
+            case DOCKING -> (scene, util) -> DockControlPonderScenes.docking(scene, util, definition);
+            case RAILGUN_REMOTE -> (scene, util) -> DockControlPonderScenes.remote(scene, util, definition);
+            case IMPRINT -> (scene, util) -> DockControlPonderScenes.imprint(scene, util, definition);
+            case TRACTOR -> (scene, util) -> DockControlPonderScenes.tractor(scene, util, definition);
+            case PYRRHOTITE_HEAT -> (scene, util) -> ThermalPowerPonderScenes.heat(scene, util, definition);
+            case GYROSTABILIZER -> (scene, util) -> ThermalPowerPonderScenes.gyro(scene, util, definition);
+            case INDUCTION_PAD -> (scene, util) -> ThermalPowerPonderScenes.induction(scene, util, definition);
             case MAGNETIC_BASICS -> (scene, util) -> MagneticWorkflowScenes.basics(scene, util, definition);
             case EXCAVATOR -> (scene, util) -> MagneticWorkflowScenes.excavator(scene, util, definition);
             case REPULSOR_TRANSPORT -> (scene, util) -> MagneticWorkflowScenes.transport(scene, util, definition);
@@ -209,7 +218,7 @@ public final class MagPonderPlugin implements PonderPlugin {
     private static void fusionPanel(final SceneBuilder scene, final SceneBuildingUtil util,
                                     final PonderSceneCatalog.Scene definition) {
         prepare(scene, definition);
-        scene.scaleSceneView(0.85f);
+        scene.scaleSceneView(0.60f);
         final BlockPos center = util.grid().at(2, 2, 2);
         panel(scene, 1, 3);
         show(scene, util, util.grid().at(1, 1, 2), util.grid().at(3, 3, 2));
@@ -240,6 +249,7 @@ public final class MagPonderPlugin implements PonderPlugin {
     private static void railgunPair(final SceneBuilder scene, final SceneBuildingUtil util,
                                     final PonderSceneCatalog.Scene definition) {
         prepare(scene, definition);
+        scene.scaleSceneView(0.70f);
         final Direction facing = Direction.EAST;
         final BlockPos first = util.grid().at(1, 1, 1);
         final BlockPos second = util.grid().at(1, 1, 3);
@@ -257,6 +267,7 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.overlay().showOutlineWithText(util.select().fromTo(first, second), 80)
                 .colored(PonderPalette.OUTPUT)
                 .text(definition.text(1))
+                .pointAt(Vec3.atCenterOf(first).add(0, 1.5, 0))
                 .placeNearTarget();
         scene.idle(90);
         final BlockPos projectile = new BlockPos(2, 1, 2);
@@ -421,8 +432,12 @@ public final class MagPonderPlugin implements PonderPlugin {
         scene.world().setBlock(smco, MagBlocks.SAMARIUM_COBALT_MAGNET.get().defaultBlockState(), false);
         scene.world().setBlock(ndfeb, MagBlocks.NEODYMIUM_MAGNET.get().defaultBlockState(), false);
         show(scene, util, smco, ndfeb);
-        text(scene, util, smco, smco,
-                definition.text(1));
+        scene.overlay().showOutlineWithText(util.select().position(smco), 80)
+                .colored(PonderPalette.INPUT)
+                .text(definition.text(1))
+                .pointAt(Vec3.atCenterOf(smco).add(0, 1.5, 0))
+                .placeNearTarget();
+        scene.idle(90);
         for (final net.minecraft.world.item.Item item : List.of(MagItems.NEODYMIUM_OXIDE.get(), MagItems.DYSPROSIUM_OXIDE.get(),
                 MagItems.BORON_DUST.get(), MagItems.NEODYMIUM_ALLOY_PLATE.get(), MagItems.NEODYMIUM_MAGNET_BLANK.get(), MagItems.SINTERED_NEODYMIUM.get())) {
             scene.overlay().showControls(util.vector().topOf(press), net.createmod.catnip.math.Pointing.DOWN, 35).withItem(new ItemStack(item));
@@ -482,7 +497,7 @@ public final class MagPonderPlugin implements PonderPlugin {
                 definition.text(0));
         final var assembled = scene.world().makeSectionIndependent(util.select().position(copycat));
         scene.world().moveSection(assembled, new Vec3(0, 1, 0), 50);
-        scene.overlay().showControls(util.vector().topOf(copycat.above()), net.createmod.catnip.math.Pointing.DOWN, 70)
+        scene.overlay().showControls(util.vector().topOf(copycat.above()), net.createmod.catnip.math.Pointing.RIGHT, 70)
                 .withItem(new ItemStack(com.simibubi.create.AllItems.GOGGLES.get()));
         scene.overlay().showOutlineWithText(util.select().position(copycat), 90)
                 .colored(PonderPalette.OUTPUT)

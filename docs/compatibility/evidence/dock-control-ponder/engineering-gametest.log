@@ -1,0 +1,5 @@
+runMagneticEngineeringGameTestServer: moved previous generated run directory to /tmp/magnetization-run-magnetic-engineering-gametest-1790886716-318036
+runMagneticEngineeringGameTestServer: using tmpfs runtime /tmp/magnetization-run-magnetic-engineering-gametest-runtime.AwLsdc
+[01Oct2026 13:32:21.724] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 7 GAME TESTS COMPLETE IN 1.464 s ======================
+[01Oct2026 13:32:21.725] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 7 required tests passed :)
+runMagneticEngineeringGameTestServer: assertions passed; terminating only its lingering process group

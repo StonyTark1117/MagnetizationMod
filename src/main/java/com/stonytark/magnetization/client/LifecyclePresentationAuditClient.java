@@ -26,6 +26,7 @@ public final class LifecyclePresentationAuditClient {
     private static boolean done, finalCaptured;
     private static String requested;
     private static final java.util.Set<Integer> capturedTexts = new java.util.HashSet<>();
+    private static final java.util.Map<Integer, Integer> visibleTextSince = new java.util.HashMap<>();
     private static final java.util.Set<String> capturedInputs = new java.util.HashSet<>();
     private static final List<PonderSceneCatalog.Scene> SCENES = new ArrayList<>();
     @SubscribeEvent
@@ -180,7 +181,7 @@ public final class LifecyclePresentationAuditClient {
                 .compile(ResourceLocation.parse(definition.targets().getFirst())).stream()
                 .filter(scene -> scene.getId().equals(ResourceLocation.parse("magnetization:" + definition.id()))).toList();
         check(compiled.size() == 1, "Expected one advertised scene for " + definition.id());
-        capturedTexts.clear(); capturedInputs.clear();
+        capturedTexts.clear(); visibleTextSince.clear(); capturedInputs.clear();
         mc.setScreen(new AuditPonderUI(new ArrayList<>(compiled))); previousTime = 0; finalCaptured = false;
         LOG.info("VALIDATION_PONDER_START id={} duration={}", definition.id(), compiled.getFirst().getTotalTime());
     }
@@ -194,6 +195,10 @@ public final class LifecyclePresentationAuditClient {
                 if (rendered == null) return; // Await an actual rendered frame.
                 final int index = definition.texts().indexOf(rendered);
                 check(index >= 0, "Ponder rendered stale/unlocalized instruction: " + rendered);
+                // Client tick state can lead the last rendered framebuffer during fade-in.
+                // Capture only after several fully visible ticks, while ordinary playback continues.
+                int since = visibleTextSince.computeIfAbsent(index, key -> scene.getCurrentTime());
+                if (scene.getCurrentTime() - since < 12) return;
                 if (capturedTexts.add(index)) {
                     PonderSceneAudit.verifyInstruction(scene, definition.id(), index);
                     capture(mc, "ponder-" + definition.id() + "-text-" + (index+1));

@@ -1,0 +1,180 @@
+{
+  "baseCommit": "686344637fd4dd3428e744554787531e4a8b5199",
+  "result": "pass",
+  "scope": "Three thermal/power tutorials: normal native playback and all six target compilations at GUI scales 2/3; 19 instructions plus first/final frames per scale. Larger combined catalog sweep recorded separately. Scripted scene diagrams are supported by independent server mechanics tests.",
+  "phases": {
+    "gui2": {
+      "captures": 25,
+      "instructionTimes": {
+        "pyrrhotite_heat": [
+          33,
+          143,
+          253,
+          363,
+          473,
+          583,
+          693,
+          803,
+          913,
+          1023
+        ],
+        "gyrostabilizer": [
+          33,
+          143,
+          253,
+          363
+        ],
+        "induction_pad": [
+          33,
+          143,
+          253,
+          363,
+          473
+        ]
+      },
+      "fullClientAndServerPass": true
+    },
+    "gui3": {
+      "captures": 25,
+      "instructionTimes": {
+        "pyrrhotite_heat": [
+          33,
+          143,
+          253,
+          363,
+          473,
+          583,
+          693,
+          803,
+          913,
+          1023
+        ],
+        "gyrostabilizer": [
+          33,
+          143,
+          253,
+          363
+        ],
+        "induction_pad": [
+          33,
+          143,
+          253,
+          363,
+          473
+        ]
+      },
+      "fullClientAndServerPass": true
+    }
+  },
+  "scopedRegressionTests": 10,
+  "immersiveEngineeringProfileTests": 11,
+  "combinedRegressionTests": 13,
+  "visualReview": "All 38 final instruction frames checked: readable captions, visible heat/gauge/catalyst transitions, moving gyro without ghost outlines, carried equipment and out-of-range control.",
+  "sources": {
+    "src/main/java/com/stonytark/magnetization/client/ThermalPowerPonderScenes.java": "738eb62a95102d85c6e4dec101665815d9850f458d606113c044a441b4ca9345",
+    "src/main/java/com/stonytark/magnetization/client/ThermalPowerPonderAudit.java": "c0ac8b1174fcaa159ba14eccb7f4d7d057a0096163a7afd8f5064edbd3263583",
+    "src/main/java/com/stonytark/magnetization/client/PonderSceneAudit.java": "ae40dfbc821124e57bdf8d92734e349ebb605e4293f85867782da98a9ba67e71",
+    "src/main/java/com/stonytark/magnetization/client/LifecyclePresentationAuditClient.java": "79e6e156f62435f3817e38b73bb6867ef7dafd760cd0e3d56a9d6a84c4e7bca5",
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "be5f6a8c12523f68a8b271c6d65b1d84169f1476902037e88b1ae3d18e893cc6",
+    "src/main/java/com/stonytark/magnetization/compat/ponder/PonderSceneCatalog.java": "18b8e9c776055d60fa96ad1ebd212a08f78f861d9b3a06f00f55760cd901aaf1",
+    "src/main/java/com/stonytark/magnetization/gametest/ThermalPowerPonderGameTests.java": "172dbcbf0f56b30bc304942271aa54ae22bba4e9fce79244fa277467b8491d8e",
+    "src/main/java/com/stonytark/magnetization/gametest/InductionPonderGameTests.java": "603e7877c4addb3545329178b7e0cf2c0fb43142c9d0098f561a51f739d7a771",
+    "src/main/java/com/stonytark/magnetization/content/pyrrhotite/PyrrhotiteCatalystBlock.java": "bad715ffaa255e2a3051293f52f3c1063c87a42aa4354745bb6fc6bea76cf433",
+    "src/main/resources/assets/magnetization/ponder/thermal_workshop.nbt": "0f98613e5328a03b8229a1217101767d49087a3627e62899be1710e24adf27cb",
+    "scripts/generate-ponder-workshop.py": "48a55793212ba4ed3429e3b33ce546b1deb7273d65d03b83c1199798c46ecbd8",
+    "src/test/java/com/stonytark/magnetization/compat/PonderSceneCatalogTest.java": "5ad86547b9d6ec7bcb303fd67d3cc8ab2f073a4eb81325b93466af8f326aae36"
+  },
+  "laterSharedSourceChanges": {
+    "src/main/java/com/stonytark/magnetization/client/MagPonderPlugin.java": "e900d149889de199e759862c52bc1b3c6f1a285c3b535e28fb43422043a42300"
+  },
+  "sourceProvenance": "Sources identify the compiled full-catalog run. Subsequent MagPonderPlugin changes adjust camera, caption or hint layout in Fusion Panel, Railgun Pair, rare-earth magnets and Copycats; their focused reruns are in the combined report. All thermal/power builders, assertions, text, targets and schematic match the tested files.",
+  "english": {
+    "magnetization.ponder.pyrrhotite_heat.header": "Activate Pyrrhotite with heat",
+    "magnetization.ponder.pyrrhotite_heat.text_1": "Cold Pyrrhotite emits no field. Blue cells illustrate field strength; heat must touch the block or a catalyst that can reach it.",
+    "magnetization.ponder.pyrrhotite_heat.text_2": "A smouldering or fading Blaze Burner gives WEAK strength. A lit campfire also gives WEAK.",
+    "magnetization.ponder.pyrrhotite_heat.text_3": "A kindled Blaze Burner gives STRONG strength. Fire and Magma Blocks give the same tier.",
+    "magnetization.ponder.pyrrhotite_heat.text_4": "A seething Blaze Burner gives EXTREME strength. Lava also gives EXTREME; heat levels do not add together.",
+    "magnetization.ponder.pyrrhotite_heat.text_5": "The basic catalyst relays its adjacent heat to Pyrrhotite up to 3 blocks away. The blue line shows this reach.",
+    "magnetization.ponder.pyrrhotite_heat.text_6": "An Enhanced Catalyst reaches 5 blocks. The heat source must still touch the catalyst.",
+    "magnetization.ponder.pyrrhotite_heat.text_7": "A Cosmic Catalyst reaches 7 blocks. Range is measured independently along each axis, not along a cable.",
+    "magnetization.ponder.pyrrhotite_heat.text_8": "Catalysts cannot chain. This heated basic catalyst is 6 blocks away; the unheated middle catalyst cannot extend its range.",
+    "magnetization.ponder.pyrrhotite_heat.text_9": "The hottest source in range wins. Here the Enhanced Catalyst supplies EXTREME despite the weaker basic source.",
+    "magnetization.ponder.pyrrhotite_heat.text_10": "Remove the heat sources and the field ends on the next heat scan. The server controls active and idle scan intervals.",
+    "magnetization.ponder.gyrostabilizer.header": "Stop ship rotation, keep translation",
+    "magnetization.ponder.gyrostabilizer.text_1": "Mount the Gyrostabilizer aboard a ship. This moving section illustrates a ship translating and rotating while unpowered.",
+    "magnetization.ponder.gyrostabilizer.text_2": "Power it with adjacent redstone. It cancels angular velocity while translation continues; it does not anchor the ship in place.",
+    "magnetization.ponder.gyrostabilizer.text_3": "FE is an alternative: stabilization costs 20 FE per tick. Gold marks an external FE supply. Redstone power takes priority and uses no FE.",
+    "magnetization.ponder.gyrostabilizer.text_4": "Remove both power sources and rotation is free again. A powered Gyrostabilizer on the ground has no ship to stabilize and spends no FE.",
+    "magnetization.ponder.induction_pad.header": "Charge carried FE equipment",
+    "magnetization.ponder.induction_pad.text_1": "Induction Pads require the server to enable inductionPadEnabled; it is off by default. This tutorial shows the enabled behavior.",
+    "magnetization.ponder.induction_pad.text_2": "Supply FE through a cable or generator. Gold marks the external supply; the pad stores energy for nearby equipment.",
+    "magnetization.ponder.induction_pad.text_3": "The gold token represents carried equipment that accepts FE. Green cells illustrate its charge increasing as the pad spends energy; ordinary tools do not charge.",
+    "magnetization.ponder.induction_pad.text_4": "Charging checks inventory, offhand and worn armor, plus enabled Curios slots. Stand within the configured area: by default 4 blocks beyond each pad face.",
+    "magnetization.ponder.induction_pad.text_5": "Leaving that area stops charging. An empty pad also cannot charge; transfer rate, scan interval and range are server configurable."
+  },
+  "pinnedRuntimeArtifacts": {
+    "neoforge-21.1.252-client-extra-aka-minecraft-resources.jar": "8e9cf6f4b6eafb1c6bf745a67a61dd1736f31865cad409e5b2bec918667dab5e"
+  },
+  "logStorage": "Logs have trailing whitespace removed; original byte hashes retained in raw-log-sha256.json alongside each run.",
+  "files": {
+    "gui2/client.log": "20c6bd2d69299da7f36e4f797b28f2dc5ee39447998108445392725b1e4ce7af",
+    "gui2/raw-log-sha256.json": "0f04ffbc3acb4d348f8c6cf98457b034bd30d0a79713f10407f329c1b544b3f6",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-first.png": "708e5b7d68222e1a0a6594f9fc09bc371e0e3d7e7617e62d4d3e203f72dcd6bc",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-last.png": "cc2cf575eb7c33bc78c424b90f5e708c76a451c809bf0fc8b6f3732d79912915",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-text-1.png": "ed3eeb8efd21fbc819d2bffd6d591570750aa894deac2706e3d0d167531c7b01",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-text-2.png": "359d2d61effdbfae4a608cebd7994d2222ed911043cd8712848e68af34be4a82",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-text-3.png": "3b8a9b14aecdd22c7e04c890b1251d514d691d3eda8d7ae886f5d0395eab9c2c",
+    "gui2/screenshots/validation-ponder-gyrostabilizer-text-4.png": "a5daa1b44344eb4e8943ab89cb283268c6fb02dea369ee501a35aa2fe1bfcb1b",
+    "gui2/screenshots/validation-ponder-induction_pad-first.png": "0118497a1e0c27266ae242d2b17402839cc5e0e65e070bcbd24fcee96a7fd837",
+    "gui2/screenshots/validation-ponder-induction_pad-last.png": "b8b4db1f40a1d373f3f71d0ca8cccfe60c3d55153051ca192920c75c7b729617",
+    "gui2/screenshots/validation-ponder-induction_pad-text-1.png": "d532208332e72e14cf582215c4f642dcd53b44a97f9524bf82e175f6ea1c2d28",
+    "gui2/screenshots/validation-ponder-induction_pad-text-2.png": "52ed581374cc03bd520d4cb9a47b086615a65d2641a556775a41a63ce29e7b89",
+    "gui2/screenshots/validation-ponder-induction_pad-text-3.png": "7c064a67d7c5d3fedde932e877a6c8d55245c3a9464d598b0f37105afa7f8c38",
+    "gui2/screenshots/validation-ponder-induction_pad-text-4.png": "80d636f851b12cf660114579e60ea67980f8e1a1a6c9df91aac16db9c765a5fa",
+    "gui2/screenshots/validation-ponder-induction_pad-text-5.png": "76647d7db2107f9d55454fd75c312a65309e702d3a446f476903250ef5b390a6",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-first.png": "926e50781fb6517af1bd35f01c350197fa29006ed26f3d63b6aa7ae92264ad42",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-last.png": "748719036f61988edfc38c0c8097ca64eb8e1cc40049bdd29d23ffb9a4c5adf2",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-1.png": "90b2e72912a2e4e55e5a3ee6522ffc1aa1b5c0582993f6c954d8573faed447b3",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-10.png": "aa5698344aaca8bc3a7408485c61b1f48816f7355ef6ffeb8dd9565ebdb6fbbf",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-2.png": "44ef5643b3f624d72f2c9298781475bbb0ebce03a9896e13f45d8b35bf3a1cd8",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-3.png": "cb72c42b617961d7cc09e3a03a217e04d5cbc2bdab5264e7f0844424ff5ac3a5",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-4.png": "52851ea29c1b49e982b3eef82c261762d540aa0abe298d346ac1691b89f968a5",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-5.png": "2c883c11edcd573d65d9fc77d2d9ba814a1a1cfe69790b1dea0965a602a3cf2e",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-6.png": "ec6e8b243f61a87c199def69a6938b091ec8f2054ef08fb5ef2eb5aa8db943dd",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-7.png": "eee5af584174f9ec8842cbf4b3031feceb74393e5af256b3bc73bd84b3e2fa45",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-8.png": "e97d42d037052dc48ad51c99cf3e4c44f0bd8dc3d71f9b669f092012d0331062",
+    "gui2/screenshots/validation-ponder-pyrrhotite_heat-text-9.png": "2d7b8b6cbace11220223c011b6e57eba05ea2fa59cddb69e7026d8a0add8f66b",
+    "gui2/server.log": "d527db213fe9bd37ee2633e5628ca6f7a1fa6144613e39181b0ba907cf5e045d",
+    "gui3/client.log": "6a2519ad8a5d8238ee6889eeadf47338f261958fdd8557dc987156834628e0f4",
+    "gui3/raw-log-sha256.json": "02b1f6206abfa486c4af49afae454fa04dfc54bf0630369204dd62e032bc7bc3",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-first.png": "5b6ec0fa1eeabb14dad01baecd1d559a8bdda353d3dfa6e562fa3a73d61d6080",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-last.png": "059700f42ff44f23e95be7d3015f80b5eea6a12b452d3bb8d4f20b8f63396093",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-text-1.png": "514a3ff2f468581c014e777837072bd8172300e0bf1724c397744a3b11cb4d09",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-text-2.png": "e7625f34207ea96316ccd229650e8a2cc1b07a2412cc7c457f0f2d48d85af0d9",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-text-3.png": "821c868c94c4e73c848c009f2faf35b987240ddf5a6fb54dcd538b1fdae47a0c",
+    "gui3/screenshots/validation-ponder-gyrostabilizer-text-4.png": "d2f463aa61c079e92dc1e3c34214071bcf16f6a35664da2aad76b827bb1a1e33",
+    "gui3/screenshots/validation-ponder-induction_pad-first.png": "0a4d20ff5339e285e8d0c78ae9f226c7c05152f35d5e59d936f3f3b6591e5f2e",
+    "gui3/screenshots/validation-ponder-induction_pad-last.png": "be1b00613f4ec518a6da6e95731ea7ed38637c31d9192fd9086d94899c9785ca",
+    "gui3/screenshots/validation-ponder-induction_pad-text-1.png": "abb7447bfd0bf5e71ccc4c010868162672234067f5b09d00297fa1bdefefa6f9",
+    "gui3/screenshots/validation-ponder-induction_pad-text-2.png": "2e5eb31a45ea3029a8dffd9db9d9df2b9f2c8de214ee2b415ed80b8a092da671",
+    "gui3/screenshots/validation-ponder-induction_pad-text-3.png": "dca73889c6cd3e5301cbdfec1fc3fe3c8f9d51b84772eb90bf7c63e2f46f1917",
+    "gui3/screenshots/validation-ponder-induction_pad-text-4.png": "2c03cdbb83c37acb438646776aa01fb093bca84261c1dbf5a62fc65161abcf3f",
+    "gui3/screenshots/validation-ponder-induction_pad-text-5.png": "b5a277211e0432bc4010b92437d1578114feed7122fd90961c92c33f9e84bdcd",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-first.png": "2e7e69976b21d606116f7c83641d6ad2d33548dbce739bdb02ed68842a9153c2",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-last.png": "3e7c77e9ed852abf45d8f820725e2bf0f2174e9130987a248d6b72edd3b02a2a",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-1.png": "29654bb4d9728c78d6b2e80a676561f2c4d5438da4561d789fabae010fce81fa",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-10.png": "7af45560a326e6ea93ba72e83dc336503041cdfd254f6b57711186d609f05e1b",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-2.png": "07148b52b67deb9126ccbf50e700c6365d0fd444beef6aa9c99cbeb87744c8ee",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-3.png": "187c49a6d7693bc0e9b22c283b94122716a9884ebefd7ac5767ac4164229b485",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-4.png": "156905bf82bd9c68b51517015a92ea2f3bde9c9e73b14dea11b38ec4d01e9fe1",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-5.png": "cf8f6c193808c09fea261a9d44f452fd9fc321fe754c409b7fd5f57200356c75",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-6.png": "21e9651f931b33269c8962c9909e947a781fb05ee552a7e62e6c19d82e1ea99a",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-7.png": "c22f9c9ce1af08b763c23d1ab8a2790bb0383dafa653de5bc18ab974ee97cfa0",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-8.png": "7c84aa16ffd180dbbe12c87507de76afc11276e7e6dcacda0738544d41be9619",
+    "gui3/screenshots/validation-ponder-pyrrhotite_heat-text-9.png": "95b863aa01b3468ebcdd92134c150b725dce04d3b923d77adc98b7dea2c55f02",
+    "gui3/server.log": "c42299dd503cc6b4cf5db7db58dd4bed85d8ab776365ddf97f9b38ef76af2c42",
+    "immersive-engineering.log": "6ab4ed921137b2c891781e568baaf98699620617359d3686318ab30636701e36",
+    "raw-log-sha256.json": "ccd1dea25ac12c0fe93ebe669c3c81e258f113985a7d9c58ded3fe4eacd2e111",
+    "regression.log": "5220db3bd545b05558dc6dbfc982ee3a67c85e8feb357b21b8848957c558a953"
+  }
+}

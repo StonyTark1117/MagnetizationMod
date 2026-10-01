@@ -19,6 +19,12 @@ final class PonderSceneAudit {
     static void verify(final PonderScene scene, final String id, final boolean last) {
         final var world = scene.getWorld();
         switch (id) {
+            case "docking_signals" -> DockControlPonderAudit.verify(scene, id, last ? 6 : 0);
+            case "railgun_remote" -> DockControlPonderAudit.verify(scene, id, last ? 5 : 0);
+            case "imprint_module", "tractor_beam" -> DockControlPonderAudit.verify(scene, id, last ? 3 : 0);
+            case "pyrrhotite_heat" -> ThermalPowerPonderAudit.verify(scene, id, last ? 9 : 0);
+            case "gyrostabilizer", "magnetic_shaft" -> ThermalPowerPonderAudit.verify(scene, id, last ? 3 : 0);
+            case "induction_pad" -> ThermalPowerPonderAudit.verify(scene, id, last ? 4 : 0);
             case "magnetic_basics" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 6 : 0);
             case "magnetic_excavator" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 5 : 0);
             case "repulsor_transport" -> MagneticWorkflowSceneAudit.verify(scene, id, last ? 3 : 0);
@@ -147,6 +153,8 @@ final class PonderSceneAudit {
         final var world = scene.getWorld();
         final var center = MaterialControlPonderScenes.CENTER;
         switch (id) {
+            case "docking_signals", "railgun_remote", "imprint_module", "tractor_beam" -> DockControlPonderAudit.verify(scene, id, stage);
+            case "pyrrhotite_heat", "gyrostabilizer", "induction_pad", "magnetic_shaft" -> ThermalPowerPonderAudit.verify(scene, id, stage);
             case "magnetic_basics", "magnetic_excavator", "repulsor_transport" -> MagneticWorkflowSceneAudit.verify(scene, id, stage);
             case "mr_fluid_bridge" -> {
                 boolean hard = stage == 1 || stage == 2;

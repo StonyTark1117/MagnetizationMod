@@ -31,12 +31,17 @@ def compounds(values):
 
 
 palette = [compound([tag(8, 'Name', utf(name))]) for name in ['minecraft:gray_concrete', 'minecraft:air']]
-blocks = [compound([tag(9, 'pos', ints([x, y, z])), tag(3, 'state', integer(0 if y == 0 else 1))])
-          for x in range(7) for y in range(5) for z in range(7)]
-root = compound([tag(3, 'DataVersion', integer(3955)), tag(9, 'size', ints([7, 5, 7])),
-                 tag(9, 'palette', compounds(palette)), tag(9, 'blocks', compounds(blocks)),
-                 tag(9, 'entities', compounds([]))])
-path = Path(__file__).resolve().parent.parent / 'src/main/resources/assets/magnetization/ponder/empty_workshop.nbt'
-path.parent.mkdir(parents=True, exist_ok=True)
-path.write_bytes(gzip.compress(tag(10, '', root), mtime=0))
-print(path)
+def write_workshop(name, width):
+    blocks = [compound([tag(9, 'pos', ints([x, y, z])), tag(3, 'state', integer(0 if y == 0 else 1))])
+              for x in range(width) for y in range(5) for z in range(width)]
+    root = compound([tag(3, 'DataVersion', integer(3955)), tag(9, 'size', ints([width, 5, width])),
+                     tag(9, 'palette', compounds(palette)), tag(9, 'blocks', compounds(blocks)),
+                     tag(9, 'entities', compounds([]))])
+    path = Path(__file__).resolve().parent.parent / f'src/main/resources/assets/magnetization/ponder/{name}.nbt'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(gzip.compress(tag(10, '', root), mtime=0))
+    print(path)
+
+
+write_workshop('empty_workshop', 7)
+write_workshop('thermal_workshop', 9)

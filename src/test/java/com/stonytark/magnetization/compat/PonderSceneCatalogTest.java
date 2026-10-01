@@ -63,10 +63,10 @@ class PonderSceneCatalogTest {
             }
         }
 
-        assertEquals(26, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
-        assertEquals(86, PonderSceneCatalog.allScenes().stream()
+        assertEquals(32, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
+        assertEquals(125, PonderSceneCatalog.allScenes().stream()
                 .mapToInt(scene -> scene.texts().size()).sum(), "Unexpected Ponder instruction count");
-        assertEquals(112, expected.size(), "Unexpected Ponder localization count");
+        assertEquals(157, expected.size(), "Unexpected Ponder localization count");
         expected.forEach((key, value) -> {
             assertTrue(lang.has(key), () -> "Missing Ponder localization: " + key);
             assertEquals(value, lang.get(key).getAsString(), () -> "Stale Ponder localization: " + key);
@@ -87,6 +87,15 @@ class PonderSceneCatalogTest {
         assertTrue(targets.containsAll(Set.of(
                 "magnetization:permanent_magnet",
                 "magnetization:polarity_inverter",
+                "magnetization:pyrrhotite_block",
+                "magnetization:pyrrhotite_catalyst",
+                "magnetization:enhanced_pyrrhotite_catalyst",
+                "magnetization:cosmic_pyrrhotite_catalyst",
+                "magnetization:gyrostabilizer",
+                "magnetization:induction_pad",
+                "magnetization:railgun_remote",
+                "magnetization:imprint_module",
+                "magnetization:tractor_beam",
                 "magnetization:magnetic_excavator",
                 "magnetization:repulsor_coil",
                 "magnetization:vector_core",

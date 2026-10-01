@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.api.LirmTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:57.925Z" hostname="Hades" time="0.006">
+  <properties/>
+  <testcase name="isTemporaryRejectsClockSkew()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="freshStampIsFullStrength()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="isTemporaryBoundary()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="expiredStampIsZeroStrength()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="durationIs20Minutes()" classname="com.stonytark.magnetization.api.LirmTest" time="0.001"/>
+  <testcase name="oneTickBeforeExpiryIsAlmostZero()" classname="com.stonytark.magnetization.api.LirmTest" time="0.001"/>
+  <testcase name="clockSkewClampsToFullStrength()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="halfwayIsHalfStrength()" classname="com.stonytark.magnetization.api.LirmTest" time="0.0"/>
+  <testcase name="quarterPointsAreLinear()" classname="com.stonytark.magnetization.api.LirmTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

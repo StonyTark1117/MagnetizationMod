@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.gas.GasExcitationProfileTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:58.468Z" hostname="Hades" time="0.014">
+  <properties/>
+  <testcase name="codecAcceptsThePublicSchemaAndRejectsInvalidProfiles()" classname="com.stonytark.magnetization.content.gas.GasExcitationProfileTest" time="0.007"/>
+  <testcase name="duplicateActiveFluidClaimsAreRejected()" classname="com.stonytark.magnetization.content.gas.GasExcitationProfileTest" time="0.004"/>
+  <testcase name="allTfmgProfilesHaveExactFluidsConditionsBuoyancyAndColors()" classname="com.stonytark.magnetization.content.gas.GasExcitationProfileTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

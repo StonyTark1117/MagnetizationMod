@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.physics.EmitterRegistryTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:59.315Z" hostname="Hades" time="0.138">
+  <properties/>
+  <testcase name="registerIsIdempotentForSamePos()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.002"/>
+  <testcase name="externalChunkReplacementIsAtomicAndPreservesNativeEmitters()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.001"/>
+  <testcase name="unregisterRemovesPosAndShrinksSize()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="unregisterAcceptsMissingPosWithoutThrowing()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.001"/>
+  <testcase name="forEachVisitsEveryRegisteredPosExactlyOnce()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.001"/>
+  <testcase name="emptyLevelReportsSizeZero()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="unloadingChunkDropsOnlyItsExternalBucket()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="snapshotIsDefensiveCopy()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="unregisteringLastPosDropsTheLevelBucket()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="pointQueriesMatchExpandedReferenceAtBoundariesAndAfterRemoval()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.073"/>
+  <testcase name="directCandidatesRetainOldOrderLimitsAndDefensiveLifecycle()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.002"/>
+  <testcase name="occupiedQueriesPreserveExpandedCoverageAndIterationOrder()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.014"/>
+  <testcase name="spatialExternalQueryExcludesUnrelatedChunksAndHonorsLimit()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.001"/>
+  <testcase name="forEachOnEmptyLevelDoesNothing()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.0"/>
+  <testcase name="categoryCountsTrackDuplicateRegistrationReplacementAndUnload()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.039"/>
+  <testcase name="registerIncrementsSize()" classname="com.stonytark.magnetization.physics.EmitterRegistryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

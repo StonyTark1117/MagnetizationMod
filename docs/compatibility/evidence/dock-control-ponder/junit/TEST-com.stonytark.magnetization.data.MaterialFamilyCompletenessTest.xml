@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-01T21:07:59.032Z" hostname="Hades" time="0.077">
+  <properties/>
+  <testcase name="everyEquipmentFamilyHasModelsTexturesRecipesAndTranslations()" classname="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" time="0.04"/>
+  <testcase name="specializedMrFluidEquipmentFamilyIsCompleteWithoutSolidStorage()" classname="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" time="0.014"/>
+  <testcase name="commonMaterialTagsAndAuditedFamilyMatricesStayInLockstep()" classname="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" time="0.001"/>
+  <testcase name="standaloneWearablesParticipateInVanillaEnchantmentTags()" classname="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" time="0.0"/>
+  <testcase name="everyStorageBlockHasCompleteAssetsTagsLootAndLosslessRoundTripRecipes()" classname="com.stonytark.magnetization.data.MaterialFamilyCompletenessTest" time="0.019"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

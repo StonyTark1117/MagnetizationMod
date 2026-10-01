@@ -2,6 +2,7 @@
 
 ## Unreleased — Magnetic engineering
 
+- Expand docking into a seven-stage capture/link/output/cooperative-anchor tutorial; add Railgun Remote, Imprint Module, Tractor Beam, Pyrrhotite heat/catalysts, Gyrostabilizer and Induction Pad scenes. Add the missing Magnetic Shaft and docking playback assertions, with native interaction and physics GameTests behind the new tutorials. Validate all 32 catalog scenes and 125 instructions; fix camera/caption/hint overlap in five tutorials and wait for stable visible captions before audit capture.
 - Add six native Ponder tutorials: magnetic basics and ship polarity, Magnetic Excavator, repulsor transport with Vector Core and copper braking, switchable MR Fluid bridges, field-strength control, and equipment magnetization. Register item targets as well as blocks, including Vector Core and the MR Fluid bucket. Validate each new instruction and every advertised target in native playback.
 
 - Add Create-goggles ship inspection using server-calculated applied forces, turning torque, individual sources and shared force-cap limiting. Keep the Field Compass unchanged.

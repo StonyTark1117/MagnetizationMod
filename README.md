@@ -205,6 +205,8 @@ Ship rear:       [ N ][ N ][ N ]    ← repels ship away from wall
 
 Ponder covers magnetic basics and ship polarity, Magnetic Excavator operation, repulsor transport with Vector Core and copper braking, switchable MR Fluid bridges, field-strength control, and equipment magnetization. Open the tutorials from their related items, including the Vector Core and MR Fluid bucket. See [magnetic workflow tutorials](docs/compatibility/magnetic-workflow-ponder.md) and [material-control tutorials](docs/compatibility/material-control-ponder.md) for targets and validation evidence.
 
+Ponder also covers linked docking outputs and cooperative anchors, Railgun Remote operation, emitter presets with the Imprint Module, Tractor Beam aiming, Pyrrhotite heat and catalysts, Gyrostabilizer power, and Induction Pad charging. See [dock/control tutorials](docs/compatibility/dock-control-ponder.md) and [heat/power tutorials](docs/compatibility/thermal-power-ponder.md) for controls and native behavior evidence. The [complete catalog audit](docs/compatibility/ponder-complete.md) records playback and rendered instruction checks for all 32 scenes.
+
 ## Magnetizing armor & tools
 
 Right-click the **Electromagnet** or **Kinetic Electromagnet** with an empty hand to open its GUI. Insert a piece of metal armor (anything in `#magnetization:metal_armor`) or a metal tool (anything in `#magnetization:metal_tools`) into the slot, then click **N** / **S** / **Clear** to stamp the polarity:

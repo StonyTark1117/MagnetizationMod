@@ -13,12 +13,12 @@ import net.minecraft.world.level.block.Block;
  * share this class; the radius is set at construction so each tier registers
  * its own block instance with a distinct {@code transmitRadius()} reading.
  *
- * <p>Chains of Catalysts daisy-chain heat across distance (each one
- * independently transmits to pyrrhotite within its own radius), and mixed
- * tiers stack naturally — the largest radius in range wins.
+ * <p>Catalysts read only their own directly adjacent heat sources; they do not
+ * relay through other catalysts. Each in-range catalyst contributes independently,
+ * and the hottest observed source wins.
  *
  * <p>No BE = no per-block memory cost. The scan workload lives in the
- * pyrrhotite reactor, which only ticks while it's an active emitter.
+ * pyrrhotite reactor, with configurable active and idle scan intervals.
  */
 public final class PyrrhotiteCatalystBlock extends Block {
 
