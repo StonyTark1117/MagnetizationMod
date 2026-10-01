@@ -2,7 +2,7 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
-Release candidate: **1.4.6**. This release adds magnetic shaft networks, docking controls, ship-force inspection, and Ponder tutorials alongside native Extra Golems Reborn 21.1.0.1 support, compatibility corrections, and performance improvements. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The Ironworks and Coasters Additions integrations remain intact.
+Current release: **1.4.6**. This release adds magnetic shaft networks, docking controls, ship-force inspection, and Ponder tutorials alongside native Extra Golems Reborn 21.1.0.1 support, compatibility corrections, and performance improvements. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The Ironworks and Coasters Additions integrations remain intact.
 
 ## Requirements
 
