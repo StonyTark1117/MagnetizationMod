@@ -1,0 +1,150 @@
+[
+  {
+    "stage": "previous-build",
+    "url": "https://spark.lucko.me/CX8q5oSLhQ",
+    "ticks": 1200,
+    "duration_seconds": 60.047,
+    "mod_sample_ms_per_tick": 0.2633333333333333,
+    "median_mspt_window_min": 7.116761,
+    "median_mspt_window_max": 7.116761,
+    "max_mspt": 178.011514,
+    "players": [
+      0
+    ],
+    "entities": [
+      49
+    ],
+    "chunks": [
+      846
+    ],
+    "external_tracker_ms_per_tick": 0.21,
+    "metadata": {
+      "interval": 4000,
+      "threadDumper": {
+        "type": "SPECIFIC",
+        "ids": [
+          "116"
+        ],
+        "patterns": []
+      },
+      "dataAggregator": {
+        "threadGrouper": "BY_POOL",
+        "type": "SIMPLE",
+        "tickLengthThreshold": "0",
+        "numberOfIncludedTicks": 0
+      },
+      "samplerMode": "EXECUTION"
+    }
+  },
+  {
+    "stage": "current-build",
+    "url": "https://spark.lucko.me/It4WLEh7EM",
+    "ticks": 1200,
+    "duration_seconds": 60.138,
+    "mod_sample_ms_per_tick": 0.9833333333333333,
+    "median_mspt_window_min": 7.015337,
+    "median_mspt_window_max": 7.015337,
+    "max_mspt": 50.857322,
+    "players": [
+      0
+    ],
+    "entities": [
+      49
+    ],
+    "chunks": [
+      846
+    ],
+    "external_tracker_ms_per_tick": 0.83,
+    "metadata": {
+      "interval": 4000,
+      "threadDumper": {
+        "type": "SPECIFIC",
+        "ids": [
+          "117"
+        ],
+        "patterns": []
+      },
+      "dataAggregator": {
+        "threadGrouper": "BY_POOL",
+        "type": "SIMPLE",
+        "tickLengthThreshold": "0",
+        "numberOfIncludedTicks": 0
+      },
+      "samplerMode": "EXECUTION"
+    }
+  },
+  {
+    "stage": "current-build-repeat",
+    "url": "https://spark.lucko.me/bIudAW2XWI",
+    "ticks": 1200,
+    "duration_seconds": 60.051,
+    "mod_sample_ms_per_tick": 1.37,
+    "median_mspt_window_min": 7.004038,
+    "median_mspt_window_max": 7.004038,
+    "max_mspt": 62.088582,
+    "players": [
+      0
+    ],
+    "entities": [
+      49
+    ],
+    "chunks": [
+      846
+    ],
+    "external_tracker_ms_per_tick": 1.2033333333333334,
+    "metadata": {
+      "interval": 4000,
+      "threadDumper": {
+        "type": "SPECIFIC",
+        "ids": [
+          "117"
+        ],
+        "patterns": []
+      },
+      "dataAggregator": {
+        "threadGrouper": "BY_POOL",
+        "type": "SIMPLE",
+        "tickLengthThreshold": "0",
+        "numberOfIncludedTicks": 0
+      },
+      "samplerMode": "EXECUTION"
+    }
+  },
+  {
+    "stage": "current-build-long",
+    "url": "https://spark.lucko.me/kmHVKOTsOL",
+    "ticks": 3896,
+    "duration_seconds": 194.819,
+    "mod_sample_ms_per_tick": 0.07392197125256673,
+    "median_mspt_window_min": 6.891045,
+    "median_mspt_window_max": 6.929601,
+    "max_mspt": 55.352003,
+    "players": [
+      0
+    ],
+    "entities": [
+      49
+    ],
+    "chunks": [
+      846
+    ],
+    "external_tracker_ms_per_tick": 0.024640657084188913,
+    "metadata": {
+      "interval": 4000,
+      "threadDumper": {
+        "type": "SPECIFIC",
+        "ids": [
+          "117"
+        ],
+        "patterns": []
+      },
+      "dataAggregator": {
+        "threadGrouper": "BY_POOL",
+        "type": "SIMPLE",
+        "tickLengthThreshold": "0",
+        "numberOfIncludedTicks": 0
+      },
+      "samplerMode": "EXECUTION"
+    }
+  }
+]

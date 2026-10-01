@@ -1,0 +1,14 @@
+{
+  "source_commit": "1d479047812b",
+  "source_sha256": "cd8f85de26ed0e69a3d68c8843595f21905f0fe33f4a07c2d89de3d4e5d6db1f",
+  "tracked_source_changes": false,
+  "actual_runtime_java": "21.0.12.1+1",
+  "runtime_evidence": "Standard gradle.log ModLauncher JVM identification; profiled server.jfr jdk.JVMInformation",
+  "metadata_caveats": [
+    "Harness java_version records PATH java 27, not its Java 21 Gradle-launched server.",
+    "Harness git_dirty is true because it creates the untracked disposable run-performance-stress directory before recording git status. Tracked source was clean and hashes match both runs."
+  ],
+  "unit_tests": 286,
+  "unit_failures": 0,
+  "build_and_release_checks": "passed"
+}
