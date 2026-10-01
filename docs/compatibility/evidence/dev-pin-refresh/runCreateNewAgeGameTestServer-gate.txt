@@ -1,0 +1,4 @@
+runCreateNewAgeGameTestServer: using tmpfs runtime /tmp/magnetization-run-create-new-age-gametest-runtime.CBko0M
+[01Oct2026 04:20:46.284] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 12 GAME TESTS COMPLETE IN 841.7 ms ======================
+[01Oct2026 04:20:46.284] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 12 required tests passed :)
+runCreateNewAgeGameTestServer: assertions passed; terminating only its lingering process group

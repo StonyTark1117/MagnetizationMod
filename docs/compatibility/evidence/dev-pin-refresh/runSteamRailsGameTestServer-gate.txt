@@ -1,0 +1,4 @@
+runSteamRailsGameTestServer: using tmpfs runtime /tmp/magnetization-run-steam-rails-gametest-runtime.6VVCuL
+[01Oct2026 04:28:36.643] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 570.6 ms ======================
+[01Oct2026 04:28:36.643] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runSteamRailsGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,20 @@
+[
+  {
+    "case": "recorded",
+    "exit": 0,
+    "expected": 0,
+    "output": "fixture: rendered main menu with required mods [simulatedcoasters,coasterssimulatedextratypes] on isolated display fixture\n"
+  },
+  {
+    "case": "missing-one",
+    "exit": 1,
+    "expected": 1,
+    "output": "fixture: expected either zero or all 14 audited Track Styles invalid-resource errors; got 13\n"
+  },
+  {
+    "case": "unexpected",
+    "exit": 1,
+    "expected": 1,
+    "output": "334:[Render thread/ERROR] Failed to load model magnetization:unexpected.json\nfixture: client reached the menu with ERROR/FATAL log entries\n"
+  }
+]

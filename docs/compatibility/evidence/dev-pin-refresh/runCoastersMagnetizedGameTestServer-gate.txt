@@ -1,0 +1,4 @@
+runCoastersMagnetizedGameTestServer: using tmpfs runtime /tmp/magnetization-run-coasters-magnetized-gametest-runtime.XiGLsm
+[01Oct2026 04:16:55.628] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 772.4 ms ======================
+[01Oct2026 04:16:55.629] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runCoastersMagnetizedGameTestServer: assertions passed; terminating only its lingering process group

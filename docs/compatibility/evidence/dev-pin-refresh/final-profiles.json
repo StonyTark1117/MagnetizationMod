@@ -1,0 +1,58 @@
+[
+  {
+    "name": "track-styles-final",
+    "exit": 0,
+    "seconds": 51.2,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runSimulatedCoastersTrackStylesClient",
+      "run-simulated-coasters-track-styles-client",
+      "simulatedcoasters,coasterssimulatedextratypes",
+      "360"
+    ],
+    "log_sha256": "4ac8481213d267357ee72bd7d6d8ca0c313c5269490b2128720baae742318fa1"
+  },
+  {
+    "name": "engineered-current-final",
+    "exit": 0,
+    "seconds": 38.4,
+    "command": [
+      "bash",
+      "scripts/run-gametest-gate.sh",
+      "runCoastersEngineeredGameTestServer",
+      "run-coasters-engineered-gametest",
+      "360"
+    ],
+    "log_sha256": "334df3e3d2ce715f6e46f6b31cbf35618d5e133c78a784b930554f0291b6476b"
+  },
+  {
+    "name": "tfmg-original-minimum",
+    "exit": 0,
+    "seconds": 36.4,
+    "command": [
+      "bash",
+      "scripts/run-gametest-gate.sh",
+      "runTfmgGameTestServer",
+      "run-tfmg-gametest",
+      "360",
+      "-Ptfmg_test_dependency=maven.modrinth:create-tfmg:uDi14nbt",
+      "-Ptfmg_test_mod_version=1.2.0"
+    ],
+    "log_sha256": "992c0f8637f205b0ad55c98ddf50d7595bdb82992e97cac3769134fbe9ba07c8"
+  },
+  {
+    "name": "full-client-final",
+    "exit": 1,
+    "seconds": 73.2,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runClient",
+      "run",
+      "tfmg,ae2,guideme,sodium,iris,jei,sophisticatedstorage,supplementaries,immersive_aircraft",
+      "360"
+    ],
+    "log_sha256": "7e9c9e9a8e5e2a93fe8cc064f7a8b33077c660c32580905ecb5357349852f3b9"
+  }
+]

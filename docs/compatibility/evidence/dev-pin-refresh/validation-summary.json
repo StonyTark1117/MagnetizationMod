@@ -1,0 +1,25 @@
+{
+  "base": "6ecea04",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "create": "6.0.11-312",
+  "aeronautics": "1.3.2",
+  "simulated": "1.3.2",
+  "sable": "2.0.5",
+  "passing_profiles": 44,
+  "required_test_passes": 321,
+  "unit_tests": 255,
+  "minimum_core_required_tests": 173,
+  "minimum_engineered_required_tests": 2,
+  "minimum_original_tfmg_required_tests": 16,
+  "storage_two_process_restart": "passed",
+  "selected_client_profiles": [
+    "Engineered",
+    "Track Styles (versioned resource allowance updated)",
+    "Missiles",
+    "JEI minimum / JER"
+  ],
+  "full_development_client": "menu rendered; strict log gate failed on eight upstream subtitle translations",
+  "published_dependency_relationships_unchanged": 40,
+  "excluded": "Known upstream pulley diagnostic is out of scope; deprecated Magnetics default-off upstream-crash reproducer is not counted as a pass."
+}

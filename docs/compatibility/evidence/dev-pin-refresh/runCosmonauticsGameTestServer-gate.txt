@@ -1,0 +1,4 @@
+runCosmonauticsGameTestServer: using tmpfs runtime /tmp/magnetization-run-cosmonautics-gametest-runtime.B1DtAD
+[01Oct2026 04:21:15.923] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 296.2 ms ======================
+[01Oct2026 04:21:15.923] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+runCosmonauticsGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,1 @@
+runSimulatedCoastersTrackStylesClient: expected either zero or all seven audited Track Styles invalid-resource errors; got 1

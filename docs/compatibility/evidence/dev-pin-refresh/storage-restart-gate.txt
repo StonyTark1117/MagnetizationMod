@@ -1,0 +1,5 @@
+[01Oct2026 04:26:16.235] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[01Oct2026 04:26:15.953] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_CREATED ship=ec9166ff-38d6-48f7-b57b-5bf8e2b1fbe4 cooked=0 pid=115987
+[01Oct2026 04:27:10.153] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[01Oct2026 04:26:45.165] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_RESTORED ship=ec9166ff-38d6-48f7-b57b-5bf8e2b1fbe4 creatorPid=115987 verifierPid=118118
+[01Oct2026 04:27:10.069] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_PASS sophisticated=7 ironChests=6 cooked=1 ticksAfterRestart=500

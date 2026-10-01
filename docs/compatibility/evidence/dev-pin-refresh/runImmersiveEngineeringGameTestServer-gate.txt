@@ -1,0 +1,4 @@
+runImmersiveEngineeringGameTestServer: using tmpfs runtime /tmp/magnetization-run-immersive-engineering-gametest-runtime.VqVbYx
+[01Oct2026 04:22:22.775] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 493.9 ms ======================
+[01Oct2026 04:22:22.775] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+runImmersiveEngineeringGameTestServer: assertions passed; terminating only its lingering process group

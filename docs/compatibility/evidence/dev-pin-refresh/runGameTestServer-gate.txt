@@ -1,0 +1,5 @@
+runGameTestServer: moved previous generated run directory to /tmp/magnetization-run-gametest-1790852953-38937
+runGameTestServer: using tmpfs runtime /tmp/magnetization-run-gametest-runtime.KnFzl6
+[01Oct2026 04:11:08.047] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 173 GAME TESTS COMPLETE IN 21.36 s ======================
+[01Oct2026 04:11:08.048] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 173 required tests passed :)
+runGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,4 @@
+runSimulatedCoastersLegacyGameTestServer: using tmpfs runtime /tmp/magnetization-run-simulated-coasters-legacy-gametest-runtime.JVrsVq
+[01Oct2026 04:15:53.332] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 622.7 ms ======================
+[01Oct2026 04:15:53.333] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runSimulatedCoastersLegacyGameTestServer: assertions passed; terminating only its lingering process group

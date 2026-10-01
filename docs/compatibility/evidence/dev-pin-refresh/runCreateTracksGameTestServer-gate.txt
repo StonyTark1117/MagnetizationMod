@@ -1,0 +1,4 @@
+runCreateTracksGameTestServer: using tmpfs runtime /tmp/magnetization-run-create-tracks-gametest-runtime.OzlkmH
+[01Oct2026 04:28:05.432] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 1.440 s ======================
+[01Oct2026 04:28:05.433] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runCreateTracksGameTestServer: assertions passed; terminating only its lingering process group

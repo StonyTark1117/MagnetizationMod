@@ -1,0 +1,4 @@
+runIronworksCoastersAdditionsGameTestServer: using tmpfs runtime /tmp/magnetization-run-ironworks-coasters-additions-gametest-runtime.UjGCoR
+[01Oct2026 04:18:50.923] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 764.3 ms ======================
+[01Oct2026 04:18:50.923] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+runIronworksCoastersAdditionsGameTestServer: assertions passed; terminating only its lingering process group

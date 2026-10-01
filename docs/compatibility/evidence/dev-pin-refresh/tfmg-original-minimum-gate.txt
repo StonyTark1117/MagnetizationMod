@@ -1,0 +1,4 @@
+runTfmgGameTestServer: using tmpfs runtime /tmp/magnetization-run-tfmg-gametest-runtime.YP5B6o
+[01Oct2026 04:29:50.198] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 16 GAME TESTS COMPLETE IN 755.9 ms ======================
+[01Oct2026 04:29:50.199] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 16 required tests passed :)
+runTfmgGameTestServer: assertions passed; terminating only its lingering process group

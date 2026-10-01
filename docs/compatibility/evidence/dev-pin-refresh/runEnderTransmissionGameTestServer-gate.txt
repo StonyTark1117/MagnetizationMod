@@ -1,0 +1,4 @@
+runEnderTransmissionGameTestServer: using tmpfs runtime /tmp/magnetization-run-ender-transmission-gametest-runtime.oC8vLX
+[01Oct2026 04:31:12.076] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 1.054 s ======================
+[01Oct2026 04:31:12.076] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+runEnderTransmissionGameTestServer: assertions passed; terminating only its lingering process group

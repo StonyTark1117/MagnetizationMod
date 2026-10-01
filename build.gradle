@@ -1841,13 +1841,41 @@ def extractModularGolemsApi = tasks.register('extractModularGolemsApi', Sync) {
     include 'META-INF/jarjar/l2core-*.jar', 'META-INF/jarjar/l2serial-*.jar'
     into layout.buildDirectory.dir('modular-golems-compile-api')
 }
+// Aeronautics 1.3.2 is distributed as an official jar-in-jar bundle. Its
+// standalone Maven coordinates are not published. Extract the unmodified APIs
+// for development; none of these dependencies is bundled in the release JAR.
+configurations { aeronauticsBundle }
+def extractAeronauticsBundle = tasks.register('extractAeronauticsBundle', Sync) {
+    def bundle = configurations.aeronauticsBundle
+    inputs.property('sha256', aeronautics_bundle_sha256)
+    doFirst {
+        def actual = java.security.MessageDigest.getInstance('SHA-256')
+                .digest(bundle.singleFile.bytes).encodeHex().toString()
+        if (actual != aeronautics_bundle_sha256) {
+            throw new GradleException("Aeronautics bundle SHA-256 mismatch: ${actual}")
+        }
+    }
+    from({ zipTree(bundle.singleFile) }) {
+        include 'META-INF/jarjar/dev.eriksonn.aeronautics.*.jar'
+        include 'META-INF/jarjar/dev.simulated_team.simulated.*.jar'
+        include 'META-INF/jarjar/dev.ryanhcode.offroad.*.jar'
+        eachFile { path = name }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('aeronautics-bundle')
+}
+def bundledAeroJar = { name ->
+    files(layout.buildDirectory.file("aeronautics-bundle/${name}")).builtBy(extractAeronauticsBundle)
+}
+
 dependencies {
+    aeronauticsBundle("maven.modrinth:create-aeronautics:${aeronautics_bundle_version}") { transitive = false }
     sweepTwilightRuntime("curse.maven:the-twilight-forest-227639:7797302") { transitive = false }
     sweepStorageRuntime("curse.maven:ironchest-228756:5491156") { transitive = false }
-    sweepStorageRuntime("maven.modrinth:sophisticated-storage:H7wGZ8Sl") { transitive = false }
-    sweepStorageRuntime("maven.modrinth:sophisticated-core:PXl6rB3q") { transitive = false }
-    sweepSupplementariesRuntime("maven.modrinth:supplementaries:WrZWfRjP") { transitive = false }
-    sweepSupplementariesRuntime("maven.modrinth:moonlight:HTfE7eCk") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-storage:${sophisticated_storage_test_version}") { transitive = false }
+    sweepStorageRuntime("maven.modrinth:sophisticated-core:${sophisticated_core_test_version}") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:supplementaries:${supplementaries_test_version}") { transitive = false }
+    sweepSupplementariesRuntime("maven.modrinth:moonlight:${moonlight_test_version}") { transitive = false }
     modularGolemsLibraries("maven.modrinth:l2library:640EOvKh") { transitive = false }
     compileOnly(files(layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2core-3.0.8+15.jar'),
             layout.buildDirectory.file('modular-golems-compile-api/META-INF/jarjar/l2serial-3.1.1.jar')).builtBy(extractModularGolemsApi))
@@ -1872,8 +1900,16 @@ dependencies {
     // Their POMs incorrectly publish optional integrations (Curios, JEI,
     // compasses, CC:Tweaked) as runtime transitives. The actual required stack is
     // already declared explicitly above, so keep these two artifacts isolated.
-    implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}") { transitive = false }
-    implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
+    if (aeronautics_version == '1.3.2') {
+        implementation(bundledAeroJar("dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        implementation("dev.eriksonn.aeronautics:aeronautics-neoforge-${minecraft_version}:${aeronautics_version}") { transitive = false }
+    }
+    if (simulated_version == '1.3.2') {
+        implementation(bundledAeroJar("dev.simulated_team.simulated.simulated-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        implementation("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") { transitive = false }
+    }
 
     // AeroPortals is optional for users. Compile against its public transfer
     // event so bindings can follow a relocated Sable plot, and load it only in
@@ -1920,8 +1956,8 @@ dependencies {
     coastersAdditionsRuntime("maven.modrinth:interiors:${create_interiors_test_version}") { transitive = false }
     ironworksRuntime("maven.modrinth:create-ironworks:${ironworks_test_version}") { transitive = false }
     // Exact upstream audit artifacts, isolated from shipped dependencies.
-    compileOnly("maven.modrinth:immersive-aircraft:ZZTlNkV9") { transitive = false }
-    sweepAircraftRuntime("maven.modrinth:immersive-aircraft:ZZTlNkV9") { transitive = false }
+    compileOnly("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}") { transitive = false }
+    sweepAircraftRuntime("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}") { transitive = false }
     sweepAircraftRuntime("maven.modrinth:aviator-dreams-reloaded:4Aa8QEq9") { transitive = false }
     sweepMaterialsRuntime("dev.architectury:architectury-neoforge:13.0.8") { transitive = false }
     sweepMaterialsRuntime("maven.modrinth:magnetizing:az3hmBKl") { transitive = false }
@@ -1982,7 +2018,11 @@ dependencies {
 
     compileOnly("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
     createTracksRuntime("curse.maven:create-tracks-1519765:${create_tracks_test_file}") { transitive = false }
-    createTracksRuntime("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_test_version}") { transitive = false }
+    if (offroad_test_version == '1.3.2') {
+        createTracksRuntime(bundledAeroJar("dev.ryanhcode.offroad.offroad-neoforge-${minecraft_version}-1.3.2.jar"))
+    } else {
+        createTracksRuntime("dev.ryanhcode.offroad:offroad-neoforge-${minecraft_version}:${offroad_test_version}") { transitive = false }
+    }
 
     compileOnly("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
     steamRailsRuntime("curse.maven:steam-n-rails-neoforge-1414670:${steam_rails_test_file}") { transitive = false }
@@ -2040,9 +2080,9 @@ dependencies {
     // BlameJared's maven (api-only artifact), which is published with NeoForge-
     // compatible mappings; the Modrinth mirror has classpath baggage that pulls
     // Yarn intermediary stubs.
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:19.44.0.401")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_test_version}")
     // Full JEI build for dev runs — api-only doesn't include the mod entrypoint.
-    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:19.44.0.401")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_test_version}")
 
     // REI — alternative recipe browser. Soft-dep; plugin discovered through
     // REI's @REIPluginClient annotation scanner.
@@ -2137,8 +2177,8 @@ dependencies {
     // `compat.CompatSodiumFluidRendererMixin` (@Inject require=1) matches 0 targets
     // against Sodium 0.8 and hard-crashes the client at world load. Bumped to a
     // Sodium-0.8-aware build. If you bump Sodium again, bump these to match.
-    localRuntime("maven.modrinth:supplementaries:ZHJvgW8G") // 1.21.1-3.8.9
-    localRuntime("maven.modrinth:moonlight:Gh4IJiwq") // 1.21.1-3.3.3, Supplementaries hard dep
+    localRuntime("maven.modrinth:supplementaries:${supplementaries_test_version}")
+    localRuntime("maven.modrinth:moonlight:${moonlight_test_version}") // Supplementaries hard dep
     // Sodium — the renderer most users run. localRuntime so we validate our
     // (and Sable's) mixin compatibility against it in dev. Latest 1.21.1 NeoForge
     // build; earlier Sable+Sodium-alpha clashes should be gone on Sable 2.x.
@@ -2159,9 +2199,9 @@ dependencies {
     // upstream mod fixes it; tag coverage remains in place either way.
     // localRuntime("maven.modrinth:aether:K5X5qMwG")
     // localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // Aether hard dep
-    localRuntime("maven.modrinth:sophisticated-storage:r5eqHpxi") // 1.21.1-1.5.85.2077
-    localRuntime("maven.modrinth:sophisticated-core:fNqyH4kb") // 1.21.1-1.4.86.2259, Sophisticated Storage hard dep
-    localRuntime("maven.modrinth:immersive-aircraft:RkWu0N4D") // 1.4.6+1.21.1
+    localRuntime("maven.modrinth:sophisticated-storage:${sophisticated_storage_test_version}")
+    localRuntime("maven.modrinth:sophisticated-core:${sophisticated_core_test_version}") // Sophisticated Storage hard dep
+    localRuntime("maven.modrinth:immersive-aircraft:${immersive_aircraft_test_version}")
     // create-new-age 1.2.0 declares an OPTIONAL computercraft dep with range
     // [1.116.2,); NeoForge still enforces that range when CC is present. CC:Tweaked
     // arrives as an optional Maven POM transitive of aeronautics + simulated at
@@ -2211,7 +2251,7 @@ dependencies {
     localRuntime("maven.modrinth:accessories:Fb55Fgjz")
     localRuntime("maven.modrinth:accessories-compat-layer:JMgVNypu")
     localRuntime("maven.modrinth:owo-lib:NMCHU6DZ") // accessories-compat-layer hard dep
-    localRuntime("maven.modrinth:spartan-weaponry-unofficial:I7KW38kf") // 1.21.1-1.2.2
+    localRuntime("maven.modrinth:spartan-weaponry-unofficial:${spartan_weaponry_test_version}")
 
     testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")

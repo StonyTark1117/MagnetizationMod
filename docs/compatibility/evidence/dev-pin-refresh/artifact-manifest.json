@@ -1,0 +1,3774 @@
+[
+  {
+    "coordinate": "maven.modrinth:create-aeronautics:44pLdPGg",
+    "filename": "create-aeronautics-44pLdPGg.jar",
+    "sha256": "a3f330d4757640f8715d991a43eedb826e4d0e51558d859c843ae6693bd35f1e",
+    "mods": [
+      {
+        "modId": "aeronautics_bundled",
+        "version": "1.3.2",
+        "displayName": "Create Aeronautics",
+        "logoFile": "aeronautics_bundled.png",
+        "credits": "",
+        "authors": "Simulated Team",
+        "description": "Expands the Create mod with physics-based contraptions, to build anything from cars to planes. This is a bundled JAR that contains Simulated, Aeronautics, and Offroad."
+      }
+    ],
+    "dependencies": {
+      "aeronautics_bundled": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.228,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:the-twilight-forest-227639:7797302",
+    "filename": "the-twilight-forest-227639-7797302.jar",
+    "sha256": "493da16d10210f9f53a3c33b3d8fcb4ae9b14016ee420d753c894562bd9aba35",
+    "mods": [
+      {
+        "modId": "twilightforest",
+        "version": "4.8.3345",
+        "displayName": "The Twilight Forest",
+        "itemIcon": "twilightforest:twilight_portal_miniature_structure",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/the-twilight-forest",
+        "logoFile": "twilightforest_logo.png",
+        "credits": "By Benimatic (Ben Mazur)",
+        "authors": "Benimatic, AtomicBlom, Drullkus, Killer_Demon, quadraxis, Tamaized, williewillus, Andromander, GizmoTheMoonPig, jodlodi, SleepyHorse",
+        "description": "An enchanted forest dimension.\n",
+        "enumExtensions": "META-INF/enumextensions.json"
+      }
+    ],
+    "dependencies": {
+      "twilightforest": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.209,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:ironchest-228756:5491156",
+    "filename": "ironchest-228756-5491156.jar",
+    "sha256": "dae66a38a33c2adac6ca0b7a4fbf4b365ba37a6a1f7a10961028617965c1fcaf",
+    "mods": [
+      {
+        "modId": "ironchest",
+        "version": "1.21-neoforge-16.0.7",
+        "displayName": "Iron Chests",
+        "authors": "cpw, alexbegt, progwml6",
+        "description": "New chests with larger sizes, with in-place upgrade items.\nThe feature chest is the crystal chest, which is transparent - some inventory contents are visible without opening the chest.",
+        "displayURL": "https://minecraft.curseforge.com/projects/iron-chests",
+        "displayTest": "MATCH_VERSION"
+      }
+    ],
+    "dependencies": {
+      "ironchest": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.0-beta,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.21.1)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:sophisticated-storage:GvOv4X8M",
+    "filename": "sophisticated-storage-GvOv4X8M.jar",
+    "sha256": "ed0246ef868dc432558225fbd9fb52dfd581d8bc440f3352436c45f0c464fdf5",
+    "mods": [
+      {
+        "modId": "sophisticatedstorage",
+        "version": "1.6.0",
+        "displayName": "Sophisticated Storage",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-storage",
+        "logoFile": "logo.png",
+        "credits": "Created by P3pp3rF1y and art by Ridanisaurus.",
+        "authors": "P3pp3rF1y, Ridanisaurus",
+        "description": "Fancy and functional storage containers."
+      }
+    ],
+    "dependencies": {
+      "sophisticatedstorage": [
+        {
+          "modId": "sophisticatedcore",
+          "type": "required",
+          "versionRange": "[1.5.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[19.9.0,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.229,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:sophisticated-core:blXGSmAb",
+    "filename": "sophisticated-core-blXGSmAb.jar",
+    "sha256": "d83fff0191031290e333807974d2621820d1d64d003bca5fa2ee64969f84cf94",
+    "mods": [
+      {
+        "modId": "sophisticatedcore",
+        "version": "1.5.2",
+        "displayName": "Sophisticated Core",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-core",
+        "logoFile": "logo.png",
+        "credits": "Created by P3pp3rF1y",
+        "authors": "P3pp3rF1y",
+        "description": "A library / shared functionality mod for Sophisticated Storage and Backpacks"
+      }
+    ],
+    "dependencies": {
+      "sophisticatedcore": [
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[19.32.0.359,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.229,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:supplementaries:WrZWfRjP",
+    "filename": "supplementaries-WrZWfRjP.jar",
+    "sha256": "d6876ad959d0da4bab0ba182839a0af0e38ef3571345e5e7aea0be572f958e05",
+    "mods": [
+      {
+        "modId": "supplementaries",
+        "version": "1.21.1-3.9.9",
+        "displayName": "Supplementaries",
+        "logoFile": "icon.png",
+        "authors": "MehVahdJukaar, Plantkillable",
+        "credits": "Put a book named 'credits' inside a notice board",
+        "description": "Many functional and useful Vanilla+ blocks",
+        "modUrl": "https://www.curseforge.com/minecraft/mc-mods/supplementaries",
+        "itemIcon": "supplementaries:globe"
+      }
+    ],
+    "dependencies": {
+      "supplementaries": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.247,]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "1.21.1",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "moonlight",
+          "type": "required",
+          "referralUrl": "https://www.curseforge.com/minecraft/mc-mods/selene",
+          "versionRange": "[1.21-3.6.4,]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "optional",
+          "versionRange": "[6.0.0,]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "amendments",
+          "type": "optional",
+          "versionRange": "[1.21-2.0.0,]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "farmersdelight",
+          "type": "incompatible",
+          "versionRange": "[0,1.3.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sodium",
+          "type": "incompatible",
+          "versionRange": "[0,0.8.12-beta.1)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:moonlight:t6iFh4M3",
+    "filename": "moonlight-t6iFh4M3.jar",
+    "sha256": "932b8c8ea86dff39903862383e0ffde6ada9569254ed9b7ccb05ac1b2992c711",
+    "mods": [
+      {
+        "modId": "moonlight",
+        "version": "1.21.1-3.7.0",
+        "displayName": "Moonlight Lib",
+        "logoFile": "icon.png",
+        "iconFile": "icon.png",
+        "authors": "MehVahdJukaar",
+        "credits": "MehVahdJukaar",
+        "description": "A small library with many cool unique features, from dynamic asset generation to dynamic villager schedules, data driven trades and Map Markers, simple multi loader utilities and more",
+        "modUrl": "https://www.curseforge.com/minecraft/mc-mods/selene"
+      }
+    ],
+    "dependencies": {
+      "moonlight": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:l2library:640EOvKh",
+    "filename": "l2library-640EOvKh.jar",
+    "sha256": "26038e30873cf505bc289e28f9dcf084561b8a4929b294dd0552ba5e52505dd6",
+    "mods": [
+      {
+        "modId": "l2library",
+        "version": "3.0.8",
+        "displayName": "L2Library",
+        "authors": "lcy0x1",
+        "description": "Library mod for all L2 mods"
+      }
+    ],
+    "dependencies": {
+      "l2library": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.4,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:modular-golems:zNXsPDeF",
+    "filename": "modular-golems-zNXsPDeF.jar",
+    "sha256": "aa46efba62595ad11daf41cae68ef9af91f79a7cc66e5046d96a32d052479971",
+    "mods": [
+      {
+        "modId": "modulargolems",
+        "version": "3.1.43",
+        "displayName": "Modular Golems",
+        "authors": "lcy0x1",
+        "description": "Materials"
+      }
+    ],
+    "dependencies": {
+      "modulargolems": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.4,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "l2library",
+          "type": "required",
+          "versionRange": "[3.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "optional",
+          "versionRange": "[6.0.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "iceandfire",
+          "type": "optional",
+          "versionRange": "[2.0-beta.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "cataclysm",
+          "type": "optional",
+          "versionRange": "[3.16,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "l2complements",
+          "type": "optional",
+          "versionRange": "[3.1.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:quark:8uDGRJCr",
+    "filename": "quark-8uDGRJCr.jar",
+    "sha256": "40808b4094b8e4987c14211f4c021ad42c3a4ac2543f6af4163b8020016b0925",
+    "mods": [
+      {
+        "modId": "quark",
+        "displayName": "Quark",
+        "version": "4.1-485",
+        "authors": "Vazkii, WireSegal, MCVinnyq, Sully",
+        "description": "Small things, improving Minecraft bit by bit."
+      }
+    ],
+    "dependencies": {
+      "quark": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.230,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "zeta",
+          "type": "required",
+          "versionRange": "[1,1.2)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "biolith",
+          "type": "required",
+          "versionRange": "[3.0.0,3.1.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "lootr",
+          "type": "optional",
+          "versionRange": "[1.10.34.86,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:zeta:9GjNW2Gf",
+    "filename": "zeta-9GjNW2Gf.jar",
+    "sha256": "4f17d1a2b9fd6d18ddb7697aa451db7fb154053b8648f79de279ae0d7e68a2fa",
+    "mods": [
+      {
+        "modId": "zeta",
+        "displayName": "Zeta",
+        "version": "1.1-40",
+        "authors": "Vazkii, quat, IThundxr, Siuol, wiresegal, MehVahdJukaar",
+        "description": "A fully featured Library designed around loading highly configurable, agile developed. modular mods"
+      }
+    ],
+    "dependencies": {
+      "zeta": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.192,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-aeroportals-1549100:8876165",
+    "filename": "create-aeroportals-1549100-8876165.jar",
+    "sha256": "6acf27b43647e5daa5e5fd2d99545a1cb459b30de410a936d9336aad2b447575",
+    "mods": [
+      {
+        "modId": "aeroportals",
+        "version": "1.3.3",
+        "displayName": "AeroPortals",
+        "displayURL": "https://github.com/breakinblocks/AeroPortals",
+        "authors": "breakinblocks",
+        "description": "Teleport Sable SubLevels (Create: Aeronautics ships) through nether portals.\n"
+      }
+    ],
+    "dependencies": {
+      "aeroportals": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.3,3)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "optional",
+          "versionRange": "[6.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "kubejs",
+          "type": "optional",
+          "versionRange": "[2101.7,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-aeroportals-1549100:8433331",
+    "filename": "create-aeroportals-1549100-8433331.jar",
+    "sha256": "7aecf8337c4091ff41c20124112384f326827dcd4be39c5a268e30a42d87ed31",
+    "mods": [
+      {
+        "modId": "aeroportals",
+        "version": "1.1.2",
+        "displayName": "AeroPortals",
+        "displayURL": "https://github.com/breakinblocks/AeroPortals",
+        "authors": "breakinblocks",
+        "description": "Teleport Sable SubLevels (Create: Aeronautics ships) through nether portals.\n"
+      }
+    ],
+    "dependencies": {
+      "aeroportals": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[1.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "optional",
+          "versionRange": "[6.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:immersive-aeronautics-1629108:8586854",
+    "filename": "immersive-aeronautics-1629108-8586854.jar",
+    "sha256": "b42de5b81fe76fee7dd1bded7ed7a581abdb461479db1831f2714c5c60c77b35",
+    "mods": [
+      {
+        "modId": "immersive_portals_core",
+        "version": "6.0.7",
+        "displayName": "Immersive Portals",
+        "logoFile": "icon.png",
+        "authors": "qouteall, Nick1st, Other Contributors (see GitHub)",
+        "description": "See through portals and travel between dimensions seamlessly."
+      },
+      {
+        "modId": "immersive_portals",
+        "version": "6.0.7",
+        "displayName": "Immersive Portals",
+        "description": "See through portals and travel between dimensions seamlessly."
+      },
+      {
+        "modId": "q_misc_util",
+        "version": "6.0.7",
+        "displayName": "Immersive Portals",
+        "logoFile": "icon.png",
+        "authors": "qouteall, Nick1st, Other Contributors (see GitHub)",
+        "description": "See through portals and travel between dimensions seamlessly."
+      },
+      {
+        "modId": "imm_ptl",
+        "version": "6.0.7",
+        "displayName": "Immersive Portals",
+        "logoFile": "icon.png",
+        "authors": "qouteall, Nick1st, Other Contributors (see GitHub)",
+        "description": "See through portals and travel between dimensions seamlessly."
+      }
+    ],
+    "dependencies": {
+      "immersive_portals_core": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-coasters-simulated-1601871:8655742",
+    "filename": "create-coasters-simulated-1601871-8655742.jar",
+    "sha256": "f80b4c3cdf9fa6188804967147761b0373e150a6eadbdc53626e5ac9700b2049",
+    "mods": [
+      {
+        "modId": "simulatedcoasters",
+        "version": "0.1.5",
+        "displayName": "Create: Coasters Simulated",
+        "logoFile": "logo.png",
+        "description": "Create add-on: rollercoasters using Create mechanisms with Sable physics.\n"
+      }
+    ],
+    "dependencies": {
+      "simulatedcoasters": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.228,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "flywheel",
+          "type": "required",
+          "versionRange": "[1.0.6,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-coasters-simulated-1601871:8542817",
+    "filename": "create-coasters-simulated-1601871-8542817.jar",
+    "sha256": "da0a9b7aee98ae8397c92854eff80189d81df18819c8ea5714cdb2646a3c096e",
+    "mods": [
+      {
+        "modId": "simulatedcoasters",
+        "version": "0.1",
+        "displayName": "Create: Coasters Simulated",
+        "logoFile": "logo.png",
+        "description": "Create add-on: rollercoasters using Create mechanisms with Sable physics.\n"
+      }
+    ],
+    "dependencies": {
+      "simulatedcoasters": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.228,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "flywheel",
+          "type": "required",
+          "versionRange": "[1.0.6,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:coasters-simulated-track-styles-1642719:8672156",
+    "filename": "coasters-simulated-track-styles-1642719-8672156.jar",
+    "sha256": "2db637054455c92111ffca910f242b48dfe6aa815028cd1be3c1bbad43f63276",
+    "mods": [
+      {
+        "modId": "coasterssimulatedextratypes",
+        "version": "1.1.0",
+        "displayName": "Coasters Simulated: Track Styles",
+        "logoFile": "icon.png",
+        "authors": "claebcode",
+        "description": "An unofficial addon for Create: Coasters Simulated that adds track styles based off real life coaster manufacturer track.\n"
+      }
+    ],
+    "dependencies": {
+      "coasterssimulatedextratypes": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.234,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:coasters-magnetized-1642979:8668703",
+    "filename": "coasters-magnetized-1642979-8668703.jar",
+    "sha256": "52314bdace976a41d7d0948d4505ef96561719616d50dfffddce33f8f014e32a",
+    "mods": [
+      {
+        "modId": "coastersmagnetized",
+        "version": "1.1.0",
+        "displayName": "Coasters: Magnetized",
+        "authors": "Antopfr",
+        "description": "Magnetic Tracks and Wooden Tracks for Create: Coasters Simulated!\n"
+      }
+    ],
+    "dependencies": {
+      "coastersmagnetized": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.231,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulatedcoasters",
+          "type": "required",
+          "versionRange": "[0.1.2,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "flywheel",
+          "type": "required",
+          "versionRange": "[1.0.6,)",
+          "ordering": "AFTER",
+          "side": "CLIENT"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:coasters-engineered-1643631:8761537",
+    "filename": "coasters-engineered-1643631-8761537.jar",
+    "sha256": "ac7530a7b1dc637cad00942855de9156f13bf272c1a22d81c5325e11b52903b6",
+    "mods": [
+      {
+        "modId": "coastersengineered",
+        "version": "1.1.0",
+        "displayName": "Coasters: Engineered",
+        "authors": "jwaterfall",
+        "logoFile": "logo.png",
+        "logoBlur": false,
+        "description": "Create-style additions for Create: Coasters Simulated \u2014 magnetic launch track and more.\n"
+      }
+    ],
+    "dependencies": {
+      "coastersengineered": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.228,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulatedcoasters",
+          "type": "required",
+          "versionRange": "[0.1.4,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:jade:15.10.6+neoforge",
+    "filename": "jade-15.10.6+neoforge.jar",
+    "sha256": "276f1f65a20d04f536989c4f311949d770b52c440c23c2b904a08860f3c93810",
+    "mods": [
+      {
+        "modId": "jade",
+        "version": "${file.jarVersion}",
+        "displayName": "Jade",
+        "authors": "Snownee",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/jade",
+        "description": "Minecraft mod shows what you are looking at. (Hwyla fork)",
+        "logoFile": "icon.png",
+        "credits": "TehNut, ProfMobius, kalkafox"
+      }
+    ],
+    "dependencies": {
+      "jade": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.143, )",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-coasters-extras-1649197:8718286",
+    "filename": "create-coasters-extras-1649197-8718286.jar",
+    "sha256": "e989c33e305779e37d4cd61bd4a7a13700faa45a604bd4aa92eacad738145115",
+    "mods": [
+      {
+        "modId": "coasters_extras",
+        "version": "1.2",
+        "displayName": "Create: Coasters Extras",
+        "authors": "NotZyvex",
+        "description": "Adds more balloon colours and new coaster track types to Create: Coasters Simulated.",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "coasters_extras": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.0,7.0.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulatedcoasters",
+          "type": "required",
+          "versionRange": "[0.1.2,0.2.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-coasters-simulated-additions-1661497:8772429",
+    "filename": "create-coasters-simulated-additions-1661497-8772429.jar",
+    "sha256": "398a65f7c651a098b7608c6c8d600f074e7a359f239a8bdb7b49446f3deb9883",
+    "mods": [
+      {
+        "modId": "coasterfins",
+        "version": "0.2.0",
+        "displayName": "Create: Coasters Simulated Additions",
+        "authors": "PlushiVR",
+        "logoFile": "logo.png",
+        "description": "Stations, seats, cart cladding, track sensors, launch/brake spans, water currents and splash for Create: Coasters Simulated."
+      }
+    ],
+    "dependencies": {
+      "coasterfins": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulated",
+          "type": "required",
+          "versionRange": "[1.3.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulatedcoasters",
+          "type": "required",
+          "versionRange": "[0.1.3,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "interiors",
+          "type": "required",
+          "versionRange": "[0.6,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:interiors:gBrfZy6S",
+    "filename": "interiors-gBrfZy6S.jar",
+    "sha256": "0d1326fb8b67623ae1c69a63b788dcdcecaf8df400c7d8e5e55ace79a5166fe5",
+    "mods": [
+      {
+        "modId": "interiors",
+        "version": "0.6.1",
+        "displayName": "Create: Interiors",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/interiors",
+        "issueTrackerURL": "https://github.com/aesefficio/CreateInteriorsMod/issues",
+        "logoFile": "assets/interiors/icon.png",
+        "authors": "sudolev, rdh",
+        "description": "Create: Interiors is a new take on furniture, adding functional blocks that mesh seamlessly with the aesthetic and principles of the Create mod.\n"
+      }
+    ],
+    "dependencies": {
+      "interiors": [
+        {
+          "modId": "create",
+          "mandatory": true,
+          "versionRange": "[6,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:create-ironworks:4.0.3",
+    "filename": "create-ironworks-4.0.3.jar",
+    "sha256": "d6efd546e0dce52d7a79fb98de5be4a2690e70505e9ce1ed920f0431597243fd",
+    "mods": [
+      {
+        "modId": "create_ironworks",
+        "version": "4.0.3",
+        "displayName": "Create: Ironworks",
+        "displayURL": "https://www.curseforge.com/members/robinfrt/projects",
+        "logoFile": "logo.png",
+        "credits": "A mod by robinfrt",
+        "authors": "robinfrt",
+        "description": "An addon for Create bringing new materials (Tin, Bronze, Steel) and related items."
+      }
+    ],
+    "dependencies": {
+      "create_ironworks": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.190,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:immersive-aircraft:ZZTlNkV9",
+    "filename": "immersive-aircraft-ZZTlNkV9.jar",
+    "sha256": "ef5b68c04171d1eadb3bb70e600eb766534ef7588a5b4737f9d55a4f38550ae9",
+    "mods": [
+      {
+        "modId": "immersive_aircraft",
+        "version": "1.5.2+1.21.1",
+        "displayName": "Immersive Aircraft",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/immersive-aircraft",
+        "authors": "Luke100000",
+        "description": "A bunch of rustic aircraft to travel, transport, and explore!",
+        "logoFile": "icon.png",
+        "itemIcon": "immersive_aircraft:biplane"
+      }
+    ],
+    "dependencies": {
+      "immersive_aircraft": [
+        {
+          "modId": "minecraft",
+          "mandatory": true,
+          "versionRange": "[1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:aviator-dreams-reloaded:4Aa8QEq9",
+    "filename": "aviator-dreams-reloaded-4Aa8QEq9.jar",
+    "sha256": "d7317213b18e9f690a070c52ef4569dbfcdffe4abe98911cd9da001bcdbaa134",
+    "mods": [
+      {
+        "modId": "aviator_dream",
+        "version": "1.2.7+1.21.1",
+        "displayName": "Aviator Dreams (Reloaded)",
+        "displayURL": "https://modrinth.com/mod/aviator-dreams-reloaded",
+        "authors": "CerealCamera",
+        "description": "Realistic aircraft for Immersive Aircraft",
+        "logoFile": "icon.png",
+        "itemIcon": "aviator_dream:douglas_dc1",
+        "updateJSONURL": "https://api.modrinth.com/updates/aviator-dreams-reloaded/forge_updates.json?neoforge_only"
+      }
+    ],
+    "dependencies": {
+      "aviator_dream": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[@MINECRAFT_VERSION@,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.194,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "immersive_aircraft",
+          "type": "required",
+          "versionRange": "[1.2.2,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:magnetizing:az3hmBKl",
+    "filename": "magnetizing-az3hmBKl.jar",
+    "sha256": "9f29dae223efa310f29407f39d41b02e1310a93c9f0617c9a4c2d18f9c487353",
+    "mods": [
+      {
+        "modId": "magnetizing",
+        "version": "1.1.0+mc1.21.1",
+        "displayName": "Magnetizing",
+        "authors": "Command17",
+        "description": "Adds items and blocks based around magnets\n",
+        "logoFile": "assets/magnetizing/icon.png"
+      }
+    ],
+    "dependencies": {
+      "magnetizing": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "architectury",
+          "type": "required",
+          "versionRange": "[13.0.8,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:createmagnetics-1457075:7667440",
+    "filename": "createmagnetics-1457075-7667440.jar",
+    "sha256": "12a875cdc14200c3ea6e9d9ab14f754fbe4b5ad35521e6ac7daccc8b777e9b28",
+    "mods": [
+      {
+        "modId": "createmagnetics",
+        "version": "0.0.4-alpha",
+        "displayName": "Create: Magnetics",
+        "logoFile": "logo.png",
+        "logoBlur": false,
+        "authors": "Koudesuk",
+        "description": "Adds Magnetics to Create Mod\n"
+      }
+    ],
+    "dependencies": {
+      "createmagnetics": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:l_enders-cataclysm:PsPYpoCC",
+    "filename": "l_enders-cataclysm-PsPYpoCC.jar",
+    "sha256": "371956d0c2e3b56729ee93b955e936875d210e372fe734cdb74326d89ef79875",
+    "mods": [
+      {
+        "enumExtensions": "META-INF/enumextensions.json",
+        "modId": "cataclysm",
+        "version": "3.33",
+        "displayName": "L_Ender's Cataclysm 1.21.1",
+        "authors": "L_Ender",
+        "description": "https://www.curseforge.com/minecraft/texture-packs/cataclysmic-tunes"
+      }
+    ],
+    "dependencies": {
+      "cataclysm": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "1.21.1",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "curios",
+          "type": "required",
+          "versionRange": "[9.2.2+1.21.1,)",
+          "ordering": "NONE"
+        },
+        {
+          "modId": "lionfishapi",
+          "type": "required",
+          "versionRange": "3.1",
+          "ordering": "NONE"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:bosses-of-mass-destruction-forge:snhDYBxP",
+    "filename": "bosses-of-mass-destruction-forge-snhDYBxP.jar",
+    "sha256": "93da8753a00229e41c5ed399e6cf849737e7bd9b4109d5d8e4ad3a20136deb82",
+    "mods": [
+      {
+        "modId": "bosses_of_mass_destruction",
+        "version": "1.3.3",
+        "displayName": "Bosses of Mass Destruction",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/bosses-of-mass-destruction-forge",
+        "logoFile": "logo.png",
+        "authors": "CerbonXD",
+        "description": "Adds high threat mobs for players to take on."
+      }
+    ],
+    "dependencies": {
+      "bosses_of_mass_destruction": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "cerbons_api",
+          "type": "required",
+          "versionRange": "[1.2.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "cloth_config",
+          "type": "required",
+          "versionRange": "[15.0.140,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "geckolib",
+          "type": "required",
+          "versionRange": "[4.5.8,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:cerbons-api:5wbxkBQ1",
+    "filename": "cerbons-api-5wbxkBQ1.jar",
+    "sha256": "5c750762b31ab79127df6f455351fe79793d8c2b41e1a0f94b335a5a1123534d",
+    "mods": [
+      {
+        "modId": "cerbons_api",
+        "version": "1.3.0",
+        "displayName": "Cerbons API",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/cerbons-api",
+        "logoFile": "logo.png",
+        "authors": "CerbonXD",
+        "description": "API Library for CERBONS's minecraft mods."
+      }
+    ],
+    "dependencies": {
+      "cerbons_api": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:geckolib:Grwn5rUB",
+    "filename": "geckolib-Grwn5rUB.jar",
+    "sha256": "20a1995e4074f387ff549e2c57ea79dd7d41ee83c6afb9dd6a6e840e592d1c47",
+    "mods": [
+      {
+        "modId": "geckolib",
+        "version": "4.9.3",
+        "displayName": "GeckoLib 4",
+        "displayURL": "http://geckolib.com/",
+        "logoFile": "geckolib.png",
+        "credits": "Gecko, Eliot, AzureDoom, DerToaster, Tslat, Witixin",
+        "authors": "Gecko, Eliot, AzureDoom, DerToaster, Tslat, Witixin",
+        "description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.\n"
+      }
+    ],
+    "dependencies": {
+      "geckolib": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.150,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "geckoanimfix",
+          "type": "incompatible",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:cloth-config:izKINKFg",
+    "filename": "cloth-config-izKINKFg.jar",
+    "sha256": "65e722e0d98431a07c45f8bdd8d529a217cc8c175fde1740248bd5c1b4f3c0d4",
+    "mods": [
+      {
+        "modId": "cloth_config",
+        "version": "15.0.140",
+        "displayName": "Cloth Config v15 API",
+        "description": "An API for config screens.\n"
+      }
+    ],
+    "dependencies": {
+      "cloth_config": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.110-beta,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:irons-spells-n-spellbooks:slKLosTb",
+    "filename": "irons-spells-n-spellbooks-slKLosTb.jar",
+    "sha256": "55a290db9b966e0c5d2f5c051d50775f3db6375cdb52730c4da528bcf5d5daa0",
+    "mods": [
+      {
+        "modId": "irons_spellbooks",
+        "version": "1.21.1-3.16.3",
+        "displayName": "Iron's Spells 'n Spellbooks",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/irons-spells-n-spellbooks",
+        "logoFile": "spellbooks title small background low res.png",
+        "credits": "\n  Crispytwig: Ring textures, Scroll textures, Arcane Cloth texture\n  Crydigo: Ink, Spellbook, Mithril, Hogskin, and Dragonskin textures; Priest Armor and Dead King models\n  Hazentouvel: Ice Spider Texture/Model\n  Cakeman: Spellbook models\n  RenovatedStudios: Various spell icons\n  Caner Crebes: Music (Flame Still Burns, King's Lullaby, Whispers of Ice, Tyros Bossfight, Dead King Bossfight) \n  Amo: Spellbook Apotheosis compat\n  Some assets remixed from J. W. Bjerk (eleazzaar)'s Painterly Spell Icon Packs -- www.jwbjerk.com/art  -- find this and other open art at: http://opengameart.org.",
+        "authors": "Iron431, Lab3",
+        "description": "A magic mod for Minecraft returning to the classic RPG spellcasting fantasy.",
+        "enumExtensions": "META-INF/enumextensions.json"
+      }
+    ],
+    "dependencies": {
+      "irons_spellbooks": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.0-beta,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "geckolib",
+          "type": "required",
+          "versionRange": "[4.7.5.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "playeranimator",
+          "type": "required",
+          "versionRange": "[2.0.1+1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "curios",
+          "type": "required",
+          "versionRange": "[9.0.5+1.21.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "irons_lib",
+          "type": "required",
+          "versionRange": "[1.21.1-2,1.21.1-3)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:irons-lib:lUwUKYPl",
+    "filename": "irons-lib-lUwUKYPl.jar",
+    "sha256": "9e086a4d449147baad6468b11fd34924a905d9cb6818c962676aa0c4589dcc3c",
+    "mods": [
+      {
+        "modId": "irons_lib",
+        "version": "1.21.1-2.2.0",
+        "displayName": "Iron's Lib",
+        "description": "Provides common functionality and content for Iron431's mods.\n"
+      }
+    ],
+    "dependencies": {
+      "irons_lib": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.221,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "geckolib",
+          "type": "required",
+          "versionRange": "4.7.5.1",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "irons_patreon_lib",
+          "type": "incompatible",
+          "ordering": "NONE",
+          "side": "BOTH",
+          "reason": "Patreon Lib is superceeded by Iron's Lib! You can safely uninstall it."
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:playeranimator:HJZB6bmA",
+    "filename": "playeranimator-HJZB6bmA.jar",
+    "sha256": "dbe5de45f5cd60c0e5e47af14e6d564534a98456e973cf670cb881f6938eee92",
+    "mods": [
+      {
+        "modId": "playeranimator",
+        "version": "2.0.4+1.21.1",
+        "displayURL": "https://github.com/KosmX/minecraftPlayerAnimator",
+        "displayName": "Player Animator",
+        "authors": "KosmX",
+        "description": "A lightweight library to easily animate the player"
+      }
+    ],
+    "dependencies": {
+      "playeranimator": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "mandatory": true,
+          "versionRange": "[1.21,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:lionfish-api:fTRMVgyZ",
+    "filename": "lionfish-api-fTRMVgyZ.jar",
+    "sha256": "aeebf0692650afbbc78259c0d4e3d5b7edf037707e8ae5d56045066d83a19cf6",
+    "mods": [
+      {
+        "modId": "lionfishapi",
+        "version": "3.1",
+        "displayName": "lionfishapi",
+        "authors": "L_Ender",
+        "description": ""
+      }
+    ],
+    "dependencies": {
+      "lionfishapi": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "1.21.1",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:curios:yohfFbgD",
+    "filename": "curios-yohfFbgD.jar",
+    "sha256": "a45df2125c26219974aba7507ffc9afe7b83acc941a386af3faacb1cc0056fde",
+    "mods": [
+      {
+        "modId": "curios",
+        "version": "9.5.1+1.21.1",
+        "displayName": "Curios API",
+        "displayURL": "https://github.com/TheIllusiveC4/Curios",
+        "authors": "C4",
+        "description": "A flexible and expandable accessory/equipment API for users and developers."
+      }
+    ],
+    "dependencies": {
+      "curios": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.60,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:owo-lib:NMCHU6DZ",
+    "filename": "owo-lib-NMCHU6DZ.jar",
+    "sha256": "de6ed336bd80154b7241a7b3276694befc1c94550add8bcdfe7f82e5172fd13d",
+    "mods": [
+      {
+        "modId": "owo",
+        "version": "0.12.15.5-beta.1+1.21",
+        "displayName": "o\u03c9o",
+        "provides": [
+          "owo-lib",
+          "owo_lib",
+          "owo-impl",
+          "owo_impl"
+        ],
+        "authors": "glisco, Blodhgarm, BasiqueEvangelist, Noaaan",
+        "credits": "",
+        "description": "yes its bad i know thanks\n",
+        "logoFile": "assets/owo/icon.png"
+      }
+    ],
+    "dependencies": {
+      "owo": [
+        {
+          "modId": "neoforge",
+          "required": true,
+          "versionRange": "[21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "required": true,
+          "versionRange": "[1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:aether:K5X5qMwG",
+    "filename": "aether-K5X5qMwG.jar",
+    "sha256": "a999a9265eb550a46a0f8eedfee7c3c75371d7f6cf34b7c09ff800e48633e9f8",
+    "mods": [
+      {
+        "modId": "aether",
+        "version": "1.5.10",
+        "displayName": "The Aether",
+        "updateJSONURL": "https://github.com/The-Aether-Team/The-Aether/raw/1.21.1-develop/update.json",
+        "displayURL": "https://modrinth.com/mod/aether",
+        "logoFile": "aether.png",
+        "credits": "The Aether Team, former Aether Team Collaborators for their prior work on The Aether Mod, Modding Legacy for their work on Aether Legacy, GitHub contributors for their additional help, and the Wisp Forest Team for Accessories, the source code of which can be found at https://github.com/wisp-forest",
+        "authors": "AlphaMode, baguchi, bconlon, Blodhgarm, Burning Cactus, Drullkus, Hugo Payn, Jaryt, Katie 'Oz' Payn, quek, Raptor, reetam, RENREN, sunsette",
+        "description": "The Aether Team presents the original Aether mod! Up to date for modern Minecraft versions and fully compatible with multiplayer. The Aether is a dimension of floating islands high in the sky. Ascend through a Glowstone portal and begin a new survival adventure packed with new ores, mythical creatures and perilous Dungeons!",
+        "enumExtensions": "META-INF/enumextensions.json"
+      }
+    ],
+    "dependencies": {
+      "aether": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.72,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:mekanism:5KzzycBT",
+    "filename": "mekanism-5KzzycBT.jar",
+    "sha256": "004dbc9f3106f4d192aeaa1ee1190dd16ec9ca8059ed3d093b80034f4c574f43",
+    "mods": [
+      {
+        "modId": "mekanism",
+        "version": "10.7.19",
+        "displayName": "Mekanism",
+        "displayURL": "https://aidancbrady.com/mekanism/",
+        "authors": "Aidancbrady, Thommy101, Thiakil, pupnewfster, dizzyd",
+        "credits": "unpairedbracket, CyanideX, Ridanisaurus and many others",
+        "logoFile": "logo.png",
+        "description": "Mekanism is a Minecraft add-on featuring high-tech machinery that can be used to create powerful tools, armor, and weapons."
+      }
+    ],
+    "dependencies": {
+      "mekanism": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "side": "BOTH"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.194,)",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[19.19.0.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "appmek",
+          "type": "incompatible",
+          "reason": "Requires an update to support changes to Mekanism's Chemical API",
+          "versionRange": "[,1.6.0-alpha.2]",
+          "side": "BOTH"
+        },
+        {
+          "modId": "enderio_conduits_modded",
+          "type": "incompatible",
+          "reason": "Requires an update to support changes to Mekanism's Chemical API",
+          "versionRange": "[,6.0.24.351-nightly+d8261275]",
+          "side": "BOTH"
+        },
+        {
+          "modId": "laserio",
+          "type": "incompatible",
+          "reason": "Requires an update to support changes to Mekanism's Chemical API",
+          "versionRange": "[,1.9.9]",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jaopca",
+          "type": "incompatible",
+          "reason": "Requires an update to support changes to Mekanism's Chemical API",
+          "versionRange": "[,5.0.1.2]",
+          "side": "BOTH"
+        },
+        {
+          "modId": "fissionrecipe",
+          "type": "incompatible",
+          "reason": "Requires an update to support changes to Mekanism's Chemical API",
+          "versionRange": "[,3.0.7]",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:mekanism-tools:v5zlSE9s",
+    "filename": "mekanism-tools-v5zlSE9s.jar",
+    "sha256": "e1dbca7d70df150101da535f6ab4b165a2e402fde830d34df75b58d9aad24dd8",
+    "mods": [
+      {
+        "modId": "mekanismtools",
+        "version": "10.7.19",
+        "displayName": "Mekanism: Tools",
+        "displayURL": "https://aidancbrady.com/mekanism/",
+        "authors": "Aidancbrady, Thommy101, Thiakil, pupnewfster, dizzyd",
+        "credits": "unpairedbracket, CyanideX, Ridanisaurus and many others",
+        "logoFile": "logo.png",
+        "description": "Tools module for Mekanism"
+      }
+    ],
+    "dependencies": {
+      "mekanismtools": [
+        {
+          "modId": "mekanism",
+          "type": "required",
+          "versionRange": "[10.7.19]",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:extra-golems-reborn-1456863:7922386",
+    "filename": "extra-golems-reborn-1456863-7922386.jar",
+    "sha256": "adf8b2328a48791e2e7c2e52e17008c1c0d608f580ebdfbc97fe4d986278534d",
+    "mods": [
+      {
+        "modId": "golems",
+        "version": "21.1.0.1",
+        "displayName": "Extra-Golems-Reborn",
+        "logoFile": "golem_logo.png",
+        "credits": "TheGlitch76, jriwanek, AtelierAmber, and translators - Thanks!",
+        "authors": "skyjay1 and the MMD Team,Big_Energy",
+        "description": "Adds dozens of golems with unique textures and abilities!"
+      }
+    ],
+    "dependencies": {
+      "golems": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.206,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "theoneprobe",
+          "type": "optional",
+          "versionRange": "[1.21_neo-12.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jade",
+          "type": "optional",
+          "versionRange": "[15.0.0,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "quark",
+          "type": "optional",
+          "versionRange": "[4.0-433,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "biomesoplenty",
+          "type": "optional",
+          "versionRange": "[1.21.1-21.0.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "thermal",
+          "type": "optional",
+          "versionRange": "[11.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-new-age-905861:8215216",
+    "filename": "create-new-age-905861-8215216.jar",
+    "sha256": "a217ea21ccc8364e99d86777e519436bc7c94516df9737ad0103047e48a44717",
+    "mods": [
+      {
+        "modId": "create_new_age",
+        "version": "1.2.0+mc1.21.1",
+        "displayName": "Create: New Age",
+        "logoFile": "icon.png",
+        "authors": "Antarctic Gardens",
+        "description": "An addon for the Create mod that adds integration with electricity",
+        "displayTest": "MATCH_VERSION",
+        "displayURL": "https://antarcticgardens.org/"
+      }
+    ],
+    "dependencies": {
+      "create_new_age": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.209,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "esl",
+          "type": "required",
+          "versionRange": "[1.0.3]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.9,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "computercraft",
+          "type": "optional",
+          "versionRange": "[1.116.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-cosmonautics-1595491:8612744",
+    "filename": "create-cosmonautics-1595491-8612744.jar",
+    "sha256": "3fd9dac868400905a55164d2c9d74abc2080ae3269ca51e54e1899874945973e",
+    "mods": [
+      {
+        "modId": "rocketnautics",
+        "version": "${file.jarVersion}",
+        "displayName": "Create: Cosmonautics",
+        "displayURL": "https://github.com/CosmonauticsTeam/Create-Cosmonautics",
+        "authors": "webyep-art, M_W_K",
+        "description": "Space addon for Create Aeronautics!\n"
+      },
+      {
+        "modId": "dimensional_sable",
+        "version": "1.0.5",
+        "displayName": "Dimensional Sable",
+        "description": "Dimensional Support for Sable"
+      }
+    ],
+    "dependencies": {
+      "rocketnautics": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "aeronautics",
+          "type": "required",
+          "versionRange": "[1.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "dimensional_sable",
+          "type": "required",
+          "versionRange": "[1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ],
+      "dimensional_sable": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.3,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:createaddition:qPr8V4G2",
+    "filename": "createaddition-qPr8V4G2.jar",
+    "sha256": "41876c3780b70365a1848994d146a73423cc19fbe86485885795d9e7d855e7e9",
+    "mods": [
+      {
+        "modId": "createaddition",
+        "version": "1.6.0",
+        "displayName": "Create Crafts & Additions",
+        "displayURL": "https://github.com/mrh0/createaddition",
+        "logoFile": "icon.png",
+        "credits": "",
+        "authors": "MRH0",
+        "description": "Create Crafts & Additions extends Create and acts as a bridge between electric and kinetic energy from Create.\nJoin the Discord: https://discord.gg/mRbNnyKTEu\nSpecial thanks to:\nthe Create team, the Forge team, and all contributors on the CC&A discord including:\nAlphaMode, Skippyall, BobDole, legoatoom, gobiidaiah, StockiesLad, THEREDSTONEBRO lawliet__, and Uraxys.\n"
+      }
+    ],
+    "dependencies": {
+      "createaddition": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.7,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[15.0.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "computercraft",
+          "type": "optional",
+          "versionRange": "[0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulated",
+          "type": "optional",
+          "ordering": "AFTER"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:immersiveengineering:uNRARSH2",
+    "filename": "immersiveengineering-uNRARSH2.jar",
+    "sha256": "45942985a4a4aebf265b8e22a0c54a96208637471f36f2532ff5d4911322debc",
+    "mods": [
+      {
+        "modId": "immersiveengineering",
+        "version": "12.4.2-194",
+        "displayName": "Immersive Engineering",
+        "description": "A tech based mod focused on realism.",
+        "authors": "BluSunrize and Damien A.W. Hazard",
+        "updateJSONURL": "https://raw.githubusercontent.com/BluSunrize/ImmersiveEngineering/1.21.1/changelog.json",
+        "displayURL": "https://minecraft.curseforge.com/projects/immersive-engineering/",
+        "logoFile": "logo.png",
+        "credits": "All the great other Git Contributors, and the nerds on IRC!",
+        "enumExtensions": "immersiveengineering.enumextension.json"
+      }
+    ],
+    "dependencies": {
+      "immersiveengineering": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.164,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[19.10.0.126,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:citadel-(1.21.1-port):mIylVpkN",
+    "filename": "citadel-(1.21.1-port)-mIylVpkN.jar",
+    "sha256": "9e12468c49e5a95b7adbf22b3b4d05bc55565989b89c40b985cd73bdfe63c3c2",
+    "mods": [
+      {
+        "modId": "citadel",
+        "version": "2.7.6",
+        "displayName": "Citadel",
+        "logoFile": "citadel.png",
+        "credits": "Gegy1000",
+        "authors": "Alexthe666",
+        "description": "A shared code library for many of Alexthe666's mods. Code used from LLibrary with permission."
+      }
+    ],
+    "dependencies": {
+      "citadel": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[4,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:alexs-caves-(unofficial-port):pC1MYhqR",
+    "filename": "alexs-caves-(unofficial-port)-pC1MYhqR.jar",
+    "sha256": "6fad35bf07fcb977aaa32d3fe05bf122150c6a30ed16b057385040207a3b788f",
+    "mods": [
+      {
+        "modId": "alexscaves",
+        "version": "2.0.10",
+        "displayName": "Alex's Caves",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/alexs-caves",
+        "logoFile": "assets/alexscaves/textures/misc/mod_logo.png",
+        "authors": "Alexthe668, Noonyeyz, Raguto",
+        "credits": "LudoCrypt, _Ninni, PrismaticPinky, RenRen, Gatetoh, arby698, PlummetStudios, HolidayRaptor",
+        "description": "Explore new rare cave biomes hidden under the surface of the Overworld..."
+      }
+    ],
+    "dependencies": {
+      "alexscaves": [
+        {
+          "modId": "citadel",
+          "mandatory": true,
+          "versionRange": "[2.6.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-tracks-1519765:7968280",
+    "filename": "create-tracks-1519765-7968280.jar",
+    "sha256": "b126b2522a129c13ebec6491b8602726bad9a3df201cf906468ba583796125c8",
+    "mods": [
+      {
+        "modId": "tracks",
+        "version": "1.0.1",
+        "displayName": "Create Tracks",
+        "credits": "Uses Trackwork art assets as placeholders.",
+        "authors": "qwxon",
+        "description": "Addon for Create: Simulated Offroad that adds adjustable suspension keys and Sable-powered track blocks."
+      }
+    ],
+    "dependencies": {
+      "tracks": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.9,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[1.0.3,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulated",
+          "type": "required",
+          "versionRange": "[1.0.1,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "offroad",
+          "type": "required",
+          "versionRange": "[1.0.1,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:steam-n-rails-neoforge-1414670:8243336",
+    "filename": "steam-n-rails-neoforge-1414670-8243336.jar",
+    "sha256": "b7636c8b1b0352ed1a130dfe67f8bb574e2fc08803ed1cda4d3ea00505193914",
+    "mods": [
+      {
+        "modId": "railways",
+        "version": "0.2.1+neoforge-mc1.21.1",
+        "displayName": "Create: Steam 'n' Rails 1.21.1",
+        "authors": "PoppyBlossom, Chameleon538, gblfxt",
+        "description": "Unofficial port of Create: Steam 'n' Rails to 1.21.1.\n\nThis mod bring all of the features from Steam 'n' Rails to a newer Minecraft version!\n",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "railways": [
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[21.1.233,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "mandatory": true,
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "mandatory": true,
+          "versionRange": "[6.0.7,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "hexcasting",
+          "type": "optional",
+          "versionRange": "[0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "voicechat",
+          "type": "optional",
+          "versionRange": "[0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-diesel-generators-869316:8542167",
+    "filename": "create-diesel-generators-869316-8542167.jar",
+    "sha256": "56ef1d574278fc311f1ffa223dbd613077b899354a18d01ae8dca2578a4e2990",
+    "mods": [
+      {
+        "modId": "createdieselgenerators",
+        "version": "1.21.1-1.3.15",
+        "displayName": "Create Diesel Generators",
+        "authors": "George VI",
+        "description": "Diesel Generators, Oil processing."
+      }
+    ],
+    "dependencies": {
+      "createdieselgenerators": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.174,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.7,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "struts",
+          "type": "optional",
+          "versionRange": "[1.3.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:UT2M39wf:bPYeUWZx",
+    "filename": "UT2M39wf-bPYeUWZx.jar",
+    "sha256": "d1efdd8688af6603dff9425299ac4547ef56a7d5cfee757716ead7853276694e",
+    "mods": [
+      {
+        "modId": "copycats",
+        "version": "3.0.9+mc.1.21.1-neoforge",
+        "displayName": "Create: Copycats+",
+        "updateJSONURL": "https://raw.githubusercontent.com/copycats-plus/copycats/multiloader/update.json",
+        "displayURL": "https://github.com/copycats-plus/copycats",
+        "logoFile": "copycats_icon.png",
+        "credits": "The Create: Addon Hub Discord",
+        "authors": "Lysine, Bennyboy1695, Redcat_XVIII",
+        "description": "All the copycats you've ever wanted, combined into a single mod!"
+      }
+    ],
+    "dependencies": {
+      "copycats": [
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[21.1.200,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "mandatory": true,
+          "versionRange": "[1.21.1,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "mandatory": true,
+          "versionRange": "[6.0.8,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-enchantment-industry-688768:8241347",
+    "filename": "create-enchantment-industry-688768-8241347.jar",
+    "sha256": "81f192bb53888e01f87a82eaac2f261c93715f2221dbcf5d8a8d414f912f75ef",
+    "mods": [
+      {
+        "modId": "create_enchantment_industry",
+        "version": "2.4.2",
+        "displayName": "Create: Enchantment Industry",
+        "displayURL": "https://github.com/DragonsPlusMinecraft/CreateEnchantmentIndustry",
+        "logoFile": "icon.png",
+        "authors": "DragonsPlus",
+        "description": "Enchantment, Experience, Enhancement and Enlightening - with Create"
+      }
+    ],
+    "dependencies": {
+      "create_enchantment_industry": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create_dragons_plus",
+          "type": "required",
+          "versionRange": "[1.11.1,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "apothic_enchanting",
+          "type": "optional",
+          "versionRange": "[1.5.3,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "apotheosis",
+          "type": "optional",
+          "versionRange": "[8.5.4,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "apothic_spawners",
+          "type": "optional",
+          "versionRange": "[1.3.4,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "optional",
+          "versionRange": "[1.2.2,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "touhou_little_maid",
+          "type": "optional",
+          "versionRange": "[1.2.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-ender-transmission-737302:7232820",
+    "filename": "create-ender-transmission-737302-7232820.jar",
+    "sha256": "13f237796ba51312a385ebd55b252c55598d49bcf677ea68f0bfb9bd88c23b63",
+    "mods": [
+      {
+        "modId": "createendertransmission",
+        "version": "2.1.1-1.21.1",
+        "displayName": "Create Ender Transmission",
+        "authors": "Forsteri",
+        "description": "\"Non-dimensional Machanines  Have you ever feel like you have lost your mind at formating networks?Well, this mod is for you!\""
+      }
+    ],
+    "dependencies": {
+      "createendertransmission": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.125,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.21.1)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "mandatory": true,
+          "versionRange": "[0.5.0.e,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:ore-excavation-250898:6327284",
+    "filename": "ore-excavation-250898-6327284.jar",
+    "sha256": "bc34445e726f354e4f7c8d1f8981080d5ab95286eda8cb43719fc937c488789b",
+    "mods": [
+      {
+        "modId": "oreexcavation",
+        "version": "1.16.43",
+        "displayName": "OreExcavation",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/ore-excavation",
+        "logoFile": "title.png",
+        "authors": "Funwayguy, Darkosto",
+        "description": "Allows players to mine whole veins of ore, cut down entire trees in one go. Simple and easy to understand configs provided for mod pack developers"
+      }
+    ],
+    "dependencies": {
+      "oreexcavation": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:GWp4jCJj:bOiDu0LS",
+    "filename": "GWp4jCJj-bOiDu0LS.jar",
+    "sha256": "ea017ab94637032d039899d88404838d173fa0e6286657cae6a6c3af459e87ca",
+    "mods": [
+      {
+        "modId": "createbigcannons",
+        "version": "5.11.7",
+        "displayName": "Create Big Cannons",
+        "authors": "rbasamoyai",
+        "description": "Artillery engineering comes to Create\nAttributions:\nLogo by Milkyfur\nTextures by rbasamoyai, Milkyfur, and LopyLuna\n",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "createbigcannons": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "21.1.228",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.7,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "ritchiesprojectilelib",
+          "type": "required",
+          "versionRange": "[2.1.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "copycats",
+          "type": "optional",
+          "versionRange": "[3.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "framedblocks",
+          "type": "optional",
+          "versionRange": "[10.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "curios",
+          "type": "optional",
+          "versionRange": "[9.2.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "optional",
+          "versionRange": "[2.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "simulated",
+          "type": "optional",
+          "versionRange": "[1.3.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "aeronautics",
+          "type": "optional",
+          "versionRange": "[1.3.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "offroad",
+          "type": "optional",
+          "versionRange": "[1.3.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:B3pb093D:hZ6B2Z0x",
+    "filename": "B3pb093D-hZ6B2Z0x.jar",
+    "sha256": "cc509060833736fb650aa4c36b1ce33a7eeeb9ca6e9f8e80a7c951c9e7487b24",
+    "mods": [
+      {
+        "modId": "ritchiesprojectilelib",
+        "version": "2.1.2",
+        "displayName": "Ritchie's Projectile Library",
+        "authors": "rbasamoyai",
+        "description": "A Minecraft modding library for better projectiles.",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "ritchiesprojectilelib": [
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[21.1.206,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "mandatory": true,
+          "versionRange": "1.21.1",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-simulated-missiles-create-aeronautics-1654531:8746555",
+    "filename": "create-simulated-missiles-create-aeronautics-1654531-8746555.jar",
+    "sha256": "5e401ca48cec71341a1121092132a7720b908ccad945f286a7b8347de76de4e5",
+    "mods": [
+      {
+        "modId": "cbcaeronauticsmissiles",
+        "version": "0.1.0",
+        "displayName": "CBC Aeronautics Missiles",
+        "authors": "squishy",
+        "description": "Missiles and weapon integrations for Create Big Cannons and Create Aeronautics.\n"
+      }
+    ],
+    "dependencies": {
+      "cbcaeronauticsmissiles": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.228,21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,6.1.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "createbigcannons",
+          "type": "required",
+          "versionRange": "[5.11.7,6.0.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create_radar",
+          "type": "required",
+          "versionRange": "[0.4.9.4-1.21.1,0.5.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "aeronautics",
+          "type": "required",
+          "versionRange": "[1.3.0,2.0.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sable",
+          "type": "required",
+          "versionRange": "[2.0.0,3.0.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-radars-1152836:8227753",
+    "filename": "create-radars-1152836-8227753.jar",
+    "sha256": "4554359fee389b1c255b4cef23ac41e978b2a371cec9e952185f4ec0a90ee930",
+    "mods": [
+      {
+        "modId": "create_radar",
+        "version": "0.4.9.4-1.21.1",
+        "displayName": "Create: Radars",
+        "authors": "Aycer, HappySG, CeoOfGoogle, Kipti, OndatraCZE, Ray(furuochen)",
+        "description": "Welcome to Create Radars, a mod offering a variety of tools and blocks for Surveillance, Detection, and Controlling Weapons."
+      }
+    ],
+    "dependencies": {
+      "create_radar": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,1.21.2)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.10,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "createbigcannons",
+          "type": "required",
+          "versionRange": "[5.11.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "valkyrienskies",
+          "type": "optional",
+          "versionRange": "[2.4.7,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "shupapium",
+          "type": "optional",
+          "versionRange": "[1.0,2.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "computercraft",
+          "type": "optional",
+          "versionRange": "[1.113.0,2.0)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:terrablender:6e8GCrLb",
+    "filename": "terrablender-6e8GCrLb.jar",
+    "sha256": "0c49b5ef447a7f09100e9a210888a7347fbda0aa75322063991f6063b25fe3f9",
+    "mods": [
+      {
+        "modId": "terrablender",
+        "version": "${file.jarVersion}",
+        "displayName": "TerraBlender",
+        "authors": "Adubbz",
+        "credits": "Joseph T. McQuigg",
+        "description": "A library mod for adding biomes in a simple and compatible manner with Minecraft's new biome/terrain system."
+      }
+    ],
+    "dependencies": {
+      "terrablender": [
+        {
+          "modId": "neoforge",
+          "required": true,
+          "versionRange": "[20.4,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:wthit:neo-12.10.2",
+    "filename": "wthit-neo-12.10.2.jar",
+    "sha256": "f350344dbeb9d506efbc6e17fc88c34eca42d7aed8b7525dd6642255dcc2c0ec",
+    "mods": [
+      {
+        "modId": "wthit",
+        "version": "12.10.2",
+        "displayName": "wthit",
+        "description": "What the hell is that? Forge Edition",
+        "authors": "deirn, TehNut, ProfMobius",
+        "logoFile": "wthit.png"
+      },
+      {
+        "modId": "waila",
+        "version": "12.10.2",
+        "displayName": "waila",
+        "description": "Actually WTHIT but with \"waila\" as it's id lmao",
+        "authors": "deirn, TehNut, ProfMobius",
+        "logoFile": "wthit.png"
+      }
+    ],
+    "dependencies": {
+      "wthit": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.143,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "badpackets",
+          "type": "required",
+          "versionRange": "[0.8.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:badpackets:neo-0.8.2",
+    "filename": "badpackets-neo-0.8.2.jar",
+    "sha256": "6e97bf8c2a66df484e8c100a1fc1b615b8beac70ec44f4c3bc07bb672dcd54c6",
+    "mods": [
+      {
+        "modId": "badpackets",
+        "version": "0.8.2",
+        "displayName": "Bad Packets",
+        "description": "Allow packet messaging between multiple modding platform.",
+        "authors": "deirn",
+        "logoFile": "badpackets.png"
+      }
+    ],
+    "dependencies": {
+      "badpackets": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:the-one-probe:1.21_neo-12.0.8",
+    "filename": "the-one-probe-1.21_neo-12.0.8.jar",
+    "sha256": "3fa108d0f3b4ceac1a78ba61743f4156efb36a449fa88018df0e680a4922416e",
+    "mods": [
+      {
+        "modId": "theoneprobe",
+        "version": "${file.jarVersion}",
+        "displayName": "The One Probe",
+        "description": "The One Probe lets you examine the block that you are looking at. Having a\nprobe in your hand lets you examine it better but you can also make this\nprobe required if you so desire.\n"
+      }
+    ],
+    "dependencies": {
+      "theoneprobe": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[20.4,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:just-enough-resources-jer:TgNFki8j",
+    "filename": "just-enough-resources-jer-TgNFki8j.jar",
+    "sha256": "7a47d69b5530704690d5a5f0726cd74a2d6c57df17dd4a8589c4ab5212f91460",
+    "mods": [
+      {
+        "modId": "jeresources",
+        "version": "1.6.0.17",
+        "displayName": "Just Enough Resources",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/just-enough-resources-jer",
+        "authors": "way2muchnoise",
+        "description": "Adds Resources and Mob Drops to JEI\n"
+      }
+    ],
+    "dependencies": {
+      "jeresources": [
+        {
+          "modId": "jei",
+          "type": "required",
+          "versionRange": "[16.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:emi:5sIPA1To",
+    "filename": "emi-5sIPA1To.jar",
+    "sha256": "b68691f94f0727fc517cac2ab55bd6658d1179cc8cc715fe610b60c37469bc4c",
+    "mods": [
+      {
+        "modId": "emi",
+        "version": "1.1.24+1.21.1+neoforge",
+        "displayName": "EMI",
+        "authors": "Emi",
+        "description": "A featureful and accessible item and recipe viewer\n",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "emi": [
+        {
+          "modId": "neoforge",
+          "type": "REQUIRED",
+          "versionRange": "[20.4.72-beta,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:patchouli:BIogJv2D",
+    "filename": "patchouli-BIogJv2D.jar",
+    "sha256": "959af52ed6640c316c3a8469203420be4aeea11ad6603890ba83bf48f5d9f993",
+    "mods": [
+      {
+        "modId": "patchouli",
+        "displayName": "Patchouli",
+        "version": "${file.jarVersion}",
+        "authors": "Vazkii",
+        "description": "Accessible, Data-Driven, Dependency-Free Documentation for Minecraft Modders and Pack Makers\n"
+      }
+    ],
+    "dependencies": {
+      "patchouli": [
+        {
+          "modId": "neoforge",
+          "type": "REQUIRED",
+          "versionRange": "[21.0.31-beta,)"
+        },
+        {
+          "modId": "minecraft",
+          "type": "REQUIRED",
+          "versionRange": "[1.21.1,1.21.2)"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:guideme:hFpGwC6q",
+    "filename": "guideme-hFpGwC6q.jar",
+    "sha256": "2ce254edb931c3c3cf81d69abaf8f4ce5b871bf85e64984f366bf044173bd66a",
+    "mods": [
+      {
+        "modId": "guideme",
+        "version": "21.1.19",
+        "displayName": "GuideME",
+        "description": "GuideME offers the foundation for your mods or modpacks guidebook.",
+        "issueTrackerURL": "https://github.com/AppliedEnergistics/GuideME/issues",
+        "displayURL": "https://github.com/AppliedEnergistics/GuideME/"
+      }
+    ],
+    "dependencies": {
+      "guideme": [
+        {
+          "modId": "neoforge",
+          "type": "REQUIRED",
+          "versionRange": "[21.1.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "REQUIRED",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:ae2:KDnFUmMm",
+    "filename": "ae2-KDnFUmMm.jar",
+    "sha256": "df15a07f86ca1ca93aa66373f9d5d84dd3d4586631fceb38f4fbc85dad591e39",
+    "mods": [
+      {
+        "modId": "ae2",
+        "version": "19.2.18",
+        "displayName": "Applied Energistics 2",
+        "description": "A Mod about Matter, Energy and using them to conquer the world...",
+        "authors": "Team AppliedEnergistics",
+        "displayURL": "https://appliedenergistics.org"
+      }
+    ],
+    "dependencies": {
+      "ae2": [
+        {
+          "modId": "neoforge",
+          "type": "REQUIRED",
+          "versionRange": "[21.1.169,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "REQUIRED",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "guideme",
+          "type": "REQUIRED",
+          "versionRange": "[21.1.1,)",
+          "side": "BOTH"
+        },
+        {
+          "modId": "emi",
+          "type": "OPTIONAL",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "theoneprobe",
+          "type": "OPTIONAL",
+          "versionRange": "[1.20.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jade",
+          "type": "OPTIONAL",
+          "versionRange": "[15.0.0,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "vanillafix",
+          "type": "discouraged",
+          "reason": "VanillaFix breaks some NeoForge features that AE2 depends on. Do not report AE2 bugs if VanillaFix is present."
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-doors:u7BRX44F",
+    "filename": "macaws-doors-u7BRX44F.jar",
+    "sha256": "87261e309f5e10c9910169d5acbba613cab3a2d2270698b0bd47e657a45b0518",
+    "mods": [
+      {
+        "modId": "mcwdoors",
+        "version": "1.1.5",
+        "displayName": "Macaw's Doors",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-doors",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/doors.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Sketch Peachy",
+        "description": "Adds a lot of new Doors! With vanila and unique styles."
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-fences-and-walls:jVdb0r4W",
+    "filename": "macaws-fences-and-walls-jVdb0r4W.jar",
+    "sha256": "e4b0e5a5b67decc2285e71f017fb4f60284796fa0838de3edeaf6b7cb0395735",
+    "mods": [
+      {
+        "modId": "mcwfences",
+        "version": "1.2.1",
+        "displayName": "Macaw's Fences and Walls",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-fences-and-walls",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/fences.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Peachy Macaw",
+        "description": "Adds new vanila styled fences, walls and gates."
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-bridges:aQ7rY7ng",
+    "filename": "macaws-bridges-aQ7rY7ng.jar",
+    "sha256": "070b817d3282760d9789b22ce13779613c8b558e02012fd5884d343175d88fd9",
+    "mods": [
+      {
+        "modId": "mcwbridges",
+        "version": "3.1.2",
+        "displayName": "Macaw's Bridges",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-bridges",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/bridges.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Peachy Macaw",
+        "description": "Connect the world with bridges!"
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-trapdoors:StnP0RNi",
+    "filename": "macaws-trapdoors-StnP0RNi.jar",
+    "sha256": "1408d46bc2e7515b25b4da8393f8dbb3d79bcd9fb6d51fcf26fe84734c2597af",
+    "mods": [
+      {
+        "modId": "mcwtrpdoors",
+        "version": "1.1.5",
+        "displayName": "Macaw's Trapdoors",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-trapdoors",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/trapdoors.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Peachy Macaw",
+        "description": "Adds lots of different Trapdoors! With vanila and unique styles."
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-lights-and-lamps:5U2kQZIL",
+    "filename": "macaws-lights-and-lamps-5U2kQZIL.jar",
+    "sha256": "b27cd68a7673874b0f6d765bdef2a022666cc07ca0e5057209a16d1a535da9e4",
+    "mods": [
+      {
+        "modId": "mcwlights",
+        "version": "1.1.5",
+        "displayName": "Macaw's Lights and Lamps",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-lights-and-lamps",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/lights.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Peachy Macaw",
+        "description": "Make your worlds brighter with lamps, tiki torches, paper lamps and more!"
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:macaws-windows:rQUE4LCz",
+    "filename": "macaws-windows-rQUE4LCz.jar",
+    "sha256": "8970c40ec622edd34c9b055226b403af08ab441c77303a6dc625ae18005f8184",
+    "mods": [
+      {
+        "modId": "mcwwindows",
+        "version": "2.4.2",
+        "displayName": "Macaw's Windows",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/macaws-windows",
+        "updateJSONURL": "https://raw.githubusercontent.com/sketchmacaw/macawsmods/master/window.json",
+        "credits": "",
+        "authors": "Sketch Macaw & Peachy Macaw",
+        "description": "Build Windows, Sills, Blinds, Shutters, Mosaic Windows and more!"
+      }
+    ],
+    "dependencies": null
+  },
+  {
+    "coordinate": "maven.modrinth:sodium:mc1.21.1-0.8.13-neoforge",
+    "filename": "sodium-mc1.21.1-0.8.13-neoforge.jar",
+    "sha256": "575d187b15328d7bddd8a9b1bee64333c22c14735f5780ec49eac0cd5503c08d",
+    "mods": [
+      {
+        "modId": "sodium",
+        "version": "0.8.13+mc1.21.1",
+        "displayName": "Sodium",
+        "logoFile": "sodium-icon.png",
+        "authors": "JellySquid (jellysquid3), IMS212",
+        "credits": "bytzo, PepperCode1, FlashyReese, altrisi, Grayray75, Madis0, Johni0702, comp500, coderbot16, Moulberry, MCRcortex, Altirix, embeddedt, pajicadvance, Kroppeb, douira, burgerindividual, TwistedZero, Leo40Git, haykam821, muzikbike",
+        "description": "Sodium is a powerful rendering engine for Minecraft which improves frame rates and reduces lag spikes.\n",
+        "provides": [
+          "indium"
+        ]
+      }
+    ],
+    "dependencies": {
+      "sodium": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "1.21.1",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.82,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "embeddium",
+          "type": "incompatible",
+          "reason": "Sodium and Embeddium cannot be used together. Please remove Embeddium.",
+          "versionRange": "[0.0.1,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:iris:1.8.14-beta.1+1.21.1-neoforge",
+    "filename": "iris-1.8.14-beta.1+1.21.1-neoforge.jar",
+    "sha256": "60d5f8bf52f25e9986440f4a4270a6bd986d9cff994510e1108ac1547063b314",
+    "mods": [
+      {
+        "modId": "iris",
+        "version": "1.8.14-beta.1+mc1.21.1",
+        "displayName": "Iris",
+        "logoFile": "iris-logo.png",
+        "authors": "coderbot, IMS212",
+        "description": "Iris is a modern shaders mod for Minecraft intended to be compatible with existing OptiFine shader packs.\n",
+        "sodium:options": {
+          "mixin.features.render.world.sky": false
+        }
+      }
+    ],
+    "dependencies": {
+      "iris": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.21.1)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "embeddium",
+          "type": "incompatible",
+          "reason": "Iris and Embeddium cannot be used together. Please use Sodium 0.8 instead.",
+          "versionRange": "[0.0.1,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:create-new-age:IwtuwMZy",
+    "filename": "create-new-age-IwtuwMZy.jar",
+    "sha256": "a217ea21ccc8364e99d86777e519436bc7c94516df9737ad0103047e48a44717",
+    "mods": [
+      {
+        "modId": "create_new_age",
+        "version": "1.2.0+mc1.21.1",
+        "displayName": "Create: New Age",
+        "logoFile": "icon.png",
+        "authors": "Antarctic Gardens",
+        "description": "An addon for the Create mod that adds integration with electricity",
+        "displayTest": "MATCH_VERSION",
+        "displayURL": "https://antarcticgardens.org/"
+      }
+    ],
+    "dependencies": {
+      "create_new_age": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.209,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "esl",
+          "type": "required",
+          "versionRange": "[1.0.3]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.9,6.1.0)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "computercraft",
+          "type": "optional",
+          "versionRange": "[1.116.2,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "curse.maven:create-ore-excavation-649832:7199305",
+    "filename": "create-ore-excavation-649832-7199305.jar",
+    "sha256": "d3a2e1a6e65de7e50ae9e279de399b6535da407abc8e6b4688a56f2e461aab99",
+    "mods": [
+      {
+        "modId": "createoreexcavation",
+        "version": "1.6.8",
+        "displayName": "Create Ore Excavation",
+        "updateJSONURL": "https://raw.githubusercontent.com/tom5454/Create-Ore-Excavation/main/version-check.json",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/create-ore-excavation",
+        "logoFile": "createoreexcavation.png",
+        "credits": "tom5454",
+        "authors": "tom5454",
+        "description": "Extract resources using machines powered by Rotational Force\n"
+      }
+    ],
+    "dependencies": {
+      "createoreexcavation": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "create",
+          "type": "required",
+          "versionRange": "[6.0.7,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "kubejs",
+          "type": "optional",
+          "versionRange": "[2101.7.2-build.295,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "kubejs_create",
+          "type": "optional",
+          "versionRange": "[2101.3.1-build.14,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:lithium:mc1.21.1-0.15.4-neoforge",
+    "filename": "lithium-mc1.21.1-0.15.4-neoforge.jar",
+    "sha256": "488f33216030c1cb0baa33e59de3d657d08d5795a6c2080c8c8bbbc133fc8757",
+    "mods": [
+      {
+        "modId": "lithium",
+        "version": "0.15.4+mc1.21.1",
+        "displayName": "Lithium",
+        "logoFile": "assets/lithium/lithium-icon.png",
+        "authors": "2No2Name, JellySquid",
+        "credits": "",
+        "description": "Lithium is a free and open-source optimization mod for Minecraft which makes a wide range of performance improvements to the game.\n"
+      }
+    ],
+    "dependencies": {
+      "lithium": [
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21, 1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:modernfix:5.27.20+mc1.21.1",
+    "filename": "modernfix-5.27.20+mc1.21.1.jar",
+    "sha256": "6f367ea4002c39e3cfe27e0a0be1008880a4b35a8482a78a437cfb9d8ee38273",
+    "mods": [
+      {
+        "modId": "modernfix",
+        "version": "5.27.20+mc1.21.1",
+        "displayName": "ModernFix",
+        "displayURL": "https://modrinth.com/mod/modernfix",
+        "logoFile": "icon.png",
+        "authors": "embeddedt",
+        "description": "Egregious, yet effective performance improvements for modern Minecraft\n"
+      }
+    ],
+    "dependencies": {
+      "modernfix": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.0.111-beta,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21, 1.22)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "jei",
+          "type": "optional",
+          "versionRange": "[15.8.0.11,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:accessories:Fb55Fgjz",
+    "filename": "accessories-Fb55Fgjz.jar",
+    "sha256": "10017a3da78ea63e9ece27a1ca32f8cf490362f348778cf8cb759e7282f3beb0",
+    "mods": [
+      {
+        "modId": "accessories",
+        "version": "1.1.0-beta.53+1.21.1",
+        "displayName": "Accessories",
+        "authors": "Blodhgarm, chyzman, Dr.Zeal",
+        "credits": "glisco, BasiqueEvangelist, mpustovoi, EvanHsieh0415, notlin4, RuyaSavascisi, TheLegendofSaram, Zailer43, and Special thanks to both Emi and C4 for the creation of both Trinkets and Curios",
+        "description": "A extendable and data-driven Accessory Mod for Minecraft.\n",
+        "logoFile": "icon.png"
+      }
+    ],
+    "dependencies": {
+      "accessories": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "owo",
+          "type": "required",
+          "versionRange": "[0.12.15.0+1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "accessories_compat_layer",
+          "type": "incompatible",
+          "versionRange": "(,0.1.9]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:accessories-compat-layer:JMgVNypu",
+    "filename": "accessories-compat-layer-JMgVNypu.jar",
+    "sha256": "d9b673ebc4766a59663e4cc73d50e0ff3a371334e599c7890941e6e0bdd286ae",
+    "mods": [
+      {
+        "modId": "accessories_compat_layer",
+        "version": "0.1.12",
+        "displayName": "Accessories Compatibility Layer",
+        "authors": "blodhgarm, ",
+        "credits": "TheIllusiveC4,emilyploszaj",
+        "description": "Modifies commonly used Accessory API's to work with Accessories, unifying a modpack under one Accessory API\n",
+        "logoFile": "assets/accessories_compat_layer/icon.png",
+        "displayURL": "https://github.com/wisp-forest/accessories-compat-layer"
+      },
+      {
+        "modId": "tclayer",
+        "version": "0.1.12"
+      },
+      {
+        "modId": "cclayer",
+        "version": "0.1.12"
+      }
+    ],
+    "dependencies": {
+      "accessories_compat_layer": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.191,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "owo",
+          "type": "required",
+          "versionRange": "[0.12.15.1-beta.6+1.21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "accessories",
+          "type": "required",
+          "versionRange": "[1.1.0-beta.53+1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "curios",
+          "type": "optional",
+          "versionRange": "[9.5.1+1.21.1,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "curios",
+          "type": "incompatible",
+          "versionRange": "[,9.5.1+1.21.1)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "maven.modrinth:spartan-weaponry-unofficial:ygaWB8ji",
+    "filename": "spartan-weaponry-unofficial-ygaWB8ji.jar",
+    "sha256": "84d3ddafb519e2f5e03f2681ff52c30c92c9512181f61a7a7487399a0179888f",
+    "mods": [
+      {
+        "modId": "spartan_weaponry_unofficial",
+        "version": "1.2.3",
+        "displayName": "Spartan Weaponry Unofficial",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/spartan-weaponry",
+        "logoFile": "logo.png",
+        "credits": "xwerffx for the weapon ideas and most of the art. Translators: alexvirgo13 (Spanish), Samlegamer (French), MrMikeForDev (Chinese) and SplashedTomato (Russian)\u00ef\u00bc\u008ckoooy for testing and feedback ,Golder114514 for testing and feedback , ImNotGayForFood for testing and feedback , Everyone who supported me on Patreon!",
+        "authors": "ObliviousSpartan(Original Author), xwerffx(Weapon Ideas and Art), Mai_xiyu(1.21.1 Port)",
+        "description": "Weapons Galore! A whole new arsenal of weaponry made for Minecraft. Inspired by Balkon's WeaponMod, it adds new versions of weapons from that mod, as well expanding the arsenal with a bunch of original weapons."
+      }
+    ],
+    "dependencies": {
+      "spartan_weaponry_unofficial": [
+        {
+          "modId": "neoforge",
+          "mandatory": true,
+          "versionRange": "[21,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "mandatory": true,
+          "versionRange": "[1.21.1,1.21.4)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "spartanshieldsunofficial",
+          "type": "optional",
+          "versionRange": "[1.0.0,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "com.simibubi.create:create-1.21.1:6.0.11-312",
+    "filename": "create-1.21.1-6.0.11-312.jar",
+    "sha256": "f92f9cdb9fee46011a8fd5e0f2f9fea142b7cb7c0cae396aa358b4937433db28",
+    "mods": [
+      {
+        "modId": "create",
+        "version": "6.0.11",
+        "displayName": "Create",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/create",
+        "logoFile": "icon.png",
+        "authors": "simibubi",
+        "description": "Technology that empowers the player."
+      }
+    ],
+    "dependencies": {
+      "create": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.219,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21.1]",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "flywheel",
+          "type": "required",
+          "versionRange": "[1.0.0,2.0)",
+          "ordering": "AFTER",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "ponder",
+          "type": "required",
+          "versionRange": "[1.0.85,)",
+          "ordering": "AFTER",
+          "side": "BOTH"
+        },
+        {
+          "modId": "sodium",
+          "type": "optional",
+          "reason": "Versions before 0.6.9 do not include the neccesary APIs Create needs to work properly with Sodium.",
+          "versionRange": "[0.6.9,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "lithium",
+          "type": "optional",
+          "reason": "Versions before 0.14.7 crash when paired with Create, Update Lithium.",
+          "versionRange": "[0.14.7,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "journeymap",
+          "type": "optional",
+          "reason": "Versions before 1.21.1-6.0.0-beta.46 do not contain the APIs Create requires to work with JourneyMap.",
+          "versionRange": "[1.21.1-6.0.0-beta.46,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "xaeroworldmap",
+          "type": "optional",
+          "reason": "Versions before 1.40.2 do not contain the classes Create requires to work with Xaero's World Map.",
+          "versionRange": "[1.40.2,)",
+          "ordering": "NONE",
+          "side": "CLIENT"
+        },
+        {
+          "modId": "radium",
+          "type": "incompatible",
+          "reason": "Radium is a unofficial port of Lithium, Lithium is now natively available for NeoForge and does not suffer from the same issues radium does, use Lithium instead.",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "palladium",
+          "type": "incompatible",
+          "reason": "Palladium does not improve memory usage by anything meaningful, and results in broken visuals for Create's blocks with connected textures.",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "mezz.jei:jei-1.21.1-neoforge:19.51.0.418",
+    "filename": "jei-1.21.1-neoforge-19.51.0.418.jar",
+    "sha256": "8bc3936d869e4040a5649c58b7e8be1c78c82a245c0dc07bdd68ab49121a222c",
+    "mods": [
+      {
+        "modId": "jei",
+        "version": "19.51.0.418",
+        "displayName": "Just Enough Items",
+        "displayURL": "https://www.curseforge.com/minecraft/mc-mods/jei",
+        "displayTest": "IGNORE_SERVER_VERSION",
+        "authors": "mezz",
+        "description": "JEI is an item and recipe viewing mod for Minecraft, built from the ground up for stability and performance.\n"
+      }
+    ],
+    "dependencies": {
+      "jei": [
+        {
+          "modId": "neoforge",
+          "type": "required",
+          "versionRange": "[21.1.238,)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        },
+        {
+          "modId": "minecraft",
+          "type": "required",
+          "versionRange": "[1.21, 1.21.1)",
+          "ordering": "NONE",
+          "side": "BOTH"
+        }
+      ]
+    }
+  },
+  {
+    "coordinate": "mezz.jei:jei-1.21.1-neoforge-api:19.51.0.418",
+    "filename": "jei-1.21.1-neoforge-api-19.51.0.418.jar",
+    "sha256": "f48f5af6fc087322edd5e6994cd2b2ef916d865b10118b4d51a1a608a8c64e91",
+    "mods": null,
+    "dependencies": null
+  }
+]

@@ -1,0 +1,4 @@
+runSweepBossGameTestServer: using tmpfs runtime /tmp/magnetization-run-sweep-boss-gametest-runtime.OHTpc3
+[01Oct2026 04:34:27.865] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 13 GAME TESTS COMPLETE IN 1.695 s ======================
+[01Oct2026 04:34:27.865] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 13 required tests passed :)
+runSweepBossGameTestServer: assertions passed; terminating only its lingering process group

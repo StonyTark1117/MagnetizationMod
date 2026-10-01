@@ -1,0 +1,4 @@
+runSimulatedMissilesGameTestServer: using tmpfs runtime /tmp/magnetization-run-simulated-missiles-gametest-runtime.hn5PAC
+[01Oct2026 04:19:38.520] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 512.2 ms ======================
+[01Oct2026 04:19:38.521] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+runSimulatedMissilesGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,4 @@
+runIronworksGameTestServer: using tmpfs runtime /tmp/magnetization-run-ironworks-gametest-runtime.CBiGvY
+[01Oct2026 04:17:50.622] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 462.5 ms ======================
+[01Oct2026 04:17:50.622] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runIronworksGameTestServer: assertions passed; terminating only its lingering process group

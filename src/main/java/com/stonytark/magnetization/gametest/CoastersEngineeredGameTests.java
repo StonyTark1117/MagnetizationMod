@@ -8,7 +8,6 @@ import dev.jwaterfall.coastersengineered.CoastersEngineeredConfig;
 import dev.jwaterfall.coastersengineered.CoastersEngineeredRegistry;
 import dev.jwaterfall.coastersengineered.MotorForce;
 import dev.jwaterfall.coastersengineered.TrackEnergy;
-import dev.jwaterfall.coastersengineered.TrackKind;
 import dev.jwaterfall.coastersengineered.compat.JadePlugin;
 import dev.jwaterfall.coastersengineered.controller.LinearMotorControllerBlockEntity;
 import dev.jwaterfall.coastersengineered.span.AnchorEnergyBehaviour;
@@ -35,7 +34,7 @@ import org.joml.Vector3d;
 
 import java.util.List;
 
-/** Recipe and energy-contract checks against Coasters: Engineered 1.0.1. */
+/** Recipe and energy-contract checks against Coasters: Engineered 1.0.1 and 1.1.0. */
 @GameTestHolder("magnetization_coasters_engineered")
 @PrefixGameTestTemplate(false)
 public final class CoastersEngineeredGameTests {
@@ -116,7 +115,7 @@ public final class CoastersEngineeredGameTests {
         helper.runAfterDelay(12L, () -> {
             final var anchor = helper.getBlockEntity(anchorRel);
             final AnchorEnergyBehaviour energy = AnchorEnergyBehaviour.of(anchor);
-            final TrackSpanBehaviour run = TrackSpanBehaviour.of(anchor, TrackKind.MOTOR);
+            final TrackSpanBehaviour run = (TrackSpanBehaviour) nativeMotorSpan(anchor);
             final var container = SubLevelContainer.getContainer(helper.getLevel());
             final var resolved = container == null ? null : container.getSubLevel(cartId);
             final ServerSubLevel liveCart = resolved instanceof ServerSubLevel server ? server : null;
@@ -150,16 +149,14 @@ public final class CoastersEngineeredGameTests {
                 helper.assertTrue(TrackEnergy.throttle(run, 500.0d) == 0.0d,
                         "Empty native motor did not report energy starvation");
                 final var physics = container.physicsSystem();
-                helper.assertTrue(MotorForce.mass(liveCart) > 0.0d,
+                helper.assertTrue(nativeMotorMass(helper.getLevel(), liveCart) > 0.0d,
                         "Native Engineered motor lost its Sable mass-based force input");
-                helper.assertTrue(MotorForce.accelerate(run, liveCart, physics, 0.05d,
-                                new Vector3d(1, 0, 0), 0.0d, 5.0d) == MotorForce.Outcome.STARVED,
+                helper.assertTrue(nativeMotorAccelerate(run, liveCart, physics) == MotorForce.Outcome.STARVED,
                         "Empty native motor did not preserve its STARVED outcome");
 
                 energy.receiveEnergy(20_000, false);
                 final int beforeDrive = energy.getEnergyStored();
-                helper.assertTrue(MotorForce.accelerate(run, liveCart, physics, 0.05d,
-                                new Vector3d(1, 0, 0), 0.0d, 5.0d) == MotorForce.Outcome.APPLIED,
+                helper.assertTrue(nativeMotorAccelerate(run, liveCart, physics) == MotorForce.Outcome.APPLIED,
                         "Powered native motor did not apply mass-based acceleration");
                 helper.assertTrue(energy.getEnergyStored() < beforeDrive,
                         "Native acceleration did not consume FE");
@@ -178,6 +175,64 @@ public final class CoastersEngineeredGameTests {
                 remove(helper, cartId);
             }
         });
+    }
+
+    // Keep optional upstream types out of helper signatures: GameTest discovery
+    // scans this class even when Engineered is absent. Both published API shapes
+    // are exercised through their native implementations, without mocking force/FE.
+    private static Object nativeMotorSpan(final Object anchor) {
+        try {
+            final Class<?> type = Class.forName("dev.jwaterfall.coastersengineered.span.TrackSpanBehaviour");
+            try {
+                return type.getMethod("of", net.minecraft.world.level.block.entity.BlockEntity.class)
+                        .invoke(null, anchor);
+            } catch (NoSuchMethodException oldApi) {
+                final Class<?> kind = Class.forName("dev.jwaterfall.coastersengineered.TrackKind");
+                return type.getMethod("of", net.minecraft.world.level.block.entity.BlockEntity.class, kind)
+                        .invoke(null, anchor, kind.getField("MOTOR").get(null));
+            }
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Engineered native span API changed", failure);
+        }
+    }
+
+    private static double nativeMotorMass(final net.minecraft.server.level.ServerLevel level,
+                                          final ServerSubLevel cart) {
+        try {
+            try {
+                return ((Number) MotorForce.class.getMethod("mass",
+                        net.minecraft.server.level.ServerLevel.class, ServerSubLevel.class)
+                        .invoke(null, level, cart)).doubleValue();
+            } catch (NoSuchMethodException oldApi) {
+                return ((Number) MotorForce.class.getMethod("mass", ServerSubLevel.class)
+                        .invoke(null, cart)).doubleValue();
+            }
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Engineered native mass API changed", failure);
+        }
+    }
+
+    private static Object nativeMotorAccelerate(final Object run, final ServerSubLevel cart,
+                                               final Object physics) {
+        try {
+            for (final var method : MotorForce.class.getMethods()) {
+                if (!method.getName().equals("accelerate")) continue;
+                if (method.getParameterCount() == 7) {
+                    return method.invoke(null, run, cart, physics, 0.05d,
+                            new Vector3d(1, 0, 0), 0.0d, 5.0d);
+                }
+                if (method.getParameterCount() == 8) {
+                    return method.invoke(null, run, cart, physics, 0.05d,
+                            new Vector3d(1, 0, 0), 0.0d, 5.0d,
+                            ((net.neoforged.neoforge.common.ModConfigSpec.DoubleValue)
+                                    CoastersEngineeredConfig.class.getField("MAX_LAUNCH_ACCELERATION")
+                                            .get(null)).get());
+                }
+            }
+            throw new NoSuchMethodException("MotorForce.accelerate");
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Engineered native acceleration API changed", failure);
+        }
     }
 
     private static void remove(final GameTestHelper helper, final ServerSubLevel cart) {

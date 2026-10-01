@@ -149,14 +149,19 @@ if [[ $required_mods == 'cbcaeronauticsmissiles,createbigcannons,create_radar' ]
     ignored_errors="${ignored_errors}|${radar_empty_resource}"
 fi
 if [[ $required_mods == 'simulatedcoasters,coasterssimulatedextratypes' ]]; then
-    # Track Styles 1.0.0 contains seven unused development filenames which are
-    # invalid resource locations (spaces, capitals, and #). The functional
-    # resources still reload; accept only that exact published set and fail if
-    # it changes partially or any additional error appears.
+    # Published 1.0.0 ships seven invalid development filenames. The pinned
+    # 1.1.0-hotfix1 (runtime 1.1.0) moves six under track_v1 and adds seven
+    # uppercase arrow_4D development files. Check the exact versioned set;
+    # partial fixes or any other resource error still fail this startup gate.
     track_styles_invalid_resource='Invalid path in pack: coasterssimulatedextratypes:(textures/block/track/standard_track_dyed - Copy\.png|models/block/track/(steel_no_spine/#0\.png|intamin_triangular/#0\.png|intamin_box/intamin_box_(tie|rail) - pure json( - copy)?\.json)), ignoring$'
+    track_styles_expected_errors=7
+    if grep -Eq '1\.1\.0 \(coasterssimulatedextratypes\)' "$log_file"; then
+        track_styles_invalid_resource='Invalid path in pack: coasterssimulatedextratypes:(textures/block/track/standard_track_dyed - Copy\.png|models/block/(track_v1/(steel_no_spine/#0\.png|intamin_triangular/#0\.png|intamin_box/intamin_box_(tie|rail) - pure json( - copy)?\.json)|track/arrow_4D/arrow_4D_(tie\.(obj|mtl|json)|rail\.json|center_beam\.(obj|mtl|json)))), ignoring$'
+        track_styles_expected_errors=14
+    fi
     track_styles_error_count=$(grep -Ec "/ERROR\].*${track_styles_invalid_resource}" "$log_file" || true)
-    if [[ $track_styles_error_count != 0 && $track_styles_error_count != 7 ]]; then
-        echo "$run_task: expected either zero or all seven audited Track Styles invalid-resource errors; got $track_styles_error_count" >&2
+    if [[ $track_styles_error_count != 0 && $track_styles_error_count != "$track_styles_expected_errors" ]]; then
+        echo "$run_task: expected either zero or all $track_styles_expected_errors audited Track Styles invalid-resource errors; got $track_styles_error_count" >&2
         exit 1
     fi
     ignored_errors="${ignored_errors}|${track_styles_invalid_resource}"

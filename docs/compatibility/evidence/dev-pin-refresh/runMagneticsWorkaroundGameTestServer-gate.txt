@@ -1,0 +1,4 @@
+runMagneticsWorkaroundGameTestServer: using tmpfs runtime /tmp/magnetization-run-magnetics-workaround-gametest-runtime.2nJRuJ
+[01Oct2026 04:24:09.243] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 291.6 ms ======================
+[01Oct2026 04:24:09.243] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runMagneticsWorkaroundGameTestServer: assertions passed; terminating only its lingering process group

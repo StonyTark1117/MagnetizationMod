@@ -1,0 +1,4 @@
+runQuarkGameTestServer: using tmpfs runtime /tmp/magnetization-run-quark-gametest-runtime.xyuE1d
+[01Oct2026 04:27:13.219] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 398.4 ms ======================
+[01Oct2026 04:27:13.220] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+runQuarkGameTestServer: assertions passed; terminating only its lingering process group

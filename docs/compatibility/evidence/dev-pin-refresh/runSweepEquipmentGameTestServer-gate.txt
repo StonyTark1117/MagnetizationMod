@@ -1,0 +1,4 @@
+runSweepEquipmentGameTestServer: using tmpfs runtime /tmp/magnetization-run-sweep-equipment-gametest-runtime.LxuDQO
+[01Oct2026 04:25:10.228] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 765.3 ms ======================
+[01Oct2026 04:25:10.230] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runSweepEquipmentGameTestServer: assertions passed; terminating only its lingering process group

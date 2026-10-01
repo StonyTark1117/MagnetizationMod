@@ -1,0 +1,4 @@
+runCuriosGameTestServer: using tmpfs runtime /tmp/magnetization-run-curios-gametest-runtime.j5tAJ6
+[01Oct2026 04:33:19.195] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 1.002 s ======================
+[01Oct2026 04:33:19.196] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runCuriosGameTestServer: assertions passed; terminating only its lingering process group

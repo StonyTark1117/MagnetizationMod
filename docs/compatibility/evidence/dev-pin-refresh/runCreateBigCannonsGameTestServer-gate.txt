@@ -1,0 +1,4 @@
+runCreateBigCannonsGameTestServer: using tmpfs runtime /tmp/magnetization-run-createbigcannons-gametest-runtime.bRtkHp
+[01Oct2026 04:20:16.725] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 439.8 ms ======================
+[01Oct2026 04:20:16.725] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+runCreateBigCannonsGameTestServer: assertions passed; terminating only its lingering process group

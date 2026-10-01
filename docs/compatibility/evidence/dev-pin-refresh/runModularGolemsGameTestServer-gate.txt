@@ -1,0 +1,4 @@
+runModularGolemsGameTestServer: using tmpfs runtime /tmp/magnetization-run-modular-golems-gametest-runtime.NKFwSB
+[01Oct2026 04:26:46.629] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 367.4 ms ======================
+[01Oct2026 04:26:46.629] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+runModularGolemsGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,4 @@
+runAlexsCavesGameTestServer: using tmpfs runtime /tmp/magnetization-run-alexscaves-gametest-runtime.mx0EFi
+[01Oct2026 04:23:03.950] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 7 GAME TESTS COMPLETE IN 739.6 ms ======================
+[01Oct2026 04:23:03.951] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 7 required tests passed :)
+runAlexsCavesGameTestServer: assertions passed; terminating only its lingering process group

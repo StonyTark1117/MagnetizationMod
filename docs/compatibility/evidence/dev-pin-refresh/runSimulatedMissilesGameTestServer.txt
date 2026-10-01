@@ -1,0 +1,121 @@
+[01Oct2026 04:19:18.187] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.44, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.252, --fml.neoFormVersion, 20240808.144430]
+[01Oct2026 04:19:18.194] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Arch Linux OpenJDK 64-Bit Server VM 21.0.12.1+1
+[01Oct2026 04:19:18.197] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Arch Linux; OS Linux arch amd64 version 7.2.7-zen1-1-zen
+[01Oct2026 04:19:18.352] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[01Oct2026 04:19:18.407] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/braydon/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[01Oct2026 04:19:18.877] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:Registrate.MC1._21._67. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/com.tterrag.registrate/Registrate/MC1.21-1.3.0+67/66ddc4cd56472fea1ea1a24182901e6c92a51c0a/Registrate-MC1.21-1.3.0+67.jar
+[01Oct2026 04:19:18.877] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: veil. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/foundry.veil/veil-neoforge-1.21.1/4.3.2/3d4056e31dd8a06e35901c3b82210c3d471e1e48/veil-neoforge-1.21.1-4.3.2.jar
+[01Oct2026 04:19:18.878] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[01Oct2026 04:19:18.878] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.engine-room.flywheel/flywheel-neoforge-1.21.1/1.0.6/a943872ad0bdd4458d818d8d7dc123fb250eb744/flywheel-neoforge-1.21.1-1.0.6.jar
+[01Oct2026 04:19:18.878] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+[01Oct2026 04:19:18.878] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/net.createmod.ponder/ponder-neoforge/1.0.87+mc1.21.1/7783eeff0389f8c6003457133b9dd98e903266c6/ponder-neoforge-1.0.87+mc1.21.1.jar
+[01Oct2026 04:19:18.878] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 4 dependencies adding them to mods collection
+[01Oct2026 04:19:18.879] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		CBC Aeronautics Missiles 0.1.0 (cbcaeronauticsmissiles)
+		Create 6.0.11 (create)
+		Create Aeronautics 1.3.2 (aeronautics)
+		Create Big Cannons 5.11.7 (createbigcannons)
+		Create Simulated 1.3.2 (simulated)
+		Create: Radars 0.4.9.4-1.21.1 (create_radar)
+		Flywheel 1.0.6 (flywheel)
+		Magnetization 1.4.6 (magnetization)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Ponder 1.0.87+mc1.21.1 (ponder)
+		Ritchie's Projectile Library 2.1.2 (ritchiesprojectilelib)
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+		TerraBlender 4.1.0.8 (terrablender)
+		Veil 4.3.2 (veil)
+[01Oct2026 04:19:20.229] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[01Oct2026 04:19:20.237] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[01Oct2026 04:19:20.297] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[01Oct2026 04:19:20.436] [main/WARN] [mixin/]: Reference map 'createradar.refmap.json' for create_radar.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:20.541] [main/WARN] [mixin/]: Reference map 'simulated.refmap.json' for simulated.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:20.555] [main/WARN] [mixin/]: Reference map 'aeronautics.refmap.json' for aeronautics.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:20.580] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:20.601] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:19:20.605] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:19:20.633] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:20.638] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender_neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:19:21.473] [main/WARN] [mixin/]: Error loading class: xfacthd/framedblocks/common/blockentity/doubled/slab/FramedAdjustableDoubleBlockEntity (java.lang.ClassNotFoundException: xfacthd.framedblocks.common.blockentity.doubled.slab.FramedAdjustableDoubleBlockEntity)
+[01Oct2026 04:19:21.474] [main/WARN] [mixin/]: @Mixin target xfacthd.framedblocks.common.blockentity.doubled.slab.FramedAdjustableDoubleBlockEntity was not found createbigcannons.mixins.json:compat.framedblocks.FramedAdjustableDoubleBlockEntityAccessor from mod createbigcannons
+[01Oct2026 04:19:21.987] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/CCCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.CCCopycatBlockEntity)
+[01Oct2026 04:19:21.990] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/multistate/MultiStateCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.multistate.MultiStateCopycatBlockEntity)
+[01Oct2026 04:19:21.991] [main/WARN] [mixin/]: Error loading class: com/jesz/createdieselgenerators/content/tools/ChemicalSprayerProjectileEntity (java.lang.ClassNotFoundException: com.jesz.createdieselgenerators.content.tools.ChemicalSprayerProjectileEntity)
+[01Oct2026 04:19:21.997] [main/WARN] [mixin/]: Error loading class: qouteall/imm_ptl/core/compat/sable_integration/IPSableBridge (java.lang.ClassNotFoundException: qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge)
+[01Oct2026 04:19:22.004] [main/WARN] [mixin/]: Error loading class: com/github/alexmodguy/alexscaves/server/block/blockentity/TeslaBulbBlockEntity (java.lang.ClassNotFoundException: com.github.alexmodguy.alexscaves.server.block.blockentity.TeslaBulbBlockEntity)
+[01Oct2026 04:19:22.005] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/orbit/DeepSpaceData (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.orbit.DeepSpaceData)
+[01Oct2026 04:19:22.055] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[01Oct2026 04:19:22.174] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[01Oct2026 04:19:28.213] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:19:28.215] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:19:28.217] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:19:28.218] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:19:28.219] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:19:28.281] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Initializing Create Radar!
+[01Oct2026 04:19:28.281] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[01Oct2026 04:19:28.298] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[01Oct2026 04:19:28.308] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Registering Items!
+[01Oct2026 04:19:28.318] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.11 initializing! Commit hash: fc9535d82a29419164a1e9dc9c678bdcddeab30d
+[01Oct2026 04:19:28.446] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Registering blocks!
+[01Oct2026 04:19:28.603] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Registering block entity types!
+[01Oct2026 04:19:28.604] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Registering CreativeTabs!
+[01Oct2026 04:19:28.605] [modloading-worker-0/INFO] [com.happysg.radar.CreateRadar/]: Registering Lang!
+[01Oct2026 04:19:29.856] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[01Oct2026 04:19:29.876] [modloading-worker-0/INFO] [com.squishy.cbcaeronauticsmissiles.CbcAeronauticsMissiles/]: CBC Aeronautics Missiles initialized
+[01Oct2026 04:19:32.924] [modloading-sync-worker/INFO] [com.happysg.radar.CreateRadar/]: Registering Display Sources!
+[01Oct2026 04:19:32.957] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:overworld to index 0 for type OVERWORLD
+[01Oct2026 04:19:32.957] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:nether to index 0 for type NETHER
+[01Oct2026 04:19:32.957] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:anomaly_region to index 1 for type OVERWORLD
+[01Oct2026 04:19:32.958] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:petrified_forest_region to index 2 for type OVERWORLD
+[01Oct2026 04:19:32.963] [modloading-sync-worker/INFO] [magnetization/]: Surface rules registered for OVERWORLD category (anomaly + petrified_forest)
+[01Oct2026 04:19:33.073] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[01Oct2026 04:19:33.190] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.cache/magnetization-pin-refresh/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:19:33.190] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.cache/magnetization-pin-refresh/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:19:33.360] [main/INFO] [com.simibubi.create.Create/]: Created 157 recipes which will be injected into the game
+[01Oct2026 04:19:33.367] [main/INFO] [com.simibubi.create.Create/]: Created 0 tags which will be injected into the game
+[01Oct2026 04:19:33.374] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [magnetization_simulated_missiles]
+[01Oct2026 04:19:34.846] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 3410 recipes
+[01Oct2026 04:19:35.076] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 3012 advancements
+[01Oct2026 04:19:35.117] [main/INFO] [com.stonytark.magnetization.content.gas.GasExcitationProfiles/]: Loaded 0 gas excitation fluid profile bindings
+[01Oct2026 04:19:35.132] [main/WARN] [net.minecraft.core.MappedRegistry/]: Not all defined tags for registry ResourceKey[minecraft:root / minecraft:item] are present in data pack: c:ingots/aluminum
+[01Oct2026 04:19:36.982] [Server thread/INFO] [terrablender/]: Initialized TerraBlender biomes for level stem minecraft:the_nether
+[01Oct2026 04:19:37.000] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:overworld] using RapierPhysicsPipelineProvider
+[01Oct2026 04:19:37.007] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Using game directory relative Sable Rapier native directory /tmp/magnetization-run-simulated-missiles-gametest-runtime.hn5PAC/.sable/natives
+[01Oct2026 04:19:37.608] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_nether] using RapierPhysicsPipelineProvider
+[01Oct2026 04:19:37.645] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_end] using RapierPhysicsPipelineProvider
+[01Oct2026 04:19:37.683] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[01Oct2026 04:19:37.713] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[01Oct2026 04:19:37.858] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 174 ms
+[01Oct2026 04:19:37.868] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Started game test server
+[01Oct2026 04:19:37.904] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[01Oct2026 04:19:37.913] [Server thread/INFO] [magnetization/]: Stripped 1 recipe(s) producing disabled magnetization content.
+[01Oct2026 04:19:38.007] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 3 tests are now running at position 10352020, -59, -8755974!
+[01Oct2026 04:19:38.243] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'missileEmp:0' (3 tests)...
+[01Oct2026 04:19:38.382] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [   ]
+[01Oct2026 04:19:38.488] [Server thread/INFO] [com.squishy.cbcaeronauticsmissiles.CbcAeronauticsMissiles/]: Guidance computer at BlockPos{x=20481032, y=128, z=20481032} recovered actuator link to BlockPos{x=20481033, y=128, z=20481032} on missile 737f9002-88aa-458b-8d45-81b105e8166b
+[01Oct2026 04:19:38.490] [Server thread/INFO] [com.squishy.cbcaeronauticsmissiles.CbcAeronauticsMissiles/]: Guidance computer at BlockPos{x=20481032, y=128, z=20483080} recovered actuator link to BlockPos{x=20481033, y=128, z=20483080} on missile 0f066305-3342-4f90-a5cd-6dc0d69a46f3
+[01Oct2026 04:19:38.490] [Server thread/INFO] [com.squishy.cbcaeronauticsmissiles.CbcAeronauticsMissiles/]: Guidance computer at BlockPos{x=20481032, y=128, z=20485128} recovered actuator link to BlockPos{x=20481033, y=128, z=20485128} on missile fbdb20c5-8c65-4fca-b49d-843686497e47
+[01Oct2026 04:19:38.519] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++]
+[01Oct2026 04:19:38.519] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++]
+[01Oct2026 04:19:38.520] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 512.2 ms ======================
+[01Oct2026 04:19:38.521] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+[01Oct2026 04:19:38.522] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ====================================================
+[01Oct2026 04:19:38.535] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[01Oct2026 04:19:38.535] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[01Oct2026 04:19:38.535] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[01Oct2026 04:19:38.970] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:19:38.971] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:19:38.995] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:19:38.996] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:19:38.997] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:19:38.997] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:19:39.009] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[01Oct2026 04:19:39.011] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[01Oct2026 04:19:39.011] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[01Oct2026 04:19:39.011] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[01Oct2026 04:19:39.020] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Game test server shutting down

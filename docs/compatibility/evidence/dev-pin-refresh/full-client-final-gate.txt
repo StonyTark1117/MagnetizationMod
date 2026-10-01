@@ -1,0 +1,9 @@
+399:[01Oct2026 04:30:44.116] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.death', args=[]} for sound event: supplementaries:entity.plunderer.death
+400:[01Oct2026 04:30:44.116] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.immersiveengineering.alert', args=[]} for sound event: immersiveengineering:alert
+401:[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.supplementaries.wrench.rotate', args=[]} for sound event: supplementaries:item.wrench.rotate
+402:[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.ambient', args=[]} for sound event: supplementaries:entity.plunderer.ambient
+403:[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.hurt', args=[]} for sound event: supplementaries:entity.plunderer.hurt
+404:[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='alexscaves.sound.subtitle.luxtructosaurus_snort', args=[]} for sound event: alexscaves:luxtructosaurus_snort
+405:[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='alexscaves.sound.subtitle.gingerbread_man_talk', args=[]} for sound event: alexscaves:gingerbread_man_talk
+406:[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.celebrate', args=[]} for sound event: supplementaries:entity.plunderer.celebrate
+runClient: client reached the menu with ERROR/FATAL log entries

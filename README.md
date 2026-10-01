@@ -8,11 +8,13 @@ Development release: **1.4.6**. This release adds native Extra Golems Reborn 21.
 
 - Minecraft **1.21.1**
 - NeoForge **21.1.219+ and below 22.0** for the complete required stack (Magnetization itself permits **21.1.200+**; Create 6.0.10 sets the effective 21.1.219 floor; development uses **21.1.252**)
-- [Create](https://modrinth.com/mod/create) **6.0.10+** (development uses the newer official Maven build 6.0.11-295)
+- [Create](https://modrinth.com/mod/create) **6.0.10+** (development uses the newer official Maven build 6.0.11-312)
 - [Sable](https://modrinth.com/mod/sable) **2.0.3+** (development uses **2.0.5**)
 - [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics) **1.3.0+**
 - Simulated **1.3.0+**
 - [TerraBlender](https://modrinth.com/mod/terrablender) **4.1.0.8+**
+
+Current development/test artifacts and retained user minimums are listed in the [pin refresh report](docs/compatibility/dev-pin-refresh.md).
 
 Optional integrations (auto-detected when installed):
 

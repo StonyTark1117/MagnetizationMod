@@ -1,0 +1,4 @@
+runOreExcavationGameTestServer: using tmpfs runtime /tmp/magnetization-run-ore-excavation-gametest-runtime.yOn8QU
+[01Oct2026 04:32:10.937] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 457.8 ms ======================
+[01Oct2026 04:32:10.937] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runOreExcavationGameTestServer: assertions passed; terminating only its lingering process group

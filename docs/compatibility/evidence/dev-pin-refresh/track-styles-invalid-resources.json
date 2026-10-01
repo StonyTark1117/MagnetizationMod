@@ -1,0 +1,20 @@
+{
+  "artifact": "coasters-simulated-track-styles-1642719-8672156.jar",
+  "sha256": "2db637054455c92111ffca910f242b48dfe6aa815028cd1be3c1bbad43f63276",
+  "invalid_paths": [
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_center_beam.json",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_center_beam.mtl",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_center_beam.obj",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_rail.json",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_tie.json",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_tie.mtl",
+    "assets/coasterssimulatedextratypes/models/block/track/arrow_4D/arrow_4D_tie.obj",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/intamin_box/intamin_box_rail - pure json - copy.json",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/intamin_box/intamin_box_rail - pure json.json",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/intamin_box/intamin_box_tie - pure json - copy.json",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/intamin_box/intamin_box_tie - pure json.json",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/intamin_triangular/#0.png",
+    "assets/coasterssimulatedextratypes/models/block/track_v1/steel_no_spine/#0.png",
+    "assets/coasterssimulatedextratypes/textures/block/track/standard_track_dyed - Copy.png"
+  ]
+}

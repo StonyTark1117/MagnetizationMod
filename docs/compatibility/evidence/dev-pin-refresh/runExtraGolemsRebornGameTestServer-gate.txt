@@ -1,0 +1,4 @@
+runExtraGolemsRebornGameTestServer: using tmpfs runtime /tmp/magnetization-run-extra-golems-reborn-gametest-runtime.8z7SJn
+[01Oct2026 04:27:36.741] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 12 GAME TESTS COMPLETE IN 1.265 s ======================
+[01Oct2026 04:27:36.741] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 12 required tests passed :)
+runExtraGolemsRebornGameTestServer: assertions passed; terminating only its lingering process group

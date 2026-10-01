@@ -1,0 +1,4 @@
+runGameTestServer: using tmpfs runtime /tmp/magnetization-run-gametest-runtime.uCJMCK
+[01Oct2026 04:25:37.417] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 173 GAME TESTS COMPLETE IN 22.27 s ======================
+[01Oct2026 04:25:37.418] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 173 required tests passed :)
+runGameTestServer: assertions passed; terminating only its lingering process group

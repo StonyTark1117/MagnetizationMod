@@ -1,0 +1,4 @@
+runAeroPortalsGameTestServer: using tmpfs runtime /tmp/magnetization-run-aeroportals-gametest-runtime.79CjmY
+[01Oct2026 04:13:43.963] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 2.036 s ======================
+[01Oct2026 04:13:43.963] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runAeroPortalsGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,4 @@
+runImmersiveAeronauticsGameTestServer: using tmpfs runtime /tmp/magnetization-run-immersive-aeronautics-gametest-runtime.tMuSkt
+[01Oct2026 04:14:49.826] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 5 GAME TESTS COMPLETE IN 2.571 s ======================
+[01Oct2026 04:14:49.827] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 5 required tests passed :)
+runImmersiveAeronauticsGameTestServer: assertions passed; terminating only its lingering process group

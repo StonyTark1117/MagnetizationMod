@@ -1,0 +1,72 @@
+{
+  "base": "6ecea04",
+  "changed": {
+    "create_version": {
+      "old": "6.0.11-295",
+      "new": "6.0.11-312"
+    },
+    "aeronautics_version": {
+      "old": "1.3.0",
+      "new": "1.3.2"
+    },
+    "simulated_version": {
+      "old": "1.3.0",
+      "new": "1.3.2"
+    },
+    "offroad_test_version": {
+      "old": "1.3.0",
+      "new": "1.3.2"
+    },
+    "copycats_test_version": {
+      "old": "kecZ0sl7",
+      "new": "bPYeUWZx"
+    },
+    "create_dragons_plus_test_file": {
+      "old": "8633162",
+      "new": "8900055"
+    },
+    "ae2_test_version": {
+      "old": "kfyIqgJ6",
+      "new": "KDnFUmMm"
+    },
+    "guideme_test_version": {
+      "old": "rduAfwb7",
+      "new": "hFpGwC6q"
+    },
+    "sodium_version": {
+      "old": "mc1.21.1-0.8.13-beta.2-neoforge",
+      "new": "mc1.21.1-0.8.13-neoforge"
+    },
+    "aeroportals_test_file": {
+      "old": "8621990",
+      "new": "8876165"
+    },
+    "simulated_coasters_test_file": {
+      "old": "8586851",
+      "new": "8655742"
+    },
+    "simulated_coasters_track_styles_test_file": {
+      "old": "8593009",
+      "new": "8672156"
+    },
+    "coasters_engineered_test_file": {
+      "old": "8653100",
+      "new": "8761537"
+    },
+    "simulated_missiles_test_file": {
+      "old": "8658979",
+      "new": "8746555"
+    }
+  },
+  "added": {
+    "aeronautics_bundle_version": "44pLdPGg",
+    "aeronautics_bundle_sha256": "a3f330d4757640f8715d991a43eedb826e4d0e51558d859c843ae6693bd35f1e",
+    "jei_test_version": "19.51.0.418",
+    "immersive_aircraft_test_version": "ZZTlNkV9",
+    "supplementaries_test_version": "WrZWfRjP",
+    "moonlight_test_version": "t6iFh4M3",
+    "sophisticated_storage_test_version": "GvOv4X8M",
+    "sophisticated_core_test_version": "blXGSmAb",
+    "spartan_weaponry_test_version": "ygaWB8ji"
+  }
+}

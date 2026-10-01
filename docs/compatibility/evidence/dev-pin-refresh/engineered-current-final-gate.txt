@@ -1,0 +1,5 @@
+runCoastersEngineeredGameTestServer: moved previous generated run directory to /tmp/magnetization-run-coasters-engineered-gametest-1790854119-130512
+runCoastersEngineeredGameTestServer: using tmpfs runtime /tmp/magnetization-run-coasters-engineered-gametest-runtime.ohl2zm
+[01Oct2026 04:29:13.817] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 647.6 ms ======================
+[01Oct2026 04:29:13.817] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runCoastersEngineeredGameTestServer: assertions passed; terminating only its lingering process group

@@ -1,0 +1,4 @@
+runRegressionGameTestServer: using tmpfs runtime /tmp/magnetization-run-regression-gametest-runtime.E3ALex
+[01Oct2026 04:12:09.117] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 694.1 ms ======================
+[01Oct2026 04:12:09.118] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+runRegressionGameTestServer: assertions passed; terminating only its lingering process group

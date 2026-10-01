@@ -1,0 +1,4 @@
+runOptionalCompatibilityAbsentGameTestServer: using tmpfs runtime /tmp/magnetization-run-compat-absent-gametest-runtime.b5Qq4J
+[01Oct2026 04:13:07.357] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 419.0 ms ======================
+[01Oct2026 04:13:07.357] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runOptionalCompatibilityAbsentGameTestServer: assertions passed; terminating only its lingering process group

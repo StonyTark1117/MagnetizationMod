@@ -1,0 +1,1 @@
+runSimulatedCoastersTrackStylesClient: rendered main menu with required mods [simulatedcoasters,coasterssimulatedextratypes] on isolated display :523

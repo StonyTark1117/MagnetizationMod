@@ -1,0 +1,4 @@
+runSweepAircraftGameTestServer: using tmpfs runtime /tmp/magnetization-run-sweep-aircraft-gametest-runtime.2bUnSj
+[01Oct2026 04:23:31.186] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 238.0 ms ======================
+[01Oct2026 04:23:31.186] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)
+runSweepAircraftGameTestServer: assertions passed; terminating only its lingering process group

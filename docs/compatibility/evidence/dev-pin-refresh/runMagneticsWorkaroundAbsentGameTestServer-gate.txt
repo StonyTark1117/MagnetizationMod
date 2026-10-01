@@ -1,0 +1,4 @@
+runMagneticsWorkaroundAbsentGameTestServer: using tmpfs runtime /tmp/magnetization-run-magnetics-workaround-absent-gametest-runtime.spwvVE
+[01Oct2026 04:24:36.588] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 2 GAME TESTS COMPLETE IN 354.0 ms ======================
+[01Oct2026 04:24:36.588] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 2 required tests passed :)
+runMagneticsWorkaroundAbsentGameTestServer: assertions passed; terminating only its lingering process group

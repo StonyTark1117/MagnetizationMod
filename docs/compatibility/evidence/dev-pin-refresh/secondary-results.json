@@ -1,0 +1,100 @@
+[
+  {
+    "name": "runCoastersEngineeredClient",
+    "exit": 0,
+    "seconds": 53.2,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runCoastersEngineeredClient",
+      "run-client-coasters-engineered",
+      "coastersengineered,jade",
+      "360"
+    ],
+    "log_sha256": "b54557e51a740562dd70a8197e1723823eae4125b71aa0816e49dfbec64258ad"
+  },
+  {
+    "name": "runSimulatedCoastersTrackStylesClient",
+    "exit": 1,
+    "seconds": 59.2,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runSimulatedCoastersTrackStylesClient",
+      "run-simulated-coasters-track-styles-client",
+      "simulatedcoasters,coasterssimulatedextratypes",
+      "360"
+    ],
+    "log_sha256": "b1841b914c65914588761c7a73ab1ebc2aec28497fcea0d329fc226f318f2050"
+  },
+  {
+    "name": "runSimulatedMissilesClient",
+    "exit": 0,
+    "seconds": 47.9,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runSimulatedMissilesClient",
+      "run-client-simulated-missiles",
+      "cbcaeronauticsmissiles,createbigcannons,create_radar",
+      "360"
+    ],
+    "log_sha256": "d1957233e1363ca0c10ab2c218ba9c81790c3f6012ef49b38210b15dd1f1fd7a"
+  },
+  {
+    "name": "runJerClient",
+    "exit": 0,
+    "seconds": 55.1,
+    "command": [
+      "bash",
+      "scripts/run-client-profile-smoke.sh",
+      "runJerClient",
+      "run-client-jer",
+      "jei,jeresources",
+      "360"
+    ],
+    "log_sha256": "49943dcd0fc6b4f955844f05a8dfcb272c000ce4634fb8c41ad00bab28f14214"
+  },
+  {
+    "name": "engineered-minimum",
+    "exit": 0,
+    "seconds": 47.3,
+    "command": [
+      "bash",
+      "scripts/run-gametest-gate.sh",
+      "runCoastersEngineeredGameTestServer",
+      "run-coasters-engineered-gametest",
+      "360",
+      "-Pcoasters_engineered_test_file=8653100"
+    ],
+    "log_sha256": "a33bd8c6d6ec5849d2de57a998fdb04e853e80db0020ddc3c254c6e4f9449782"
+  },
+  {
+    "name": "core-minimum",
+    "exit": 0,
+    "seconds": 357.0,
+    "command": [
+      "bash",
+      "scripts/run-gametest-gate.sh",
+      "runGameTestServer",
+      "run-gametest",
+      "420",
+      "-Pneoforge_version=21.1.228",
+      "-Pcreate_version=6.0.10-281",
+      "-Paeronautics_version=1.3.0",
+      "-Psimulated_version=1.3.0",
+      "-Psable_version=2.0.3"
+    ],
+    "log_sha256": "6610075008b38bea4252daab3b24b1cd17ca5fc641e9fc75f8efb70fef1481c8"
+  },
+  {
+    "name": "storage-restart",
+    "exit": 0,
+    "seconds": 89.7,
+    "command": [
+      "bash",
+      "scripts/run-storage-restart-audit.sh"
+    ],
+    "log_sha256": "2127b1b4650355655bf5c69b3da0d19779288ee4fea8bb8fa57089e90c04d3af"
+  }
+]

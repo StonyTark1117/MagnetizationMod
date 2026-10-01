@@ -1,0 +1,215 @@
+{
+  "rendered_menu": true,
+  "strict_error_gate": "failed: eight upstream subtitle translations",
+  "loaded_versions": {
+    "accessories": {
+      "name": "Accessories",
+      "version": "1.1.0-beta.53+1.21.1"
+    },
+    "accessories_compat_layer": {
+      "name": "Accessories Compatibility Layer",
+      "version": "0.1.12"
+    },
+    "alexscaves": {
+      "name": "Alex's Caves",
+      "version": "2.0.10"
+    },
+    "ae2": {
+      "name": "Applied Energistics 2",
+      "version": "19.2.18"
+    },
+    "badpackets": {
+      "name": "Bad Packets",
+      "version": "0.8.2"
+    },
+    "citadel": {
+      "name": "Citadel",
+      "version": "2.7.6"
+    },
+    "codecui": {
+      "name": "CodecUI",
+      "version": "1.21.1-1.4.5"
+    },
+    "create": {
+      "name": "Create",
+      "version": "6.0.11"
+    },
+    "aeronautics": {
+      "name": "Create Aeronautics",
+      "version": "1.3.2"
+    },
+    "createaddition": {
+      "name": "Create Crafts & Additions",
+      "version": "1.6.0"
+    },
+    "simulated": {
+      "name": "Create Simulated",
+      "version": "1.3.2"
+    },
+    "create_new_age": {
+      "name": "Create: New Age",
+      "version": "1.2.0+mc1.21.1"
+    },
+    "tfmg": {
+      "name": "Create: The Factory Must Grow",
+      "version": "1.3.2a-community"
+    },
+    "curios": {
+      "name": "Curios API",
+      "version": "9.5.1+1.21.1"
+    },
+    "esl": {
+      "name": "ESL",
+      "version": "1.0.3"
+    },
+    "flywheel": {
+      "name": "Flywheel",
+      "version": "1.0.6"
+    },
+    "fabric_api_base": {
+      "name": "Forgified Fabric API Base",
+      "version": "0.4.42+d1308ded19"
+    },
+    "fabric_block_view_api_v2": {
+      "name": "Forgified Fabric BlockView API (v2)",
+      "version": "1.0.10+9afaaf8c19"
+    },
+    "fabric_renderer_api_v1": {
+      "name": "Forgified Fabric Renderer API (v1)",
+      "version": "3.4.1+9125b6dc19"
+    },
+    "fabric_rendering_data_attachment_v1": {
+      "name": "Forgified Fabric Rendering Data Attachment (v1)",
+      "version": "0.3.48+73761d2e19"
+    },
+    "guideme": {
+      "name": "GuideME",
+      "version": "21.1.19"
+    },
+    "immersive_aircraft": {
+      "name": "Immersive Aircraft",
+      "version": "1.5.2+1.21.1"
+    },
+    "immersiveengineering": {
+      "name": "Immersive Engineering",
+      "version": "12.4.2-194"
+    },
+    "iris": {
+      "name": "Iris",
+      "version": "1.8.14-beta.1+mc1.21.1"
+    },
+    "jei": {
+      "name": "Just Enough Items",
+      "version": "19.51.0.418"
+    },
+    "jeresources": {
+      "name": "Just Enough Resources",
+      "version": "1.6.0.17"
+    },
+    "mcwbridges": {
+      "name": "Macaw's Bridges",
+      "version": "3.1.2"
+    },
+    "mcwdoors": {
+      "name": "Macaw's Doors",
+      "version": "1.1.5"
+    },
+    "mcwfences": {
+      "name": "Macaw's Fences and Walls",
+      "version": "1.2.1"
+    },
+    "mcwlights": {
+      "name": "Macaw's Lights and Lamps",
+      "version": "1.1.5"
+    },
+    "mcwtrpdoors": {
+      "name": "Macaw's Trapdoors",
+      "version": "1.1.5"
+    },
+    "mcwwindows": {
+      "name": "Macaw's Windows",
+      "version": "2.4.2"
+    },
+    "magnetization": {
+      "name": "Magnetization",
+      "version": "1.4.6"
+    },
+    "minecraft": {
+      "name": "Minecraft",
+      "version": "1.21.1"
+    },
+    "moonlight": {
+      "name": "Moonlight Lib",
+      "version": "1.21.1-3.7.0"
+    },
+    "neoforge": {
+      "name": "NeoForge",
+      "version": "21.1.252"
+    },
+    "owo": {
+      "name": "o\u03c9o",
+      "version": "0.12.15.5-beta.1+1.21"
+    },
+    "patchouli": {
+      "name": "Patchouli",
+      "version": "1.21.1-93-NEOFORGE"
+    },
+    "ponder": {
+      "name": "Ponder",
+      "version": "1.0.87+mc1.21.1"
+    },
+    "sable": {
+      "name": "Sable",
+      "version": "2.0.5"
+    },
+    "sablecompanion": {
+      "name": "Sable Companion",
+      "version": "1.6.0"
+    },
+    "sodium": {
+      "name": "Sodium",
+      "version": "0.8.13+mc1.21.1"
+    },
+    "sophisticatedcore": {
+      "name": "Sophisticated Core",
+      "version": "1.5.2"
+    },
+    "sophisticatedstorage": {
+      "name": "Sophisticated Storage",
+      "version": "1.6.0"
+    },
+    "spartan_weaponry_unofficial": {
+      "name": "Spartan Weaponry Unofficial",
+      "version": "1.2.3"
+    },
+    "supplementaries": {
+      "name": "Supplementaries",
+      "version": "1.21.1-3.9.9"
+    },
+    "terrablender": {
+      "name": "TerraBlender",
+      "version": "4.1.0.8"
+    },
+    "veil": {
+      "name": "Veil",
+      "version": "4.3.2"
+    },
+    "wthit": {
+      "name": "wthit",
+      "version": "12.10.2"
+    }
+  },
+  "errors": [
+    "[01Oct2026 04:30:33.960] [Render thread/ERROR] [com.mojang.text2speech.Narrator/]: Error while loading the narrator",
+    "[01Oct2026 04:30:44.116] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.death', args=[]} for sound event: supplementaries:entity.plunderer.death",
+    "[01Oct2026 04:30:44.116] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.immersiveengineering.alert', args=[]} for sound event: immersiveengineering:alert",
+    "[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.supplementaries.wrench.rotate', args=[]} for sound event: supplementaries:item.wrench.rotate",
+    "[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.ambient', args=[]} for sound event: supplementaries:entity.plunderer.ambient",
+    "[01Oct2026 04:30:44.117] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.hurt', args=[]} for sound event: supplementaries:entity.plunderer.hurt",
+    "[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='alexscaves.sound.subtitle.luxtructosaurus_snort', args=[]} for sound event: alexscaves:luxtructosaurus_snort",
+    "[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='alexscaves.sound.subtitle.gingerbread_man_talk', args=[]} for sound event: alexscaves:gingerbread_man_talk",
+    "[01Oct2026 04:30:44.119] [Render thread/ERROR] [net.minecraft.client.sounds.SoundManager/]: Missing subtitle translation{key='subtitles.entity.plunderer.celebrate', args=[]} for sound event: supplementaries:entity.plunderer.celebrate"
+  ],
+  "log": "full-client-final.txt",
+  "log_sha256": "7e9c9e9a8e5e2a93fe8cc064f7a8b33077c660c32580905ecb5357349852f3b9"
+}
