@@ -95,6 +95,17 @@ public final class ReleaseCoverageGameTests {
                             == com.stonytark.magnetization.config.MagConfig.AlexsCavesPotionMode.OURS_ONLY,
                     "Enum COMMON setting did not synchronize from the server");
 
+            tank.set(777); // A local reload must not hide the active remote override.
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterTank() == 123_456,
+                    "Local reload bypassed the active snapshot");
+            final var replacement = received.values().copy();
+            replacement.getCompound(String.join(".", tank.getPath())).putInt("value", 234_567);
+            com.stonytark.magnetization.config.MagConfig.applyClientSnapshot(replacement);
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterTank() == 234_567,
+                    "Replacement snapshot retained an old cached value");
+            com.stonytark.magnetization.config.MagConfig.applyClientSnapshot(new net.minecraft.nbt.CompoundTag());
+            helper.assertTrue(com.stonytark.magnetization.config.MagConfig.microThrusterTank() == 6_543,
+                    "Empty snapshot did not restore local values");
             com.stonytark.magnetization.config.MagConfig.clearClientSnapshot();
             helper.assertTrue(tank.get() == 6_543 && redstone.get() && strength.get() == 0.625d
                             && potionMode.get()

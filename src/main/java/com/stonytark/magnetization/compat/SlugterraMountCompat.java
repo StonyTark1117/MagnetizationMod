@@ -18,15 +18,15 @@ public final class SlugterraMountCompat {
     private SlugterraMountCompat() {}
 
     public static double susceptibility(final Entity entity) {
-        if (!MagConfig.slugterraMountsEnabled() || !ModList.get().isLoaded("slugterra")
-                || !MOUNTS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()))) return 0.0d;
+        if (!MOUNTS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()))
+                || !ModList.get().isLoaded("slugterra") || !MagConfig.slugterraMountsEnabled()) return 0.0d;
         return MagConfig.SLUGTERRA_MOUNT_SUSCEPTIBILITY.get();
     }
 
     /** An unbound anchor can dock mechanical mounts without requiring a Sable ship. */
     public static boolean hasAnchorTarget(final net.minecraft.server.level.ServerLevel level,
                                            final net.minecraft.core.BlockPos pos, final double range) {
-        if (!MagConfig.slugterraMountsEnabled() || !ModList.get().isLoaded("slugterra")
+        if (!ModList.get().isLoaded("slugterra") || !MagConfig.slugterraMountsEnabled()
                 || MagConfig.SLUGTERRA_MOUNT_SUSCEPTIBILITY.get() <= 0.0d) return false;
         final Vec3 center = Vec3.atCenterOf(pos);
         return !level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,

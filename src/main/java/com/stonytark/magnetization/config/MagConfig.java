@@ -21,6 +21,10 @@ public final class MagConfig {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger("magnetization/config");
     private static final Object CLIENT_SYNC_LOCK = new Object();
+    // Dedicated servers never install a client snapshot. Publication also keeps
+    // client readers on the locked path while a snapshot is replaced/restored.
+    private static volatile boolean clientSnapshotActive;
+    private static final Map<ModConfigSpec.ConfigValue<?>, String> CLIENT_CONFIG_KEYS = new java.util.IdentityHashMap<>();
     private static Map<String, Object> clientCommonOverrides = Map.of();
     private static Map<String, Object> clientCommonOriginals = Map.of();
 
@@ -2939,8 +2943,10 @@ public final class MagConfig {
      */
     @SuppressWarnings("unchecked")
     public static <T> T commonClientValue(final ModConfigSpec.ConfigValue<T> value, final T localValue) {
+        if (!clientSnapshotActive) return localValue;
         synchronized (CLIENT_SYNC_LOCK) {
-            final Object override = clientCommonOverrides.get(String.join(".", value.getPath()));
+            final String key = CLIENT_CONFIG_KEYS.computeIfAbsent(value, v -> String.join(".", v.getPath()));
+            final Object override = clientCommonOverrides.get(key);
             return override == null ? localValue : (T) override;
         }
     }
@@ -2964,6 +2970,7 @@ public final class MagConfig {
     /** Apply a server snapshot only in memory; it is never saved to the client file. */
     public static void applyClientSnapshot(final CompoundTag snapshot) {
         synchronized (CLIENT_SYNC_LOCK) {
+            clientSnapshotActive = true;
             restoreClientSnapshotLocked();
             final Map<String, ModConfigSpec.ConfigValue<?>> values = new HashMap<>();
             collectConfigValues(COMMON_SPEC.getValues(), values);
@@ -2985,6 +2992,7 @@ public final class MagConfig {
             }
             clientCommonOriginals = originals;
             clientCommonOverrides = overrides;
+            clientSnapshotActive = !overrides.isEmpty();
         }
     }
 
@@ -2992,6 +3000,7 @@ public final class MagConfig {
     public static void clearClientSnapshot() {
         synchronized (CLIENT_SYNC_LOCK) {
             restoreClientSnapshotLocked();
+            clientSnapshotActive = false;
         }
     }
 

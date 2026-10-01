@@ -26,9 +26,8 @@ public final class SlugterraProjectileCompat {
     private SlugterraProjectileCompat() {}
 
     public static boolean handles(final Entity entity) {
-        if (!MagConfig.slugterraDeflectionEnabled()) return false;
         final var id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-        return ARROWS.contains(id) || VECTORS.contains(id);
+        return (ARROWS.contains(id) || VECTORS.contains(id)) && MagConfig.slugterraDeflectionEnabled();
     }
 
     public static boolean isInFlight(final Entity entity) {
