@@ -1,0 +1,3 @@
+[30Sep2026 18:52:37.075] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_RESTORED ship=133ab693-d0f3-4f17-9bbc-2ef2c5b930d6 creatorPid=1770772 verifierPid=1771870
+[30Sep2026 18:53:01.987] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_PASS sophisticated=7 ironChests=6 cooked=1 ticksAfterRestart=500
+[30Sep2026 18:53:02.072] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved

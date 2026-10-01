@@ -1,0 +1,418 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "sable": "2.0.5",
+  "passing_profiles": 44,
+  "passed_required_tests": 320,
+  "known_failing_profile": "runSupplementariesWorkflowGameTestServer",
+  "profiles": [
+    {
+      "task": "runRegressionGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 4,
+      "failures": [],
+      "log_sha256": "950ec290821b3f6a87b954ad3da92b5067244317d7f51359dfdcbe26cd046f00"
+    },
+    {
+      "task": "runOptionalCompatibilityAbsentGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "f793a2c7be46105dd5fca7c5ec730faae316817b87cb7748476b2d17980b2f4d"
+    },
+    {
+      "task": "runAeroPortalsGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "94ae217e9560c09345afcc605f5b19789857a91534d5dea88f2a8c4e45d77fb3"
+    },
+    {
+      "task": "runAeroPortalsLegacyGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "ee74ad9f6da2c5659a8c589c68a4b41c2d8a0f26307ada360bce2881ae0773b7"
+    },
+    {
+      "task": "runImmersiveAeronauticsGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 5,
+      "failures": [],
+      "log_sha256": "654bd3d1942e614dfbe7cb91f62ea46f81a3541c6d588e670cb4f54694940075"
+    },
+    {
+      "task": "runSimulatedCoastersGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "dbf703369cd0543f7ea7616fdcfbe7c4f89597979d508df51be2eb2c26b9cfc4"
+    },
+    {
+      "task": "runSimulatedCoastersLegacyGameTestServer",
+      "exit": 0,
+      "seconds": 16.0,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "9667770996ddbbe418aa391f879882a21ee1838c93e796240c8b72839925e102"
+    },
+    {
+      "task": "runSimulatedCoastersTrackStylesGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "935aa00f3e11e809c3a027f01cedc039dac5f6a1d4ad356eee24c249b517d287"
+    },
+    {
+      "task": "runCoastersMagnetizedGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "dd80dbbd505a0b09e01fe7b78245fac3c233a72807a0338d0abdc730ed253dc5"
+    },
+    {
+      "task": "runCoastersEngineeredGameTestServer",
+      "exit": 0,
+      "seconds": 16.0,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "979bbb2e42724b3fb3a02df20a29e7b0e5065c85b916633a73b35cef351c4c3a"
+    },
+    {
+      "task": "runCoastersExtrasGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "1fd12cd4f99d4d1e854cad716ef6f0b70c2eb131705059aaf1e39fea5dbd3fae"
+    },
+    {
+      "task": "runIronworksGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "b7892172d9741bd665dd61494adcd21926d59bc05d6d8c1f30efce0b111b515c"
+    },
+    {
+      "task": "runCoastersAdditionsGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 4,
+      "failures": [],
+      "log_sha256": "ea195935029bb5a24046017f14aa27c2dd12e66038404a23b9ded1fa3edea375"
+    },
+    {
+      "task": "runIronworksCoastersAdditionsGameTestServer",
+      "exit": 0,
+      "seconds": 20.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 5,
+      "failures": [],
+      "log_sha256": "534f49bde8c9b538db1c88c52817366d35f010ea8d8c8c9caf10f902557497c1"
+    },
+    {
+      "task": "runSimulatedMissilesGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 3,
+      "failures": [],
+      "log_sha256": "ba0d01311686723da5662b53b5fa2e16aadcb9dc9918ccb1dbab084c27a2f85a"
+    },
+    {
+      "task": "runCreateBigCannonsGameTestServer",
+      "exit": 0,
+      "seconds": 16.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 3,
+      "failures": [],
+      "log_sha256": "21ea271b383fc45614cf8ed44cb6f4ed536122becc382c6ec2cfdd41ee8536b0"
+    },
+    {
+      "task": "runCreateNewAgeGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 12,
+      "failures": [],
+      "log_sha256": "136bcd11427c0e5b0ec6a0911adea4741d1b2607eb4a46cc75d853455f1ebba1"
+    },
+    {
+      "task": "runCosmonauticsGameTestServer",
+      "exit": 0,
+      "seconds": 21.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 4,
+      "failures": [],
+      "log_sha256": "2c7dc7be108a4a57195aeb654139f45eb2e5bee0c8a87209966ea03e191fdc9a"
+    },
+    {
+      "task": "runCreateAdditionGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 3,
+      "failures": [],
+      "log_sha256": "fb9fefd81a417db73b0d8139c1de4d443c0eaaaf9116575891e4c2170cf0acbb"
+    },
+    {
+      "task": "runImmersiveEngineeringGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 5,
+      "failures": [],
+      "log_sha256": "967bc624d024f6eca5d8f0c039bf3fe7e7f0b3a50533e5cb7b66f35b23271fcb"
+    },
+    {
+      "task": "runAlexsCavesGameTestServer",
+      "exit": 0,
+      "seconds": 19.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 7,
+      "failures": [],
+      "log_sha256": "8a9851e9e17dc1a373630561a9d8a56ed1fc218c2b8e9a5026b59f10d9c5cf84"
+    },
+    {
+      "task": "runSweepAircraftGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "c3a0a8b2307cca204b0e8c18a14ed087d1c976b76b8000496f2deeb16d179cf8"
+    },
+    {
+      "task": "runMagneticsWorkaroundGameTestServer",
+      "exit": 0,
+      "seconds": 16.0,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "c73517c30fa64108039db8775c2352de9643063c34d5e8f74c8039668251e688"
+    },
+    {
+      "task": "runMagneticsWorkaroundAbsentGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "3d7aaede44b52730a6debeaabf846e2f283e8aecd1034bb6fb4b9b6ef9fdc56c"
+    },
+    {
+      "task": "runSweepEquipmentGameTestServer",
+      "exit": 0,
+      "seconds": 17.3,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "e855f00c42a01ce4db5a4cbf64a8da6345ab133597ef83735879a31a9ab7062c"
+    },
+    {
+      "task": "runSweepMaterialsGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "3e0bdbe66dd4b96faad291c5ab21b85f02f382433db6decefaeeb9043bbb6322"
+    },
+    {
+      "task": "runSweepTwilightGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "ac3bf87609e35e03b4556f8b518bfd048405f71029b04ba2a51324d35f881afb"
+    },
+    {
+      "task": "runModularGolemsGameTestServer",
+      "exit": 0,
+      "seconds": 16.0,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 4,
+      "failures": [],
+      "log_sha256": "3452650641eae66b80dd79379c031a26bffa2338a1a89f18a3e435aa99106f58"
+    },
+    {
+      "task": "runQuarkGameTestServer",
+      "exit": 0,
+      "seconds": 22.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 4,
+      "failures": [],
+      "log_sha256": "8792f97f014a1ead1f360a67d2952a2c80e283ca3b9ca5b9fe73f91f2b51c1ed"
+    },
+    {
+      "task": "runExtraGolemsRebornGameTestServer",
+      "exit": 0,
+      "seconds": 21.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 12,
+      "failures": [],
+      "log_sha256": "6cae9f91ca282aa9f2558a2edb22539469cc386eebbfa4625c19debdbfbb1b32"
+    },
+    {
+      "task": "runCreateTracksGameTestServer",
+      "exit": 0,
+      "seconds": 19.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "5554ac67ccf640cf64ade5c978ad4ebb2f77caf5ba9e3812491e63ac2d3547d8"
+    },
+    {
+      "task": "runSteamRailsGameTestServer",
+      "exit": 0,
+      "seconds": 19.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "77d4ebf0d9dc417ce6dbdd5a831632d7a0522332377844a3aac87d9bb196ba29"
+    },
+    {
+      "task": "runDieselGeneratorsGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "ca83d7518ce8d379634b42f1d48cf31e58f4937d187a011c4f90ad9c3b17ac03"
+    },
+    {
+      "task": "runCopycatsGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "4305ac2377038536db54a6df612c43ccdad8f2c4572fdef30cc7d8d88876f81c"
+    },
+    {
+      "task": "runEnchantmentIndustryGameTestServer",
+      "exit": 0,
+      "seconds": 20.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "c2f0854cdf9f3726c6384aefba84782119bf232836fb35faf14585338fe03bb2"
+    },
+    {
+      "task": "runEnderTransmissionGameTestServer",
+      "exit": 0,
+      "seconds": 17.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 3,
+      "failures": [],
+      "log_sha256": "76e0f0e94596deb58dd1aac15d2951cdad575bb1446d762de35075867b65e3b8"
+    },
+    {
+      "task": "runTfmgGameTestServer",
+      "exit": 0,
+      "seconds": 19.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 15,
+      "failures": [],
+      "log_sha256": "3f87a7d77a58f7c127f88a2023e932ad144a6089fd47b0aa9483237a99cb1aab"
+    },
+    {
+      "task": "runOreExcavationGameTestServer",
+      "exit": 0,
+      "seconds": 20.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 1,
+      "failures": [],
+      "log_sha256": "8fdaeec672985bbb599c40a7b27b9b6c6e54be2bb961f99c07e960e7f460f9fc"
+    },
+    {
+      "task": "runCreateOreExcavationGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "ae26fe82a85ed337b2111bcdd755506f954c25ead4d9775e667a5318145e20c9"
+    },
+    {
+      "task": "runCuriosGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "c29065ccb15f1bffa582049888d4460f1ddc28a2ca09e1516b5a36772a3a78f1"
+    },
+    {
+      "task": "runGameTestServer",
+      "exit": 0,
+      "seconds": 35.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 173,
+      "failures": [],
+      "log_sha256": "a31a6131d055a41d808e079150eecb89a1d1f1ec4f257f468a632718a95e341a"
+    },
+    {
+      "task": "runSweepStorageGameTestServer",
+      "exit": 0,
+      "seconds": 18.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 2,
+      "failures": [],
+      "log_sha256": "4411928bfe3bec0a533aa58c2985e7041f7cb45915a3d470ea0b9b73f5abf6fb"
+    },
+    {
+      "task": "runSweepBossGameTestServer",
+      "exit": 0,
+      "seconds": 21.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 13,
+      "failures": [],
+      "log_sha256": "75b44b1efca5d890096daae393411558d4da07f2332c861d78405ab1834a1ac0"
+    },
+    {
+      "task": "runSweepSupplementariesGameTestServer",
+      "exit": 0,
+      "seconds": 20.1,
+      "sable_version": "2.0.5",
+      "required_tests_passed": 3,
+      "failures": [],
+      "log_sha256": "3750fef1b3015b9a8808d7cb21b1a9f26d055784fa4f0b941982076d62045821"
+    },
+    {
+      "task": "runSupplementariesWorkflowGameTestServer",
+      "exit": 1,
+      "seconds": 16.6,
+      "sable_version": "2.0.5",
+      "required_tests_passed": null,
+      "failures": [
+        "movingpulleypayloadsurvivesnativeassembly",
+        "pulleymovesloadedchestdownanduponmovingship"
+      ],
+      "log_sha256": "e1374b3fa52f059e23b47874ae94763e8e76ed31f126e572a394ec288a8fde16"
+    }
+  ]
+}

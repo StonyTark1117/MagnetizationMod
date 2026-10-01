@@ -14,11 +14,14 @@ async def main():
     args = parser.parse_args()
     started = time.monotonic()
     stats = {'ports': [], 'upstream': '127.0.0.1:25585', 'delay_phases_ms': [25, 75, 125, 40],
-             'jitter_ms': 5, 'udp_datagrams': 0, 'connections': 0, 'chunks': 0, 'bytes': 0, 'min_delay_ms': None, 'max_delay_ms': 0}
+             'jitter_ms': 5, 'udp_datagrams': 0, 'connections': 0, 'chunks': 0, 'bytes': 0, 'min_delay_ms': None, 'max_delay_ms': 0,
+             'delivered_tcp_chunks': 0, 'max_observed_tcp_delay_ms': 0, 'max_tcp_schedule_overrun_ms': 0}
     stop = asyncio.Event()
     rng = random.Random(2101)
     def save():
-        args.output.write_text(json.dumps(stats, indent=2) + '\n')
+        temporary = args.output.with_suffix('.tmp')
+        temporary.write_text(json.dumps(stats, indent=2) + '\n')
+        temporary.replace(args.output)
     async def relay(reader, writer):
         queue = asyncio.Queue()
         async def receive():
@@ -34,15 +37,19 @@ async def main():
                     actual = (due-now)*1000
                     stats['min_delay_ms'] = min(stats['min_delay_ms'] or actual, actual)
                     stats['max_delay_ms'] = max(stats['max_delay_ms'], actual)
-                    await queue.put((due, data))
+                    await queue.put((due, now, data))
             finally:
-                await queue.put((0, None))
+                await queue.put((0, 0, None))
         task = asyncio.create_task(receive())
         try:
             while True:
-                due, data = await queue.get()
+                due, received, data = await queue.get()
                 if data is None: break
                 await asyncio.sleep(max(0, due-time.monotonic()))
+                delivered = time.monotonic()
+                stats['delivered_tcp_chunks'] += 1
+                stats['max_observed_tcp_delay_ms'] = max(stats['max_observed_tcp_delay_ms'], (delivered-received)*1000)
+                stats['max_tcp_schedule_overrun_ms'] = max(stats['max_tcp_schedule_overrun_ms'], (delivered-due)*1000)
                 writer.write(data)
                 await writer.drain()
         finally:

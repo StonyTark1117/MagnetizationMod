@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -uo pipefail
 ordinary=false
+strength=WEAK
 if [[ ${1:-} == --ordinary ]]; then ordinary=true; shift; fi
-if [[ $# -ne 0 ]]; then echo 'usage: run-aircraft-network-audit.sh [--ordinary]' >&2; exit 2; fi
+if [[ ${1:-} == --strength && $# -ge 2 ]]; then strength=$2; shift 2; fi
+if [[ $# -ne 0 || ! $strength =~ ^(WEAK|MEDIUM|STRONG|EXTREME)$ ]]; then echo 'usage: run-aircraft-network-audit.sh [--ordinary] [--strength WEAK|MEDIUM|STRONG|EXTREME]' >&2; exit 2; fi
+if ! $ordinary && [[ $strength != WEAK ]]; then echo '--strength requires --ordinary' >&2; exit 2; fi
 proxy_pid=''
 pilot_endpoint=127.0.0.1:25585
 observer_endpoint=127.0.0.1:25585
@@ -11,6 +14,7 @@ cd "$repo_dir"
 mkdir -p build/compat-audit
 exec 9>build/compat-audit/aircraft-network.lock
 flock -n 9 || { echo 'An aircraft network audit is already running' >&2; exit 2; }
+rm -f build/compat-audit/aircraft-network-results.json
 # As with the other Sable audits, keep disposable region/chunk I/O on tmpfs.
 # Preserve prior evidence, including config, in the archived runtime.
 if [[ -L run-aircraft-audit-server ]]; then
@@ -71,17 +75,18 @@ if $ordinary; then
   rm -f build/compat-audit/aircraft-latency.json
   python3 tools/aircraft_latency_proxy.py --output build/compat-audit/aircraft-latency.json > /tmp/aircraft-latency-proxy.log 2>&1 &
   proxy_pid=$!
-  for ((i=0;i<50;i++)); do
+  for ((i=0;i<300;i++)); do
     [[ -f build/compat-audit/aircraft-latency.json ]] && break
     kill -0 "$proxy_pid" 2>/dev/null || exit 1
     sleep 0.1
   done
+  [[ -f build/compat-audit/aircraft-latency.json ]] || { echo "Latency relay did not become ready within 30 seconds" >&2; exit 1; }
   read -r pilot_port observer_port < <(python3 -c 'import json; print(*json.load(open("build/compat-audit/aircraft-latency.json"))["ports"])')
   [[ -n $pilot_port && -n $observer_port ]] || exit 1
   pilot_endpoint="127.0.0.1:$pilot_port"
   observer_endpoint="127.0.0.1:$observer_port"
 fi
-./gradlew runAircraftAuditServer -PaircraftOrdinary="$ordinary" --console=plain > /tmp/aircraft-server-launch.log 2>&1 &
+./gradlew runAircraftAuditServer -PaircraftOrdinary="$ordinary" -PaircraftStrength="$strength" --console=plain > /tmp/aircraft-server-launch.log 2>&1 &
 server_runner=$!
 for ((i=0;i<180;i++)); do
   if rg -q 'Done \(' run-aircraft-audit-server/logs/latest.log 2>/dev/null; then break; fi
@@ -89,14 +94,14 @@ for ((i=0;i<180;i++)); do
   sleep 1
 done
 rg -q 'Done \(' run-aircraft-audit-server/logs/latest.log || exit 1
-env DISPLAY="$display" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runAircraftAuditPilot -x compileJava -x processResources -PaircraftOrdinary="$ordinary" -PaircraftAuditEndpoint="$pilot_endpoint" --console=plain > /tmp/aircraft-pilot-launch.log 2>&1 &
+env DISPLAY="$display" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runAircraftAuditPilot -x compileJava -x processResources -PaircraftOrdinary="$ordinary" -PaircraftStrength="$strength" -PaircraftAuditEndpoint="$pilot_endpoint" --console=plain > /tmp/aircraft-pilot-launch.log 2>&1 &
 for ((i=0;i<180;i++)); do
   if rg -q 'AuditPilot joined the game' run-aircraft-audit-server/logs/latest.log; then break; fi
   if rg -q "/FATAL|\[Render thread/FATAL" run-aircraft-audit-pilot/logs/latest.log 2>/dev/null; then exit 1; fi
   sleep 1
 done
 rg -q 'AuditPilot joined the game' run-aircraft-audit-server/logs/latest.log || exit 1
-env DISPLAY="$display" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runAircraftAuditObserver -x compileJava -x processResources -PaircraftOrdinary="$ordinary" -PaircraftAuditEndpoint="$observer_endpoint" --console=plain > /tmp/aircraft-observer-launch.log 2>&1 &
+env DISPLAY="$display" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runAircraftAuditObserver -x compileJava -x processResources -PaircraftOrdinary="$ordinary" -PaircraftStrength="$strength" -PaircraftAuditEndpoint="$observer_endpoint" --console=plain > /tmp/aircraft-observer-launch.log 2>&1 &
 for ((i=0;i<700;i++)); do
   if rg -q 'AIRCRAFT_NETWORK_(SERVER_PASS|FAILED)' run-aircraft-audit-server/logs/latest.log; then sleep 3; break; fi
   if rg -q '/FATAL' run-aircraft-audit-observer/logs/latest.log 2>/dev/null; then exit 1; fi

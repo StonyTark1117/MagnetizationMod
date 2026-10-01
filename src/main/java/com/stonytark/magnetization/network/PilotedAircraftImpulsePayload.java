@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.UUID;
 
-/** Server-computed additive impulse; never replaces the pilot's current native velocity. */
+/** Server-computed impulse combined with the pilot's current velocity under the magnetic speed limit. */
 public record PilotedAircraftImpulsePayload(UUID vehicle, double x, double y, double z, double speedLimit) implements CustomPacketPayload {
     public static final Type<PilotedAircraftImpulsePayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(Magnetization.MOD_ID, "piloted_aircraft_impulse"));

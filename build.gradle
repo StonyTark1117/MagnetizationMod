@@ -619,12 +619,9 @@ tasks.matching { it.name == 'runClient' || it.name == 'runPlaytestLabClient'
 // `run/world/session.lock`, which makes the new server crash on boot and/or
 // false-fail timing-sensitive tests. Before launching a fresh gametest server,
 // kill any leftover gametest JVM and clear a stale world lock. The match is
-// SAFE — `-Dneoforge.gameTestServer=true` is a VM flag unique to the
-// gameTestServer run type, so this never touches a runClient/runServer (or the
-// Gradle daemon). doFirst runs before the JVM forks, so only PRIOR runs match.
-// The `Dneoforge[.]gameTestServer=true` char-class regex matches that literal
-// flag but NOT this command's own text (which carries the bracketed form), so
-// pgrep can't self-match and kill its own shell.
+// limited to this checkout's generated GameTest launch arguments. A GameTest
+// flag alone also matches other projects and must not be used for global cleanup.
+// doFirst runs before the JVM forks, so only PRIOR runs in this checkout match.
 tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGameTestServer'
         || it.name == 'runAeroPortalsGameTestServer'
         || it.name == 'runAeroPortalsLegacyGameTestServer'
@@ -650,13 +647,30 @@ tasks.matching { it.name == 'runGameTestServer' || it.name == 'runRegressionGame
     doFirst {
         if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             try {
-                def killed = ['bash', '-c',
-                    "pids=\$(pgrep -f 'Dneoforge[.]gameTestServer=true' || true); " +
-                    "if [ -n \"\$pids\" ]; then echo \"\$pids\" | xargs -r kill -9; sleep 0.5; echo \"\$pids\"; fi"
-                ].execute()
-                killed.waitFor()
-                def out = killed.text.trim()
-                if (out) { logger.lifecycle("runGameTestServer: killed lingering gametest JVM(s): ${out.replaceAll('\\s+', ' ')}") }
+                def argumentPrefix = '@' + layout.buildDirectory.dir('moddev').get().asFile.absolutePath + File.separator
+                def killed = []
+                ProcessHandle.allProcesses().withCloseable { processes ->
+                    processes.forEach { process ->
+                        def arguments = process.info().arguments().orElse(new String[0])
+                        def ownProgramArguments = arguments.any {
+                            it.startsWith(argumentPrefix) && it.endsWith('RunProgramArgs.txt')
+                        }
+                        // DevLaunch normally puts VM flags in an @argument file,
+                        // so they need not appear directly in the process arguments.
+                        def gameTest = ownProgramArguments && (arguments.contains('-Dneoforge.gameTestServer=true') || arguments.any {
+                            if (!it.startsWith(argumentPrefix) || !it.endsWith('RunVmArgs.txt')) { return false }
+                            def vmArguments = new File(it.substring(1))
+                            vmArguments.isFile() && vmArguments.readLines().contains('-Dneoforge.gameTestServer=true')
+                        })
+                        if (gameTest) {
+                            if (process.destroyForcibly()) { killed.add(process.pid()) }
+                        }
+                    }
+                }
+                if (killed) {
+                    Thread.sleep(500)
+                    logger.lifecycle("runGameTestServer: stopped this checkout's lingering GameTest JVM(s): ${killed}")
+                }
             } catch (Exception e) {
                 logger.warn("runGameTestServer: zombie-kill step failed (continuing): ${e.message}")
             }
@@ -820,6 +834,9 @@ processResources {
         into 'data/magnetization_supplementaries_workflow/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_supplementaries_production/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_extra_golems_reborn/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -920,17 +937,20 @@ neoForge {
             server(); programArgument 'nogui'; gameDirectory = file('run-aircraft-audit-server')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
             systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
         }
         aircraftAuditPilot {
             client(); gameDirectory = file('run-aircraft-audit-pilot')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
             systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
             programArguments.addAll('--username', 'AuditPilot', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
         }
         aircraftAuditObserver {
             client(); gameDirectory = file('run-aircraft-audit-observer')
             systemProperty 'magnetization.audit.aircraftNetwork', 'true'
             systemProperty 'magnetization.audit.aircraftOrdinary', providers.gradleProperty('aircraftOrdinary').getOrElse('false')
+            systemProperty 'magnetization.audit.aircraftStrength', providers.gradleProperty('aircraftStrength').getOrElse('WEAK')
             programArguments.addAll('--username', 'AuditObserver', '--quickPlayMultiplayer', providers.gradleProperty('aircraftAuditEndpoint').getOrElse('127.0.0.1:25585'))
         }
         // Same client, hard dependencies only — the classpath gate above drops
@@ -1222,7 +1242,7 @@ neoForge {
         sweepSupplementariesGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-sweep-supplementaries-gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_sweep,magnetization_attached_ship,magnetization_supplementaries_production'
             systemProperty 'magnetization.audit.namespaces', 'supplementaries'
         }
         sweepBossGameTestServer {

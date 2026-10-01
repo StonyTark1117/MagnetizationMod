@@ -1,0 +1,25 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "artifacts": [
+    {
+      "coordinate": "dev.ryanhcode.sable:sable-neoforge-1.21.1:2.0.5",
+      "filename": "sable-neoforge-1.21.1-2.0.5.jar",
+      "sha256": "c8710f85bc780bbf523e6726ceaaf76dd0b8c61479db497b382c6bb34317e7ab"
+    },
+    {
+      "coordinate": "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:2.0.5",
+      "filename": "sable-sable_rapier-1.21.1-2.0.5.jar",
+      "sha256": "f7a89044a47bf0b766b460c8784e5f81b255f6806177d8d357a8c3c01362961b"
+    }
+  ],
+  "assembly_helper_class_comparison": {
+    "class": "dev/ryanhcode/sable/api/SubLevelAssemblyHelper.class",
+    "sha256": "fc0c99dac96bb217d7b988f7972fbc49824a26a82c35c07368b72539b01fd288",
+    "identical_versions": [
+      "2.0.3",
+      "2.0.5"
+    ],
+    "scope": "Class-byte comparison only; runtime pulley outcome is recorded separately"
+  }
+}

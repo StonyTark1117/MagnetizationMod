@@ -1,0 +1,12 @@
+{
+  "command": "./gradlew test build verifyReleaseJar verifyNoRuntimeModpackCoupling --console=plain",
+  "status": "passed",
+  "unit_tests": {
+    "tests": 254,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "log_sha256": "8c92cbe45890a1b74c1d0e6ffbbb32731e8af883ce09b7f4a8461488a9fa5959",
+  "scope": "After bellows/pulley diagnostics; before parameterized aircraft strength profiles."
+}

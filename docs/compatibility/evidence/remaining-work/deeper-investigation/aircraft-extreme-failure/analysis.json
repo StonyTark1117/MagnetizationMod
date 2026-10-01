@@ -1,0 +1,18 @@
+{
+  "source_artifact": "neoforge-21.1.252-sources.jar",
+  "source_sha256": "6cf0e401a1745cbf18d8f554eda08b06810550a1d07167918f0509aa71fce5f4",
+  "method": "ServerGamePacketListenerImpl.handleMoveVehicle",
+  "rejection_predicate": "squared displacement from vehicleFirstGood minus server velocity squared > 100",
+  "reference_position": "vehicleFirstGood is refreshed by the connection tick; multiple movement packets can be processed before it refreshes",
+  "pilot_trace": {
+    "aviator_dream:fokker_fviib3m": {
+      "recorded_x_velocity_min": -1.846863951736744,
+      "recorded_x_velocity_max": 1.802993218023711
+    },
+    "aviator_dream:toyota_stout_k100": {
+      "recorded_x_velocity_min": -1.8224335978671602,
+      "recorded_x_velocity_max": 1.8222504237293284
+    }
+  },
+  "limitation": "Only x velocity is logged directly; full native velocity and host scheduling were not instrumented in this failing run. Later relay instrumentation records actual dispatch delays."
+}

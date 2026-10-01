@@ -75,6 +75,40 @@ public final class SupplementariesWorkflowGameTests {
         });
     }
 
+    /** Minimal reproducer isolates payload restoration from pulley controls and ship splitting. */
+    @GameTest(template="empty", timeoutTicks=40, batch="nativeMovingPulleyAssembly")
+    public static void movingPulleyPayloadSurvivesNativeAssembly(GameTestHelper h) throws Exception {
+        final var level = h.getLevel();
+        final var base = h.absolutePos(new BlockPos(2,220,2));
+        final var original = base.west(5);
+        level.setBlockAndUpdate(original,Blocks.CHEST.defaultBlockState());
+        ((Container)level.getBlockEntity(original)).setItem(0,new ItemStack(Items.DIAMOND,17));
+        final var carried = level.getBlockEntity(original).saveWithFullMetadata(level.registryAccess());
+        final var state = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("supplementaries:moving_pulley_block"))
+                .defaultBlockState().setValue(BlockStateProperties.FACING,Direction.DOWN);
+        level.setBlockAndUpdate(base,state);
+        final var factory = state.getBlock().getClass().getMethod("newMovingBlockEntity",BlockPos.class,
+                net.minecraft.world.level.block.state.BlockState.class,
+                net.minecraft.world.level.block.state.BlockState.class,Direction.class,boolean.class,boolean.class);
+        final var moving = (BlockEntity)factory.invoke(null,base,state,Blocks.CHEST.defaultBlockState(),Direction.DOWN,true,false);
+        invoke(moving,"setAnimationDuration",new Class<?>[]{int.class},40);
+        invoke(moving,"supp$setCarriedBlockEntityNbt",new Class<?>[]{net.minecraft.nbt.CompoundTag.class},carried);
+        level.setBlockEntity(moving);
+        level.setBlockAndUpdate(base.east(),Blocks.IRON_BLOCK.defaultBlockState());
+        h.assertTrue(level.getBlockEntity(base)==moving,"Native moving block fixture missing before assembly");
+        final var saved = moving.saveWithFullMetadata(level.registryAccess());
+        final var ship = assemble(h,base,List.of(base,base.east()));
+        final var destination = ship.getPlot().getCenterBlock();
+        final var restored = level.getBlockEntity(destination);
+        org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info(
+                "MOVING_PULLEY_ASSEMBLY sourceType={} savedKeys={} destinationState={} destinationEntity={}",
+                BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(moving.getType()),saved.getAllKeys(),level.getBlockState(destination),restored);
+        h.assertTrue(restored != null,"Sable assembly retained moving-pulley state but did not reconstruct its block entity");
+        final var nbt = (net.minecraft.nbt.CompoundTag)invoke(restored,"supp$getCarriedBlockEntityNbt");
+        h.assertTrue(carried.equals(nbt),"Moving pulley lost carried chest data during assembly");
+        remove(h,ship);h.succeed();
+    }
+
     @GameTest(template="empty", timeoutTicks=140, batch="nativePulley")
     public static void pulleyMovesLoadedChestDownAndUpOnMovingShip(GameTestHelper h) {
         final var level = h.getLevel(); final var base = h.absolutePos(new BlockPos(2,280,2));
@@ -111,15 +145,22 @@ public final class SupplementariesWorkflowGameTests {
                 org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info("PULLEY_DIAGNOSTIC winding={} column={}",invoke(pulley,"getDisplayedItem"), java.util.stream.IntStream.rangeClosed(0,5).mapToObj(i -> level.getBlockState(pos.below(i)).toString()).toList());
                 assertChest(h,control.below(3));
                 org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info("PULLEY_GROUND_PASS shipPositions={}",SubLevelContainer.getContainer(level).getAllSubLevels().stream().map(s -> s.getPlot().getLoadedChunks().stream().flatMap(c -> c.getChunk().getBlockEntities().values().stream()).map(t -> t.getType()+":"+t.getBlockPos()).toList()).toList());
-                assertChest(h,pos.below(3));
-                h.assertTrue(((ItemStack)invoke(pulley,"getDisplayedItem")).getCount()==3,"Pulley did not consume chain on extension");
-                h.assertTrue((boolean)invoke(pulley,"pullRopeUp"),"Native pulley refused to retract");
+                h.assertTrue(((ItemStack)invoke(controlPulley,"getDisplayedItem")).getCount()==3,"Ground extension did not consume chain");
+                h.assertTrue((boolean)invoke(controlPulley,"pullRopeUp"),"Ground control refused to retract");
                 h.runAfterDelay(25, () -> {
-                    assertChest(h,pos.below(2));
-                    h.assertTrue(((ItemStack)invoke(pulley,"getDisplayedItem")).getCount()==4,"Pulley did not recover chain on retraction");
-                    h.assertTrue(start.distance(ship.logicalPose().position())>0.2,"Pulley ship did not move");
-                    org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info("NATIVE_PULLEY_PASS payload=17_diamonds extend=1 retract=1 recoveredChain=4");
-                    remove(h,ship); h.succeed();
+                    assertChest(h,control.below(2));
+                    h.assertTrue(((ItemStack)invoke(controlPulley,"getDisplayedItem")).getCount()==4,"Ground retraction did not recover chain");
+                    org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info("PULLEY_GROUND_ROUNDTRIP_PASS payload=17_diamonds recoveredChain=4");
+                    assertChest(h,pos.below(3));
+                    h.assertTrue(((ItemStack)invoke(pulley,"getDisplayedItem")).getCount()==3,"Pulley did not consume chain on extension");
+                    h.assertTrue((boolean)invoke(pulley,"pullRopeUp"),"Native pulley refused to retract");
+                    h.runAfterDelay(25, () -> {
+                        assertChest(h,pos.below(2));
+                        h.assertTrue(((ItemStack)invoke(pulley,"getDisplayedItem")).getCount()==4,"Pulley did not recover chain on retraction");
+                        h.assertTrue(start.distance(ship.logicalPose().position())>0.2,"Pulley ship did not move");
+                        org.slf4j.LoggerFactory.getLogger("magnetization/compat-audit").info("NATIVE_PULLEY_PASS payload=17_diamonds extend=1 retract=1 recoveredChain=4");
+                        remove(h,ship); h.succeed();
+                    });
                 });
             });
         });

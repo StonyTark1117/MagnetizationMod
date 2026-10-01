@@ -1,0 +1,67 @@
+[30Sep2026 12:39:23.229] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[30Sep2026 12:39:23.229] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+[30Sep2026 12:39:28.659] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[30Sep2026 12:39:32.060] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Using game directory relative Sable Rapier native directory /tmp/magnetization-aircraft-audit-server.eZGWaz/.sable/natives
+[30Sep2026 12:40:14.133] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:airship recipe=immersive_aircraft:airship inputs=9 output=1 immersive_aircraft:airship
+[30Sep2026 12:40:14.135] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:airship fuelSlots=[6] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:40:34.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:airship initial=64 remaining=63 creative=false
+[30Sep2026 12:40:34.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:airship ticks=400 distance=369.1490920407777
+[30Sep2026 12:40:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:bamboo_hopper recipe=immersive_aircraft:bamboo_hopper inputs=9 output=1 immersive_aircraft:bamboo_hopper
+[30Sep2026 12:40:34.096] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:bamboo_hopper fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:40:54.043] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:bamboo_hopper initial=64 remaining=63 creative=false
+[30Sep2026 12:40:54.043] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:bamboo_hopper ticks=400 distance=491.47560275943306
+[30Sep2026 12:40:54.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:biplane recipe=immersive_aircraft:biplane inputs=5 output=1 immersive_aircraft:biplane
+[30Sep2026 12:40:54.096] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:biplane fuelSlots=[7] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:41:14.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:biplane initial=64 remaining=63 creative=false
+[30Sep2026 12:41:14.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:biplane ticks=400 distance=498.64411626697364
+[30Sep2026 12:41:14.098] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:cargo_airship recipe=immersive_aircraft:cargo_airship inputs=6 output=1 immersive_aircraft:cargo_airship
+[30Sep2026 12:41:14.099] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:cargo_airship fuelSlots=[6] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:41:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:cargo_airship initial=64 remaining=63 creative=false
+[30Sep2026 12:41:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:cargo_airship ticks=400 distance=356.24714325258617
+[30Sep2026 12:41:34.097] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:dehavilland_dh106 recipe=aviator_dream:dehavilland_dh106 inputs=9 output=1 aviator_dream:dehavilland_dh106
+[30Sep2026 12:41:34.097] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:dehavilland_dh106 fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:41:54.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:dehavilland_dh106 initial=64 remaining=61 creative=false
+[30Sep2026 12:41:54.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:dehavilland_dh106 ticks=400 distance=406.7116970477607
+[30Sep2026 12:41:54.102] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:douglas_c47 recipe=aviator_dream:douglas_c47 inputs=9 output=1 aviator_dream:douglas_c47
+[30Sep2026 12:41:54.102] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_c47 fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:42:14.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_c47 initial=64 remaining=62 creative=false
+[30Sep2026 12:42:14.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_c47 ticks=400 distance=253.15154374064883
+[30Sep2026 12:42:14.097] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:douglas_dc1 recipe=aviator_dream:douglas_dc1 inputs=9 output=1 aviator_dream:douglas_dc1
+[30Sep2026 12:42:14.098] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_dc1 fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:42:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_dc1 initial=64 remaining=62 creative=false
+[30Sep2026 12:42:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc1 ticks=400 distance=240.869693684946
+[30Sep2026 12:42:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:douglas_dc2 recipe=aviator_dream:douglas_dc2 inputs=3 output=1 aviator_dream:douglas_dc2
+[30Sep2026 12:42:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_dc2 fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:42:54.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:douglas_dc2 initial=64 remaining=62 creative=false
+[30Sep2026 12:42:54.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc2 ticks=400 distance=246.670686534291
+[30Sep2026 12:42:54.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:fokker_fviia recipe=aviator_dream:fokker_fviia inputs=7 output=1 aviator_dream:fokker_fviia
+[30Sep2026 12:42:54.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:fokker_fviia fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:43:14.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:fokker_fviia initial=64 remaining=62 creative=false
+[30Sep2026 12:43:14.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviia ticks=400 distance=180.47585625571503
+[30Sep2026 12:43:14.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:fokker_fviib3m recipe=aviator_dream:fokker_fviib3m inputs=5 output=1 aviator_dream:fokker_fviib3m
+[30Sep2026 12:43:14.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:fokker_fviib3m fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:43:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:fokker_fviib3m initial=64 remaining=62 creative=false
+[30Sep2026 12:43:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviib3m ticks=400 distance=201.4585726499752
+[30Sep2026 12:43:34.094] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:gyrodyne recipe=immersive_aircraft:gyrodyne inputs=5 output=1 immersive_aircraft:gyrodyne
+[30Sep2026 12:43:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:gyrodyne fuelSlots=[] initialCoal=0 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:43:54.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:gyrodyne initial=0 remaining=0 creative=false
+[30Sep2026 12:43:54.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:gyrodyne ticks=400 distance=262.965780161272
+[30Sep2026 12:43:54.096] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:lockheed_l1049g recipe=aviator_dream:lockheed_l1049g inputs=9 output=1 aviator_dream:lockheed_l1049g
+[30Sep2026 12:43:54.096] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:lockheed_l1049g fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:44:14.041] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:lockheed_l1049g initial=64 remaining=61 creative=false
+[30Sep2026 12:44:14.041] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:lockheed_l1049g ticks=400 distance=234.88511315169612
+[30Sep2026 12:44:14.094] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:quadrocopter recipe=immersive_aircraft:quadrocopter inputs=9 output=1 immersive_aircraft:quadrocopter
+[30Sep2026 12:44:14.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:quadrocopter fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:44:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:quadrocopter initial=64 remaining=63 creative=false
+[30Sep2026 12:44:34.042] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:quadrocopter ticks=400 distance=7.032556959969571
+[30Sep2026 12:44:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=aviator_dream:toyota_stout_k100 recipe=aviator_dream:toyota_stout_k100 inputs=9 output=1 aviator_dream:toyota_stout_k100
+[30Sep2026 12:44:34.095] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:toyota_stout_k100 fuelSlots=[0] initialCoal=64 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:44:54.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=aviator_dream:toyota_stout_k100 initial=64 remaining=63 creative=false
+[30Sep2026 12:44:54.044] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:toyota_stout_k100 ticks=400 distance=260.43032124224186
+[30Sep2026 12:44:54.097] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_CRAFT_PASS type=immersive_aircraft:warship recipe=immersive_aircraft:warship inputs=9 output=1 immersive_aircraft:warship
+[30Sep2026 12:44:54.097] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:warship fuelSlots=[10, 11, 12] initialCoal=192 strength=STRONG force=2400.0 ticks=400
+[30Sep2026 12:45:14.043] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_FUEL_PASS type=immersive_aircraft:warship initial=192 remaining=189 creative=false
+[30Sep2026 12:45:14.043] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:warship ticks=400 distance=377.1885295584618
+[30Sep2026 12:45:14.043] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_NETWORK_SERVER_PASS types=15

@@ -64,6 +64,15 @@ public final class CompatibilityUiAuditClient {
                         require(spread.getInt(mc.screen)==previous+1,"Patchouli entry did not advance its page spread");
                     }
                     case 165 -> capture(mc,"ui-patchouli-next-page.png");
+                    case 166 -> {
+                        var api=Class.forName("vazkii.patchouli.api.PatchouliAPI").getMethod("get").invoke(null);
+                        api.getClass().getMethod("openBookEntry",ResourceLocation.class,ResourceLocation.class,int.class)
+                                .invoke(api,ResourceLocation.parse("magnetization:field_manual"),ResourceLocation.parse("magnetization:advanced/compatibility"),6);
+                    }
+                    case 168 -> {
+                        requireScreen(mc,"vazkii.patchouli.client.book.gui.GuiBookEntry");
+                        capture(mc,"ui-patchouli-audit.png");
+                    }
                     case 170 -> {
                         var api=Class.forName("vazkii.patchouli.api.PatchouliAPI").getMethod("get").invoke(null);
                         api.getClass().getMethod("openBookEntry",ResourceLocation.class,ResourceLocation.class,int.class)

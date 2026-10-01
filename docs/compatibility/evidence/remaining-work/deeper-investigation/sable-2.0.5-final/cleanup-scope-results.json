@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "scope": "Owned disposable Python processes exercise actual Gradle ProcessHandle cleanup with launch arguments; foreign-checkout and non-GameTest controls must remain alive. All probes are terminated by this harness afterward.",
+  "exit_statuses": {
+    "owned_inline": -9,
+    "owned_argfile": -9,
+    "foreign_inline": null,
+    "owned_non_gametest": null
+  },
+  "game_test_gate_exit": 0,
+  "runner_sha256": "3d1e0fbf670d154a45db60319e7cb9ad83330e25b9c3d7d650d30ce911e355c7"
+}

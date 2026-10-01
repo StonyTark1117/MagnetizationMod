@@ -1,0 +1,46 @@
+{
+  "platform": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.252",
+    "sable": "2.0.5"
+  },
+  "requirements": [
+    {
+      "requirement": "Investigate intermittent Create startup failure",
+      "result": "Investigated; upstream concurrent access demonstrated with Magnetization absent. Pinned collection model reproduces the failure predicate. Six controls and six diagnostic candidates preserve registry/encasing tables; historical corrupt mutation remains uncaptured. No production crash fix claimed.",
+      "evidence": "../deferred-shaft-candidate-results.json"
+    },
+    {
+      "requirement": "Ordinary aircraft gameplay",
+      "result": "15 vehicles at each of four strengths; native crafting, survival fuel, 400 ticks, real pilot/observer, variable TCP/UDP latency, sustained attraction/repulsion. No vehicle rejection. Spectator warnings disclosed.",
+      "evidence": "../aircraft-final-strength-summary.json"
+    },
+    {
+      "requirement": "Storage process restart and functional upgrades",
+      "result": "Same ship in different JVMs; seven Sophisticated Storage and six Iron Chests inventories preserved; stack capacity/extraction and native smelting after 500 ticks verified.",
+      "evidence": "storage-restart-verify.txt"
+    },
+    {
+      "requirement": "Native ship machinery workflows",
+      "result": "Cannon projectile travel and fuel/ammo consumption pass; powered bellows/furnace/hopper/chest production matches powered ground control and outperforms unpowered control. Both pulley payload tests fail; localized cause and separate adapter acceptance proposal retained.",
+      "evidence": "regression-results.json"
+    },
+    {
+      "requirement": "Native lightning producers",
+      "result": "13-test profile passes nine registered Iron's Spells casts, three Scylla attack paths and registry/damage sweep. Physical Magnetron attacks remain non-LIRM by default; its separately controlled experimental policy remains covered.",
+      "evidence": "regression-results.json"
+    },
+    {
+      "requirement": "Fresh UI and broader regressions",
+      "result": "44 profiles, 320 required passes, 255 unit tests; native Patchouli/Curios/EMI interactions and screenshot review. Twenty-four external/common tag-label warnings disclosed.",
+      "evidence": "visual-review.json"
+    }
+  ],
+  "release_scope": "Audit and confirmed corrections complete; does not claim every upstream interaction works. Pulley adapter, active Magnetics fields and additional upgrades/multiblocks remain separate proposed work.",
+  "outstanding_limits": [
+    "Historical Create crash not reproduced; no proven production fix.",
+    "Supplementaries moving-pulley payload loss persists on Sable 2.0.5.",
+    "Native in-world shaft encasing of the diagnostic startup candidate untested.",
+    "EMI reports 24 untranslated external/common tag labels."
+  ]
+}

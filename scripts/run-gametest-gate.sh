@@ -89,10 +89,14 @@ setsid ./gradlew "$run_task" "${gradle_arguments[@]}" --no-daemon >"$runner_outp
 runner_pid=$!
 deadline=$((SECONDS + timeout_seconds))
 passed=0
+# Diagnostic profiles can collect all failures and controls before returning
+# failure. This never turns a failed test into a passing gate.
+collect_failures=${MAGNETIZATION_AUDIT_COLLECT_FAILURES:-0}
 
 while (( SECONDS < deadline )); do
     if [[ -f "$log_file" ]]; then
-        if grep -Eq 'required tests failed| failed at ' "$log_file"; then
+        if grep -Eq 'required tests failed| failed at ' "$log_file" &&
+                { [[ "$collect_failures" != 1 ]] || grep -q 'GAME TESTS COMPLETE' "$log_file"; }; then
             echo "$run_task: GameTest reported a failure" >&2
             tail -n 200 "$log_file" >&2
             exit 1

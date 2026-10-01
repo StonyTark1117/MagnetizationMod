@@ -1,0 +1,410 @@
+{
+  "status": "passed",
+  "observer_movement_warning_count": 0,
+  "sable_versions": {
+    "server": "2.0.5",
+    "pilot": "2.0.5",
+    "observer": "2.0.5"
+  },
+  "magnetic_speed_limit": 1.0,
+  "real_clients": 2,
+  "ticks_per_aircraft": 400,
+  "survival": true,
+  "nominal_strength": true,
+  "strength": {
+    "tier": "EXTREME",
+    "force": "8000.0"
+  },
+  "aircraft": [
+    {
+      "entity_type": "immersive_aircraft:airship",
+      "uuid": "20f4f317-dec0-41e8-b9bd-a9a5cbe05dcf",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -7.417479209578965,
+        "max_dx": 8.067909412381674,
+        "attraction_phase_dx": -45.025112173840135,
+        "repulsion_phase_dx": 45.67333320396154
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -6.670470544590586,
+        "max_dx": 8.01807176934389,
+        "attraction_phase_dx": -49.93819355842653,
+        "repulsion_phase_dx": 50.89740096954513
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "immersive_aircraft:airship",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -91.3261356148511,
+        "repulsion_phase_dx": 91.35010018269332
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:bamboo_hopper",
+      "uuid": "dd440b72-3761-4539-9e64-f85e6d04d236",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -4.938471434098342,
+        "max_dx": 7.4540360940905686,
+        "attraction_phase_dx": -30.821677018274258,
+        "repulsion_phase_dx": 28.88777375077858
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -4.6088121261845885,
+        "max_dx": 7.204695321138087,
+        "attraction_phase_dx": -29.639287931000453,
+        "repulsion_phase_dx": 28.361718602806516
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "immersive_aircraft:bamboo_hopper",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -62.19679009307308,
+        "repulsion_phase_dx": 64.0174931123947
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:biplane",
+      "uuid": "acef2535-2eda-488f-abc8-105b02e8b406",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -4.80813091599756,
+        "max_dx": 7.386685530607721,
+        "attraction_phase_dx": -29.325778935974906,
+        "repulsion_phase_dx": 29.175843365989806
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -4.420322160202648,
+        "max_dx": 7.104852084208212,
+        "attraction_phase_dx": -28.495390454857496,
+        "repulsion_phase_dx": 29.44574334469018
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "immersive_aircraft:biplane",
+      "crafting_inputs": 5,
+      "server": {
+        "attraction_phase_dx": -59.95270333311148,
+        "repulsion_phase_dx": 63.824117671325794
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:cargo_airship",
+      "uuid": "494c226c-7de5-485c-a864-9f64826ee8e2",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -7.891490108226882,
+        "max_dx": 7.994201941620581,
+        "attraction_phase_dx": -52.4001774257931,
+        "repulsion_phase_dx": 45.49855427434512
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -7.7376641509928845,
+        "max_dx": 8.315944448262364,
+        "attraction_phase_dx": -50.83673787867646,
+        "repulsion_phase_dx": 44.66538753861818
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "immersive_aircraft:cargo_airship",
+      "crafting_inputs": 6,
+      "server": {
+        "attraction_phase_dx": -103.50166084092346,
+        "repulsion_phase_dx": 89.18547836219945
+      }
+    },
+    {
+      "entity_type": "aviator_dream:dehavilland_dh106",
+      "uuid": "82250ca2-3556-41d4-9451-474b5d097c86",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.999895925849671,
+        "max_dx": 8.923546856484995,
+        "attraction_phase_dx": -47.002490196699725,
+        "repulsion_phase_dx": 60.51296989271391
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.277703398906027,
+        "max_dx": 10.294349005243044,
+        "attraction_phase_dx": -44.65212032312469,
+        "repulsion_phase_dx": 59.27746987300303
+      },
+      "initial_coal": 64,
+      "remaining_coal": 61,
+      "recipe": "aviator_dream:dehavilland_dh106",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -99.35341060850357,
+        "repulsion_phase_dx": 115.63862219636164
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_c47",
+      "uuid": "0f1f15e2-64a4-4bcf-bfa5-d8105f9c8b97",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.375469180577625,
+        "max_dx": 9.245119162623205,
+        "attraction_phase_dx": -56.90180527989893,
+        "repulsion_phase_dx": 29.695945864662484
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.54842561823332,
+        "max_dx": 8.702831002801695,
+        "attraction_phase_dx": -55.923121325322725,
+        "repulsion_phase_dx": 32.0609944243224
+      },
+      "initial_coal": 64,
+      "remaining_coal": 62,
+      "recipe": "aviator_dream:douglas_c47",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -109.25257579511766,
+        "repulsion_phase_dx": 74.91212579137382
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_dc1",
+      "uuid": "25570ebc-81ab-4747-bd84-df0e1402ffb4",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.267639768377752,
+        "max_dx": 9.153178969983799,
+        "attraction_phase_dx": -56.49134424224982,
+        "repulsion_phase_dx": 38.56598036982153
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.573716768338706,
+        "max_dx": 8.446293925402998,
+        "attraction_phase_dx": -54.93442866724706,
+        "repulsion_phase_dx": 39.59955129043771
+      },
+      "initial_coal": 64,
+      "remaining_coal": 62,
+      "recipe": "aviator_dream:douglas_dc1",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -108.25166538310532,
+        "repulsion_phase_dx": 84.17308477946183
+      }
+    },
+    {
+      "entity_type": "aviator_dream:douglas_dc2",
+      "uuid": "ccbc0f1e-ff32-4889-b0aa-c9383699bb54",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.424998693395672,
+        "max_dx": 9.130342153824834,
+        "attraction_phase_dx": -57.49252952013618,
+        "repulsion_phase_dx": 34.34340119860594
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.525095951161333,
+        "max_dx": 7.899170697843751,
+        "attraction_phase_dx": -56.419151108034654,
+        "repulsion_phase_dx": 35.988058962457465
+      },
+      "initial_coal": 64,
+      "remaining_coal": 62,
+      "recipe": "aviator_dream:douglas_dc2",
+      "crafting_inputs": 3,
+      "server": {
+        "attraction_phase_dx": -110.53604747993427,
+        "repulsion_phase_dx": 77.80564148765046
+      }
+    },
+    {
+      "entity_type": "aviator_dream:fokker_fviia",
+      "uuid": "bb332b3d-f1d8-44ed-857f-5ffc936fb837",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.920929428379068,
+        "max_dx": 9.23175228629453,
+        "attraction_phase_dx": -62.04951350186634,
+        "repulsion_phase_dx": 56.47439124178094
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -9.021237941085147,
+        "max_dx": 10.03790042592248,
+        "attraction_phase_dx": -60.95582353514265,
+        "repulsion_phase_dx": 55.89818128204577
+      },
+      "initial_coal": 64,
+      "remaining_coal": 62,
+      "recipe": "aviator_dream:fokker_fviia",
+      "crafting_inputs": 7,
+      "server": {
+        "attraction_phase_dx": -119.98512008094262,
+        "repulsion_phase_dx": 112.2545370548631
+      }
+    },
+    {
+      "entity_type": "aviator_dream:fokker_fviib3m",
+      "uuid": "019817a4-dc08-41bc-9dbc-cf39be919764",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.725606286857769,
+        "max_dx": 9.20305649838329,
+        "attraction_phase_dx": -60.46266749734184,
+        "repulsion_phase_dx": 51.848054561897705
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -9.002343813031437,
+        "max_dx": 9.45098353663927,
+        "attraction_phase_dx": -58.80691989653285,
+        "repulsion_phase_dx": 52.16555193329845
+      },
+      "initial_coal": 64,
+      "remaining_coal": 62,
+      "recipe": "aviator_dream:fokker_fviib3m",
+      "crafting_inputs": 5,
+      "server": {
+        "attraction_phase_dx": -116.68602315718918,
+        "repulsion_phase_dx": 105.19243290458772
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:gyrodyne",
+      "uuid": "2d5ab1ae-1cc2-4219-b633-57ef46340563",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -7.590632266947216,
+        "max_dx": 7.997783754495062,
+        "attraction_phase_dx": -49.704147570402725,
+        "repulsion_phase_dx": 51.90578409208503
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -7.336113814868227,
+        "max_dx": 8.753482768222927,
+        "attraction_phase_dx": -48.56210647333655,
+        "repulsion_phase_dx": 51.19583789472345
+      },
+      "initial_coal": 0,
+      "remaining_coal": 0,
+      "recipe": "immersive_aircraft:gyrodyne",
+      "crafting_inputs": 5,
+      "server": {
+        "attraction_phase_dx": -99.23247475419227,
+        "repulsion_phase_dx": 101.1176814139522
+      }
+    },
+    {
+      "entity_type": "aviator_dream:lockheed_l1049g",
+      "uuid": "ec30dcf3-4243-4383-ae5b-0755f187ce99",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.711044316049481,
+        "max_dx": 9.048045343234058,
+        "attraction_phase_dx": -60.10000943039541,
+        "repulsion_phase_dx": 36.1278341449606
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.645636962930936,
+        "max_dx": 8.05247764452941,
+        "attraction_phase_dx": -58.910212920478436,
+        "repulsion_phase_dx": 38.34370759703461
+      },
+      "initial_coal": 64,
+      "remaining_coal": 61,
+      "recipe": "aviator_dream:lockheed_l1049g",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -115.69270342705514,
+        "repulsion_phase_dx": 81.98976819884672
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:quadrocopter",
+      "uuid": "78959372-1856-4981-85a1-0cd788797e5d",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.867664406313196,
+        "max_dx": 8.8667454490854,
+        "attraction_phase_dx": -61.95923458082585,
+        "repulsion_phase_dx": 62.05131264373898
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -9.235135203745116,
+        "max_dx": 9.940346430682638,
+        "attraction_phase_dx": -60.02871904398474,
+        "repulsion_phase_dx": 61.595325259342346
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "immersive_aircraft:quadrocopter",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -122.23326736456016,
+        "repulsion_phase_dx": 119.3725168058707
+      }
+    },
+    {
+      "entity_type": "aviator_dream:toyota_stout_k100",
+      "uuid": "e476729e-d5a4-41ba-a20f-4a030d9c3f93",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -8.86062194350987,
+        "max_dx": 9.11221276898722,
+        "attraction_phase_dx": -52.86434324941858,
+        "repulsion_phase_dx": 54.009080731868565
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -8.13585390843042,
+        "max_dx": 10.306723504383484,
+        "attraction_phase_dx": -57.95416100112608,
+        "repulsion_phase_dx": 59.33199714531924
+      },
+      "initial_coal": 64,
+      "remaining_coal": 63,
+      "recipe": "aviator_dream:toyota_stout_k100",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -107.52292628516007,
+        "repulsion_phase_dx": 108.76572608087004
+      }
+    },
+    {
+      "entity_type": "immersive_aircraft:warship",
+      "uuid": "e447ef43-bf37-4994-879c-acdd6755f830",
+      "pilot": {
+        "samples": 40,
+        "min_dx": -7.306528350745321,
+        "max_dx": 7.859053822801201,
+        "attraction_phase_dx": -45.7819955310365,
+        "repulsion_phase_dx": 44.99537696292158
+      },
+      "observer": {
+        "samples": 39,
+        "min_dx": -6.822652970042654,
+        "max_dx": 7.773047293322556,
+        "attraction_phase_dx": -50.90627568068994,
+        "repulsion_phase_dx": 50.21708439856
+      },
+      "initial_coal": 192,
+      "remaining_coal": 189,
+      "recipe": "immersive_aircraft:warship",
+      "crafting_inputs": 9,
+      "server": {
+        "attraction_phase_dx": -92.28709406801156,
+        "repulsion_phase_dx": 88.06653565213104
+      }
+    }
+  ]
+}

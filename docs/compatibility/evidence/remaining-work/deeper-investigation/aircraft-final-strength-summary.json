@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.252",
+  "sable": "2.0.5",
+  "magnetic_speed_limit": 1.0,
+  "limiter_source_sha256": "3fb52f029159610de76e0214b21700ed9dfa823a8a5d511d5e8b01bd84361900",
+  "checks": "Each vehicle: native crafting and survival fuel, 400 world ticks, sustained attraction/repulsion in server/pilot/observer traces, matching Sable versions, no vehicle movement rejection. Both TCP and UDP pass through variable-latency relays.",
+  "runs": [
+    {
+      "tier": "WEAK",
+      "force_newtons": 200.0,
+      "vehicles": 15,
+      "ticks_per_vehicle": 400,
+      "survival": true,
+      "observer_movement_warnings": 1,
+      "vehicle_movement_rejections": 0,
+      "max_observed_tcp_delay_ms": 132.65873199998168,
+      "result": "aircraft-weak-limit1/aircraft-network-results.json"
+    },
+    {
+      "tier": "MEDIUM",
+      "force_newtons": 800.0,
+      "vehicles": 15,
+      "ticks_per_vehicle": 400,
+      "survival": true,
+      "observer_movement_warnings": 0,
+      "vehicle_movement_rejections": 0,
+      "max_observed_tcp_delay_ms": 132.9963790049078,
+      "result": "aircraft-medium-limit1/aircraft-network-results.json"
+    },
+    {
+      "tier": "STRONG",
+      "force_newtons": 2400.0,
+      "vehicles": 15,
+      "ticks_per_vehicle": 400,
+      "survival": true,
+      "observer_movement_warnings": 1,
+      "vehicle_movement_rejections": 0,
+      "max_observed_tcp_delay_ms": 137.22080900333822,
+      "result": "aircraft-strong-limit1/aircraft-network-results.json"
+    },
+    {
+      "tier": "EXTREME",
+      "force_newtons": 8000.0,
+      "vehicles": 15,
+      "ticks_per_vehicle": 400,
+      "survival": true,
+      "observer_movement_warnings": 0,
+      "vehicle_movement_rejections": 0,
+      "max_observed_tcp_delay_ms": 132.79872999555664,
+      "result": "aircraft-extreme-limit1/aircraft-network-results.json"
+    }
+  ],
+  "limits": [
+    "Controlled exposure with source maintained three blocks from vehicle; not a stationary-emitter flight course.",
+    "Not a long-duration public-server stress test.",
+    "One spectator-camera movement warning in WEAK and one in STRONG are retained separately from vehicle checks."
+  ]
+}

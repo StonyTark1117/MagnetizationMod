@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "strength": "EXTREME",
+  "force": 8000,
+  "speed_limit": 2,
+  "cause": "Server vehicle movement rejected during Fokker FVIIb3m and Toyota phases; not a compatibility pass"
+}

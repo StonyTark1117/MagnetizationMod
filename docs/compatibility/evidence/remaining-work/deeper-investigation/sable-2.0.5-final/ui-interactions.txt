@@ -1,0 +1,12 @@
+[30Sep2026 18:53:40.225] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-patchouli-landing.png Saved screenshot as ui-patchouli-landing.png
+[30Sep2026 18:53:42.723] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-patchouli-entry.png Saved screenshot as ui-patchouli-entry.png
+[30Sep2026 18:53:42.992] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-patchouli-next-page.png Saved screenshot as ui-patchouli-next-page.png
+[30Sep2026 18:53:43.124] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-patchouli-audit.png Saved screenshot as ui-patchouli-audit.png
+[30Sep2026 18:53:43.726] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-patchouli-compatibility.png Saved screenshot as ui-patchouli-compatibility.png
+[30Sep2026 18:53:47.724] [Render thread/INFO] [magnetization/ui-audit/]: UI_CURIOS_PASS charmSlot=49 equipped=1 magnetization:field_compass
+[30Sep2026 18:53:47.743] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-curios-equipped.png Saved screenshot as ui-curios-equipped.png
+[30Sep2026 18:53:49.728] [Render thread/INFO] [magnetization/ui-audit/]: UI_EMI_PAGES_RESOLVED count=18
+[30Sep2026 18:53:49.750] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-emi-search.png Saved screenshot as ui-emi-search.png
+[30Sep2026 18:53:51.717] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-emi-info.png Saved screenshot as ui-emi-info.png
+[30Sep2026 18:53:53.705] [Render thread/INFO] [magnetization/ui-audit/]: UI_AUDIT_PASS patchouli=item_open_entry_page_navigation curios=server_menu_equip emi=search_info_crafting
+[30Sep2026 18:53:53.722] [IO-Worker-1/INFO] [magnetization/ui-audit/]: UI_CAPTURE ui-emi-crafting.png Saved screenshot as ui-emi-crafting.png

@@ -1,0 +1,7 @@
+[30Sep2026 18:52:01.616] [Server thread/INFO] [magnetization/compat-audit/]: NATIVE_CANNON_PASS spawn=(-3510666.3954768414, 167.6482391357422, -5394937.0110471295) traveled=3.5170871898187355 fuel=3 ammo=1
+[30Sep2026 18:52:01.645] [Server thread/INFO] [magnetization/compat-audit/]: MOVING_PULLEY_ASSEMBLY sourceType=supplementaries:moving_pulley_block savedKeys=[blockState, supp_carried_be, supp_progress_step, x, facing, progress, y, z, source, id, extending] destinationState=Block{supplementaries:moving_pulley_block}[facing=down,type=normal] destinationEntity=null
+[30Sep2026 18:52:01.648] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: movingpulleypayloadsurvivesnativeassembly failed at -3510661, -60, -5394940! Sable assembly retained moving-pulley state but did not reconstruct its block entity
+[30Sep2026 18:52:01.751] [Server thread/INFO] [magnetization/compat-audit/]: PULLEY_GROUND_ROUNDTRIP_PASS payload=17_diamonds recoveredChain=4
+[30Sep2026 18:52:01.752] [Server thread/ERROR] [net.minecraft.gametest.framework.LogTestReporter/]: pulleymovesloadedchestdownanduponmovingship failed at -3510653, -60, -5394940! Native pulley did not move chest to BlockPos{x=20481032, y=125, z=20483080}
+[30Sep2026 18:52:01.752] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 420.1 ms ======================
+[30Sep2026 18:52:01.752] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 2 required tests failed :(

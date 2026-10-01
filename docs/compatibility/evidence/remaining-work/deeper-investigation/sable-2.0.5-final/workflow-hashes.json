@@ -1,0 +1,15 @@
+{
+  "storage-create": "ddb0eee86ac6f77ed970fcdd5d0b8e5a75d07744b6a15bef4e9b24ce13a11c30",
+  "storage-verify": "539ec99b62ab25c46bdf655461c44a93cded9326273eef186648f09ac408ceab",
+  "ui-client": "5079d3eff52a09e3a1c0a6253ee53a84adcc4f40491468005c441ca87f3e2651",
+  "ui-patchouli-entry.png": "80059d720836cfa45545bf73b94e8ae26380255980b18468e0091e1f956a1015",
+  "ui-patchouli-landing.png": "fdf94e93cd4ce28ac5e24d93167bc78b5ecf16ab01bb1113b971516d467c9b31",
+  "ui-curios-equipped.png": "23b8fe029cfab83a7153fbe67ff550bea855cbd655265907dbcfa8f8d1ff4f52",
+  "ui-emi-crafting.png": "e36c5290d76ed3d298ed891eb6f8910af8a8f55453f52dc66c1990114bbcc3c8",
+  "ui-emi-info.png": "f00330ba3fd0b4ba2e4189d91ec0939e957e19f76230adf7e97cccf3cc2568d4",
+  "ui-emi-search.png": "c55de30128eed9405b2e839025cd0618373be7e7fa400297d91230f2d9c9b981",
+  "ui-patchouli-next-page.png": "a88b6e06f387f03d14fb00f599b780e99545cc4ba2e860a0f6762aba9e4f963e",
+  "ui-patchouli-compatibility.png": "5022f82773ca2ce4ea319521590b36943d418f12d83dcf331ae1d679516152b2",
+  "ui-patchouli-audit.png": "4fa3fad0b5ff03dfd25bbadfea365bf6cbf53ee4074ed7373dc03b220a6e7f6f",
+  "build": "8ba484489c0b78949126fffce11aebae7cc1a845e56ea2552ee4375b147ed0ff"
+}

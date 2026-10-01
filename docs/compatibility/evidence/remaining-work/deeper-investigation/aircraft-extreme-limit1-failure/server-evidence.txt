@@ -1,0 +1,33 @@
+		Sable 2.0.5 (sable)
+[30Sep2026 13:05:42.740] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:airship fuelSlots=[6] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:06:02.658] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:airship ticks=400 distance=188.9597384803984
+[30Sep2026 13:06:02.716] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:bamboo_hopper fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:06:22.657] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:bamboo_hopper ticks=400 distance=279.6637671281401
+[30Sep2026 13:06:22.716] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:biplane fuelSlots=[7] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:06:42.660] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:biplane ticks=400 distance=283.65203113068543
+[30Sep2026 13:06:42.717] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:cargo_airship fuelSlots=[6] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:07:02.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:cargo_airship ticks=400 distance=184.2172841300986
+[30Sep2026 13:07:02.716] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:dehavilland_dh106 fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:07:22.658] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:dehavilland_dh106 ticks=400 distance=433.6650822962506
+[30Sep2026 13:07:22.716] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_c47 fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:07:42.658] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_c47 ticks=400 distance=266.1719810105438
+[30Sep2026 13:07:42.715] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_dc1 fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:08:02.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc1 ticks=400 distance=250.34135431425975
+[30Sep2026 13:08:02.713] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:douglas_dc2 fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:08:22.660] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:douglas_dc2 ticks=400 distance=254.93500098648374
+[30Sep2026 13:08:22.720] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:fokker_fviia fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:08:42.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviia ticks=400 distance=176.33522551340437
+[30Sep2026 13:08:42.711] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:fokker_fviib3m fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:09:02.658] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:fokker_fviib3m ticks=400 distance=200.8638288883993
+[30Sep2026 13:09:02.710] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:gyrodyne fuelSlots=[] initialCoal=0 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:09:22.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:gyrodyne ticks=400 distance=141.10812992081404
+[30Sep2026 13:09:22.710] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:lockheed_l1049g fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:09:42.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:lockheed_l1049g ticks=400 distance=242.69143382371482
+[30Sep2026 13:09:42.710] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:quadrocopter fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:10:02.657] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:quadrocopter ticks=400 distance=6.868069220203962
+[30Sep2026 13:10:02.710] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=aviator_dream:toyota_stout_k100 fuelSlots=[0] initialCoal=64 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:10:11.702] [Server thread/WARN] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: AuditObserver moved too quickly! -18.11005970769388,0.0,1.2078494577999273
+[30Sep2026 13:10:22.659] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=aviator_dream:toyota_stout_k100 ticks=400 distance=241.50724448392882
+[30Sep2026 13:10:22.714] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_ORDINARY type=immersive_aircraft:warship fuelSlots=[10, 11, 12] initialCoal=192 strength=EXTREME force=8000.0 ticks=400 speedLimit=1.0
+[30Sep2026 13:10:42.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_PASS type=immersive_aircraft:warship ticks=400 distance=192.73215958549207
+[30Sep2026 13:10:42.656] [Server thread/INFO] [magnetization/aircraft-network-audit/]: AIRCRAFT_NETWORK_SERVER_PASS types=15

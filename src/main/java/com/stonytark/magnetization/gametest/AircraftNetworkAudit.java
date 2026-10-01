@@ -25,6 +25,7 @@ public final class AircraftNetworkAudit {
     private static double repelStartX;
     private static boolean finished;
     private static final boolean ORDINARY = Boolean.getBoolean("magnetization.audit.aircraftOrdinary");
+    private static final MagneticStrength AUDIT_STRENGTH = MagneticStrength.valueOf(System.getProperty("magnetization.audit.aircraftStrength", "WEAK"));
     private static int initialFuel;
     private static java.util.List<Integer> fuelSlots = java.util.List.of();
 
@@ -62,7 +63,7 @@ public final class AircraftNetworkAudit {
                     final var inventory = (net.minecraft.world.Container)craft.getClass().getMethod("getInventory").invoke(craft);
                     for (int slot : fuelSlots) inventory.setItem(slot, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.COAL,64));
                     initialFuel = fuelSlots.size()*64;
-                    LOG.info("AIRCRAFT_ORDINARY type={} fuelSlots={} initialCoal={} strength={} force={} ticks=400", types.get(index),fuelSlots,initialFuel,MagneticStrength.WEAK,MagneticStrength.WEAK.force());
+                    LOG.info("AIRCRAFT_ORDINARY type={} fuelSlots={} initialCoal={} strength={} force={} ticks=400 speedLimit={}", types.get(index),fuelSlots,initialFuel,AUDIT_STRENGTH,AUDIT_STRENGTH.force(),com.stonytark.magnetization.config.MagConfig.immersiveAircraftMagneticSpeedLimit());
                 }
                 start = craft.position(); age = 0;
                 LOG.info("AIRCRAFT_BEGIN type={} uuid={}", types.get(index), craft.getUUID());
@@ -75,7 +76,7 @@ public final class AircraftNetworkAudit {
                 final var pole = age < (ORDINARY ? 240 : 110) ? MagneticPolarity.SOUTH : MagneticPolarity.NORTH;
                 FieldApplicator.applyEntitiesOnly(server.overworld(), new MagneticField(
                         craft.position().add(-3, craft.getBbHeight()*0.5, 0), new Vec3(1,0,0), pole,
-                        MagneticStrength.WEAK, MagneticField.Shape.OMNIDIRECTIONAL, 4, ORDINARY ? 0.0 : 9.0));
+                        AUDIT_STRENGTH, MagneticField.Shape.OMNIDIRECTIONAL, ORDINARY ? AUDIT_STRENGTH.range() : 4, ORDINARY ? 0.0 : 9.0));
             }
             if (age % 10 == 0) LOG.info("AIRCRAFT_SERVER type={} uuid={} age={} x={} y={} z={} vx={} entityTicks={} pilotPos={}",
                     types.get(index), craft.getUUID(), age, craft.getX(), craft.getY(), craft.getZ(), craft.getDeltaMovement().x, craft.tickCount, pilot.position());

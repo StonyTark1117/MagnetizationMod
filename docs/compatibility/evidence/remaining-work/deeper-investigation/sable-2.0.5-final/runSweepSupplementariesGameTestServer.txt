@@ -1,0 +1,3 @@
+[30Sep2026 18:51:42.508] [Server thread/INFO] [magnetization/compat-audit/]: NATIVE_BELLOWS_LINE_PASS moving=3 poweredGround=3 unpoweredGround=2 inputConserved=8 ticks=500
+[30Sep2026 18:51:42.694] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 828.8 ms ======================
+[30Sep2026 18:51:42.695] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)

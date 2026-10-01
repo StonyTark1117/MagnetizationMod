@@ -1,0 +1,16 @@
+{
+  "command": "./gradlew test build verifyReleaseJar verifyNoRuntimeModpackCoupling --console=plain",
+  "status": "passed",
+  "unit_tests": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "log_sha256": "8ba484489c0b78949126fffce11aebae7cc1a845e56ea2552ee4375b147ed0ff",
+  "release_jar": {
+    "filename": "magnetization-1.4.6.jar",
+    "sha256": "f4c840cc0d5781acf60c9bd66b1ee99ae973f9d6e0fb8bfd746139a7354cde8d"
+  },
+  "scope": "Final build after argument-file-aware cleanup correction; no production changes after the four-strength and 45-profile validation."
+}

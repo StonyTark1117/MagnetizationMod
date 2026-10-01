@@ -1,0 +1,10 @@
+{
+  "review": "Viewed captured images after fresh native UI run",
+  "screenshots": {
+    "ui-patchouli-audit.png": "Reborn and audit pages fit within page bounds; port distinction, material policy and pulley gap visible.",
+    "ui-patchouli-compatibility.png": "Default non-LIRM physical attacks and default-one aircraft limit visible; text fits.",
+    "ui-emi-info.png": "Magnetization information page has readable black text on light background.",
+    "ui-curios-equipped.png": "Field compass appears in the native charm slot; server-backed equip assertion passes."
+  },
+  "remaining_diagnostics": "EMI dev mode reports 24 untranslated external/common tag labels; none uses the magnetization namespace. These are retained in ui-tag-warnings.txt; this is not a claim of a warning-free upstream UI."
+}

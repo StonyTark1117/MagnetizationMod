@@ -2308,11 +2308,11 @@ public final class MagConfig {
 
         IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT = b
                 .comment("Maximum speed (blocks/tick) to which magnetic fields accelerate a piloted Immersive Aircraft vehicle.",
-                         "Default 2 prevents sustained fields from overrunning vanilla vehicle movement validation.",
+                         "Default 1 leaves headroom for delayed movement packets; higher limits can trigger vanilla movement rejection.",
                          "Existing faster native flight is preserved; fields can still brake or redirect it.",
                          "Applied on the controlling client using this server value. Config reload applies to subsequent impulses.")
                 .translation("magnetization.configuration.compat.immersiveAircraftMagneticSpeedLimit")
-                .defineInRange("immersiveAircraftMagneticSpeedLimit", 2.0d, 0.1d, 4.0d);
+                .defineInRange("immersiveAircraftMagneticSpeedLimit", 1.0d, 0.1d, 4.0d);
         ALEXSCAVES_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's Alex's Caves integration.")
                 .translation("magnetization.configuration.compat.alexsCavesCompatEnabled")
@@ -3306,7 +3306,7 @@ public final class MagConfig {
         return doubleOr(IMMERSIVE_ENGINEERING_FIELD_FORCE_MULTIPLIER, 1.0d);
     }
     public static double immersiveAircraftMagneticSpeedLimit() {
-        return doubleOr(IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT, 2.0d);
+        return doubleOr(IMMERSIVE_AIRCRAFT_MAGNETIC_SPEED_LIMIT, 1.0d);
     }
     public static boolean alexsCavesCompatEnabled() { return booleanOr(ALEXSCAVES_COMPAT_ENABLED, true); }
     public static boolean alexsCavesMagnetronLirmEnabled() {

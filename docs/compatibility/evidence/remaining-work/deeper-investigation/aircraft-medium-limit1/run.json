@@ -1,0 +1,5 @@
+{
+  "command": "scripts/run-aircraft-network-audit.sh --ordinary --strength MEDIUM",
+  "exit": 0,
+  "speed_limit": 1
+}

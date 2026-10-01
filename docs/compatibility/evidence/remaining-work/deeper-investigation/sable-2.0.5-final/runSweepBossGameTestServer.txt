@@ -1,0 +1,14 @@
+[30Sep2026 18:51:21.752] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=LightningLanceSpell health=1010.672 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:21.868] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=Scylla native spear goal health=1010.0 source=DamageSource (cataclysm.lightning) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.020] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=ShockwaveSpell health=1014.0 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.071] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=BallLightningSpell health=1019.7 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.124] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=Scylla spawnLightning health=973.04 source=DamageSource (cataclysm.lightning) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.177] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=VoltStrikeSpell health=1018.0 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.207] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=ElectrocuteSpell health=1022.60876 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.233] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=Scylla native electric whip health=1006.0 source=DamageSource (cataclysm.lightning) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.305] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=LightningBoltSpell health=1014.0 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.379] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=ThunderstormSpell health=1017.28 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.410] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=AscensionSpell health=1020.8 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.426] [Server thread/INFO] [magnetization/native-lightning-audit/]: NATIVE_HIT producer=ChainLightningSpell health=1018.72 source=DamageSource (lightning_magic) armor=1 minecraft:iron_chestplate
+[30Sep2026 18:51:22.428] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 13 GAME TESTS COMPLETE IN 1.146 s ======================
+[30Sep2026 18:51:22.428] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 13 required tests passed :)

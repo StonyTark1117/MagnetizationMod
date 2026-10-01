@@ -10,6 +10,12 @@ public final class AircraftImpulseLimiter {
         final Vec3 candidate = velocity.add(impulse);
         final double maximumSquared = Math.max(limit * limit, velocity.lengthSqr());
         if (candidate.lengthSqr() <= maximumSquared) return candidate;
+        if (velocity.lengthSqr() >= limit * limit) {
+            // A ray/sphere intersection at an existing speed boundary rejects
+            // perpendicular force entirely. Deflect at the current speed instead:
+            // faster native flight keeps its speed, but still responds to a field.
+            return candidate.scale(Math.sqrt(maximumSquared / candidate.lengthSqr()));
+        }
         final double a = impulse.lengthSqr();
         if (a < 1.0e-20) return velocity;
         // Intersect v + t*impulse with the allowed speed sphere, choosing the

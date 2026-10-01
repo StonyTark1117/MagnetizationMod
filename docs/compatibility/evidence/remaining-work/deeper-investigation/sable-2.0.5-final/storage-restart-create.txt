@@ -1,0 +1,2 @@
+[30Sep2026 18:52:22.483] [Server thread/INFO] [magnetization/storage-restart-audit/]: STORAGE_RESTART_CREATED ship=133ab693-d0f3-4f17-9bbc-2ef2c5b930d6 cooked=0 pid=1770772
+[30Sep2026 18:52:22.705] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved

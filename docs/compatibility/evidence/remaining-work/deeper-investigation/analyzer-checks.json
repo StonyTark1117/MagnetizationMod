@@ -1,0 +1,24 @@
+[
+  {
+    "case": "recorded_strong_run",
+    "accepted": true
+  },
+  {
+    "case": "movement_rejection",
+    "rejected": true,
+    "stale_result_removed": true,
+    "error": "AssertionError: Vehicle movement validation rejected the magnetic run"
+  },
+  {
+    "case": "missing_server_completion",
+    "rejected": true,
+    "stale_result_removed": true,
+    "error": "AssertionError: Missing complete server pass"
+  },
+  {
+    "case": "mismatched_sable",
+    "rejected": true,
+    "stale_result_removed": true,
+    "error": "AssertionError: Server/client Sable versions differ"
+  }
+]
