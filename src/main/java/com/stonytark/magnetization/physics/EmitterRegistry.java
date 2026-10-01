@@ -248,34 +248,41 @@ public final class EmitterRegistry {
     }
 
     /** External positions in a square chunk radius around one target. */
-    public static Set<BlockPos> snapshotExternalNear(final Level level, final BlockPos target,
+    public static synchronized Set<BlockPos> snapshotExternalNear(final Level level, final BlockPos target,
                                                      final int radiusBlocks, final int limit) {
-        if (limit <= 0 || !hasExternal(level)) return Collections.emptySet();
-        final int minChunkX = Math.floorDiv(target.getX() - radiusBlocks, 16);
-        final int maxChunkX = Math.floorDiv(target.getX() + radiusBlocks, 16);
-        final int minChunkZ = Math.floorDiv(target.getZ() - radiusBlocks, 16);
-        final int maxChunkZ = Math.floorDiv(target.getZ() + radiusBlocks, 16);
-        final Set<Long> keys = new LinkedHashSet<>();
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) keys.add(ChunkPos.asLong(x, z));
-        }
-        return snapshotExternalInChunks(level, keys, limit);
+        return snapshotNear(level, target, radiusBlocks, limit, true);
     }
 
-    /** Native positions in a square block radius around one target. */
+    /** Native positions in the original inclusive square block-radius bounds. */
     public static synchronized Set<BlockPos> snapshotNativeNear(final Level level, final BlockPos target,
                                                                final int radiusBlocks) {
+        return snapshotNear(level, target, radiusBlocks, Integer.MAX_VALUE, false);
+    }
+
+    private static Set<BlockPos> snapshotNear(final Level level, final BlockPos target,
+                                             final int radiusBlocks, final int limit, final boolean external) {
         final LevelIndex chunks = BY_LEVEL.get(level);
-        if (chunks == null || chunks.nativeCount == 0) return Collections.emptySet();
-        final int minChunkX = Math.floorDiv(target.getX() - radiusBlocks, 16);
-        final int maxChunkX = Math.floorDiv(target.getX() + radiusBlocks, 16);
-        final int minChunkZ = Math.floorDiv(target.getZ() - radiusBlocks, 16);
-        final int maxChunkZ = Math.floorDiv(target.getZ() + radiusBlocks, 16);
-        final Set<BlockPos> result = new HashSet<>();
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                final ChunkBucket bucket = chunks.get(ChunkPos.asLong(x, z));
-                if (bucket != null) result.addAll(bucket.nativeEmitters);
+        if (limit <= 0 || chunks == null || (external ? chunks.externalCount : chunks.nativeCount) == 0)
+            return Collections.emptySet();
+        final int minX = Math.floorDiv(target.getX() - radiusBlocks, 16);
+        final int maxX = Math.floorDiv(target.getX() + radiusBlocks, 16);
+        final int minZ = Math.floorDiv(target.getZ() - radiusBlocks, 16);
+        final int maxZ = Math.floorDiv(target.getZ() + radiusBlocks, 16);
+        final Set<BlockPos> result = external ? new LinkedHashSet<>() : new HashSet<>();
+        if (minX > maxX || minZ > maxZ) return result;
+        // Same ascending X/Z and bucket order as the old expanded scan; skip
+        // empty coordinates without changing boundary membership or limits.
+        for (final var row : chunks.rows.subMap(minX, true, maxX, true).values()) {
+            for (final ChunkBucket bucket : row.subMap(minZ, true, maxZ, true).values()) {
+                if (level instanceof net.minecraft.server.level.ServerLevel server) {
+                    PerformanceDiagnostics.record(server, external
+                            ? PerformanceDiagnostics.Work.EXTERNAL_POINT_BUCKETS
+                            : PerformanceDiagnostics.Work.NATIVE_POINT_BUCKETS, 1);
+                }
+                for (final BlockPos pos : external ? bucket.externalEmitters : bucket.nativeEmitters) {
+                    result.add(pos);
+                    if (result.size() >= limit) return result;
+                }
             }
         }
         return result;

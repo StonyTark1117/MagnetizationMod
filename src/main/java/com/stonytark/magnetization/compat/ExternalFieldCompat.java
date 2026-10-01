@@ -43,44 +43,58 @@ public final class ExternalFieldCompat {
 
     private ExternalFieldCompat() {}
 
-    public static boolean isKnownEmitter(final BlockState state) {
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null) return false;
-        return switch (id.getNamespace()) {
-            case "create_new_age" -> CNA_STRENGTH_FALLBACKS.containsKey(id.getPath());
-            case "immersiveengineering" -> id.getPath().equals("electromagnet")
-                    || id.getPath().equals("tesla_coil");
-            case "alexscaves" -> id.getPath().equals("azure_magnet")
-                    || id.getPath().equals("scarlet_magnet");
-            case "createaddition" -> id.getPath().equals("tesla_coil");
-            case "createendertransmission" -> id.getPath().equals("energy_transmitter");
-            case "tfmg" -> id.getPath().equals("polarizer");
-            default -> false;
-        };
+    // Registry identity is immutable for a block's lifetime. Configuration and
+    // machine state are deliberately not retained in this cache.
+    private static final java.util.concurrent.ConcurrentMap<net.minecraft.world.level.block.Block, Adapter> ADAPTERS =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    static record Adapter(ResourceLocation id, boolean known) {
+        boolean relay() { return id != null && id.getNamespace().equals("createendertransmission"); }
+        boolean supported() {
+            if (!known) return false;
+            return switch (id.getNamespace()) {
+                case "create_new_age" -> MagConfig.createNewAgeFieldsEnabled();
+                case "immersiveengineering" -> MagConfig.immersiveEngineeringFieldsEnabled();
+                case "alexscaves" -> MagConfig.alexsCavesFieldsEnabled();
+                case "createaddition" -> MagConfig.createAdditionFieldsEnabled();
+                case "tfmg" -> MagConfig.tfmgPolarizerFieldEnabled();
+                default -> false;
+            };
+        }
+        boolean indexable() {
+            return known && (relay() ? MagConfig.enderTransmissionFieldRelayEnabled() : supported());
+        }
+        boolean shipsOnly() { return id != null && id.getNamespace().equals("alexscaves"); }
+        double maximumRange() {
+            if (id == null) return Double.POSITIVE_INFINITY;
+            return switch (id.getNamespace()) {
+                case "create_new_age", "immersiveengineering", "createaddition", "tfmg" -> MagneticStrength.EXTREME.range();
+                default -> Double.POSITIVE_INFINITY;
+            };
+        }
     }
 
-    public static boolean isSupportedEmitter(final BlockState state) {
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null || !isKnownEmitter(state)) return false;
-        return switch (id.getNamespace()) {
-            case "create_new_age" -> MagConfig.createNewAgeFieldsEnabled();
-            case "immersiveengineering" -> MagConfig.immersiveEngineeringFieldsEnabled();
-            case "alexscaves" -> MagConfig.alexsCavesFieldsEnabled();
-            case "createaddition" -> MagConfig.createAdditionFieldsEnabled();
-            case "createendertransmission" -> false;
-            case "tfmg" -> MagConfig.tfmgPolarizerFieldEnabled();
-            default -> false;
-        };
+    static Adapter adapter(final BlockState state) {
+        return ADAPTERS.computeIfAbsent(state.getBlock(), block -> {
+            final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+            final boolean known = id != null && switch (id.getNamespace()) {
+                case "create_new_age" -> CNA_STRENGTH_FALLBACKS.containsKey(id.getPath());
+                case "immersiveengineering" -> id.getPath().equals("electromagnet") || id.getPath().equals("tesla_coil");
+                case "alexscaves" -> id.getPath().equals("azure_magnet") || id.getPath().equals("scarlet_magnet");
+                case "createaddition" -> id.getPath().equals("tesla_coil");
+                case "createendertransmission" -> id.getPath().equals("energy_transmitter");
+                case "tfmg" -> id.getPath().equals("polarizer");
+                default -> false;
+            };
+            return new Adapter(id, known);
+        });
     }
+
+    public static boolean isKnownEmitter(final BlockState state) { return adapter(state).known(); }
+    public static boolean isSupportedEmitter(final BlockState state) { return adapter(state).supported(); }
 
     /** Blocks that need an external-index entry for either a local field or relay behavior. */
-    public static boolean isIndexableEmitter(final BlockState state) {
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null || !isKnownEmitter(state)) return false;
-        return "createendertransmission".equals(id.getNamespace())
-                ? MagConfig.enderTransmissionFieldRelayEnabled()
-                : isSupportedEmitter(state);
-    }
+    public static boolean isIndexableEmitter(final BlockState state) { return adapter(state).indexable(); }
 
     public static @Nullable MagneticField currentField(final Level level, final BlockPos pos) {
         final BlockState state;
@@ -97,9 +111,19 @@ public final class ExternalFieldCompat {
     /** Evaluate an already-loaded emitter state without asking the level for its chunk. */
     public static @Nullable MagneticField currentField(final Level level, final BlockPos pos,
                                                        final BlockState state) {
+        final Adapter adapter = adapter(state);
+        if (!adapter.supported()) {
+            if (level instanceof ServerLevel server) PerformanceDiagnostics.record(server, Work.FIELD_EVALUATIONS, 1);
+            return null;
+        }
+        return currentSupportedField(level, pos, state, adapter);
+    }
+
+    /** Internal path after this candidate's live enable check; never cache the result. */
+    static @Nullable MagneticField currentSupportedField(final Level level, final BlockPos pos,
+                                                         final BlockState state, final Adapter adapter) {
         if (level instanceof ServerLevel server) PerformanceDiagnostics.record(server, Work.FIELD_EVALUATIONS, 1);
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null || !isSupportedEmitter(state)) return null;
+        final ResourceLocation id = adapter.id();
         return switch (id.getNamespace()) {
             case "create_new_age" -> createNewAgeField(level, pos, state, id.getPath());
             case "immersiveengineering" -> immersiveEngineeringField(level, pos, state, id.getPath());
@@ -110,23 +134,11 @@ public final class ExternalFieldCompat {
         };
     }
 
-    /** Alex's Caves already moves ordinary entities itself. Its projected field is
-     * applied only to physics ships to avoid doubling that native entity force. */
-    public static boolean shipsOnly(final BlockState state) {
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        return id != null && "alexscaves".equals(id.getNamespace());
-    }
+    /** Alex's Caves already moves ordinary entities itself. */
+    public static boolean shipsOnly(final BlockState state) { return adapter(state).shipsOnly(); }
 
-    /** Upper bound without querying power, energy, or a block entity. Adapters
-     * with a live custom radius (Alex's Caves) retain the uncullable fallback. */
-    public static double maximumFieldRange(final BlockState state) {
-        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null) return Double.POSITIVE_INFINITY;
-        return switch (id.getNamespace()) {
-            case "create_new_age", "immersiveengineering", "createaddition", "tfmg" -> MagneticStrength.EXTREME.range();
-            default -> Double.POSITIVE_INFINITY;
-        };
-    }
+    /** Unknown live custom ranges remain uncullable. */
+    public static double maximumFieldRange(final BlockState state) { return adapter(state).maximumRange(); }
 
     public static boolean isImmersiveEngineeringRailgunShot(final net.minecraft.world.entity.Entity entity) {
         final ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());

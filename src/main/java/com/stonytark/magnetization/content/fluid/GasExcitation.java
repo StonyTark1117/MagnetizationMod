@@ -62,12 +62,28 @@ public final class GasExcitation {
         }
 
         final int cap = Math.max(1, MagConfig.gasExcitationMaxCells());
-        final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
-        final LongOpenHashSet seen = new LongOpenHashSet(Math.min(cap, 4096));
-        final LongArrayList cells = new LongArrayList(Math.min(cap, 4096));
-        final LongOpenHashSet exciterPositions = new LongOpenHashSet();
-        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        final BlockPos.MutableBlockPos next = new BlockPos.MutableBlockPos();
+        if (tickCache.scratch == null) tickCache.scratch = new Scratch(cap);
+        // Block/BE updates can re-enter recompute. A nested pass must never
+        // overwrite its caller's queue or mutable positions.
+        final Scratch scratch = tickCache.scratch.busy ? new Scratch(cap) : tickCache.scratch;
+        scratch.busy = true;
+        try {
+            recompute(level, seed, gas, tickCache, cap, scratch);
+        } finally {
+            scratch.clear();
+            scratch.busy = false;
+        }
+    }
+
+    private static void recompute(final ServerLevel level, final BlockPos seed, final Fluid gas,
+                                  final TickCache tickCache, final int cap, final Scratch scratch) {
+        final long seedKey = seed.asLong();
+        final LongArrayFIFOQueue queue = scratch.queue;
+        final LongOpenHashSet seen = scratch.seen;
+        final LongArrayList cells = scratch.cells;
+        final LongOpenHashSet exciterPositions = scratch.exciterPositions;
+        final BlockPos.MutableBlockPos pos = scratch.pos;
+        final BlockPos.MutableBlockPos next = scratch.next;
         boolean redstone = false;
         queue.enqueue(seedKey);
 
@@ -75,13 +91,13 @@ public final class GasExcitation {
             final long packed = queue.dequeueLong();
             if (!seen.add(packed)) continue;
             pos.set(packed);
-            if (!level.hasChunkAt(pos) || fluidAt(level, pos) != gas) continue;
+            if (!level.hasChunkAt(pos) || scratch.fluidAt(level, pos) != gas) continue;
             cells.add(packed);
             redstone |= level.hasNeighborSignal(pos);
             for (final Direction direction : DIRECTIONS) {
                 next.setWithOffset(pos, direction);
                 if (!level.hasChunkAt(next)) continue;
-                final Fluid adjacentFluid = fluidAt(level, next);
+                final Fluid adjacentFluid = scratch.fluidAt(level, next);
                 if (adjacentFluid == gas) {
                     queue.enqueue(next.asLong());
                     continue;
@@ -169,9 +185,12 @@ public final class GasExcitation {
 
     /** Canonical gas identity shared by native fluids and compatibility proxy cells. */
     public static Fluid fluidAt(final ServerLevel level, final BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof ProxyGasCloudBlockEntity cloud) return cloud.fluid();
-        if (!(level.getBlockState(pos).getBlock() instanceof ExcitableGasBlock)) return Fluids.EMPTY;
-        final Fluid fluid = level.getFluidState(pos).getType();
+        final BlockState state = level.getBlockState(pos);
+        if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof ProxyGasCloudBlockEntity cloud) {
+            return cloud.fluid();
+        }
+        if (!(state.getBlock() instanceof ExcitableGasBlock)) return Fluids.EMPTY;
+        final Fluid fluid = state.getFluidState().getType();
         return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid;
     }
 
@@ -199,5 +218,40 @@ public final class GasExcitation {
     private static final class TickCache {
         private long gameTime = Long.MIN_VALUE;
         private final LongOpenHashSet processed = new LongOpenHashSet();
+        private Scratch scratch;
+    }
+
+    /** Reuse capacity only; topology, power, grace and ownership stay live. */
+    private static final class Scratch {
+        private boolean busy;
+        private final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
+        private final LongOpenHashSet seen;
+        private final LongArrayList cells;
+        private final LongOpenHashSet exciterPositions = new LongOpenHashSet();
+        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<Fluid> fluids =
+                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+        private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        private final BlockPos.MutableBlockPos next = new BlockPos.MutableBlockPos();
+
+        private Scratch(int cap) {
+            seen = new LongOpenHashSet(Math.min(cap, 4096));
+            cells = new LongArrayList(Math.min(cap, 4096));
+        }
+        private Fluid fluidAt(final ServerLevel level, final BlockPos pos) {
+            final long key = pos.asLong();
+            Fluid fluid = fluids.get(key);
+            if (fluid == null) {
+                fluid = GasExcitation.fluidAt(level, pos);
+                fluids.put(key, fluid);
+            }
+            return fluid;
+        }
+        private void clear() {
+            fluids.clear();
+            queue.clear();
+            seen.clear();
+            cells.clear();
+            exciterPositions.clear();
+        }
     }
 }

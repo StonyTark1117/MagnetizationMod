@@ -1,0 +1,527 @@
+{
+  "unit_tests": [
+    {
+      "name": "com.stonytark.magnetization.api.EmitterPresetTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.FieldTooltipFormatterTest",
+      "tests": "12",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.LirmTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.MagneticFieldTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.MagneticPolarityTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.MagneticStrengthScalingTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.MagneticStrengthTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.api.ShipMagneticStateTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.client.GasDetectorHudLayoutTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.AdapterReflectionTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.AircraftImpulseLimiterTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.ExternalFieldFallbackTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.ExternalFieldTargetsTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.HudSurfaceCompletenessTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.JerWorldgenCatalogTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.PonderSceneCatalogTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.compat.RecipeViewerInfoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.docking.DockingStateTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.fluid.FluidDiscoveryTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.fluid.FluidSignalSolverTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistryTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.gas.GasExcitationProfileTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.golem.IronOxideGolemConfigTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.golem.IronOxideGolemLogicTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.golem.MagnetiteGolemTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.golem.TitanomagnetiteGolemTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.hematite.HematiteDampenTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.item.BoundedTickCacheTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.jet.FusionCoolingMechanicsTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.jet.ThrusterPlumeTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.meteorite.AeMeteoriteScannerTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.meteorite.MeteoriteCompassTargetTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.meteorite.MeteoriteCoreDecayTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistryEntryTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.meteorite.MeteoriteSaplingProgressTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.pyrrhotite.PyrrhotiteHeatTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.sail.AlfvenBackpackHandlerTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.content.shaft.ShaftRangeIndexTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.EmitterRosterResourceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.GasExciterAssetTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.GasVentAssetTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.GuideInstructionContractsTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.IronOxideGolemResourceTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.MaterialFamilyCompletenessTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.NobleGasResourceCompletenessTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.OptionalCompatibilityTagConditionTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.PatchouliFieldManualTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.RareEarthResourceCompletenessTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.data.TrackStylesCompatibilityResourceTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.menu.AirSeparatorGuiLayoutTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.menu.MachineGuiLayoutTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.mixin.compat.CreateMagneticsServerMixinPluginTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.network.CosmicCompassTargetPayloadTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.network.GasDetectorStatusPayloadTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.physics.EmitterRegistryTest",
+      "tests": "16",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.physics.FieldApplicatorTest",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.physics.MobileFieldRegistryTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.physics.SableBridgePromoteTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.physics.ShipMagneticScannerTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.stonytark.magnetization.registry.MagTiersTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "unit_total": 293,
+  "gametest_total": 264,
+  "gates": {
+    "core-compact": {
+      "passed": 176,
+      "evidence": "All 176 required tests passed",
+      "log_sha256": "c667a1360a3e47c853c2a253978f5b2241af68bd36426b9eced66f0ae95d17a8",
+      "source": "8217baf4586d4e594967283cf483373381af63d4"
+    },
+    "cna-compact": {
+      "passed": 20,
+      "evidence": "All 20 required tests passed",
+      "log_sha256": "2ce6843b46ce83ad2963ae7994c3e65ace211f7281f6a8fd1c88f5860f79e92f",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "engineering": {
+      "passed": 7,
+      "evidence": "All 7 required tests passed",
+      "log_sha256": "c642d0e5d09854b13af91aa3e5a4322b79dd8612a3a57804c71522329a34814e",
+      "source": "64c94c12"
+    },
+    "regressions": {
+      "passed": 4,
+      "evidence": "All 4 required tests passed",
+      "log_sha256": "51e45829d7e9f0b7b8f3426d36d20e6ce4944d6e138cedd46534d3a72013ba8a",
+      "source": "64c94c12"
+    },
+    "coasters": {
+      "passed": 2,
+      "evidence": "All 2 required tests passed",
+      "log_sha256": "b38ac25d7d0f8a560f1befb1e0a84a31e0f0187a24bfb6f2a969538441d7bfa7",
+      "source": "64c94c12"
+    },
+    "ie": {
+      "passed": 10,
+      "evidence": "All 10 required tests passed",
+      "log_sha256": "defa42fd00ef327987d547b2c123317cf48bdff863cce96cb6d047bd12e879ab",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "alexs": {
+      "passed": 7,
+      "evidence": "All 7 required tests passed",
+      "log_sha256": "61dfc58b0ae67b57fd088083d8fe4878c5c42b7fd8e16cf2b4ee3d8001635afe",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "addition": {
+      "passed": 7,
+      "evidence": "All 7 required tests passed",
+      "log_sha256": "16dfafa50310473369a9ce0c75e6baec9ecb9f5f3b05ea693cfe708f5b7b4c6d",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "tfmg": {
+      "passed": 20,
+      "evidence": "All 20 required tests passed",
+      "log_sha256": "10a9ad8a0cb91051e516ab65a751b66dda1bb97efeb134e60fea2df4400eab14",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "slug-absent": {
+      "passed": 1,
+      "evidence": "All 1 required tests passed",
+      "log_sha256": "1ac2b7a7e1bc661028feb26879c80730c1ab0675e75b800ff1ebdc71f6e49759",
+      "source": "0845f4b1d32a64a6a53cf1fd66fb45fd2ccd9773"
+    },
+    "slugterra-focused": {
+      "passed": 1,
+      "evidence": "All 1 required tests passed",
+      "log_sha256": "0f8e522a71e67c103083a92e937aed67ba9331b3d42fc1d2fc609e47c3c70d40",
+      "source": "8217baf4586d4e594967283cf483373381af63d4",
+      "dependency_sha256": "b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736"
+    },
+    "slugterra-1.0": {
+      "passed": 9,
+      "evidence": "All 9 required tests passed",
+      "log_sha256": "8a9f1d9739da4f5a81023c3885c900378f5e983b354e1fef27089f60cbfb56db",
+      "source": "8217baf4586d4e594967283cf483373381af63d4",
+      "dependency_sha256": "b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736"
+    }
+  },
+  "build_verify_release_jar": "passed",
+  "initial_direct_core_run": "Unrelated separator visual test failed in terrain world; repository fresh-flat supervisor subsequently passed all176, including two later runs.",
+  "latest_source": "8217baf4586d4e594967283cf483373381af63d4",
+  "latest_artifact_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+  "slugterra_broad_suite": "All 9 tests pass against updated port v1.0; previous 7 failures and control apply only to unofficial.1. See slugterra-control.json.",
+  "fullpack_fluid_assertions": {
+    "passed": 37,
+    "artifact_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+    "function_sha256": "2a68a2782081cbe14f536d61c1d4f064157d913977629449aaa71e2c07bac883",
+    "result_file": "fullpack-gameplay.json"
+  }
+}

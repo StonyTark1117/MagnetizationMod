@@ -30,6 +30,8 @@ SCENARIOS = (
     "mr_armor",
     "mr_mainhand",
     "mr_offhand",
+    "native_queries_control", "native_queries_64", "native_queries_256",
+    "gas_stable", "shafts_16", "shafts_64", "shafts_256", "ships_4", "ships_16",
     "empty_end",
 )
 
@@ -107,6 +109,12 @@ def grid_scenario(size: int, block: str, *, powered: bool = False, items: bool =
 def scenario_commands(name: str, size: int) -> list[str]:
     if name in {"empty_start", "empty_end"}:
         return []
+    if name.startswith("native_queries_"):
+        count = 0 if name.endswith("control") else int(name.rsplit("_", 1)[1])
+        return [f"magperf scale native {count}"]
+    if name.startswith(("shafts_", "ships_")):
+        kind, count = name.split("_")
+        return [f"magperf scale {kind} {count}"]
     if name == "dense_external":
         return [f"fill -8 {BASE_Y - 4} -8 7 {BASE_Y - 1} 7 create_new_age:netherite_magnet"] + [
             command for x, z in grid_positions(size) for command in item_cell_commands(x, z)
@@ -153,7 +161,7 @@ def scenario_commands(name: str, size: int) -> list[str]:
         return grid_scenario(size, "magnetization:railgun_emitter", powered=True)
     if name == "air_separators":
         return grid_scenario(size, "magnetization:air_separator", items=False)
-    if name == "gas_volume":
+    if name in {"gas_volume", "gas_stable"}:
         side = size * 2
         height = size
         min_x = -(side // 2)
@@ -175,7 +183,7 @@ def scenario_commands(name: str, size: int) -> list[str]:
             f'summon minecraft:marker {min_x} {BASE_Y} {min_z} '
             '{Tags:["mag_stress","mag_stress_gas_churn"]}',
         ]
-        return commands
+        return commands if name == "gas_volume" else commands[:-1]
     if name == "mixed_pack":
         blocks = (
             "minecraft:iron_block",

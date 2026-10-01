@@ -126,17 +126,27 @@ public final class MagneticShaftNetwork {
         // longer than their expiry so inspection itself cannot keep a source loaded.
         if (state.lastUpdate != Long.MIN_VALUE && now >= state.lastUpdate && now - state.lastUpdate < 4) return;
         state.lastUpdate = now;
-        List<MagneticShaftBlockEntity> shafts = state.shafts.stream().sorted()
-                .map(pos -> loaded(level, pos)).filter(MagneticShaftBlockEntity.class::isInstance)
-                .map(MagneticShaftBlockEntity.class::cast).toList();
-        // A ticket can temporarily drop below FULL while a chunk is still in memory.
-        // Keep that position until the block entity's actual unload/removal event.
-        state.shafts.removeIf(pos -> loaded(level, pos) != null && !(loaded(level, pos) instanceof MagneticShaftBlockEntity));
+        final List<MagneticShaftBlockEntity> shafts = new ArrayList<>();
+        for (final BlockPos pos : state.shafts.stream().sorted().toList()) {
+            final KineticBlockEntity entity = loaded(level, pos);
+            if (entity instanceof MagneticShaftBlockEntity shaft) shafts.add(shaft);
+            // A ticket may temporarily drop below FULL. Preserve that entry until
+            // a real unload; only discard a known replacement, as before.
+            else if (entity != null) state.shafts.remove(pos);
+        }
         Map<KineticBlockEntity, Component> components = new HashMap<>();
         for (var shaft : shafts) if (!components.containsKey(shaft)) {
             var component = discover(shaft);
             component.members.keySet().forEach(be -> components.put(be, component));
         }
+        // Classify live drives once; preserve the original sorted source order.
+        List<MagneticShaftBlockEntity> sources = shafts.stream().filter(source -> {
+            Component drive = components.get(source);
+            return !drive.invalid && drive.driven && source.getTheoreticalSpeed() != 0
+                    && !MagConfig.isBlockDisabled(source.getBlockState());
+        }).toList();
+        var sourceIndex = new ShaftRangeIndex<>(sources,
+                MagneticShaftBlockEntity::worldCenter, MagneticShaftBlockEntity::transmissionRange);
         Map<BlockPos, BlockPos> desired = new HashMap<>();
         Set<MagneticShaftBlockEntity> conflicts = new HashSet<>();
         for (Component target : new HashSet<>(components.values())) {
@@ -146,7 +156,7 @@ public final class MagneticShaftNetwork {
             for (var receiver : target.shafts) {
                 if (MagConfig.isBlockDisabled(receiver.getBlockState())) continue;
                 double receiverRatio = target.members.get(receiver);
-                for (var source : shafts) {
+                for (var source : sourceIndex.near(receiver.worldCenter())) {
                     Component drive = components.get(source);
                     if (drive == target || drive.invalid || !drive.driven || source.getTheoreticalSpeed() == 0
                             || MagConfig.isBlockDisabled(source.getBlockState())) continue;

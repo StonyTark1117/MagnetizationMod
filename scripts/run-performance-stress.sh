@@ -17,6 +17,7 @@ absolute_noise_floor_mspt=${MAG_STRESS_ABSOLUTE_NOISE_FLOOR_MSPT:-0.1}
 timestamp=$(date -u +%Y%m%dT%H%M%SZ)
 git_revision=$(git -C "$repo_dir" rev-parse --short=12 HEAD)
 report_dir="$reports_root/${timestamp}-${git_revision}-${profile}"
+git_dirty_before=$(git -C "$repo_dir" status --porcelain)
 server_pid=
 console_fd=
 completed=false
@@ -55,6 +56,7 @@ warmup_ticks=${MAG_STRESS_WARMUP_TICKS:-$default_warmup}
 sample_ticks=${MAG_STRESS_SAMPLE_TICKS:-$default_sample_ticks}
 samples_per_scenario=${MAG_STRESS_SAMPLES:-$default_samples}
 default_scenarios='empty_start,block_item_control,idle_emitters,active_emitters,external_fields,railgun_emitters,air_separators,gas_volume,mixed_pack,dense_external,equipment_changes,ordinary_player,ordinary_mobs,external_no_targets,ferrofluid_pool,ferrofluid_external,ferrofluid_native,mr_armor,mr_mainhand,mr_offhand,empty_end'
+available_scenarios="$default_scenarios,native_queries_control,native_queries_64,native_queries_256,gas_stable,shafts_16,shafts_64,shafts_256,ships_4,ships_16"
 scenario_csv=${MAG_STRESS_SCENARIOS:-$default_scenarios}
 IFS=',' read -r -a scenarios <<<"$scenario_csv"
 
@@ -146,7 +148,7 @@ done
 [[ " ${scenarios[*]} " == *" empty_start "* && " ${scenarios[*]} " == *" empty_end "* ]] \
     || fail 'the scenario list must contain empty_start and empty_end'
 for scenario in "${scenarios[@]}"; do
-    [[ ",$default_scenarios," == *",$scenario,"* ]] || fail "unknown scenario: $scenario"
+    [[ ",$available_scenarios," == *",$scenario,"* ]] || fail "unknown scenario: $scenario"
 done
 if [[ ! -f "$repo_dir/run/eula.txt" ]] || ! grep -Eq '^eula=true[[:space:]]*$' "$repo_dir/run/eula.txt"; then
     fail 'an accepted run/eula.txt is required; the harness will not accept the EULA for you'
@@ -179,7 +181,7 @@ python3 "$repo_dir/scripts/generate-performance-stress-pack.py" \
     --output "$run_dir/world/datapacks/magnetization_stress" \
     --grid-size "$grid_size" >"$report_dir/generator-output.json"
 
-python3 - "$report_dir/metadata.json" <<PY
+MAG_STRESS_GIT_DIRTY="$git_dirty_before" python3 - "$report_dir/metadata.json" <<PY
 import json
 import platform
 import subprocess
@@ -191,7 +193,7 @@ metadata = {
     "schema_version": 2,
     "started_utc": "$timestamp",
     "git_revision": "$git_revision",
-    "git_dirty": bool(subprocess.run(["git", "-C", "$repo_dir", "status", "--porcelain"], capture_output=True, text=True, check=True).stdout),
+    "git_dirty": bool(__import__("os").environ["MAG_STRESS_GIT_DIRTY"]),
     "profile": "$profile",
     "grid_size": $grid_size,
     "instances_per_grid": $((grid_size * grid_size)),
@@ -293,6 +295,8 @@ metadata = json.loads(metadata_path.read_text())
 lines = (runtime / "logs/latest.log").read_text().splitlines()
 metadata["minecraft_jvm"] = next(line.split("JVM identified as ", 1)[1]
                                  for line in lines if "JVM identified as " in line)
+metadata["path_java_version"] = metadata["java_version"]
+metadata["java_version"] = metadata["minecraft_jvm"]
 configurations = {}
 for folder in (runtime / "config", runtime / "world/serverconfig"):
     for path in sorted(folder.rglob("*.toml")):
@@ -335,6 +339,21 @@ run_sprint() {
     wait_for_new_match 'MAG_PERF_COUNTS ' "$count_before" 30 || fail 'diagnostic snapshot missing'
     count_line=$(grep 'MAG_PERF_COUNTS ' "$run_dir/logs/latest.log" | tail -n 1)
     printf '%s\t%s\t%s\n' "$scenario" "$sample" "${count_line#*MAG_PERF_COUNTS }" >>"$report_dir/work-counts.tsv"
+    python3 - "$scenario" "${count_line#*MAG_PERF_COUNTS }" <<'ACTIVATION_PY'
+import json, sys
+scenario, raw = sys.argv[1:]
+counts = json.loads(raw)
+if scenario.startswith(("shafts_", "ships_")):
+    expected = int(scenario.rsplit("_", 1)[1])
+    assert counts.get("loaded_shafts") == expected * 2, (scenario, "missing shafts", counts)
+    assert counts.get("driven_shafts") == expected, (scenario, "inactive drives", counts)
+    if scenario.startswith("shafts_"):
+        assert counts.get("receiving_shafts") == expected, (scenario, "inactive receivers", counts)
+    else:
+        assert counts.get("moving_ships") == expected, (scenario, "missing ships", counts)
+if scenario.startswith("native_queries_") and not scenario.endswith("control"):
+    assert counts.get("synthetic_point_queries", 0) > 0 and counts.get("synthetic_query_hits", 0) > 0, (scenario, counts)
+ACTIVATION_PY
     echo "performance-stress: $scenario sample $sample/$samples_per_scenario = ${mspt} MSPT"
 }
 

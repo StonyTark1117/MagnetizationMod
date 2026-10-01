@@ -21,7 +21,9 @@ neoForge.runs {
     slugterraGameTestServer {
         type = 'gameTestServer'
         gameDirectory = file('run-slugterra-gametest')
-        systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_slugterra'
+        systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('slugterraPerformanceTests')
+                .map { it.toBoolean() ? 'magnetization_slugterra_performance' : 'magnetization_slugterra' }
+                .getOrElse('magnetization_slugterra')
     }
     slugterraAbsentGameTestServer {
         type = 'gameTestServer'
@@ -30,7 +32,7 @@ neoForge.runs {
     }
 }
 tasks.named('processResources', ProcessResources).configure {
-    ['magnetization_slugterra', 'magnetization_slugterra_absent'].each { namespace ->
+    ['magnetization_slugterra', 'magnetization_slugterra_absent', 'magnetization_slugterra_performance'].each { namespace ->
         from('src/main/resources/data/magnetization/structure/empty.nbt') { into "data/${namespace}/structure" }
     }
 }

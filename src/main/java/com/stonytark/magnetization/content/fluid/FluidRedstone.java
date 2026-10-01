@@ -10,12 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.joml.Vector3f;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Makes the mod's conductive fluids carry a redstone signal like a body of
@@ -43,7 +39,26 @@ public final class FluidRedstone {
     /** Cap on a single connected network we will recompute, as a runaway guard. */
     private static final int MAX_NETWORK = 4096;
 
+    private static final Direction[] DIRECTIONS = Direction.values();
     private static boolean recomputing = false;
+    private static final ThreadLocal<Scratch> SCRATCH = ThreadLocal.withInitial(Scratch::new);
+
+    /** Capacity reuse only: no topology, block states or power survive a call. */
+    private static final class Scratch {
+        final it.unimi.dsi.fastutil.longs.LongArrayList queue = new it.unimi.dsi.fastutil.longs.LongArrayList();
+        final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap indices = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+        final List<BlockPos> cells = new ArrayList<>(), written = new ArrayList<>();
+        final it.unimi.dsi.fastutil.ints.IntArrayList external = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        final it.unimi.dsi.fastutil.ints.IntArrayList edges = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        final BlockPos.MutableBlockPos neighbor = new BlockPos.MutableBlockPos();
+        final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states =
+                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+        Scratch() { indices.defaultReturnValue(-1); }
+        void clear() {
+            queue.clear(); indices.clear(); cells.clear(); written.clear();
+            external.clear(); edges.clear(); states.clear();
+        }
+    }
 
     private FluidRedstone() {}
 
@@ -86,16 +101,34 @@ public final class FluidRedstone {
         recomputeNetwork(level, pos, block);
     }
 
-    /** Strongest external (non-conductor) signal feeding into a single cell. */
-    private static int externalSignal(final Level level, final BlockPos pos) {
-        int max = 0;
-        for (final Direction d : Direction.values()) {
-            final BlockPos np = pos.relative(d);
-            if (isConductor(level.getBlockState(np))) continue; // network edges handled separately
-            final int s = level.getSignal(np, d);
-            if (s > max) max = s;
+    /** Read-only discovery snapshot. Discarded before another notification can
+     * recompute; signal methods still receive the actual level and live BEs. */
+    private static final class ReadCache {
+        private final Level level;
+        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states;
+        private final BlockPos.MutableBlockPos directNeighbor = new BlockPos.MutableBlockPos();
+        private ReadCache(final Level level, final Scratch scratch) {
+            this.level = level; this.states = scratch.states;
         }
-        return max;
+        private BlockState state(final BlockPos pos) {
+            final long key = pos.asLong();
+            BlockState state = states.get(key);
+            if (state == null) { state = level.getBlockState(pos); states.put(key, state); }
+            return state;
+        }
+        // SignalGetter#getSignal, including NeoForge's weak-power hook. Reusing
+        // block states avoids repeatedly looking up the same solid neighbors.
+        private int signal(final BlockState state, final BlockPos pos, final Direction direction) {
+            final int weak = state.getSignal(level, pos, direction);
+            if (!state.shouldCheckWeakPower(level, pos, direction)) return weak;
+            int direct = 0;
+            for (final Direction d : DIRECTIONS) {
+                directNeighbor.setWithOffset(pos, d);
+                direct = Math.max(direct, state(directNeighbor).getDirectSignal(level, directNeighbor, d));
+                if (direct >= 15) break;
+            }
+            return Math.max(weak, direct);
+        }
     }
 
     /**
@@ -105,53 +138,54 @@ public final class FluidRedstone {
      * components (lamps, repeaters, …) re-read the fresh signal.
      */
     private static void recomputeNetwork(final Level level, final BlockPos start, final Block block) {
+        final Scratch scratch = SCRATCH.get();
         recomputing = true;
         try {
-            // 1. Collect the connected component + each cell's external input.
-            final List<BlockPos> cells = new ArrayList<>();
-            final Map<BlockPos, Integer> power = new HashMap<>();
-            final Map<BlockPos, Integer> ext = new HashMap<>();
-            final Deque<BlockPos> queue = new ArrayDeque<>();
-            queue.add(start.immutable());
-            power.put(start.immutable(), 0);
-            while (!queue.isEmpty() && cells.size() < MAX_NETWORK) {
-                final BlockPos p = queue.poll();
+            // Retain the original breadth-first discovery order and exact cap.
+            // Queue entries beyond the cap have zero power, just as before.
+            final var queue = scratch.queue;
+            final var indices = scratch.indices;
+            final List<BlockPos> cells = scratch.cells;
+            final var external = scratch.external;
+            final var edges = scratch.edges;
+            final ReadCache reads = new ReadCache(level, scratch);
+            final long seed = start.asLong();
+            queue.add(seed);
+            indices.put(seed, 0);
+            for (int cursor = 0; cursor < queue.size() && cursor < MAX_NETWORK; cursor++) {
+                final BlockPos p = BlockPos.of(queue.getLong(cursor));
                 cells.add(p);
-                ext.put(p, externalSignal(level, p));
-                for (final Direction d : Direction.values()) {
-                    final BlockPos np = p.relative(d).immutable();
-                    if (power.containsKey(np)) continue;
-                    if (isConductor(level.getBlockState(np))) {
-                        power.put(np, 0);
-                        queue.add(np);
+                int externalPower = 0;
+                for (final Direction d : DIRECTIONS) {
+                    final BlockPos np = scratch.neighbor.setWithOffset(p, d);
+                    final long key = np.asLong();
+                    int index = indices.get(key);
+                    // An indexed cell is already known to be a conductor in this
+                    // read-only pass. Discover edges and inputs together rather
+                    // than looking up/classifying all six neighbors twice.
+                    if (index < 0) {
+                        final BlockState neighbor = reads.state(np);
+                        if (isConductor(neighbor)) {
+                            index = queue.size();
+                            indices.put(key, index);
+                            queue.add(key);
+                        } else {
+                            externalPower = Math.max(externalPower, reads.signal(neighbor, np, d));
+                        }
                     }
+                    edges.add(index);
                 }
+                external.add(externalPower);
             }
-
-            // 2. Solve: power[cell] = max(external[cell], max neighbour power - 1).
-            //    Relax repeatedly; values are 0..15 so this converges quickly.
-            for (final BlockPos p : cells) power.put(p, ext.get(p));
-            boolean changed = true;
-            while (changed) {
-                changed = false;
-                for (final BlockPos p : cells) {
-                    int best = ext.get(p);
-                    for (final Direction d : Direction.values()) {
-                        final BlockPos np = p.relative(d);
-                        final Integer pn = power.get(np);
-                        if (pn != null && pn - 1 > best) best = pn - 1;
-                    }
-                    if (best > 15) best = 15;
-                    if (best != power.get(p)) { power.put(p, best); changed = true; }
-                }
-            }
+            final int[] power = FluidSignalSolver.solve(external.toIntArray(), edges.toIntArray());
 
             // 3. Write changed cells (clients only; we notify neighbours ourselves).
-            final List<BlockPos> written = new ArrayList<>();
-            for (final BlockPos p : cells) {
+            final List<BlockPos> written = scratch.written;
+            for (int index = 0; index < cells.size(); index++) {
+                final BlockPos p = cells.get(index);
                 final BlockState s = level.getBlockState(p);
                 if (!s.hasProperty(POWER)) continue;
-                final int want = power.get(p);
+                final int want = power[index];
                 if (s.getValue(POWER) != want) {
                     level.setBlock(p, s.setValue(POWER, want), Block.UPDATE_CLIENTS);
                     written.add(p);
@@ -160,6 +194,7 @@ public final class FluidRedstone {
             // 4. Notify every component touching the network so it re-reads us.
             for (final BlockPos p : written) level.updateNeighborsAt(p, block);
         } finally {
+            scratch.clear();
             recomputing = false;
         }
     }

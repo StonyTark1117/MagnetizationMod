@@ -1,0 +1,47 @@
+{
+  "matched_pairs": [
+    [
+      "baseline",
+      "candidate"
+    ],
+    [
+      "baseline-updated",
+      "candidate-v2"
+    ]
+  ],
+  "stages": {
+    "baseline": {
+      "magnetization_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+      "slugterra_sha256": "b5e6093124b450d6b9aa281aae7d5842a86f748b84c365770ffe3271f7b5dc94",
+      "production_source": "70a71579d208"
+    },
+    "candidate": {
+      "magnetization_sha256": "77e574774c78c047353c2a181e797d1e2dcae45f64aafaacb921a7c76b4633e6",
+      "slugterra_sha256": "b5e6093124b450d6b9aa281aae7d5842a86f748b84c365770ffe3271f7b5dc94",
+      "production_source": "5e1adb0caaa766690731bd994ba827453da316a4"
+    },
+    "baseline-updated": {
+      "magnetization_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+      "slugterra_sha256": "b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736",
+      "production_source": "70a71579d208"
+    },
+    "candidate-v2": {
+      "magnetization_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+      "slugterra_sha256": "b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736",
+      "production_source": "8217baf4586d4e594967283cf483373381af63d4"
+    }
+  },
+  "initial_candidate_interruption": {
+    "runner_exit_code": 143,
+    "completed_samples": 144,
+    "last_completed_scenario": "shafts_64",
+    "last_completed_sample": 4,
+    "server_status": "SERVER_STATUS_RUNNING",
+    "resume": "Only unfinished sprint samples; no profile or artifact redeployment restart"
+  },
+  "status": "Measurements, bounded gameplay checks and original-world restoration complete; dense-field, full Lenz-scan and shaft speedups not demonstrated.",
+  "final_stress_samples": 150,
+  "final_stress_scenarios": 30,
+  "fullpack_fluid_assertions": 37,
+  "restoration_evidence": "restoration-validation.json"
+}

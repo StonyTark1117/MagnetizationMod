@@ -598,7 +598,10 @@ public final class FieldApplicator {
                 .scale(target.susceptibility() * polaritySign);
         final Vec3 velocityImpulse = com.stonytark.magnetization.compat.SlugterraMountCompat
                 .limitImpulse(entity, impulse.scale(prepared.velocityScale()));
-        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection(entity, velocityImpulse)) return;
+        // Ordinary targets need no repeated registry lookup for each overlapping field.
+        // Eligible projectile types still re-check live configuration and flight state.
+        if (target.slugterraProjectile()
+                && com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection(entity, velocityImpulse)) return;
         if (com.stonytark.magnetization.compat.ImmersiveAircraftCompat.applyPilotImpulse(entity, velocityImpulse)) return;
         entity.setDeltaMovement(entity.getDeltaMovement().add(velocityImpulse));
         entity.hurtMarked = true;
@@ -699,6 +702,7 @@ public final class FieldApplicator {
         if (magnetizable) PerformanceDiagnostics.record(level, Work.TARGET_DETAILS, 1);
         snapshot = magnetizable
                 ? new TargetSnapshot(true, diamagnetic,
+                        !diamagnetic && com.stonytark.magnetization.compat.SlugterraProjectileCompat.supportsType(entity),
                         diamagnetic ? DIAMAGNETIC_SUSCEPTIBILITY : susceptibilityOf(entity, affectsArmor),
                         diamagnetic ? MagneticPolarity.NONE : polarityOf(entity))
                 : TargetSnapshot.NOT_MAGNETIZABLE;
@@ -849,10 +853,10 @@ public final class FieldApplicator {
         return MagneticPolarity.NORTH;
     }
 
-    private record TargetSnapshot(boolean magnetizable, boolean diamagnetic,
+    private record TargetSnapshot(boolean magnetizable, boolean diamagnetic, boolean slugterraProjectile,
                                   double susceptibility, MagneticPolarity polarity) {
         private static final TargetSnapshot NOT_MAGNETIZABLE =
-                new TargetSnapshot(false, false, 0.0d, MagneticPolarity.NONE);
+                new TargetSnapshot(false, false, false, 0.0d, MagneticPolarity.NONE);
     }
 
     private record PreparedField(MagneticField field, double globalScalar,

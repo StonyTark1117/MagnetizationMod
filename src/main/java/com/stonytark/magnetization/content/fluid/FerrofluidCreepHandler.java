@@ -87,7 +87,7 @@ public final class FerrofluidCreepHandler {
         // the grid bounds each small-range magnet to its locale. (Result is identical —
         // grow()'s covers() check already rejected the far anchors this skips.)
         final Map<Long, List<BlockPos>> grid = buildAnchorGrid(anchors);
-        for (final Magnet m : magnets) grow(server, m, anchorsNear(m, anchors, grid), growPlain, growMag);
+        for (final Magnet m : magnets) grow(server, m, anchorsNear(m.origin, m.range, anchors, grid), growPlain, growMag);
     }
 
     /** 2-D (X,Z) grid cell size for the anchor index. Ferrofluid pools are near-planar,
@@ -100,7 +100,7 @@ public final class FerrofluidCreepHandler {
         return (((long) cx) << 32) | (cz & 0xFFFFFFFFL);
     }
 
-    private static Map<Long, List<BlockPos>> buildAnchorGrid(final List<BlockPos> anchors) {
+    static Map<Long, List<BlockPos>> buildAnchorGrid(final List<BlockPos> anchors) {
         final Map<Long, List<BlockPos>> grid = new java.util.HashMap<>();
         for (final BlockPos a : anchors) {
             grid.computeIfAbsent(cellKey(Math.floorDiv(a.getX(), ANCHOR_CELL), Math.floorDiv(a.getZ(), ANCHOR_CELL)),
@@ -112,20 +112,30 @@ public final class FerrofluidCreepHandler {
     /** Anchors whose grid cell is within the magnet's reach. Wide-reach magnets (the few
      *  real emitters, up to 128 blocks) span so many cells that probing the grid costs
      *  more than a full scan, so they fall back to the whole anchor list. */
-    private static List<BlockPos> anchorsNear(final Magnet m, final List<BlockPos> all,
+    static Iterable<BlockPos> anchorsNear(final Vec3 origin, final double range, final List<BlockPos> all,
                                               final Map<Long, List<BlockPos>> grid) {
-        final int rCells = (int) Math.ceil(m.range / ANCHOR_CELL);
+        final int rCells = (int) Math.ceil(range / ANCHOR_CELL);
         if (rCells > 3) return all;
-        final int cx = Math.floorDiv(net.minecraft.util.Mth.floor(m.origin.x), ANCHOR_CELL);
-        final int cz = Math.floorDiv(net.minecraft.util.Mth.floor(m.origin.z), ANCHOR_CELL);
-        final List<BlockPos> near = new ArrayList<>();
-        for (int dx = -rCells; dx <= rCells; dx++) {
-            for (int dz = -rCells; dz <= rCells; dz++) {
-                final List<BlockPos> bucket = grid.get(cellKey(cx + dx, cz + dz));
-                if (bucket != null) near.addAll(bucket);
+        final int cx = Math.floorDiv(net.minecraft.util.Mth.floor(origin.x), ANCHOR_CELL);
+        final int cz = Math.floorDiv(net.minecraft.util.Mth.floor(origin.z), ANCHOR_CELL);
+        return () -> new java.util.Iterator<>() {
+            private int x = cx - rCells, z = cz - rCells, index;
+            private List<BlockPos> bucket = List.of();
+
+            @Override public boolean hasNext() {
+                while (index >= bucket.size()) {
+                    if (x > cx + rCells) return false;
+                    bucket = grid.getOrDefault(cellKey(x, z), List.of());
+                    index = 0;
+                    if (++z > cz + rCells) { z = cz - rCells; x++; }
+                }
+                return true;
             }
-        }
-        return near;
+            @Override public BlockPos next() {
+                if (!hasNext()) throw new java.util.NoSuchElementException();
+                return bucket.get(index++);
+            }
+        };
     }
 
     /** Real emitters (live field) + magnetized-ferrofluid pools, EXCLUDING creep
@@ -175,7 +185,7 @@ public final class FerrofluidCreepHandler {
     /** Advance the path one cell for magnet {@code m}: the nearest reacting anchor
      *  that can step toward (attract) / away (repel). Plain attracts to any pole;
      *  magnetized attracts to an opposing pole, repels a matching one. */
-    private static void grow(final ServerLevel server, final Magnet m, final List<BlockPos> anchors,
+    private static void grow(final ServerLevel server, final Magnet m, final Iterable<BlockPos> anchors,
                              final boolean growPlain, final boolean growMag) {
         boolean reachedAttract = false;
         BlockPos attractStep = null, repelStep = null;

@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/StonyTark1117/legends-of-slugterra-neoforge",
+  "release": "v1.0",
+  "source_commit": "590f1a0257b2f10aa03af40a1ddd86c1b106d498",
+  "old_filename": "slugterra-1.3.4+1.21.1-unofficial.1.jar",
+  "old_sha256": "b5e6093124b450d6b9aa281aae7d5842a86f748b84c365770ffe3271f7b5dc94",
+  "new_filename": "slugterra-1.0.jar",
+  "new_sha256": "b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736",
+  "old_server_backup": "/mods/slugterra-1.3.4+1.21.1-unofficial.1.jar.disabled",
+  "readback_verified": true
+}

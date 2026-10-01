@@ -70,6 +70,17 @@ Every scenario clears the same volume, removes tagged test entities, reuses the 
 
 The synthetic player invokes the real MR tick handler but does not measure connected-player, network, or full player-tick costs. Fluid pools contain 512 sources in the quick profile and 2,048 in standard. External blocks placed by commands are explicitly reindexed, and external scenarios fail setup if the index is empty.
 
+Additional scenarios are opt-in through `MAG_STRESS_SCENARIOS`:
+
+| Scenario | Workload |
+|---|---|
+| `native_queries_control`, `native_queries_64`, `native_queries_256` | One powered native electromagnet, with zero/64/256 synthetic `isInField` recipients per tick. These measure the shared field query, not whole player or golem ticks. |
+| `gas_stable` | The same enclosed gas volume as `gas_volume`, with no topology churn. |
+| `shafts_16`, `shafts_64`, `shafts_256` | Isolated source/receiver pairs, each with a real Create motor. Counts are networks, with two magnetic shafts per network. |
+| `ships_4`, `ships_16` | Moving receiver ships, stationary source motors, bound magnetic anchors and linked switches. Repeated translation/rotation crosses transmission range; whole-server cost includes the harness teleport calls. |
+
+Scaling fixtures clean up their blocks, ships and extra chunk tickets between scenarios. Snapshots verify every static source and receiver is active and all expected moving ships/shafts exist. Their `scaling_ticks`, query and hit totals are cumulative since scenario setup (including warmup), rather than per-sample diagnostic totals. The harness records the Minecraft JVM separately from `PATH` Java and captures Git status before creating its disposable runtime.
+
 With diagnostics enabled, `work-counts.tsv` records counters between explicit resets and snapshots. `observed_ticks` includes the short console delay after each sprint; use it for per-tick rates. `fluid_sources`, `source_chunks`, and `creep_cells` are population sums over `creep_passes`, not unique-world counts. Divide by the pass count to obtain mean populations. `targets_discovered` counts all eligible entities, ships and fluid entries before identical regions are deduplicated; `targets_scheduled` and `target_regions` count regions selected under the existing scheduling limit. Discovery itself remains uncapped. `emitter_candidates` and `fields_applied` describe the external tracker, while `field_evaluations` also includes external fields queried by other handlers. MR search/skip counters cover player refresh checks. Stable reflective metadata should require no additional `adapter_method_lookups` after warmup.
 
 ## Compare revisions

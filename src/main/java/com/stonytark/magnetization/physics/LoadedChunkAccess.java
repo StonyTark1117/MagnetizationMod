@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 /** Non-loading reads used by tracked-emitter hot paths. */
 public final class LoadedChunkAccess {
+    private static final Direction[] DIRECTIONS = Direction.values();
     private LoadedChunkAccess() {}
 
     /** Returns the already-full chunk or {@code null}; never creates a ticket. */
@@ -69,7 +70,7 @@ public final class LoadedChunkAccess {
     /** Package-visible core that keeps the loaded-state reader injectable. */
     static boolean hasNeighborSignal(final SignalGetter getter, final BlockPos pos,
                                      final Function<BlockPos, @Nullable BlockState> loadedState) {
-        for (final Direction direction : Direction.values()) {
+        for (final Direction direction : DIRECTIONS) {
             if (signal(getter, pos.relative(direction), direction, loadedState) > 0) return true;
         }
         return false;
@@ -87,7 +88,7 @@ public final class LoadedChunkAccess {
     private static int directSignalTo(final SignalGetter getter, final BlockPos pos,
                                       final Function<BlockPos, @Nullable BlockState> loadedState) {
         int best = 0;
-        for (final Direction direction : Direction.values()) {
+        for (final Direction direction : DIRECTIONS) {
             final BlockPos neighbor = pos.relative(direction);
             final BlockState state = loadedState.apply(neighbor);
             if (state == null) continue;

@@ -159,15 +159,17 @@ public final class ExternalEmitterTracker {
         }
 
         final Set<Long> fluidSections = new java.util.HashSet<>();
-        for (final BlockPos pos : FerrofluidSourceRegistry.snapshot(server)) {
-            discovered++;
-            targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
-            fluidSections.add(SectionPos.asLong(pos));
-        }
-        for (final BlockPos pos : MagnetizedFerrofluidRegistry.forLevel(server).keySet()) {
-            discovered++;
-            targets.add(around(pos.getX() + 0.5d, pos.getZ() + 0.5d, MAX_EXTERNAL_FIELD_RANGE));
-            fluidSections.add(SectionPos.asLong(pos));
+        for (final var regions : java.util.List.of(FerrofluidSourceRegistry.targetRegions(server),
+                MagnetizedFerrofluidRegistry.targetRegions(server))) {
+            discovered += regions.sourceCount();
+            for (final long key : regions.chunks()) {
+                // The 32-block radius is exactly two chunks on each side for
+                // every cell in a source chunk; preserve first-seen chunk order.
+                final int x = ChunkPos.getX(key), z = ChunkPos.getZ(key);
+                final int radius = MAX_EXTERNAL_FIELD_RANGE / 16;
+                targets.add(new ChunkBounds(x - radius, x + radius, z - radius, z + radius));
+            }
+            fluidSections.addAll(regions.sections());
         }
         for (final long key : fluidSections) {
             final SectionPos section = SectionPos.of(key);
@@ -189,20 +191,21 @@ public final class ExternalEmitterTracker {
         for (int i = 0; i < attempts; i++) {
             final BlockPos pos = candidates.get((start + i) % candidates.size());
             final BlockState state = LoadedChunkAccess.blockState(server, pos);
-            if (state == null || !ExternalFieldCompat.isIndexableEmitter(state)) {
+            final var adapter = state == null ? null : ExternalFieldCompat.adapter(state);
+            if (adapter == null || !adapter.indexable()) {
                 EmitterRegistry.unregisterExternal(server, pos);
                 continue;
             }
-            if (!ExternalFieldCompat.isSupportedEmitter(state)) continue;
+            if (adapter.relay()) continue;
             // Keep skipped attempts in the same rotating budget: culling must
             // not increase the frequency/force of the remaining emitters.
-            if (!recipients.mayReach(pos, ExternalFieldCompat.maximumFieldRange(state))) {
+            if (!recipients.mayReach(pos, adapter.maximumRange())) {
                 PerformanceDiagnostics.record(server, Work.FIELD_BOUNDS_REJECTIONS, 1);
                 continue;
             }
-            final MagneticField field = ExternalFieldCompat.currentField(server, pos, state);
+            final MagneticField field = ExternalFieldCompat.currentSupportedField(server, pos, state, adapter);
             if (field == null) continue;
-            if (ExternalFieldCompat.shipsOnly(state)) {
+            if (adapter.shipsOnly()) {
                 FieldApplicator.applyToSubLevelsOnly(server, field, null, null);
             } else {
                 FieldApplicator.apply(server, field);
