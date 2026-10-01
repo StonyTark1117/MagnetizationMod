@@ -59,7 +59,11 @@ was checked. Its source is `590f1a0257b2f10aa03af40a1ddd86c1b106d498` and verifi
 JAR SHA is `b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736`.
 All nine broad integration tests and the focused cached-type/live-flight-state
 test pass against this release. It includes the previously missing Dark content.
-Clients need the same Slugterra build. No original Forge addon JARs were added.
+Clients need the same Slugterra build. Its metadata also requires JEI
+19.57.0.450 or newer within 19.x when JEI is installed on the client. The server
+has JEI19.57.0.447; this dependency is client-only and does not block the server,
+but a client using that same older JEI must update it. No original Forge addon
+JARs were added.
 
 The dependency changes the pack, so old-port `baseline`/`candidate` results are
 retained as a separate experiment. Final comparisons pair `baseline-updated`

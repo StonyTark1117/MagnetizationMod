@@ -402,5 +402,107 @@
         1.65
       ]
     }
+  },
+  "baseline-updated": {
+    "empty_start": {
+      "median_mspt": 1.78,
+      "samples_mspt": [
+        1.86,
+        1.77,
+        1.84,
+        1.78,
+        1.77
+      ]
+    },
+    "block_item_control": {
+      "median_mspt": 1.78,
+      "samples_mspt": [
+        1.8,
+        1.87,
+        1.78,
+        1.77,
+        1.76
+      ]
+    },
+    "active_emitters": {
+      "median_mspt": 2.51,
+      "samples_mspt": [
+        2.54,
+        2.49,
+        2.46,
+        2.51,
+        2.78
+      ]
+    },
+    "dense_external": {
+      "median_mspt": 3.05,
+      "samples_mspt": [
+        3.05,
+        3.04,
+        3.11,
+        3.15,
+        2.9
+      ]
+    },
+    "gas_volume": {
+      "median_mspt": 5.23,
+      "samples_mspt": [
+        5.25,
+        5.32,
+        5.19,
+        5.13,
+        5.23
+      ]
+    },
+    "gas_stable": {
+      "median_mspt": 1.69,
+      "samples_mspt": [
+        1.7,
+        1.6,
+        1.69,
+        1.66,
+        1.71
+      ]
+    },
+    "ferrofluid_external": {
+      "median_mspt": 2.08,
+      "samples_mspt": [
+        2.08,
+        2.09,
+        2.06,
+        2.24,
+        2.0
+      ]
+    },
+    "shafts_256": {
+      "median_mspt": 2.76,
+      "samples_mspt": [
+        3.07,
+        2.69,
+        2.8,
+        2.74,
+        2.76
+      ]
+    },
+    "ships_16": {
+      "median_mspt": 7.1,
+      "samples_mspt": [
+        7.19,
+        6.96,
+        7.1,
+        7.08,
+        7.15
+      ]
+    },
+    "empty_end": {
+      "median_mspt": 1.7,
+      "samples_mspt": [
+        1.72,
+        1.88,
+        1.68,
+        1.66,
+        1.7
+      ]
+    }
   }
 }

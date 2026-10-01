@@ -2604,5 +2604,1424 @@
         "sampled_ms": 4.0
       }
     ]
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "bulk_ferrofluid_setup",
+    "ticks": 2096,
+    "methods": [
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FluidRedstone.onNeighborChanged",
+        "sampled_ms": 14704.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FluidRedstone.recomputeNetwork",
+        "sampled_ms": 14704.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidBlock.neighborChanged",
+        "sampled_ms": 13396.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FluidRedstone.externalSignal",
+        "sampled_ms": 7240.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidBlock.onPlace",
+        "sampled_ms": 1320.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FluidRedstone.isConductor",
+        "sampled_ms": 1080.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        "sampled_ms": 620.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.grow",
+        "sampled_ms": 616.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler$1.hasNext",
+        "sampled_ms": 268.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        "sampled_ms": 184.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+        "sampled_ms": 88.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.scheduleNearActiveTargets",
+        "sampled_ms": 88.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler$1.next",
+        "sampled_ms": 60.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.apply",
+        "sampled_ms": 44.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.gatherTargets",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.currentSupportedField",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.addChunkKeys",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.bestStep",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler$Magnet.covers",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.targetCache",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.hasNeighborSignal",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000785063d0e380.accept",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.magnetizableTargets",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldTargets.<init>",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.applyToTrains",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.lenzBrakingEnabled",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.isPlain",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalListInChunks",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess$NeighborStateReader.apply",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat$Adapter.indexable",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat$Adapter.supported",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.forEachFieldTarget",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.trackedCarriages",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.booleanOr",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.createNewAgeFieldsEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.cellKey",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.processLaunchedShips",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.blockState",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.chunkNow",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.worldgen.PetrifiedForestBiome.enabled",
+        "sampled_ms": 4.0
+      }
+    ]
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "dense_external",
+    "ticks": 3600,
+    "methods": [
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        "sampled_ms": 5576.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.applyBudgeted",
+        "sampled_ms": 4136.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.apply",
+        "sampled_ms": 2716.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+        "sampled_ms": 2320.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.scheduleNearActiveTargets",
+        "sampled_ms": 1416.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.createNewAgeField",
+        "sampled_ms": 1276.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.currentSupportedField",
+        "sampled_ms": 1276.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.hasNeighborSignal",
+        "sampled_ms": 1108.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.hasNeighborSignal",
+        "sampled_ms": 1108.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.signal",
+        "sampled_ms": 1096.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.directSignalTo",
+        "sampled_ms": 744.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyPreparedToEntity",
+        "sampled_ms": 668.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.gatherTargets",
+        "sampled_ms": 572.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess$NeighborStateReader.apply",
+        "sampled_ms": 512.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.snapshotExternalListInChunks",
+        "sampled_ms": 420.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.addChunkKeys",
+        "sampled_ms": 384.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.targetEligibility",
+        "sampled_ms": 372.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator$$Lambda.0x0000785067214220.test",
+        "sampled_ms": 368.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.lambda$magnetizableTargets$1",
+        "sampled_ms": 368.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.targetSnapshot",
+        "sampled_ms": 348.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.computeGlobalScalar",
+        "sampled_ms": 344.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.isMagnetizableUncached",
+        "sampled_ms": 324.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat.applyThroughPortals",
+        "sampled_ms": 320.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator$$Lambda.0x0000785067206000.test",
+        "sampled_ms": 308.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.lambda$applyToEntities$2",
+        "sampled_ms": 304.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles",
+        "sampled_ms": 288.0
+      },
+      {
+        "method": "com.stonytark.magnetization.worldgen.AnomalyBiome.isAt",
+        "sampled_ms": 276.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection",
+        "sampled_ms": 216.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+        "sampled_ms": 132.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.susceptibilityOf",
+        "sampled_ms": 104.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility",
+        "sampled_ms": 100.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.baseSusceptibility",
+        "sampled_ms": 100.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.SlugterraMountCompat.limitImpulse",
+        "sampled_ms": 96.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.hasIntrinsicTagResponse",
+        "sampled_ms": 92.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.applyToTrains",
+        "sampled_ms": 80.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.FerromagneticCompat.is",
+        "sampled_ms": 68.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.FerromagneticCompat.isFerromagnetic",
+        "sampled_ms": 68.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.blockState",
+        "sampled_ms": 68.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.strengthMultiplier",
+        "sampled_ms": 64.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000785063d0e380.accept",
+        "sampled_ms": 52.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat.onLevelTick",
+        "sampled_ms": 44.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.targetCache",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.createbigcannons.MagCreateBigCannonsCompat.isMagnetizableProjectile",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.isItemDisabled",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.MobileFieldRegistry.dampen",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.SlugterraProjectileCompat.isInFlight",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.chunkNow",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.MobileFieldRegistry.snapshotNear",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.around",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.createbigcannons.MagCreateBigCannonsCompat.projectileSusceptibility",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.createNewAgeFieldForceMultiplier",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.doubleOr",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldTargets.add",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.booleanOr",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.update",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.intOr",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.magnetizableTargets",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ModularGolemsCompat.isMagnetizable",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.nearbyCarriages",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.trackedCarriages",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.protectLaunchedShipsBeforePhysics",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.ShaftRangeIndex.<init>",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.polarityOf",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.MagneticField.origin",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.MagneticField.range",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker$ChunkBounds.hashCode",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.adapter",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat.field",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.QuarkToretoiseCompat.isMagnetizable",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.createbigcannons.MagCreateBigCannonsCompat.projectileReactionEnabled",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.immersivePortalsCompatEnabled",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.lenzBrakingEnabled",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.petrifiedStormTicks",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.gatherAnchors",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.MobileFieldRegistry.size",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.MagneticStrength.range",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.bounds",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat$Adapter.maximumRange",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldCompat$Adapter.shipsOnly",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalFieldTargets.<init>",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExtraGolemsRebornCompat$$Lambda.0x00007850672070f8.test",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.lambda$isMagnetizable$0",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.FerromagneticCompat.integrationEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.forEachFieldTarget",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.anomalyChaosTicks",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.createBigCannonsCompatEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.extraGolemsRebornCompatEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.magnetizedFerrofluidTicks",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.railgunEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.isEmpty",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.HardenedMrFluidRegistry.snapshot",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.targetRegions",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MrFluidSourceRegistry.snapshot",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunRegistry.snapshot",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.gametest.MagneticEngineeringAudit.tick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasNative",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator$$Lambda.0x0000785067206000.<init>",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator$TargetSnapshot.diamagnetic",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess$NeighborStateReader.<init>",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.worldgen.PetrifiedForestBiome.enabled",
+        "sampled_ms": 4.0
+      }
+    ]
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "gas_volume",
+    "ticks": 3600,
+    "methods": [
+      {
+        "method": "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.tick",
+        "sampled_ms": 13664.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GasExcitation.recompute",
+        "sampled_ms": 13664.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GasExcitation.fluidAt",
+        "sampled_ms": 5028.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000785063d0e380.accept",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GasExcitation$Scratch.clear",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasNative",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GalliumRegistry.snapshot",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidRegistry.forLevel",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.processLaunchedShips",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.update",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.MobileFieldRegistry.size",
+        "sampled_ms": 4.0
+      }
+    ]
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "shafts_256",
+    "ticks": 3600,
+    "methods": [
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        "sampled_ms": 2148.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.update",
+        "sampled_ms": 2148.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.discover",
+        "sampled_ms": 1192.0
+      },
+      {
+        "method": "com.stonytark.magnetization.mixin.MagneticShaftRotationAccess.magnetization$locations",
+        "sampled_ms": 1052.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.loaded",
+        "sampled_ms": 196.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.ShaftRangeIndex.<init>",
+        "sampled_ms": 96.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.ShaftRangeIndex.near",
+        "sampled_ms": 88.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724fda8.apply",
+        "sampled_ms": 56.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.isBlockDisabled",
+        "sampled_ms": 52.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.lambda$update$12",
+        "sampled_ms": 48.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000785063d0e380.accept",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.mixin.MagneticShaftRotationAccess.magnetization$ratio",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat.onLevelTick",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.display",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.addPropagationLocations",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.intOr",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.addNeighbours",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.temporaryLirmApplyTicks",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.protectLaunchedShipsBeforePhysics",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlock.getRotationAxis",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.material",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.transmissionRange",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.connectionRatio",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasNative",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.booleanOr",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.commonClientValue",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.mrFluidHardenTicks",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.petrifiedStormTicks",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.railgunEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.gatherAnchors",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepRegistry.isEmpty",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidSourceRegistry.snapshot",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.processLaunchedShips",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.prunePendingAssemblies",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlock.hasShaftTowards",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.worldCenter",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasExternal",
+        "sampled_ms": 4.0
+      }
+    ]
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "ships_16",
+    "ticks": 3600,
+    "methods": [
+      {
+        "method": "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.serverTick",
+        "sampled_ms": 2552.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.tickEmitter",
+        "sampled_ms": 2552.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.anchor.MagneticAnchorBlock$$Lambda.0x0000785067266180.tick",
+        "sampled_ms": 2552.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.apply",
+        "sampled_ms": 2240.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyToSubLevels",
+        "sampled_ms": 2020.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyToSubLevelsInternal",
+        "sampled_ms": 2020.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat.receivesMagneticFields",
+        "sampled_ms": 1692.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersLoadedCompat.isPartOfCoasterStructure",
+        "sampled_ms": 1684.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersLoadedCompat.receivesMagneticFields",
+        "sampled_ms": 1684.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersLoadedCompat.isCoasterCart",
+        "sampled_ms": 1656.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        "sampled_ms": 1636.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.LenzBrakingHandler.countOverlappingConductors",
+        "sampled_ms": 1624.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.FerromagneticCompat.is",
+        "sampled_ms": 676.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        "sampled_ms": 672.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.update",
+        "sampled_ms": 672.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.discover",
+        "sampled_ms": 476.0
+      },
+      {
+        "method": "com.stonytark.magnetization.mixin.MagneticShaftRotationAccess.magnetization$locations",
+        "sampled_ms": 408.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity.computeField",
+        "sampled_ms": 224.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity.hasCoopPeer",
+        "sampled_ms": 184.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.applyToEntities",
+        "sampled_ms": 140.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.tryApplyWorldImpulse",
+        "sampled_ms": 132.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.snapshotNativeNear",
+        "sampled_ms": 120.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.snapshotNear",
+        "sampled_ms": 116.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.tryApplyLocalImpulse",
+        "sampled_ms": 112.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.ShipMagneticRegistry.get",
+        "sampled_ms": 104.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.ShipMagneticScanner.scan",
+        "sampled_ms": 104.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.immersiveaeronautics.ImmersivePortalFieldCompat.applyThroughPortals",
+        "sampled_ms": 80.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.applyFieldModifiers",
+        "sampled_ms": 60.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.blockEntity",
+        "sampled_ms": 60.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.loaded",
+        "sampled_ms": 52.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.LoadedChunkAccess.chunkNow",
+        "sampled_ms": 52.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000785063d0e380.accept",
+        "sampled_ms": 44.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.HalbachArray.boostedStrength",
+        "sampled_ms": 44.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat.onLevelTick",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.HalbachArray.polarityAt",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity.updateDockStatus",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.docking.DockingMeasurements.sample",
+        "sampled_ms": 40.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724d360.apply",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.computeGlobalScalar",
+        "sampled_ms": 36.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.lambda$update$4",
+        "sampled_ms": 32.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.InventorySink.cachedAdjacentInventory",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.InventorySink.tryIngest",
+        "sampled_ms": 28.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.worldgen.AnomalyBiome.isAt",
+        "sampled_ms": 24.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlock$$Lambda.0x00007850672667e0.tick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity.run",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity.serverTick",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.shipSampleForce",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.connectedChainIds",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.worldgen.AnomalyBiome.isAtAssumeEnabled",
+        "sampled_ms": 20.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.applyToTrains",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        "sampled_ms": 16.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724da48.test",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.connectionRatio",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.lambda$update$5",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.ShaftRangeIndex.<init>",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.mixin.MagneticShaftRotationAccess.magnetization$disconnect",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.InventorySink.capability",
+        "sampled_ms": 12.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.simulatedcoasters.MagSimulatedCoastersCompat.loaded",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.nearbyCarriages",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.compat.steamrails.MagSteamRailsCompat.trackedCarriages",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.docking.DockingMeasurements.motion",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.hematite.HematiteBlock.dampenedStrength",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.inverter.PolarityInverterBlock.shouldInvert",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.protectLaunchedShipsBeforePhysics",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.addPropagationLocations",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724ded8.test",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.addNeighbours",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.lambda$update$7",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.targetCache",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.MobileFieldRegistry.size",
+        "sampled_ms": 8.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.MagneticField.force",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.MagneticField.range",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.api.ShipMagneticState.isDiamagnetic",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.anomalyChaosTicks",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.intOr",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.isBlockDisabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.config.MagConfig.lenzBrakingEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.AbstractEmitterBlockEntity.effectiveRange",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.anchor.MagneticAnchorBlockEntity.defaultEffectiveRange",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.docking.DockingMeasurements$Motion.<init>",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.meteorite.AeMeteoriteScanner.isEnabled",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlock.getRotationAxis",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlock.hasShaftTowards",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724d5a8.test",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724dca0.accept",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x000078506724f290.test",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.lambda$update$6",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.shaft.ShaftRangeIndex.near",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlockEntity.sync",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.gametest.CuriosUiAudit.tick",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.mixin.MagneticShaftRotationAccess.magnetization$ratio",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.EmitterRegistry.hasNative",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.FieldApplicator.strengthMultiplier",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.dampAngularVelocity",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.dampLinearVelocity",
+        "sampled_ms": 4.0
+      },
+      {
+        "method": "com.stonytark.magnetization.physics.SableBridge.subLevelOf",
+        "sampled_ms": 4.0
+      }
+    ]
   }
 ]

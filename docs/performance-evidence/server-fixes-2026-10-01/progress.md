@@ -146,3 +146,13 @@ Updated Slugterra dependency (user steering):
   matched pair with old-port baseline/candidate captures.
 - V2 execution split into matched sprints, five captures, then remaining20
   scenarios with completion checks between sessions. Gameplay/restoration follow.
+
+Updated-pack baseline complete:
+
+- All50 targeted sprint samples and five Spark captures completed; captures
+  decoded with expected4ms interval, timings, zero players and activation counts.
+- Worst bulk tick15,257.96ms. Normal sampled production costs: dense1.617,
+  gas3.826, shafts0.654 and ships1.399ms/tick. Profiling attribution varies more
+  than whole-workload timing; do not overstate small differences.
+- CandidateV2 deployment/matched-sprint stage now running. It verifies the new
+  Slugterra hash before deployment and Magnetization hash after upload.

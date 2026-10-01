@@ -108,5 +108,60 @@
     "ticks": 3600,
     "url": "https://spark.lucko.me/hh5zyr6h9s",
     "server_file": null
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "bulk_ferrofluid_setup",
+    "sha256": "a61684095422288b2c36fea2dd792bbc70fbe174e79e2f895a0cf590b1e4a1a3",
+    "bytes": 478422,
+    "start_epoch_ms": 1790889862434,
+    "requested_start_epoch_ms": 1790889862268,
+    "ticks": 2096,
+    "url": "https://spark.lucko.me/fs0vE33gaX",
+    "server_file": null
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "dense_external",
+    "sha256": "183c0420f54ab5d16acf96e91d08f97e59bd46bfe6776900448148c23760430f",
+    "bytes": 608815,
+    "start_epoch_ms": 1790888835022,
+    "requested_start_epoch_ms": 1790888834840,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/74GJs7Toc6",
+    "server_file": null
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "gas_volume",
+    "sha256": "591e9bc53c37cdfb788af097e459ea13a6a4319b615cf7a425102a62d8e84d7b",
+    "bytes": 475561,
+    "start_epoch_ms": 1790889099249,
+    "requested_start_epoch_ms": 1790889099072,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/kSFbBF1prE",
+    "server_file": null
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "shafts_256",
+    "sha256": "aabb4a7f31dc7702af08f9c76f40c895ad21ffb4b768a59ad72b2084dd0c19fb",
+    "bytes": 625337,
+    "start_epoch_ms": 1790889363375,
+    "requested_start_epoch_ms": 1790889363181,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/6lVuaRwUmH",
+    "server_file": null
+  },
+  {
+    "stage": "baseline-updated",
+    "scenario": "ships_16",
+    "sha256": "0854f212bc886ce8e6c12f49f6791b8faef3559c05b3a3fd600ec7f695ec93bf",
+    "bytes": 788309,
+    "start_epoch_ms": 1790889627750,
+    "requested_start_epoch_ms": 1790889627383,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/SlHxKXDpjE",
+    "server_file": null
   }
 ]
