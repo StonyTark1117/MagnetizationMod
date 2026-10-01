@@ -196,14 +196,18 @@ public final class SableBridge {
      * unregistered sub-level.</b> {@link FieldApplicator} guards against
      * phantoms (invalid mass, zero mass, UUID not resolvable) before calling.
      */
-    public static void applyLocalImpulse(
+    public static void applyLocalImpulse(final ServerSubLevel subLevel, final Vector3d pointLocal, final Vector3d forceLocal) {
+        tryApplyLocalImpulse(subLevel, pointLocal, forceLocal);
+    }
+
+    private static boolean tryApplyLocalImpulse(
             final ServerSubLevel subLevel,
             final Vector3d pointLocal,
             final Vector3d forceLocal
     ) {
         // Re-check phantom conditions defensively — caller filters but races
         // are possible if a sub-level is removed between query and apply.
-        if (subLevel.getMassTracker().isInvalid() || subLevel.getMassTracker().getMass() <= 0.0) return;
+        if (subLevel.getMassTracker().isInvalid() || subLevel.getMassTracker().getMass() <= 0.0) return false;
 
         // Display-only entry: surfaces the force in Sable's gizmo.
         final QueuedForceGroup group = subLevel.getOrCreateQueuedForceGroup(ForceGroups.MAGNETIC_FORCE.get());
@@ -217,9 +221,9 @@ public final class SableBridge {
             handle = RigidBodyHandle.of(subLevel);
         } catch (final Throwable t) {
             warnThrottled("applyLocalImpulse:handleOf", t, subLevel);
-            return;
+            return false;
         }
-        if (handle == null) return;
+        if (handle == null) return false;
         final Vector3d dvLocal = new Vector3d(forceLocal.x * scale, forceLocal.y * scale, forceLocal.z * scale);
 
         // Torque from an off-center impulse: τ = r × F where r = pointLocal − COM.
@@ -238,7 +242,7 @@ public final class SableBridge {
         subLevel.getMassTracker().getInverseInertiaTensor().transform(torque, dOmegaLocal);
         dOmegaLocal.mul(TICK_DT_SECONDS);
 
-        if (dvLocal.lengthSquared() < 1.0e-8 && dOmegaLocal.lengthSquared() < 1.0e-10) return;
+        if (dvLocal.lengthSquared() < 1.0e-8 && dOmegaLocal.lengthSquared() < 1.0e-10) return false;
 
         // Sable's getLinearVelocity / getAngularVelocity return GLOBAL (world)
         // velocities, and addLinearAndAngularVelocity is their counterpart — it
@@ -257,11 +261,13 @@ public final class SableBridge {
 
         try {
             handle.addLinearAndAngularVelocity(dvWorld, dOmegaWorld);
+            return true;
         } catch (final Throwable t) {
             // Java-side exceptions (e.g. NPE in handle internals) — log and
             // continue. Native Rapier panics will still abort, which is why
             // FieldApplicator filters out phantom sub-levels upstream.
             warnThrottled("applyLocalImpulse:addVelocity", t, subLevel);
+            return false;
         }
     }
 
@@ -346,10 +352,14 @@ public final class SableBridge {
             final Vec3 worldPoint,
             final Vec3 worldImpulse
     ) {
+        tryApplyWorldImpulse(subLevel, worldPoint, worldImpulse);
+    }
+
+    public static boolean tryApplyWorldImpulse(final ServerSubLevel subLevel, final Vec3 worldPoint, final Vec3 worldImpulse) {
         final Pose3dc pose = subLevel.logicalPose();
         final Vec3 localPointVec = pose.transformPositionInverse(worldPoint);
         final Vec3 localImpulseVec = pose.transformNormalInverse(worldImpulse);
-        applyLocalImpulse(
+        return tryApplyLocalImpulse(
                 subLevel,
                 new Vector3d(localPointVec.x, localPointVec.y, localPointVec.z),
                 new Vector3d(localImpulseVec.x, localImpulseVec.y, localImpulseVec.z)

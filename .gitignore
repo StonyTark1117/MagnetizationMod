@@ -69,6 +69,8 @@ run-magnetics-workaround-client/
 /run-ui-audit-server
 /run-ui-audit-client
 
+/run-magnetic-engineering-audit-*/
+
 /run-aircraft-audit-server
 
 tools/__pycache__/

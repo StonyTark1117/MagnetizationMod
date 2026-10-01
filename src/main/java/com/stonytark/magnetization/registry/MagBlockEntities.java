@@ -20,6 +20,10 @@ public final class MagBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Magnetization.MOD_ID);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity>> MAGNETIC_SHAFT =
+            REGISTER.register("magnetic_shaft", () -> BlockEntityType.Builder
+                    .of(com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity::new, MagBlocks.MAGNETIC_SHAFT.get(), MagBlocks.SAMARIUM_COBALT_MAGNETIC_SHAFT.get(), MagBlocks.NEODYMIUM_MAGNETIC_SHAFT.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =
             REGISTER.register("electromagnet", () -> BlockEntityType.Builder
                     .of(ElectromagnetBlockEntity::new, MagBlocks.ELECTROMAGNET.get())

@@ -309,6 +309,19 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | COMMON | content.hematiteGolemEnabled | boolean | true | Allow Hematite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops their field dampening. |
 | COMMON | content.titanomagnetiteGolemEnabled | boolean | true | Allow Titanomagnetite Golems to be built or spawned from creative eggs. Disabling this keeps existing golems in-world but stops field capture and emission. |
 | COMMON | content.magneticSwitchRange | number | 8; 1-64 | How far the Magnetic Switch scans for a Sable ship/contraption to derive its redstone output strength. Default 8 blocks. Larger ranges let one switch cover a hangar; smaller ranges force tight placement. |
+| COMMON | content.dockTolerance | number | 1.5; 0.1-16.0 | — |
+| COMMON | content.dockHysteresis | number | 0.5; 0.05-4.0 | Extra distance allowed before a present/settled dock deactivates. |
+| COMMON | content.dockSpeed | number | 0.1; 0.001-10.0 | — |
+| COMMON | content.dockSpin | number | 0.1; 0.001-10.0 | — |
+| COMMON | content.dockDwellTicks | number | 20; 1-1200 | Continuous stable ticks before a dock reports settled. |
+
+## Magneticshafts
+
+| Scope | Key | Type | Default / range | Description |
+|---|---|---|---|---|
+| SERVER | magneticShafts.ferromagneticRange | number | 4; 1-64 | — |
+| SERVER | magneticShafts.samariumCobaltRange | number | 8; 1-64 | — |
+| SERVER | magneticShafts.neodymiumRange | number | 16; 1-64 | — |
 
 ## Items
 

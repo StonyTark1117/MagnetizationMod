@@ -291,6 +291,9 @@ public final class MagCreativeTab {
                         accept(output, MagItems.ELECTROMAGNET);
                         accept(output, MagItems.DIPOLE_ELECTROMAGNET);
                         accept(output, MagItems.KINETIC_ELECTROMAGNET);
+                        accept(output, MagItems.MAGNETIC_SHAFT);
+                        accept(output, MagItems.SAMARIUM_COBALT_MAGNETIC_SHAFT);
+                        accept(output, MagItems.NEODYMIUM_MAGNETIC_SHAFT);
                         accept(output, MagItems.MAGNETIC_ANCHOR);
                         accept(output, MagItems.REPULSOR_COIL);
                         accept(output, MagItems.TRACTOR_BEAM);

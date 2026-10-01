@@ -63,6 +63,15 @@ public final class PonderSceneCatalog {
             generic("homopolar_motor", "Drive a Homopolar Motor",
                     "Install a magnet and connect the Create shaft; output scales with the installed magnet.", true,
                     "magnetization:homopolar_motor"),
+            custom("magnetic_shaft", "Transmit rotation through a magnetic field", Kind.MAGNETIC_SHAFT, List.of(
+                    "Drive one shaft mechanically. Nearby receivers match its signed RPM and share the original stress capacity; they cannot retransmit.",
+                    "Ferromagnetic, Samarium-Cobalt and Neodymium shafts reach 4, 8 and 16 blocks by default. Each range is server configurable; materials do not add power.",
+                    "Conflicting speeds stop the receiver. Removing drive, leaving range or unloading the source breaks its link. A newly driven shaft can take over.",
+                    "Goggles show material, range, source links, RPM, load and conflicts. Hold sneak and aim at a ship to inspect applied magnetic forces and force limits."),
+                    "magnetization:magnetic_shaft", "magnetization:samarium_cobalt_magnetic_shaft", "magnetization:neodymium_magnetic_shaft"),
+            generic("docking_signals", "Read a dock with redstone",
+                    "Sneak-use an anchor with an empty hand, then sneak-use a switch to link it. Use the switch to choose present, settled, lost or distance output. Goggles explain the state.", false,
+                    "magnetization:magnetic_switch", "magnetization:magnetic_anchor"),
             generic("structural_inducer", "Launch a Structure",
                     "Power the inducer, point it with a wrench, and set its scan range before launching the structure ahead.",
                     true, "magnetization:structural_inducer"),
@@ -113,6 +122,7 @@ public final class PonderSceneCatalog {
 
     public enum Kind {
         GENERIC,
+        MAGNETIC_SHAFT,
         TOKAMAK,
         FUSION_PANEL,
         RAILGUN,

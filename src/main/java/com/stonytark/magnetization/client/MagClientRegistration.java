@@ -227,6 +227,7 @@ public final class MagClientRegistration {
     public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(MagBlockEntities.TRACTOR_BEAM.get(), BeamEmitterRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.KINETIC_ELECTROMAGNET.get(), KineticElectromagnetRenderer::new);
+        event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_SHAFT.get(), MagneticShaftRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_EXCAVATOR.get(), ExcavatorPreviewRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.MAGNETIC_ITEM_FRAME.get(), MagneticItemFrameRenderer::new);
         event.registerBlockEntityRenderer(MagBlockEntities.ELECTROLYZER.get(),

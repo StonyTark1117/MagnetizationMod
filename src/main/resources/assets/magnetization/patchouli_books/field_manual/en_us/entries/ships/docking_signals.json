@@ -1,0 +1,19 @@
+{
+  "name": "book.magnetization.entry.docking_signals.name",
+  "icon": "magnetization:magnetic_switch",
+  "category": "magnetization:ships",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.docking_signals.page_1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.docking_signals.page_2"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.docking_signals.page_3"
+    }
+  ]
+}

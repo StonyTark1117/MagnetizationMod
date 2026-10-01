@@ -36,6 +36,10 @@ public final class MagItemTooltips {
         m.put(MagItems.ELECTROMAGNET.get(),         "tooltip.magnetization.electromagnet.use");
         m.put(MagItems.DIPOLE_ELECTROMAGNET.get(),  "tooltip.magnetization.dipole_electromagnet.use");
         m.put(MagItems.KINETIC_ELECTROMAGNET.get(), "tooltip.magnetization.kinetic_electromagnet.use");
+        for (final var shaft : new Item[]{MagItems.MAGNETIC_SHAFT.get(),
+                MagItems.SAMARIUM_COBALT_MAGNETIC_SHAFT.get(), MagItems.NEODYMIUM_MAGNETIC_SHAFT.get()}) {
+            m.put(shaft, "tooltip.magnetization.magnetic_shaft.use");
+        }
         m.put(MagItems.MAGNETIC_ANCHOR.get(),       "tooltip.magnetization.magnetic_anchor.use");
         m.put(MagItems.REPULSOR_COIL.get(),         "tooltip.magnetization.repulsor_coil.use");
         m.put(MagItems.TRACTOR_BEAM.get(),          "tooltip.magnetization.tractor_beam.use");

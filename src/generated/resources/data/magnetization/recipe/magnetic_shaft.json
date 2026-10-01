@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:lodestone_core"
+    },
+    "P": {
+      "tag": "c:plates/magnetic_alloy"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " P ",
+    "SCS",
+    " P "
+  ],
+  "result": {
+    "count": 2,
+    "id": "magnetization:magnetic_shaft"
+  }
+}

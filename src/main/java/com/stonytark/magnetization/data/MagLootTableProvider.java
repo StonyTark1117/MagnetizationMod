@@ -62,6 +62,9 @@ public final class MagLootTableProvider {
             // Plain dropSelf — every emitter, magnet, switch, and storage block.
             dropSelf(MagBlocks.ELECTROMAGNET.get());
             dropSelf(MagBlocks.KINETIC_ELECTROMAGNET.get());
+            dropSelf(MagBlocks.MAGNETIC_SHAFT.get());
+            dropSelf(MagBlocks.SAMARIUM_COBALT_MAGNETIC_SHAFT.get());
+            dropSelf(MagBlocks.NEODYMIUM_MAGNETIC_SHAFT.get());
             dropSelf(MagBlocks.MAGNETIC_ANCHOR.get());
             dropSelf(MagBlocks.REPULSOR_COIL.get());
             dropSelf(MagBlocks.TRACTOR_BEAM.get());

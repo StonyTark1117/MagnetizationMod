@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:sintered_samarium_cobalt"
+    },
+    "P": {
+      "item": "magnetization:samarium_cobalt_plate"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " P ",
+    "SCS",
+    " P "
+  ],
+  "result": {
+    "count": 2,
+    "id": "magnetization:samarium_cobalt_magnetic_shaft"
+  }
+}

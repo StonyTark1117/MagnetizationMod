@@ -143,6 +143,22 @@ public final class MagRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_core", has(core))
                 .save(out, id("magnetic_excavator"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_SHAFT.get(), 2)
+                .pattern(" P ").pattern("SCS").pattern(" P ")
+                .define('P', magneticPlate).define('C', core).define('S', com.simibubi.create.AllBlocks.SHAFT.get())
+                .unlockedBy("has_core", has(core)).save(out, id("magnetic_shaft"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.SAMARIUM_COBALT_MAGNETIC_SHAFT.get(), 2)
+                .pattern(" P ").pattern("SCS").pattern(" P ")
+                .define('P', MagItems.SAMARIUM_COBALT_PLATE.get()).define('C', MagItems.SINTERED_SAMARIUM_COBALT.get())
+                .define('S', com.simibubi.create.AllBlocks.SHAFT.get())
+                .unlockedBy("has_material", has(MagItems.SINTERED_SAMARIUM_COBALT.get())).save(out, id("samarium_cobalt_magnetic_shaft"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.NEODYMIUM_MAGNETIC_SHAFT.get(), 2)
+                .pattern(" P ").pattern("SCS").pattern(" P ")
+                .define('P', MagItems.NEODYMIUM_ALLOY_PLATE.get()).define('C', MagItems.SINTERED_NEODYMIUM.get())
+                .define('S', com.simibubi.create.AllBlocks.SHAFT.get())
+                .unlockedBy("has_material", has(MagItems.SINTERED_NEODYMIUM.get())).save(out, id("neodymium_magnetic_shaft"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, MagBlocks.MAGNETIC_SWITCH.get())
                 .pattern("PRP").pattern("PCP").pattern("SSS")
                 .define('P', magneticPlate).define('R', Ingredient.of(C_DUSTS_REDSTONE))

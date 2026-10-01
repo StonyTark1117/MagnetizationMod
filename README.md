@@ -240,6 +240,26 @@ While goggles are worn, additional world overlays appear:
 - **Inverter connectors**: each Polarity Inverter face-adjacent to an active emitter draws a gold connector segment between them. Two inverters showing two segments confirm cancel-out.
 - **Excavator column preview**: the cells that *would* be pulled next cycle are outlined in a polarity-tinted wireframe along the emitter's FACING.
 
+### Inspect applied forces
+
+Wear Create Engineer's Goggles, aim at a ship within 64 blocks, and hold sneak. The inspection panel reports the previous completed server tick's applied magnetic force, turning torque, source count and force-cap limiting. Cyan arrows show individual applied contributions, orange arrows show capped requests, and green/gold arrows above the hull show combined force and torque direction. Arrow length is compressed for readability; the numeric readout gives the actual values. Release sneak to leave inspection. The Field Compass is unchanged.
+
+### Dock signals
+
+Sneak-use a Magnetic Anchor with an empty hand to select it, then sneak-use a Magnetic Switch within 64 blocks to link it. Normal empty-hand use cycles proximity, target present, settled, target lost and analog distance modes. Proximity retains the original nearest-ship scan; linked modes follow only the anchor's bound ship. The switch emits redstone directly and supplies the same 0–15 value to a comparator.
+
+Settled requires the target hull to remain within the docking tolerance and below relative speed/spin limits for a continuous dwell. Measurements account for both ships' translation and rotation, so a moving dock works too. Separate release thresholds prevent flicker. Target lost activates only after that bound ship was observed in range. Goggles show the output mode, signal, link and reason a dock has not settled; anchors also show their bound target and docking reason.
+
+### Magnetic Shaft
+
+A mechanically driven Magnetic Shaft transmits its signed RPM to eligible shafts within a configurable spherical radius (4, 8 or 16 blocks by material). Receivers power their attached Create machinery using the source's existing stress network: their combined load consumes the original capacity. Received rotation cannot retransmit, multiply capacity or keep a loop running after its independent drive stops.
+
+Each receiving mechanical network selects one source and keeps it while valid. Conflicting available speeds or directions stop that receiving network with a goggles conflict indication; independent drives retain their own rotation. Attaching an independent drive makes a receiver a source. Removing a drive, leaving range, breaking a shaft or unloading the source ends that connection, and nearby shafts can take over. Coupling does not force chunks or apply attraction to ships, players or items.
+
+The material progression matches permanent magnets: **Ferromagnetic / WEAK / 4 blocks**, **Samarium–Cobalt / MEDIUM / 8 blocks**, and **Neodymium / STRONG / 16 blocks**. Each has an independent server setting under `magneticShafts` (`ferromagneticRange`, `samariumCobaltRange`, `neodymiumRange`, 1–64 blocks). The source's material sets reach; any variant can receive. Copper triple rings, broad cobalt collars and a ribbed neodymium cage distinguish them by geometry and finish. Rare-earth variants use the corresponding alloy plates and sintered magnetic material around two Create shafts. Connections update every four ticks.
+
+Goggles show Source, Receiving, Idle, Conflict or Overstressed, material/range, signed RPM, shared load/capacity and source position. Active sources have a radius overlay and receivers have connection lines. Craft two Magnetic Shafts from two Create shafts, two Magnetic Plates and one Lodestone Core; the Field Manual and Ponder describe operation.
+
 ## Configuration
 
 The built-in Mods → Magnetization → Config screen and the generated TOML files are
