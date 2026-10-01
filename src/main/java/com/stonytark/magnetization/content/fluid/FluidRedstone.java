@@ -50,6 +50,7 @@ public final class FluidRedstone {
         final List<BlockPos> cells = new ArrayList<>(), written = new ArrayList<>();
         final it.unimi.dsi.fastutil.ints.IntArrayList external = new it.unimi.dsi.fastutil.ints.IntArrayList();
         final it.unimi.dsi.fastutil.ints.IntArrayList edges = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        final BlockPos.MutableBlockPos neighbor = new BlockPos.MutableBlockPos();
         final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states =
                 new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
         Scratch() { indices.defaultReturnValue(-1); }
@@ -105,6 +106,7 @@ public final class FluidRedstone {
     private static final class ReadCache {
         private final Level level;
         private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states;
+        private final BlockPos.MutableBlockPos directNeighbor = new BlockPos.MutableBlockPos();
         private ReadCache(final Level level, final Scratch scratch) {
             this.level = level; this.states = scratch.states;
         }
@@ -121,20 +123,11 @@ public final class FluidRedstone {
             if (!state.shouldCheckWeakPower(level, pos, direction)) return weak;
             int direct = 0;
             for (final Direction d : DIRECTIONS) {
-                final BlockPos neighbor = pos.relative(d);
-                direct = Math.max(direct, state(neighbor).getDirectSignal(level, neighbor, d));
+                directNeighbor.setWithOffset(pos, d);
+                direct = Math.max(direct, state(directNeighbor).getDirectSignal(level, directNeighbor, d));
                 if (direct >= 15) break;
             }
             return Math.max(weak, direct);
-        }
-        private int externalSignal(final BlockPos pos) {
-            int max = 0;
-            for (final Direction d : DIRECTIONS) {
-                final BlockPos neighbor = pos.relative(d);
-                final BlockState state = state(neighbor);
-                if (!isConductor(state)) max = Math.max(max, signal(state, neighbor, d));
-            }
-            return max;
         }
     }
 
@@ -162,18 +155,27 @@ public final class FluidRedstone {
             for (int cursor = 0; cursor < queue.size() && cursor < MAX_NETWORK; cursor++) {
                 final BlockPos p = BlockPos.of(queue.getLong(cursor));
                 cells.add(p);
-                external.add(reads.externalSignal(p));
+                int externalPower = 0;
                 for (final Direction d : DIRECTIONS) {
-                    final BlockPos np = p.relative(d);
+                    final BlockPos np = scratch.neighbor.setWithOffset(p, d);
                     final long key = np.asLong();
                     int index = indices.get(key);
-                    if (index < 0 && isConductor(reads.state(np))) {
-                        index = queue.size();
-                        indices.put(key, index);
-                        queue.add(key);
+                    // An indexed cell is already known to be a conductor in this
+                    // read-only pass. Discover edges and inputs together rather
+                    // than looking up/classifying all six neighbors twice.
+                    if (index < 0) {
+                        final BlockState neighbor = reads.state(np);
+                        if (isConductor(neighbor)) {
+                            index = queue.size();
+                            indices.put(key, index);
+                            queue.add(key);
+                        } else {
+                            externalPower = Math.max(externalPower, reads.signal(neighbor, np, d));
+                        }
                     }
                     edges.add(index);
                 }
+                external.add(externalPower);
             }
             final int[] power = FluidSignalSolver.solve(external.toIntArray(), edges.toIntArray());
 
