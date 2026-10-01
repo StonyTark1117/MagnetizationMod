@@ -76,13 +76,11 @@ public final class MagPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerScenes(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
-        final PonderSceneRegistrationHelper<Block> blocks =
-                helper.withKeyFunction(BuiltInRegistries.BLOCK::getKey);
 
         int coreRegistered = 0;
         int optionalRegistered = 0;
         for (final PonderSceneCatalog.Scene definition : PonderSceneCatalog.coreScenes()) {
-            if (registerScene(blocks, definition)) coreRegistered++;
+            if (registerScene(helper, definition)) coreRegistered++;
         }
 
         for (final PonderSceneCatalog.Scene definition : PonderSceneCatalog.optionalScenes()) {
@@ -91,18 +89,17 @@ public final class MagPonderPlugin implements PonderPlugin {
                 case COPYCATS -> com.stonytark.magnetization.config.MagConfig.copycatsCompatEnabled();
                 default -> true;
             };
-            if (enabled && registerScene(blocks, definition)) optionalRegistered++;
+            if (enabled && registerScene(helper, definition)) optionalRegistered++;
         }
         LOGGER.info("Registered {} core and {} optional Magnetization Ponder scenes",
                 coreRegistered, optionalRegistered);
     }
 
-    private static boolean registerScene(final PonderSceneRegistrationHelper<Block> blocks,
+    private static boolean registerScene(final PonderSceneRegistrationHelper<ResourceLocation> helper,
                                          final PonderSceneCatalog.Scene definition) {
-        final List<Block> targets = definition.targets().stream()
+        final List<ResourceLocation> targets = definition.targets().stream()
                 .map(ResourceLocation::parse)
-                .map(BuiltInRegistries.BLOCK::getOptional)
-                .flatMap(java.util.Optional::stream)
+                .filter(BuiltInRegistries.ITEM::containsKey)
                 .toList();
         if (targets.size() != definition.targets().size()) {
             if (definition.kind() == PonderSceneCatalog.Kind.STEAM_RAILS
@@ -115,14 +112,20 @@ public final class MagPonderPlugin implements PonderPlugin {
             }
             return false;
         }
-        blocks.forComponents(targets.toArray(Block[]::new))
-                .addStoryBoard(SCHEMATIC, storyBoard(definition, targets.getFirst()));
+        helper.forComponents(targets.toArray(ResourceLocation[]::new))
+                .addStoryBoard(SCHEMATIC, storyBoard(definition, BuiltInRegistries.BLOCK.get(targets.getFirst())));
         return true;
     }
 
     private static PonderStoryBoard storyBoard(final PonderSceneCatalog.Scene definition,
                                                 final Block primaryTarget) {
         return switch (definition.kind()) {
+            case MAGNETIC_BASICS -> (scene, util) -> MagneticWorkflowScenes.basics(scene, util, definition);
+            case EXCAVATOR -> (scene, util) -> MagneticWorkflowScenes.excavator(scene, util, definition);
+            case REPULSOR_TRANSPORT -> (scene, util) -> MagneticWorkflowScenes.transport(scene, util, definition);
+            case MR_FLUID_BRIDGE -> (scene, util) -> MaterialControlPonderScenes.mrFluidBridge(scene, util, definition);
+            case FIELD_STRENGTH_CONTROL -> (scene, util) -> MaterialControlPonderScenes.fieldStrength(scene, util, definition);
+            case MAGNETIZING_EQUIPMENT -> (scene, util) -> MaterialControlPonderScenes.equipment(scene, util, definition);
             case TOKAMAK -> (scene, util) -> tokamakRing(scene, util, definition);
             case FUSION_PANEL -> (scene, util) -> fusionPanel(scene, util, definition);
             case RAILGUN -> (scene, util) -> railgunPair(scene, util, definition);

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.889Z" hostname="Hades" time="0.045">
+  <properties/>
+  <testcase name="blockEntityExtractionIsDisabledByDefault()" classname="com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest" time="0.044"/>
+  <testcase name="blockEntityExtractionRequiresExplicitOptIn()" classname="com.stonytark.magnetization.content.excavator.MagneticExcavatorSafetyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

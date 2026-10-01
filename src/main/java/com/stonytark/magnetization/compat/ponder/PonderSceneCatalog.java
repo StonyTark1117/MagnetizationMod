@@ -13,6 +13,50 @@ import java.util.List;
 public final class PonderSceneCatalog {
 
     private static final List<Scene> CORE_SCENES = List.of(
+            custom("magnetic_basics", "Understand fields and ship polarity", Kind.MAGNETIC_BASICS, List.of(
+                    "Blue marks a NORTH ship. A NORTH Permanent Magnet repels it; the moving hull illustrates the force direction.",
+                    "Right-click the Permanent Magnet to flip it SOUTH. Opposite poles attract the NORTH ship toward the magnet.",
+                    "Reset the magnet to NORTH. One face-adjacent Polarity Inverter flips its field to SOUTH.",
+                    "A second adjacent inverter cancels the first. The fixed magnet now emits NORTH again.",
+                    "One inverter anywhere aboard changes this ship to SOUTH. The NORTH world magnet attracts it.",
+                    "A second onboard inverter restores NORTH. Ship polarity follows the parity of all onboard inverters.",
+                    "Mounted magnets add susceptibility, not ship polarity. Flip the onboard magnet: the ship remains NORTH."),
+                    "magnetization:permanent_magnet", "magnetization:electromagnet", "magnetization:kinetic_electromagnet", "magnetization:polarity_inverter"),
+            custom("magnetic_excavator", "Operate the Excavator", Kind.EXCAVATOR, List.of(
+                    "Place the Excavator in the world and wrench its active face toward the ore. This downward scan cone contains two ore blocks.",
+                    "Open the GUI to set strength, scan range and concurrent pulls. These settings stay within the server limits.",
+                    "Power it with external redstone or a redstone item in its internal slot. The slotted item is not consumed.",
+                    "Each ore travels as its own moving block. The animation illustrates separate pulls; excavated terrain is consumed.",
+                    "Arrival drops enter an adjacent inventory first. This barrel shows two Raw Iron drops; leftovers become dropped items.",
+                    "Immune, protected or unbreakable blocks stop tunneling. Block entities are skipped by default."),
+                    "magnetization:magnetic_excavator"),
+            custom("repulsor_transport", "Convey and brake a magnetic ship", Kind.REPULSOR_TRANSPORT, List.of(
+                    "Power the upward-facing world coils with redstone. Their cones repel an ordinary NORTH ship upward.",
+                    "Right-click each coil with a Vector Core to install it. Open the GUI and choose EAST: conveyor thrust is perpendicular to UP.",
+                    "The moving hull illustrates travel along the powered coils. Added conveyor thrust has a configurable speed limit.",
+                    "Over the copper pad, eddy-current drag opposes motion. The slowing hull illustrates Lenz braking, not attraction."),
+                    "magnetization:repulsor_coil", "magnetization:vector_core", "minecraft:copper_block"),
+            custom("mr_fluid_bridge", "Build a switchable MR Fluid bridge", Kind.MR_FLUID_BRIDGE, List.of(
+                    "Pour MR Fluid over a temporary floor between the banks. With no redstone or magnetic field, the source spreads into flowing cells.",
+                    "Apply redstone to harden the fluid, then remove the temporary floor. The rigid cells form a walkable bridge and still conduct redstone.",
+                    "Add a nearby magnet, then remove redstone. The magnetic field keeps the bridge rigid on its own.",
+                    "Remove the magnet too. With both activations gone, original sources return and the fluid flows again. Flowing cells do not become extra sources."),
+                    "magnetization:mr_fluid_bucket"),
+            custom("field_strength_control", "Balance field strength", Kind.FIELD_STRENGTH_CONTROL, List.of(
+                    "This Samarium-Cobalt magnet starts at MEDIUM. The examples use the default enabled Halbach bonus.",
+                    "One face-adjacent magnet with the same pole adds one tier: MEDIUM becomes STRONG.",
+                    "Two aligned neighbors still give only one bonus tier. The field remains STRONG.",
+                    "Three aligned neighbors give two bonus tiers: EXTREME. Four through six give the same bonus; EXTREME is the ceiling.",
+                    "Remove the aligned neighbors to return to the base MEDIUM field before adding dampeners.",
+                    "One face-adjacent Hematite block lowers MEDIUM to WEAK. Each additional touching face lowers another tier.",
+                    "A second Hematite block lowers WEAK to NONE: complete suppression. Dampeners must touch the emitter, not just each other."),
+                    "magnetization:hematite_block", "magnetization:permanent_magnet"),
+            custom("magnetizing_equipment", "Stamp equipment polarity", Kind.MAGNETIZING_EQUIPMENT, List.of(
+                    "Open an Electromagnet and put metal equipment in its magnetizing slot. N, S and Clear act on that item, not on the emitter pole.",
+                    "Choose N and equip the helmet. The NORTH magnet repels the NORTH-stamped wearer; an opposite SOUTH field attracts them.",
+                    "Choose S and equip it again. The same NORTH field now attracts the SOUTH-stamped wearer. The arrows illustrate the response.",
+                    "Choose Clear to remove the stamp. Metal armor still contributes susceptibility; without other stamps the wearer defaults to NORTH. Clear does not make metal nonmagnetic."),
+                    "magnetization:electromagnet", "magnetization:kinetic_electromagnet"),
             custom("tokamak_ring", "Build a solid-core Tokamak", Kind.TOKAMAK, List.of(
                             "Fill the ring interior with Reactor Cores. This 5x5 reactor uses 16 coils and a solid 3x3 interior of 9 cores.",
                             "Insert a Deuterium Cell in the master core. The gold marker represents shared FE output from a perimeter coil. This size runs at 3x capacity, generation, and output.",
@@ -132,6 +176,12 @@ public final class PonderSceneCatalog {
     }
 
     public enum Kind {
+        MAGNETIC_BASICS,
+        EXCAVATOR,
+        REPULSOR_TRANSPORT,
+        MR_FLUID_BRIDGE,
+        FIELD_STRENGTH_CONTROL,
+        MAGNETIZING_EQUIPMENT,
         MACHINE,
         GENERIC,
         MAGNETIC_SHAFT,

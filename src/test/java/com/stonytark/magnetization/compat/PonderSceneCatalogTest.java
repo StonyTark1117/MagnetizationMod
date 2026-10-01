@@ -29,16 +29,19 @@ class PonderSceneCatalogTest {
         assertEquals(scenes.size(), scenes.stream().map(PonderSceneCatalog.Scene::id).distinct().count(),
                 "Ponder scene IDs must be unique");
 
-        final Set<String> targets = new HashSet<>();
         for (final PonderSceneCatalog.Scene scene : scenes) {
+            final Set<String> targets = new HashSet<>();
             assertFalse(scene.title().isBlank(), () -> scene.id() + " has no title");
             assertFalse(scene.targets().isEmpty(), () -> scene.id() + " has no targets");
             if (scene.kind() == PonderSceneCatalog.Kind.MACHINE) {
                 assertEquals(3, scene.texts().size(), () -> scene.id() + " needs setup and two demonstration stages");
             }
             for (final String target : scene.targets()) {
-                assertTrue(targets.add(target), () -> target + " has more than one Ponder scene definition");
-                if (target.startsWith("magnetization:")) assertLocalBlockstate(target);
+                assertTrue(targets.add(target), () -> target + " is duplicated within a Ponder scene definition");
+                if (target.equals("magnetization:mr_fluid_bucket")) {
+                    assertTrue(Files.isRegularFile(MAIN.resolve("assets/magnetization/models/item/mr_fluid_bucket.json"))
+                            || Files.isRegularFile(GENERATED.resolve("assets/magnetization/models/item/mr_fluid_bucket.json")));
+                } else if (target.startsWith("magnetization:")) assertLocalTarget(target);
             }
         }
     }
@@ -60,10 +63,10 @@ class PonderSceneCatalogTest {
             }
         }
 
-        assertEquals(20, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
-        assertEquals(54, PonderSceneCatalog.allScenes().stream()
+        assertEquals(26, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
+        assertEquals(86, PonderSceneCatalog.allScenes().stream()
                 .mapToInt(scene -> scene.texts().size()).sum(), "Unexpected Ponder instruction count");
-        assertEquals(74, expected.size(), "Unexpected Ponder localization count");
+        assertEquals(112, expected.size(), "Unexpected Ponder localization count");
         expected.forEach((key, value) -> {
             assertTrue(lang.has(key), () -> "Missing Ponder localization: " + key);
             assertEquals(value, lang.get(key).getAsString(), () -> "Stale Ponder localization: " + key);
@@ -82,6 +85,12 @@ class PonderSceneCatalogTest {
                 .flatMap(scene -> scene.targets().stream())
                 .collect(Collectors.toSet());
         assertTrue(targets.containsAll(Set.of(
+                "magnetization:permanent_magnet",
+                "magnetization:polarity_inverter",
+                "magnetization:magnetic_excavator",
+                "magnetization:repulsor_coil",
+                "magnetization:vector_core",
+                "minecraft:copper_block",
                 "magnetization:tokamak_controller",
                 "magnetization:tokamak_coil",
                 "magnetization:fusion_thruster",
@@ -110,10 +119,12 @@ class PonderSceneCatalogTest {
                         .collect(Collectors.toSet()));
     }
 
-    private static void assertLocalBlockstate(final String target) {
+    private static void assertLocalTarget(final String target) {
         final String path = target.substring("magnetization:".length());
-        final String relative = "assets/magnetization/blockstates/" + path + ".json";
-        assertTrue(Files.isRegularFile(MAIN.resolve(relative)) || Files.isRegularFile(GENERATED.resolve(relative)),
-                () -> "Ponder target has no shipping blockstate: " + target);
+        final String block = "assets/magnetization/blockstates/" + path + ".json";
+        final String item = "assets/magnetization/models/item/" + path + ".json";
+        assertTrue(Files.isRegularFile(MAIN.resolve(block)) || Files.isRegularFile(GENERATED.resolve(block))
+                        || Files.isRegularFile(MAIN.resolve(item)) || Files.isRegularFile(GENERATED.resolve(item)),
+                () -> "Ponder target has no shipping blockstate or item model: " + target);
     }
 }

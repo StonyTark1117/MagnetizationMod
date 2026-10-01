@@ -1,0 +1,12 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+
+> Task :smokeGameTest
+runGameTestServer: using tmpfs runtime /tmp/magnetization-run-gametest-runtime.qg6Zpq
+[01Oct2026 12:40:55.055] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 173 GAME TESTS COMPLETE IN 22.59 s ======================
+[01Oct2026 12:40:55.055] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 173 required tests passed :)
+runGameTestServer: assertions passed; terminating only its lingering process group
+
+BUILD SUCCESSFUL in 57s
+1 actionable task: 1 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html

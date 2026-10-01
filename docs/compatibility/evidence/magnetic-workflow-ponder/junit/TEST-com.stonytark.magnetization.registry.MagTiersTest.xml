@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.registry.MagTiersTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:16.253Z" hostname="Hades" time="0.008">
+  <properties/>
+  <testcase name="maghemiteAttackStrictlyLessThanMagnetite()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.002"/>
+  <testcase name="maghemiteSpeedStrictlyLessThanMagnetite()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.0"/>
+  <testcase name="ferromagneticStrictlyExceedsMagnetiteOnAllStats()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.0"/>
+  <testcase name="pinExactStatsForRegressionCatch()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.0"/>
+  <testcase name="magnetiteIsIronTierMaghemiteIsStoneTier()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.004"/>
+  <testcase name="additionalMaterialTiersKeepTheirIntendedProgression()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.0"/>
+  <testcase name="maghemiteUsesStrictlyLessThanMagnetite()" classname="com.stonytark.magnetization.registry.MagTiersTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

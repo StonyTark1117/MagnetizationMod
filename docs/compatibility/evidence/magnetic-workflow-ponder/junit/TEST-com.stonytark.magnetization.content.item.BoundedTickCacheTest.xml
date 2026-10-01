@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.item.BoundedTickCacheTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:15.374Z" hostname="Hades" time="0.011">
+  <properties/>
+  <testcase name="concurrentCallersCannotExceedTheHardLimit()" classname="com.stonytark.magnetization.content.item.BoundedTickCacheTest" time="0.009"/>
+  <testcase name="rejectsAnInvalidMaximumSize()" classname="com.stonytark.magnetization.content.item.BoundedTickCacheTest" time="0.0"/>
+  <testcase name="evictsTheLeastRecentlyUsedOriginAtTheHardLimit()" classname="com.stonytark.magnetization.content.item.BoundedTickCacheTest" time="0.001"/>
+  <testcase name="replacesBucketsWithoutGrowingAndRejectsLateOlderWrites()" classname="com.stonytark.magnetization.content.item.BoundedTickCacheTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

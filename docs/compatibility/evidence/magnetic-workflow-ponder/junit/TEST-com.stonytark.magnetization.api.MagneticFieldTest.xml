@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.api.MagneticFieldTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.760Z" hostname="Hades" time="0.008">
+  <properties/>
+  <testcase name="fromNbtReturnsNullForNullTag()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="rangeFallsBackToStrengthRangeWhenCustomZero()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.001"/>
+  <testcase name="omnidirectionalShapeSurvivesRoundtrip()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.002"/>
+  <testcase name="fromNbtReturnsNullForMalformedTag()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.001"/>
+  <testcase name="withCopiersPreserveCustomRange()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="legacyConstructorSetsCustomRangeToZero()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="nbtRoundtripPreservesAllFields()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.001"/>
+  <testcase name="forceFallsBackToTheTierWithoutAnOverride()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="toNbtOmitsForceOverrideWhenZeroAndRoundTripsWhenSet()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="directionalShapeSurvivesRoundtrip()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="toNbtOmitsCustomRangeWhenZero()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="steppedStrengthScalesTheOverrideProportionally()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="rangeUsesCustomRangeWhenPositive()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="forceOverrideWinsOverTheTier()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.0"/>
+  <testcase name="conicalShapeSurvivesRoundtrip()" classname="com.stonytark.magnetization.api.MagneticFieldTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

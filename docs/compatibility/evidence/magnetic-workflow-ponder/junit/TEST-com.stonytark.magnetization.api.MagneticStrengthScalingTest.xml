@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.api.MagneticStrengthScalingTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.770Z" hostname="Hades" time="0.005">
+  <properties/>
+  <testcase name="zeroAndNegativeSignalsAreDead()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.0"/>
+  <testcase name="midpointLandsBetweenMediumAndStrong()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.001"/>
+  <testcase name="rampIsGeometricNotLinear()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.0"/>
+  <testcase name="rampNeverLeavesTheTierRange()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.0"/>
+  <testcase name="signalsAboveFifteenClampToTheTop()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.0"/>
+  <testcase name="endpointsMatchTheTierLadder()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.001"/>
+  <testcase name="rampIsStrictlyIncreasing()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.0"/>
+  <testcase name="nearestForForceMapsBackOntoTheLadder()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.001"/>
+  <testcase name="everySignalMapsToALiveDisplayTier()" classname="com.stonytark.magnetization.api.MagneticStrengthScalingTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

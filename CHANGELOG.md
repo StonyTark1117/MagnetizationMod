@@ -2,6 +2,8 @@
 
 ## Unreleased — Magnetic engineering
 
+- Add six native Ponder tutorials: magnetic basics and ship polarity, Magnetic Excavator, repulsor transport with Vector Core and copper braking, switchable MR Fluid bridges, field-strength control, and equipment magnetization. Register item targets as well as blocks, including Vector Core and the MR Fluid bucket. Validate each new instruction and every advertised target in native playback.
+
 - Add Create-goggles ship inspection using server-calculated applied forces, turning torque, individual sources and shared force-cap limiting. Keep the Field Compass unchanged.
 - Add anchor-linked Magnetic Switch outputs for target presence, settled state, target loss and analog distance, with dwell, hysteresis and motion measured relative to moving docks. Preserve proximity mode and show docking reasons through goggles.
 - Add distinct Ferromagnetic, Samarium–Cobalt and Neodymium Magnetic Shafts with independent server-configurable ranges: nearby receivers share an independently driven source's signed RPM and original Create stress capacity, without retransmission or self-sustaining loops. Support drive handoff, visible conflicts, range loss and source removal; include an original rotor model, recipe, loot and guides.

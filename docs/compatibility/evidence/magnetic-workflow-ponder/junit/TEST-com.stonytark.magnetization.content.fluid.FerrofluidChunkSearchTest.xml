@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-01T19:44:14.934Z" hostname="Hades" time="0.251">
+  <properties/>
+  <testcase name="preservesBlockBasedBoundsAcrossChunkEdgesAndNegativeCoordinates()" classname="com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest" time="0.199"/>
+  <testcase name="rejectsRadiiThatWouldChangeBlockBasedCoverage()" classname="com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest" time="0.002"/>
+  <testcase name="tenThousandSourcesExpandFortyNineChunksExactlyOnce()" classname="com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest" time="0.043"/>
+  <testcase name="preservesSeparatedPoolsAndIgnoresHeightOnlyForCandidateDiscovery()" classname="com.stonytark.magnetization.content.fluid.FerrofluidChunkSearchTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
