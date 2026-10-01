@@ -1,0 +1,57 @@
+[
+  {
+    "stage": "baseline",
+    "scenario": "bulk_ferrofluid_setup",
+    "sha256": "89073a3ba8e15ea43c33192f0760f00824552d9a4c4f0fd4bd1952899309ab3b",
+    "bytes": 583424,
+    "start_epoch_ms": 1790885737163,
+    "requested_start_epoch_ms": 1790885736942,
+    "ticks": 2095,
+    "url": "https://spark.lucko.me/25gdlxni99",
+    "server_file": null
+  },
+  {
+    "stage": "baseline",
+    "scenario": "dense_external",
+    "sha256": "2a76b0c8ef893e71346a45058e0627d6fa6cf56068ad8077c100b38b1737009e",
+    "bytes": 604427,
+    "start_epoch_ms": 1790884709999,
+    "requested_start_epoch_ms": 1790884709723,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/5N6gK46rEo",
+    "server_file": null
+  },
+  {
+    "stage": "baseline",
+    "scenario": "gas_volume",
+    "sha256": "a91eeb9a3582c3a54e2b8f461c91977cd242b46f2e39657bb4186871f798710b",
+    "bytes": 647752,
+    "start_epoch_ms": 1790884974493,
+    "requested_start_epoch_ms": 1790884974289,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/7kKEMU48gC",
+    "server_file": null
+  },
+  {
+    "stage": "baseline",
+    "scenario": "shafts_256",
+    "sha256": "046ddf8718377525cbede554f488422d6748cd8b738b42c0b354f20403f4cc9a",
+    "bytes": 654350,
+    "start_epoch_ms": 1790885238449,
+    "requested_start_epoch_ms": 1790885238227,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/cuaISRRE0n",
+    "server_file": null
+  },
+  {
+    "stage": "baseline",
+    "scenario": "ships_16",
+    "sha256": "a2e699888abae3530dea5cb79eb8aee9ad33f436c052b2076c18ec9195fe3c95",
+    "bytes": 786636,
+    "start_epoch_ms": 1790885502622,
+    "requested_start_epoch_ms": 1790885502403,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/kQJb7s7oGw",
+    "server_file": null
+  }
+]

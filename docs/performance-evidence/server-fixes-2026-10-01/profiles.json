@@ -1,0 +1,1013 @@
+[
+  {
+    "stage": "baseline",
+    "scenario": "bulk_ferrofluid_setup",
+    "measurement_kind": "bulk setup followed by steady state",
+    "url": "https://spark.lucko.me/25gdlxni99",
+    "server_file": null,
+    "ticks": 2095,
+    "duration_ms": 120035,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 7.129355608591886,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidBlock.neighborChanged",
+        13412.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidBlock.onPlace",
+        1320.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        56.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        36.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        28.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000734d53caf680.accept",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.AircraftNetworkAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.AeMeteoriteRuntimeAudit.beforeTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FluidRedstone.externalSignal",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.028801695748841012,
+        "cpuSystem": 0.03516615431588978,
+        "tps": 20.000064509541406,
+        "msptMedian": 3.138755,
+        "msptMax": 113.240563,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885797171",
+        "endTime": "1790885857168",
+        "duration": 59997,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 895,
+        "cpuProcess": 0.09667007014138732,
+        "cpuSystem": 0.1032588622955715,
+        "tps": 15.946793648652006,
+        "msptMedian": 3.001447,
+        "msptMax": 15304.940163,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885737164",
+        "endTime": "1790885797171",
+        "duration": 60007,
+        "players": 0,
+        "entities": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 3.5438980533333333,
+      "max": 113.240563,
+      "min": 1.823585,
+      "median": 3.138755,
+      "percentile95": 5.372386
+    },
+    "player_count": 0,
+    "before_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    },
+    "after_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    }
+  },
+  {
+    "stage": "baseline",
+    "scenario": "dense_external",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/5N6gK46rEo",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180091,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 1.3566666666666667,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        4768.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000734d53caf680.accept",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.physics.FieldApplicator.forceAtPrecomputed",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.030774606156053257,
+        "cpuSystem": 0.033361421770337234,
+        "tps": 20.000036330732662,
+        "msptMedian": 4.216862,
+        "msptMax": 20.144163,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790884830006",
+        "endTime": "1790884890002",
+        "duration": 59996,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.030331455863541527,
+        "cpuSystem": 0.033744695909407145,
+        "tps": 19.999996333000674,
+        "msptMedian": 4.219702,
+        "msptMax": 27.840073,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790884709999",
+        "endTime": "1790884770005",
+        "duration": 60006,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03946499651461874,
+        "cpuSystem": 0.04292718420863311,
+        "tps": 19.99990866375045,
+        "msptMedian": 4.205154,
+        "msptMax": 43.115129,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790884770004",
+        "endTime": "1790884830006",
+        "duration": 60002,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 4.3756717675,
+      "max": 20.144163,
+      "min": 3.455748,
+      "median": 4.216864,
+      "percentile95": 5.596116
+    },
+    "player_count": 0,
+    "before_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    },
+    "after_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    }
+  },
+  {
+    "stage": "baseline",
+    "scenario": "gas_volume",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/7kKEMU48gC",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180037,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 3.2511111111111113,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.tick",
+        11496.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000734d53caf680.accept",
+        56.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        28.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.physics.inspection.FieldInspectionTracker.tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.AeMeteoriteRuntimeAudit.beforeTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GasFlowingFluid$DenseSource.spread",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.neighborChanged",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.CompatibilityUiAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.HudUiAudit.tick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03673406115971963,
+        "cpuSystem": 0.04086602940777749,
+        "tps": 20.000053609143695,
+        "msptMedian": 5.93465,
+        "msptMax": 25.522355,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790884974494",
+        "endTime": "1790885034501",
+        "duration": 60007,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.04573782609796378,
+        "cpuSystem": 0.04834399405390723,
+        "tps": 19.99994753547096,
+        "msptMedian": 5.96878,
+        "msptMax": 34.010537,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885034501",
+        "endTime": "1790885094499",
+        "duration": 59998,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.036322924076660955,
+        "cpuSystem": 0.05366861460358386,
+        "tps": 20.00004329476039,
+        "msptMedian": 5.971061,
+        "msptMax": 40.99241,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885094499",
+        "endTime": "1790885154498",
+        "duration": 59999,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 6.149360091666667,
+      "max": 40.99241,
+      "min": 5.344441,
+      "median": 5.971061,
+      "percentile95": 7.376898
+    },
+    "player_count": 0,
+    "before_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    },
+    "after_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0
+    }
+  },
+  {
+    "stage": "baseline",
+    "scenario": "shafts_256",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/cuaISRRE0n",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180034,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 0.9455555555555556,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        3208.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000734d53caf680.accept",
+        56.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        28.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.HudUiAudit.tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.AircraftNetworkAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork$$Lambda.0x0000734d5713eaf0.test",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.028721017952923176,
+        "cpuSystem": 0.03348234333125076,
+        "tps": 20.000055408820174,
+        "msptMedian": 3.313614,
+        "msptMax": 13.531083,
+        "entities": 8,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885298455",
+        "endTime": "1790885358455",
+        "duration": 60000,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.02914482112434488,
+        "cpuSystem": 0.036148535895343864,
+        "tps": 19.999944703486218,
+        "msptMedian": 3.302901,
+        "msptMax": 58.59261,
+        "entities": 8,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885358455",
+        "endTime": "1790885418454",
+        "duration": 59999,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03946617564755696,
+        "cpuSystem": 0.04253084055911783,
+        "tps": 19.999943945157106,
+        "msptMedian": 3.374638,
+        "msptMax": 12.064392,
+        "entities": 8,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790885238450",
+        "endTime": "1790885298456",
+        "duration": 60006,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 4.183600728333333,
+      "max": 58.59261,
+      "min": 2.095538,
+      "median": 3.302901,
+      "percentile95": 6.913141
+    },
+    "player_count": 0,
+    "before_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0,
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 1243
+    },
+    "after_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0,
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 5282
+    }
+  },
+  {
+    "stage": "baseline",
+    "scenario": "ships_16",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/kQJb7s7oGw",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180035,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 1.9188888888888889,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.anchor.MagneticAnchorBlock$$Lambda.0x0000734d5715ac48.tick",
+        4712.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        1596.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        440.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x0000734d53caf680.accept",
+        44.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        28.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.physics.inspection.FieldInspectionTracker.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlock$$Lambda.0x0000734d5715b2a8.tick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.05575495930505719,
+        "cpuSystem": 0.06110806779344859,
+        "tps": 20.000119785717427,
+        "msptMedian": 8.339602,
+        "msptMax": 65.609034,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790885502623",
+        "endTime": "1790885562628",
+        "duration": 60005,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.05669651917959569,
+        "cpuSystem": 0.08027606790030976,
+        "tps": 19.999983517013586,
+        "msptMedian": 8.327133,
+        "msptMax": 89.438003,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790885562628",
+        "endTime": "1790885622629",
+        "duration": 60001,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.06442718027571394,
+        "cpuSystem": 0.07075543477716803,
+        "tps": 19.99998979067188,
+        "msptMedian": 8.341323,
+        "msptMax": 131.038805,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790885622629",
+        "endTime": "1790885682627",
+        "duration": 59998,
+        "players": 0,
+        "entities": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 8.610382090833333,
+      "max": 131.038805,
+      "min": 6.524816,
+      "median": 8.341323,
+      "percentile95": 10.701166
+    },
+    "player_count": 0,
+    "before_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0,
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 11,
+      "loaded_shafts": 32,
+      "scaling_ticks": 1244
+    },
+    "after_counts": {
+      "observed_ticks": 0,
+      "creep_passes": 0,
+      "fluid_sources": 0,
+      "source_chunks": 0,
+      "creep_cells": 0,
+      "native_chunk_attempts": 0,
+      "external_chunk_attempts": 0,
+      "entities_inspected": 0,
+      "eligible_entities": 0,
+      "targets_discovered": 0,
+      "targets_scheduled": 0,
+      "target_regions": 0,
+      "emitter_candidates": 0,
+      "field_evaluations": 0,
+      "fields_applied": 0,
+      "mr_equipment_skips": 0,
+      "mr_field_searches": 0,
+      "target_details": 0,
+      "adapter_method_lookups": 0,
+      "field_bounds_rejections": 0,
+      "ship_field_preparations": 0,
+      "adapter_energy_reads": 0,
+      "recession_setups": 0,
+      "emitter_buckets_inspected": 0,
+      "native_point_buckets": 0,
+      "external_point_buckets": 0,
+      "mr_fluid_field_searches": 0,
+      "gallium_entity_queries": 0,
+      "gallium_field_searches": 0,
+      "fluid_target_queries": 0,
+      "fluid_field_applications": 0,
+      "fluid_field_candidates": 0,
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 9,
+      "loaded_shafts": 32,
+      "scaling_ticks": 5286
+    }
+  }
+]

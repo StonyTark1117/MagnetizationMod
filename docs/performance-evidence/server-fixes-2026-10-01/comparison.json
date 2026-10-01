@@ -1,0 +1,202 @@
+[
+  {
+    "scenario": "empty_start",
+    "baseline_median_mspt": 1.81,
+    "candidate_median_mspt": 1.79,
+    "change_percent": -1.104972375690605,
+    "baseline_samples_mspt": [
+      1.86,
+      1.75,
+      1.88,
+      1.81,
+      1.79
+    ],
+    "candidate_samples_mspt": [
+      1.79,
+      1.82,
+      1.76,
+      1.74,
+      1.96
+    ]
+  },
+  {
+    "scenario": "block_item_control",
+    "baseline_median_mspt": 1.77,
+    "candidate_median_mspt": 1.74,
+    "change_percent": -1.6949152542372947,
+    "baseline_samples_mspt": [
+      1.77,
+      2.12,
+      1.77,
+      1.78,
+      1.77
+    ],
+    "candidate_samples_mspt": [
+      1.74,
+      1.7,
+      1.78,
+      1.78,
+      1.67
+    ]
+  },
+  {
+    "scenario": "active_emitters",
+    "baseline_median_mspt": 2.55,
+    "candidate_median_mspt": 2.57,
+    "change_percent": 0.7843137254901933,
+    "baseline_samples_mspt": [
+      2.55,
+      2.55,
+      2.59,
+      2.53,
+      2.55
+    ],
+    "candidate_samples_mspt": [
+      2.57,
+      2.45,
+      2.76,
+      2.41,
+      2.69
+    ]
+  },
+  {
+    "scenario": "dense_external",
+    "baseline_median_mspt": 2.99,
+    "candidate_median_mspt": 2.97,
+    "change_percent": -0.6688963210702337,
+    "baseline_samples_mspt": [
+      3.23,
+      2.97,
+      2.99,
+      3.24,
+      2.88
+    ],
+    "candidate_samples_mspt": [
+      2.94,
+      3.26,
+      2.95,
+      3.14,
+      2.97
+    ]
+  },
+  {
+    "scenario": "gas_volume",
+    "baseline_median_mspt": 5.42,
+    "candidate_median_mspt": 3.91,
+    "change_percent": -27.85977859778598,
+    "baseline_samples_mspt": [
+      5.42,
+      5.42,
+      5.42,
+      5.49,
+      5.38
+    ],
+    "candidate_samples_mspt": [
+      4.03,
+      3.91,
+      4.0,
+      3.85,
+      3.89
+    ]
+  },
+  {
+    "scenario": "gas_stable",
+    "baseline_median_mspt": 1.64,
+    "candidate_median_mspt": 1.64,
+    "change_percent": 0.0,
+    "baseline_samples_mspt": [
+      1.68,
+      1.62,
+      1.64,
+      1.61,
+      1.99
+    ],
+    "candidate_samples_mspt": [
+      1.67,
+      1.55,
+      1.59,
+      1.64,
+      1.73
+    ]
+  },
+  {
+    "scenario": "ferrofluid_external",
+    "baseline_median_mspt": 2.05,
+    "candidate_median_mspt": 1.98,
+    "change_percent": -3.4146341463414553,
+    "baseline_samples_mspt": [
+      2.05,
+      2.32,
+      2.01,
+      2.07,
+      2.04
+    ],
+    "candidate_samples_mspt": [
+      1.95,
+      2.05,
+      1.97,
+      1.98,
+      2.01
+    ]
+  },
+  {
+    "scenario": "shafts_256",
+    "baseline_median_mspt": 2.68,
+    "candidate_median_mspt": 2.64,
+    "change_percent": -1.4925373134328401,
+    "baseline_samples_mspt": [
+      2.75,
+      3.0,
+      2.68,
+      2.66,
+      2.68
+    ],
+    "candidate_samples_mspt": [
+      2.64,
+      2.63,
+      3.01,
+      2.59,
+      3.02
+    ]
+  },
+  {
+    "scenario": "ships_16",
+    "baseline_median_mspt": 7.44,
+    "candidate_median_mspt": 6.99,
+    "change_percent": -6.048387096774199,
+    "baseline_samples_mspt": [
+      7.47,
+      7.44,
+      7.68,
+      7.43,
+      7.36
+    ],
+    "candidate_samples_mspt": [
+      7.14,
+      6.87,
+      7.12,
+      6.91,
+      6.99
+    ]
+  },
+  {
+    "scenario": "empty_end",
+    "baseline_median_mspt": 1.7,
+    "candidate_median_mspt": 1.65,
+    "change_percent": -2.941176470588236,
+    "baseline_samples_mspt": [
+      1.7,
+      1.89,
+      1.7,
+      1.68,
+      1.71
+    ],
+    "candidate_samples_mspt": [
+      1.97,
+      1.63,
+      1.71,
+      1.63,
+      1.65
+    ]
+  }
+]
