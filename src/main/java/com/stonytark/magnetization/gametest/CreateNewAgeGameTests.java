@@ -201,6 +201,56 @@ public final class CreateNewAgeGameTests {
         }
     }
 
+    @GameTest(template = "empty", timeoutTicks = 350, batch = "nativeGeneratorCoilCraftingConsumesPermanentMagnets")
+    public static void nativeGeneratorCoilCraftingConsumesPermanentMagnets(GameTestHelper h) {
+        NativeRecipeProductionTestSupport.mechanicalCraft(h, "create_new_age_generator_coil_from_permanent_magnets", "create_new_age:generator_coil");
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "cnaNativeCrafting")
+    public static void nativeCraftingTableConsumesPermanentMagnet(GameTestHelper h) {
+        NativeRecipeProductionTestSupport.vanillaCraft(h, "create_new_age_basic_motor_from_permanent_magnet", "create_new_age:basic_motor");
+    }
+
+
+    @GameTest(template = "empty", timeoutTicks = 300, batch = "cnaNativeEnergising")
+    public static void nativeEnergiserConsumesEnergyAndProducesPermanentMagnet(GameTestHelper h) {
+        var depotPos = new BlockPos(2, 40, 2);
+        NativeCompatTestSupport.forceTicking(h, depotPos, depotPos.above(2));
+        var depot = NativeCompatTestSupport.place(h, depotPos, "create:depot");
+        var energiser = NativeCompatTestSupport.place(h, depotPos.above(2), "create_new_age:basic_energiser");
+        var energy = NativeCompatTestSupport.call(energiser, "getEnergyStorage");
+        long firstCharge = (long) NativeCompatTestSupport.call(energy, "internalInsert",
+                new Class<?>[]{long.class, boolean.class}, 12000L, false);
+        h.assertTrue(firstCharge == 10000L, "Native basic energiser capacity changed: " + firstCharge);
+        long[] supplied = {firstCharge};
+        var inventory = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                h.absolutePos(depotPos), null);
+        h.assertTrue(inventory != null && inventory.insertItem(0,
+                NativeCompatTestSupport.stack("magnetization:ferromagnetic_ingot"), false).isEmpty(),
+                "Native energiser depot rejected input");
+        h.onEachTick(() -> {
+            if (((net.minecraft.world.level.block.entity.BlockEntity) energiser).isRemoved()) return;
+            ((com.simibubi.create.content.kinetics.base.KineticBlockEntity) energiser).setSpeed(256);
+            var behaviour = NativeCompatTestSupport.field(energiser, "energisingBehaviour");
+            if ((long) NativeCompatTestSupport.field(behaviour, "needed") > 0 && supplied[0] < 12000L)
+                supplied[0] += (long) NativeCompatTestSupport.call(energy, "internalInsert",
+                        new Class<?>[]{long.class, boolean.class}, 12000L - supplied[0], false);
+        });
+        h.succeedWhen(() -> {
+            h.assertTrue(java.util.stream.IntStream.range(0, inventory.getSlots()).anyMatch(slot -> inventory.getStackInSlot(slot)
+                    .is(NativeCompatTestSupport.stack("magnetization:permanent_magnet").getItem())),
+                    "Native energiser did not produce Permanent Magnet; energy=" + NativeCompatTestSupport.call(energy, "getStoredEnergy")
+                            + " speed=" + ((com.simibubi.create.content.kinetics.base.KineticBlockEntity) energiser).getSpeed()
+                            + " input=" + inventory.getStackInSlot(0)
+                            + " charged=" + NativeCompatTestSupport.field(NativeCompatTestSupport.field(energiser, "energisingBehaviour"), "charged")
+                            + " needed=" + NativeCompatTestSupport.field(NativeCompatTestSupport.field(energiser, "energisingBehaviour"), "needed"));
+            h.assertTrue(supplied[0] == 12000L && (long) NativeCompatTestSupport.call(energy, "getStoredEnergy") == 0,
+                    "Native energising did not consume exactly 12000 energy");
+            h.setBlock(depotPos.above(2), Blocks.AIR);
+            h.setBlock(depotPos, Blocks.AIR);
+        });
+    }
+
     private static Block block(final String namespace, final String path) {
         return BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(namespace, path));
     }

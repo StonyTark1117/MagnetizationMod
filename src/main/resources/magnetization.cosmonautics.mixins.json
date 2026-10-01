@@ -4,7 +4,8 @@
   "package": "com.stonytark.magnetization.mixin.compat",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "CosmonauticsMissingDimensionGuardMixin"
+    "CosmonauticsMissingDimensionGuardMixin",
+    "CosmonauticsMissingSpacePhysicsGuardMixin"
   ],
   "client": [],
   "server": [],

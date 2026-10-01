@@ -184,6 +184,22 @@ public final class ImmersiveEngineeringGameTests {
         helper.succeed();
     }
 
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "ieNativeTesla")
+    public static void nativeTeslaAttackConsumesFeAndStampsEquipment(GameTestHelper helper) {
+        NativeElectricalDamageTestSupport.tesla(helper, "immersiveengineering");
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "ieNativeRazor")
+    public static void nativeRazorCollisionStampsEquipment(GameTestHelper helper) {
+        NativeElectricalDamageTestSupport.razor(helper, false);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40, batch = "ieNativeRazorShock")
+    public static void nativePoweredRazorStampsEquipment(GameTestHelper helper) {
+        NativeElectricalDamageTestSupport.razor(helper, true);
+    }
+
     private static IEnergyStorage energy(final GameTestHelper helper, final BlockPos relative) {
         final BlockPos absolute = helper.absolutePos(relative);
         IEnergyStorage storage = helper.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, absolute, null);

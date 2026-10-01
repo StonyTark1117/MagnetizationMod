@@ -1,0 +1,177 @@
+[01Oct2026 04:46:23.878] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.44, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.252, --fml.neoFormVersion, 20240808.144430]
+[01Oct2026 04:46:23.880] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Arch Linux OpenJDK 64-Bit Server VM 21.0.12.1+1
+[01Oct2026 04:46:23.883] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Arch Linux; OS Linux arch amd64 version 7.2.7-zen1-1-zen
+[01Oct2026 04:46:23.938] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[01Oct2026 04:46:23.960] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/braydon/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[01Oct2026 04:46:24.277] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:Registrate.MC1._21._67. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/com.tterrag.registrate/Registrate/MC1.21-1.3.0+67/66ddc4cd56472fea1ea1a24182901e6c92a51c0a/Registrate-MC1.21-1.3.0+67.jar
+[01Oct2026 04:46:24.277] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: veil. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/foundry.veil/veil-neoforge-1.21.1/4.3.2/3d4056e31dd8a06e35901c3b82210c3d471e1e48/veil-neoforge-1.21.1-4.3.2.jar
+[01Oct2026 04:46:24.278] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[01Oct2026 04:46:24.278] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.engine-room.flywheel/flywheel-neoforge-1.21.1/1.0.6/a943872ad0bdd4458d818d8d7dc123fb250eb744/flywheel-neoforge-1.21.1-1.0.6.jar
+[01Oct2026 04:46:24.278] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+[01Oct2026 04:46:24.278] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/net.createmod.ponder/ponder-neoforge/1.0.87+mc1.21.1/7783eeff0389f8c6003457133b9dd98e903266c6/ponder-neoforge-1.0.87+mc1.21.1.jar
+[01Oct2026 04:46:24.278] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 6 dependencies adding them to mods collection
+[01Oct2026 04:46:24.279] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Create 6.0.11 (create)
+		Create Aeronautics 1.3.0 (aeronautics)
+		Create Simulated 1.3.0 (simulated)
+		Flywheel 1.0.6 (flywheel)
+		Immersive Engineering 12.4.2-194 (immersiveengineering)
+		Magnetization 1.4.6 (magnetization)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Ponder 1.0.87+mc1.21.1 (ponder)
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+		TerraBlender 4.1.0.8 (terrablender)
+		Veil 4.3.2 (veil)
+[01Oct2026 04:46:24.776] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[01Oct2026 04:46:24.801] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[01Oct2026 04:46:24.853] [main/WARN] [mixin/]: Reference map 'simulated.refmap.json' for simulated.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:46:24.872] [main/WARN] [mixin/]: Reference map 'aeronautics.refmap.json' for aeronautics.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:46:24.879] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:46:24.886] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:46:24.888] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:46:24.893] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:46:24.893] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender_neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:46:25.063] [main/WARN] [mixin/]: Error loading class: mezz/jei/library/plugins/vanilla/ingredients/ItemStackListFactory (java.lang.ClassNotFoundException: mezz.jei.library.plugins.vanilla.ingredients.ItemStackListFactory)
+[01Oct2026 04:46:25.316] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/CCCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.CCCopycatBlockEntity)
+[01Oct2026 04:46:25.317] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/multistate/MultiStateCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.multistate.MultiStateCopycatBlockEntity)
+[01Oct2026 04:46:25.318] [main/WARN] [mixin/]: Error loading class: com/jesz/createdieselgenerators/content/tools/ChemicalSprayerProjectileEntity (java.lang.ClassNotFoundException: com.jesz.createdieselgenerators.content.tools.ChemicalSprayerProjectileEntity)
+[01Oct2026 04:46:25.319] [main/WARN] [mixin/]: Error loading class: qouteall/imm_ptl/core/compat/sable_integration/IPSableBridge (java.lang.ClassNotFoundException: qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge)
+[01Oct2026 04:46:25.320] [main/WARN] [mixin/]: Error loading class: com/github/alexmodguy/alexscaves/server/block/blockentity/TeslaBulbBlockEntity (java.lang.ClassNotFoundException: com.github.alexmodguy.alexscaves.server.block.blockentity.TeslaBulbBlockEntity)
+[01Oct2026 04:46:25.321] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/orbit/DeepSpaceData (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.orbit.DeepSpaceData)
+[01Oct2026 04:46:25.321] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/physics/SpaceTransitionHandler (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.physics.SpaceTransitionHandler)
+[01Oct2026 04:46:25.352] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[01Oct2026 04:46:25.442] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[01Oct2026 04:46:29.460] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:46:29.463] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:46:29.466] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:46:29.467] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:46:29.469] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:46:29.508] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[01Oct2026 04:46:29.523] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[01Oct2026 04:46:29.531] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.11 initializing! Commit hash: 87b3c6a65fd00c023a07b37b0353144bc7e6a5bf
+[01Oct2026 04:46:30.508] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[01Oct2026 04:46:32.247] [Immersive Engineering Contributors Thread/INFO] [immersiveengineering/]: Attempting to download special revolvers from GitHub
+[01Oct2026 04:46:32.281] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:overworld to index 0 for type OVERWORLD
+[01Oct2026 04:46:32.282] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:nether to index 0 for type NETHER
+[01Oct2026 04:46:32.282] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:anomaly_region to index 1 for type OVERWORLD
+[01Oct2026 04:46:32.282] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:petrified_forest_region to index 2 for type OVERWORLD
+[01Oct2026 04:46:32.283] [modloading-sync-worker/INFO] [magnetization/]: Surface rules registered for OVERWORLD category (anomaly + petrified_forest)
+[01Oct2026 04:46:32.350] [NeoForge Version Check/INFO] [net.neoforged.fml.VersionChecker/]: [immersiveengineering] Starting version check at https://raw.githubusercontent.com/BluSunrize/ImmersiveEngineering/1.21.1/changelog.json
+[01Oct2026 04:46:32.363] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[01Oct2026 04:46:32.387] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.codex/worktrees/native-integration-validation/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:46:32.388] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.codex/worktrees/native-integration-validation/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:46:32.439] [main/INFO] [com.simibubi.create.Create/]: Created 157 recipes which will be injected into the game
+[01Oct2026 04:46:32.443] [main/INFO] [com.simibubi.create.Create/]: Created 0 tags which will be injected into the game
+[01Oct2026 04:46:32.448] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [magnetization_sweep, magnetization_immersiveengineering]
+[01Oct2026 04:46:32.666] [NeoForge Version Check/INFO] [net.neoforged.fml.VersionChecker/]: [immersiveengineering] Found status: AHEAD Current: 12.4.2-194 Target: null
+[01Oct2026 04:46:33.382] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 4395 recipes
+[01Oct2026 04:46:33.545] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 3681 advancements
+[01Oct2026 04:46:33.552] [main/INFO] [com.stonytark.magnetization.content.gas.GasExcitationProfiles/]: Loaded 0 gas excitation fluid profile bindings
+[01Oct2026 04:46:34.503] [Server thread/INFO] [terrablender/]: Initialized TerraBlender biomes for level stem minecraft:the_nether
+[01Oct2026 04:46:34.520] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:overworld] using RapierPhysicsPipelineProvider
+[01Oct2026 04:46:34.524] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Using game directory relative Sable Rapier native directory /tmp/magnetization-run-immersive-engineering-gametest-runtime.jJCTCw/.sable/natives
+[01Oct2026 04:46:34.918] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_end] using RapierPhysicsPipelineProvider
+[01Oct2026 04:46:34.948] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_nether] using RapierPhysicsPipelineProvider
+[01Oct2026 04:46:34.960] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[01Oct2026 04:46:34.980] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[01Oct2026 04:46:35.086] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 125 ms
+[01Oct2026 04:46:35.095] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Started game test server
+[01Oct2026 04:46:35.128] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[01Oct2026 04:46:35.139] [Server thread/INFO] [magnetization/]: Stripped 1 recipe(s) producing disabled magnetization content.
+[01Oct2026 04:46:35.171] [Server thread/INFO] [immersiveengineering/]: Couldn't fully analyze 1 magnetization:mr_fluid_horse_armor, missing knowledge for {1 minecraft:iron_horse_armor=1.0}
+[01Oct2026 04:46:35.171] [Server thread/INFO] [immersiveengineering/]: Finished recipe profiler for Arc Recycling, took 32 milliseconds
+[01Oct2026 04:46:35.251] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 10 tests are now running at position 13555489, -59, 12542553!
+[01Oct2026 04:46:35.390] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'ieNativeMetalPress:0' (1 tests)...
+[01Oct2026 04:46:35.457] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [          ]
+[01Oct2026 04:46:35.506] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [          ]
+[01Oct2026 04:46:35.557] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.584] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.602] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.629] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.653] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.665] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_         ]
+[01Oct2026 04:46:35.758] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'defaultBatch:0' (5 tests)...
+[01Oct2026 04:46:35.760] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+         ]
+[01Oct2026 04:46:35.791] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++        ]
+[01Oct2026 04:46:35.842] [Server thread/INFO] [magnetization/compat-audit/]: SWEEP_AUDIT namespaces=[immersiveengineering] resolved=78 unresolved=[]
+[01Oct2026 04:46:35.895] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++_+++    ]
+[01Oct2026 04:46:35.912] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'ieNativeRazor:0' (1 tests)...
+[01Oct2026 04:46:35.967] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++    ]
+[01Oct2026 04:46:35.993] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'ieNativeTesla:0' (1 tests)...
+[01Oct2026 04:46:35.993] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++   ]
+[01Oct2026 04:46:36.005] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++   ]
+[01Oct2026 04:46:36.039] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'ieNativeRazorShock:0' (1 tests)...
+[01Oct2026 04:46:36.151] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++  ]
+[01Oct2026 04:46:36.169] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++  ]
+[01Oct2026 04:46:36.177] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'ieNativeMixer:0' (1 tests)...
+[01Oct2026 04:46:36.186] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++ ]
+[01Oct2026 04:46:36.225] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.241] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.252] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.269] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.279] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.291] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.300] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.309] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.318] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.334] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.341] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.349] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.360] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.374] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.378] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.384] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.396] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.403] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.409] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.415] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.422] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.434] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.440] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.447] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.454] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.464] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.473] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.480] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.490] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.501] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.508] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.512] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.521] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.530] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.537] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.543] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.551] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.562] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.570] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.576] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.580] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.588] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.601] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.611] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.616] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.627] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.643] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++_]
+[01Oct2026 04:46:36.646] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++]
+[01Oct2026 04:46:36.646] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 10 GAME TESTS COMPLETE IN 1.394 s ======================
+[01Oct2026 04:46:36.647] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 10 required tests passed :)
+[01Oct2026 04:46:36.647] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ====================================================
+[01Oct2026 04:46:36.651] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[01Oct2026 04:46:36.651] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[01Oct2026 04:46:36.651] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[01Oct2026 04:46:36.927] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:46:36.927] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:46:36.937] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:46:36.938] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:46:36.940] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:46:36.940] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:46:36.946] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[01Oct2026 04:46:36.946] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[01Oct2026 04:46:36.946] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[01Oct2026 04:46:36.946] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[01Oct2026 04:46:36.953] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Game test server shutting down

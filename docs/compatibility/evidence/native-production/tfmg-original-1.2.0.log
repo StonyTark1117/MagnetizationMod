@@ -1,0 +1,288 @@
+[01Oct2026 04:44:40.544] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.44, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.252, --fml.neoFormVersion, 20240808.144430]
+[01Oct2026 04:44:40.547] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Arch Linux OpenJDK 64-Bit Server VM 21.0.12.1+1
+[01Oct2026 04:44:40.548] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Arch Linux; OS Linux arch amd64 version 7.2.7-zen1-1-zen
+[01Oct2026 04:44:40.607] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[01Oct2026 04:44:40.631] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/braydon/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[01Oct2026 04:44:40.922] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:Registrate.MC1._21._67. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/com.tterrag.registrate/Registrate/MC1.21-1.3.0+67/66ddc4cd56472fea1ea1a24182901e6c92a51c0a/Registrate-MC1.21-1.3.0+67.jar
+[01Oct2026 04:44:40.922] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: veil. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/foundry.veil/veil-neoforge-1.21.1/4.3.2/3d4056e31dd8a06e35901c3b82210c3d471e1e48/veil-neoforge-1.21.1-4.3.2.jar
+[01Oct2026 04:44:40.923] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[01Oct2026 04:44:40.923] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.engine-room.flywheel/flywheel-neoforge-1.21.1/1.0.6/a943872ad0bdd4458d818d8d7dc123fb250eb744/flywheel-neoforge-1.21.1-1.0.6.jar
+[01Oct2026 04:44:40.923] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+[01Oct2026 04:44:40.923] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/net.createmod.ponder/ponder-neoforge/1.0.87+mc1.21.1/7783eeff0389f8c6003457133b9dd98e903266c6/ponder-neoforge-1.0.87+mc1.21.1.jar
+[01Oct2026 04:44:40.923] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 4 dependencies adding them to mods collection
+[01Oct2026 04:44:40.925] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Create 6.0.11 (create)
+		Create Aeronautics 1.3.0 (aeronautics)
+		Create Simulated 1.3.0 (simulated)
+		Create: The Factory Must Grow 1.2.0 (tfmg)
+		Flywheel 1.0.6 (flywheel)
+		Magnetization 1.4.6 (magnetization)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Ponder 1.0.87+mc1.21.1 (ponder)
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+		TerraBlender 4.1.0.8 (terrablender)
+		Veil 4.3.2 (veil)
+[01Oct2026 04:44:41.561] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[01Oct2026 04:44:41.597] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[01Oct2026 04:44:41.656] [main/WARN] [mixin/]: Reference map 'simulated.refmap.json' for simulated.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:41.658] [main/WARN] [mixin/]: Reference map 'aeronautics.refmap.json' for aeronautics.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:41.667] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:41.672] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:44:41.673] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 04:44:41.673] [main/WARN] [mixin/]: Reference map 'tfmg.refmap.json' for tfmg.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:41.680] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:41.682] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender_neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 04:44:42.086] [main/WARN] [mixin/]: Error loading class: mezz/jei/library/plugins/vanilla/ingredients/ItemStackListFactory (java.lang.ClassNotFoundException: mezz.jei.library.plugins.vanilla.ingredients.ItemStackListFactory)
+[01Oct2026 04:44:42.387] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/CCCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.CCCopycatBlockEntity)
+[01Oct2026 04:44:42.389] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/multistate/MultiStateCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.multistate.MultiStateCopycatBlockEntity)
+[01Oct2026 04:44:42.389] [main/WARN] [mixin/]: Error loading class: com/jesz/createdieselgenerators/content/tools/ChemicalSprayerProjectileEntity (java.lang.ClassNotFoundException: com.jesz.createdieselgenerators.content.tools.ChemicalSprayerProjectileEntity)
+[01Oct2026 04:44:42.391] [main/WARN] [mixin/]: Error loading class: qouteall/imm_ptl/core/compat/sable_integration/IPSableBridge (java.lang.ClassNotFoundException: qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge)
+[01Oct2026 04:44:42.395] [main/WARN] [mixin/]: Error loading class: com/github/alexmodguy/alexscaves/server/block/blockentity/TeslaBulbBlockEntity (java.lang.ClassNotFoundException: com.github.alexmodguy.alexscaves.server.block.blockentity.TeslaBulbBlockEntity)
+[01Oct2026 04:44:42.396] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/orbit/DeepSpaceData (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.orbit.DeepSpaceData)
+[01Oct2026 04:44:42.397] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/physics/SpaceTransitionHandler (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.physics.SpaceTransitionHandler)
+[01Oct2026 04:44:42.428] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[01Oct2026 04:44:42.533] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[01Oct2026 04:44:46.731] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:44:46.732] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:44:46.735] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:44:46.736] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 04:44:46.737] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 04:44:46.773] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[01Oct2026 04:44:46.781] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[01Oct2026 04:44:46.793] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.11 initializing! Commit hash: 87b3c6a65fd00c023a07b37b0353144bc7e6a5bf
+[01Oct2026 04:44:47.655] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[01Oct2026 04:44:47.833] [modloading-sync-worker/INFO] [com.drmangotea.tfmg.TFMG/]: [TFMG Remapper] Remapped 0 fluids
+[01Oct2026 04:44:48.482] [modloading-sync-worker/INFO] [com.drmangotea.tfmg.TFMG/]: [TFMG Remapper] Remapped 5 blocks
+[01Oct2026 04:44:48.539] [modloading-sync-worker/INFO] [com.drmangotea.tfmg.TFMG/]: [TFMG Remapper] Remapped 5 items
+[01Oct2026 04:44:49.467] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:overworld to index 0 for type OVERWORLD
+[01Oct2026 04:44:49.468] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:nether to index 0 for type NETHER
+[01Oct2026 04:44:49.468] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:anomaly_region to index 1 for type OVERWORLD
+[01Oct2026 04:44:49.468] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:petrified_forest_region to index 2 for type OVERWORLD
+[01Oct2026 04:44:49.469] [modloading-sync-worker/INFO] [magnetization/]: Surface rules registered for OVERWORLD category (anomaly + petrified_forest)
+[01Oct2026 04:44:49.528] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[01Oct2026 04:44:49.548] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.codex/worktrees/native-integration-validation/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:44:49.549] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/.codex/worktrees/native-integration-validation/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[01Oct2026 04:44:49.606] [main/INFO] [com.simibubi.create.Create/]: Created 157 recipes which will be injected into the game
+[01Oct2026 04:44:49.611] [main/INFO] [com.simibubi.create.Create/]: Created 0 tags which will be injected into the game
+[01Oct2026 04:44:49.614] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [magnetization_tfmg]
+[01Oct2026 04:44:50.557] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 3880 recipes
+[01Oct2026 04:44:50.859] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 3445 advancements
+[01Oct2026 04:44:50.864] [main/INFO] [com.drmangotea.tfmg.TFMG/]: Added 8 Engine Fuel Types
+[01Oct2026 04:44:50.868] [main/INFO] [com.stonytark.magnetization.content.gas.GasExcitationProfiles/]: Loaded 22 gas excitation fluid profile bindings
+[01Oct2026 04:44:51.916] [Server thread/INFO] [terrablender/]: Initialized TerraBlender biomes for level stem minecraft:the_nether
+[01Oct2026 04:44:51.929] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:overworld] using RapierPhysicsPipelineProvider
+[01Oct2026 04:44:51.935] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Using game directory relative Sable Rapier native directory /tmp/magnetization-run-tfmg-gametest-runtime.rR1xz4/.sable/natives
+[01Oct2026 04:44:52.317] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_nether] using RapierPhysicsPipelineProvider
+[01Oct2026 04:44:52.339] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_end] using RapierPhysicsPipelineProvider
+[01Oct2026 04:44:52.360] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[01Oct2026 04:44:52.375] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[01Oct2026 04:44:52.477] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 116 ms
+[01Oct2026 04:44:52.485] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Started game test server
+[01Oct2026 04:44:52.523] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[01Oct2026 04:44:52.528] [Server thread/INFO] [magnetization/]: Stripped 1 recipe(s) producing disabled magnetization content.
+[01Oct2026 04:44:52.602] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: 20 tests are now running at position -10430292, -59, 3133354!
+[01Oct2026 04:44:52.732] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgNativeMotorAssembly:0' (1 tests)...
+[01Oct2026 04:44:52.786] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [                    ]
+[01Oct2026 04:44:52.817] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [                    ]
+[01Oct2026 04:44:52.894] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.905] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.925] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.933] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.947] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.962] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.974] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.984] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:52.991] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.005] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.015] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.023] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.029] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.035] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.045] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.056] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.061] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [_                   ]
+[01Oct2026 04:44:53.140] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'defaultBatch:0' (14 tests)...
+[01Oct2026 04:44:53.156] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+                   ]
+[01Oct2026 04:44:53.188] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+                   ]
+[01Oct2026 04:44:53.227] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgNativeBlasting:0' (1 tests)...
+[01Oct2026 04:44:53.276] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++     ]
+[01Oct2026 04:44:53.299] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.311] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.325] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.343] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.355] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.365] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.371] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.379] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.389] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.396] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.403] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.414] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.428] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.434] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.443] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.453] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.459] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.464] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.471] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.479] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.489] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.496] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.502] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.510] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.520] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.527] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.532] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.536] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.542] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.548] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.552] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.558] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.562] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.566] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.569] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.576] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.580] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.586] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.590] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.595] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.600] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.604] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.609] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.614] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.621] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.626] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.630] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.633] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.638] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.644] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.648] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.653] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.656] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.659] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.663] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.668] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.673] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.679] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.686] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.692] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.697] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.702] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.707] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.713] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.724] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.730] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.734] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.738] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.745] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.753] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.761] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.765] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.770] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.778] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.784] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.790] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.796] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.802] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.805] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.810] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.814] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.820] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.824] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.829] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.834] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.837] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.842] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.848] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.853] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.857] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.860] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.863] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.866] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.869] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.873] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.880] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.886] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.890] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.892] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.896] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.899] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.903] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.905] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.910] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.913] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.919] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.925] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.929] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.932] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.935] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.939] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.944] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.951] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.954] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.957] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++_    ]
+[01Oct2026 04:44:53.964] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgCooling:0' (1 tests)...
+[01Oct2026 04:44:54.023] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++    ]
+[01Oct2026 04:44:54.031] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgPolarizerField:0' (1 tests)...
+[01Oct2026 04:44:54.035] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++   ]
+[01Oct2026 04:44:54.046] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++_  ]
+[01Oct2026 04:44:54.052] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgNativeGeneratorAssembly:0' (1 tests)...
+[01Oct2026 04:44:54.059] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++  ]
+[01Oct2026 04:44:54.072] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.079] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.089] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.093] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.097] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.102] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.106] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.114] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.122] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.127] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.132] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.135] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.140] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.145] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.150] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.156] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.163] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.168] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.173] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.179] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.186] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++_ ]
+[01Oct2026 04:44:54.193] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestRunner/]: Running test batch 'tfmgNativeCasting:0' (1 tests)...
+[01Oct2026 04:44:54.198] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++ ]
+[01Oct2026 04:44:54.204] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.208] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.212] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.217] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.224] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.227] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.230] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.233] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.236] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.240] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.244] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.249] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [+++++++++++++++++++_]
+[01Oct2026 04:44:54.252] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: [++++++++++++++++++++]
+[01Oct2026 04:44:54.254] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 20 GAME TESTS COMPLETE IN 1.650 s ======================
+[01Oct2026 04:44:54.255] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 20 required tests passed :)
+[01Oct2026 04:44:54.255] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ====================================================
+[01Oct2026 04:44:54.258] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[01Oct2026 04:44:54.258] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[01Oct2026 04:44:54.258] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[01Oct2026 04:44:54.483] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:44:54.483] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:overworld
+[01Oct2026 04:44:54.491] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:44:54.491] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[01Oct2026 04:44:54.492] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:44:54.492] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Saving sub-levels for level 'ServerLevel[Test Level]'/minecraft:the_end
+[01Oct2026 04:44:54.497] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[01Oct2026 04:44:54.497] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[01Oct2026 04:44:54.497] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[01Oct2026 04:44:54.498] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[01Oct2026 04:44:54.501] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: Game test server shutting down

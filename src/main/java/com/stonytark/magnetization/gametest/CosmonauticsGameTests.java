@@ -32,6 +32,73 @@ public final class CosmonauticsGameTests {
 
     private CosmonauticsGameTests() {}
 
+    @GameTest(template = "empty", timeoutTicks = 120, batch = "cosmoSourceHydrogen")
+    public static void nativeRocketBurnsSourceHydrogenAndThrusts(GameTestHelper helper) {
+        rocket(helper, MagFluids.HYDROGEN.get());
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 120, batch = "cosmoFlowingHydrogen")
+    public static void nativeRocketBurnsFlowingHydrogenAndThrusts(GameTestHelper helper) {
+        rocket(helper, MagFluids.HYDROGEN_FLOWING.get());
+    }
+
+    private static void rocket(GameTestHelper h, Fluid hydrogen) {
+        final var pos = new net.minecraft.core.BlockPos(2, 40, 2);
+        h.setBlock(pos, NativeCompatTestSupport.block("rocketnautics:rocket_thruster").defaultBlockState()
+                .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.NORTH));
+        final var be = h.getBlockEntity(pos);
+        final var tank = (net.neoforged.neoforge.fluids.capability.templates.FluidTank)
+                NativeCompatTestSupport.field(be, "fuelTank");
+        final var action = net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+        h.assertTrue(tank.fill(new net.neoforged.neoforge.fluids.FluidStack(
+                net.minecraft.world.level.material.Fluids.WATER, 1000), action) == 0,
+                "Native rocket accepted non-fuel water");
+        h.assertTrue(tank.fill(new net.neoforged.neoforge.fluids.FluidStack(hydrogen, 1000), action) == 1000,
+                "Native rocket rejected " + BuiltInRegistries.FLUID.getKey(hydrogen));
+        final var level = h.getLevel();
+        final var anchor = h.absolutePos(pos);
+        final var blocks = new java.util.ArrayList<net.minecraft.core.BlockPos>();
+        blocks.add(anchor);
+        for (int i = 1; i < 6; i++) {
+            blocks.add(anchor.east(i));
+            level.setBlockAndUpdate(anchor.east(i), net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState());
+        }
+        final var ship = dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(level, anchor, blocks,
+                new dev.ryanhcode.sable.companion.math.BoundingBox3i(anchor.getX(), anchor.getY(), anchor.getZ(),
+                        anchor.getX() + 6, anchor.getY() + 1, anchor.getZ() + 1));
+        h.assertTrue(ship != null, "Could not assemble native rocket fixture");
+        NativeCompatTestSupport.cleanup(h, () -> {
+            if (!ship.isRemoved()) dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level)
+                    .removeSubLevel(ship, dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason.REMOVED);
+        });
+        h.runAfterDelay(5, () -> {
+            final var moved = ship.getPlot().getLoadedChunks().stream()
+                    .flatMap(chunk -> chunk.getChunk().getBlockEntities().values().stream())
+                    .filter(entity -> entity.getClass().getName().endsWith("RocketThrusterBlockEntity"))
+                    .findFirst().orElseThrow();
+            final var movedTank = (net.neoforged.neoforge.fluids.capability.templates.FluidTank)
+                    NativeCompatTestSupport.field(moved, "fuelTank");
+            final var handle = dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle.of(ship);
+            h.assertTrue(handle != null && handle.isValid(), "Rocket ship has no live Sable rigid body");
+            final double before = handle.getLinearVelocity(new org.joml.Vector3d()).z();
+            h.runAfterDelay(15, () -> {
+                try {
+                    h.assertTrue(movedTank.getFluidAmount() < 1000, "Native rocket consumed no Hydrogen");
+                    h.assertTrue((boolean) NativeCompatTestSupport.call(moved, "isActive"), "Hydrogen did not ignite");
+                    h.assertTrue((int) NativeCompatTestSupport.call(moved, "getCurrentPower") > 0,
+                            "Hydrogen produced no native thrust power");
+                    double after = handle.getLinearVelocity(new org.joml.Vector3d()).z();
+                    h.assertTrue(after > before + 0.00001d,
+                            "Hydrogen rocket did not accelerate its ship; before=" + before + " after=" + after);
+                    h.succeed();
+                } finally {
+                    dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level).removeSubLevel(ship,
+                            dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason.REMOVED);
+                }
+            });
+        });
+    }
+
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void publishedRuntimeContractIsPresent(final GameTestHelper helper) {
         helper.assertTrue(ModList.get().isLoaded("rocketnautics"),
