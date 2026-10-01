@@ -122,6 +122,16 @@
         1.67
       ]
     },
+    "idle_emitters": {
+      "median_mspt": 1.77,
+      "samples_mspt": [
+        1.77,
+        1.73,
+        1.85,
+        1.81,
+        1.76
+      ]
+    },
     "active_emitters": {
       "median_mspt": 2.57,
       "samples_mspt": [
@@ -132,14 +142,34 @@
         2.69
       ]
     },
-    "dense_external": {
-      "median_mspt": 2.97,
+    "external_fields": {
+      "median_mspt": 2.01,
       "samples_mspt": [
-        2.94,
-        3.26,
-        2.95,
-        3.14,
-        2.97
+        2.03,
+        2.01,
+        1.96,
+        2.0,
+        2.04
+      ]
+    },
+    "railgun_emitters": {
+      "median_mspt": 1.82,
+      "samples_mspt": [
+        1.82,
+        1.83,
+        1.95,
+        1.72,
+        1.76
+      ]
+    },
+    "air_separators": {
+      "median_mspt": 1.7,
+      "samples_mspt": [
+        1.7,
+        1.78,
+        1.7,
+        1.67,
+        1.9
       ]
     },
     "gas_volume": {
@@ -152,14 +182,74 @@
         3.89
       ]
     },
-    "gas_stable": {
-      "median_mspt": 1.64,
+    "mixed_pack": {
+      "median_mspt": 2.08,
       "samples_mspt": [
-        1.67,
-        1.55,
-        1.59,
-        1.64,
-        1.73
+        2.08,
+        1.97,
+        2.08,
+        2.02,
+        2.15
+      ]
+    },
+    "dense_external": {
+      "median_mspt": 2.97,
+      "samples_mspt": [
+        2.94,
+        3.26,
+        2.95,
+        3.14,
+        2.97
+      ]
+    },
+    "equipment_changes": {
+      "median_mspt": 1.78,
+      "samples_mspt": [
+        1.78,
+        1.78,
+        1.72,
+        1.7,
+        1.81
+      ]
+    },
+    "ordinary_player": {
+      "median_mspt": 1.71,
+      "samples_mspt": [
+        1.71,
+        1.73,
+        1.84,
+        1.65,
+        1.67
+      ]
+    },
+    "ordinary_mobs": {
+      "median_mspt": 1.82,
+      "samples_mspt": [
+        1.88,
+        1.82,
+        1.81,
+        1.8,
+        2.01
+      ]
+    },
+    "external_no_targets": {
+      "median_mspt": 1.75,
+      "samples_mspt": [
+        1.75,
+        1.75,
+        1.68,
+        1.69,
+        1.81
+      ]
+    },
+    "ferrofluid_pool": {
+      "median_mspt": 1.84,
+      "samples_mspt": [
+        1.79,
+        1.86,
+        1.84,
+        1.71,
+        1.84
       ]
     },
     "ferrofluid_external": {
@@ -172,6 +262,106 @@
         2.01
       ]
     },
+    "ferrofluid_native": {
+      "median_mspt": 1.92,
+      "samples_mspt": [
+        1.9,
+        1.92,
+        1.97,
+        1.89,
+        1.92
+      ]
+    },
+    "mr_armor": {
+      "median_mspt": 1.73,
+      "samples_mspt": [
+        1.76,
+        1.73,
+        1.68,
+        1.66,
+        1.8
+      ]
+    },
+    "mr_mainhand": {
+      "median_mspt": 1.74,
+      "samples_mspt": [
+        1.72,
+        1.74,
+        2.03,
+        1.75,
+        1.66
+      ]
+    },
+    "mr_offhand": {
+      "median_mspt": 1.77,
+      "samples_mspt": [
+        1.78,
+        1.77,
+        1.75,
+        1.69,
+        1.77
+      ]
+    },
+    "native_queries_control": {
+      "median_mspt": 1.73,
+      "samples_mspt": [
+        1.76,
+        1.74,
+        1.73,
+        1.72,
+        1.73
+      ]
+    },
+    "native_queries_64": {
+      "median_mspt": 1.79,
+      "samples_mspt": [
+        1.82,
+        1.79,
+        2.04,
+        1.77,
+        1.77
+      ]
+    },
+    "native_queries_256": {
+      "median_mspt": 1.86,
+      "samples_mspt": [
+        1.82,
+        1.89,
+        1.82,
+        1.94,
+        1.86
+      ]
+    },
+    "gas_stable": {
+      "median_mspt": 1.64,
+      "samples_mspt": [
+        1.67,
+        1.55,
+        1.59,
+        1.64,
+        1.73
+      ]
+    },
+    "shafts_16": {
+      "median_mspt": 1.8,
+      "samples_mspt": [
+        1.82,
+        1.73,
+        1.81,
+        1.8,
+        1.74
+      ]
+    },
+    "shafts_64": {
+      "median_mspt": 1.97,
+      "samples_mspt": [
+        2.08,
+        1.97,
+        1.93,
+        2.03,
+        1.95
+      ]
+    },
     "shafts_256": {
       "median_mspt": 2.64,
       "samples_mspt": [
@@ -180,6 +370,16 @@
         3.01,
         2.59,
         3.02
+      ]
+    },
+    "ships_4": {
+      "median_mspt": 3.13,
+      "samples_mspt": [
+        3.22,
+        3.09,
+        3.18,
+        3.09,
+        3.13
       ]
     },
     "ships_16": {

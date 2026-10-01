@@ -1,6 +1,8 @@
 [
   {
     "scenario": "empty_start",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 1.81,
     "candidate_median_mspt": 1.79,
     "change_percent": -1.104972375690605,
@@ -21,6 +23,8 @@
   },
   {
     "scenario": "block_item_control",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 1.77,
     "candidate_median_mspt": 1.74,
     "change_percent": -1.6949152542372947,
@@ -41,6 +45,8 @@
   },
   {
     "scenario": "active_emitters",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 2.55,
     "candidate_median_mspt": 2.57,
     "change_percent": 0.7843137254901933,
@@ -61,6 +67,8 @@
   },
   {
     "scenario": "dense_external",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 2.99,
     "candidate_median_mspt": 2.97,
     "change_percent": -0.6688963210702337,
@@ -81,6 +89,8 @@
   },
   {
     "scenario": "gas_volume",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 5.42,
     "candidate_median_mspt": 3.91,
     "change_percent": -27.85977859778598,
@@ -101,6 +111,8 @@
   },
   {
     "scenario": "gas_stable",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 1.64,
     "candidate_median_mspt": 1.64,
     "change_percent": 0.0,
@@ -121,6 +133,8 @@
   },
   {
     "scenario": "ferrofluid_external",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 2.05,
     "candidate_median_mspt": 1.98,
     "change_percent": -3.4146341463414553,
@@ -141,6 +155,8 @@
   },
   {
     "scenario": "shafts_256",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 2.68,
     "candidate_median_mspt": 2.64,
     "change_percent": -1.4925373134328401,
@@ -161,6 +177,8 @@
   },
   {
     "scenario": "ships_16",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 7.44,
     "candidate_median_mspt": 6.99,
     "change_percent": -6.048387096774199,
@@ -181,6 +199,8 @@
   },
   {
     "scenario": "empty_end",
+    "baseline_stage": "baseline",
+    "candidate_stage": "candidate",
     "baseline_median_mspt": 1.7,
     "candidate_median_mspt": 1.65,
     "change_percent": -2.941176470588236,

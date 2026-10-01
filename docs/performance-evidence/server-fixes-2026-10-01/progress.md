@@ -76,3 +76,73 @@ Latest measured progress:
   fluid gameplay assertions, additional20 regression scenarios, and restoration
   remain unverified. All six findings stay in scope; investigate weak/regressed
   paths after profile attribution is available.
+
+Revision after first candidate profiles:
+
+- Candidate v1 (`5e1adb0c`, SHA77e57477…) normal-speed profiles show gas
+  production3.251→2.077ms/tick, shafts0.946→0.717, ships1.919→0.756.
+  Shaft manager itself0.891→0.687; Lenz scan0.438→0.124. Coaster classification
+  no longer appears. Dense fields1.357→1.349 is not a demonstrated gain.
+- Removed ineffective25-cell signal state cache, retaining shared Directions.
+  Added static projectile-type classification to existing per-tick target
+  snapshots so ordinary targets avoid repeated registry lookups per field.
+  Live deflection config/flight checks remain in the actual adapter.
+- Revised production/test changes committed as `0845f4b1`. Build/unit tests pass;
+  core176, CNA20, IE10, Alexs7, CreateAddition7, TFMG20 rerun; Slugterra absent1
+  and focused installed-port projectile1 pass. Unique passing gates total255.
+- Installed Slugterra JAR hashb5e60931… downloaded to ignored build evidence.
+  The old broad suite fails7 tests both with and without the new shortcut.
+  Normalized failure comparison is `slugterra-control.json`; do not call that
+  suite passing. Focused test verifies both actual base projectile protocols,
+  same-tick flight-state changes and ordinary item force.
+- Preserved revised artifact `build/reports/server-fixes-2026-10-01/candidate-v2.jar`,
+  SHA `2e130d1bfd9b02b099d0bff8a5bb968824d3a82c5d2c5fa6fb3768bb42413f53`.
+  Manifest `candidate-v2-build.json` pins source and hash.
+- First candidate runner remains live (exec session63814). It still owns the
+  server. Wait for its CANDIDATE_COMPLETE marker/terminal process before starting
+  `/tmp/mag_six_candidate_v2.py` with log`/tmp/mag-six-candidate-v2.log`.
+- V2 runner repeats matched10,4steady profiles+bulk, then additional20. It uses
+  a separate `candidate-v2` evidence directory and updates final installed-artifact
+  manifest. Analysis script `/tmp/mag_six_analyze.py` includes both candidates
+  and prefers v2 comparisons once its summary exists.
+- Full-pack gameplay runner `/tmp/mag_six_gameplay.py` now requires V2 completion.
+  It executes37 same-function fluid assertions; lever cases explicitly trigger
+  a neighboring inert-block update (command placement does not invoke player-use
+  callbacks), then assert indirect power. Restore runner remains prepared but
+  must run only after final measurements/gameplay checks pass.
+
+Latest fluid refinement (supersedes the staged v2 artifact above):
+
+- V1 bulk worst tick11,934.01ms versus baseline15,304.94ms: an improvement, but
+  still a severe hitch. Combined graph and external-input discovery in one
+  neighbor loop and reused temporary neighbor positions; callbacks, solve/write/
+  notification ordering and synchronous completion remain intact.
+- Latest source`8217baf4`; latest v2 JAR SHA
+  `b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a`.
+  Core176 and build/unit293 passed again after this refinement. The staged
+  candidate-v2.jar and candidate-v2-build.json now contain this latest version;
+  the earlier unused build is retained as candidate-v2-before-fluid.*.
+- V1 moving-ship profile: Lenz count scan0.438→0.124ms/tick; coaster classification
+  absent from samples; sampled total production1.919→0.756. Four steady captures
+  and the bulk capture decoded and validated (start timestamps within5seconds,
+  exact4ms sampling interval, duration/tick counts, zero players, and shaft/ship
+  activation counts where applicable).
+- V1 runner is finishing additional20 throughput scenarios. No V2 server run or
+  full-pack gameplay run has started yet. Do not restore the server until final
+  V2 measurements and gameplay assertions have passed.
+
+Updated Slugterra dependency (user steering):
+
+- V1 completed all30 scenarios. The runner stopped with exit143 after144/150
+  samples; verified live JAR/world/player count, then resumed the six remaining
+  samples after a fresh warmup. Its five captures completed before interruption.
+- Private Slugterra releasev1.0 source590f1a02, published September30, supersedes
+  unofficial.1. SHA b2388d688b2902a5931a3c8be44a997fdc87789a192c31a64599b2eda591c736
+  verified against release checksum. Broad9 and focused1 GameTests pass. Unique
+  passing GameTests now264; earlier old-port failures remain documented.
+- Updating the disposable server with old Slugterra JAR retained disabled. A new
+  baseline-updated run uses the original Magnetization baseline JAR and new port.
+  Final candidate-v2 will use the same updated pack. Do not compare these as a
+  matched pair with old-port baseline/candidate captures.
+- V2 execution split into matched sprints, five captures, then remaining20
+  scenarios with completion checks between sessions. Gameplay/restoration follow.

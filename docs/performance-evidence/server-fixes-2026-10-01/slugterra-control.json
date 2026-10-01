@@ -1,0 +1,48 @@
+{
+  "dependency_sha256": "b5e6093124b450d6b9aa281aae7d5842a86f748b84c365770ffe3271f7b5dc94",
+  "comparison": "Same installed Slugterra JAR, candidate versus candidate with projectile shortcut reverted to5e1adb0c. Identical7 failures in older broad suite, ignoring JVM class-loader identity.",
+  "results": {
+    "control": {
+      "failed_tests": {
+        "fluidsgravityandimpactstateskeepnativelifecycle": "Field changed combat progression",
+        "nativetazerlinghitsstamponceandexpirewithoutpetrification": "class net.minecraft.world.entity.monster.Zombie cannot be cast to class net.minecraft.world.entity.player.Player (net.minecraft.world.entity.monster.Zombie and net.minecraft.world.entity.player.Player are in module minecraft@1.21.1 of loader 'TRANSFORMER' @2e3cdec2)",
+        "emittersmoveriddenandunriddenmountsandsendmotion": "Wrong field response: burro_mecha/Block{magnetization:tractor_beam}/ridden=false",
+        "experimentaldefaultandoptoutandstationaryexclusions": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @2e3cdec2)",
+        "blastersuseelectromagnetmenuandhelditemmagnet": "Menu rejects slugterra_dark:doctor_black_blaster",
+        "boundeddeflectionsurvivesnativeflightsaveandrecovery": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @2e3cdec2)",
+        "fieldsandpickuppreserveeverycapsule": "Expected all 46 base and 23 dark capsules"
+      },
+      "normalized_failures": {
+        "fluidsgravityandimpactstateskeepnativelifecycle": "Field changed combat progression",
+        "nativetazerlinghitsstamponceandexpirewithoutpetrification": "class net.minecraft.world.entity.monster.Zombie cannot be cast to class net.minecraft.world.entity.player.Player (net.minecraft.world.entity.monster.Zombie and net.minecraft.world.entity.player.Player are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "emittersmoveriddenandunriddenmountsandsendmotion": "Wrong field response: burro_mecha/Block{magnetization:tractor_beam}/ridden=false",
+        "experimentaldefaultandoptoutandstationaryexclusions": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "blastersuseelectromagnetmenuandhelditemmagnet": "Menu rejects slugterra_dark:doctor_black_blaster",
+        "boundeddeflectionsurvivesnativeflightsaveandrecovery": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "fieldsandpickuppreserveeverycapsule": "Expected all 46 base and 23 dark capsules"
+      },
+      "log_sha256": "59e628b9d6d9f4dd73f26c6a1d62a920c4bff8dab5801a62e7d2de51753f8bfe"
+    },
+    "v2": {
+      "failed_tests": {
+        "fluidsgravityandimpactstateskeepnativelifecycle": "Field changed combat progression",
+        "nativetazerlinghitsstamponceandexpirewithoutpetrification": "class net.minecraft.world.entity.monster.Zombie cannot be cast to class net.minecraft.world.entity.player.Player (net.minecraft.world.entity.monster.Zombie and net.minecraft.world.entity.player.Player are in module minecraft@1.21.1 of loader 'TRANSFORMER' @451f87af)",
+        "emittersmoveriddenandunriddenmountsandsendmotion": "Wrong field response: burro_mecha/Block{magnetization:tractor_beam}/ridden=false",
+        "experimentaldefaultandoptoutandstationaryexclusions": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @451f87af)",
+        "blastersuseelectromagnetmenuandhelditemmagnet": "Menu rejects slugterra_dark:doctor_black_blaster",
+        "boundeddeflectionsurvivesnativeflightsaveandrecovery": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @451f87af)",
+        "fieldsandpickuppreserveeverycapsule": "Expected all 46 base and 23 dark capsules"
+      },
+      "normalized_failures": {
+        "fluidsgravityandimpactstateskeepnativelifecycle": "Field changed combat progression",
+        "nativetazerlinghitsstamponceandexpirewithoutpetrification": "class net.minecraft.world.entity.monster.Zombie cannot be cast to class net.minecraft.world.entity.player.Player (net.minecraft.world.entity.monster.Zombie and net.minecraft.world.entity.player.Player are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "emittersmoveriddenandunriddenmountsandsendmotion": "Wrong field response: burro_mecha/Block{magnetization:tractor_beam}/ridden=false",
+        "experimentaldefaultandoptoutandstationaryexclusions": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "blastersuseelectromagnetmenuandhelditemmagnet": "Menu rejects slugterra_dark:doctor_black_blaster",
+        "boundeddeflectionsurvivesnativeflightsaveandrecovery": "class net.minecraft.world.entity.animal.Pig cannot be cast to class net.minecraft.world.entity.TamableAnimal (net.minecraft.world.entity.animal.Pig and net.minecraft.world.entity.TamableAnimal are in module minecraft@1.21.1 of loader 'TRANSFORMER' @<runtime-id>)",
+        "fieldsandpickuppreserveeverycapsule": "Expected all 46 base and 23 dark capsules"
+      },
+      "log_sha256": "aee556f54cad56c75f2831a6aed528bad75ae90771da46f78413898de6da53f3"
+    }
+  }
+}
