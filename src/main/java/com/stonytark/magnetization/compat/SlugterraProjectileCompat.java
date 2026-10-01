@@ -25,9 +25,14 @@ public final class SlugterraProjectileCompat {
 
     private SlugterraProjectileCompat() {}
 
-    public static boolean handles(final Entity entity) {
+    /** Type-only classification: safe to reuse without caching the live opt-in or flight state. */
+    public static boolean supportsType(final Entity entity) {
         final var id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-        return (ARROWS.contains(id) || VECTORS.contains(id)) && MagConfig.slugterraDeflectionEnabled();
+        return ARROWS.contains(id) || VECTORS.contains(id);
+    }
+
+    public static boolean handles(final Entity entity) {
+        return supportsType(entity) && MagConfig.slugterraDeflectionEnabled();
     }
 
     public static boolean isInFlight(final Entity entity) {

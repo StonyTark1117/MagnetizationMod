@@ -14,19 +14,6 @@ import java.util.function.Function;
 /** Non-loading reads used by tracked-emitter hot paths. */
 public final class LoadedChunkAccess {
     private static final Direction[] DIRECTIONS = Direction.values();
-    // Weak neighbors and their direct neighbors occupy only the 25 cells at
-    // Manhattan distance <= 2, not all 125 cells of the enclosing cube.
-    private static final int[] SIGNAL_CACHE_INDICES = signalCacheIndices();
-
-    private static int[] signalCacheIndices() {
-        final int[] indices = new int[125];
-        java.util.Arrays.fill(indices, -1);
-        int index = 0;
-        for (int x = -2; x <= 2; x++) for (int y = -2; y <= 2; y++) for (int z = -2; z <= 2; z++) {
-            if (Math.abs(x) + Math.abs(y) + Math.abs(z) <= 2) indices[((x + 2) * 5 + y + 2) * 5 + z + 2] = index++;
-        }
-        return indices;
-    }
     private LoadedChunkAccess() {}
 
     /** Returns the already-full chunk or {@code null}; never creates a ticket. */
@@ -53,20 +40,16 @@ public final class LoadedChunkAccess {
         return hasNeighborSignal(level, pos, new NeighborStateReader(level, pos));
     }
 
-    /** Reuse chunk and immutable block-state reads within one read-only signal
-     * query. Nothing survives this evaluation; signal methods themselves remain live. */
+    /** Reuse the last loaded chunk within one read-only signal query, while
+     * reading each block state live. Nothing survives this evaluation. */
     private static final class NeighborStateReader implements Function<BlockPos, BlockState> {
         private final ServerLevel level;
         private int chunkX;
         private int chunkZ;
         private LevelChunk chunk;
-        private final int originX, originY, originZ;
-        private final BlockState[] states = new BlockState[25];
-        private int read;
 
         private NeighborStateReader(final ServerLevel level, final BlockPos origin) {
             this.level = level;
-            originX = origin.getX(); originY = origin.getY(); originZ = origin.getZ();
             chunkX = Math.floorDiv(origin.getX(), 16);
             chunkZ = Math.floorDiv(origin.getZ(), 16);
             chunk = level.getChunkSource().getChunkNow(chunkX, chunkZ);
@@ -74,20 +57,13 @@ public final class LoadedChunkAccess {
 
         @Override
         public @Nullable BlockState apply(final BlockPos pos) {
-            final int dx = pos.getX() - originX + 2, dy = pos.getY() - originY + 2,
-                    dz = pos.getZ() - originZ + 2;
-            final int index = dx >= 0 && dx < 5 && dy >= 0 && dy < 5 && dz >= 0 && dz < 5
-                    ? SIGNAL_CACHE_INDICES[(dx * 5 + dy) * 5 + dz] : -1;
-            if (index >= 0 && (read & (1 << index)) != 0) return states[index];
             final int x = Math.floorDiv(pos.getX(), 16), z = Math.floorDiv(pos.getZ(), 16);
             if (x != chunkX || z != chunkZ) {
                 chunkX = x;
                 chunkZ = z;
                 chunk = level.getChunkSource().getChunkNow(x, z);
             }
-            final BlockState result = chunk == null ? null : chunk.getBlockState(pos);
-            if (index >= 0) { read |= 1 << index; states[index] = result; }
-            return result;
+            return chunk == null ? null : chunk.getBlockState(pos);
         }
     }
 
