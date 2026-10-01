@@ -1,0 +1,522 @@
+[
+  {
+    "scenario": "native_queries_control",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 1655
+    }
+  },
+  {
+    "scenario": "native_queries_control",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 2863
+    }
+  },
+  {
+    "scenario": "native_queries_control",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 4073
+    }
+  },
+  {
+    "scenario": "native_queries_control",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 5281
+    }
+  },
+  {
+    "scenario": "native_queries_control",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 6488
+    }
+  },
+  {
+    "scenario": "native_queries_64",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 105600,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 105600,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 1650
+    }
+  },
+  {
+    "scenario": "native_queries_64",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 182784,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 182784,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 2856
+    }
+  },
+  {
+    "scenario": "native_queries_64",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 260160,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 260160,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 4065
+    }
+  },
+  {
+    "scenario": "native_queries_64",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 337472,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 337472,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 5273
+    }
+  },
+  {
+    "scenario": "native_queries_64",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 414720,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 414720,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 6480
+    }
+  },
+  {
+    "scenario": "native_queries_256",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 422144,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 422144,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 1649
+    }
+  },
+  {
+    "scenario": "native_queries_256",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 730624,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 730624,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 2854
+    }
+  },
+  {
+    "scenario": "native_queries_256",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 1038592,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 1038592,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 4057
+    }
+  },
+  {
+    "scenario": "native_queries_256",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 1350400,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 1350400,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 5275
+    }
+  },
+  {
+    "scenario": "native_queries_256",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 1659392,
+      "driven_shafts": 0,
+      "synthetic_point_queries": 1659392,
+      "receiving_shafts": 0,
+      "loaded_shafts": 0,
+      "scaling_ticks": 6482
+    }
+  },
+  {
+    "scenario": "shafts_16",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 16,
+      "loaded_shafts": 32,
+      "scaling_ticks": 1677
+    }
+  },
+  {
+    "scenario": "shafts_16",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 16,
+      "loaded_shafts": 32,
+      "scaling_ticks": 2886
+    }
+  },
+  {
+    "scenario": "shafts_16",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 16,
+      "loaded_shafts": 32,
+      "scaling_ticks": 4095
+    }
+  },
+  {
+    "scenario": "shafts_16",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 16,
+      "loaded_shafts": 32,
+      "scaling_ticks": 5304
+    }
+  },
+  {
+    "scenario": "shafts_16",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 16,
+      "loaded_shafts": 32,
+      "scaling_ticks": 6510
+    }
+  },
+  {
+    "scenario": "shafts_64",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 64,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 64,
+      "loaded_shafts": 128,
+      "scaling_ticks": 1678
+    }
+  },
+  {
+    "scenario": "shafts_64",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 64,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 64,
+      "loaded_shafts": 128,
+      "scaling_ticks": 2888
+    }
+  },
+  {
+    "scenario": "shafts_64",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 64,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 64,
+      "loaded_shafts": 128,
+      "scaling_ticks": 4107
+    }
+  },
+  {
+    "scenario": "shafts_64",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 64,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 64,
+      "loaded_shafts": 128,
+      "scaling_ticks": 5325
+    }
+  },
+  {
+    "scenario": "shafts_64",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 64,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 64,
+      "loaded_shafts": 128,
+      "scaling_ticks": 6543
+    }
+  },
+  {
+    "scenario": "shafts_256",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 1662
+    }
+  },
+  {
+    "scenario": "shafts_256",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 2876
+    }
+  },
+  {
+    "scenario": "shafts_256",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 4085
+    }
+  },
+  {
+    "scenario": "shafts_256",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 5298
+    }
+  },
+  {
+    "scenario": "shafts_256",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 0,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 256,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 256,
+      "loaded_shafts": 512,
+      "scaling_ticks": 6513
+    }
+  },
+  {
+    "scenario": "ships_4",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 4,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 4,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 2,
+      "loaded_shafts": 8,
+      "scaling_ticks": 1663
+    }
+  },
+  {
+    "scenario": "ships_4",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 4,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 4,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 2,
+      "loaded_shafts": 8,
+      "scaling_ticks": 2875
+    }
+  },
+  {
+    "scenario": "ships_4",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 4,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 4,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 3,
+      "loaded_shafts": 8,
+      "scaling_ticks": 4093
+    }
+  },
+  {
+    "scenario": "ships_4",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 4,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 4,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 2,
+      "loaded_shafts": 8,
+      "scaling_ticks": 5310
+    }
+  },
+  {
+    "scenario": "ships_4",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 4,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 4,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 3,
+      "loaded_shafts": 8,
+      "scaling_ticks": 6521
+    }
+  },
+  {
+    "scenario": "ships_16",
+    "sample": 1,
+    "counts": {
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 10,
+      "loaded_shafts": 32,
+      "scaling_ticks": 1656
+    }
+  },
+  {
+    "scenario": "ships_16",
+    "sample": 2,
+    "counts": {
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 10,
+      "loaded_shafts": 32,
+      "scaling_ticks": 2875
+    }
+  },
+  {
+    "scenario": "ships_16",
+    "sample": 3,
+    "counts": {
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 10,
+      "loaded_shafts": 32,
+      "scaling_ticks": 4080
+    }
+  },
+  {
+    "scenario": "ships_16",
+    "sample": 4,
+    "counts": {
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 8,
+      "loaded_shafts": 32,
+      "scaling_ticks": 5284
+    }
+  },
+  {
+    "scenario": "ships_16",
+    "sample": 5,
+    "counts": {
+      "moving_ships": 16,
+      "synthetic_query_hits": 0,
+      "driven_shafts": 16,
+      "synthetic_point_queries": 0,
+      "receiving_shafts": 10,
+      "loaded_shafts": 32,
+      "scaling_ticks": 6489
+    }
+  }
+]

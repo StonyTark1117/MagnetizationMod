@@ -1,0 +1,17 @@
+{
+  "server_status": "SERVER_STATUS_RUNNING",
+  "players": "There are 0 of a max of 5 players online: \n",
+  "stats": "Stats in minecraft:overworld: 1746 block emitters, 0 mobile golems, 5 Sable ships, 0 magnetized entities.\n",
+  "all_server_property_values_restored": true,
+  "fixture_disabled": true,
+  "original_level_dat_unchanged_during_tests": true,
+  "jar_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+  "unit_or_gametest_rerun": false,
+  "production_code_changes": false,
+  "measured_sprint_samples": 150,
+  "measured_sprint_ticks": 180000,
+  "steady_profile_count": 5,
+  "steady_profile_ticks": 18000,
+  "bulk_profile_count": 1,
+  "bulk_profile_ticks": 2081
+}

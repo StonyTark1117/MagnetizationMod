@@ -1,0 +1,735 @@
+[
+  {
+    "scenario": "bulk_ferrofluid_setup",
+    "measurement_kind": "bulk setup followed by steady state",
+    "url": "https://spark.lucko.me/FpdJdb4daM",
+    "server_file": null,
+    "ticks": 2081,
+    "duration_ms": 120029,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 7.794329649207112,
+    "all_mod_including_fixture_sampled_ms_per_tick": 7.794329649207112,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidBlock.neighborChanged",
+        14020.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidBlock.onPlace",
+        1440.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        552.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        136.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        28.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.physics.inspection.FieldInspectionTracker.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FluidRedstone.externalSignal",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 881,
+        "cpuProcess": 0.09256591702821217,
+        "cpuSystem": 0.09600226999625613,
+        "tps": 15.799920062058238,
+        "msptMedian": 2.900589,
+        "msptMax": 16006.31603,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882888018",
+        "endTime": "1790882948024",
+        "duration": 60006,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.027934351079856368,
+        "cpuSystem": 0.029935300541372865,
+        "tps": 19.99995334410884,
+        "msptMedian": 3.045238,
+        "msptMax": 34.805332,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882948024",
+        "endTime": "1790883008021",
+        "duration": 59997,
+        "players": 0,
+        "entities": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 3.4733388008333335,
+      "max": 34.805332,
+      "min": 2.280491,
+      "median": 3.045238,
+      "percentile95": 5.678754
+    },
+    "player_count": "0"
+  },
+  {
+    "scenario": "dense_external",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/Jy7ybRBntO",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180054,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 1.4222222222222223,
+    "all_mod_including_fixture_sampled_ms_per_tick": 1.4244444444444444,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        4952.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        44.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidFieldHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.physics.LoadedChunkAccess.directSignalTo",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03869298585368274,
+        "cpuSystem": 0.043631173886369765,
+        "tps": 19.999961606073704,
+        "msptMedian": 4.171305,
+        "msptMax": 19.119385,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881937895",
+        "endTime": "1790881997894",
+        "duration": 59999,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.043601017189992874,
+        "cpuSystem": 0.04784396194831104,
+        "tps": 20.00001178467361,
+        "msptMedian": 4.150577,
+        "msptMax": 15.38951,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881817890",
+        "endTime": "1790881877895",
+        "duration": 60005,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.030034895684072402,
+        "cpuSystem": 0.0336595541382428,
+        "tps": 19.99998538134402,
+        "msptMedian": 4.150296,
+        "msptMax": 29.311357,
+        "entities": 64,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881877895",
+        "endTime": "1790881937895",
+        "duration": 60000,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 4.38639875,
+      "max": 19.119385,
+      "min": 3.482647,
+      "median": 4.171305,
+      "percentile95": 6.28047
+    },
+    "player_count": "0"
+  },
+  {
+    "scenario": "empty_start",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/ccMErqYWdT",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180099,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 0.04555555555555556,
+    "all_mod_including_fixture_sampled_ms_per_tick": 0.04555555555555556,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        44.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        32.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.StorageRestartAudit.tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.TemporaryLirmFields.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.MagneticEngineeringAudit.tick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03363732370821951,
+        "cpuSystem": 0.03833358381216238,
+        "tps": 20.000010598672283,
+        "msptMedian": 2.823253,
+        "msptMax": 11.548495,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881553175",
+        "endTime": "1790881613180",
+        "duration": 60005,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.024151839145567934,
+        "cpuSystem": 0.03341328465273,
+        "tps": 20.000042117422026,
+        "msptMedian": 2.752816,
+        "msptMax": 5.789196,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881613180",
+        "endTime": "1790881673180",
+        "duration": 60000,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.025689400726683107,
+        "cpuSystem": 0.030253196877526388,
+        "tps": 19.999988931672792,
+        "msptMedian": 2.805552,
+        "msptMax": 12.458281,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790881673180",
+        "endTime": "1790881733179",
+        "duration": 59999,
+        "players": 0,
+        "entities": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 3.0007034966666666,
+      "max": 12.458281,
+      "min": 2.118553,
+      "median": 2.805552,
+      "percentile95": 4.751853
+    },
+    "player_count": "0"
+  },
+  {
+    "scenario": "gas_volume",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/Va1IlNJsE4",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180040,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 3.7844444444444445,
+    "all_mod_including_fixture_sampled_ms_per_tick": 3.7844444444444445,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.fluid.ExcitableGasBlock.tick",
+        13432.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        36.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        32.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GasFlowingFluid$DenseSource.spread",
+        32.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        16.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.MagneticEngineeringAudit.tick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.processLaunchedShips",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.HudUiAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.AeMeteoriteRuntimeAudit.beforeTick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.037778169045962984,
+        "cpuSystem": 0.04261076344725013,
+        "tps": 19.99995631209543,
+        "msptMedian": 6.539088,
+        "msptMax": 27.387712,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882081943",
+        "endTime": "1790882141949",
+        "duration": 60006,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.04708616038539818,
+        "cpuSystem": 0.05096619514179251,
+        "tps": 19.999955661098298,
+        "msptMedian": 6.509306,
+        "msptMax": 25.835419,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882141948",
+        "endTime": "1790882201949",
+        "duration": 60001,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.04715986512375576,
+        "cpuSystem": 0.051868804356768994,
+        "tps": 20.00004418609762,
+        "msptMedian": 6.5096,
+        "msptMax": 21.024263,
+        "entities": 1,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882201949",
+        "endTime": "1790882261953",
+        "duration": 60004,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 6.7783716258333335,
+      "max": 21.024263,
+      "min": 5.877098,
+      "median": 6.5096,
+      "percentile95": 8.658442
+    },
+    "player_count": "0"
+  },
+  {
+    "scenario": "shafts_256",
+    "measurement_kind": "steady state",
+    "url": null,
+    "server_file": "/config/spark/profile-2026-10-01_19.22.17.sparkprofile",
+    "ticks": 3600,
+    "duration_ms": 180036,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 1.0066666666666666,
+    "all_mod_including_fixture_sampled_ms_per_tick": 1.008888888888889,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        3516.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        20.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        12.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.PetrifiedForestStorms.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.LifecyclePresentationAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.HudUiAudit.tick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.gametest.StorageRestartAudit.tick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.029777208241520976,
+        "cpuSystem": 0.04772808875241098,
+        "tps": 20.00003708406876,
+        "msptMedian": 3.178336,
+        "msptMax": 31.123273,
+        "entities": 4,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882406294",
+        "endTime": "1790882466294",
+        "duration": 60000,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.038681551576213016,
+        "cpuSystem": 0.04268058215787023,
+        "tps": 19.99998313101423,
+        "msptMedian": 3.192048,
+        "msptMax": 20.983308,
+        "entities": 4,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882466294",
+        "endTime": "1790882526292",
+        "duration": 59998,
+        "players": 0
+      },
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.03885612103995922,
+        "cpuSystem": 0.0433729528009841,
+        "tps": 19.999972829036913,
+        "msptMedian": 3.249034,
+        "msptMax": 87.491744,
+        "entities": 4,
+        "tileEntities": -1,
+        "chunks": 1444,
+        "startTime": "1790882346289",
+        "endTime": "1790882406294",
+        "duration": 60005,
+        "players": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 4.156477339166667,
+      "max": 20.983308,
+      "min": 2.407377,
+      "median": 3.191468,
+      "percentile95": 6.905907
+    },
+    "player_count": "0"
+  },
+  {
+    "scenario": "ships_16",
+    "measurement_kind": "steady state",
+    "url": "https://spark.lucko.me/nRWkt80AeR",
+    "server_file": null,
+    "ticks": 3600,
+    "duration_ms": 180037,
+    "sampler_engine": "ASYNC",
+    "sampler_mode": "EXECUTION",
+    "interval_us": 4000,
+    "production_mod_sampled_ms_per_tick": 1.8877777777777778,
+    "all_mod_including_fixture_sampled_ms_per_tick": 1.8888888888888888,
+    "production_roots_sampled_ms": [
+      [
+        "com.stonytark.magnetization.content.anchor.MagneticAnchorBlock$$Lambda.0x000072062319a838.tick",
+        4484.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.LenzBrakingHandler.onLevelTick",
+        2032.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftNetwork.tick",
+        60.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.coastersmagnetized.MagCoastersMagnetizedLoadedCompat$$Lambda.0x000072061fc96170.accept",
+        36.0
+      ],
+      [
+        "com.stonytark.magnetization.content.switchblock.MagneticSwitchBlock$$Lambda.0x000072062319ae98.tick",
+        36.0
+      ],
+      [
+        "com.stonytark.magnetization.content.meteorite.MeteoriteFieldRegistry.onLevelTick",
+        32.0
+      ],
+      [
+        "com.stonytark.magnetization.compat.ExternalEmitterTracker.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.effect.AnomalyMagneticChaos.onLevelTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.railgun.RailgunHandler.onSablePrePhysicsTick",
+        24.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.FerrofluidCreepHandler.onLevelTick",
+        8.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.GalliumLorentzHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.fluid.MrFluidHardenHandler.onLevelTick",
+        4.0
+      ],
+      [
+        "com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity.sable$tick",
+        4.0
+      ]
+    ],
+    "windows": [
+      {
+        "ticks": 1200,
+        "cpuProcess": 0.06178359206309554,
+        "cpuSystem": 0.06597057613281725,
+        "tps": 19.99998006135321,
+        "msptMedian": 8.161968,
+        "msptMax": 44.337884,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790882636046",
+        "endTime": "1790882696053",
+        "duration": 60007,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1201,
+        "cpuProcess": 0.06388898410877392,
+        "cpuSystem": 0.08354555270954284,
+        "tps": 20.000014911677784,
+        "msptMedian": 8.276893,
+        "msptMax": 29.768763,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790882696053",
+        "endTime": "1790882756057",
+        "duration": 60004,
+        "players": 0,
+        "entities": 0
+      },
+      {
+        "ticks": 1199,
+        "cpuProcess": 0.0625496384787395,
+        "cpuSystem": 0.06743761819624358,
+        "tps": 19.99999951766668,
+        "msptMedian": 8.178947,
+        "msptMax": 36.870049,
+        "tileEntities": -1,
+        "chunks": 1460,
+        "startTime": "1790882756057",
+        "endTime": "1790882816051",
+        "duration": 59994,
+        "players": 0,
+        "entities": 0
+      }
+    ],
+    "final_minute_mspt": {
+      "mean": 8.3813198625,
+      "max": 36.870049,
+      "min": 6.735253,
+      "median": 8.178947,
+      "percentile95": 10.70625
+    },
+    "player_count": "0"
+  }
+]
