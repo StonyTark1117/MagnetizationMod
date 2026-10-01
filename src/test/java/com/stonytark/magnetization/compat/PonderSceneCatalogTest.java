@@ -60,10 +60,10 @@ class PonderSceneCatalogTest {
             }
         }
 
-        assertEquals(18, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
-        assertEquals(49, PonderSceneCatalog.allScenes().stream()
+        assertEquals(20, PonderSceneCatalog.allScenes().size(), "Unexpected Ponder scene count");
+        assertEquals(54, PonderSceneCatalog.allScenes().stream()
                 .mapToInt(scene -> scene.texts().size()).sum(), "Unexpected Ponder instruction count");
-        assertEquals(67, expected.size(), "Unexpected Ponder localization count");
+        assertEquals(74, expected.size(), "Unexpected Ponder localization count");
         expected.forEach((key, value) -> {
             assertTrue(lang.has(key), () -> "Missing Ponder localization: " + key);
             assertEquals(value, lang.get(key).getAsString(), () -> "Stale Ponder localization: " + key);

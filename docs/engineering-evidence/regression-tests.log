@@ -1,0 +1,5 @@
+runMagneticEngineeringRegressionGameTestServer: moved previous generated run directory to /tmp/magnetization-run-magnetic-engineering-regression-gametest-1790818517-1724138
+runMagneticEngineeringRegressionGameTestServer: using tmpfs runtime /tmp/magnetization-run-magnetic-engineering-regression-gametest-runtime.W7R2j7
+[30Sep2026 18:35:32.976] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 4 GAME TESTS COMPLETE IN 452.0 ms ======================
+[30Sep2026 18:35:32.976] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 4 required tests passed :)
+runMagneticEngineeringRegressionGameTestServer: assertions passed; terminating only its lingering process group

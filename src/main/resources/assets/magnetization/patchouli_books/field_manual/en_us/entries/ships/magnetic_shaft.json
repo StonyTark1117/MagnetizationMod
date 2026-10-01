@@ -1,0 +1,32 @@
+{
+  "name": "book.magnetization.entry.magnetic_shaft.name",
+  "icon": "magnetization:magnetic_shaft",
+  "category": "magnetization:ships",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.magnetic_shaft.page_1"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:magnetic_shaft"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.magnetic_shaft.page_3"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.magnetic_shaft.materials"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "magnetization:samarium_cobalt_magnetic_shaft",
+      "recipe2": "magnetization:neodymium_magnetic_shaft"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "book.magnetization.entry.magnetic_shaft.availability"
+    }
+  ]
+}

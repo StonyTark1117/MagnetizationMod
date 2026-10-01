@@ -1,0 +1,5 @@
+runMagneticEngineeringCoreGameTestServer: moved previous generated run directory to /tmp/magnetization-run-magnetic-engineering-core-gametest-1790818549-1725269
+runMagneticEngineeringCoreGameTestServer: using tmpfs runtime /tmp/magnetization-run-magnetic-engineering-core-gametest-runtime.L0TQgN
+[30Sep2026 18:36:26.393] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 173 GAME TESTS COMPLETE IN 17.46 s ======================
+[30Sep2026 18:36:26.393] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 173 required tests passed :)
+runMagneticEngineeringCoreGameTestServer: assertions passed; terminating only its lingering process group

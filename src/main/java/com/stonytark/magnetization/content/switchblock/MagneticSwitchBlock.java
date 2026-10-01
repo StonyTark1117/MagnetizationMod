@@ -39,6 +39,33 @@ public class MagneticSwitchBlock extends Block implements EntityBlock {
     }
 
     @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            net.minecraft.world.entity.player.Player player, net.minecraft.world.phys.BlockHitResult hit) {
+        if (level.isClientSide) return net.minecraft.world.InteractionResult.SUCCESS;
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp && level.getBlockEntity(pos) instanceof MagneticSwitchBlockEntity sw) {
+            if (player.isShiftKeyDown()) com.stonytark.magnetization.content.docking.DockingLink.link(sp, sw);
+            else {
+                sw.cycleMode();
+                sp.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                        "dock.magnetization.mode." + sw.mode().name().toLowerCase(java.util.Locale.ROOT)), true);
+            }
+        }
+        return net.minecraft.world.InteractionResult.CONSUME;
+    }
+
+    @Override protected boolean hasAnalogOutputSignal(BlockState state) { return true; }
+    @Override protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof MagneticSwitchBlockEntity sw ? sw.signal() : 0;
+    }
+    @Override protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState replacement, boolean moving) {
+        if (!state.is(replacement.getBlock())) {
+            level.updateNeighborsAt(pos, this);
+            level.updateNeighbourForOutputSignal(pos, this);
+        }
+        super.onRemove(state, level, pos, replacement, moving);
+    }
+
+    @Override
     public boolean isSignalSource(final BlockState state) {
         return true;
     }

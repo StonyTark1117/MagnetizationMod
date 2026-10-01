@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Magnetic engineering
+
+- Add Create-goggles ship inspection using server-calculated applied forces, turning torque, individual sources and shared force-cap limiting. Keep the Field Compass unchanged.
+- Add anchor-linked Magnetic Switch outputs for target presence, settled state, target loss and analog distance, with dwell, hysteresis and motion measured relative to moving docks. Preserve proximity mode and show docking reasons through goggles.
+- Add distinct Ferromagnetic, Samarium–Cobalt and Neodymium Magnetic Shafts with independent server-configurable ranges: nearby receivers share an independently driven source's signed RPM and original Create stress capacity, without retransmission or self-sustaining loops. Support drive handoff, visible conflicts, range loss and source removal; include an original rotor model, recipe, loot and guides.
+
 ## 1.4.6 — Compatibility audit (unreleased)
 
 - Fix the Cosmic Compass ignoring optional AE2 meteorites: synchronize the nearest active saved AE2 source from the server and compare it with native cores. Respect range, decay and dimension changes; disabling `compat.ae2MeteoriteHookEnabled` now also stops persisted AE2 field emission and compass tracking without deleting saved sources.

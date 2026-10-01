@@ -8,7 +8,9 @@
     "ItemCombinerMenuAccessor",
     "compat.CopycatsGoggleMixin",
     "compat.DieselChemicalSprayerMixin",
-    "LightningBoltAccessor"
+    "LightningBoltAccessor",
+    "MagneticShaftRotationAccess",
+    "MagneticShaftRotationMixin"
   ],
   "client": [
     "client.AnvilSoundMixin",

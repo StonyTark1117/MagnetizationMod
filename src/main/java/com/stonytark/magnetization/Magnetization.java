@@ -307,6 +307,8 @@ public final class Magnetization {
         com.stonytark.magnetization.network.CommonConfigSyncPayload.register(reg);
         com.stonytark.magnetization.network.CosmicCompassTargetPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusRequestPayload.register(reg);
+        com.stonytark.magnetization.network.FieldInspectionRequestPayload.register(reg);
+        com.stonytark.magnetization.network.FieldInspectionPayload.register(reg);
         com.stonytark.magnetization.network.GasDetectorStatusPayload.register(reg);
         com.stonytark.magnetization.network.CoastersMagnetizedPowerPayload.register(reg);
         com.stonytark.magnetization.network.PilotedAircraftImpulsePayload.register(reg);

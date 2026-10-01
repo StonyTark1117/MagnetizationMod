@@ -452,6 +452,8 @@ public final class MagConfig {
     public static final ModConfigSpec.IntValue     METEORITE_DECAY_TICKS;
     public static final ModConfigSpec.IntValue     METEORITE_SAPLING_GROW_TICKS;
     public static final ModConfigSpec.IntValue     MAGNETIC_SWITCH_RANGE;
+    public static final ModConfigSpec.DoubleValue DOCK_TOLERANCE, DOCK_HYSTERESIS, DOCK_SPEED, DOCK_SPIN;
+    public static final ModConfigSpec.IntValue DOCK_DWELL_TICKS, MAGNETIC_SHAFT_RANGE, SAMARIUM_COBALT_SHAFT_RANGE, NEODYMIUM_SHAFT_RANGE;
     public static final ModConfigSpec.BooleanValue AE2_METEORITE_HOOK_ENABLED;
     public static final ModConfigSpec.BooleanValue TOOL_SWORD_YANK_ENABLED;
     public static final ModConfigSpec.BooleanValue TOOL_PICKAXE_ORE_RIP_ENABLED;
@@ -1683,6 +1685,26 @@ public final class MagConfig {
                          "bays; smaller values force tighter sensor placement.")
                 .translation("magnetization.configuration.content.magneticSwitchRange")
                 .defineInRange("magneticSwitchRange", 8, 1, 64);
+        DOCK_TOLERANCE = b.comment("Maximum anchor-to-hull distance for settling (blocks).")
+                .defineInRange("dockTolerance", 1.5, 0.1, 16.0);
+        DOCK_HYSTERESIS = b.comment("Extra distance allowed before a present/settled dock deactivates.")
+                .defineInRange("dockHysteresis", 0.5, 0.05, 4.0);
+        DOCK_SPEED = b.comment("Maximum relative contact-point speed for settling (m/s).")
+                .defineInRange("dockSpeed", 0.1, 0.001, 10.0);
+        DOCK_SPIN = b.comment("Maximum relative angular speed for settling (radians/s).")
+                .defineInRange("dockSpin", 0.1, 0.001, 10.0);
+        DOCK_DWELL_TICKS = b.comment("Continuous stable ticks before a dock reports settled.")
+                .defineInRange("dockDwellTicks", 20, 1, 1200);
+        sb.comment("Magnetic Shaft transmission radii. Only loaded shafts participate; material changes range, never capacity.")
+                .push("magneticShafts");
+        MAGNETIC_SHAFT_RANGE = sb.comment("Ferromagnetic (WEAK) shaft transmission radius, in blocks.")
+                .defineInRange("ferromagneticRange", 4, 1, 64);
+        SAMARIUM_COBALT_SHAFT_RANGE = sb.comment("Samarium-Cobalt (MEDIUM) shaft transmission radius, in blocks.")
+                .defineInRange("samariumCobaltRange", 8, 1, 64);
+        NEODYMIUM_SHAFT_RANGE = sb.comment("Neodymium (STRONG) shaft transmission radius, in blocks.")
+                .defineInRange("neodymiumRange", 16, 1, 64);
+        sb.pop();
+
 
         b.pop();
 

@@ -453,17 +453,19 @@ public final class FieldApplicator {
             double scaleAll = 1.0;
             if (plannedScales != null) {
                 final Double planned = plannedScales.get(server);
-                if (planned == null || planned <= 0.0d) continue;
-                scaleAll = planned;
+                scaleAll = planned == null ? 0 : Math.max(0, planned);
             } else if (cap > 0.0 && mass > 0.0) {
                 final double granted = ShipTickBudget.grant(server, now, cap, wantedAccel);
-                if (granted <= 0.0) continue;
                 if (granted < wantedAccel) scaleAll = granted / wantedAccel;
             }
 
+            final var inspection = com.stonytark.magnetization.physics.inspection.FieldInspectionTracker.begin(
+                    level, server, field, sampleForces, scaleAll);
+            if (scaleAll <= 0) continue;
             for (int i = 0; i < samplePoints.size(); i++) {
                 final Vec3 scaled = scaleAll == 1.0 ? sampleForces.get(i) : sampleForces.get(i).scale(scaleAll);
-                SableBridge.applyWorldImpulse(server, samplePoints.get(i), scaled);
+                if (SableBridge.tryApplyWorldImpulse(server, samplePoints.get(i), scaled) && inspection != null)
+                    inspection.applied(samplePoints.get(i), scaled);
             }
 
             // Apply linear + angular drag at most once per ship per tick (multiple

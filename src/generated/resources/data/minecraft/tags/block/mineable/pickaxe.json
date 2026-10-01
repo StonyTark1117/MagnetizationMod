@@ -2,6 +2,9 @@
   "values": [
     "magnetization:electromagnet",
     "magnetization:dipole_electromagnet",
+    "magnetization:magnetic_shaft",
+    "magnetization:samarium_cobalt_magnetic_shaft",
+    "magnetization:neodymium_magnetic_shaft",
     "magnetization:kinetic_electromagnet",
     "magnetization:magnetic_anchor",
     "magnetization:repulsor_coil",

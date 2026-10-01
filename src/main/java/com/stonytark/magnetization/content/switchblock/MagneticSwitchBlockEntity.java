@@ -31,7 +31,7 @@ import java.util.UUID;
  * host pose) before scanning — otherwise the search box sits in empty plot space
  * and the switch "can't detect sub-levels while on a sub-level".
  */
-public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
+public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, com.stonytark.magnetization.menu.MachineHudData {
 
     /** Default scan radius. Server owners override via
      *  {@code MagConfig.MAGNETIC_SWITCH_RANGE}; this is the fallback for
@@ -45,7 +45,72 @@ public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntit
     }
 
     private int signal = 0;
-    private int phase = 0;
+    private long lastSample = Long.MIN_VALUE;
+    private com.stonytark.magnetization.content.docking.DockingState.Mode mode =
+            com.stonytark.magnetization.content.docking.DockingState.Mode.PROXIMITY;
+    private @Nullable BlockPos anchorPos;
+    private com.stonytark.magnetization.content.docking.DockingState docking =
+            new com.stonytark.magnetization.content.docking.DockingState();
+    private String dockReason = "unlinked";
+
+    public void linkAnchor(BlockPos pos) {
+        anchorPos = pos.immutable();
+        mode = com.stonytark.magnetization.content.docking.DockingState.Mode.TARGET_PRESENT;
+        docking = new com.stonytark.magnetization.content.docking.DockingState();
+        configurationChanged();
+    }
+    public void cycleMode() { mode = mode.next(); configurationChanged(); }
+    public com.stonytark.magnetization.content.docking.DockingState.Mode mode() { return mode; }
+    public @Nullable BlockPos anchorPos() { return anchorPos; }
+    public String dockReason() { return dockReason; }
+    private void configurationChanged() {
+        lastSample = Long.MIN_VALUE;
+        if (level instanceof ServerLevel server) run(server, SableBridge.subLevelOf(this));
+        sync();
+    }
+    private void sync() {
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+    @Override public boolean addToGoggleTooltip(java.util.List<net.minecraft.network.chat.Component> lines, boolean sneaking) {
+        for (var line : hudLines()) lines.add(net.minecraft.network.chat.Component.literal("    ").append(line));
+        return true;
+    }
+    @Override public java.util.List<net.minecraft.network.chat.Component> hudLines() {
+        var lines = new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.mode." + mode.name().toLowerCase(java.util.Locale.ROOT)));
+        lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.signal", signal));
+        if (mode != com.stonytark.magnetization.content.docking.DockingState.Mode.PROXIMITY) {
+            lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.reason." + dockReason));
+            if (anchorPos != null) lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.anchor", anchorPos.toShortString()));
+        }
+        return lines;
+    }
+    @Override protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        tag.putString("DockMode", mode.name());
+        if (anchorPos != null) tag.putLong("DockAnchor", anchorPos.asLong());
+        if (docking.tracked() != null) tag.putUUID("DockTarget", docking.tracked());
+        tag.putBoolean("DockSeen", docking.seen());
+        tag.putInt("Signal", signal);
+        tag.putString("DockReason", dockReason);
+    }
+    @Override protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        try { mode = com.stonytark.magnetization.content.docking.DockingState.Mode.valueOf(tag.getString("DockMode")); }
+        catch (IllegalArgumentException ignored) { mode = com.stonytark.magnetization.content.docking.DockingState.Mode.PROXIMITY; }
+        anchorPos = tag.contains("DockAnchor") ? BlockPos.of(tag.getLong("DockAnchor")) : null;
+        docking = new com.stonytark.magnetization.content.docking.DockingState();
+        docking.restore(tag.hasUUID("DockTarget") ? tag.getUUID("DockTarget") : null, tag.getBoolean("DockSeen"));
+        // A saved settled signal is never trusted on the server before fresh measurements.
+        signal = level != null && level.isClientSide ? Math.clamp(tag.getInt("Signal"), 0, 15) : 0;
+        dockReason = tag.getString("DockReason");
+        lastSample = Long.MIN_VALUE;
+    }
+    @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider provider) { return saveWithoutMetadata(provider); }
+    @Override public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
 
     public MagneticSwitchBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETIC_SWITCH.get(), pos, state);
@@ -58,7 +123,6 @@ public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntit
     /** Vanilla ticker (open world / off-ship). {@code subLevelAt} resolves a host
      *  if this somehow runs on a contraption; normally it returns null here. */
     public static void serverTick(final Level level, final BlockPos pos, final BlockState state, final MagneticSwitchBlockEntity be) {
-        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(state)) return;
         if (!(level instanceof ServerLevel server)) return;
         be.run(server, SableBridge.subLevelAt(server, pos));
     }
@@ -70,13 +134,34 @@ public class MagneticSwitchBlockEntity extends BlockEntity implements BlockEntit
     }
 
     private void run(final ServerLevel server, final @Nullable ServerSubLevel host) {
-        if ((phase++ % PERIOD) != 0) return;
-        final int next = computeSignal(server, host);
+        long now = server.getGameTime();
+        if (lastSample != Long.MIN_VALUE && now - lastSample < PERIOD && now >= lastSample) return;
+        lastSample = now;
+        String previousReason = dockReason;
+        UUID previousTarget = docking.tracked();
+        boolean previouslySeen = docking.seen();
+        final int next;
+        if (com.stonytark.magnetization.config.MagConfig.isBlockDisabled(getBlockState())) next = 0;
+        else if (mode == com.stonytark.magnetization.content.docking.DockingState.Mode.PROXIMITY) next = computeSignal(server, host);
+        else {
+            var sample = com.stonytark.magnetization.content.docking.DockingMeasurements.sample(server, anchorPos);
+            var limits = new com.stonytark.magnetization.content.docking.DockingState.Limits(sample.range(),
+                    com.stonytark.magnetization.config.MagConfig.DOCK_TOLERANCE.get(),
+                    com.stonytark.magnetization.config.MagConfig.DOCK_HYSTERESIS.get(),
+                    com.stonytark.magnetization.config.MagConfig.DOCK_SPEED.get(),
+                    com.stonytark.magnetization.config.MagConfig.DOCK_SPIN.get(),
+                    com.stonytark.magnetization.config.MagConfig.DOCK_DWELL_TICKS.get());
+            docking.update(sample.reading(), limits, now);
+            dockReason = docking.reason().name().toLowerCase(java.util.Locale.ROOT);
+            next = docking.signal(mode, sample.range(), signal);
+        }
         if (next != signal) {
             signal = next;
             // Force a comparator/redstone neighbor update.
             server.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
-        }
+            server.updateNeighbourForOutputSignal(getBlockPos(), getBlockState().getBlock());
+            sync();
+        } else if (!previousReason.equals(dockReason) || !java.util.Objects.equals(previousTarget, docking.tracked()) || previouslySeen != docking.seen()) sync();
     }
 
     private int computeSignal(final ServerLevel level, final @Nullable ServerSubLevel host) {

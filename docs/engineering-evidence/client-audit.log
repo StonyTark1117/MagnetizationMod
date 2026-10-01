@@ -1,0 +1,9 @@
+[18:28:42] [IO-Worker-1/INFO] [magnetization/engineering-audit/]: ENGINEERING_CAPTURE engineering-shaft.png Saved screenshot as engineering-shaft.png
+[18:28:53] [IO-Worker-1/INFO] [magnetization/engineering-audit/]: ENGINEERING_CAPTURE engineering-dock.png Saved screenshot as engineering-dock.png
+[18:29:07] [Render thread/INFO] [magnetization/engineering-audit/]: ENGINEERING_UI_PASS ship=176ebead-0f30-4f2b-8ee9-625795c41bfe sources=2 force=(-0.10199625742286628, 3.007627498704819E-5, 6.790066337719088E-5) torque=(1.1341062721661508E-5, 5.1598230654010136E-5, 0.017013001240007153)
+[18:29:08] [IO-Worker-1/INFO] [magnetization/engineering-audit/]: ENGINEERING_CAPTURE engineering-fields.png Saved screenshot as engineering-fields.png
+[18:29:22] [Render thread/INFO] [magnetization/engineering-audit/]: ENGINEERING_INSPECTION_RELEASE_PASS
+[18:29:22] [Render thread/INFO] [magnetization/engineering-audit/]: ENGINEERING_MATERIAL_RENDER_PASS
+[18:29:22] [IO-Worker-1/INFO] [magnetization/engineering-audit/]: ENGINEERING_CAPTURE engineering-materials.png Saved screenshot as engineering-materials.png
+
+The audit was stopped after all capture/pass markers; its Gradle run task consequently reports nonzero termination. Build verification is recorded separately.

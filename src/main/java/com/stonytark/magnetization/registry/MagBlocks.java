@@ -45,6 +45,19 @@ public final class MagBlocks {
     public static final DeferredBlock<com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlock> DIPOLE_ELECTROMAGNET =
             REGISTER.register("dipole_electromagnet", () -> new com.stonytark.magnetization.content.dipole.DipoleElectromagnetBlock(poweredMetal()));
 
+    public static final DeferredBlock<com.stonytark.magnetization.content.shaft.MagneticShaftBlock> MAGNETIC_SHAFT =
+            REGISTER.register("magnetic_shaft", () -> new com.stonytark.magnetization.content.shaft.MagneticShaftBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(3.0f).noOcclusion().requiresCorrectToolForDrops().mapColor(net.minecraft.world.level.material.MapColor.METAL)));
+
+    public static final DeferredBlock<com.stonytark.magnetization.content.shaft.MagneticShaftBlock> SAMARIUM_COBALT_MAGNETIC_SHAFT =
+            REGISTER.register("samarium_cobalt_magnetic_shaft", () -> new com.stonytark.magnetization.content.shaft.MagneticShaftBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(4.0f).noOcclusion().requiresCorrectToolForDrops().mapColor(net.minecraft.world.level.material.MapColor.METAL),
+                    com.stonytark.magnetization.content.shaft.MagneticShaftMaterial.SAMARIUM_COBALT));
+    public static final DeferredBlock<com.stonytark.magnetization.content.shaft.MagneticShaftBlock> NEODYMIUM_MAGNETIC_SHAFT =
+            REGISTER.register("neodymium_magnetic_shaft", () -> new com.stonytark.magnetization.content.shaft.MagneticShaftBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(5.0f).noOcclusion().requiresCorrectToolForDrops().mapColor(net.minecraft.world.level.material.MapColor.METAL),
+                    com.stonytark.magnetization.content.shaft.MagneticShaftMaterial.NEODYMIUM));
+
     public static final DeferredBlock<KineticElectromagnetBlock> KINETIC_ELECTROMAGNET =
             REGISTER.register("kinetic_electromagnet", () -> new KineticElectromagnetBlock(metal()));
 

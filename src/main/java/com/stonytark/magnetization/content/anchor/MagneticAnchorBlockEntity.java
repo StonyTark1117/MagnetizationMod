@@ -45,6 +45,26 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
 
     private @Nullable UUID boundShipId = null;
     private long lastCoopTick = Long.MIN_VALUE;
+    private final com.stonytark.magnetization.content.docking.DockingState dockState = new com.stonytark.magnetization.content.docking.DockingState();
+    private String dockReason = "no_target";
+
+    private void updateDockStatus(ServerLevel server) {
+        var sample = com.stonytark.magnetization.content.docking.DockingMeasurements.sample(server, getBlockPos());
+        dockState.update(sample.reading(), new com.stonytark.magnetization.content.docking.DockingState.Limits(sample.range(),
+                MagConfig.DOCK_TOLERANCE.get(), MagConfig.DOCK_HYSTERESIS.get(), MagConfig.DOCK_SPEED.get(),
+                MagConfig.DOCK_SPIN.get(), MagConfig.DOCK_DWELL_TICKS.get()), server.getGameTime());
+        String next = dockState.reason().name().toLowerCase(java.util.Locale.ROOT);
+        if (!next.equals(dockReason)) {
+            dockReason = next;
+            server.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+        }
+    }
+    @Override public boolean addToGoggleTooltip(java.util.List<net.minecraft.network.chat.Component> lines, boolean sneaking) {
+        super.addToGoggleTooltip(lines, sneaking);
+        if (boundShipId != null) lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.target", boundShipId.toString().substring(0, 8)));
+        lines.add(net.minecraft.network.chat.Component.translatable("dock.magnetization.reason." + dockReason));
+        return true;
+    }
 
     public MagneticAnchorBlockEntity(final BlockPos pos, final BlockState state) {
         super(MagBlockEntities.MAGNETIC_ANCHOR.get(), pos, state);
@@ -86,6 +106,7 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
     protected @Nullable MagneticField computeField(final BlockState state) {
         final boolean powered = isPowered();
         if (!(level instanceof ServerLevel server)) return null;
+        updateDockStatus(server);
         if (!powered) {
             debugLog(server, "computeField: anchor at {} unpowered", getBlockPos().toShortString());
             return null;
@@ -216,12 +237,14 @@ public class MagneticAnchorBlockEntity extends AbstractEmitterBlockEntity {
     protected void saveAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         if (boundShipId != null) tag.putUUID("BoundShip", boundShipId);
+        tag.putString("DockReason", dockReason);
     }
 
     @Override
     protected void loadAdditional(final CompoundTag tag, final HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         boundShipId = tag.hasUUID("BoundShip") ? tag.getUUID("BoundShip") : null;
+        dockReason = tag.contains("DockReason") ? tag.getString("DockReason") : "no_target";
     }
 
     @Override

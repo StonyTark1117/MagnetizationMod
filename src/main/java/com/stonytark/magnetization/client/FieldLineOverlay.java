@@ -153,7 +153,9 @@ public final class FieldLineOverlay {
         final SubLevel ship = container.getSubLevel(boundShipId);
         if (ship == null || ship.isRemoved()) return;
         final org.joml.Vector3dc shipPos = ship.logicalPose().position();
-        final Vec3 anchorCenter = Vec3.atCenterOf(anchorPos);
+        final var anchor = level.getBlockEntity(anchorPos);
+        final var host = anchor == null ? null : dev.ryanhcode.sable.Sable.HELPER.getContaining(anchor);
+        final Vec3 anchorCenter = host == null ? Vec3.atCenterOf(anchorPos) : host.logicalPose().transformPosition(Vec3.atCenterOf(anchorPos));
 
         ps.pushPose();
         ps.translate(anchorCenter.x - camPos.x, anchorCenter.y - camPos.y, anchorCenter.z - camPos.z);

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "magnetization:block/neodymium_magnetic_shaft"
+    },
+    "axis=x": {
+      "model": "magnetization:block/neodymium_magnetic_shaft",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "magnetization:block/neodymium_magnetic_shaft",
+      "x": 90
+    }
+  }
+}

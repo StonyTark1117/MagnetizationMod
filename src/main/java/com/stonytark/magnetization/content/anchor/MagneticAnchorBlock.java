@@ -59,6 +59,10 @@ public final class MagneticAnchorBlock extends Block implements EntityBlock {
     ) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
+        if (sp.isShiftKeyDown() && sp.getMainHandItem().isEmpty()) {
+            com.stonytark.magnetization.content.docking.DockingLink.select(sp, pos);
+            return InteractionResult.CONSUME;
+        }
         final int caps = EmitterMenu.CAP_STRENGTH | EmitterMenu.CAP_RANGE;
         new EmitterMenuProvider(ContainerLevelAccess.create(level, pos), pos, caps,
                 Component.translatable("block.magnetization.magnetic_anchor")).openFor(sp);

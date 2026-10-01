@@ -151,6 +151,7 @@ def lowered = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 // lowercased suffix so both `:runServer` and `runServer` forms hit.
 def minimalProfileTasks = [
         'runvalidationauditserver', 'runvalidationauditclient',
+        'runmagneticengineeringgametestserver', 'runmagneticengineeringcoregametestserver', 'runmagneticengineeringregressiongametestserver', 'runmagneticengineeringauditserver', 'runmagneticengineeringauditclient',
         'runstoragerestartauditserver', 'runuiauditserver', 'runuiauditclient',
         'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
         'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver', 'runsupplementariesworkflowgametestserver',
@@ -229,8 +230,9 @@ if (!wantsMinimalClasspath) {
     configurations.runtimeClasspath { extendsFrom configurations.localRuntime }
 }
 def wantsStandardGameTests = lowered.any {
-    it.endsWith('rungametestserver') && !it.endsWith('runaeroportalsgametestserver')
-            && !it.endsWith('runimmersiveaeronauticsgametestserver')
+    it.endsWith('runmagneticengineeringcoregametestserver') ||
+            (it.endsWith('rungametestserver') && !it.endsWith('runaeroportalsgametestserver')
+                    && !it.endsWith('runimmersiveaeronauticsgametestserver'))
 }
 if (wantsStandardGameTests) {
     // Two security-boundary GameTests exercise a real Curios capability. Keep
@@ -792,6 +794,9 @@ processResources {
     // The isolated optional-test namespace needs the same empty arena without
     // committing a second binary NBT fixture.
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
+        into 'data/magnetization_engineering/structure'
+    }
+    from('src/main/resources/data/magnetization/structure/empty.nbt') {
         into 'data/magnetization_aeroportals/structure'
     }
     from('src/main/resources/data/magnetization/structure/empty.nbt') {
@@ -1110,6 +1115,31 @@ neoForge {
         // method (only client/server/data), so set the run type manually.
         // The `neoforge.enabledGameTestNamespaces` system property (set in
         // configureEach above) gates which mods' tests get registered.
+        magneticEngineeringAuditServer {
+            server(); programArgument 'nogui'; gameDirectory = file('run-magnetic-engineering-audit-server')
+            systemProperty 'magnetization.audit.engineering', 'true'
+            jvmArgument '-Xmx2G'
+        }
+        magneticEngineeringAuditClient {
+            client(); gameDirectory = file('run-magnetic-engineering-audit-client')
+            systemProperty 'magnetization.audit.engineering', 'true'
+            jvmArgument '-Xmx2G'
+            programArguments.addAll('--username', 'EngineeringAudit', '--quickPlayMultiplayer', '127.0.0.1:25593', '--width', '1280', '--height', '800')
+        }
+        magneticEngineeringCoreGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetic-engineering-core-gametest')
+        }
+        magneticEngineeringRegressionGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetic-engineering-regression-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_regressions'
+        }
+        magneticEngineeringGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-magnetic-engineering-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_engineering'
+        }
         gameTestServer {
             type = 'gameTestServer'
             // Keep GameTests isolated from the developer world. Sable sublevel

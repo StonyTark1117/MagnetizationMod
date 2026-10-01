@@ -196,6 +196,9 @@
     {"id": "createbigcannons:steel_autocannon_barrel", "required": false},
     {"id": "createbigcannons:cast_iron_cannon_barrel", "required": false},
     {"id": "createbigcannons:steel_cannon_barrel", "required": false},
-    {"id": "createbigcannons:nethersteel_cannon_barrel", "required": false}
+    {"id": "createbigcannons:nethersteel_cannon_barrel", "required": false},
+    "magnetization:magnetic_shaft",
+    "magnetization:samarium_cobalt_magnetic_shaft",
+    "magnetization:neodymium_magnetic_shaft"
   ]
 }

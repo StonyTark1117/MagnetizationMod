@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "magnetization:sintered_neodymium"
+    },
+    "P": {
+      "item": "magnetization:neodymium_alloy_plate"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " P ",
+    "SCS",
+    " P "
+  ],
+  "result": {
+    "count": 2,
+    "id": "magnetization:neodymium_magnetic_shaft"
+  }
+}

@@ -134,6 +134,8 @@ public final class MagPonderPlugin implements PonderPlugin {
             case STEAM_RAILS -> (scene, util) -> steamRailsMagnetism(scene, util, definition);
             case COPYCATS -> (scene, util) -> copycatMagnetism(scene, util, definition);
             case MACHINE -> machineScene(definition, primaryTarget);
+            case MAGNETIC_SHAFT -> (scene, util) -> magneticShafts(scene, util, definition);
+            case GENERIC -> genericScene(definition, primaryTarget);
         };
     }
 
@@ -484,6 +486,34 @@ public final class MagPonderPlugin implements PonderPlugin {
                 .text(definition.text(1))
                 .placeNearTarget();
         scene.idle(100);
+    }
+
+    private static void magneticShafts(SceneBuilder scene, SceneBuildingUtil util, PonderSceneCatalog.Scene definition) {
+        prepare(scene, definition);
+        var source = util.grid().at(1, 1, 2);
+        var receiver = util.grid().at(3, 1, 2);
+        scene.world().setBlock(source, MagBlocks.MAGNETIC_SHAFT.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), false);
+        scene.world().setBlock(source.west(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST), false);
+        scene.world().setBlock(receiver, MagBlocks.MAGNETIC_SHAFT.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), false);
+        show(scene, util, source.west(), receiver);
+        text(scene, util, source, receiver, definition.text(0));
+        scene.world().setBlock(util.grid().at(2, 1, 3), MagBlocks.SAMARIUM_COBALT_MAGNETIC_SHAFT.get().defaultBlockState(), false);
+        scene.world().setBlock(util.grid().at(3, 1, 3), MagBlocks.NEODYMIUM_MAGNETIC_SHAFT.get().defaultBlockState(), false);
+        show(scene, util, util.grid().at(2, 1, 3), util.grid().at(3, 1, 3));
+        text(scene, util, source, util.grid().at(3, 1, 3), definition.text(1));
+        scene.world().setBlock(source.west(), Blocks.AIR.defaultBlockState(), false);
+        text(scene, util, source, receiver, definition.text(2));
+        text(scene, util, source, receiver, definition.text(3));
+    }
+
+    private static PonderStoryBoard genericScene(final PonderSceneCatalog.Scene definition, final Block block) {
+        return (scene, util) -> {
+            prepare(scene, definition);
+            final BlockPos pos = new BlockPos(2, 1, 2);
+            scene.world().setBlock(pos, block.defaultBlockState(), false);
+            show(scene, util, pos, pos);
+            text(scene, util, pos, pos, definition.text(0));
+        };
     }
 
     private static PonderStoryBoard machineScene(final PonderSceneCatalog.Scene definition, final Block block) {

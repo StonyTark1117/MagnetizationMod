@@ -1,0 +1,85 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :extractModularGolemsApi UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :sourcesJar
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test
+
+> Task :verifyNoRuntimeModpackCoupling
+verifyNoRuntimeModpackCoupling: runtime source/resources contain no recommended-modpack names, slugs, or project IDs.
+
+> Task :verifyPlaytestBaselines
+./jade/gas_exciter_hud.png: OK
+./jade/golem_gallium_hud.png: OK
+./jade/golem_mr_fluid_hardened_hud.png: OK
+./jade/golem_mr_fluid_soft_hud.png: OK
+./jade/golem_titanomagnetite_hud.png: OK
+./lab/air_separator-gui.png: OK
+./lab/air_separator.png: OK
+./lab/automation.png: OK
+./lab/dipoles-gui.png: OK
+./lab/dipoles.png: OK
+./lab/electrolyzer-gui.png: OK
+./lab/electrolyzer.png: OK
+./lab/fusion-gui.png: OK
+./lab/fusion.png: OK
+./lab/gallery.png: OK
+./lab/gas_detector.png: OK
+./lab/gas_excitation.png: OK
+./lab/gas_exciter_hud.png: OK
+./lab/golem_gallium_hud.png: OK
+./lab/golem_hematite_hud.png: OK
+./lab/golem_magnetite_hud.png: OK
+./lab/golem_mr_fluid_hardened_hud.png: OK
+./lab/golem_mr_fluid_soft_hud-transition.png: OK
+./lab/golem_mr_fluid_soft_hud.png: OK
+./lab/golem_pyrrhotite_hud.png: OK
+./lab/golem_titanomagnetite_hud.png: OK
+./lab/golems_active.png: OK
+./lab/ion_thruster.png: OK
+./lab/overview.png: OK
+./lab/ponder_railgun.png: OK
+./lab/ponder_tokamak.png: OK
+./lab/portal.png: OK
+./lab/railgun-gui.png: OK
+./lab/railgun.png: OK
+./lab/rare_earth.png: OK
+./lab/ship.png: OK
+./lab/thruster_exhaust.png: OK
+./lab/tokamak-gui.png: OK
+./lab/tokamak.png: OK
+./survival/electrolyzer.png: OK
+./survival/fusion.png: OK
+./survival/golem_titanomagnetite_hud.png: OK
+./survival/golems_active.png: OK
+./survival/overview.png: OK
+./survival/railgun.png: OK
+./survival/tokamak.png: OK
+./top/gas_exciter_hud.png: OK
+./top/golem_gallium_hud.png: OK
+./top/golem_mr_fluid_hardened_hud.png: OK
+./top/golem_mr_fluid_soft_hud.png: OK
+./top/golem_titanomagnetite_hud.png: OK
+All immutable playtest baselines are declared, present, and checksum-verified.
+
+> Task :verifyRecommendedPackFixtures
+Verified 2 complete recommended-pack manifests and 4 individual-addon pins
+
+> Task :verifyReleaseJar
+verifyReleaseJar: magnetization-1.4.6.jar contains required metadata, no build-only files, and no pack-specific runtime coupling.
+
+> Task :check
+> Task :build
+
+BUILD SUCCESSFUL in 6s
+12 actionable tasks: 7 executed, 5 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html

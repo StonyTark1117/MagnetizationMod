@@ -63,6 +63,15 @@ public final class PonderSceneCatalog {
             machine("homopolar_motor", "Drive a Homopolar Motor",
                     "Install a magnet and connect the Create shaft; output scales with the installed magnet.", true,
                     "magnetization:homopolar_motor"),
+            custom("magnetic_shaft", "Transmit rotation through a magnetic field", Kind.MAGNETIC_SHAFT, List.of(
+                    "Drive one shaft mechanically. Nearby receivers match its signed RPM and share the original stress capacity; they cannot retransmit.",
+                    "Ferromagnetic, Samarium-Cobalt and Neodymium shafts reach 4, 8 and 16 blocks by default. Each range is server configurable; materials do not add power.",
+                    "Conflicting speeds stop the receiver. Removing drive, leaving range or unloading the source breaks its link. A newly driven shaft can take over.",
+                    "Goggles show material, range, source links, RPM, load and conflicts. Hold sneak and aim at a ship to inspect applied magnetic forces and force limits."),
+                    "magnetization:magnetic_shaft", "magnetization:samarium_cobalt_magnetic_shaft", "magnetization:neodymium_magnetic_shaft"),
+            custom("docking_signals", "Read a dock with redstone", Kind.GENERIC, List.of(
+                    "Sneak-use an anchor with an empty hand, then sneak-use a switch to link it. Use the switch to choose present, settled, lost or distance output. Goggles explain the state."),
+                    "magnetization:magnetic_switch", "magnetization:magnetic_anchor"),
             machine("structural_inducer", "Reel in a Structure",
                     "Power the inducer and set its scan range. With block FACING SOUTH, its capture cone points NORTH and reels structures SOUTH toward the inducer.",
                     true, "magnetization:structural_inducer"),
@@ -124,6 +133,8 @@ public final class PonderSceneCatalog {
 
     public enum Kind {
         MACHINE,
+        GENERIC,
+        MAGNETIC_SHAFT,
         TOKAMAK,
         FUSION_PANEL,
         RAILGUN,
