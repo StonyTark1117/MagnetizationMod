@@ -16,4 +16,4 @@ Goal: address all seven items in the October 1 audit, preserve gameplay, run a m
 
 Gameplay gates must cover force results/order, live configuration and power, chunk/lifecycle changes, gas grace/energy/topology behavior, and shaft conflicts/reversals. Faster timing alone is not acceptance evidence.
 
-The baseline comparison checkout is detached at `1d479047812b`, with only the same opt-in fixture/harness extensions copied in. Both variants will use the same 30-scenario standard run, followed by matched attribution runs. Changes beyond items 1–2 are not yet pushed while validation continues.
+The baseline comparison checkout is detached at `1d479047812b`, with only the same opt-in fixture/harness extensions copied in. Both variants will use the same 30-scenario standard run, followed by matched attribution runs. Implementation through item 7 is committed and pushed as `3e9ca114`; matched measurements and remaining compatibility gates are still pending.
