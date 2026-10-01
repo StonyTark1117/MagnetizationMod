@@ -126,12 +126,14 @@ public final class MagneticShaftNetwork {
         // longer than their expiry so inspection itself cannot keep a source loaded.
         if (state.lastUpdate != Long.MIN_VALUE && now >= state.lastUpdate && now - state.lastUpdate < 4) return;
         state.lastUpdate = now;
-        List<MagneticShaftBlockEntity> shafts = state.shafts.stream().sorted()
-                .map(pos -> loaded(level, pos)).filter(MagneticShaftBlockEntity.class::isInstance)
-                .map(MagneticShaftBlockEntity.class::cast).toList();
-        // A ticket can temporarily drop below FULL while a chunk is still in memory.
-        // Keep that position until the block entity's actual unload/removal event.
-        state.shafts.removeIf(pos -> loaded(level, pos) != null && !(loaded(level, pos) instanceof MagneticShaftBlockEntity));
+        final List<MagneticShaftBlockEntity> shafts = new ArrayList<>();
+        for (final BlockPos pos : state.shafts.stream().sorted().toList()) {
+            final KineticBlockEntity entity = loaded(level, pos);
+            if (entity instanceof MagneticShaftBlockEntity shaft) shafts.add(shaft);
+            // A ticket may temporarily drop below FULL. Preserve that entry until
+            // a real unload; only discard a known replacement, as before.
+            else if (entity != null) state.shafts.remove(pos);
+        }
         Map<KineticBlockEntity, Component> components = new HashMap<>();
         for (var shaft : shafts) if (!components.containsKey(shaft)) {
             var component = discover(shaft);

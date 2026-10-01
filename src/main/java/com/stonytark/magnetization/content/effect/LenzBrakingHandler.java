@@ -95,6 +95,10 @@ public final class LenzBrakingHandler {
         final int maxY = (int) Math.ceil(bb.maxY()) + CONDUCTOR_REACH;
         final int maxZ = (int) Math.ceil(bb.maxZ()) + CONDUCTOR_REACH;
         final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        // Block states are immutable. Reuse classification only during this scan:
+        // tags/config remain live on the next call, and every world position and
+        // the original sample cap/order are still examined.
+        final var conductors = new java.util.IdentityHashMap<net.minecraft.world.level.block.state.BlockState, Boolean>();
         int count = 0;
         int examined = 0;
         for (int x = minX; x <= maxX; x++) {
@@ -103,8 +107,10 @@ public final class LenzBrakingHandler {
                     if (++examined > SAMPLE_CAP) return count;
                     cursor.set(x, y, z);
                     if (!level.isLoaded(cursor)) continue;
-                    if (com.stonytark.magnetization.compat.FerromagneticCompat
-                            .is(level.getBlockState(cursor), MagTags.EDDY_CONDUCTORS)) count++;
+                    final var state = level.getBlockState(cursor);
+                    if (conductors.computeIfAbsent(state, candidate ->
+                            com.stonytark.magnetization.compat.FerromagneticCompat
+                                    .is(candidate, MagTags.EDDY_CONDUCTORS))) count++;
                 }
             }
         }

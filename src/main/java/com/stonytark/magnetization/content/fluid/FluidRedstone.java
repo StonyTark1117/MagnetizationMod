@@ -10,12 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.joml.Vector3f;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Makes the mod's conductive fluids carry a redstone signal like a body of
@@ -43,6 +39,7 @@ public final class FluidRedstone {
     /** Cap on a single connected network we will recompute, as a runaway guard. */
     private static final int MAX_NETWORK = 4096;
 
+    private static final Direction[] DIRECTIONS = Direction.values();
     private static boolean recomputing = false;
 
     private FluidRedstone() {}
@@ -86,16 +83,41 @@ public final class FluidRedstone {
         recomputeNetwork(level, pos, block);
     }
 
-    /** Strongest external (non-conductor) signal feeding into a single cell. */
-    private static int externalSignal(final Level level, final BlockPos pos) {
-        int max = 0;
-        for (final Direction d : Direction.values()) {
-            final BlockPos np = pos.relative(d);
-            if (isConductor(level.getBlockState(np))) continue; // network edges handled separately
-            final int s = level.getSignal(np, d);
-            if (s > max) max = s;
+    /** Read-only discovery snapshot. Discarded before another notification can
+     * recompute; signal methods still receive the actual level and live BEs. */
+    private static final class ReadCache {
+        private final Level level;
+        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<BlockState> states =
+                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+        private ReadCache(final Level level) { this.level = level; }
+        private BlockState state(final BlockPos pos) {
+            final long key = pos.asLong();
+            BlockState state = states.get(key);
+            if (state == null) { state = level.getBlockState(pos); states.put(key, state); }
+            return state;
         }
-        return max;
+        // SignalGetter#getSignal, including NeoForge's weak-power hook. Reusing
+        // block states avoids repeatedly looking up the same solid neighbors.
+        private int signal(final BlockState state, final BlockPos pos, final Direction direction) {
+            final int weak = state.getSignal(level, pos, direction);
+            if (!state.shouldCheckWeakPower(level, pos, direction)) return weak;
+            int direct = 0;
+            for (final Direction d : DIRECTIONS) {
+                final BlockPos neighbor = pos.relative(d);
+                direct = Math.max(direct, state(neighbor).getDirectSignal(level, neighbor, d));
+                if (direct >= 15) break;
+            }
+            return Math.max(weak, direct);
+        }
+        private int externalSignal(final BlockPos pos) {
+            int max = 0;
+            for (final Direction d : DIRECTIONS) {
+                final BlockPos neighbor = pos.relative(d);
+                final BlockState state = state(neighbor);
+                if (!isConductor(state)) max = Math.max(max, signal(state, neighbor, d));
+            }
+            return max;
+        }
     }
 
     /**
@@ -107,51 +129,43 @@ public final class FluidRedstone {
     private static void recomputeNetwork(final Level level, final BlockPos start, final Block block) {
         recomputing = true;
         try {
-            // 1. Collect the connected component + each cell's external input.
+            // Retain the original breadth-first discovery order and exact cap.
+            // Queue entries beyond the cap have zero power, just as before.
+            final it.unimi.dsi.fastutil.longs.LongArrayList queue = new it.unimi.dsi.fastutil.longs.LongArrayList();
+            final it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap indices = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+            indices.defaultReturnValue(-1);
             final List<BlockPos> cells = new ArrayList<>();
-            final Map<BlockPos, Integer> power = new HashMap<>();
-            final Map<BlockPos, Integer> ext = new HashMap<>();
-            final Deque<BlockPos> queue = new ArrayDeque<>();
-            queue.add(start.immutable());
-            power.put(start.immutable(), 0);
-            while (!queue.isEmpty() && cells.size() < MAX_NETWORK) {
-                final BlockPos p = queue.poll();
+            final it.unimi.dsi.fastutil.ints.IntArrayList external = new it.unimi.dsi.fastutil.ints.IntArrayList();
+            final it.unimi.dsi.fastutil.ints.IntArrayList edges = new it.unimi.dsi.fastutil.ints.IntArrayList();
+            final ReadCache reads = new ReadCache(level);
+            final long seed = start.asLong();
+            queue.add(seed);
+            indices.put(seed, 0);
+            for (int cursor = 0; cursor < queue.size() && cursor < MAX_NETWORK; cursor++) {
+                final BlockPos p = BlockPos.of(queue.getLong(cursor));
                 cells.add(p);
-                ext.put(p, externalSignal(level, p));
-                for (final Direction d : Direction.values()) {
-                    final BlockPos np = p.relative(d).immutable();
-                    if (power.containsKey(np)) continue;
-                    if (isConductor(level.getBlockState(np))) {
-                        power.put(np, 0);
-                        queue.add(np);
+                external.add(reads.externalSignal(p));
+                for (final Direction d : DIRECTIONS) {
+                    final BlockPos np = p.relative(d);
+                    final long key = np.asLong();
+                    int index = indices.get(key);
+                    if (index < 0 && isConductor(reads.state(np))) {
+                        index = queue.size();
+                        indices.put(key, index);
+                        queue.add(key);
                     }
+                    edges.add(index);
                 }
             }
-
-            // 2. Solve: power[cell] = max(external[cell], max neighbour power - 1).
-            //    Relax repeatedly; values are 0..15 so this converges quickly.
-            for (final BlockPos p : cells) power.put(p, ext.get(p));
-            boolean changed = true;
-            while (changed) {
-                changed = false;
-                for (final BlockPos p : cells) {
-                    int best = ext.get(p);
-                    for (final Direction d : Direction.values()) {
-                        final BlockPos np = p.relative(d);
-                        final Integer pn = power.get(np);
-                        if (pn != null && pn - 1 > best) best = pn - 1;
-                    }
-                    if (best > 15) best = 15;
-                    if (best != power.get(p)) { power.put(p, best); changed = true; }
-                }
-            }
+            final int[] power = FluidSignalSolver.solve(external.toIntArray(), edges.toIntArray());
 
             // 3. Write changed cells (clients only; we notify neighbours ourselves).
             final List<BlockPos> written = new ArrayList<>();
-            for (final BlockPos p : cells) {
+            for (int index = 0; index < cells.size(); index++) {
+                final BlockPos p = cells.get(index);
                 final BlockState s = level.getBlockState(p);
                 if (!s.hasProperty(POWER)) continue;
-                final int want = power.get(p);
+                final int want = power[index];
                 if (s.getValue(POWER) != want) {
                     level.setBlock(p, s.setValue(POWER, want), Block.UPDATE_CLIENTS);
                     written.add(p);

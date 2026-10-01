@@ -91,13 +91,13 @@ public final class GasExcitation {
             final long packed = queue.dequeueLong();
             if (!seen.add(packed)) continue;
             pos.set(packed);
-            if (!level.hasChunkAt(pos) || fluidAt(level, pos) != gas) continue;
+            if (!level.hasChunkAt(pos) || scratch.fluidAt(level, pos) != gas) continue;
             cells.add(packed);
             redstone |= level.hasNeighborSignal(pos);
             for (final Direction direction : DIRECTIONS) {
                 next.setWithOffset(pos, direction);
                 if (!level.hasChunkAt(next)) continue;
-                final Fluid adjacentFluid = fluidAt(level, next);
+                final Fluid adjacentFluid = scratch.fluidAt(level, next);
                 if (adjacentFluid == gas) {
                     queue.enqueue(next.asLong());
                     continue;
@@ -185,9 +185,12 @@ public final class GasExcitation {
 
     /** Canonical gas identity shared by native fluids and compatibility proxy cells. */
     public static Fluid fluidAt(final ServerLevel level, final BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof ProxyGasCloudBlockEntity cloud) return cloud.fluid();
-        if (!(level.getBlockState(pos).getBlock() instanceof ExcitableGasBlock)) return Fluids.EMPTY;
-        final Fluid fluid = level.getFluidState(pos).getType();
+        final BlockState state = level.getBlockState(pos);
+        if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof ProxyGasCloudBlockEntity cloud) {
+            return cloud.fluid();
+        }
+        if (!(state.getBlock() instanceof ExcitableGasBlock)) return Fluids.EMPTY;
+        final Fluid fluid = state.getFluidState().getType();
         return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid;
     }
 
@@ -225,6 +228,8 @@ public final class GasExcitation {
         private final LongOpenHashSet seen;
         private final LongArrayList cells;
         private final LongOpenHashSet exciterPositions = new LongOpenHashSet();
+        private final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<Fluid> fluids =
+                new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
         private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         private final BlockPos.MutableBlockPos next = new BlockPos.MutableBlockPos();
 
@@ -232,7 +237,17 @@ public final class GasExcitation {
             seen = new LongOpenHashSet(Math.min(cap, 4096));
             cells = new LongArrayList(Math.min(cap, 4096));
         }
+        private Fluid fluidAt(final ServerLevel level, final BlockPos pos) {
+            final long key = pos.asLong();
+            Fluid fluid = fluids.get(key);
+            if (fluid == null) {
+                fluid = GasExcitation.fluidAt(level, pos);
+                fluids.put(key, fluid);
+            }
+            return fluid;
+        }
         private void clear() {
+            fluids.clear();
             queue.clear();
             seen.clear();
             cells.clear();
