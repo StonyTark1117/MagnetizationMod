@@ -18,6 +18,7 @@ public enum GalliumGolemBodyProvider implements IEntityComponentProvider {
 
     @Override
     public void appendBody(final ITooltip tooltip, final IEntityAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.wthitCompatEnabled()) return;
         final Entity entity = accessor.getEntity();
         if (!(entity instanceof GalliumGolem golem)) return;
         com.stonytark.magnetization.content.golem.GalliumGolemHud.lines(golem)

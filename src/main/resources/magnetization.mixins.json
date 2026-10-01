@@ -11,7 +11,10 @@
     "LightningBoltAccessor"
   ],
   "client": [
-    "client.AnvilSoundMixin"
+    "client.AnvilSoundMixin",
+    "client.UiAuditTextMixin",
+    "client.UiAuditFontMixin",
+    "compat.WthitRayCasterMixin"
   ],
   "server": [],
   "injectors": {

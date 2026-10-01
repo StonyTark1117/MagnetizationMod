@@ -423,6 +423,13 @@ if (lowered.any { it.contains('validationaudit') }) {
 }
 if (lowered.any { it.contains('uiaudit') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.uiAuditRuntime)
+    def uiMode = providers.gradleProperty('uiAuditMode').getOrElse('legacy')
+    switch (uiMode) {
+        case 'jei': case 'jer': configurations.runtimeClasspath.extendsFrom(configurations.jerClientRuntime); break
+        case 'rei': configurations.runtimeClasspath.extendsFrom(configurations.reiClientRuntime); break
+        case 'jade': configurations.runtimeClasspath.extendsFrom(configurations.jadeClientRuntime); break
+        case 'top': configurations.runtimeClasspath.extendsFrom(configurations.topClientRuntime); break
+    }
 }
 if (lowered.any { it.contains('aircraftaudit') }) {
     configurations.runtimeClasspath.extendsFrom(configurations.sweepAircraftRuntime)
@@ -943,10 +950,14 @@ neoForge {
         uiAuditServer {
             server(); programArgument 'nogui'; gameDirectory = file('run-ui-audit-server')
             systemProperty 'magnetization.audit.ui', 'true'
+            systemProperty 'magnetization.audit.uiControl', file('build/compat-audit/ui/hud-switch.txt').absolutePath
+            systemProperty 'magnetization.audit.uiMode', providers.gradleProperty('uiAuditMode').getOrElse('legacy')
         }
         uiAuditClient {
             client(); gameDirectory = file('run-ui-audit-client')
             systemProperty 'magnetization.audit.ui', 'true'
+            systemProperty 'magnetization.audit.uiControl', file('build/compat-audit/ui/hud-switch.txt').absolutePath
+            systemProperty 'magnetization.audit.uiMode', providers.gradleProperty('uiAuditMode').getOrElse('legacy')
             programArguments.addAll('--username', 'AuditUi', '--quickPlayMultiplayer', providers.gradleProperty('uiAuditEndpoint').getOrElse('127.0.0.1:25589'))
         }
         storageRestartAuditServer {
@@ -2132,7 +2143,13 @@ dependencies {
     // localRuntime lines above.
     compileOnly("maven.modrinth:emi:${emi_version}")
     emiClientRuntime("maven.modrinth:emi:${emi_version}")
-    uiAuditRuntime("maven.modrinth:emi:${emi_version}") { transitive = false }
+    if (providers.gradleProperty('uiAuditMode').getOrElse('legacy') in ['legacy', 'emi']) {
+        uiAuditRuntime("maven.modrinth:emi:${emi_version}") { transitive = false }
+    }
+    if (providers.gradleProperty('uiAuditMode').getOrElse('legacy') == 'wthit') {
+        uiAuditRuntime("maven.modrinth:wthit:neo-12.10.2") { transitive = false }
+        uiAuditRuntime("maven.modrinth:badpackets:neo-0.8.2") { transitive = false }
+    }
     uiAuditRuntime("maven.modrinth:curios:${curios_version}") { transitive = false }
     validationAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }
     uiAuditRuntime("maven.modrinth:patchouli:${patchouli_version}") { transitive = false }

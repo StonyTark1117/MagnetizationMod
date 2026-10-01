@@ -1,0 +1,161 @@
+[01Oct2026 05:17:12.886] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.44, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.252, --fml.neoFormVersion, 20240808.144430, nogui]
+[01Oct2026 05:17:12.888] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Arch Linux OpenJDK 64-Bit Server VM 21.0.12.1+1
+[01Oct2026 05:17:12.888] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Arch Linux; OS Linux arch amd64 version 7.2.7-zen1-1-zen
+[01Oct2026 05:17:12.927] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[01Oct2026 05:17:12.945] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/braydon/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[01Oct2026 05:17:13.176] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:Registrate.MC1._21._67. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/com.tterrag.registrate/Registrate/MC1.21-1.3.0+67/66ddc4cd56472fea1ea1a24182901e6c92a51c0a/Registrate-MC1.21-1.3.0+67.jar
+[01Oct2026 05:17:13.176] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: veil. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/foundry.veil/veil-neoforge-1.21.1/4.3.2/3d4056e31dd8a06e35901c3b82210c3d471e1e48/veil-neoforge-1.21.1-4.3.2.jar
+[01Oct2026 05:17:13.176] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: sablecompanion. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable-companion/sable-companion-common-1.21.1/1.6.0/370be7db705926176e05c0215ed676150c45daae/sable-companion-common-1.21.1-1.6.0.jar
+[01Oct2026 05:17:13.177] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.engine-room.flywheel/flywheel-neoforge-1.21.1/1.0.6/a943872ad0bdd4458d818d8d7dc123fb250eb744/flywheel-neoforge-1.21.1-1.0.6.jar
+[01Oct2026 05:17:13.177] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: library:sable_rapier. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/dev.ryanhcode.sable/sable-sable_rapier-1.21.1/2.0.5/8fd9e68113d35a8014669da7396c6ad892c4f143/sable-sable_rapier-1.21.1-2.0.5.jar
+[01Oct2026 05:17:13.177] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: /home/braydon/.gradle/caches/modules-2/files-2.1/net.createmod.ponder/ponder-neoforge/1.0.87+mc1.21.1/7783eeff0389f8c6003457133b9dd98e903266c6/ponder-neoforge-1.0.87+mc1.21.1.jar
+[01Oct2026 05:17:13.177] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 4 dependencies adding them to mods collection
+[01Oct2026 05:17:13.178] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Create 6.0.11 (create)
+		Create Aeronautics 1.3.2 (aeronautics)
+		Create Simulated 1.3.2 (simulated)
+		Curios API 9.5.1+1.21.1 (curios)
+		Flywheel 1.0.6 (flywheel)
+		Jade 15.10.6+neoforge (jade)
+		Magnetization 1.4.6 (magnetization)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.252 (neoforge)
+		Patchouli 1.21.1-93-NEOFORGE (patchouli)
+		Ponder 1.0.87+mc1.21.1 (ponder)
+		Sable 2.0.5 (sable)
+		Sable Companion 1.6.0 (sablecompanion)
+		TerraBlender 4.1.0.8 (terrablender)
+		Veil 4.3.2 (veil)
+[01Oct2026 05:17:13.634] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[01Oct2026 05:17:13.686] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, ., nogui]
+[01Oct2026 05:17:13.753] [main/WARN] [mixin/]: Reference map 'simulated.refmap.json' for simulated.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.757] [main/WARN] [mixin/]: Reference map 'aeronautics.refmap.json' for aeronautics.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.759] [main/WARN] [mixin/]: Reference map 'curios.refmap.json' for curios.neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.760] [main/WARN] [mixin/]: Reference map 'curios.refmap.json' for curios.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.767] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.767] [main/WARN] [mixin/]: Reference map 'patchouli.refmap.json' for patchouli_xplat.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.772] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 05:17:13.772] [main/INFO] [dev.ryanhcode.sable.mixin.AbstractSableMixinPlugin/]: Using Vanilla renderer mixins
+[01Oct2026 05:17:13.778] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:13.778] [main/WARN] [mixin/]: Reference map 'terrablender.refmap.json' for terrablender_neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[01Oct2026 05:17:14.206] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/CCCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.CCCopycatBlockEntity)
+[01Oct2026 05:17:14.207] [main/WARN] [mixin/]: Error loading class: com/copycatsplus/copycats/foundation/copycat/multistate/MultiStateCopycatBlockEntity (java.lang.ClassNotFoundException: com.copycatsplus.copycats.foundation.copycat.multistate.MultiStateCopycatBlockEntity)
+[01Oct2026 05:17:14.208] [main/WARN] [mixin/]: Error loading class: com/jesz/createdieselgenerators/content/tools/ChemicalSprayerProjectileEntity (java.lang.ClassNotFoundException: com.jesz.createdieselgenerators.content.tools.ChemicalSprayerProjectileEntity)
+[01Oct2026 05:17:14.209] [main/WARN] [mixin/]: Error loading class: qouteall/imm_ptl/core/compat/sable_integration/IPSableBridge (java.lang.ClassNotFoundException: qouteall.imm_ptl.core.compat.sable_integration.IPSableBridge)
+[01Oct2026 05:17:14.209] [main/WARN] [mixin/]: Error loading class: com/github/alexmodguy/alexscaves/server/block/blockentity/TeslaBulbBlockEntity (java.lang.ClassNotFoundException: com.github.alexmodguy.alexscaves.server.block.blockentity.TeslaBulbBlockEntity)
+[01Oct2026 05:17:14.210] [main/WARN] [mixin/]: Error loading class: dev/devce/rocketnautics/content/orbit/DeepSpaceData (java.lang.ClassNotFoundException: dev.devce.rocketnautics.content.orbit.DeepSpaceData)
+[01Oct2026 05:17:14.240] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[01Oct2026 05:17:14.321] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[01Oct2026 05:17:17.526] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 05:17:17.527] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 05:17:17.528] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 05:17:17.529] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[01Oct2026 05:17:17.530] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[01Oct2026 05:17:17.559] [modloading-worker-0/INFO] [Veil/]: Veil is initializing.
+[01Oct2026 05:17:17.567] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.252, for MC 1.21.1
+[01Oct2026 05:17:17.569] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.11 initializing! Commit hash: fc9535d82a29419164a1e9dc9c678bdcddeab30d
+[01Oct2026 05:17:18.291] [modloading-worker-0/INFO] [dev.ryanhcode.sable.Sable/]: Sable loaded!
+[01Oct2026 05:17:19.390] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:overworld to index 0 for type OVERWORLD
+[01Oct2026 05:17:19.390] [modloading-sync-worker/INFO] [terrablender/]: Registered region minecraft:nether to index 0 for type NETHER
+[01Oct2026 05:17:19.391] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:anomaly_region to index 1 for type OVERWORLD
+[01Oct2026 05:17:19.391] [modloading-sync-worker/INFO] [terrablender/]: Registered region magnetization:petrified_forest_region to index 2 for type OVERWORLD
+[01Oct2026 05:17:19.392] [modloading-sync-worker/INFO] [magnetization/]: Surface rules registered for OVERWORLD category (anomaly + petrified_forest)
+[01Oct2026 05:17:19.430] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.vanilla.VanillaPlugin
+[01Oct2026 05:17:19.442] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.vanilla.VanillaPlugin in 9.054 ms
+[01Oct2026 05:17:19.442] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.universal.UniversalPlugin
+[01Oct2026 05:17:19.444] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.universal.UniversalPlugin in 1.544 ms
+[01Oct2026 05:17:19.444] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.debug.DebugPlugin
+[01Oct2026 05:17:19.444] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.debug.DebugPlugin in 3.010 μs
+[01Oct2026 05:17:19.444] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.core.CorePlugin
+[01Oct2026 05:17:19.445] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.core.CorePlugin in 20.69 μs
+[01Oct2026 05:17:19.445] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.access.AccessibilityPlugin
+[01Oct2026 05:17:19.445] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.access.AccessibilityPlugin in 2.800 μs
+[01Oct2026 05:17:19.445] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from com.stonytark.magnetization.compat.jade.MagJadePlugin
+[01Oct2026 05:17:19.445] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from com.stonytark.magnetization.compat.jade.MagJadePlugin in 2.770 μs
+[01Oct2026 05:17:19.488] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[01Oct2026 05:17:19.505] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[01Oct2026 05:17:19.506] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/braydon/Magnetization-API/build/moddev/artifacts/neoforge-21.1.252.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[01Oct2026 05:17:19.546] [main/INFO] [com.simibubi.create.Create/]: Created 157 recipes which will be injected into the game
+[01Oct2026 05:17:19.549] [main/INFO] [com.simibubi.create.Create/]: Created 0 tags which will be injected into the game
+[01Oct2026 05:17:19.572] [main/INFO] [net.minecraft.server.MinecraftServer/]: Found new data pack create:dynamic_data, loading it automatically
+[01Oct2026 05:17:19.794] [main/INFO] [net.minecraft.server.Main/]: No existing world data, creating new world
+[01Oct2026 05:17:20.130] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 3236 recipes
+[01Oct2026 05:17:20.234] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 2939 advancements
+[01Oct2026 05:17:20.238] [main/INFO] [Curios API/]: Loaded 10 curio slots
+[01Oct2026 05:17:20.239] [main/INFO] [Curios API/]: Loaded 1 curio entities
+[01Oct2026 05:17:20.243] [main/INFO] [com.stonytark.magnetization.content.gas.GasExcitationProfiles/]: Loaded 0 gas excitation fluid profile bindings
+[01Oct2026 05:17:20.249] [main/WARN] [net.minecraft.core.MappedRegistry/]: Not all defined tags for registry ResourceKey[minecraft:root / minecraft:item] are present in data pack: c:ingots/aluminum
+[01Oct2026 05:17:20.839] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting minecraft server version 1.21.1
+[01Oct2026 05:17:20.839] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Loading properties
+[01Oct2026 05:17:20.839] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Default game type: SURVIVAL
+[01Oct2026 05:17:20.839] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[01Oct2026 05:17:20.870] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting Minecraft server on 127.0.0.1:52843
+[01Oct2026 05:17:20.889] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Adding UDP server channel future
+[01Oct2026 05:17:20.908] [Netty Epoll Server IO #0/WARN] [io.netty.channel.AbstractChannel/]: A non-root user can't receive a broadcast packet if the socket is not bound to a wildcard address; binding to a non-wildcard address (/127.0.0.1:52843) anyway as requested.
+[01Oct2026 05:17:20.909] [Netty Epoll Server IO #0/INFO] [dev.ryanhcode.sable.Sable/]: Server UDP channel active
+[01Oct2026 05:17:20.909] [Server thread/INFO] [net.minecraft.server.network.ServerConnectionListener/]: Using epoll channel type
+[01Oct2026 05:17:20.912] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[01Oct2026 05:17:20.912] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: The server will make no attempt to authenticate usernames. Beware.
+[01Oct2026 05:17:20.912] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[01Oct2026 05:17:20.912] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: To change this, set "online-mode" to "true" in the server.properties file.
+[01Oct2026 05:17:20.941] [Server thread/INFO] [terrablender/]: Initialized TerraBlender biomes for level stem minecraft:the_nether
+[01Oct2026 05:17:20.942] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Preparing level "world"
+[01Oct2026 05:17:20.954] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:overworld] using RapierPhysicsPipelineProvider
+[01Oct2026 05:17:20.959] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Using game directory relative Sable Rapier native directory /tmp/magnetization-ui-server.InQWXF/.sable/natives
+[01Oct2026 05:17:21.270] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_nether] using RapierPhysicsPipelineProvider
+[01Oct2026 05:17:21.286] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Creating physics pipeline for ResourceKey[minecraft:dimension / minecraft:the_end] using RapierPhysicsPipelineProvider
+[01Oct2026 05:17:21.304] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[01Oct2026 05:17:21.316] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[01Oct2026 05:17:21.389] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 84 ms
+[01Oct2026 05:17:21.389] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Done (0.470s)! For help, type "help"
+[01Oct2026 05:17:21.395] [LanServerPinger #1/WARN] [net.minecraft.client.server.LanServerPinger/]: LanServerPinger: Network is unreachable
+[01Oct2026 05:17:21.424] [Server thread/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [magnetization]
+[01Oct2026 05:17:21.459] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[01Oct2026 05:17:21.463] [Server thread/INFO] [magnetization/]: Stripped 1 recipe(s) producing disabled magnetization content.
+[01Oct2026 05:17:21.463] [Server thread/INFO] [patchouli/]: Sending reload packet to clients
+[01Oct2026 05:17:38.208] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: AuditUi[/127.0.0.1:53650] logged in with entity id 1 at (2.5, -60.0, 5.5)
+[01Oct2026 05:17:38.212] [Server thread/INFO] [dev.ryanhcode.sable.Sable/]: Beginning attempted authentication with player AuditUi
+[01Oct2026 05:17:38.227] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: AuditUi joined the game
+[01Oct2026 05:17:38.312] [Server thread/INFO] [magnetization/ui-audit/]: UI_AUDIT_SERVER_READY manual=1 patchouli:guide_book compass=1 magnetization:field_compass
+[01Oct2026 05:17:38.374] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_CREATED uuid=1ee71f4a-01e3-4b4e-bb83-a4cc96fee7d1 blocks=[permanent_magnet, kinetic_electromagnet, gas_exciter, gas_vent, air_separator, magnetostrictive_sensor, barkhausen_generator, gyrostabilizer, induction_pad] pose=Pose3d{position=(8.944 100.611 0.5), orientation=(0 0 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:17:38.408] [Netty Epoll Server IO #0/INFO] [dev.ryanhcode.sable.Sable/]: UDP authentication complete with /127.0.0.1:53650, UDP routing to /127.0.0.1:58955
+[01Oct2026 05:17:43.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=100 pose=Pose3d{position=(8.995 102 0.5), orientation=(0 0.057 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:17:48.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=200 pose=Pose3d{position=(7.809 102 0.5), orientation=(0 0.036 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:17:50.222] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:17:52.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:17:53.123] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=300 pose=Pose3d{position=(7.041 102 0.5), orientation=(0 -0.034 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:17:58.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=400 pose=Pose3d{position=(8.374 102 0.5), orientation=(0 -0.058 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:00.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:02.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:03.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=500 pose=Pose3d{position=(8.887 102 0.5), orientation=(0 -0.002 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:08.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=600 pose=Pose3d{position=(7.456 102 0.5), orientation=(0 0.056 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:10.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:12.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:13.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=700 pose=Pose3d{position=(7.217 102 0.5), orientation=(0 0.037 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:18.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=800 pose=Pose3d{position=(8.694 102 0.5), orientation=(0 -0.033 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:20.173] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:22.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:23.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=900 pose=Pose3d{position=(8.65 102 0.5), orientation=(0 -0.058 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:28.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1000 pose=Pose3d{position=(7.182 102 0.5), orientation=(0 -0.004 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:30.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:32.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:33.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1100 pose=Pose3d{position=(7.506 102 0.5), orientation=(0 0.056 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:38.121] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1200 pose=Pose3d{position=(8.913 102 0.5), orientation=(0 0.039 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:40.173] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:42.171] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:43.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1300 pose=Pose3d{position=(8.319 102 0.5), orientation=(0 -0.031 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:48.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1400 pose=Pose3d{position=(7.026 102 0.5), orientation=(0 -0.059 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:50.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:18:52.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:18:53.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1500 pose=Pose3d{position=(7.868 102 0.5), orientation=(0 -0.006 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:18:58.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1600 pose=Pose3d{position=(8.999 102 0.5), orientation=(0 0.055 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:19:00.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:19:02.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:19:03.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1700 pose=Pose3d{position=(7.941 102 0.5), orientation=(0 0.04 0 0.999), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:19:08.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1800 pose=Pose3d{position=(7.012 102 0.5), orientation=(0 -0.029 0 1), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}
+[01Oct2026 05:19:10.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=false
+[01Oct2026 05:19:12.170] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_MASTER_SYNC viewer=jade enabled=true
+[01Oct2026 05:19:13.120] [Server thread/INFO] [magnetization/ui-audit/]: UI_HUD_SHIP_MOTION tick=1900 pose=Pose3d{position=(8.248 102 0.5), orientation=(0 -0.059 0 0.998), rotationPoint=(20,481,040.944 127.611 20,481,032.5), scale=(1 1 1)}

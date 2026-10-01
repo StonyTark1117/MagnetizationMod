@@ -27,6 +27,7 @@ public enum MachineProbeProvider implements IProbeInfoProvider {
     @Override
     public void addProbeInfo(final ProbeMode mode, final IProbeInfo probeInfo, final Player player,
                              final Level level, final BlockState state, final IProbeHitData data) {
+        if (!com.stonytark.magnetization.config.MagConfig.theOneProbeCompatEnabled()) return;
         final BlockEntity be = level.getBlockEntity(data.getPos());
         if (!(be instanceof MachineHudData d)) return;
         for (final Component line : d.hudLines()) {

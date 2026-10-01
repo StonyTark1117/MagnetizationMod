@@ -49,7 +49,7 @@ Reproduce with `scripts/run-aircraft-network-audit.sh --ordinary`. The default i
 
 ## Client interfaces
 
-Pinned EMI **1.1.24+1.21.1+neoforge** (`5sIPA1To`, `emi`), Curios **9.5.1+1.21.1** (`yohfFbgD`, `curios`) and Patchouli **1.21.1-93-NEOFORGE** (`BIogJv2D`, `patchouli`) passed fresh native client interactions: manual item opening, actual page-spread navigation, server-backed charm-slot equip, all 18 EMI information-page IDs, search and native crafting display. [Interaction log](evidence/remaining-work/ui-interactions.txt) and rendered screenshots in that directory. Reproduce with `scripts/run-compatibility-ui-audit.sh`.
+Pinned EMI **1.1.24+1.21.1+neoforge** (`5sIPA1To`, `emi`), Curios **9.5.1+1.21.1** (`yohfFbgD`, `curios`) and Patchouli **1.21.1-93-NEOFORGE** (`BIogJv2D`, `patchouli`) passed fresh native client interactions: manual item opening, actual page-spread navigation, server-backed charm-slot equip, all 18 EMI information-page IDs, search and native crafting display. [Interaction log](evidence/remaining-work/ui-interactions.txt) and rendered screenshots in that directory. Reproduce with `scripts/run-compatibility-ui-audit.sh`. The later [native UI validation](ui-validation.md) extends this evidence to equipped keybind effects, compass needle/HUD behavior, moving-ship HUD readouts and switches, all three recipe viewers and native JER charts.
 
 Visual inspection identified low-contrast EMI information text. Removing our forced gray style restores black text on EMI’s light background. Missing translation names for our supplied and generated material tags were also corrected. These checks exercise the named interfaces, not every screen of all three upstream mods.
 

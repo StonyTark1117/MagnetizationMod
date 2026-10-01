@@ -19,6 +19,7 @@ public enum GalliumGolemProvider implements IEntityComponentProvider {
     @Override
     public void appendTooltip(final ITooltip tooltip, final EntityAccessor accessor,
                               final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.jadeCompatEnabled()) return;
         if (!(accessor.getEntity() instanceof GalliumGolem golem)) return;
         com.stonytark.magnetization.content.golem.GalliumGolemHud.lines(golem)
                 .forEach(tooltip::add);

@@ -22,6 +22,7 @@ public enum SaplingBodyProvider implements IBlockComponentProvider {
 
     @Override
     public void appendBody(final ITooltip tooltip, final IBlockAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.wthitCompatEnabled()) return;
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MeteoriteSaplingBlockEntity sapling)) return;
         final long now = accessor.getWorld().getGameTime();

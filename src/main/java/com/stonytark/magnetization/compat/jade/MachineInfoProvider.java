@@ -23,6 +23,7 @@ public enum MachineInfoProvider implements IBlockComponentProvider {
 
     @Override
     public void appendTooltip(final ITooltip tooltip, final BlockAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.jadeCompatEnabled()) return;
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MachineHudData data)) return;
         for (final Component line : data.hudLines()) {

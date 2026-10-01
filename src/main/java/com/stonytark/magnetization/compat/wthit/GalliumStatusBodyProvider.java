@@ -25,6 +25,7 @@ public enum GalliumStatusBodyProvider implements IBlockComponentProvider {
 
     @Override
     public void appendBody(final ITooltip tooltip, final IBlockAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.wthitCompatEnabled()) return;
         final BlockState state = accessor.getBlockState();
         final Block block = state.getBlock();
         final boolean cooled = Gallium.coolingAdjacent(accessor.getWorld(), accessor.getPosition());

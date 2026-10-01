@@ -2,9 +2,12 @@
 set -Eeuo pipefail
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_dir"
+mode=${1:-legacy}
+case "$mode" in legacy|emi|jei|rei|jer|curios|jade|wthit|top|goggles) ;; *) echo "Unknown UI audit mode: $mode" >&2; exit 2 ;; esac
 mkdir -p build/compat-audit/ui
 exec 9>build/compat-audit/ui.lock
 flock -n 9 || { echo 'UI audit already running' >&2; exit 2; }
+rm -f build/compat-audit/ui/hud-switch.txt build/compat-audit/ui/ui-*.png
 port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()')
 for role in server client; do
   path="run-ui-audit-$role"
@@ -14,11 +17,13 @@ for role in server client; do
 done
 cat > run-ui-audit-server/server.properties <<PROPS
 online-mode=false
+allow-flight=true
 server-ip=127.0.0.1
 server-port=$port
 level-type=minecraft:flat
 generator-settings={"layers":[{"block":"minecraft:bedrock","height":1},{"block":"minecraft:dirt","height":2},{"block":"minecraft:grass_block","height":1}],"biome":"minecraft:plains"}
 generate-structures=false
+difficulty=peaceful
 view-distance=4
 simulation-distance=4
 spawn-protection=0
@@ -37,7 +42,7 @@ guiScale:2
 OPTIONS
 display_number=$((950+$$%500))
 while [[ -e /tmp/.X11-unix/X$display_number ]]; do display_number=$((display_number+1)); done
-Xvfb ":$display_number" -screen 0 1440x900x24 -nolisten tcp > build/compat-audit/ui/xvfb.log 2>&1 &
+Xvfb ":$display_number" -screen 0 1440x900x24 -nolisten tcp > build/compat-audit/ui/xvfb.log 2>&1 9>&- &
 xvfb=$!
 server_runner=''; client_runner=''
 cleanup() {
@@ -57,21 +62,26 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM
-setsid ./gradlew runUiAuditServer --console=plain > build/compat-audit/ui/server-launch.log 2>&1 &
+setsid ./gradlew runUiAuditServer -PuiAuditMode="$mode" --console=plain > build/compat-audit/ui/server-launch.log 2>&1 9>&- &
 server_runner=$!
-for ((i=0;i<150;i++)); do
+for ((i=0;i<480;i++)); do
   if rg -q 'Done \(' run-ui-audit-server/logs/latest.log 2>/dev/null; then break; fi
   kill -0 "$server_runner" 2>/dev/null || exit 1
   sleep 1
 done
 rg -q 'Done \(' run-ui-audit-server/logs/latest.log
-setsid env DISPLAY=":$display_number" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runUiAuditClient -x compileJava -x processResources -PuiAuditEndpoint="127.0.0.1:$port" --console=plain > build/compat-audit/ui/client-launch.log 2>&1 &
+setsid env DISPLAY=":$display_number" LIBGL_ALWAYS_SOFTWARE=1 ./gradlew runUiAuditClient -PuiAuditMode="$mode" -x compileJava -x processResources -PuiAuditEndpoint="127.0.0.1:$port" --console=plain > build/compat-audit/ui/client-launch.log 2>&1 9>&- &
 client_runner=$!
-for ((i=0;i<180;i++)); do
-  if rg -q 'UI_AUDIT_(PASS|FAILED)' run-ui-audit-client/logs/latest.log 2>/dev/null; then break; fi
+for ((i=0;i<480;i++)); do
+  if rg -q 'UI_AUDIT_(PASS|FAILED)|Mod loading has failed|Failed to register automatic subscribers|Reported exception thrown|Crash Report UUID:' run-ui-audit-client/logs/latest.log 2>/dev/null; then break; fi
+  if rg -q 'UI_AUDIT_FAILED' run-ui-audit-server/logs/latest.log 2>/dev/null; then break; fi
   kill -0 "$client_runner" 2>/dev/null || exit 1
   sleep 1
 done
 rg 'UI_AUDIT_|UI_CURIOS_|UI_EMI_|UI_CAPTURE' run-ui-audit-client/logs/latest.log
 rg -q 'UI_AUDIT_PASS' run-ui-audit-client/logs/latest.log
 ! rg -q 'UI_AUDIT_FAILED' run-ui-audit-client/logs/latest.log
+! rg -q 'UI_AUDIT_FAILED' run-ui-audit-server/logs/latest.log
+if [[ $mode == curios ]]; then rg -q 'UI_CURIOS_SERVER_PASS' run-ui-audit-server/logs/latest.log; fi
+# Screenshot saving is asynchronous; wait for the final framebuffer to reach disk.
+sleep 1

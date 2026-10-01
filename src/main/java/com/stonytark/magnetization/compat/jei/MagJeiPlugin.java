@@ -8,6 +8,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -31,7 +32,9 @@ public class MagJeiPlugin implements IModPlugin {
             registration.addIngredientInfo(
                     stacks,
                     VanillaTypes.ITEM_STACK,
-                    topic.descriptions().toArray(Component[]::new));
+                    topic.descriptions().stream()
+                            .map(line -> line.copy().setStyle(Style.EMPTY))
+                            .toArray(Component[]::new));
         }
     }
 }

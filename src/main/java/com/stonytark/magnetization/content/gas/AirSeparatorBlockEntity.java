@@ -326,6 +326,15 @@ public final class AirSeparatorBlockEntity extends KineticBlockEntity
         return lines;
     }
 
+    @Override
+    public boolean addToGoggleTooltip(final List<Component> tooltip, final boolean sneaking) {
+        // KineticBlockEntity's concrete method takes precedence over the shared
+        // MachineHudData default, so explicitly append our machine readout.
+        super.addToGoggleTooltip(tooltip, sneaking);
+        tooltip.addAll(hudLines());
+        return true;
+    }
+
     public static Component statusLine(final OperatingStatus status) {
         final String key = switch (status) {
             case DISALLOWED -> "tooltip.magnetization.air_separator.status_disallowed";

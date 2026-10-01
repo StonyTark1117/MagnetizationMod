@@ -12,6 +12,7 @@ public enum MrFluidGolemBodyProvider implements IEntityComponentProvider {
 
     @Override
     public void appendBody(final ITooltip tooltip, final IEntityAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.wthitCompatEnabled()) return;
         if (!(accessor.getEntity() instanceof MrFluidGolem golem)) return;
         for (final var line : com.stonytark.magnetization.content.golem.MrFluidGolemHud.lines(golem)) {
             tooltip.addLine(line);

@@ -19,6 +19,7 @@ public enum MagneticGolemProvider implements IEntityComponentProvider {
     @Override
     public void appendTooltip(final ITooltip tooltip, final EntityAccessor accessor,
                               final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.jadeCompatEnabled()) return;
         if (!(accessor.getEntity() instanceof MagneticGolem golem)) return;
         for (final var line : com.stonytark.magnetization.content.golem.MagneticGolemHud.lines(golem)) {
             tooltip.add(line);

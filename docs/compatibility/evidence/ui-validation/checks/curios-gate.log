@@ -1,0 +1,5 @@
+runCuriosGameTestServer: moved previous generated run directory to /tmp/magnetization-run-curios-gametest-1790857441-290067
+runCuriosGameTestServer: using tmpfs runtime /tmp/magnetization-run-curios-gametest-runtime.61S2JY
+[01Oct2026 05:24:18.693] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 412.4 ms ======================
+[01Oct2026 05:24:18.693] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+runCuriosGameTestServer: assertions passed; terminating only its lingering process group

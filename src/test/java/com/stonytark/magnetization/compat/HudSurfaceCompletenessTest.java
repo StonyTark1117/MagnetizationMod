@@ -57,12 +57,11 @@ class HudSurfaceCompletenessTest {
         }
     }
 
-    @Test void jadeAndSableHaveNonDuplicatedOverlayOwnership() throws Exception {
+    @Test void jadeRegistersEachSharedBlockProviderOnce() throws Exception {
         final String plugin = Files.readString(JAVA.resolve("compat/jade/MagJadePlugin.java"));
-        // Sable's Jade bridge projects targeting into sublevels. Magnetization
-        // owns the two content providers and registers each exactly once against
-        // ordinary blocks; a second SubLevel-specific provider would duplicate
-        // the same field/machine lines when looking inside a craft.
+        // Registration guard only. Actual Sable targeting and rendered-line
+        // multiplicity are asserted by HudUiAuditClient against a connected,
+        // moving/rotating ship; source inspection cannot establish those effects.
         assertEquals(1, occurrences(plugin,
                 "registerBlockComponent(EmitterFieldProvider.INSTANCE"));
         assertEquals(1, occurrences(plugin,

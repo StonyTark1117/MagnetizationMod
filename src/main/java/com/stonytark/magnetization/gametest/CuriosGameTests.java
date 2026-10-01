@@ -66,4 +66,9 @@ public final class CuriosGameTests {
     public static void masterGatesRealCurioActivation(final GameTestHelper helper) {
         MagGameTests.curioRepulsorPayloadActivatesRealCharm(helper);
     }
+
+    @GameTest(template = "empty", timeoutTicks = 60, batch = "curiosLogout")
+    public static void equippedGrapplePullClearsOnLogout(final GameTestHelper helper) {
+        MagGameTests.curioGrapplePayloadClearsOnLogout(helper);
+    }
 }

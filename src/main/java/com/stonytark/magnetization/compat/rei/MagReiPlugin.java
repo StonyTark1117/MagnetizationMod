@@ -10,6 +10,8 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.displays.DefaultInformationDisplay;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,8 @@ public class MagReiPlugin implements REIClientPlugin {
         for (final ItemStack stack : stacks) entries.add(EntryStacks.of(stack));
         registry.add(DefaultInformationDisplay
                 .createFromEntries(EntryIngredient.of(entries), topic.title())
-                .lines(topic.descriptions()));
+                .lines(topic.descriptions().stream()
+                        .map(line -> (Component) line.copy().setStyle(Style.EMPTY))
+                        .toList()));
     }
 }

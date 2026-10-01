@@ -19,6 +19,7 @@ public enum MachineBodyProvider implements IBlockComponentProvider {
 
     @Override
     public void appendBody(final ITooltip tooltip, final IBlockAccessor accessor, final IPluginConfig config) {
+        if (!com.stonytark.magnetization.config.MagConfig.wthitCompatEnabled()) return;
         final BlockEntity be = accessor.getBlockEntity();
         if (!(be instanceof MachineHudData data)) return;
         for (final Component line : data.hudLines()) {

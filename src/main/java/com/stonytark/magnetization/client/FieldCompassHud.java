@@ -102,7 +102,7 @@ public final class FieldCompassHud {
         final double dx = target.getX() + 0.5 - player.getX();
         final double dz = target.getZ() + 0.5 - player.getZ();
         final double dist = Math.sqrt(dx * dx + dz * dz);
-        final double bearingDeg = ((Math.toDegrees(Math.atan2(-dx, dz)) + 360.0) % 360.0);
+        final double bearingDeg = ((Math.toDegrees(Math.atan2(dx, -dz)) + 360.0) % 360.0);
         final String cardinal = cardinal(bearingDeg);
         final Component top = Component.translatable("hud.magnetization.compass.bearing",
                         cardinal, String.format("%.0f°", bearingDeg), String.format("%.1fm", dist))

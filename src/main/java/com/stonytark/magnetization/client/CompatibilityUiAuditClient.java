@@ -22,6 +22,7 @@ public final class CompatibilityUiAuditClient {
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
         if (!Boolean.getBoolean("magnetization.audit.ui")) return;
+        if (!System.getProperty("magnetization.audit.uiMode", "legacy").equals("legacy")) return;
         if (!net.neoforged.fml.ModList.get().isLoaded("emi") || !net.neoforged.fml.ModList.get().isLoaded("curios")
                 || !net.neoforged.fml.ModList.get().isLoaded("patchouli")) return;
         Loaded.tick(event);

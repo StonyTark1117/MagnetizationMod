@@ -23,6 +23,7 @@ public enum CustomGolemProbeProvider implements IProbeInfoEntityProvider {
     public void addProbeEntityInfo(final ProbeMode mode, final IProbeInfo probeInfo,
                                    final Player player, final Level level, final Entity entity,
                                    final IProbeHitEntityData data) {
+        if (!com.stonytark.magnetization.config.MagConfig.theOneProbeCompatEnabled()) return;
         CustomGolemHud.lines(entity).forEach(probeInfo::text);
     }
 }

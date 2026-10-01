@@ -28,6 +28,7 @@ public enum EmitterProbeProvider implements IProbeInfoProvider {
             final ProbeMode mode, final IProbeInfo probeInfo, final Player player,
             final Level level, final BlockState state, final IProbeHitData data
     ) {
+        if (!com.stonytark.magnetization.config.MagConfig.theOneProbeCompatEnabled()) return;
         // Magnetized ferrofluid has no BE — surface its pole from the blockstate.
         final Component fluidLine = com.stonytark.magnetization.content.fluid.MagnetizedFerrofluidBlock
                 .polarityTooltip(state);
