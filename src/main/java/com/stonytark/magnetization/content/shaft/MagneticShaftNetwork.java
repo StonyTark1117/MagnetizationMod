@@ -137,6 +137,14 @@ public final class MagneticShaftNetwork {
             var component = discover(shaft);
             component.members.keySet().forEach(be -> components.put(be, component));
         }
+        // Classify live drives once; preserve the original sorted source order.
+        List<MagneticShaftBlockEntity> sources = shafts.stream().filter(source -> {
+            Component drive = components.get(source);
+            return !drive.invalid && drive.driven && source.getTheoreticalSpeed() != 0
+                    && !MagConfig.isBlockDisabled(source.getBlockState());
+        }).toList();
+        var sourceIndex = new ShaftRangeIndex<>(sources,
+                MagneticShaftBlockEntity::worldCenter, MagneticShaftBlockEntity::transmissionRange);
         Map<BlockPos, BlockPos> desired = new HashMap<>();
         Set<MagneticShaftBlockEntity> conflicts = new HashSet<>();
         for (Component target : new HashSet<>(components.values())) {
@@ -146,7 +154,7 @@ public final class MagneticShaftNetwork {
             for (var receiver : target.shafts) {
                 if (MagConfig.isBlockDisabled(receiver.getBlockState())) continue;
                 double receiverRatio = target.members.get(receiver);
-                for (var source : shafts) {
+                for (var source : sourceIndex.near(receiver.worldCenter())) {
                     Component drive = components.get(source);
                     if (drive == target || drive.invalid || !drive.driven || source.getTheoreticalSpeed() == 0
                             || MagConfig.isBlockDisabled(source.getBlockState())) continue;

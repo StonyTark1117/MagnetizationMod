@@ -18,6 +18,51 @@ import static com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity
 @GameTestHolder("magnetization_engineering")
 @PrefixGameTestTemplate(false)
 public final class MagneticEngineeringGameTests {
+    @GameTest(template = "empty", timeoutTicks = 160, batch = "engineeringMovingShaft")
+    public static void movingShaftLeavesAndReentersSourceRange(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var sourcePos = helper.absolutePos(new BlockPos(1, 2, 1)).atY(200);
+        var state = MagBlocks.MAGNETIC_SHAFT.get().defaultBlockState()
+                .setValue(BlockStateProperties.AXIS, Direction.Axis.X);
+        level.setBlock(sourcePos, state, 3);
+        level.setBlock(sourcePos.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState()
+                .setValue(BlockStateProperties.FACING, Direction.EAST), 3);
+        var drive = (CreativeMotorBlockEntity) level.getBlockEntity(sourcePos.west());
+        drive.generatedSpeed.setValue(32);
+        drive.updateGeneratedRotation();
+        var initial = sourcePos.east(3);
+        level.setBlock(initial, state, 3);
+        level.setBlock(initial.above(), Blocks.IRON_BLOCK.defaultBlockState(), 3);
+        var ship = dev.ryanhcode.sable.api.SubLevelAssemblyHelper.assembleBlocks(level, initial,
+                java.util.List.of(initial, initial.above()), new dev.ryanhcode.sable.companion.math.BoundingBox3i(
+                        initial.getX(), initial.getY(), initial.getZ(), initial.getX()+1, initial.getY()+2, initial.getZ()+1));
+        var container = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(level);
+        var bounds = ship.getPlot().getBoundingBox();
+        var receiverPos = new BlockPos(bounds.minX(), bounds.minY(), bounds.minZ());
+        // Hold each phase for several manager passes; no falling out of range
+        // between assertions, and use actual Sable pose publication.
+        for (int tick = 1; tick <= 58; tick++) {
+            final int phase = tick;
+            helper.runAtTickTime(tick, () -> container.physicsSystem().getPipeline().teleport(ship,
+                    new org.joml.Vector3d(sourcePos.getX() + .5 + (phase <= 20 || phase > 40 ? 3 : 12),
+                            sourcePos.getY() + .5, sourcePos.getZ() + .5), new org.joml.Quaterniond()));
+        }
+        helper.runAtTickTime(18, () -> helper.assertTrue(
+                ((MagneticShaftBlockEntity) level.getBlockEntity(receiverPos)).getSpeed() == 32,
+                "Ship shaft did not acquire nearby drive"));
+        helper.runAtTickTime(38, () -> helper.assertTrue(
+                ((MagneticShaftBlockEntity) level.getBlockEntity(receiverPos)).getSpeed() == 0,
+                "Ship shaft retained a drive after moving out of range"));
+        helper.runAtTickTime(59, () -> {
+            helper.assertTrue(((MagneticShaftBlockEntity) level.getBlockEntity(receiverPos)).getSpeed() == 32,
+                    "Ship shaft did not reacquire drive after moving back");
+            remove(level, ship);
+            level.setBlock(sourcePos, Blocks.AIR.defaultBlockState(), 3);
+            level.setBlock(sourcePos.west(), Blocks.AIR.defaultBlockState(), 3);
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = "empty", timeoutTicks = 240)
     public static void shaftsShareLoadReverseStopConflictAndSwapRoles(GameTestHelper helper) {
         int originalRange = MagConfig.MAGNETIC_SHAFT_RANGE.get();

@@ -40,6 +40,34 @@ class EmitterRegistryTest {
     }
 
     @Test
+    void pointQueriesMatchExpandedReferenceAtBoundariesAndAfterRemoval() {
+        var random = new java.util.Random(571);
+        for (int i = 0; i < 2000; i++) {
+            var p = new BlockPos(random.nextInt(2048) - 1024, i, random.nextInt(2048) - 1024);
+            EmitterRegistry.register(LVL, p);
+            EmitterRegistry.registerExternal(LVL, p);
+        }
+        for (int pass = 0; pass < 2; pass++) {
+            for (int center : new int[]{-513, -512, -17, -16, -1, 0, 15, 16, 511, 512}) {
+                var target = new BlockPos(center, 0, -center);
+                for (int radius : new int[]{0, 1, 16, 32, 512}) {
+                    var keys = new java.util.LinkedHashSet<Long>();
+                    for (int x = Math.floorDiv(target.getX() - radius, 16); x <= Math.floorDiv(target.getX() + radius, 16); x++)
+                        for (int z = Math.floorDiv(target.getZ() - radius, 16); z <= Math.floorDiv(target.getZ() + radius, 16); z++)
+                            keys.add(ChunkPos.asLong(x, z));
+                    assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotNativeInChunks(LVL, keys)),
+                            new java.util.ArrayList<>(EmitterRegistry.snapshotNativeNear(LVL, target, radius)));
+                    for (int cap : new int[]{0, 1, 7, 256, Integer.MAX_VALUE})
+                        assertEquals(new java.util.ArrayList<>(EmitterRegistry.snapshotExternalInChunks(LVL, keys, cap)),
+                                new java.util.ArrayList<>(EmitterRegistry.snapshotExternalNear(LVL, target, radius, cap)));
+                }
+            }
+            EmitterRegistry.snapshotNative(LVL).stream().filter(p -> p.getY() % 2 == 0).toList()
+                    .forEach(p -> { EmitterRegistry.unregister(LVL, p); EmitterRegistry.unregisterExternal(LVL, p); });
+        }
+    }
+
+    @Test
     void occupiedQueriesPreserveExpandedCoverageAndIterationOrder() {
         final var random = new java.util.Random(956);
         for (int i = 0; i < 1500; i++) {

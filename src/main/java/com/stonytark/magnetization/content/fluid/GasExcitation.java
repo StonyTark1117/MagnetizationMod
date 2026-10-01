@@ -62,12 +62,28 @@ public final class GasExcitation {
         }
 
         final int cap = Math.max(1, MagConfig.gasExcitationMaxCells());
-        final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
-        final LongOpenHashSet seen = new LongOpenHashSet(Math.min(cap, 4096));
-        final LongArrayList cells = new LongArrayList(Math.min(cap, 4096));
-        final LongOpenHashSet exciterPositions = new LongOpenHashSet();
-        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        final BlockPos.MutableBlockPos next = new BlockPos.MutableBlockPos();
+        if (tickCache.scratch == null) tickCache.scratch = new Scratch(cap);
+        // Block/BE updates can re-enter recompute. A nested pass must never
+        // overwrite its caller's queue or mutable positions.
+        final Scratch scratch = tickCache.scratch.busy ? new Scratch(cap) : tickCache.scratch;
+        scratch.busy = true;
+        try {
+            recompute(level, seed, gas, tickCache, cap, scratch);
+        } finally {
+            scratch.clear();
+            scratch.busy = false;
+        }
+    }
+
+    private static void recompute(final ServerLevel level, final BlockPos seed, final Fluid gas,
+                                  final TickCache tickCache, final int cap, final Scratch scratch) {
+        final long seedKey = seed.asLong();
+        final LongArrayFIFOQueue queue = scratch.queue;
+        final LongOpenHashSet seen = scratch.seen;
+        final LongArrayList cells = scratch.cells;
+        final LongOpenHashSet exciterPositions = scratch.exciterPositions;
+        final BlockPos.MutableBlockPos pos = scratch.pos;
+        final BlockPos.MutableBlockPos next = scratch.next;
         boolean redstone = false;
         queue.enqueue(seedKey);
 
@@ -199,5 +215,28 @@ public final class GasExcitation {
     private static final class TickCache {
         private long gameTime = Long.MIN_VALUE;
         private final LongOpenHashSet processed = new LongOpenHashSet();
+        private Scratch scratch;
+    }
+
+    /** Reuse capacity only; topology, power, grace and ownership stay live. */
+    private static final class Scratch {
+        private boolean busy;
+        private final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
+        private final LongOpenHashSet seen;
+        private final LongArrayList cells;
+        private final LongOpenHashSet exciterPositions = new LongOpenHashSet();
+        private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        private final BlockPos.MutableBlockPos next = new BlockPos.MutableBlockPos();
+
+        private Scratch(int cap) {
+            seen = new LongOpenHashSet(Math.min(cap, 4096));
+            cells = new LongArrayList(Math.min(cap, 4096));
+        }
+        private void clear() {
+            queue.clear();
+            seen.clear();
+            cells.clear();
+            exciterPositions.clear();
+        }
     }
 }

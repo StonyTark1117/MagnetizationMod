@@ -41,6 +41,11 @@ public final class MagnetizedFerrofluidRegistry {
         return sources == null ? List.of() : sources.near(target, radius);
     }
 
+    public static synchronized FluidTargetRegions targetRegions(final Level level) {
+        final SourceMap sources = BY_LEVEL.get(level);
+        return sources == null ? FluidTargetRegions.EMPTY : sources.regions();
+    }
+
     public static synchronized void dropChunk(final Level level, final ChunkPos chunk) {
         final SourceMap sources = BY_LEVEL.get(level);
         if (sources != null) sources.dropChunk(chunk.toLong());
@@ -87,6 +92,12 @@ public final class MagnetizedFerrofluidRegistry {
     private static final class SourceMap extends AbstractMap<BlockPos, MagneticPolarity> {
         private final Map<BlockPos, MagneticPolarity> positions = new ConcurrentHashMap<>();
         private final Map<Long, Set<BlockPos>> chunks = new HashMap<>();
+        private FluidTargetRegions targetRegions;
+
+        private synchronized FluidTargetRegions regions() {
+            if (targetRegions == null) targetRegions = FluidTargetRegions.of(positions.keySet());
+            return targetRegions;
+        }
 
         @Override public int size() { return positions.size(); }
         @Override public MagneticPolarity get(Object key) { return positions.get(key); }
@@ -94,12 +105,16 @@ public final class MagnetizedFerrofluidRegistry {
         @Override public synchronized MagneticPolarity put(BlockPos key, MagneticPolarity value) {
             final BlockPos pos = key.immutable();
             final MagneticPolarity old = positions.put(pos, value);
-            if (old == null) chunks.computeIfAbsent(ChunkPos.asLong(pos), ignored -> new HashSet<>()).add(pos);
+            if (old == null) {
+                chunks.computeIfAbsent(ChunkPos.asLong(pos), ignored -> new HashSet<>()).add(pos);
+                targetRegions = null;
+            }
             return old;
         }
         @Override public synchronized MagneticPolarity remove(Object key) {
             final MagneticPolarity old = positions.remove(key);
             if (old != null && key instanceof BlockPos pos) {
+                targetRegions = null;
                 final long chunk = ChunkPos.asLong(pos);
                 final Set<BlockPos> bucket = chunks.get(chunk);
                 if (bucket != null) {
@@ -109,11 +124,14 @@ public final class MagnetizedFerrofluidRegistry {
             }
             return old;
         }
-        @Override public synchronized void clear() { positions.clear(); chunks.clear(); }
+        @Override public synchronized void clear() { positions.clear(); chunks.clear(); targetRegions = null; }
 
         private synchronized void dropChunk(long key) {
             final Set<BlockPos> bucket = chunks.remove(key);
-            if (bucket != null) bucket.forEach(positions::remove);
+            if (bucket != null) {
+                bucket.forEach(positions::remove);
+                targetRegions = null;
+            }
         }
         private synchronized List<BlockPos> near(BlockPos target, int radius) {
             if (radius < 0) throw new IllegalArgumentException("Negative source radius");

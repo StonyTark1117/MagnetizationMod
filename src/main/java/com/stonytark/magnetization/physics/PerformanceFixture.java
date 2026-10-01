@@ -42,6 +42,7 @@ public final class PerformanceFixture {
                 }))
                 .then(Commands.literal("counts").executes(ctx -> {
                     final var counts = PerformanceDiagnostics.workSnapshot(ctx.getSource().getLevel());
+                    counts.putAll(PerformanceScalingFixture.counts(ctx.getSource().getLevel()));
                     ctx.getSource().sendSuccess(() -> Component.literal("MAG_PERF_COUNTS " +
                             new com.google.gson.Gson().toJson(counts)), false);
                     return 1;
@@ -66,8 +67,17 @@ public final class PerformanceFixture {
                 }))
                 .then(Commands.literal("clear").executes(ctx -> {
                     PLAYERS.remove(ctx.getSource().getLevel());
+                    PerformanceScalingFixture.clear(ctx.getSource().getLevel());
                     return 1;
                 }))
+                .then(Commands.literal("scale").then(Commands.argument("kind",
+                        com.mojang.brigadier.arguments.StringArgumentType.word()).then(Commands.argument("count",
+                        com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 4096)).executes(ctx -> {
+                    PerformanceScalingFixture.setup(ctx.getSource().getLevel(),
+                            com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "kind"),
+                            com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "count"));
+                    return 1;
+                }))))
                 .then(Commands.literal("player").then(Commands.argument("equipment",
                         com.mojang.brigadier.arguments.StringArgumentType.word()).executes(ctx -> {
                     final ServerLevel level = ctx.getSource().getLevel();
@@ -104,6 +114,7 @@ public final class PerformanceFixture {
     public static void tick(final LevelTickEvent.Post event) {
         if (!ENABLED) return;
         if (!(event.getLevel() instanceof ServerLevel level)) return;
+        PerformanceScalingFixture.tick(level);
         final FakePlayer player = PLAYERS.get(level);
         if (player != null) {
             if (player.getTags().contains("mag_perf_cycle") && level.getGameTime() % 20 == 0) {
