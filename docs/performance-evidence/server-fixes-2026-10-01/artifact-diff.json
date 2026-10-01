@@ -1,0 +1,31 @@
+{
+  "baseline_jar_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+  "candidate_jar_sha256": "b81e113f59ca87afd0f0517ef7c2bcd49a036c4acd03b377de601bca52f0c60a",
+  "added": [
+    "com/stonytark/magnetization/content/fluid/FluidRedstone$ReadCache.class",
+    "com/stonytark/magnetization/content/fluid/FluidRedstone$Scratch.class",
+    "com/stonytark/magnetization/content/fluid/FluidSignalSolver.class",
+    "com/stonytark/magnetization/gametest/PerformanceRegressionGameTests.class",
+    "com/stonytark/magnetization/gametest/SlugterraPerformanceGameTests.class",
+    "data/magnetization_slugterra_performance/structure/empty.nbt"
+  ],
+  "removed": [],
+  "changed": [
+    "META-INF/MANIFEST.MF",
+    "com/stonytark/magnetization/compat/SlugterraProjectileCompat.class",
+    "com/stonytark/magnetization/compat/simulatedcoasters/MagSimulatedCoastersLoadedCompat.class",
+    "com/stonytark/magnetization/content/effect/LenzBrakingHandler.class",
+    "com/stonytark/magnetization/content/fluid/FluidRedstone.class",
+    "com/stonytark/magnetization/content/fluid/GasExcitation$Scratch.class",
+    "com/stonytark/magnetization/content/fluid/GasExcitation$TickCache.class",
+    "com/stonytark/magnetization/content/fluid/GasExcitation.class",
+    "com/stonytark/magnetization/content/shaft/MagneticShaftNetwork.class",
+    "com/stonytark/magnetization/physics/FieldApplicator$1.class",
+    "com/stonytark/magnetization/physics/FieldApplicator$PreparedField.class",
+    "com/stonytark/magnetization/physics/FieldApplicator$TargetSnapshot.class",
+    "com/stonytark/magnetization/physics/FieldApplicator$TargetTickCache.class",
+    "com/stonytark/magnetization/physics/FieldApplicator.class",
+    "com/stonytark/magnetization/physics/LoadedChunkAccess$NeighborStateReader.class",
+    "com/stonytark/magnetization/physics/LoadedChunkAccess.class"
+  ]
+}

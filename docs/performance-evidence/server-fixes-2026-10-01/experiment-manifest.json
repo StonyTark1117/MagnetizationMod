@@ -39,5 +39,5 @@
     "server_status": "SERVER_STATUS_RUNNING",
     "resume": "Only unfinished sprint samples; no profile or artifact redeployment restart"
   },
-  "status": "Final updated-pack candidate measurements pending"
+  "status": "Updated-pack matched sprints complete; final profiles, remaining stress cases, gameplay function and restoration pending"
 }

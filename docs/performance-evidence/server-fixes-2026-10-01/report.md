@@ -61,7 +61,7 @@ All nine broad integration tests and the focused cached-type/live-flight-state
 test pass against this release. It includes the previously missing Dark content.
 Clients need the same Slugterra build. Its metadata also requires JEI
 19.57.0.450 or newer within 19.x when JEI is installed on the client. The server
-has JEI19.57.0.447; this dependency is client-only and does not block the server,
+has JEI 19.57.0.447; this dependency is client-only and does not block the server,
 but a client using that same older JEI must update it. No original Forge addon
 JARs were added.
 
@@ -98,11 +98,27 @@ spawns, random ticks, weather/daylight changes, drops and autosaves are disabled
 for controlled measurement. This does not establish survival, terrain-generation,
 client/network, long-soak or all-mod compatibility performance.
 
+## Interpretation of the targeted paths
+
+The final dense-field sprint median is unchanged at 3.05 ms/tick. Its normal-speed
+minute medians are slightly lower, but its sampled external-tracker attribution
+is higher. Repeated Slugterra handling checks nearly disappear from samples;
+this does not demonstrate an overall dense-field speedup. Scheduling and signal
+queries remain substantial costs.
+
+The shaft sprint median is 2.76→2.90 ms/tick with overlapping sample ranges. Normal
+minute medians overlap around 3.2–3.3 ms/tick and sampled shaft-manager cost is
+0.597→0.607 ms/tick. The earlier candidate on the old port showed a larger sampled
+reduction, which the updated-pack run does not reproduce. Retain that evidence,
+but do not use it to claim a final shaft speedup. Native kinetic discovery and
+other mods' hooks remain active; changing their cadence or bypassing them would
+need a separate behavior-preserving design.
+
 ## Gameplay validation
 
 Build, release-JAR verification and all 293 unit tests pass. The new solver has
 400 differential graph cases covering cycles, multiple inputs and cap edges.
-There are 264 unique passing GameTests across core, engineering, MR regressions,
+There are 264 passing GameTest cases across core, engineering, MR regressions,
 coasters, CNA, IE, Alexs Caves, CreateAddition, TFMG and Slugterra configurations.
 [Validation evidence](gameplay-validation.json) identifies which source revision
 and dependency each gate exercised; unchanged paths were not all rerun after

@@ -8,6 +8,9 @@
 
 ## 1.4.6 — Compatibility audit (unreleased)
 
+- Reduce synchronous conductive-fluid redstone work with indexed graph traversal and a queued signal solver; reuse gas identity reads within each recomputation. Preserve signal ordering, topology changes, caps and energy behavior.
+- Skip coaster classification when field reactions are enabled, reuse conductor classification within each Lenz scan, consolidate loaded-shaft lookups, and reuse projectile-type classification within existing target snapshots. See the [full-pack stress comparison and remaining limits](docs/performance-evidence/server-fixes-2026-10-01/report.md).
+
 - Fix the Cosmic Compass ignoring optional AE2 meteorites: synchronize the nearest active saved AE2 source from the server and compare it with native cores. Respect range, decay and dimension changes; disabling `compat.ae2MeteoriteHookEnabled` now also stops persisted AE2 field emission and compass tracking without deleting saved sources.
 
 - Refresh development/test dependency pins and align the development pack with isolated compatibility profiles while retaining published user minimums. Use the official Aeronautics 1.3.2 bundle for development APIs and adapt the Engineered test fixture to both supported API shapes. See [version and validation details](docs/compatibility/dev-pin-refresh.md).

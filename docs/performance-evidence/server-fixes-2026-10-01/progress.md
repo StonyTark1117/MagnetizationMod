@@ -156,3 +156,12 @@ Updated-pack baseline complete:
   than whole-workload timing; do not overstate small differences.
 - CandidateV2 deployment/matched-sprint stage now running. It verifies the new
   Slugterra hash before deployment and Magnetization hash after upload.
+
+Final candidate matched sprints complete:
+
+- Gas5.23→4.11ms/tick (−21.4%), stable gas1.69→1.69, dense3.05→3.05.
+- Shafts2.76→2.90 (+5.1%) and ships7.10→7.03 (−1.0%) with overlapping
+  sample ranges; initial empty control1.78→1.90, final empty1.70→1.74.
+  Do not claim reliable whole-workload gains for these small differences.
+- Candidate normal-speed profiles now active. Final artifact remains source8217
+  with Slugterra1.0 on both sides. Full-pack gameplay/restoration still pending.

@@ -163,5 +163,38 @@
     "ticks": 3600,
     "url": "https://spark.lucko.me/SlHxKXDpjE",
     "server_file": null
+  },
+  {
+    "stage": "candidate-v2",
+    "scenario": "dense_external",
+    "sha256": "18387425f075048f606c48ee966439af001fff4041e79b45dd4bdf0fe7bf5369",
+    "bytes": 534830,
+    "start_epoch_ms": 1790890479875,
+    "requested_start_epoch_ms": 1790890479534,
+    "ticks": 3601,
+    "url": "https://spark.lucko.me/fCzgWxmFXE",
+    "server_file": null
+  },
+  {
+    "stage": "candidate-v2",
+    "scenario": "gas_volume",
+    "sha256": "576e76e2cced6267a81f2a0cd61f21ba67074f94d258b55c29179518bb62efea",
+    "bytes": 618420,
+    "start_epoch_ms": 1790890744854,
+    "requested_start_epoch_ms": 1790890744527,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/aTqJcEfjKl",
+    "server_file": null
+  },
+  {
+    "stage": "candidate-v2",
+    "scenario": "shafts_256",
+    "sha256": "0351b0899dc52940f03bcc6d6949cb90489bdc4699fe2747bc91783315a464f4",
+    "bytes": 652045,
+    "start_epoch_ms": 1790891008994,
+    "requested_start_epoch_ms": 1790891008857,
+    "ticks": 3600,
+    "url": "https://spark.lucko.me/stvLu87sgr",
+    "server_file": null
   }
 ]
