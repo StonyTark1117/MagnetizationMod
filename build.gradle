@@ -1148,6 +1148,11 @@ neoForge {
             // files are not a safe fixture for a repeated headless test run.
             gameDirectory = file('run-gametest')
         }
+        oreCompassGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('run-ore-compass-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_ore_compass'
+        }
         regressionGameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-regression-gametest')
