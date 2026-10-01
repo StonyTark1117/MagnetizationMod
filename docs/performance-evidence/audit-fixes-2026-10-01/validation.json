@@ -1,0 +1,65 @@
+{
+  "baseline_code": "1d479047812b",
+  "candidate_code": "70a71579",
+  "identical_comparison_fixture_files_sha256": {
+    "scripts/generate-performance-stress-pack.py": "17c32b5b0cc8d987a6b671f4b5e6c2383a03243a94b53064982a2cd2b028298a",
+    "scripts/run-performance-stress.sh": "acc5b05fec984b4eb9925d1a0699482518dfe4f05eefb2629947503b46697d28",
+    "src/main/java/com/stonytark/magnetization/physics/PerformanceFixture.java": "fff7d83720f59e58e6cbb54a1095c62d958a68eaaf440525a8d972338271b583",
+    "src/main/java/com/stonytark/magnetization/physics/PerformanceScalingFixture.java": "d8f22778eec3898f1e28505134d4a7f8e0acd2f0475eed777f4ff99467abd045"
+  },
+  "baseline_modifications": "Opt-in harness and fixtures only; production optimization code remains at audited baseline.",
+  "unit_tests": {
+    "tests": 292,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "core_gametests": 173,
+  "slugterra_runtime_tests": 9,
+  "create_new_age_tests": 20,
+  "engineering_gametests": 7,
+  "engineering_regression_tests": 4,
+  "optional_matrix": {
+    "createaddition": 7,
+    "immersiveengineering": 10,
+    "alexscaves": 7,
+    "createendertransmission": 3,
+    "tfmg": 20,
+    "failures": 0
+  },
+  "build": "./gradlew build verifyReleaseJar: passed, including unit tests, release contents, runtime coupling and fixture/baseline checks",
+  "performance_comparison": {
+    "scenarios": 30,
+    "samples_each": 150,
+    "both_stable": true,
+    "regressions_above_10_percent_and_0_1_mspt": 0
+  },
+  "live_deployment": {
+    "source": "70a71579d208",
+    "installed_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+    "world": "world",
+    "status": "running",
+    "players": 0,
+    "profiling": "completed",
+    "captures": 3,
+    "tps": "approximately 20 throughout",
+    "limitation": "Candidate idle averages remain higher with one elevated window per capture; matched-restart A/B is needed for attribution. No live-idle improvement claimed."
+  },
+  "timing_limitations": "Shared interactive desktop host, with other pre-existing CPU activity. Isolated high samples are retained; use matched controls, medians and the 0.1 ms absolute noise floor, not single-sample or tail-latency claims.",
+  "candidate_artifact_sha256": "978c9673c6c775d5d41a33c462eb65f7ebad82b4387910b97b674afc3b3ad9e1",
+  "raw_baseline_archives": [
+    "/home/braydon/Magnetization-API/build/reports/performance-fixes-2026-10-01/baseline-standard",
+    "/home/braydon/Magnetization-API/build/reports/performance-fixes-2026-10-01/baseline-profiled"
+  ],
+  "allocation_evidence": {
+    "matched_scenarios": 11,
+    "samples_per_scenario": 3,
+    "ticks_per_sample": 600,
+    "both_profiled_runs_stable": true,
+    "scope": "server thread measured intervals; weighted allocation estimates",
+    "preserved_work": "dense: 16 targets/details, 1024 candidates, 256 field applications per tick; fluid: 512 sources, 4 regions, 16 field applications per tick"
+  },
+  "final_code_core_gametests": 173,
+  "final_code_slugterra_runtime_gametests": 9,
+  "runtime_gametests_total_unique": 260
+}
