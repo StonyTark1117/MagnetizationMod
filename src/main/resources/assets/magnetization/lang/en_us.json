@@ -2616,5 +2616,17 @@
   "book.magnetization.entry.magnetic_shaft.availability": "Connections are rechecked every four ticks. Moving out of range, breaking a shaft, or unloading its source removes the transmitted drive. No chunks are kept loaded. The receiver keeps a compatible source until it becomes unavailable; incompatible source RPM or direction produces Conflict.",
   "magnetization.ponder.magnetic_shaft.text_2": "Ferromagnetic, Samarium-Cobalt and Neodymium shafts reach 4, 8 and 16 blocks by default. Each range is server configurable; materials do not add power.",
   "magnetization.ponder.magnetic_shaft.text_3": "Conflicting speeds stop the receiver. Removing drive, leaving range or unloading the source breaks its link. A newly driven shaft can take over.",
-  "magnetization.ponder.magnetic_shaft.text_4": "Goggles show material, range, source links, RPM, load and conflicts. Hold sneak and aim at a ship to inspect applied magnetic forces and force limits."
+  "magnetization.ponder.magnetic_shaft.text_4": "Goggles show material, range, source links, RPM, load and conflicts. Hold sneak and aim at a ship to inspect applied magnetic forces and force limits.",
+  "tooltip.magnetization.slugterra.remaining": "Magnetic effect remaining: %s",
+  "tooltip.magnetization.slugterra.pinned": "Magnetic pinning: horizontal movement damped",
+  "magnetization.configuration.compat.slugterraCompatEnabled": "Slugterra integration",
+  "magnetization.configuration.compat.slugterraOresEnabled": "Slugterra cavern ores",
+  "magnetization.configuration.compat.slugterraEquipmentEnabled": "Slugterra magnetic equipment",
+  "magnetization.configuration.compat.slugterraMountsEnabled": "Slugterra mechanical mounts",
+  "magnetization.configuration.compat.slugterraMountSusceptibility": "Mechanical mount susceptibility",
+  "magnetization.configuration.compat.slugterraMountMaxImpulse": "Mechanical mount impulse limit",
+  "magnetization.configuration.compat.slugterraElectricEnabled": "Slugterra electric remnant magnetism",
+  "magnetization.configuration.compat.slugterraElectricCooldown": "Electric remnant magnetism cooldown",
+  "magnetization.configuration.compat.slugterraDeflectionEnabled": "Experimental Slugterra trajectory deflection",
+  "magnetization.configuration.compat.slugterraDeflectionMaxTurn": "Slug deflection degrees per tick"
 }

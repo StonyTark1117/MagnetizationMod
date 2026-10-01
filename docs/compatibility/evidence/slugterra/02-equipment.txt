@@ -1,0 +1,6 @@
+present: ore plus equipment regression suite
+[30Sep2026 04:33:01.345] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 3 GAME TESTS COMPLETE IN 283.9 ms ======================
+[30Sep2026 04:33:01.345] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 3 required tests passed :)
+absent
+[30Sep2026 04:33:39.425] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: ========= 1 GAME TESTS COMPLETE IN 173.7 ms ======================
+[30Sep2026 04:33:39.425] [Server thread/INFO] [net.minecraft.gametest.framework.GameTestServer/]: All 1 required tests passed :)

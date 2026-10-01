@@ -596,7 +596,9 @@ public final class FieldApplicator {
         final Vec3 impulse = forceAtPrecomputed(field, entityPos,
                 prepared.globalScalar(), prepared.cosHalfAngle())
                 .scale(target.susceptibility() * polaritySign);
-        final Vec3 velocityImpulse = impulse.scale(prepared.velocityScale());
+        final Vec3 velocityImpulse = com.stonytark.magnetization.compat.SlugterraMountCompat
+                .limitImpulse(entity, impulse.scale(prepared.velocityScale()));
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.applyDeflection(entity, velocityImpulse)) return;
         if (com.stonytark.magnetization.compat.ImmersiveAircraftCompat.applyPilotImpulse(entity, velocityImpulse)) return;
         entity.setDeltaMovement(entity.getDeltaMovement().add(velocityImpulse));
         entity.hurtMarked = true;
@@ -608,6 +610,8 @@ public final class FieldApplicator {
         // owners only need to curate one tag for both mods. Checked first because
         // it's a hard veto.
         if (e.getType().is(MagTags.MAGNETIZING_UNMOVEABLE)) return false;
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.handles(e))
+            return com.stonytark.magnetization.compat.SlugterraProjectileCompat.isInFlight(e);
         if (e instanceof IMagnetizable) return true;
         if (hasIntrinsicTagResponse(e)) {
             if (com.stonytark.magnetization.compat.ExternalFieldCompat
@@ -754,6 +758,7 @@ public final class FieldApplicator {
     }
 
     private static double baseSusceptibility(final Entity e, final boolean affectsArmor) {
+        if (com.stonytark.magnetization.compat.SlugterraProjectileCompat.isInFlight(e)) return 1.0d;
         if (e instanceof IMagnetizable m) return m.magneticSusceptibility();
         final double cbcSusceptibility = MagCreateBigCannonsCompat.projectileSusceptibility(e);
         if (cbcSusceptibility > 0.0d) return cbcSusceptibility;
@@ -773,7 +778,8 @@ public final class FieldApplicator {
                 && (!com.stonytark.magnetization.compat.ExternalFieldCompat
                         .isImmersiveEngineeringRailgunShot(e)
                     || MagConfig.immersiveEngineeringRailgunReaction())) {
-            sum += 1.0d;
+            final double mountResponse = com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility(e);
+            sum += mountResponse > 0.0d ? mountResponse : 1.0d;
         }
         // Any LivingEntity wearing tagged metal armor is pulled in proportion to
         // how many pieces it has on. Magnetized pieces (stamped with a polarity
@@ -816,7 +822,8 @@ public final class FieldApplicator {
         return entity.getType().is(MagTags.MAGNETIZABLE_ENTITIES)
                 || com.stonytark.magnetization.compat.ExtraGolemsRebornCompat.isMagnetizable(entity)
                 || com.stonytark.magnetization.compat.ModularGolemsCompat.isMagnetizable(entity)
-                || com.stonytark.magnetization.compat.QuarkToretoiseCompat.isMagnetizable(entity);
+                || com.stonytark.magnetization.compat.QuarkToretoiseCompat.isMagnetizable(entity)
+                || com.stonytark.magnetization.compat.SlugterraMountCompat.susceptibility(entity) > 0.0d;
     }
 
     private static MagneticPolarity polarityOf(final Entity e) {

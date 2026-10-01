@@ -125,11 +125,10 @@ public final class CompassPropertyHooks {
         final java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> match;
         if (tuned != null) {
             key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(tuned).toString();
-            match = state -> state.is(tuned);
+            match = state -> com.stonytark.magnetization.content.item.OreCompassItem.matchesOre(stack, state);
         } else {
             key = "any";
-            match = state -> com.stonytark.magnetization.compat.FerromagneticCompat
-                    .is(state, com.stonytark.magnetization.api.MagTags.METALLIC_ORES);
+            match = state -> com.stonytark.magnetization.content.item.OreCompassItem.matchesOre(stack, state);
         }
         final BlockPos target = com.stonytark.magnetization.client.OreCompassScanner.nearest(
                 level, holder.blockPosition(), key, match);

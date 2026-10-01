@@ -156,6 +156,8 @@ def minimalProfileTasks = [
         'runaircraftauditserver', 'runaircraftauditpilot', 'runaircraftauditobserver',
         'runsweeptwilightgametestserver', 'runsweepstoragegametestserver', 'runsweepsupplementariesgametestserver', 'runsupplementariesworkflowgametestserver',
         'runmodulargolemsgametestserver', 'runquarkgametestserver',
+        'runslugterragametestserver', 'runslugterraabsentgametestserver',
+        'runslugterraauditserver', 'runslugterraauditclient', 'runslugterraauditobserver',
         'runmagneticsworkaroundgametestserver', 'runmagneticsworkaroundabsentgametestserver', 'runmagneticsworkaroundclient',
         'runsweepequipmentgametestserver', 'runsweepmagneticsgametestserver', 'runsweepaircraftgametestserver', 'runsweepmaterialsgametestserver', 'runsweepbossgametestserver',
         'runextragolemsreborngametestserver', 'runextragolemsrebornclient',
@@ -2502,3 +2504,6 @@ tasks.named('check') {
     dependsOn tasks.named('verifyReleaseJar'), tasks.named('verifyNoRuntimeModpackCoupling'),
             tasks.named('verifyRecommendedPackFixtures')
 }
+
+// Private local Slugterra port: never bundled or published as a dependency.
+apply from: 'gradle/slugterra-compat.gradle'

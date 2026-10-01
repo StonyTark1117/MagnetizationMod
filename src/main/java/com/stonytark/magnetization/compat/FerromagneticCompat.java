@@ -46,9 +46,19 @@ public final class FerromagneticCompat {
     public static boolean integrationEnabled(final ResourceLocation id) {
         if (id == null) return true;
         return switch (id.getNamespace()) {
+            case "slugterra", "bajoterrafn", "slugterra_dark", "eatslugslos" ->
+                    MagConfig.slugterraCompatEnabled()
+                            && (!id.getPath().endsWith("_ore") || MagConfig.slugterraOresEnabled())
+                            && (!isSlugterraEquipment(id) || MagConfig.slugterraEquipmentEnabled());
             case "tfmg" -> MagConfig.tfmgCompatEnabled();
             case "railways" -> MagConfig.steamRailsCompatEnabled();
             default -> true;
         };
+    }
+    private static boolean isSlugterraEquipment(final ResourceLocation id) {
+        final String path = id.getPath();
+        return path.startsWith("capsule_") || path.equals("empty_capsule")
+                || path.equals("overpass_shooter_avg_1") || path.equals("doctor_black_blaster")
+                || path.equals("slug_energy_core");
     }
 }

@@ -32,6 +32,8 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
         ORE_EXCAVATION_MONAZITE("ore_excavation_monazite"),
         ORE_EXCAVATION_COBALTITE("ore_excavation_cobaltite"),
         ORE_EXCAVATION_BORAX("ore_excavation_borax"),
+        SLUGTERRA_EQUIPMENT("slugterra_equipment"),
+        SLUGTERRA_ORES("slugterra_ores"),
         IRONWORKS("ironworks"),
         COASTERS_ADDITIONS("coasters_additions"),
         COASTER_FIN_MAGNETIZATION("coaster_fin_magnetization");
@@ -87,6 +89,8 @@ public record CompatConfigCondition(Feature feature) implements ICondition {
                     && MagConfig.CREATE_ORE_EXCAVATION_COBALTITE_VEIN_ENABLED.get();
             case ORE_EXCAVATION_BORAX -> MagConfig.ORE_EXCAVATION_COMPAT_ENABLED.get()
                     && MagConfig.CREATE_ORE_EXCAVATION_BORAX_VEIN_ENABLED.get();
+            case SLUGTERRA_EQUIPMENT -> MagConfig.slugterraEquipmentEnabled();
+            case SLUGTERRA_ORES -> MagConfig.slugterraOresEnabled();
             case IRONWORKS -> MagConfig.ironworksCompatEnabled();
             case COASTERS_ADDITIONS -> MagConfig.coastersAdditionsCompatEnabled();
             case COASTER_FIN_MAGNETIZATION -> MagConfig.coasterFinMagnetizationEnabled();

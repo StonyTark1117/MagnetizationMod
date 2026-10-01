@@ -16,6 +16,18 @@
 - Reduce background external-field work with conservative recipient bounds, lazy ship preparation, direct candidate lists, and immediate disabled-relay exits. Candidate budgets and force order are retained.
 - Avoid redundant machine state/reflection work, query occupied emitter buckets for creep, and skip unnecessary MR/gallium/fluid processing. Magnetized-fluid sources now retain a coherent spatial index across removal and chunk reload.
 - Select nearby train carriages for large populations while preserving live movement and the once-per-train force rule. Detailed optimization and validation evidence: [field performance pass](docs/performance-evidence/field-pass-2026-09-30/progress.md).
+- Enable experimental trajectory deflection by default after 64 two-client flight/ability cases, fluid/impact GameTests and multiplayer WTHIT status verification. Explicit opt-out remains available.
+- Add optional WTHIT server-sourced magnetic-effect countdowns and pinning details for normal/dark living slugs; no status is invented for direction-only deflection.
+
+- Add experimental trajectory deflection for normal/dark Armashelt and Rammstone. Fields bend heading with a shared per-tick angular cap, preserve speed at application, update native flight vectors and exclude grounded/impact/ability states.
+
+- Connect fresh Slugterra electric shock to equipment-only temporary LIRM, with per-target cooldown, refresh suppression and nonplayer equipment expiration. Tazerling shocks do not petrify logs.
+
+- Add optional magnetic response for Slugterra/Bajoterra Burro, Perro and Toro mechanical mounts, including native ridden travel, configurable susceptibility and bounded impulses.
+
+- Add optional magnetic Slugterra capsules, energy cores and blasters. Both blasters accept electromagnet polarity stamping and attract metal drops while held with south polarity; stored slug data survives field movement and pickup.
+
+- Add optional Slugterra cavern ore integration: 45 iron/copper/gold variants support dowsing, compass tuning, magnetic extraction and dropped-item attraction, with master and ore-specific switches.
 
 - Add default-off `compat.createMagneticsServerCrashWorkaround` to fix Create: Magnetics 0.0.4-alpha’s upstream dedicated-server `SoundInstance` loading crash. Read from `config/magnetization-common.toml` before mod construction; requires a full server restart and leaves clients unchanged.
 

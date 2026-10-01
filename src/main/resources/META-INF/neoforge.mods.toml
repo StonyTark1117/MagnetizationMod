@@ -388,3 +388,11 @@ type = "optional"
 versionRange = "[2.1.1,)"
 ordering = "AFTER"
 side = "BOTH"
+
+# Tested against the private unofficial 1.21.1 port; no redistribution or hard dependency.
+[[dependencies.magnetization]]
+modId = "slugterra"
+type = "optional"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"

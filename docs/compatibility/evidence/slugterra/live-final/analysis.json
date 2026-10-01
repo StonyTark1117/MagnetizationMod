@@ -1,0 +1,23 @@
+{
+  "server_cases": 64,
+  "clients": {
+    "client": {
+      "observed_cases": 64,
+      "visible_cases": 64,
+      "matched_samples": 1467,
+      "position_error_p95_blocks": 1.4482190925907579,
+      "position_error_max_blocks": 1.6385854307881988
+    },
+    "observer": {
+      "observed_cases": 64,
+      "visible_cases": 64,
+      "matched_samples": 1469,
+      "position_error_p95_blocks": 1.40270525852979,
+      "position_error_max_blocks": 1.6386116708042544
+    }
+  },
+  "matching_window_seconds": [
+    -0.2,
+    0.35
+  ]
+}

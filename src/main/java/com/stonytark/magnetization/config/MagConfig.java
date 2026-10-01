@@ -539,6 +539,16 @@ public final class MagConfig {
     public static final ModConfigSpec.BooleanValue QUARK_TORETOISE_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue CREATE_MAGNETICS_SERVER_CRASH_WORKAROUND;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> EXTRA_GOLEMS_REBORN_MATERIALS;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_COMPAT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_ORES_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_EQUIPMENT_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_MOUNTS_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_ELECTRIC_ENABLED;
+    public static final ModConfigSpec.BooleanValue SLUGTERRA_DEFLECTION_ENABLED;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_DEFLECTION_MAX_TURN;
+    public static final ModConfigSpec.IntValue SLUGTERRA_ELECTRIC_COOLDOWN;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_SUSCEPTIBILITY;
+    public static final ModConfigSpec.DoubleValue SLUGTERRA_MOUNT_MAX_IMPULSE;
     public static final ModConfigSpec.BooleanValue IRONWORKS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTERS_ADDITIONS_COMPAT_ENABLED;
     public static final ModConfigSpec.BooleanValue COASTER_FIN_MAGNETIZATION_ENABLED;
@@ -2494,6 +2504,46 @@ public final class MagConfig {
                 .defineListAllowEmpty("extraGolemsRebornMaterials", DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS,
                         () -> "golems:raw_iron", o -> o instanceof String id && id.matches("[a-z0-9_.-]+:[a-z0-9/._-]+")
                                 && net.minecraft.resources.ResourceLocation.tryParse(id) != null);
+        SLUGTERRA_COMPAT_ENABLED = b
+                .comment("Enable optional Slugterra integration, including bundled addon namespaces.")
+                .translation("magnetization.configuration.compat.slugterraCompatEnabled")
+                .define("slugterraCompatEnabled", true);
+        SLUGTERRA_DEFLECTION_ENABLED = b
+                .comment("EXPERIMENTAL: fields bend flying Armashelt/Rammstone (normal and dark) without accelerating them.")
+                .translation("magnetization.configuration.compat.slugterraDeflectionEnabled")
+                .define("slugterraDeflectionEnabled", true);
+        SLUGTERRA_DEFLECTION_MAX_TURN = b
+                .comment("Total maximum magnetic turn per slug per tick in degrees, shared by all fields.")
+                .translation("magnetization.configuration.compat.slugterraDeflectionMaxTurn")
+                .defineInRange("slugterraDeflectionMaxTurn", 6.0d, 0.1d, 30.0d);
+        SLUGTERRA_ELECTRIC_ENABLED = b
+                .comment("Fresh Slugterra electric shock magnetizes one eligible equipped item using temporary LIRM, without petrifying logs.")
+                .translation("magnetization.configuration.compat.slugterraElectricEnabled")
+                .define("slugterraElectricEnabled", true);
+        SLUGTERRA_ELECTRIC_COOLDOWN = b
+                .comment("Minimum ticks between fresh electric-shock magnetization attempts on a target. Refreshes never stamp again.")
+                .translation("magnetization.configuration.compat.slugterraElectricCooldown")
+                .defineInRange("slugterraElectricCooldown", 100, 1, 24000);
+        SLUGTERRA_MOUNTS_ENABLED = b
+                .comment("Mechanical Burro, Perro and Toro mounts respond to fields, including while ridden.")
+                .translation("magnetization.configuration.compat.slugterraMountsEnabled")
+                .define("slugterraMountsEnabled", true);
+        SLUGTERRA_MOUNT_SUSCEPTIBILITY = b
+                .comment("Intrinsic mechanical mount susceptibility; zero disables the intrinsic response.")
+                .translation("magnetization.configuration.compat.slugterraMountSusceptibility")
+                .defineInRange("slugterraMountSusceptibility", 1.0d, 0.0d, 8.0d);
+        SLUGTERRA_MOUNT_MAX_IMPULSE = b
+                .comment("Maximum velocity added to a mechanical mount by one field per tick (blocks/tick).")
+                .translation("magnetization.configuration.compat.slugterraMountMaxImpulse")
+                .defineInRange("slugterraMountMaxImpulse", 0.25d, 0.001d, 1.0d);
+        SLUGTERRA_EQUIPMENT_ENABLED = b
+                .comment("Capsules, blasters and energy cores respond to fields; blasters can be magnetized. Reload data after changing.")
+                .translation("magnetization.configuration.compat.slugterraEquipmentEnabled")
+                .define("slugterraEquipmentEnabled", true);
+        SLUGTERRA_ORES_ENABLED = b
+                .comment("Cavern iron, copper and gold ores support magnetic extraction and dowsing. Reload data after changing.")
+                .translation("magnetization.configuration.compat.slugterraOresEnabled")
+                .define("slugterraOresEnabled", true);
         IRONWORKS_COMPAT_ENABLED = b
                 .comment("Master switch for Magnetization's optional Create: Ironworks material and armor tag integration.",
                          "Takes effect on data reload.")
@@ -3248,6 +3298,30 @@ public final class MagConfig {
             return DEFAULT_EXTRA_GOLEMS_REBORN_MATERIALS;
         }
     }
+    public static boolean slugterraCompatEnabled() {
+        return booleanOr(SLUGTERRA_COMPAT_ENABLED, true);
+    }
+
+    public static boolean slugterraDeflectionEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_DEFLECTION_ENABLED, true);
+    }
+
+    public static boolean slugterraElectricEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_ELECTRIC_ENABLED, true);
+    }
+
+    public static boolean slugterraMountsEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_MOUNTS_ENABLED, true);
+    }
+
+    public static boolean slugterraEquipmentEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_EQUIPMENT_ENABLED, true);
+    }
+
+    public static boolean slugterraOresEnabled() {
+        return slugterraCompatEnabled() && booleanOr(SLUGTERRA_ORES_ENABLED, true);
+    }
+
     public static boolean ironworksCompatEnabled() {
         return booleanOr(IRONWORKS_COMPAT_ENABLED, true);
     }

@@ -1,0 +1,81 @@
+configurations { slugterraRuntime }
+
+def live = providers.gradleProperty('slugterraAudit').map { it.toBoolean() }.getOrElse(false)
+def present = live || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('runslugterragametestserver') }
+if (present) {
+    def jarPath = providers.gradleProperty('slugterraJar').orNull
+    if (jarPath == null || !file(jarPath).isFile()) {
+        throw new GradleException('Supply -PslugterraJar=/absolute/path/to/slugterra.jar for this private integration suite')
+    }
+    repositories.maven {
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup 'software.bernie.geckolib' }
+    }
+    dependencies {
+        slugterraRuntime files(jarPath)
+        slugterraRuntime('software.bernie.geckolib:geckolib-neoforge-1.21.1:4.8.4') { transitive = false }
+    }
+    configurations.runtimeClasspath.extendsFrom(configurations.slugterraRuntime)
+}
+neoForge.runs {
+    slugterraGameTestServer {
+        type = 'gameTestServer'
+        gameDirectory = file('run-slugterra-gametest')
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_slugterra'
+    }
+    slugterraAbsentGameTestServer {
+        type = 'gameTestServer'
+        gameDirectory = file('run-slugterra-absent-gametest')
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'magnetization_slugterra_absent'
+    }
+}
+tasks.named('processResources', ProcessResources).configure {
+    ['magnetization_slugterra', 'magnetization_slugterra_absent'].each { namespace ->
+        from('src/main/resources/data/magnetization/structure/empty.nbt') { into "data/${namespace}/structure" }
+    }
+}
+
+// Disposable live verification code is a separate source set, excluded from the release JAR.
+if (live) {
+    dependencies {
+        slugterraRuntime('maven.modrinth:wthit:neo-12.10.2') { transitive = false }
+        slugterraRuntime('maven.modrinth:badpackets:neo-0.8.2') { transitive = false }
+    }
+    sourceSets {
+        slugterraAudit {
+            compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath + configurations.slugterraRuntime
+            runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+        }
+    }
+    neoForge.mods.magnetization.sourceSet sourceSets.slugterraAudit
+    neoForge.runs {
+        slugterraAuditServer {
+            server()
+            gameDirectory = file('build/slugterra-audit/server')
+            programArgument '--nogui'
+            systemProperty 'magnetization.slugterraAudit', 'server'
+        }
+        slugterraAuditClient {
+            client()
+            gameDirectory = file('build/slugterra-audit/client')
+            programArguments.addAll('--username', 'SlugShooter', '--quickPlayMultiplayer', '127.0.0.1:25586', '--width', '1280', '--height', '720')
+            systemProperty 'magnetization.slugterraAudit', 'client'
+        }
+        slugterraAuditObserver {
+            client()
+            gameDirectory = file('build/slugterra-audit/observer')
+            programArguments.addAll('--username', 'SlugObserver', '--quickPlayMultiplayer', '127.0.0.1:25586', '--width', '1280', '--height', '720')
+            systemProperty 'magnetization.slugterraAudit', 'observer'
+        }
+    }
+}
+
+tasks.named('verifyReleaseJar').configure {
+    doLast {
+        new java.util.zip.ZipFile(tasks.named('jar').get().archiveFile.get().asFile).withCloseable { zip ->
+            if (zip.entries().any { it.name.startsWith('com/stonytark/magnetization/audit/') }) {
+                throw new GradleException('Slugterra live audit classes leaked into the release JAR')
+            }
+        }
+    }
+}
