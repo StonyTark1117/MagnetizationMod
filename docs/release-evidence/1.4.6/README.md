@@ -46,3 +46,18 @@ Before tagging, land the audit corrections and obtain green CI. The
 Create/Registrate recurrence remains tracked as an upstream dependency issue;
 a successful retry alone does not establish a fix. No `v1.4.6` tag exists at
 this audit.
+
+## Publication artifact update
+
+The audit corrections and public release notes landed on `main`, and the
+[release-notes commit's CI run](https://github.com/StonyTark1117/MagnetizationMod/actions/runs/36943581576)
+passed. Its uploaded JAR has SHA-256
+`44b5c03026234a2f5468b525f9a5ba1e2d7066de3d76792361ade660bf2a0c45`.
+This is the canonical file selected for GitHub, Modrinth, and CurseForge.
+
+The local OpenJDK 21 build retains the earlier `f605d758...` hash after a clean
+rebuild. An entry-by-entry comparison found identical archive entries and
+metadata; only three client golem-renderer classes differ, where the CI
+Temurin 21 compiler emitted additional synthetic bridge methods. The local
+rebuild check therefore establishes local repeatability, not an identical
+cross-environment artifact.
