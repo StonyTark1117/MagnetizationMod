@@ -15,6 +15,7 @@ Regenerate with python3 scripts/generate-config-reference.py; use --check to det
 | Scope | Key | Type | Default / range | Description |
 |---|---|---|---|---|
 | CLIENT | visuals.thrusterExhaustEffectsEnabled | boolean | true | Render normal exhaust plumes and cooled Fusion mist while thrusters fire. Disable to suppress all thruster exhaust particles without changing thrust. |
+| CLIENT | visuals.gogglesShiftInspectionEnabled | boolean | true | Show the magnetic ship inspection panel and force arrows while wearing Create Engineer's Goggles and holding sneak. Disable to keep sneaking without the inspection overlay. |
 
 ## Physics
 

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.stonytark.magnetization.Magnetization;
+import com.stonytark.magnetization.config.MagConfig;
 import com.stonytark.magnetization.content.shaft.MagneticShaftBlockEntity;
 import com.stonytark.magnetization.content.shaft.MagneticShaftNetwork;
 import com.stonytark.magnetization.network.FieldInspectionPayload;
@@ -30,7 +31,7 @@ public final class FieldInspectionOverlay {
         var mc = Minecraft.getInstance();
         return mc.player != null && mc.level != null && !mc.options.hideGui && GogglesItem.isWearingGoggles(mc.player);
     }
-    private static boolean inspecting() { return wearing() && Minecraft.getInstance().player.isShiftKeyDown() && Minecraft.getInstance().screen == null; }
+    private static boolean inspecting() { return MagConfig.GOGGLES_SHIFT_INSPECTION_ENABLED.get() && wearing() && Minecraft.getInstance().player.isShiftKeyDown() && Minecraft.getInstance().screen == null; }
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
         if (!inspecting()) { FieldInspectionPayload.clear(); requestTicks = 0; return; }
         if (requestTicks++ % 5 == 0) PacketDistributor.sendToServer(new FieldInspectionRequestPayload());

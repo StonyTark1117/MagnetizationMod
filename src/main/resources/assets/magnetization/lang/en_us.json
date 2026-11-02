@@ -146,6 +146,8 @@
   "magnetization.configuration.visuals.tooltip": "Local visual preferences that affect only this client.",
   "magnetization.configuration.visuals.thrusterExhaustEffectsEnabled": "Thruster Exhaust Effects",
   "magnetization.configuration.visuals.thrusterExhaustEffectsEnabled.tooltip": "Render normal exhaust plumes and cooled Fusion mist while thrusters fire. Disable to suppress all thruster exhaust particles without changing thrust.",
+  "magnetization.configuration.visuals.gogglesShiftInspectionEnabled": "Goggles Shift Inspection",
+  "magnetization.configuration.visuals.gogglesShiftInspectionEnabled.tooltip": "Show the magnetic ship inspection panel and force arrows while wearing Create Engineer's Goggles and holding sneak. Disable to keep sneaking without the inspection overlay.",
   "magnetization.configuration.propulsion.tooltip": "Thruster/sail/elytra/repulsor-track/motor tuning. FE buffer sizes apply to newly-placed machines.",
   "magnetization.configuration.propulsion.allowRedstoneThrustPower": "Allow Redstone Thrust Power",
   "magnetization.configuration.propulsion.allowRedstoneThrustPower.tooltip": "Default off: a redstone signal stops FE/fuel-powered thrust machines without replacing their FE input. Enable to let a redstone signal provide their power instead.",

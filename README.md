@@ -2,7 +2,7 @@
 
 A NeoForge 1.21.1 addon for **[Create: Aeronautics](https://modrinth.com/mod/create-aeronautics)** that adds magnetic forces, anchors, and propulsion for Sable-driven contraptions.
 
-Current release: **1.4.6**. This release adds magnetic shaft networks, docking controls, ship-force inspection, and Ponder tutorials alongside native Extra Golems Reborn 21.1.0.1 support, compatibility corrections, and performance improvements. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The Ironworks and Coasters Additions integrations remain intact.
+Current release: **1.4.7**. This update adds a client-side switch for the Shift ship-inspection overlay. Version 1.4.6 added magnetic shaft networks, docking controls, ship-force inspection, and Ponder tutorials alongside native Extra Golems Reborn 21.1.0.1 support, compatibility corrections, and performance improvements. See the [evidence-backed compatibility matrix and correction list](docs/compatibility/audit-1.21.1.md) for tested versions, unofficial ports, and unresolved gaps. The Ironworks and Coasters Additions integrations remain intact.
 
 ## Requirements
 
@@ -250,6 +250,8 @@ While goggles are worn, additional world overlays appear:
 ### Inspect applied forces
 
 Wear Create Engineer's Goggles, aim at a ship within 64 blocks, and hold sneak. The inspection panel reports the previous completed server tick's applied magnetic force, turning torque, source count and force-cap limiting. Cyan arrows show individual applied contributions, orange arrows show capped requests, and green/gold arrows above the hull show combined force and torque direction. Arrow length is compressed for readability; the numeric readout gives the actual values. Release sneak to leave inspection. The Field Compass is unchanged.
+
+To disable this Shift inspection panel and its force arrows, set `visuals.gogglesShiftInspectionEnabled = false` in `config/magnetization-client.toml` or turn off **Goggles Shift Inspection** under Mods → Magnetization → Config → Visual Effects. Other goggles information remains available.
 
 ### Dock signals
 

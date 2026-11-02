@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.7 — Goggles Shift inspection control
+
+- Add the client-only `visuals.gogglesShiftInspectionEnabled` setting, enabled by default. Turning it off suppresses the sneak-held magnetic ship inspection panel, force arrows, and inspection requests without hiding other Create-goggles information or magnetic shaft visualization.
+- Document the setting in the in-game config screen, generated configuration reference, and README. All other 1.4.6 behavior and dependency requirements remain unchanged.
+
 ## 1.4.6 — Compatibility audit and magnetic engineering
 
 - Expand docking into a seven-stage capture/link/output/cooperative-anchor tutorial; add Railgun Remote, Imprint Module, Tractor Beam, Pyrrhotite heat/catalysts, Gyrostabilizer and Induction Pad scenes. Add the missing Magnetic Shaft and docking playback assertions, with native interaction and physics GameTests behind the new tutorials. Validate all 32 catalog scenes and 125 instructions; fix camera/caption/hint overlap in five tutorials and wait for stable visible captions before audit capture.

@@ -142,6 +142,7 @@ public final class MagConfig {
 
     // ── propulsion: thrusters / sail / backpack / repulsor-track / motor ──
     public static final ModConfigSpec.BooleanValue THRUSTER_EXHAUST_EFFECTS_ENABLED;
+    public static final ModConfigSpec.BooleanValue GOGGLES_SHIFT_INSPECTION_ENABLED;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_TANK;
     public static final ModConfigSpec.BooleanValue ALLOW_REDSTONE_THRUST_POWER;
     public static final ModConfigSpec.IntValue    MICRO_THRUSTER_FE_CAPACITY;
@@ -694,6 +695,13 @@ public final class MagConfig {
                          "Set false to suppress both normal plumes and the cooled Fusion mist.")
                 .translation("magnetization.configuration.visuals.thrusterExhaustEffectsEnabled")
                 .define("thrusterExhaustEffectsEnabled", true);
+
+        GOGGLES_SHIFT_INSPECTION_ENABLED = cb
+                .comment("Show the magnetic ship inspection panel and force arrows while wearing",
+                         "Create Engineer's Goggles and holding sneak. Set false to disable the",
+                         "inspection overlay without hiding other goggles information.")
+                .translation("magnetization.configuration.visuals.gogglesShiftInspectionEnabled")
+                .define("gogglesShiftInspectionEnabled", true);
 
         cb.pop();
 
