@@ -2256,8 +2256,8 @@ dependencies {
     // as magnetizable entities, azure/scarlet neodymium ores as ferromagnetic,
     // and the alexsCavesPotionMode config (BOTH/OURS_ONLY/THEIRS_ONLY).
     // Citadel is AC's hard dep (must come before AC in classpath order).
-    localRuntime("maven.modrinth:citadel-(1.21.1-port):${citadel_test_version}")
-    localRuntime("maven.modrinth:alexs-caves-(unofficial-port):${alexscaves_test_version}")
+    localRuntime("maven.modrinth:XjY0RcQj:${citadel_test_version}")
+    localRuntime("maven.modrinth:kSsLSjEt:${alexscaves_test_version}")
 
     // Applied Energistics 2 — needed to dev-test the meteorite Phase B AE2
     // scan hook (task #289). Pure reflection-based detection in our code, so

@@ -17,6 +17,13 @@ magnetic shaft visualization use separate paths.
 | Client startup with setting `false` | Rendered the main menu with Magnetization, Create, and Sable loaded |
 | Configuration reference, language JSON, whitespace | Generator `--check`, JSON parse, and `git diff --check` passed |
 
+The first CI attempt failed before running tests because Modrinth's Maven
+descriptors for two optional development-runtime mods used project IDs while
+the build requested older punctuation-heavy slugs. The dependency coordinates
+now use those stable project IDs (`XjY0RcQj` for Citadel and `kSsLSjEt` for
+Alex's Caves); their pinned version IDs are unchanged. This changes only test
+runtime dependency resolution, not release JAR contents or required mods.
+
 The client smoke check establishes startup with the new setting disabled. The
 inspection behavior is also supported by code review of the shared
 `inspecting()` gate; this run did not exercise an in-world ship. The 1.4.6
